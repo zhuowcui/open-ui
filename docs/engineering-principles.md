@@ -94,6 +94,7 @@ condition, continue work or clarify the condition; do not self-certify completio
 
 ## Recommended Next Phase
 
-SP13-R is closed. Continue with SP17 advanced text or one of the explicitly owned
-residual systems, preserving the 2,823-ID SP13-R frozen exact baseline, the 351-ID
-exact target ledger, and the zero-pixel passing threshold.
+SP13-R is closed. Land PR #1 only after the hosted checks described in
+`docs/CI.md` are green, then start SP17 from fresh `main` using
+`docs/SP17-HANDOFF.md`. Preserve the 2,823-ID SP13-R frozen exact baseline, the
+351-ID exact target ledger, and the zero-pixel passing threshold.

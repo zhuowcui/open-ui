@@ -2,11 +2,11 @@
 #include "base/at_exit.h"
 #include "base/command_line.h"
 #include "base/logging.h"
+#include "cc/paint/paint_canvas.h"
+#include "cc/paint/paint_flags.h"
+#include "cc/paint/skia_paint_canvas.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkSurface.h"
-#include "cc/paint/paint_canvas.h"
-#include "cc/paint/skia_paint_canvas.h"
-#include "cc/paint/paint_flags.h"
 #include "ui/gfx/geometry/rect.h"
 #include "ui/gfx/geometry/size.h"
 
@@ -15,8 +15,7 @@ int main(int argc, char** argv) {
   base::CommandLine::Init(argc, argv);
 
   // Test 1: Create a Skia surface
-  auto surface = SkSurfaces::Raster(
-      SkImageInfo::MakeN32Premul(800, 600));
+  auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(800, 600));
   if (!surface) {
     LOG(ERROR) << "Failed to create Skia surface";
     return 1;
@@ -33,7 +32,6 @@ int main(int argc, char** argv) {
   gfx::Rect rect(0, 0, 800, 600);
   gfx::Size size = rect.size();
 
-  LOG(INFO) << "OpenUI smoke test passed! Surface: "
-            << size.width() << "x" << size.height();
+  LOG(INFO) << "OpenUI smoke test passed! Surface: " << size.width() << "x" << size.height();
   return 0;
 }

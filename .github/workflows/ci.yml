@@ -6,40 +6,117 @@ on:
   pull_request:
     branches: [main]
 
-jobs:
-  build:
-    runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        build_type: [Debug, Release]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
+permissions:
+  contents: read
 
-      - name: Install system dependencies
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  native-build:
+    name: native-build (${{ matrix.name }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Debug
+            is_debug: true
+          - name: Release
+            is_debug: false
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install native build tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            build-essential clang lld ninja-build \
-            libfontconfig-dev libfreetype-dev \
-            libvulkan-dev \
-            libx11-xcb-dev libxcb1-dev libxcb-shm0-dev \
-            libwayland-dev wayland-protocols \
-            libdrm-dev libgbm-dev libegl-dev libgl-dev
-
-      - name: Install depot_tools
-        run: |
-          git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git $HOME/depot_tools
-          echo "$HOME/depot_tools" >> $GITHUB_PATH
+          sudo apt-get install --yes --no-install-recommends \
+            clang generate-ninja lld ninja-build
 
       - name: Generate build
+        run: gn gen "out/${{ matrix.name }}" --args='is_debug=${{ matrix.is_debug }}'
+
+      - name: Build portable smoke target
+        run: ninja -C "out/${{ matrix.name }}" hello_world
+
+      - name: Run portable smoke target
+        run: "out/${{ matrix.name }}/hello_world"
+
+  rust-parity:
+    name: rust-parity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      # The checked-in Cargo config describes the pinned Chromium pixel runner.
+      # Public CI deliberately uses the hosted runner toolchain instead.
+      BINDGEN_EXTRA_CLANG_ARGS: ""
+      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS: ""
+      CC: clang
+      CLANGCC: clang
+      CLANGCXX: clang++
+      CXX: clang++
+      CXXFLAGS: ""
+      FORCE_SKIA_BUILD: "1"
+      LIBCLANG_PATH: /usr/lib/llvm-18/lib
+      PKG_CONFIG_SYSROOT_DIR: ""
+      SKIA_GN_ARGS: >-
+        extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP",
+        "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2",
+        "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3" ]
+      SKIA_NINJA_COMMAND: ninja
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust and Skia build dependencies
         run: |
-          gn gen out/${{ matrix.build_type }} \
-            --args='is_debug=${{ matrix.build_type == 'Debug' && 'true' || 'false' }}'
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            build-essential clang curl libclang-18-dev libfontconfig1-dev \
+            libfreetype-dev libgl1-mesa-dev ninja-build pkg-config python3
+          rustup toolchain install 1.94.1 --profile minimal --component rustfmt
+          rustup default 1.94.1
 
-      - name: Build
-        run: ninja -C out/${{ matrix.build_type }}
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/git
+            ~/.cargo/registry
+            bindings/rust/target
+          key: rust-parity-v1-${{ runner.os }}-1.94.1-${{ hashFiles('bindings/rust/Cargo.lock', 'bindings/rust/Cargo.toml', 'bindings/rust/**/Cargo.toml') }}
 
-      - name: Run hello_world
-        run: ./out/${{ matrix.build_type }}/hello_world
+      - name: Check Rust formatting
+        working-directory: bindings/rust
+        run: cargo fmt --all --check
+
+      - name: Run parity-relevant Rust tests
+        working-directory: bindings/rust
+        run: >-
+          cargo --config 'target.x86_64-unknown-linux-gnu.rustflags=[]'
+          test --locked
+          --package openui-style
+          --package openui-text
+          --package openui-layout
+          --package openui-paint
+
+  python-accountability:
+    name: python-accountability
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Run closure and porter tests
+        run: |
+          python3 -m unittest \
+            tools.wpt.test_sp13r_multicol_closure \
+            tools.wpt.test_sp14_text_port \
+            tools.wpt.test_sp15_closure \
+            tools.wpt.test_sp16_closure
+
+      - name: Verify immutable closure ledgers
+        run: python3 tools/wpt/generate_sp13r_multicol_closure.py --check
+
+      - name: Audit authoritative accountability artifacts
+        run: python3 tools/accountability/audit.py

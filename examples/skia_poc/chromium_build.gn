@@ -4,7 +4,5 @@
 executable("skia_poc") {
   sources = [ "skia_poc.cc" ]
 
-  deps = [
-    "//skia",
-  ]
+  deps = [ "//skia" ]
 }

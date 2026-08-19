@@ -7,25 +7,17 @@ set_default_toolchain("//build/toolchain/linux:clang")
 
 # Default configs applied to all targets
 set_defaults("executable") {
-  configs = [
-    "//build/config/compiler:default",
-  ]
+  configs = [ "//build/config/compiler:default" ]
 }
 
 set_defaults("shared_library") {
-  configs = [
-    "//build/config/compiler:default",
-  ]
+  configs = [ "//build/config/compiler:default" ]
 }
 
 set_defaults("static_library") {
-  configs = [
-    "//build/config/compiler:default",
-  ]
+  configs = [ "//build/config/compiler:default" ]
 }
 
 set_defaults("source_set") {
-  configs = [
-    "//build/config/compiler:default",
-  ]
+  configs = [ "//build/config/compiler:default" ]
 }

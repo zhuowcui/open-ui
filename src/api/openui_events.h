@@ -8,7 +8,6 @@
 
 #include "openui/openui.h"
 #include "openui/openui_impl.h"
-
 #include "third_party/blink/renderer/core/dom/events/native_event_listener.h"
 #include "third_party/blink/renderer/platform/heap/garbage_collected.h"
 
@@ -16,9 +15,7 @@
 // delegates to a C function pointer (OuiEventCallback).
 class OuiNativeEventListener final : public blink::NativeEventListener {
  public:
-  OuiNativeEventListener(OuiEventCallback callback,
-                          void* user_data,
-                          OuiElementImpl* owner);
+  OuiNativeEventListener(OuiEventCallback callback, void* user_data, OuiElementImpl* owner);
 
   void Invoke(blink::ExecutionContext*, blink::Event*) override;
   void Trace(blink::Visitor*) const override;
@@ -29,11 +26,9 @@ class OuiNativeEventListener final : public blink::NativeEventListener {
 
  private:
   OuiEventCallback callback_;
-  __attribute__((annotate("raw_ptr_exclusion")))
-  void* user_data_;
+  __attribute__((annotate("raw_ptr_exclusion"))) void* user_data_;
   // Non-GC raw pointer back to the OuiElementImpl that owns this listener.
-  __attribute__((annotate("raw_ptr_exclusion")))
-  OuiElementImpl* owner_;
+  __attribute__((annotate("raw_ptr_exclusion"))) OuiElementImpl* owner_;
 };
 
 #endif  // OPENUI_OPENUI_EVENTS_H_

@@ -5,29 +5,27 @@
  * This file is compiled as C (not C++) to verify the header is C-compatible.
  */
 
-#include "openui/openui.h"
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "openui/openui.h"
+
 static int g_passed = 0;
 static int g_failed = 0;
 
-#define CHECK(cond, msg)                                 \
-  do {                                                   \
-    if (cond) {                                          \
-      g_passed++;                                        \
-    } else {                                             \
-      g_failed++;                                        \
-      fprintf(stderr, "FAIL [%s:%d]: %s\n", __FILE__,   \
-              __LINE__, msg);                             \
-    }                                                    \
+#define CHECK(cond, msg)                                              \
+  do {                                                                \
+    if (cond) {                                                       \
+      g_passed++;                                                     \
+    } else {                                                          \
+      g_failed++;                                                     \
+      fprintf(stderr, "FAIL [%s:%d]: %s\n", __FILE__, __LINE__, msg); \
+    }                                                                 \
   } while (0)
 
-#define CHECK_NEAR(a, b, eps, msg)                       \
-  CHECK(fabs((double)(a) - (double)(b)) <= (eps), msg)
+#define CHECK_NEAR(a, b, eps, msg) CHECK(fabs((double)(a) - (double)(b)) <= (eps), msg)
 
 #define CHECK_EQ(a, b, msg) CHECK((a) == (b), msg)
 #define CHECK_NE(a, b, msg) CHECK((a) != (b), msg)
@@ -227,10 +225,8 @@ static void test_border_box(OuiDocument* doc) {
   oui_element_set_padding(div, oui_px(10), oui_px(10), oui_px(10), oui_px(10));
 
   oui_document_layout(doc);
-  CHECK_NEAR(oui_element_get_width(div), 200.0f, 0.1f,
-             "border-box width stays 200");
-  CHECK_NEAR(oui_element_get_height(div), 100.0f, 0.1f,
-             "border-box height stays 100");
+  CHECK_NEAR(oui_element_get_width(div), 200.0f, 0.1f, "border-box width stays 200");
+  CHECK_NEAR(oui_element_get_height(div), 100.0f, 0.1f, "border-box height stays 100");
 
   oui_element_destroy(div);
 }
@@ -300,7 +296,6 @@ int main(int argc, char** argv) {
 
   oui_shutdown();
 
-  printf("\n=== C Test Results: %d passed, %d failed ===\n",
-         g_passed, g_failed);
+  printf("\n=== C Test Results: %d passed, %d failed ===\n", g_passed, g_failed);
   return g_failed > 0 ? 1 : 0;
 }

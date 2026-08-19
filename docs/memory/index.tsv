@@ -1,6 +1,6 @@
 # id	status	tags	title	updated	path
 0001	active	project standard	Project north star: Chromium pixel parity under strict accountability	2026-07-08	entries/0001-project-north-star-chromium-pixel-parity-under-s.md
-0002	active	state accountability	Authoritative WPT state (2026-06-30): 2671 pass / 735 fail / 0 err, audit 7/7	2026-07-08	entries/0002-authoritative-wpt-state-2026-06-30-2671-pass-735.md
+0002	superseded	state accountability	Authoritative WPT state (2026-06-30): 2671 pass / 735 fail / 0 err, audit 7/7	2026-08-19	entries/0002-authoritative-wpt-state-2026-06-30-2671-pass-735.md
 0003	active	direction text sp14	Direction: layout PAUSED, pivot to text (SP14+)	2026-07-08	entries/0003-direction-layout-paused-pivot-to-text-sp14.md
 0004	active	text finding port_wpt	Text pivot is porting+parity, NOT a from-scratch engine	2026-07-08	entries/0004-text-pivot-is-porting-parity-not-a-from-scratch.md
 0005	active	sp14 text plan	SP14 goal + scope: single-line LTR Ahem text to 0.0% parity	2026-07-08	entries/0005-sp14-goal-scope-single-line-ltr-ahem-text-to-0-0.md
@@ -29,3 +29,5 @@
 0028	superseded	sp14 text accountability milestone handoff	SP14 W0/W1 closes 48 sole-needs_text tests with 26 exact and 22 named residuals	2026-08-07	entries/0028-sp14-w0-w1-48-sole-needs-text-closure.md
 0029	superseded	sp14 text accountability milestone handoff	SP14 W2 closes all runnable needs_text ownership	2026-08-07	entries/0029-sp14-w2-runnable-needs-text-closure.md
 0030	active	sp14 text accountability milestone handoff	SP14 W3/W4 closes the global needs_text backlog	2026-08-08	entries/0030-sp14-w3-w4-global-needs-text-closure.md
+0031	active	state accountability sp13r handoff	Authoritative post-SP13-R WPT state: 3267 pass / 299 fail / 0 errors	2026-08-19	entries/0031-authoritative-post-sp13-r-wpt-state-3267-pass-29.md
+0032	active	ci sp17 handoff next-steps	CI landing gate and SP17 from-main handoff	2026-08-19	entries/0032-ci-landing-gate-and-sp17-from-main-handoff.md

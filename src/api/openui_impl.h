@@ -52,10 +52,9 @@ struct OuiCallbackEntry {
   OuiCallbackEntry();
   ~OuiCallbackEntry();
 
-  __attribute__((annotate("raw_ptr_exclusion")))
-  void* callback = nullptr;   // OuiEventCallback cast to void*
-  __attribute__((annotate("raw_ptr_exclusion")))
-  void* user_data = nullptr;
+  __attribute__((annotate("raw_ptr_exclusion"))) void* callback =
+      nullptr;  // OuiEventCallback cast to void*
+  __attribute__((annotate("raw_ptr_exclusion"))) void* user_data = nullptr;
   blink::Persistent<blink::NativeEventListener> listener;
 };
 
@@ -68,7 +67,7 @@ struct OuiElementImpl {
 
   blink::Persistent<blink::Element> element;
   raw_ptr<OuiDocumentImpl> doc;  // Non-owning back-reference.
-  bool is_body = false;  // True for the <body> wrapper (not user-destroyable).
+  bool is_body = false;          // True for the <body> wrapper (not user-destroyable).
 
   // SP7: Event callbacks keyed by event type string.
   std::map<std::string, OuiCallbackEntry> callbacks;

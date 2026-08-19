@@ -5,25 +5,24 @@
  * Compiled as C (not C++) to verify the render API is C-compatible.
  */
 
-#include "openui/openui.h"
-
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "openui/openui.h"
+
 static int g_passed = 0;
 static int g_failed = 0;
 
-#define CHECK(cond, msg)                                 \
-  do {                                                   \
-    if (cond) {                                          \
-      g_passed++;                                        \
-    } else {                                             \
-      g_failed++;                                        \
-      fprintf(stderr, "FAIL [%s:%d]: %s\n", __FILE__,   \
-              __LINE__, msg);                             \
-    }                                                    \
+#define CHECK(cond, msg)                                              \
+  do {                                                                \
+    if (cond) {                                                       \
+      g_passed++;                                                     \
+    } else {                                                          \
+      g_failed++;                                                     \
+      fprintf(stderr, "FAIL [%s:%d]: %s\n", __FILE__, __LINE__, msg); \
+    }                                                                 \
   } while (0)
 
 #define CHECK_EQ(a, b, msg) CHECK((a) == (b), msg)
@@ -31,9 +30,15 @@ static int g_failed = 0;
 #define CHECK_GT(a, b, msg) CHECK((a) > (b), msg)
 
 /* Helper: check pixel at (x,y) in bitmap is approximately (er,eg,eb,ea). */
-static void check_pixel_near(const OuiBitmap* bmp, int x, int y,
-                              int er, int eg, int eb, int ea,
-                              int tol, const char* label) {
+static void check_pixel_near(const OuiBitmap* bmp,
+                             int x,
+                             int y,
+                             int er,
+                             int eg,
+                             int eb,
+                             int ea,
+                             int tol,
+                             const char* label) {
   int idx;
   int r, g, b, a;
   char msg[256];
@@ -73,7 +78,7 @@ static void test_render_to_bitmap(OuiDocument* doc) {
 
   oui_element_set_width(div, oui_px(100));
   oui_element_set_height(div, oui_px(100));
-  oui_element_set_background_color(div, 0xFF0000FF);  /* Red */
+  oui_element_set_background_color(div, 0xFF0000FF); /* Red */
   oui_element_append_child(body, div);
 
   status = oui_document_render_to_bitmap(doc, &bmp);
@@ -107,7 +112,7 @@ static void test_render_to_png_buffer(OuiDocument* doc) {
   div = oui_element_create(doc, "div");
   oui_element_set_width(div, oui_px(100));
   oui_element_set_height(div, oui_px(100));
-  oui_element_set_background_color(div, 0x00FF00FF);  /* Green */
+  oui_element_set_background_color(div, 0x00FF00FF); /* Green */
   oui_element_append_child(body, div);
 
   status = oui_document_render_to_png_buffer(doc, &png_data, &png_size);
@@ -138,7 +143,7 @@ static void test_render_to_png_file(OuiDocument* doc) {
   div = oui_element_create(doc, "div");
   oui_element_set_width(div, oui_px(100));
   oui_element_set_height(div, oui_px(100));
-  oui_element_set_background_color(div, 0x0000FFFF);  /* Blue */
+  oui_element_set_background_color(div, 0x0000FFFF); /* Blue */
   oui_element_append_child(body, div);
 
   status = oui_document_render_to_png(doc, path);
@@ -166,20 +171,17 @@ static void test_render_null_args(void) {
 
   memset(&bmp, 0, sizeof(bmp));
 
-  CHECK_EQ(oui_document_render_to_bitmap(NULL, &bmp),
-           OUI_ERROR_INVALID_ARGUMENT,
+  CHECK_EQ(oui_document_render_to_bitmap(NULL, &bmp), OUI_ERROR_INVALID_ARGUMENT,
            "bitmap null doc");
-  CHECK_EQ(oui_document_render_to_png(NULL, "/tmp/x.png"),
-           OUI_ERROR_INVALID_ARGUMENT,
+  CHECK_EQ(oui_document_render_to_png(NULL, "/tmp/x.png"), OUI_ERROR_INVALID_ARGUMENT,
            "png null doc");
-  CHECK_EQ(oui_document_render_to_png_buffer(NULL, &data, &size),
-           OUI_ERROR_INVALID_ARGUMENT,
+  CHECK_EQ(oui_document_render_to_png_buffer(NULL, &data, &size), OUI_ERROR_INVALID_ARGUMENT,
            "png_buffer null doc");
 
   /* Free null should be safe. */
   oui_bitmap_free(NULL);
   oui_free(NULL);
-  g_passed++;  /* If we got here, no crash. */
+  g_passed++; /* If we got here, no crash. */
 }
 
 static void test_re_render_after_mutation(OuiDocument* doc) {
@@ -193,18 +195,16 @@ static void test_re_render_after_mutation(OuiDocument* doc) {
   div = oui_element_create(doc, "div");
   oui_element_set_width(div, oui_px(100));
   oui_element_set_height(div, oui_px(100));
-  oui_element_set_background_color(div, 0xFF0000FF);  /* Red */
+  oui_element_set_background_color(div, 0xFF0000FF); /* Red */
   oui_element_append_child(body, div);
 
-  CHECK_EQ(oui_document_render_to_bitmap(doc, &bmp1), OUI_OK,
-           "first render OK");
+  CHECK_EQ(oui_document_render_to_bitmap(doc, &bmp1), OUI_OK, "first render OK");
   check_pixel_near(&bmp1, 50, 50, 255, 0, 0, 255, 5, "first render red");
 
   /* Mutate to lime (0x00FF00FF). */
   oui_element_set_background_color(div, 0x00FF00FF);
 
-  CHECK_EQ(oui_document_render_to_bitmap(doc, &bmp2), OUI_OK,
-           "second render OK");
+  CHECK_EQ(oui_document_render_to_bitmap(doc, &bmp2), OUI_OK, "second render OK");
   check_pixel_near(&bmp2, 50, 50, 0, 255, 0, 255, 10, "second render lime");
 
   oui_bitmap_free(&bmp1);
@@ -217,8 +217,7 @@ static void test_empty_document_render(OuiDocument* doc) {
   OuiBitmap bmp;
   memset(&bmp, 0, sizeof(bmp));
 
-  CHECK_EQ(oui_document_render_to_bitmap(doc, &bmp), OUI_OK,
-           "empty doc render OK");
+  CHECK_EQ(oui_document_render_to_bitmap(doc, &bmp), OUI_OK, "empty doc render OK");
   CHECK_EQ(bmp.width, 800, "empty doc width");
   CHECK_EQ(bmp.height, 600, "empty doc height");
 
@@ -260,7 +259,6 @@ int main(int argc, char** argv) {
   oui_document_destroy(doc);
   oui_shutdown();
 
-  printf("=== C Render Test Results: %d passed, %d failed ===\n",
-         g_passed, g_failed);
+  printf("=== C Render Test Results: %d passed, %d failed ===\n", g_passed, g_failed);
   return g_failed > 0 ? 1 : 0;
 }

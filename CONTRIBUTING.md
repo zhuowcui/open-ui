@@ -56,18 +56,25 @@ typedef enum {
 All code is formatted with `clang-format` using the config in `.clang-format`:
 
 ```bash
-# Format all source files
-find src include -name '*.cc' -o -name '*.h' | xargs clang-format -i
+# Format all native source files with the CI-pinned formatter
+find src include examples -type f \
+  \( -name '*.cc' -o -name '*.h' -o -name '*.c' \) -print0 | \
+  sort -z | xargs -0 --no-run-if-empty clang-format-18 -i
 
 # Check formatting (CI does this)
-find src include -name '*.cc' -o -name '*.h' | xargs clang-format --dry-run --Werror
+find src include examples -type f \
+  \( -name '*.cc' -o -name '*.h' -o -name '*.c' \) -print0 | \
+  sort -z | xargs -0 --no-run-if-empty clang-format-18 --dry-run --Werror
 ```
 
 GN files are formatted with `gn format`:
 
 ```bash
-find . -name 'BUILD.gn' -o -name '*.gni' | xargs -I{} gn format {}
+git ls-files -z '*.gn' '*.gni' | xargs -0 --no-run-if-empty -n1 gn format
 ```
+
+The complete hosted-CI contract, local Rust/accountability commands, and the
+separate pinned Chromium pixel gate are documented in [`docs/CI.md`](docs/CI.md).
 
 ## Commit Messages
 

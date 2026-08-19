@@ -78,9 +78,9 @@ test("openui_api_test") {
   configs += _blink_configs
 
   deps = _blink_deps + [
-    ":openui_lib",
-    "//testing/gtest",
-  ]
+           ":openui_lib",
+           "//testing/gtest",
+         ]
 
   data_deps = [ "//content/shell:pak" ]
   data = [ "$root_out_dir/content_shell.pak" ]
@@ -93,9 +93,7 @@ executable("openui_c_test") {
 
   configs += _blink_configs
 
-  deps = [
-    ":openui_lib",
-  ] + _blink_deps
+  deps = [ ":openui_lib" ] + _blink_deps
 
   data_deps = [ "//content/shell:pak" ]
   data = [ "$root_out_dir/content_shell.pak" ]
@@ -113,10 +111,10 @@ test("openui_render_test") {
   configs += _blink_configs
 
   deps = _blink_deps + [
-    ":openui_lib",
-    "//testing/gtest",
-    "//ui/gfx/codec",
-  ]
+           ":openui_lib",
+           "//testing/gtest",
+           "//ui/gfx/codec",
+         ]
 
   data_deps = [ "//content/shell:pak" ]
   data = [ "$root_out_dir/content_shell.pak" ]
@@ -129,9 +127,7 @@ executable("openui_c_render_test") {
 
   configs += _blink_configs
 
-  deps = [
-    ":openui_lib",
-  ] + _blink_deps
+  deps = [ ":openui_lib" ] + _blink_deps
 
   data_deps = [ "//content/shell:pak" ]
   data = [ "$root_out_dir/content_shell.pak" ]
@@ -149,9 +145,7 @@ executable("openui_render_pages") {
 
   configs += _blink_configs
 
-  deps = [
-    ":openui_lib",
-  ] + _blink_deps
+  deps = [ ":openui_lib" ] + _blink_deps
 
   data_deps = [ "//content/shell:pak" ]
   data = [ "$root_out_dir/content_shell.pak" ]

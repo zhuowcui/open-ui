@@ -3,21 +3,21 @@
 //
 // openui_impl.cc — C API implementation wrapping blink's rendering pipeline.
 
-#include "openui/openui.h"
-#include "openui/openui_element_factory.h"
-#include "openui/openui_events.h"
 #include "openui/openui_impl.h"
-#include "openui/openui_init.h"
 
 #include <stdlib.h>
 #include <string.h>
+
 #include <string>
 #include <vector>
 
 #include "base/time/time.h"
+#include "openui/openui.h"
+#include "openui/openui_element_factory.h"
+#include "openui/openui_events.h"
+#include "openui/openui_init.h"
 #include "third_party/blink/renderer/core/animation/animation_clock.h"
 #include "third_party/blink/renderer/core/animation/document_timeline.h"
-
 #include "third_party/blink/renderer/core/css/css_primitive_value.h"
 #include "third_party/blink/renderer/core/css/css_property_names.h"
 #include "third_party/blink/renderer/core/css/css_value_id_mappings.h"
@@ -60,9 +60,7 @@ namespace {
 // --------------------------------------------------------------------------
 // Helper: OuiLength → blink SetInlineStyleProperty with typed unit.
 // --------------------------------------------------------------------------
-void SetLengthProperty(blink::Element* elem,
-                       blink::CSSPropertyID prop,
-                       OuiLength len) {
+void SetLengthProperty(blink::Element* elem, blink::CSSPropertyID prop, OuiLength len) {
   if (!elem) {
     return;
   }
@@ -175,8 +173,8 @@ static void RemoveAllCallbacks(OuiElementImpl* impl) {
     return;
   for (auto& [type, entry] : impl->callbacks) {
     if (entry.listener) {
-      impl->element->removeEventListener(
-          blink::AtomicString(type.c_str()), entry.listener.Get(), false);
+      impl->element->removeEventListener(blink::AtomicString(type.c_str()), entry.listener.Get(),
+                                         false);
       // Safe downcast — we only ever store OuiNativeEventListener instances.
       static_cast<OuiNativeEventListener*>(entry.listener.Get())->ClearOwner();
     }
@@ -229,8 +227,8 @@ OuiDocument* oui_document_create(int viewport_width, int viewport_height) {
   if (!openui_runtime_has_external_task_env()) {
     impl->task_env = std::make_unique<blink::test::TaskEnvironment>();
   }
-  impl->page_holder = std::make_unique<blink::DummyPageHolder>(
-      gfx::Size(viewport_width, viewport_height));
+  impl->page_holder =
+      std::make_unique<blink::DummyPageHolder>(gfx::Size(viewport_width, viewport_height));
   return reinterpret_cast<OuiDocument*>(impl);
 }
 
@@ -268,8 +266,7 @@ OuiStatus oui_document_layout(OuiDocument* doc) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
-  impl->GetDocument().UpdateStyleAndLayout(
-      blink::DocumentUpdateReason::kTest);
+  impl->GetDocument().UpdateStyleAndLayout(blink::DocumentUpdateReason::kTest);
   return OUI_OK;
 }
 
@@ -312,8 +309,7 @@ OuiElement* oui_element_create(OuiDocument* doc, const char* tag) {
     return nullptr;
   }
   auto* doc_impl = reinterpret_cast<OuiDocumentImpl*>(doc);
-  blink::Element* elem =
-      openui::CreateElementForTag(doc_impl->GetDocument(), tag);
+  blink::Element* elem = openui::CreateElementForTag(doc_impl->GetDocument(), tag);
   if (!elem) {
     return nullptr;
   }
@@ -337,8 +333,7 @@ void oui_element_append_text(OuiElement* e, const char* text) {
   impl->element->AppendChild(text_node);
 }
 
-OuiTextNode* oui_element_create_text_child(OuiElement* parent,
-                                            const char* text) {
+OuiTextNode* oui_element_create_text_child(OuiElement* parent, const char* text) {
   if (!parent || !text) {
     return nullptr;
   }
@@ -459,9 +454,7 @@ void oui_element_remove_child(OuiElement* parent, OuiElement* child) {
   p->element->RemoveChild(c->element.Get());
 }
 
-void oui_element_insert_before(OuiElement* parent,
-                               OuiElement* child,
-                               OuiElement* before) {
+void oui_element_insert_before(OuiElement* parent, OuiElement* child, OuiElement* before) {
   if (!parent || !child) {
     return;
   }
@@ -480,10 +473,8 @@ void oui_element_insert_before(OuiElement* parent,
       return;
     }
   }
-  blink::Node* ref_node = before
-                              ? reinterpret_cast<OuiElementImpl*>(before)
-                                    ->element.Get()
-                              : nullptr;
+  blink::Node* ref_node =
+      before ? reinterpret_cast<OuiElementImpl*>(before)->element.Get() : nullptr;
   p->element->InsertBefore(c->element.Get(), ref_node);
 }
 
@@ -495,8 +486,7 @@ OuiElement* oui_element_first_child(const OuiElement* parent) {
   if (!p->element) {
     return nullptr;
   }
-  for (blink::Node* child = p->element->firstChild(); child;
-       child = child->nextSibling()) {
+  for (blink::Node* child = p->element->firstChild(); child; child = child->nextSibling()) {
     if (auto* elem = blink::DynamicTo<blink::Element>(child)) {
       OuiElementImpl* wrapper = FindWrapper(elem);
       if (wrapper) {
@@ -515,8 +505,7 @@ OuiElement* oui_element_next_sibling(const OuiElement* e) {
   if (!impl->element) {
     return nullptr;
   }
-  for (blink::Node* sib = impl->element->nextSibling(); sib;
-       sib = sib->nextSibling()) {
+  for (blink::Node* sib = impl->element->nextSibling(); sib; sib = sib->nextSibling()) {
     if (auto* elem = blink::DynamicTo<blink::Element>(sib)) {
       OuiElementImpl* wrapper = FindWrapper(elem);
       if (wrapper) {
@@ -560,9 +549,7 @@ void oui_element_remove_all_child_nodes(OuiElement* e) {
 // Generic style API
 // ═══════════════════════════════════════════════════════════════════════════
 
-OuiStatus oui_element_set_style(OuiElement* e,
-                                const char* property,
-                                const char* value) {
+OuiStatus oui_element_set_style(OuiElement* e, const char* property, const char* value) {
   if (!e || !property || !value) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }
@@ -576,8 +563,7 @@ OuiStatus oui_element_set_style(OuiElement* e,
     return OUI_ERROR_UNKNOWN_PROPERTY;
   }
 
-  bool ok = impl->element->SetInlineStyleProperty(
-      id, blink::String(value));
+  bool ok = impl->element->SetInlineStyleProperty(id, blink::String(value));
   return ok ? OUI_OK : OUI_ERROR_INVALID_VALUE;
 }
 
@@ -614,9 +600,7 @@ void oui_element_clear_styles(OuiElement* e) {
 // HTML attributes (generic)
 // ═══════════════════════════════════════════════════════════════════════════
 
-OuiStatus oui_element_set_attribute(OuiElement* e,
-                                     const char* name,
-                                     const char* value) {
+OuiStatus oui_element_set_attribute(OuiElement* e, const char* name, const char* value) {
   if (!e || !name) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }
@@ -624,8 +608,7 @@ OuiStatus oui_element_set_attribute(OuiElement* e,
   if (!impl->element) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }
-  impl->element->setAttribute(blink::AtomicString(name),
-                               blink::AtomicString(value ? value : ""));
+  impl->element->setAttribute(blink::AtomicString(name), blink::AtomicString(value ? value : ""));
   return OUI_OK;
 }
 
@@ -649,8 +632,7 @@ char* oui_element_get_attribute(const OuiElement* e, const char* name) {
   if (!impl->element) {
     return nullptr;
   }
-  const blink::AtomicString& val =
-      impl->element->getAttribute(blink::AtomicString(name));
+  const blink::AtomicString& val = impl->element->getAttribute(blink::AtomicString(name));
   if (val.IsNull()) {
     return nullptr;
   }
@@ -671,37 +653,43 @@ OuiStatus oui_element_set_class(OuiElement* e, const char* classes) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 void oui_element_set_width(OuiElement* e, OuiLength len) {
-  if (!e) return;
+  if (!e)
+    return;
   SetLengthProperty(reinterpret_cast<OuiElementImpl*>(e)->element.Get(),
                     blink::CSSPropertyID::kWidth, len);
 }
 
 void oui_element_set_height(OuiElement* e, OuiLength len) {
-  if (!e) return;
+  if (!e)
+    return;
   SetLengthProperty(reinterpret_cast<OuiElementImpl*>(e)->element.Get(),
                     blink::CSSPropertyID::kHeight, len);
 }
 
 void oui_element_set_min_width(OuiElement* e, OuiLength len) {
-  if (!e) return;
+  if (!e)
+    return;
   SetLengthProperty(reinterpret_cast<OuiElementImpl*>(e)->element.Get(),
                     blink::CSSPropertyID::kMinWidth, len);
 }
 
 void oui_element_set_min_height(OuiElement* e, OuiLength len) {
-  if (!e) return;
+  if (!e)
+    return;
   SetLengthProperty(reinterpret_cast<OuiElementImpl*>(e)->element.Get(),
                     blink::CSSPropertyID::kMinHeight, len);
 }
 
 void oui_element_set_max_width(OuiElement* e, OuiLength len) {
-  if (!e) return;
+  if (!e)
+    return;
   SetLengthProperty(reinterpret_cast<OuiElementImpl*>(e)->element.Get(),
                     blink::CSSPropertyID::kMaxWidth, len);
 }
 
 void oui_element_set_max_height(OuiElement* e, OuiLength len) {
-  if (!e) return;
+  if (!e)
+    return;
   SetLengthProperty(reinterpret_cast<OuiElementImpl*>(e)->element.Get(),
                     blink::CSSPropertyID::kMaxHeight, len);
 }
@@ -715,9 +703,11 @@ void oui_element_set_margin(OuiElement* e,
                             OuiLength right,
                             OuiLength bottom,
                             OuiLength left) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
   SetLengthProperty(elem, blink::CSSPropertyID::kMarginTop, top);
   SetLengthProperty(elem, blink::CSSPropertyID::kMarginRight, right);
   SetLengthProperty(elem, blink::CSSPropertyID::kMarginBottom, bottom);
@@ -729,9 +719,11 @@ void oui_element_set_padding(OuiElement* e,
                              OuiLength right,
                              OuiLength bottom,
                              OuiLength left) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
   SetLengthProperty(elem, blink::CSSPropertyID::kPaddingTop, top);
   SetLengthProperty(elem, blink::CSSPropertyID::kPaddingRight, right);
   SetLengthProperty(elem, blink::CSSPropertyID::kPaddingBottom, bottom);
@@ -743,60 +735,105 @@ void oui_element_set_padding(OuiElement* e,
 // ═══════════════════════════════════════════════════════════════════════════
 
 void oui_element_set_display(OuiElement* e, OuiDisplay display) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
 
   const char* value = "block";
   switch (display) {
-    case OUI_DISPLAY_BLOCK:        value = "block"; break;
-    case OUI_DISPLAY_INLINE:       value = "inline"; break;
-    case OUI_DISPLAY_INLINE_BLOCK: value = "inline-block"; break;
-    case OUI_DISPLAY_FLEX:         value = "flex"; break;
-    case OUI_DISPLAY_INLINE_FLEX:  value = "inline-flex"; break;
-    case OUI_DISPLAY_GRID:         value = "grid"; break;
-    case OUI_DISPLAY_INLINE_GRID:  value = "inline-grid"; break;
-    case OUI_DISPLAY_TABLE:        value = "table"; break;
-    case OUI_DISPLAY_TABLE_ROW:    value = "table-row"; break;
-    case OUI_DISPLAY_TABLE_CELL:   value = "table-cell"; break;
-    case OUI_DISPLAY_NONE:         value = "none"; break;
-    case OUI_DISPLAY_CONTENTS:     value = "contents"; break;
+    case OUI_DISPLAY_BLOCK:
+      value = "block";
+      break;
+    case OUI_DISPLAY_INLINE:
+      value = "inline";
+      break;
+    case OUI_DISPLAY_INLINE_BLOCK:
+      value = "inline-block";
+      break;
+    case OUI_DISPLAY_FLEX:
+      value = "flex";
+      break;
+    case OUI_DISPLAY_INLINE_FLEX:
+      value = "inline-flex";
+      break;
+    case OUI_DISPLAY_GRID:
+      value = "grid";
+      break;
+    case OUI_DISPLAY_INLINE_GRID:
+      value = "inline-grid";
+      break;
+    case OUI_DISPLAY_TABLE:
+      value = "table";
+      break;
+    case OUI_DISPLAY_TABLE_ROW:
+      value = "table-row";
+      break;
+    case OUI_DISPLAY_TABLE_CELL:
+      value = "table-cell";
+      break;
+    case OUI_DISPLAY_NONE:
+      value = "none";
+      break;
+    case OUI_DISPLAY_CONTENTS:
+      value = "contents";
+      break;
   }
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kDisplay,
-                               blink::String(value));
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kDisplay, blink::String(value));
 }
 
 void oui_element_set_position(OuiElement* e, OuiPosition pos) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
 
   const char* value = "static";
   switch (pos) {
-    case OUI_POSITION_STATIC:   value = "static"; break;
-    case OUI_POSITION_RELATIVE: value = "relative"; break;
-    case OUI_POSITION_ABSOLUTE: value = "absolute"; break;
-    case OUI_POSITION_FIXED:    value = "fixed"; break;
-    case OUI_POSITION_STICKY:   value = "sticky"; break;
+    case OUI_POSITION_STATIC:
+      value = "static";
+      break;
+    case OUI_POSITION_RELATIVE:
+      value = "relative";
+      break;
+    case OUI_POSITION_ABSOLUTE:
+      value = "absolute";
+      break;
+    case OUI_POSITION_FIXED:
+      value = "fixed";
+      break;
+    case OUI_POSITION_STICKY:
+      value = "sticky";
+      break;
   }
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kPosition,
-                               blink::String(value));
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kPosition, blink::String(value));
 }
 
 void oui_element_set_overflow(OuiElement* e, OuiOverflow overflow) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
 
   const char* value = "visible";
   switch (overflow) {
-    case OUI_OVERFLOW_VISIBLE: value = "visible"; break;
-    case OUI_OVERFLOW_HIDDEN:  value = "hidden"; break;
-    case OUI_OVERFLOW_SCROLL:  value = "scroll"; break;
-    case OUI_OVERFLOW_AUTO:    value = "auto"; break;
+    case OUI_OVERFLOW_VISIBLE:
+      value = "visible";
+      break;
+    case OUI_OVERFLOW_HIDDEN:
+      value = "hidden";
+      break;
+    case OUI_OVERFLOW_SCROLL:
+      value = "scroll";
+      break;
+    case OUI_OVERFLOW_AUTO:
+      value = "auto";
+      break;
   }
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kOverflow,
-                               blink::String(value));
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kOverflow, blink::String(value));
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -804,93 +841,136 @@ void oui_element_set_overflow(OuiElement* e, OuiOverflow overflow) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 void oui_element_set_flex_direction(OuiElement* e, OuiFlexDirection dir) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
 
   const char* value = "row";
   switch (dir) {
-    case OUI_FLEX_ROW:            value = "row"; break;
-    case OUI_FLEX_ROW_REVERSE:    value = "row-reverse"; break;
-    case OUI_FLEX_COLUMN:         value = "column"; break;
-    case OUI_FLEX_COLUMN_REVERSE: value = "column-reverse"; break;
+    case OUI_FLEX_ROW:
+      value = "row";
+      break;
+    case OUI_FLEX_ROW_REVERSE:
+      value = "row-reverse";
+      break;
+    case OUI_FLEX_COLUMN:
+      value = "column";
+      break;
+    case OUI_FLEX_COLUMN_REVERSE:
+      value = "column-reverse";
+      break;
   }
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFlexDirection,
-                               blink::String(value));
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFlexDirection, blink::String(value));
 }
 
 void oui_element_set_flex_wrap(OuiElement* e, OuiFlexWrap wrap) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
 
   const char* value = "nowrap";
   switch (wrap) {
-    case OUI_FLEX_WRAP_NOWRAP:       value = "nowrap"; break;
-    case OUI_FLEX_WRAP_WRAP:         value = "wrap"; break;
-    case OUI_FLEX_WRAP_WRAP_REVERSE: value = "wrap-reverse"; break;
+    case OUI_FLEX_WRAP_NOWRAP:
+      value = "nowrap";
+      break;
+    case OUI_FLEX_WRAP_WRAP:
+      value = "wrap";
+      break;
+    case OUI_FLEX_WRAP_WRAP_REVERSE:
+      value = "wrap-reverse";
+      break;
   }
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFlexWrap,
-                               blink::String(value));
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFlexWrap, blink::String(value));
 }
 
 void oui_element_set_flex_grow(OuiElement* e, float grow) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFlexGrow,
-                               static_cast<double>(grow),
+  if (!elem)
+    return;
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFlexGrow, static_cast<double>(grow),
                                blink::CSSPrimitiveValue::UnitType::kNumber);
 }
 
 void oui_element_set_flex_shrink(OuiElement* e, float shrink) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFlexShrink,
-                               static_cast<double>(shrink),
+  if (!elem)
+    return;
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFlexShrink, static_cast<double>(shrink),
                                blink::CSSPrimitiveValue::UnitType::kNumber);
 }
 
 void oui_element_set_flex_basis(OuiElement* e, OuiLength basis) {
-  if (!e) return;
+  if (!e)
+    return;
   SetLengthProperty(reinterpret_cast<OuiElementImpl*>(e)->element.Get(),
                     blink::CSSPropertyID::kFlexBasis, basis);
 }
 
 void oui_element_set_align_items(OuiElement* e, OuiAlignItems align) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
 
   const char* value = "stretch";
   switch (align) {
-    case OUI_ALIGN_STRETCH:    value = "stretch"; break;
-    case OUI_ALIGN_FLEX_START: value = "flex-start"; break;
-    case OUI_ALIGN_FLEX_END:   value = "flex-end"; break;
-    case OUI_ALIGN_CENTER:     value = "center"; break;
-    case OUI_ALIGN_BASELINE:   value = "baseline"; break;
+    case OUI_ALIGN_STRETCH:
+      value = "stretch";
+      break;
+    case OUI_ALIGN_FLEX_START:
+      value = "flex-start";
+      break;
+    case OUI_ALIGN_FLEX_END:
+      value = "flex-end";
+      break;
+    case OUI_ALIGN_CENTER:
+      value = "center";
+      break;
+    case OUI_ALIGN_BASELINE:
+      value = "baseline";
+      break;
   }
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kAlignItems,
-                               blink::String(value));
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kAlignItems, blink::String(value));
 }
 
 void oui_element_set_justify_content(OuiElement* e, OuiJustifyContent jc) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
 
   const char* value = "flex-start";
   switch (jc) {
-    case OUI_JUSTIFY_FLEX_START:    value = "flex-start"; break;
-    case OUI_JUSTIFY_FLEX_END:      value = "flex-end"; break;
-    case OUI_JUSTIFY_CENTER:        value = "center"; break;
-    case OUI_JUSTIFY_SPACE_BETWEEN: value = "space-between"; break;
-    case OUI_JUSTIFY_SPACE_AROUND:  value = "space-around"; break;
-    case OUI_JUSTIFY_SPACE_EVENLY:  value = "space-evenly"; break;
+    case OUI_JUSTIFY_FLEX_START:
+      value = "flex-start";
+      break;
+    case OUI_JUSTIFY_FLEX_END:
+      value = "flex-end";
+      break;
+    case OUI_JUSTIFY_CENTER:
+      value = "center";
+      break;
+    case OUI_JUSTIFY_SPACE_BETWEEN:
+      value = "space-between";
+      break;
+    case OUI_JUSTIFY_SPACE_AROUND:
+      value = "space-around";
+      break;
+    case OUI_JUSTIFY_SPACE_EVENLY:
+      value = "space-evenly";
+      break;
   }
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kJustifyContent,
-                               blink::String(value));
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kJustifyContent, blink::String(value));
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -898,38 +978,42 @@ void oui_element_set_justify_content(OuiElement* e, OuiJustifyContent jc) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 void oui_element_set_color(OuiElement* e, uint32_t rgba) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
   std::string css = RGBAToCSSString(rgba);
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kColor,
-                               blink::String(css.c_str()));
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kColor, blink::String(css.c_str()));
 }
 
 void oui_element_set_background_color(OuiElement* e, uint32_t rgba) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
   std::string css = RGBAToCSSString(rgba);
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kBackgroundColor,
-                               blink::String(css.c_str()));
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kBackgroundColor, blink::String(css.c_str()));
 }
 
 void oui_element_set_opacity(OuiElement* e, float opacity) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kOpacity,
-                               static_cast<double>(opacity),
+  if (!elem)
+    return;
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kOpacity, static_cast<double>(opacity),
                                blink::CSSPrimitiveValue::UnitType::kNumber);
 }
 
 void oui_element_set_z_index(OuiElement* e, int z) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kZIndex,
-                               static_cast<double>(z),
+  if (!elem)
+    return;
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kZIndex, static_cast<double>(z),
                                blink::CSSPrimitiveValue::UnitType::kInteger);
 }
 
@@ -938,9 +1022,11 @@ void oui_element_set_z_index(OuiElement* e, int z) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 void oui_element_set_text_content(OuiElement* e, const char* text) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* impl = reinterpret_cast<OuiElementImpl*>(e);
-  if (!impl->element) return;
+  if (!impl->element)
+    return;
   impl->element->setTextContent(blink::String(text));
 }
 
@@ -949,63 +1035,83 @@ void oui_element_set_text_content(OuiElement* e, const char* text) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 void oui_element_set_font_family(OuiElement* e, const char* family) {
-  if (!e || !family) return;
+  if (!e || !family)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFontFamily,
-                               blink::String(family));
+  if (!elem)
+    return;
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFontFamily, blink::String(family));
 }
 
 void oui_element_set_font_size(OuiElement* e, OuiLength size) {
-  if (!e) return;
+  if (!e)
+    return;
   SetLengthProperty(reinterpret_cast<OuiElementImpl*>(e)->element.Get(),
                     blink::CSSPropertyID::kFontSize, size);
 }
 
 void oui_element_set_font_weight(OuiElement* e, int weight) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFontWeight,
-                               static_cast<double>(weight),
+  if (!elem)
+    return;
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFontWeight, static_cast<double>(weight),
                                blink::CSSPrimitiveValue::UnitType::kNumber);
 }
 
 void oui_element_set_font_style(OuiElement* e, OuiFontStyle style) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
 
   const char* value = "normal";
   switch (style) {
-    case OUI_FONT_STYLE_NORMAL:  value = "normal"; break;
-    case OUI_FONT_STYLE_ITALIC:  value = "italic"; break;
-    case OUI_FONT_STYLE_OBLIQUE: value = "oblique"; break;
+    case OUI_FONT_STYLE_NORMAL:
+      value = "normal";
+      break;
+    case OUI_FONT_STYLE_ITALIC:
+      value = "italic";
+      break;
+    case OUI_FONT_STYLE_OBLIQUE:
+      value = "oblique";
+      break;
   }
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFontStyle,
-                               blink::String(value));
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kFontStyle, blink::String(value));
 }
 
 void oui_element_set_line_height(OuiElement* e, OuiLength lh) {
-  if (!e) return;
+  if (!e)
+    return;
   SetLengthProperty(reinterpret_cast<OuiElementImpl*>(e)->element.Get(),
                     blink::CSSPropertyID::kLineHeight, lh);
 }
 
 void oui_element_set_text_align(OuiElement* e, OuiTextAlign align) {
-  if (!e) return;
+  if (!e)
+    return;
   auto* elem = reinterpret_cast<OuiElementImpl*>(e)->element.Get();
-  if (!elem) return;
+  if (!elem)
+    return;
 
   const char* value = "left";
   switch (align) {
-    case OUI_TEXT_ALIGN_LEFT:    value = "left"; break;
-    case OUI_TEXT_ALIGN_RIGHT:   value = "right"; break;
-    case OUI_TEXT_ALIGN_CENTER:  value = "center"; break;
-    case OUI_TEXT_ALIGN_JUSTIFY: value = "justify"; break;
+    case OUI_TEXT_ALIGN_LEFT:
+      value = "left";
+      break;
+    case OUI_TEXT_ALIGN_RIGHT:
+      value = "right";
+      break;
+    case OUI_TEXT_ALIGN_CENTER:
+      value = "center";
+      break;
+    case OUI_TEXT_ALIGN_JUSTIFY:
+      value = "justify";
+      break;
   }
-  elem->SetInlineStyleProperty(blink::CSSPropertyID::kTextAlign,
-                               blink::String(value));
+  elem->SetInlineStyleProperty(blink::CSSPropertyID::kTextAlign, blink::String(value));
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1013,50 +1119,58 @@ void oui_element_set_text_align(OuiElement* e, OuiTextAlign align) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 float oui_element_get_offset_x(const OuiElement* e) {
-  if (!e) return 0.0f;
+  if (!e)
+    return 0.0f;
   auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
-  if (!impl->element) return 0.0f;
+  if (!impl->element)
+    return 0.0f;
   auto* mutable_elem = const_cast<blink::Element*>(impl->element.Get());
   return static_cast<float>(mutable_elem->OffsetLeft());
 }
 
 float oui_element_get_offset_y(const OuiElement* e) {
-  if (!e) return 0.0f;
+  if (!e)
+    return 0.0f;
   auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
-  if (!impl->element) return 0.0f;
+  if (!impl->element)
+    return 0.0f;
   auto* mutable_elem = const_cast<blink::Element*>(impl->element.Get());
   return static_cast<float>(mutable_elem->OffsetTop());
 }
 
 float oui_element_get_width(const OuiElement* e) {
-  if (!e) return 0.0f;
+  if (!e)
+    return 0.0f;
   auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
-  if (!impl->element) return 0.0f;
+  if (!impl->element)
+    return 0.0f;
   blink::LayoutObject* lo = impl->element->GetLayoutObject();
   if (!lo || !lo->IsBox()) {
     return 0.0f;
   }
-  return static_cast<float>(
-      blink::To<blink::LayoutBox>(lo)->OffsetWidth().ToFloat());
+  return static_cast<float>(blink::To<blink::LayoutBox>(lo)->OffsetWidth().ToFloat());
 }
 
 float oui_element_get_height(const OuiElement* e) {
-  if (!e) return 0.0f;
+  if (!e)
+    return 0.0f;
   auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
-  if (!impl->element) return 0.0f;
+  if (!impl->element)
+    return 0.0f;
   blink::LayoutObject* lo = impl->element->GetLayoutObject();
   if (!lo || !lo->IsBox()) {
     return 0.0f;
   }
-  return static_cast<float>(
-      blink::To<blink::LayoutBox>(lo)->OffsetHeight().ToFloat());
+  return static_cast<float>(blink::To<blink::LayoutBox>(lo)->OffsetHeight().ToFloat());
 }
 
 OuiRect oui_element_get_bounding_rect(const OuiElement* e) {
   OuiRect rect = {0, 0, 0, 0};
-  if (!e) return rect;
+  if (!e)
+    return rect;
   auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
-  if (!impl->element) return rect;
+  if (!impl->element)
+    return rect;
   auto* mutable_elem = const_cast<blink::Element*>(impl->element.Get());
 
   rect.x = static_cast<float>(mutable_elem->OffsetLeft());
@@ -1075,8 +1189,7 @@ OuiRect oui_element_get_bounding_rect(const OuiElement* e) {
 // Computed style readback
 // ═══════════════════════════════════════════════════════════════════════════
 
-char* oui_element_get_computed_style(const OuiElement* e,
-                                     const char* property) {
+char* oui_element_get_computed_style(const OuiElement* e, const char* property) {
   if (!e || !property) {
     return nullptr;
   }
@@ -1096,10 +1209,9 @@ char* oui_element_get_computed_style(const OuiElement* e,
   }
 
   const blink::CSSProperty& css_prop = blink::CSSProperty::Get(id);
-  const blink::CSSValue* css_value =
-      css_prop.CSSValueFromComputedStyleInternal(
-          *style, nullptr /* layout_object */, false /* allow_visited_style */,
-          blink::CSSValuePhase::kComputedValue);
+  const blink::CSSValue* css_value = css_prop.CSSValueFromComputedStyleInternal(
+      *style, nullptr /* layout_object */, false /* allow_visited_style */,
+      blink::CSSValuePhase::kComputedValue);
   if (!css_value) {
     return nullptr;
   }
@@ -1124,8 +1236,7 @@ OuiElement* oui_document_hit_test(OuiDocument* doc, float x, float y) {
 
   blink::HitTestLocation location(gfx::PointF(x, y));
   blink::HitTestResult result;
-  blink::LayoutView* layout_view =
-      doc_impl->GetDocument().GetLayoutView();
+  blink::LayoutView* layout_view = doc_impl->GetDocument().GetLayoutView();
   if (!layout_view) {
     return nullptr;
   }
@@ -1145,50 +1256,62 @@ OuiElement* oui_document_hit_test(OuiDocument* doc, float x, float y) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 float oui_element_get_scroll_width(const OuiElement* e) {
-  if (!e) return 0.0f;
+  if (!e)
+    return 0.0f;
   auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
-  if (!impl->element) return 0.0f;
+  if (!impl->element)
+    return 0.0f;
   auto* mutable_elem = const_cast<blink::Element*>(impl->element.Get());
   return static_cast<float>(mutable_elem->scrollWidth());
 }
 
 float oui_element_get_scroll_height(const OuiElement* e) {
-  if (!e) return 0.0f;
+  if (!e)
+    return 0.0f;
   auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
-  if (!impl->element) return 0.0f;
+  if (!impl->element)
+    return 0.0f;
   auto* mutable_elem = const_cast<blink::Element*>(impl->element.Get());
   return static_cast<float>(mutable_elem->scrollHeight());
 }
 
 double oui_element_get_scroll_left(const OuiElement* e) {
-  if (!e) return 0.0;
+  if (!e)
+    return 0.0;
   auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
-  if (!impl->element) return 0.0;
+  if (!impl->element)
+    return 0.0;
   auto* mutable_elem = const_cast<blink::Element*>(impl->element.Get());
   return mutable_elem->scrollLeft();
 }
 
 double oui_element_get_scroll_top(const OuiElement* e) {
-  if (!e) return 0.0;
+  if (!e)
+    return 0.0;
   auto* impl = reinterpret_cast<const OuiElementImpl*>(e);
-  if (!impl->element) return 0.0;
+  if (!impl->element)
+    return 0.0;
   auto* mutable_elem = const_cast<blink::Element*>(impl->element.Get());
   return mutable_elem->scrollTop();
 }
 
 OuiStatus oui_element_scroll_to(OuiElement* e, double x, double y) {
-  if (!e) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!e)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto* impl = reinterpret_cast<OuiElementImpl*>(e);
-  if (!impl->element) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!impl->element)
+    return OUI_ERROR_INVALID_ARGUMENT;
   impl->element->setScrollLeft(x);
   impl->element->setScrollTop(y);
   return OUI_OK;
 }
 
 OuiStatus oui_element_scroll_by(OuiElement* e, double dx, double dy) {
-  if (!e) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!e)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto* impl = reinterpret_cast<OuiElementImpl*>(e);
-  if (!impl->element) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!impl->element)
+    return OUI_ERROR_INVALID_ARGUMENT;
   double cur_x = impl->element->scrollLeft();
   double cur_y = impl->element->scrollTop();
   impl->element->setScrollLeft(cur_x + dx);
@@ -1234,7 +1357,8 @@ base::TimeTicks TimeFromMs(OuiDocumentImpl* impl, double time_ms) {
 }  // namespace
 
 OuiStatus oui_document_advance_time(OuiDocument* doc, double time_ms) {
-  if (!doc) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!doc)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
   EnsureTimeInitialized(impl);
   impl->current_time_ms = time_ms;
@@ -1244,21 +1368,25 @@ OuiStatus oui_document_advance_time(OuiDocument* doc, double time_ms) {
 }
 
 OuiStatus oui_document_advance_time_by(OuiDocument* doc, double delta_ms) {
-  if (!doc) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!doc)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
   EnsureTimeInitialized(impl);
   return oui_document_advance_time(doc, impl->current_time_ms + delta_ms);
 }
 
 double oui_document_get_time(OuiDocument* doc) {
-  if (!doc) return 0.0;
+  if (!doc)
+    return 0.0;
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
-  if (!impl->time_initialized) return 0.0;
+  if (!impl->time_initialized)
+    return 0.0;
   return impl->current_time_ms;
 }
 
 OuiStatus oui_document_begin_frame(OuiDocument* doc, double time_ms) {
-  if (!doc) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!doc)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
   EnsureTimeInitialized(impl);
   impl->current_time_ms = time_ms;
@@ -1282,14 +1410,16 @@ OuiStatus oui_document_begin_frame(OuiDocument* doc, double time_ms) {
 // Focus management (SP7)
 // ═══════════════════════════════════════════════════════════════════════════
 
-#include "third_party/blink/renderer/core/page/focus_controller.h"
-#include "third_party/blink/renderer/core/frame/local_frame.h"
 #include "third_party/blink/public/mojom/input/focus_type.mojom-blink.h"
+#include "third_party/blink/renderer/core/frame/local_frame.h"
+#include "third_party/blink/renderer/core/page/focus_controller.h"
 
 OuiStatus oui_element_focus(OuiElement* elem) {
-  if (!elem) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!elem)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto* impl = reinterpret_cast<OuiElementImpl*>(elem);
-  if (!impl->element || !impl->doc) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!impl->element || !impl->doc)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto& page = impl->doc->page_holder->GetPage();
   auto& fc = page.GetFocusController();
   // Ensure the page is active and focused so focus/blur events dispatch.
@@ -1302,46 +1432,50 @@ OuiStatus oui_element_focus(OuiElement* elem) {
   // (no tabindex, not a form control) may not fire DOM focus events
   // per the HTML spec, but the focus state will still be set.
   blink::LocalFrame& local_frame = impl->doc->page_holder->GetFrame();
-  fc.SetFocusedElement(
-      impl->element.Get(), static_cast<blink::Frame*>(&local_frame));
+  fc.SetFocusedElement(impl->element.Get(), static_cast<blink::Frame*>(&local_frame));
   return OUI_OK;
 }
 
 OuiStatus oui_element_blur(OuiElement* elem) {
-  if (!elem) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!elem)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto* impl = reinterpret_cast<OuiElementImpl*>(elem);
-  if (!impl->doc) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!impl->doc)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto& page = impl->doc->page_holder->GetPage();
   blink::LocalFrame& local_frame = impl->doc->page_holder->GetFrame();
-  page.GetFocusController().SetFocusedElement(
-      nullptr, static_cast<blink::Frame*>(&local_frame));
+  page.GetFocusController().SetFocusedElement(nullptr, static_cast<blink::Frame*>(&local_frame));
   return OUI_OK;
 }
 
 OuiElement* oui_document_get_focused_element(OuiDocument* doc) {
-  if (!doc) return nullptr;
+  if (!doc)
+    return nullptr;
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
   blink::Element* focused = impl->GetDocument().FocusedElement();
-  if (!focused) return nullptr;
+  if (!focused)
+    return nullptr;
   OuiElementImpl* wrapper = LookupElementWrapper(focused);
   return wrapper ? reinterpret_cast<OuiElement*>(wrapper) : nullptr;
 }
 
 OuiStatus oui_document_advance_focus(OuiDocument* doc, int direction) {
-  if (!doc) return OUI_ERROR_INVALID_ARGUMENT;
+  if (!doc)
+    return OUI_ERROR_INVALID_ARGUMENT;
   auto* impl = reinterpret_cast<OuiDocumentImpl*>(doc);
   auto& page = impl->page_holder->GetPage();
-  auto focus_type = (direction >= 0)
-      ? blink::mojom::blink::FocusType::kForward
-      : blink::mojom::blink::FocusType::kBackward;
+  auto focus_type = (direction >= 0) ? blink::mojom::blink::FocusType::kForward
+                                     : blink::mojom::blink::FocusType::kBackward;
   page.GetFocusController().AdvanceFocus(focus_type);
   return OUI_OK;
 }
 
 int oui_element_has_focus(const OuiElement* elem) {
-  if (!elem) return 0;
+  if (!elem)
+    return 0;
   auto* impl = reinterpret_cast<const OuiElementImpl*>(elem);
-  if (!impl->element || !impl->doc) return 0;
+  if (!impl->element || !impl->doc)
+    return 0;
   blink::Element* focused = impl->doc->GetDocument().FocusedElement();
   return (focused == impl->element.Get()) ? 1 : 0;
 }
@@ -1350,12 +1484,11 @@ int oui_element_has_focus(const OuiElement* elem) {
 // Offscreen rendering (SP5)
 // ═══════════════════════════════════════════════════════════════════════════
 
-#include "openui/openui_render.h"
-
 #include <fstream>
 
-OuiStatus oui_document_render_to_bitmap(OuiDocument* doc,
-                                         OuiBitmap* out_bitmap) {
+#include "openui/openui_render.h"
+
+OuiStatus oui_document_render_to_bitmap(OuiDocument* doc, OuiBitmap* out_bitmap) {
   if (!doc || !out_bitmap) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }
@@ -1390,8 +1523,7 @@ void oui_bitmap_free(OuiBitmap* bitmap) {
   }
 }
 
-OuiStatus oui_document_render_to_png(OuiDocument* doc,
-                                      const char* file_path) {
+OuiStatus oui_document_render_to_png(OuiDocument* doc, const char* file_path) {
   if (!doc || !file_path) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }
@@ -1421,8 +1553,8 @@ OuiStatus oui_document_render_to_png(OuiDocument* doc,
 }
 
 OuiStatus oui_document_render_to_png_buffer(OuiDocument* doc,
-                                             uint8_t** out_data,
-                                             size_t* out_size) {
+                                            uint8_t** out_data,
+                                            size_t* out_size) {
   if (!doc || !out_data || !out_size) {
     return OUI_ERROR_INVALID_ARGUMENT;
   }

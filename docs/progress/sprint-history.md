@@ -369,3 +369,24 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   tests; all 2823 baseline IDs remain exact; audit passes 7/7.
 - Vertical and sideways writing modes remain out of scope. Next: SP17 advanced
   text or another explicitly owned residual system.
+
+### PR #1 landing gate: portable CI and SP17 handoff
+
+- Replaced the unbootstrapped shallow `depot_tools` workflow with Ubuntu 24.04
+  packages for standalone GN, Ninja, Clang, and clang-format. Native Debug and
+  Release jobs now build and execute the portable `hello_world` target instead
+  of implicitly entering the Chromium-dependent Skia POC.
+- Added hosted Rust formatting plus style/text/layout/paint tests, cached
+  source-built Skia, the 99-test Python closure/porter suite, immutable SP13-R
+  ledger verification, and the 7/7 accountability audit.
+- Formatted the tracked C/C++ and GN sources once so the native format gates
+  enforce a clean baseline rather than failing on historical drift.
+- Added `docs/CI.md` with hosted-versus-pinned validation boundaries and exact
+  local equivalents.
+- Added `docs/SP17-HANDOFF.md` with a fresh-`main` branch procedure, the
+  3,267-pass guard, all 19 runnable writing-mode IDs, the full 842-row owner
+  inventory, the 337 direct porter opportunities, implementation waves,
+  architecture hotspots, and closure commands.
+- Local pre-push evidence: Rust style/text/layout/paint suites pass; all 99
+  Python tests pass; SP13-R ledgers remain 2,823/351/1,018; audit passes 7/7;
+  clang-format 18, GN formatting, workflow syntax, and `git diff --check` pass.

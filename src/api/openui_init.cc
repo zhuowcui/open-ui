@@ -24,9 +24,6 @@
 #include "gin/v8_initializer.h"
 #include "mojo/core/embedder/embedder.h"
 #include "mojo/public/cpp/bindings/binder_map.h"
-#include "ui/base/resource/resource_bundle.h"
-#include "v8/include/v8.h"
-
 #include "third_party/blink/public/platform/platform.h"
 #include "third_party/blink/public/platform/scheduler/test/renderer_scheduler_test_support.h"
 #include "third_party/blink/public/platform/scheduler/web_thread_scheduler.h"
@@ -35,31 +32,27 @@
 #include "third_party/blink/public/web/blink.h"
 #include "third_party/blink/renderer/platform/testing/task_environment.h"
 #include "third_party/blink/renderer/platform/wtf/text/wtf_string.h"
+#include "ui/base/resource/resource_bundle.h"
+#include "v8/include/v8.h"
 
 namespace {
 
 // Platform subclass: routes resource loading to ui::ResourceBundle.
 class OpenUIPlatform : public blink::Platform {
  public:
-  blink::WebString DefaultLocale() override {
-    return blink::WebString::FromUTF8("en-US");
-  }
+  blink::WebString DefaultLocale() override { return blink::WebString::FromUTF8("en-US"); }
 
   std::string GetDataResourceString(int resource_id) override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      return ui::ResourceBundle::GetSharedInstance().LoadDataResourceString(
-          resource_id);
+      return ui::ResourceBundle::GetSharedInstance().LoadDataResourceString(resource_id);
     }
     return std::string();
   }
 
-  blink::WebData GetDataResource(
-      int resource_id,
-      ui::ResourceScaleFactor scale_factor) override {
+  blink::WebData GetDataResource(int resource_id, ui::ResourceScaleFactor scale_factor) override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      std::string_view data =
-          ui::ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
-              resource_id, scale_factor);
+      std::string_view data = ui::ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
+          resource_id, scale_factor);
       return blink::WebData(base::as_byte_span(data));
     }
     return blink::WebData();
@@ -67,9 +60,7 @@ class OpenUIPlatform : public blink::Platform {
 
   bool HasDataResource(int resource_id) const override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      return !ui::ResourceBundle::GetSharedInstance()
-                  .GetRawDataResource(resource_id)
-                  .empty();
+      return !ui::ResourceBundle::GetSharedInstance().GetRawDataResource(resource_id).empty();
     }
     return false;
   }
@@ -108,10 +99,8 @@ OuiStatus openui_runtime_init(const OuiInitConfig* config) {
   if (!base::FeatureList::GetInstance()) {
     auto feature_list = std::make_unique<base::FeatureList>();
     feature_list->InitFromCommandLine(
-        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
-            "enable-features"),
-        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
-            "disable-features"));
+        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("enable-features"),
+        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("disable-features"));
     base::FeatureList::SetInstance(std::move(feature_list));
   }
 
@@ -147,12 +136,10 @@ OuiStatus openui_runtime_init(const OuiInitConfig* config) {
 
   {
     auto dummy_task_runner = base::MakeRefCounted<base::NullTaskRunner>();
-    base::SingleThreadTaskRunner::CurrentDefaultHandle dummy_handle(
-        dummy_task_runner);
+    base::SingleThreadTaskRunner::CurrentDefaultHandle dummy_handle(dummy_task_runner);
 
     mojo::BinderMap binders;
-    blink::InitializeWithoutIsolateForTesting(g_platform, &binders,
-                                              g_scheduler->get());
+    blink::InitializeWithoutIsolateForTesting(g_platform, &binders, g_scheduler->get());
   }
 
   // Phase 5: enable experimental features.

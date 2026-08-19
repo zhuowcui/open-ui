@@ -142,9 +142,15 @@ Top unported categories:
 
 ## Recommended Next Work
 
-Proceed to SP17 advanced text or one of the explicitly owned residual systems.
-Preserve the exact-pixel standard, frozen SP13-R baseline and target ledgers, and
-upstream-evidence ownership rules.
+After PR #1 is green and merged, start SP17 advanced text from fresh `main`.
+The handoff freezes the expected 3,267-pass starting state, enumerates all 19
+runnable writing-mode rows, and accounts for the 823 unported writing-mode rows,
+including the 337 that currently stop directly on porter writing-mode rejection.
+Follow `docs/SP17-HANDOFF.md` and preserve the exact-pixel standard, frozen
+SP13-R baseline and target ledgers, and upstream-evidence ownership rules.
+
+Hosted pre-merge checks and the separate pinned Chromium parity gate are
+documented in `docs/CI.md`.
 
 ## Authoritative Commands
 

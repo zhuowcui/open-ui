@@ -13,16 +13,19 @@ import("//build/config/BUILD.gn")
 # Common Chromium toolchain flags (libc++, sysroot).
 # Applied automatically by the skia and base configs.
 config("toolchain_common") {
-  assert(chromium_src != "",
-         "Set chromium_src to your Chromium src/ directory, e.g. " +
-         "gn gen out/Default --args='chromium_src=\"/home/user/chromium/src\"'")
+  assert(
+      chromium_src != "",
+      "Set chromium_src to your Chromium src/ directory, e.g. " +
+          "gn gen out/Default --args='chromium_src=\"/home/user/chromium/src\"'")
 
   _cr = chromium_src
 
   cflags_cc = [
     "-nostdinc++",
-    "-isystem", "$_cr/$chromium_out/gen/third_party/libc++/src/include",
-    "-isystem", "$_cr/third_party/libc++abi/src/include",
+    "-isystem",
+    "$_cr/$chromium_out/gen/third_party/libc++/src/include",
+    "-isystem",
+    "$_cr/third_party/libc++abi/src/include",
     "--sysroot=$_cr/build/linux/debian_bullseye_amd64-sysroot",
     "-fno-exceptions",
     "-fno-rtti",
@@ -36,9 +39,7 @@ config("toolchain_common") {
     "_LIBCPP_INSTRUMENTED_WITH_ASAN=0",
   ]
 
-  cflags_c = [
-    "--sysroot=$_cr/build/linux/debian_bullseye_amd64-sysroot",
-  ]
+  cflags_c = [ "--sysroot=$_cr/build/linux/debian_bullseye_amd64-sysroot" ]
 
   ldflags = [
     "-nostdlib++",
@@ -92,9 +93,7 @@ config("skia") {
     "_GNU_SOURCE",
   ]
 
-  lib_dirs = [
-    "$_cr/$chromium_out/obj/skia",
-  ]
+  lib_dirs = [ "$_cr/$chromium_out/obj/skia" ]
 }
 
 # Chromium base/ headers config.
@@ -111,11 +110,7 @@ config("base") {
     "$_cr/third_party/abseil-cpp",
   ]
 
-  defines = [
-    "DCHECK_ALWAYS_ON=1",
-  ]
+  defines = [ "DCHECK_ALWAYS_ON=1" ]
 
-  lib_dirs = [
-    "$_cr/$chromium_out/obj/base",
-  ]
+  lib_dirs = [ "$_cr/$chromium_out/obj/base" ]
 }

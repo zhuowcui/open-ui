@@ -4,8 +4,6 @@
 // openui_render_test.cc — C++ GTest suite for offscreen rendering (SP5).
 // Tests: rasterization, pixel correctness, PNG round-trip, edge cases.
 
-#include "openui/openui.h"
-#include "openui/openui_pixel_diff.h"
 #include "openui/openui_render.h"
 
 #include <cstring>
@@ -18,6 +16,8 @@
 #include "base/files/file_path.h"
 #include "base/files/file_util.h"
 #include "base/files/scoped_temp_dir.h"
+#include "openui/openui.h"
+#include "openui/openui_pixel_diff.h"
 #include "partition_alloc/pointers/raw_ptr_exclusion.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/blink/renderer/platform/testing/task_environment.h"
@@ -45,8 +45,8 @@ class OpenUIRenderTest : public testing::Test {
   }
 
   // Helper: get RGBA pixel at (x, y) from an OuiBitmap.
-  void GetPixel(const OuiBitmap& bmp, int x, int y,
-                uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
+  void
+  GetPixel(const OuiBitmap& bmp, int x, int y, uint8_t* r, uint8_t* g, uint8_t* b, uint8_t* a) {
     ASSERT_GE(x, 0);
     ASSERT_LT(x, bmp.width);
     ASSERT_GE(y, 0);
@@ -59,8 +59,13 @@ class OpenUIRenderTest : public testing::Test {
   }
 
   // Helper: check a pixel is approximately a given color.
-  void ExpectPixelNear(const OuiBitmap& bmp, int x, int y,
-                       uint8_t er, uint8_t eg, uint8_t eb, uint8_t ea,
+  void ExpectPixelNear(const OuiBitmap& bmp,
+                       int x,
+                       int y,
+                       uint8_t er,
+                       uint8_t eg,
+                       uint8_t eb,
+                       uint8_t ea,
                        int tolerance = 2) {
     uint8_t r, g, b, a;
     GetPixel(bmp, x, y, &r, &g, &b, &a);
@@ -194,9 +199,7 @@ TEST_F(OpenUIRenderTest, TextRenders) {
   for (int y = 0; y < 50; y++) {
     for (int x = 0; x < 200; x++) {
       int idx = y * bmp.stride + x * 4;
-      if (bmp.pixels[idx + 0] < 250 ||
-          bmp.pixels[idx + 1] < 250 ||
-          bmp.pixels[idx + 2] < 250) {
+      if (bmp.pixels[idx + 0] < 250 || bmp.pixels[idx + 1] < 250 || bmp.pixels[idx + 2] < 250) {
         non_white++;
       }
     }
@@ -267,8 +270,7 @@ TEST_F(OpenUIRenderTest, PNGRoundTrip) {
   // Render to PNG buffer.
   uint8_t* png_data = nullptr;
   size_t png_size = 0;
-  ASSERT_EQ(oui_document_render_to_png_buffer(doc_, &png_data, &png_size),
-            OUI_OK);
+  ASSERT_EQ(oui_document_render_to_png_buffer(doc_, &png_data, &png_size), OUI_OK);
   ASSERT_NE(png_data, nullptr);
   ASSERT_GT(png_size, static_cast<size_t>(0));
 
@@ -279,8 +281,7 @@ TEST_F(OpenUIRenderTest, PNGRoundTrip) {
   EXPECT_EQ(png_data[3], 'G');
 
   // Decode the PNG back and check a pixel.
-  SkBitmap decoded = gfx::PNGCodec::Decode(
-      base::span(png_data, png_size));
+  SkBitmap decoded = gfx::PNGCodec::Decode(base::span(png_data, png_size));
   ASSERT_FALSE(decoded.isNull());
 
   EXPECT_EQ(decoded.width(), 800);
@@ -303,8 +304,7 @@ TEST_F(OpenUIRenderTest, PNGFileOutput) {
   ASSERT_TRUE(temp_dir.CreateUniqueTempDir());
   base::FilePath png_path = temp_dir.GetPath().Append("test_output.png");
 
-  ASSERT_EQ(oui_document_render_to_png(doc_, png_path.value().c_str()),
-            OUI_OK);
+  ASSERT_EQ(oui_document_render_to_png(doc_, png_path.value().c_str()), OUI_OK);
 
   // Verify the file exists and is non-empty.
   auto file_size = base::GetFileSize(png_path);
@@ -447,9 +447,7 @@ TEST_F(OpenUIRenderTest, LargeElementTree) {
   for (int y = 0; y < bmp.height; y += 10) {
     for (int x = 0; x < bmp.width; x += 10) {
       int idx = y * bmp.stride + x * 4;
-      if (bmp.pixels[idx + 0] < 250 ||
-          bmp.pixels[idx + 1] < 250 ||
-          bmp.pixels[idx + 2] < 250) {
+      if (bmp.pixels[idx + 0] < 250 || bmp.pixels[idx + 1] < 250 || bmp.pixels[idx + 2] < 250) {
         non_white++;
       }
     }
@@ -474,8 +472,7 @@ TEST_F(OpenUIRenderTest, PixelDiffIdentical) {
   ASSERT_EQ(oui_document_render_to_bitmap(doc_, &bmp1), OUI_OK);
   ASSERT_EQ(oui_document_render_to_bitmap(doc_, &bmp2), OUI_OK);
 
-  PixelDiffResult result = ComparePixels(
-      bmp1.pixels, bmp2.pixels, bmp1.width, bmp1.height, 0);
+  PixelDiffResult result = ComparePixels(bmp1.pixels, bmp2.pixels, bmp1.width, bmp1.height, 0);
   EXPECT_TRUE(result.identical);
   EXPECT_EQ(result.max_channel_diff, 0);
   EXPECT_DOUBLE_EQ(result.diff_percentage, 0.0);
@@ -501,8 +498,7 @@ TEST_F(OpenUIRenderTest, PixelDiffDifferent) {
   OuiBitmap bmp2 = {};
   ASSERT_EQ(oui_document_render_to_bitmap(doc_, &bmp2), OUI_OK);
 
-  PixelDiffResult result = ComparePixels(
-      bmp1.pixels, bmp2.pixels, bmp1.width, bmp1.height, 0);
+  PixelDiffResult result = ComparePixels(bmp1.pixels, bmp2.pixels, bmp1.width, bmp1.height, 0);
   EXPECT_FALSE(result.identical);
   EXPECT_GT(result.max_channel_diff, 0);
   EXPECT_GT(result.diff_percentage, 0.0);
@@ -514,10 +510,8 @@ TEST_F(OpenUIRenderTest, PixelDiffDifferent) {
 TEST_F(OpenUIRenderTest, PixelDiffTolerance) {
   // Create two slightly different bitmaps manually.
   const int w = 2, h = 2;
-  uint8_t a[16] = {100, 100, 100, 255,  200, 200, 200, 255,
-                    50,  50,  50,  255,  150, 150, 150, 255};
-  uint8_t b[16] = {102, 100, 100, 255,  200, 200, 200, 255,
-                    50,  50,  50,  255,  150, 150, 150, 255};
+  uint8_t a[16] = {100, 100, 100, 255, 200, 200, 200, 255, 50, 50, 50, 255, 150, 150, 150, 255};
+  uint8_t b[16] = {102, 100, 100, 255, 200, 200, 200, 255, 50, 50, 50, 255, 150, 150, 150, 255};
 
   // Tolerance 0: should differ.
   PixelDiffResult r0 = ComparePixels(a, b, w, h, 0);
@@ -533,22 +527,17 @@ TEST_F(OpenUIRenderTest, PixelDiffTolerance) {
 // Null argument handling
 // ===========================================================================
 TEST_F(OpenUIRenderTest, NullArguments) {
-  EXPECT_EQ(oui_document_render_to_bitmap(nullptr, nullptr),
-            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_render_to_bitmap(nullptr, nullptr), OUI_ERROR_INVALID_ARGUMENT);
 
   OuiBitmap bmp = {};
-  EXPECT_EQ(oui_document_render_to_bitmap(nullptr, &bmp),
-            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_render_to_bitmap(nullptr, &bmp), OUI_ERROR_INVALID_ARGUMENT);
 
-  EXPECT_EQ(oui_document_render_to_png(nullptr, "/tmp/test.png"),
-            OUI_ERROR_INVALID_ARGUMENT);
-  EXPECT_EQ(oui_document_render_to_png(doc_, nullptr),
-            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_render_to_png(nullptr, "/tmp/test.png"), OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_render_to_png(doc_, nullptr), OUI_ERROR_INVALID_ARGUMENT);
 
   uint8_t* data = nullptr;
   size_t size = 0;
-  EXPECT_EQ(oui_document_render_to_png_buffer(nullptr, &data, &size),
-            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_render_to_png_buffer(nullptr, &data, &size), OUI_ERROR_INVALID_ARGUMENT);
 
   // Free null should be safe.
   oui_bitmap_free(nullptr);
@@ -579,14 +568,13 @@ TEST_F(OpenUIRenderTest, CSSTransform) {
   for (int y = 0; y < 150; y++) {
     for (int x = 100; x < 200; x++) {
       int idx = y * bmp.stride + x * 4;
-      if (bmp.pixels[idx + 0] > 200 &&
-          bmp.pixels[idx + 1] < 50 &&
-          bmp.pixels[idx + 2] < 50) {
+      if (bmp.pixels[idx + 0] > 200 && bmp.pixels[idx + 1] < 50 && bmp.pixels[idx + 2] < 50) {
         found_color_outside = true;
         break;
       }
     }
-    if (found_color_outside) break;
+    if (found_color_outside)
+      break;
   }
   EXPECT_TRUE(found_color_outside)
       << "Rotated red box should paint outside original 100x100 bounds";
@@ -637,17 +625,18 @@ TEST_F(OpenUIRenderTest, GridLayout) {
 #include "base/files/file_path.h"
 #include "base/memory/discardable_memory_allocator.h"
 #include "base/path_service.h"
+#include "base/task/single_thread_task_runner.h"
 #include "base/test/icu_test_util.h"
 #include "base/test/launcher/unit_test_launcher.h"
 #include "base/test/null_task_runner.h"
 #include "base/test/test_discardable_memory_allocator.h"
 #include "base/test/test_io_thread.h"
 #include "base/test/test_suite.h"
-#include "base/task/single_thread_task_runner.h"
 #include "gin/v8_initializer.h"
 #include "mojo/core/embedder/embedder.h"
 #include "mojo/core/embedder/scoped_ipc_support.h"
 #include "mojo/public/cpp/bindings/binder_map.h"
+#include "openui/openui_init.h"
 #include "third_party/blink/public/platform/platform.h"
 #include "third_party/blink/public/platform/scheduler/test/renderer_scheduler_test_support.h"
 #include "third_party/blink/public/platform/scheduler/web_thread_scheduler.h"
@@ -655,46 +644,36 @@ TEST_F(OpenUIRenderTest, GridLayout) {
 #include "third_party/blink/public/web/blink.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "v8/include/v8.h"
-#include "openui/openui_init.h"
 
 namespace {
 
 class OpenUIPlatformForTests : public blink::Platform {
  public:
-  blink::WebString DefaultLocale() override {
-    return blink::WebString::FromUTF8("en-US");
-  }
+  blink::WebString DefaultLocale() override { return blink::WebString::FromUTF8("en-US"); }
   std::string GetDataResourceString(int resource_id) override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      return ui::ResourceBundle::GetSharedInstance()
-          .LoadDataResourceString(resource_id);
+      return ui::ResourceBundle::GetSharedInstance().LoadDataResourceString(resource_id);
     }
     return std::string();
   }
-  blink::WebData GetDataResource(
-      int resource_id,
-      ui::ResourceScaleFactor scale_factor) override {
+  blink::WebData GetDataResource(int resource_id, ui::ResourceScaleFactor scale_factor) override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      std::string_view data =
-          ui::ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
-              resource_id, scale_factor);
+      std::string_view data = ui::ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
+          resource_id, scale_factor);
       return blink::WebData(base::as_byte_span(data));
     }
     return blink::WebData();
   }
   bool HasDataResource(int resource_id) const override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      return !ui::ResourceBundle::GetSharedInstance()
-                  .GetRawDataResource(resource_id)
-                  .empty();
+      return !ui::ResourceBundle::GetSharedInstance().GetRawDataResource(resource_id).empty();
     }
     return false;
   }
 };
 
 base::TestDiscardableMemoryAllocator* g_test_discardable = nullptr;
-std::unique_ptr<blink::scheduler::WebThreadScheduler>* g_test_scheduler =
-    nullptr;
+std::unique_ptr<blink::scheduler::WebThreadScheduler>* g_test_scheduler = nullptr;
 
 }  // namespace
 
@@ -709,10 +688,8 @@ int main(int argc, char** argv) {
   {
     auto feature_list = std::make_unique<base::FeatureList>();
     feature_list->InitFromCommandLine(
-        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
-            "enable-features"),
-        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
-            "disable-features"));
+        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("enable-features"),
+        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("disable-features"));
     base::FeatureList::SetInstance(std::move(feature_list));
   }
 
@@ -741,12 +718,10 @@ int main(int argc, char** argv) {
 
   {
     auto dummy_task_runner = base::MakeRefCounted<base::NullTaskRunner>();
-    base::SingleThreadTaskRunner::CurrentDefaultHandle dummy_handle(
-        dummy_task_runner);
+    base::SingleThreadTaskRunner::CurrentDefaultHandle dummy_handle(dummy_task_runner);
 
     mojo::BinderMap binders;
-    blink::InitializeWithoutIsolateForTesting(platform, &binders,
-                                              g_test_scheduler->get());
+    blink::InitializeWithoutIsolateForTesting(platform, &binders, g_test_scheduler->get());
   }
 
   blink::WebRuntimeFeatures::EnableExperimentalFeatures(true);
@@ -755,12 +730,9 @@ int main(int argc, char** argv) {
   openui_runtime_mark_initialized_externally();
 
   base::TestIOThread test_io_thread(base::TestIOThread::kAutoStart);
-  mojo::core::ScopedIPCSupport ipc_support(
-      test_io_thread.task_runner(),
-      mojo::core::ScopedIPCSupport::ShutdownPolicy::CLEAN);
+  mojo::core::ScopedIPCSupport ipc_support(test_io_thread.task_runner(),
+                                           mojo::core::ScopedIPCSupport::ShutdownPolicy::CLEAN);
 
   return base::LaunchUnitTests(
-      argc, argv,
-      base::BindOnce(&base::TestSuite::Run,
-                     base::Unretained(&test_suite)));
+      argc, argv, base::BindOnce(&base::TestSuite::Run, base::Unretained(&test_suite)));
 }

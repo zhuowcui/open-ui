@@ -6,32 +6,42 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: format-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   clang-format:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install clang-format
-        run: sudo apt-get install -y clang-format
-
-      - name: Check C/C++ formatting
         run: |
-          find src include examples -name '*.cc' -o -name '*.h' -o -name '*.c' | \
-            xargs clang-format --dry-run --Werror
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends clang-format-18
+
+      - name: Check tracked C and C++ formatting
+        run: |
+          find src include examples -type f \
+            \( -name '*.cc' -o -name '*.h' -o -name '*.c' \) \
+            -print0 | sort -z | \
+            xargs -0 --no-run-if-empty clang-format-18 --dry-run --Werror
 
   gn-format:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Install depot_tools
+      - name: Install GN
         run: |
-          git clone --depth 1 https://chromium.googlesource.com/chromium/tools/depot_tools.git $HOME/depot_tools
-          echo "$HOME/depot_tools" >> $GITHUB_PATH
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends generate-ninja
 
-      - name: Check GN formatting
-        run: |
-          find . -name 'BUILD.gn' -o -name '*.gni' | while read f; do
-            gn format --dry-run "$f" || { echo "ERROR: $f needs formatting"; exit 1; }
-          done
+      - name: Check tracked GN formatting
+        run: git ls-files -z '*.gn' '*.gni' | xargs -0 --no-run-if-empty -n1 gn format --dry-run

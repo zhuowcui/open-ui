@@ -3,14 +3,14 @@
 //
 // openui_api_test.cc — Comprehensive GTest suite for the openui C API.
 
-#include "openui/openui.h"
-
 #include <stdlib.h>
 #include <string.h>
+
 #include <cmath>
 #include <memory>
 
 #include "base/compiler_specific.h"
+#include "openui/openui.h"
 #include "partition_alloc/pointers/raw_ptr_exclusion.h"
 #include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/blink/renderer/platform/testing/task_environment.h"
@@ -133,7 +133,7 @@ TEST_F(OpenUIAPITest, CreateTableElements) {
 }
 
 TEST_F(OpenUIAPITest, CreateFormElements) {
-  const char* tags[] = {"form", "input", "button", "select",
+  const char* tags[] = {"form",     "input", "button",   "select",
                         "textarea", "label", "fieldset", "legend"};
   for (const char* tag : tags) {
     OuiElement* e = oui_element_create(doc_, tag);
@@ -152,8 +152,7 @@ TEST_F(OpenUIAPITest, CreateListElements) {
 }
 
 TEST_F(OpenUIAPITest, CreateMiscElements) {
-  const char* tags[] = {"a", "br", "hr", "pre", "img",
-                        "blockquote", "details", "summary"};
+  const char* tags[] = {"a", "br", "hr", "pre", "img", "blockquote", "details", "summary"};
   for (const char* tag : tags) {
     OuiElement* e = oui_element_create(doc_, tag);
     ASSERT_NE(e, nullptr) << "Failed to create: " << tag;
@@ -288,12 +287,9 @@ TEST_F(OpenUIAPITest, SetStyleInvalidProperty) {
 
 TEST_F(OpenUIAPITest, SetStyleNullArgs) {
   OuiElement* div = oui_element_create(doc_, "div");
-  EXPECT_EQ(oui_element_set_style(nullptr, "width", "100px"),
-            OUI_ERROR_INVALID_ARGUMENT);
-  EXPECT_EQ(oui_element_set_style(div, nullptr, "100px"),
-            OUI_ERROR_INVALID_ARGUMENT);
-  EXPECT_EQ(oui_element_set_style(div, "width", nullptr),
-            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_element_set_style(nullptr, "width", "100px"), OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_element_set_style(div, nullptr, "100px"), OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_element_set_style(div, "width", nullptr), OUI_ERROR_INVALID_ARGUMENT);
   oui_element_destroy(div);
 }
 
@@ -1208,12 +1204,9 @@ TEST_F(OpenUIAPITest, BeginFrameTriggersLayout) {
 }
 
 TEST_F(OpenUIAPITest, TimeNullDocReturnsError) {
-  EXPECT_EQ(oui_document_advance_time(nullptr, 100.0),
-            OUI_ERROR_INVALID_ARGUMENT);
-  EXPECT_EQ(oui_document_advance_time_by(nullptr, 100.0),
-            OUI_ERROR_INVALID_ARGUMENT);
-  EXPECT_EQ(oui_document_begin_frame(nullptr, 100.0),
-            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_advance_time(nullptr, 100.0), OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_advance_time_by(nullptr, 100.0), OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_begin_frame(nullptr, 100.0), OUI_ERROR_INVALID_ARGUMENT);
   EXPECT_DOUBLE_EQ(oui_document_get_time(nullptr), 0.0);
 }
 
@@ -1228,43 +1221,40 @@ TEST_F(OpenUIAPITest, DispatchMouseEventOK) {
   oui_element_set_height(div, oui_px(200));
   oui_document_layout(doc_);
 
-  EXPECT_EQ(oui_document_dispatch_mouse_event(
-      doc_, OUI_MOUSE_DOWN, 100, 100, OUI_BUTTON_LEFT, 0), OUI_OK);
-  EXPECT_EQ(oui_document_dispatch_mouse_event(
-      doc_, OUI_MOUSE_UP, 100, 100, OUI_BUTTON_LEFT, 0), OUI_OK);
-  EXPECT_EQ(oui_document_dispatch_mouse_event(
-      doc_, OUI_MOUSE_MOVE, 50, 50, OUI_BUTTON_LEFT, 0), OUI_OK);
+  EXPECT_EQ(oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 100, 100, OUI_BUTTON_LEFT, 0),
+            OUI_OK);
+  EXPECT_EQ(oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 100, 100, OUI_BUTTON_LEFT, 0),
+            OUI_OK);
+  EXPECT_EQ(oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_MOVE, 50, 50, OUI_BUTTON_LEFT, 0),
+            OUI_OK);
 
   oui_element_destroy(div);
 }
 
 TEST_F(OpenUIAPITest, DispatchMouseEventNullDoc) {
-  EXPECT_EQ(oui_document_dispatch_mouse_event(
-      nullptr, OUI_MOUSE_DOWN, 0, 0, OUI_BUTTON_LEFT, 0),
-      OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_dispatch_mouse_event(nullptr, OUI_MOUSE_DOWN, 0, 0, OUI_BUTTON_LEFT, 0),
+            OUI_ERROR_INVALID_ARGUMENT);
 }
 
 TEST_F(OpenUIAPITest, DispatchKeyEventOK) {
-  EXPECT_EQ(oui_document_dispatch_key_event(
-      doc_, OUI_KEY_DOWN, 65, nullptr, 0), OUI_OK);  // 'A' key down
-  EXPECT_EQ(oui_document_dispatch_key_event(
-      doc_, OUI_KEY_CHAR, 65, "a", 0), OUI_OK);      // 'a' char
-  EXPECT_EQ(oui_document_dispatch_key_event(
-      doc_, OUI_KEY_UP, 65, nullptr, 0), OUI_OK);     // 'A' key up
+  EXPECT_EQ(oui_document_dispatch_key_event(doc_, OUI_KEY_DOWN, 65, nullptr, 0),
+            OUI_OK);  // 'A' key down
+  EXPECT_EQ(oui_document_dispatch_key_event(doc_, OUI_KEY_CHAR, 65, "a", 0), OUI_OK);  // 'a' char
+  EXPECT_EQ(oui_document_dispatch_key_event(doc_, OUI_KEY_UP, 65, nullptr, 0),
+            OUI_OK);  // 'A' key up
 }
 
 TEST_F(OpenUIAPITest, DispatchKeyEventNullDoc) {
-  EXPECT_EQ(oui_document_dispatch_key_event(
-      nullptr, OUI_KEY_DOWN, 65, nullptr, 0),
-      OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_dispatch_key_event(nullptr, OUI_KEY_DOWN, 65, nullptr, 0),
+            OUI_ERROR_INVALID_ARGUMENT);
 }
 
 TEST_F(OpenUIAPITest, DispatchKeyEventWithModifiers) {
-  EXPECT_EQ(oui_document_dispatch_key_event(
-      doc_, OUI_KEY_DOWN, 65, nullptr, OUI_MOD_CTRL | OUI_MOD_SHIFT),
-      OUI_OK);
-  EXPECT_EQ(oui_document_dispatch_key_event(
-      doc_, OUI_KEY_UP, 65, nullptr, OUI_MOD_CTRL | OUI_MOD_SHIFT),
+  EXPECT_EQ(oui_document_dispatch_key_event(doc_, OUI_KEY_DOWN, 65, nullptr,
+                                            OUI_MOD_CTRL | OUI_MOD_SHIFT),
+            OUI_OK);
+  EXPECT_EQ(
+      oui_document_dispatch_key_event(doc_, OUI_KEY_UP, 65, nullptr, OUI_MOD_CTRL | OUI_MOD_SHIFT),
       OUI_OK);
 }
 
@@ -1275,15 +1265,14 @@ TEST_F(OpenUIAPITest, DispatchWheelEventOK) {
   oui_element_set_height(div, oui_px(400));
   oui_document_layout(doc_);
 
-  EXPECT_EQ(oui_document_dispatch_wheel_event(
-      doc_, 200, 200, 0, -120, 0), OUI_OK);
+  EXPECT_EQ(oui_document_dispatch_wheel_event(doc_, 200, 200, 0, -120, 0), OUI_OK);
 
   oui_element_destroy(div);
 }
 
 TEST_F(OpenUIAPITest, DispatchWheelEventNullDoc) {
-  EXPECT_EQ(oui_document_dispatch_wheel_event(
-      nullptr, 0, 0, 0, -120, 0), OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_dispatch_wheel_event(nullptr, 0, 0, 0, -120, 0),
+            OUI_ERROR_INVALID_ARGUMENT);
 }
 
 // ===========================================================================
@@ -1316,12 +1305,12 @@ TEST_F(OpenUIAPITest, SetEventCallbackNullArgs) {
   OuiElement* div = oui_element_create(doc_, "div");
   oui_element_append_child(body_, div);
 
-  EXPECT_EQ(oui_element_set_event_callback(nullptr, "click",
-      test_event_callback, nullptr), OUI_ERROR_INVALID_ARGUMENT);
-  EXPECT_EQ(oui_element_set_event_callback(div, nullptr,
-      test_event_callback, nullptr), OUI_ERROR_INVALID_ARGUMENT);
-  EXPECT_EQ(oui_element_set_event_callback(div, "click",
-      nullptr, nullptr), OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_element_set_event_callback(nullptr, "click", test_event_callback, nullptr),
+            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_element_set_event_callback(div, nullptr, test_event_callback, nullptr),
+            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_element_set_event_callback(div, "click", nullptr, nullptr),
+            OUI_ERROR_INVALID_ARGUMENT);
 
   oui_element_destroy(div);
 }
@@ -1334,14 +1323,11 @@ TEST_F(OpenUIAPITest, ClickCallbackFires) {
   oui_document_layout(doc_);
 
   CallbackState state;
-  EXPECT_EQ(oui_element_set_event_callback(div, "click",
-      test_event_callback, &state), OUI_OK);
+  EXPECT_EQ(oui_element_set_event_callback(div, "click", test_event_callback, &state), OUI_OK);
 
   // Click = mousedown + mouseup at same position.
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 100, 100,
-      OUI_BUTTON_LEFT, 0);
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 100, 100,
-      OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 100, 100, OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 100, 100, OUI_BUTTON_LEFT, 0);
 
   EXPECT_GE(state.call_count, 1);
   EXPECT_EQ(state.last_event_type, "click");
@@ -1357,11 +1343,9 @@ TEST_F(OpenUIAPITest, MouseDownCallbackFires) {
   oui_document_layout(doc_);
 
   CallbackState state;
-  EXPECT_EQ(oui_element_set_event_callback(div, "mousedown",
-      test_event_callback, &state), OUI_OK);
+  EXPECT_EQ(oui_element_set_event_callback(div, "mousedown", test_event_callback, &state), OUI_OK);
 
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 50, 75,
-      OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 50, 75, OUI_BUTTON_LEFT, 0);
 
   EXPECT_GE(state.call_count, 1);
   EXPECT_EQ(state.last_event_type, "mousedown");
@@ -1377,16 +1361,13 @@ TEST_F(OpenUIAPITest, RemoveEventCallback) {
   oui_document_layout(doc_);
 
   CallbackState state;
-  oui_element_set_event_callback(div, "click",
-      test_event_callback, &state);
+  oui_element_set_event_callback(div, "click", test_event_callback, &state);
 
   // Remove and verify no more callbacks.
   EXPECT_EQ(oui_element_remove_event_callback(div, "click"), OUI_OK);
 
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 100, 100,
-      OUI_BUTTON_LEFT, 0);
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 100, 100,
-      OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 100, 100, OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 100, 100, OUI_BUTTON_LEFT, 0);
 
   EXPECT_EQ(state.call_count, 0);
 
@@ -1394,11 +1375,9 @@ TEST_F(OpenUIAPITest, RemoveEventCallback) {
 }
 
 TEST_F(OpenUIAPITest, RemoveEventCallbackNullArgs) {
-  EXPECT_EQ(oui_element_remove_event_callback(nullptr, "click"),
-            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_element_remove_event_callback(nullptr, "click"), OUI_ERROR_INVALID_ARGUMENT);
   OuiElement* div = oui_element_create(doc_, "div");
-  EXPECT_EQ(oui_element_remove_event_callback(div, nullptr),
-            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_element_remove_event_callback(div, nullptr), OUI_ERROR_INVALID_ARGUMENT);
   oui_element_destroy(div);
 }
 
@@ -1410,16 +1389,12 @@ TEST_F(OpenUIAPITest, ReplaceEventCallback) {
   oui_document_layout(doc_);
 
   CallbackState state1, state2;
-  oui_element_set_event_callback(div, "click",
-      test_event_callback, &state1);
+  oui_element_set_event_callback(div, "click", test_event_callback, &state1);
   // Replace with a different user_data.
-  oui_element_set_event_callback(div, "click",
-      test_event_callback, &state2);
+  oui_element_set_event_callback(div, "click", test_event_callback, &state2);
 
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 100, 100,
-      OUI_BUTTON_LEFT, 0);
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 100, 100,
-      OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 100, 100, OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 100, 100, OUI_BUTTON_LEFT, 0);
 
   // Only the replacement callback should fire.
   EXPECT_EQ(state1.call_count, 0);
@@ -1436,15 +1411,11 @@ TEST_F(OpenUIAPITest, MultipleEventTypesOnSameElement) {
   oui_document_layout(doc_);
 
   CallbackState click_state, mousedown_state;
-  oui_element_set_event_callback(div, "click",
-      test_event_callback, &click_state);
-  oui_element_set_event_callback(div, "mousedown",
-      test_event_callback, &mousedown_state);
+  oui_element_set_event_callback(div, "click", test_event_callback, &click_state);
+  oui_element_set_event_callback(div, "mousedown", test_event_callback, &mousedown_state);
 
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 100, 100,
-      OUI_BUTTON_LEFT, 0);
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 100, 100,
-      OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 100, 100, OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 100, 100, OUI_BUTTON_LEFT, 0);
 
   EXPECT_GE(click_state.call_count, 1);
   EXPECT_GE(mousedown_state.call_count, 1);
@@ -1544,8 +1515,7 @@ TEST_F(OpenUIAPITest, AdvanceFocusBackward) {
 }
 
 TEST_F(OpenUIAPITest, AdvanceFocusNullDoc) {
-  EXPECT_EQ(oui_document_advance_focus(nullptr, 1),
-            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_document_advance_focus(nullptr, 1), OUI_ERROR_INVALID_ARGUMENT);
 }
 
 TEST_F(OpenUIAPITest, FocusCallbackFires) {
@@ -1554,10 +1524,8 @@ TEST_F(OpenUIAPITest, FocusCallbackFires) {
   oui_document_layout(doc_);
 
   CallbackState focus_state, blur_state;
-  oui_element_set_event_callback(input, "focus",
-      test_event_callback, &focus_state);
-  oui_element_set_event_callback(input, "blur",
-      test_event_callback, &blur_state);
+  oui_element_set_event_callback(input, "focus", test_event_callback, &focus_state);
+  oui_element_set_event_callback(input, "blur", test_event_callback, &blur_state);
 
   oui_element_focus(input);
   EXPECT_GE(focus_state.call_count, 1);
@@ -1652,10 +1620,8 @@ TEST_F(OpenUIAPITest, ScrollClampedToMax) {
 }
 
 TEST_F(OpenUIAPITest, ScrollNullArgs) {
-  EXPECT_EQ(oui_element_scroll_to(nullptr, 0, 0),
-            OUI_ERROR_INVALID_ARGUMENT);
-  EXPECT_EQ(oui_element_scroll_by(nullptr, 0, 0),
-            OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_element_scroll_to(nullptr, 0, 0), OUI_ERROR_INVALID_ARGUMENT);
+  EXPECT_EQ(oui_element_scroll_by(nullptr, 0, 0), OUI_ERROR_INVALID_ARGUMENT);
   EXPECT_DOUBLE_EQ(oui_element_get_scroll_left(nullptr), 0.0);
   EXPECT_DOUBLE_EQ(oui_element_get_scroll_top(nullptr), 0.0);
 }
@@ -1806,7 +1772,7 @@ TEST_F(OpenUIAPITest, CSSAnimationViaTransition) {
   oui_element_set_height(div, oui_px(50));
   oui_element_set_style(div, "background-color", "red");
   oui_element_set_style(div, "transition",
-      "width 1s linear, height 1s linear, background-color 1s linear");
+                        "width 1s linear, height 1s linear, background-color 1s linear");
   oui_document_begin_frame(doc_, 0.0);
 
   // Trigger transitions on multiple properties simultaneously.
@@ -1853,8 +1819,7 @@ TEST_F(OpenUIAPITest, Transform3DPerspective) {
   oui_free(t);
   EXPECT_NE(ts, "none");
   // Should contain rotateY or perspective (preserved function form).
-  EXPECT_TRUE(ts.find("rotateY") != std::string::npos ||
-              ts.find("matrix") != std::string::npos);
+  EXPECT_TRUE(ts.find("rotateY") != std::string::npos || ts.find("matrix") != std::string::npos);
 
   oui_element_destroy(div);
 }
@@ -1902,8 +1867,7 @@ TEST_F(OpenUIAPITest, AnimatedTransform3D) {
   oui_free(t);
   EXPECT_NE(ts, "none");
   // Final value should contain rotateX or a matrix representation.
-  EXPECT_TRUE(ts.find("rotateX") != std::string::npos ||
-              ts.find("matrix") != std::string::npos);
+  EXPECT_TRUE(ts.find("rotateX") != std::string::npos || ts.find("matrix") != std::string::npos);
 
   oui_element_destroy(div);
 }
@@ -1955,13 +1919,10 @@ TEST_F(OpenUIAPITest, MouseClickOnButton) {
   oui_document_layout(doc_);
 
   CallbackState state;
-  oui_element_set_event_callback(btn, "click",
-      test_event_callback, &state);
+  oui_element_set_event_callback(btn, "click", test_event_callback, &state);
 
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 50, 20,
-      OUI_BUTTON_LEFT, 0);
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 50, 20,
-      OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 50, 20, OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 50, 20, OUI_BUTTON_LEFT, 0);
 
   EXPECT_GE(state.call_count, 1);
   EXPECT_EQ(state.last_event_type, "click");
@@ -1979,10 +1940,8 @@ TEST_F(OpenUIAPITest, FocusViaMouseClick) {
   oui_document_layout(doc_);
 
   // Click on first input area - should receive focus.
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 10, 10,
-      OUI_BUTTON_LEFT, 0);
-  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 10, 10,
-      OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_DOWN, 10, 10, OUI_BUTTON_LEFT, 0);
+  oui_document_dispatch_mouse_event(doc_, OUI_MOUSE_UP, 10, 10, OUI_BUTTON_LEFT, 0);
 
   OuiElement* focused = oui_document_get_focused_element(doc_);
   if (focused != nullptr) {
@@ -2002,8 +1961,7 @@ TEST_F(OpenUIAPITest, CSSTransitionEndCallback) {
   oui_document_begin_frame(doc_, 0.0);
 
   CallbackState state;
-  oui_element_set_event_callback(div, "transitionend",
-      test_event_callback, &state);
+  oui_element_set_event_callback(div, "transitionend", test_event_callback, &state);
 
   oui_element_set_width(div, oui_px(300));
   // Run frames through the transition.
@@ -2027,17 +1985,18 @@ TEST_F(OpenUIAPITest, CSSTransitionEndCallback) {
 #include "base/files/file_path.h"
 #include "base/memory/discardable_memory_allocator.h"
 #include "base/path_service.h"
+#include "base/task/single_thread_task_runner.h"
 #include "base/test/icu_test_util.h"
 #include "base/test/launcher/unit_test_launcher.h"
 #include "base/test/null_task_runner.h"
 #include "base/test/test_discardable_memory_allocator.h"
 #include "base/test/test_io_thread.h"
 #include "base/test/test_suite.h"
-#include "base/task/single_thread_task_runner.h"
 #include "gin/v8_initializer.h"
 #include "mojo/core/embedder/embedder.h"
 #include "mojo/core/embedder/scoped_ipc_support.h"
 #include "mojo/public/cpp/bindings/binder_map.h"
+#include "openui/openui_init.h"
 #include "third_party/blink/public/platform/platform.h"
 #include "third_party/blink/public/platform/scheduler/test/renderer_scheduler_test_support.h"
 #include "third_party/blink/public/platform/scheduler/web_thread_scheduler.h"
@@ -2045,47 +2004,37 @@ TEST_F(OpenUIAPITest, CSSTransitionEndCallback) {
 #include "third_party/blink/public/web/blink.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "v8/include/v8.h"
-#include "openui/openui_init.h"
 
 namespace {
 
 // Platform subclass that routes resource loading to ResourceBundle.
 class OpenUIPlatformForTests : public blink::Platform {
  public:
-  blink::WebString DefaultLocale() override {
-    return blink::WebString::FromUTF8("en-US");
-  }
+  blink::WebString DefaultLocale() override { return blink::WebString::FromUTF8("en-US"); }
   std::string GetDataResourceString(int resource_id) override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      return ui::ResourceBundle::GetSharedInstance()
-          .LoadDataResourceString(resource_id);
+      return ui::ResourceBundle::GetSharedInstance().LoadDataResourceString(resource_id);
     }
     return std::string();
   }
-  blink::WebData GetDataResource(
-      int resource_id,
-      ui::ResourceScaleFactor scale_factor) override {
+  blink::WebData GetDataResource(int resource_id, ui::ResourceScaleFactor scale_factor) override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      std::string_view data =
-          ui::ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
-              resource_id, scale_factor);
+      std::string_view data = ui::ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
+          resource_id, scale_factor);
       return blink::WebData(base::as_byte_span(data));
     }
     return blink::WebData();
   }
   bool HasDataResource(int resource_id) const override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      return !ui::ResourceBundle::GetSharedInstance()
-                  .GetRawDataResource(resource_id)
-                  .empty();
+      return !ui::ResourceBundle::GetSharedInstance().GetRawDataResource(resource_id).empty();
     }
     return false;
   }
 };
 
 base::TestDiscardableMemoryAllocator* g_test_discardable = nullptr;
-std::unique_ptr<blink::scheduler::WebThreadScheduler>* g_test_scheduler =
-    nullptr;
+std::unique_ptr<blink::scheduler::WebThreadScheduler>* g_test_scheduler = nullptr;
 
 }  // namespace
 
@@ -2101,10 +2050,8 @@ int main(int argc, char** argv) {
   {
     auto feature_list = std::make_unique<base::FeatureList>();
     feature_list->InitFromCommandLine(
-        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
-            "enable-features"),
-        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII(
-            "disable-features"));
+        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("enable-features"),
+        base::CommandLine::ForCurrentProcess()->GetSwitchValueASCII("disable-features"));
     base::FeatureList::SetInstance(std::move(feature_list));
   }
 
@@ -2133,12 +2080,10 @@ int main(int argc, char** argv) {
 
   {
     auto dummy_task_runner = base::MakeRefCounted<base::NullTaskRunner>();
-    base::SingleThreadTaskRunner::CurrentDefaultHandle dummy_handle(
-        dummy_task_runner);
+    base::SingleThreadTaskRunner::CurrentDefaultHandle dummy_handle(dummy_task_runner);
 
     mojo::BinderMap binders;
-    blink::InitializeWithoutIsolateForTesting(platform, &binders,
-                                              g_test_scheduler->get());
+    blink::InitializeWithoutIsolateForTesting(platform, &binders, g_test_scheduler->get());
   }
 
   blink::WebRuntimeFeatures::EnableExperimentalFeatures(true);
@@ -2149,12 +2094,9 @@ int main(int argc, char** argv) {
   openui_runtime_mark_initialized_externally();
 
   base::TestIOThread test_io_thread(base::TestIOThread::kAutoStart);
-  mojo::core::ScopedIPCSupport ipc_support(
-      test_io_thread.task_runner(),
-      mojo::core::ScopedIPCSupport::ShutdownPolicy::CLEAN);
+  mojo::core::ScopedIPCSupport ipc_support(test_io_thread.task_runner(),
+                                           mojo::core::ScopedIPCSupport::ShutdownPolicy::CLEAN);
 
   return base::LaunchUnitTests(
-      argc, argv,
-      base::BindOnce(&base::TestSuite::Run,
-                     base::Unretained(&test_suite)));
+      argc, argv, base::BindOnce(&base::TestSuite::Run, base::Unretained(&test_suite)));
 }

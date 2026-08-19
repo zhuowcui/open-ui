@@ -49,8 +49,7 @@ namespace openui {
 // Stored on OuiDocumentImpl to hold the user's resource provider callback.
 struct ResourceProviderState {
   OuiResourceProviderFunc callback = nullptr;
-  __attribute__((annotate("raw_ptr_exclusion")))
-  void* user_data = nullptr;
+  __attribute__((annotate("raw_ptr_exclusion"))) void* user_data = nullptr;
 };
 
 // Custom URLLoader that intercepts resource requests and calls the user's
@@ -63,36 +62,33 @@ class ResourceProviderURLLoader : public blink::URLLoader {
   ~ResourceProviderURLLoader() override;
 
   // URLLoader overrides:
-  void LoadSynchronously(
-      std::unique_ptr<network::ResourceRequest> request,
-      scoped_refptr<const blink::SecurityOrigin> top_frame_origin,
-      bool download_to_blob,
-      bool no_mime_sniffing,
-      base::TimeDelta timeout_interval,
-      blink::URLLoaderClient* client,
-      blink::WebURLResponse& response,
-      std::optional<blink::WebURLError>& error,
-      scoped_refptr<blink::SharedBuffer>& data,
-      int64_t& encoded_data_length,
-      uint64_t& encoded_body_length,
-      scoped_refptr<blink::BlobDataHandle>& downloaded_blob,
-      std::unique_ptr<blink::ResourceLoadInfoNotifierWrapper>
-          resource_load_info_notifier_wrapper) override;
+  void LoadSynchronously(std::unique_ptr<network::ResourceRequest> request,
+                         scoped_refptr<const blink::SecurityOrigin> top_frame_origin,
+                         bool download_to_blob,
+                         bool no_mime_sniffing,
+                         base::TimeDelta timeout_interval,
+                         blink::URLLoaderClient* client,
+                         blink::WebURLResponse& response,
+                         std::optional<blink::WebURLError>& error,
+                         scoped_refptr<blink::SharedBuffer>& data,
+                         int64_t& encoded_data_length,
+                         uint64_t& encoded_body_length,
+                         scoped_refptr<blink::BlobDataHandle>& downloaded_blob,
+                         std::unique_ptr<blink::ResourceLoadInfoNotifierWrapper>
+                             resource_load_info_notifier_wrapper) override;
 
   void LoadAsynchronously(
       std::unique_ptr<network::ResourceRequest> request,
       scoped_refptr<const blink::SecurityOrigin> top_frame_origin,
       bool no_mime_sniffing,
-      std::unique_ptr<blink::ResourceLoadInfoNotifierWrapper>
-          resource_load_info_notifier_wrapper,
+      std::unique_ptr<blink::ResourceLoadInfoNotifierWrapper> resource_load_info_notifier_wrapper,
       blink::CodeCacheHost* code_cache_host,
       blink::URLLoaderClient* client) override;
 
   void Freeze(blink::LoaderFreezeMode mode) override;
   void DidChangePriority(blink::WebURLRequest::Priority new_priority,
                          int intra_priority_value) override;
-  scoped_refptr<base::SingleThreadTaskRunner> GetTaskRunnerForBodyLoader()
-      override;
+  scoped_refptr<base::SingleThreadTaskRunner> GetTaskRunnerForBodyLoader() override;
 
  private:
   raw_ptr<ResourceProviderState> state_;

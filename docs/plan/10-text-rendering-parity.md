@@ -7,9 +7,11 @@ then expands from Ahem geometry to real-font and advanced-text parity.
 ## Current state
 
 SP14 W0–W4 closed the global `needs_text` category, SP15 closed its inline/layout
-and root/body follow-up, and SP16 closed all 776 real-font-metric rows. The text
-manifest remains 496 IDs. The complete 3,566-test run has 2,823 exact passes and
-zero errors, preserves all 2,804 frozen SP16 baseline passes, and passes the 7/7 audit.
+and root/body follow-up, SP16 closed all 776 real-font-metric rows, and SP13-R
+then closed every runnable multicol owner. The text manifest remains 496 IDs.
+The complete 3,566-test run has 3,267 exact passes, 299 functional failures, and
+zero errors. It preserves the 2,823-ID SP13-R baseline plus all 351 exact SP13-R
+targets and passes the 7/7 audit.
 
 Deterministic ports use repo-vendored Ahem. Real-font ports use vendored DejaVu Sans,
 Sans Mono, and Serif plus the pinned Chromium 147 FreeType runtime. Each raster policy
@@ -42,7 +44,9 @@ family selection, and the real-glyph LCD raster profile are implemented. The glo
 ### SP17 — advanced text
 
 Cover bidi/RTL, vertical writing modes, transformation, decoration, emphasis, complex
-scripts, and emoji.
+scripts, and emoji. Start from the landed PR #1 state and follow
+`docs/SP17-HANDOFF.md`; the frozen candidate inventory is 19 runnable plus 823
+unported `needs_writing_mode` rows.
 
 ### SP18 — generated content and text effects
 

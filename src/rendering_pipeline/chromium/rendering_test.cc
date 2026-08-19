@@ -6,44 +6,41 @@
 #include "base/feature_list.h"
 #include "base/files/file_path.h"
 #include "base/functional/bind.h"
-#include "base/path_service.h"
-#include "base/test/icu_test_util.h"
 #include "base/memory/discardable_memory_allocator.h"
+#include "base/path_service.h"
+#include "base/task/single_thread_task_runner.h"
+#include "base/test/icu_test_util.h"
 #include "base/test/launcher/unit_test_launcher.h"
 #include "base/test/null_task_runner.h"
 #include "base/test/test_discardable_memory_allocator.h"
 #include "base/test/test_io_thread.h"
 #include "base/test/test_suite.h"
-#include "base/task/single_thread_task_runner.h"
 #include "gin/v8_initializer.h"
 #include "mojo/core/embedder/embedder.h"
 #include "mojo/core/embedder/scoped_ipc_support.h"
 #include "mojo/public/cpp/bindings/binder_map.h"
-#include "ui/base/resource/resource_bundle.h"
-#include "v8/include/v8.h"
-
+#include "testing/gtest/include/gtest/gtest.h"
 #include "third_party/blink/public/platform/platform.h"
-#include "third_party/blink/public/platform/web_runtime_features.h"
 #include "third_party/blink/public/platform/scheduler/test/renderer_scheduler_test_support.h"
 #include "third_party/blink/public/platform/scheduler/web_thread_scheduler.h"
+#include "third_party/blink/public/platform/web_runtime_features.h"
 #include "third_party/blink/public/web/blink.h"
-#include "third_party/blink/renderer/platform/testing/task_environment.h"
-
-#include "third_party/blink/renderer/core/testing/dummy_page_holder.h"
 #include "third_party/blink/renderer/core/dom/document.h"
 #include "third_party/blink/renderer/core/dom/element.h"
 #include "third_party/blink/renderer/core/dom/text.h"
-#include "third_party/blink/renderer/core/html/html_div_element.h"
-#include "third_party/blink/renderer/core/html/html_body_element.h"
 #include "third_party/blink/renderer/core/frame/local_frame_view.h"
-#include "third_party/blink/renderer/core/layout/layout_object.h"
+#include "third_party/blink/renderer/core/html/html_body_element.h"
+#include "third_party/blink/renderer/core/html/html_div_element.h"
 #include "third_party/blink/renderer/core/layout/layout_box.h"
+#include "third_party/blink/renderer/core/layout/layout_object.h"
 #include "third_party/blink/renderer/core/style/computed_style.h"
+#include "third_party/blink/renderer/core/testing/dummy_page_holder.h"
 #include "third_party/blink/renderer/platform/graphics/paint/paint_artifact.h"
+#include "third_party/blink/renderer/platform/testing/task_environment.h"
 #include "third_party/blink/renderer/platform/wtf/text/atomic_string.h"
-
-#include "testing/gtest/include/gtest/gtest.h"
+#include "ui/base/resource/resource_bundle.h"
 #include "ui/gfx/geometry/size.h"
+#include "v8/include/v8.h"
 
 // ---------------------------------------------------------------------------
 // Platform subclass: routes resource loading to ui::ResourceBundle and
@@ -51,25 +48,19 @@
 // ---------------------------------------------------------------------------
 class OpenUIPlatform : public blink::Platform {
  public:
-  blink::WebString DefaultLocale() override {
-    return blink::WebString::FromUTF8("en-US");
-  }
+  blink::WebString DefaultLocale() override { return blink::WebString::FromUTF8("en-US"); }
 
   std::string GetDataResourceString(int resource_id) override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      return ui::ResourceBundle::GetSharedInstance()
-          .LoadDataResourceString(resource_id);
+      return ui::ResourceBundle::GetSharedInstance().LoadDataResourceString(resource_id);
     }
     return std::string();
   }
 
-  blink::WebData GetDataResource(
-      int resource_id,
-      ui::ResourceScaleFactor scale_factor) override {
+  blink::WebData GetDataResource(int resource_id, ui::ResourceScaleFactor scale_factor) override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      std::string_view data =
-          ui::ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
-              resource_id, scale_factor);
+      std::string_view data = ui::ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
+          resource_id, scale_factor);
       return blink::WebData(base::as_byte_span(data));
     }
     return blink::WebData();
@@ -77,9 +68,7 @@ class OpenUIPlatform : public blink::Platform {
 
   bool HasDataResource(int resource_id) const override {
     if (ui::ResourceBundle::HasSharedInstance()) {
-      return !ui::ResourceBundle::GetSharedInstance()
-                  .GetRawDataResource(resource_id)
-                  .empty();
+      return !ui::ResourceBundle::GetSharedInstance().GetRawDataResource(resource_id).empty();
     }
     return false;
   }
@@ -92,8 +81,7 @@ class OpenUIRenderingTest : public testing::Test {
  protected:
   void SetUp() override {
     task_environment_ = std::make_unique<blink::test::TaskEnvironment>();
-    page_holder_ = std::make_unique<blink::DummyPageHolder>(
-        gfx::Size(800, 600));
+    page_holder_ = std::make_unique<blink::DummyPageHolder>(gfx::Size(800, 600));
   }
 
   void TearDown() override {
@@ -126,7 +114,7 @@ TEST_F(OpenUIRenderingTest, BoxModelLayout) {
   auto* box = blink::DynamicTo<blink::LayoutBox>(layout_obj);
   ASSERT_NE(box, nullptr) << "LayoutObject is not a LayoutBox";
   EXPECT_EQ(box->OffsetWidth().ToInt(), 210);   // 200 + 2*5 padding
-  EXPECT_EQ(box->OffsetHeight().ToInt(), 110);   // 100 + 2*5 padding
+  EXPECT_EQ(box->OffsetHeight().ToInt(), 110);  // 100 + 2*5 padding
 }
 
 // ---------------------------------------------------------------------------
@@ -137,8 +125,7 @@ TEST_F(OpenUIRenderingTest, FlexboxLayout) {
   auto* container = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
   container->setAttribute(
       blink::html_names::kStyleAttr,
-      blink::AtomicString(
-          "display: flex; width: 390px; height: 200px; gap: 10px;"));
+      blink::AtomicString("display: flex; width: 390px; height: 200px; gap: 10px;"));
 
   auto* c1 = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
   c1->setAttribute(blink::html_names::kStyleAttr,
@@ -170,17 +157,14 @@ TEST_F(OpenUIRenderingTest, FlexboxLayout) {
 TEST_F(OpenUIRenderingTest, CSSGridLayout) {
   auto& doc = GetDocument();
   auto* grid = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  grid->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("display: grid; width: 300px; "
-                          "grid-template-columns: 100px 200px; gap: 0;"));
+  grid->setAttribute(blink::html_names::kStyleAttr,
+                     blink::AtomicString("display: grid; width: 300px; "
+                                         "grid-template-columns: 100px 200px; gap: 0;"));
 
   auto* g1 = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  g1->setAttribute(blink::html_names::kStyleAttr,
-                   blink::AtomicString("height: 50px;"));
+  g1->setAttribute(blink::html_names::kStyleAttr, blink::AtomicString("height: 50px;"));
   auto* g2 = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  g2->setAttribute(blink::html_names::kStyleAttr,
-                   blink::AtomicString("height: 50px;"));
+  g2->setAttribute(blink::html_names::kStyleAttr, blink::AtomicString("height: 50px;"));
 
   grid->AppendChild(g1);
   grid->AppendChild(g2);
@@ -201,10 +185,8 @@ TEST_F(OpenUIRenderingTest, CSSGridLayout) {
 TEST_F(OpenUIRenderingTest, TextLayout) {
   auto& doc = GetDocument();
   auto* text_div = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  text_div->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString(
-          "font-size: 16px; line-height: 24px; width: 300px;"));
+  text_div->setAttribute(blink::html_names::kStyleAttr,
+                         blink::AtomicString("font-size: 16px; line-height: 24px; width: 300px;"));
   text_div->appendChild(blink::Text::Create(doc, "Hello from OpenUI!"));
   doc.body()->AppendChild(text_div);
   doc.UpdateStyleAndLayout(blink::DocumentUpdateReason::kTest);
@@ -220,16 +202,13 @@ TEST_F(OpenUIRenderingTest, TextLayout) {
 TEST_F(OpenUIRenderingTest, AbsolutePositioning) {
   auto& doc = GetDocument();
   auto* outer = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  outer->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString(
-          "position: relative; width: 400px; height: 300px;"));
+  outer->setAttribute(blink::html_names::kStyleAttr,
+                      blink::AtomicString("position: relative; width: 400px; height: 300px;"));
 
   auto* inner = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  inner->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("position: absolute; top: 10px; left: 20px; "
-                          "width: 100px; height: 50px;"));
+  inner->setAttribute(blink::html_names::kStyleAttr,
+                      blink::AtomicString("position: absolute; top: 10px; left: 20px; "
+                                          "width: 100px; height: 50px;"));
 
   outer->AppendChild(inner);
   doc.body()->AppendChild(outer);
@@ -249,10 +228,9 @@ TEST_F(OpenUIRenderingTest, AbsolutePositioning) {
 TEST_F(OpenUIRenderingTest, BorderBoxSizing) {
   auto& doc = GetDocument();
   auto* div = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  div->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("box-sizing: border-box; width: 200px; "
-                          "height: 100px; padding: 20px; border: 5px solid;"));
+  div->setAttribute(blink::html_names::kStyleAttr,
+                    blink::AtomicString("box-sizing: border-box; width: 200px; "
+                                        "height: 100px; padding: 20px; border: 5px solid;"));
   doc.body()->AppendChild(div);
   doc.UpdateStyleAndLayout(blink::DocumentUpdateReason::kTest);
 
@@ -268,9 +246,8 @@ TEST_F(OpenUIRenderingTest, BorderBoxSizing) {
 TEST_F(OpenUIRenderingTest, ComputedStyleAccess) {
   auto& doc = GetDocument();
   auto* div = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  div->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("color: rgb(255, 0, 0); font-size: 20px;"));
+  div->setAttribute(blink::html_names::kStyleAttr,
+                    blink::AtomicString("color: rgb(255, 0, 0); font-size: 20px;"));
   doc.body()->AppendChild(div);
   doc.UpdateStyleAndLayout(blink::DocumentUpdateReason::kTest);
 
@@ -289,12 +266,10 @@ TEST_F(OpenUIRenderingTest, NestedLayout) {
                       blink::AtomicString("width: 300px; padding: 10px;"));
 
   auto* middle = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  middle->setAttribute(blink::html_names::kStyleAttr,
-                       blink::AtomicString("padding: 10px;"));
+  middle->setAttribute(blink::html_names::kStyleAttr, blink::AtomicString("padding: 10px;"));
 
   auto* inner = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  inner->setAttribute(blink::html_names::kStyleAttr,
-                      blink::AtomicString("height: 50px;"));
+  inner->setAttribute(blink::html_names::kStyleAttr, blink::AtomicString("height: 50px;"));
 
   middle->AppendChild(inner);
   outer->AppendChild(middle);
@@ -318,22 +293,18 @@ TEST_F(OpenUIRenderingTest, NestedLayout) {
 TEST_F(OpenUIRenderingTest, OverflowHidden) {
   auto& doc = GetDocument();
   auto* container = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  container->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString(
-          "width: 100px; height: 100px; overflow: hidden;"));
+  container->setAttribute(blink::html_names::kStyleAttr,
+                          blink::AtomicString("width: 100px; height: 100px; overflow: hidden;"));
 
   auto* child = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  child->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("width: 200px; height: 200px;"));
+  child->setAttribute(blink::html_names::kStyleAttr,
+                      blink::AtomicString("width: 200px; height: 200px;"));
 
   container->AppendChild(child);
   doc.body()->AppendChild(container);
   doc.UpdateStyleAndLayout(blink::DocumentUpdateReason::kTest);
 
-  auto* container_box =
-      blink::To<blink::LayoutBox>(container->GetLayoutObject());
+  auto* container_box = blink::To<blink::LayoutBox>(container->GetLayoutObject());
   ASSERT_NE(container_box, nullptr);
   EXPECT_EQ(container_box->OffsetWidth().ToInt(), 100);
   EXPECT_EQ(container_box->OffsetHeight().ToInt(), 100);
@@ -347,15 +318,14 @@ TEST_F(OpenUIRenderingTest, MinMaxConstraints) {
   auto* div = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
   div->setAttribute(
       blink::html_names::kStyleAttr,
-      blink::AtomicString(
-          "width: 50px; min-width: 100px; height: 30px; max-height: 20px;"));
+      blink::AtomicString("width: 50px; min-width: 100px; height: 30px; max-height: 20px;"));
   doc.body()->AppendChild(div);
   doc.UpdateStyleAndLayout(blink::DocumentUpdateReason::kTest);
 
   auto* box = blink::To<blink::LayoutBox>(div->GetLayoutObject());
   ASSERT_NE(box, nullptr);
-  EXPECT_EQ(box->OffsetWidth().ToInt(), 100);   // min-width wins
-  EXPECT_EQ(box->OffsetHeight().ToInt(), 20);   // max-height wins
+  EXPECT_EQ(box->OffsetWidth().ToInt(), 100);  // min-width wins
+  EXPECT_EQ(box->OffsetHeight().ToInt(), 20);  // max-height wins
 }
 
 // ---------------------------------------------------------------------------
@@ -368,15 +338,11 @@ TEST_F(OpenUIRenderingTest, InlineBlockLayout) {
                         blink::AtomicString("width: 400px; font-size: 0;"));
 
   auto* a = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  a->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString(
-          "display: inline-block; width: 150px; height: 50px;"));
+  a->setAttribute(blink::html_names::kStyleAttr,
+                  blink::AtomicString("display: inline-block; width: 150px; height: 50px;"));
   auto* b = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  b->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString(
-          "display: inline-block; width: 200px; height: 50px;"));
+  b->setAttribute(blink::html_names::kStyleAttr,
+                  blink::AtomicString("display: inline-block; width: 200px; height: 50px;"));
 
   wrapper->AppendChild(a);
   wrapper->AppendChild(b);
@@ -421,10 +387,8 @@ TEST_F(OpenUIRenderingTest, PercentageSizing) {
 TEST_F(OpenUIRenderingTest, FlexWrap) {
   auto& doc = GetDocument();
   auto* flex = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  flex->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString(
-          "display: flex; flex-wrap: wrap; width: 200px;"));
+  flex->setAttribute(blink::html_names::kStyleAttr,
+                     blink::AtomicString("display: flex; flex-wrap: wrap; width: 200px;"));
 
   auto* c1 = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
   c1->setAttribute(blink::html_names::kStyleAttr,
@@ -451,10 +415,9 @@ TEST_F(OpenUIRenderingTest, FlexWrap) {
 TEST_F(OpenUIRenderingTest, CSSTransform) {
   auto& doc = GetDocument();
   auto* div = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  div->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("width: 100px; height: 100px; "
-                          "transform: scale(2);"));
+  div->setAttribute(blink::html_names::kStyleAttr,
+                    blink::AtomicString("width: 100px; height: 100px; "
+                                        "transform: scale(2);"));
   doc.body()->AppendChild(div);
   doc.UpdateStyleAndLayout(blink::DocumentUpdateReason::kTest);
 
@@ -471,21 +434,18 @@ TEST_F(OpenUIRenderingTest, CSSTransform) {
 TEST_F(OpenUIRenderingTest, ZIndexStacking) {
   auto& doc = GetDocument();
   auto* parent = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  parent->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("position: relative; width: 300px; height: 300px;"));
+  parent->setAttribute(blink::html_names::kStyleAttr,
+                       blink::AtomicString("position: relative; width: 300px; height: 300px;"));
 
   auto* back = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  back->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("position: absolute; z-index: 1; "
-                          "width: 100px; height: 100px;"));
+  back->setAttribute(blink::html_names::kStyleAttr,
+                     blink::AtomicString("position: absolute; z-index: 1; "
+                                         "width: 100px; height: 100px;"));
 
   auto* front = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  front->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("position: absolute; z-index: 2; "
-                          "width: 50px; height: 50px;"));
+  front->setAttribute(blink::html_names::kStyleAttr,
+                      blink::AtomicString("position: absolute; z-index: 2; "
+                                          "width: 50px; height: 50px;"));
 
   parent->AppendChild(back);
   parent->AppendChild(front);
@@ -511,13 +471,11 @@ TEST_F(OpenUIRenderingTest, ZIndexStacking) {
 TEST_F(OpenUIRenderingTest, MultiColumnLayout) {
   auto& doc = GetDocument();
   auto* mcol = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  mcol->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("width: 300px; column-count: 3; column-gap: 0;"));
+  mcol->setAttribute(blink::html_names::kStyleAttr,
+                     blink::AtomicString("width: 300px; column-count: 3; column-gap: 0;"));
 
   auto* child = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  child->setAttribute(blink::html_names::kStyleAttr,
-                      blink::AtomicString("height: 50px;"));
+  child->setAttribute(blink::html_names::kStyleAttr, blink::AtomicString("height: 50px;"));
   mcol->AppendChild(child);
   doc.body()->AppendChild(mcol);
   doc.UpdateStyleAndLayout(blink::DocumentUpdateReason::kTest);
@@ -533,22 +491,18 @@ TEST_F(OpenUIRenderingTest, MultiColumnLayout) {
 TEST_F(OpenUIRenderingTest, TableLayout) {
   auto& doc = GetDocument();
   auto* table = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  table->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("display: table; width: 300px;"));
+  table->setAttribute(blink::html_names::kStyleAttr,
+                      blink::AtomicString("display: table; width: 300px;"));
 
   auto* row = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  row->setAttribute(blink::html_names::kStyleAttr,
-                    blink::AtomicString("display: table-row;"));
+  row->setAttribute(blink::html_names::kStyleAttr, blink::AtomicString("display: table-row;"));
 
   auto* cell1 = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  cell1->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("display: table-cell; width: 100px; height: 40px;"));
+  cell1->setAttribute(blink::html_names::kStyleAttr,
+                      blink::AtomicString("display: table-cell; width: 100px; height: 40px;"));
   auto* cell2 = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  cell2->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("display: table-cell; width: 200px; height: 40px;"));
+  cell2->setAttribute(blink::html_names::kStyleAttr,
+                      blink::AtomicString("display: table-cell; width: 200px; height: 40px;"));
 
   row->AppendChild(cell1);
   row->AppendChild(cell2);
@@ -589,10 +543,9 @@ TEST_F(OpenUIRenderingTest, UAStylesheetDefaults) {
 TEST_F(OpenUIRenderingTest, FullPaintLifecycle) {
   auto& doc = GetDocument();
   auto* div = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  div->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("width: 200px; height: 100px; "
-                          "background-color: blue; border: 2px solid red;"));
+  div->setAttribute(blink::html_names::kStyleAttr,
+                    blink::AtomicString("width: 200px; height: 100px; "
+                                        "background-color: blue; border: 2px solid red;"));
   doc.body()->AppendChild(div);
 
   // Advance through ALL lifecycle phases including paint.
@@ -600,8 +553,8 @@ TEST_F(OpenUIRenderingTest, FullPaintLifecycle) {
 
   auto* box = blink::To<blink::LayoutBox>(div->GetLayoutObject());
   ASSERT_NE(box, nullptr);
-  EXPECT_EQ(box->OffsetWidth().ToInt(), 204);  // 200 + 2*2 border
-  EXPECT_EQ(box->OffsetHeight().ToInt(), 104); // 100 + 2*2 border
+  EXPECT_EQ(box->OffsetWidth().ToInt(), 204);   // 200 + 2*2 border
+  EXPECT_EQ(box->OffsetHeight().ToInt(), 104);  // 100 + 2*2 border
 }
 
 // ---------------------------------------------------------------------------
@@ -610,9 +563,8 @@ TEST_F(OpenUIRenderingTest, FullPaintLifecycle) {
 TEST_F(OpenUIRenderingTest, PaintArtifactGenerated) {
   auto& doc = GetDocument();
   auto* div = blink::MakeGarbageCollected<blink::HTMLDivElement>(doc);
-  div->setAttribute(
-      blink::html_names::kStyleAttr,
-      blink::AtomicString("width: 100px; height: 100px; background: green;"));
+  div->setAttribute(blink::html_names::kStyleAttr,
+                    blink::AtomicString("width: 100px; height: 100px; background: green;"));
   doc.body()->AppendChild(div);
 
   doc.View()->UpdateAllLifecyclePhasesForTest();
@@ -694,12 +646,10 @@ int main(int argc, char** argv) {
 
   {
     auto dummy_task_runner = base::MakeRefCounted<base::NullTaskRunner>();
-    base::SingleThreadTaskRunner::CurrentDefaultHandle dummy_handle(
-        dummy_task_runner);
+    base::SingleThreadTaskRunner::CurrentDefaultHandle dummy_handle(dummy_task_runner);
 
     mojo::BinderMap binders;
-    blink::InitializeWithoutIsolateForTesting(
-        platform, &binders, g_scheduler->get());
+    blink::InitializeWithoutIsolateForTesting(platform, &binders, g_scheduler->get());
   }
 
   // --- Phase 5: enable test features ---
@@ -708,12 +658,9 @@ int main(int argc, char** argv) {
 
   // --- Phase 6: run tests ---
   base::TestIOThread test_io_thread(base::TestIOThread::kAutoStart);
-  mojo::core::ScopedIPCSupport ipc_support(
-      test_io_thread.task_runner(),
-      mojo::core::ScopedIPCSupport::ShutdownPolicy::CLEAN);
+  mojo::core::ScopedIPCSupport ipc_support(test_io_thread.task_runner(),
+                                           mojo::core::ScopedIPCSupport::ShutdownPolicy::CLEAN);
 
   return base::LaunchUnitTests(
-      argc, argv,
-      base::BindOnce(&base::TestSuite::Run,
-                     base::Unretained(&test_suite)));
+      argc, argv, base::BindOnce(&base::TestSuite::Run, base::Unretained(&test_suite)));
 }
