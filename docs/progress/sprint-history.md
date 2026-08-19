@@ -20,7 +20,7 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 owner rows | W0A | 🟡 Active; kickoff evidence frozen |
+| SP17 | Advanced Text + Writing Modes | 842 owner rows | W0B | 🟡 Active; 311 actionable / 531 residual frozen |
 
 **Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,566 ported/runnable tests, 3,267 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, and 842 frozen SP17 writing-mode owner rows.**
 
@@ -430,3 +430,25 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 - Next: W0B transactional SP17 CSS handling and a temporary 340-row porter
   probe. No production behavior, committed WPT builder, mapping owner, or
   detector changed in W0A.
+
+### SP17 W0B: transactional CSS and porter disposition frozen
+
+- Implemented transactional parsing, CSS-wide keyword normalization, cascade
+  priority including `!important` and `dir`, inherited writing properties, Rust
+  enum emission, and computed-direction logical property resolution in the WPT
+  porter.
+- Probed all 823 kickoff-unported owner rows through the actual retained-text
+  deterministic-Ahem builder path: 292 generate successfully and 531 retain
+  their actual rejection plus complete detector-backed ownership.
+- Froze 311 actionable IDs (19 existing plus 292 new) and 531 residual rows as a
+  sorted, disjoint cover of the original 842-row scope. An atomic prospective
+  splice of all 292 builders succeeded in memory across 23 files without
+  changing committed builders.
+- Preserved the non-ASCII font guard. Only the fullwidth-digit
+  `css-flexbox-test1` test/reference pair retains `needs_writing_mode`; W2 must
+  supply a pinned glyph/fallback path rather than ambient font behavior.
+- The combined SP13-R through SP17 closure/porter suite passes all 117 tests and
+  both ledger checks pass. Historical SP13-R/SP16 builders remain byte-stable.
+- Next: W1 threads complete writing direction through `ConstraintSpace` and
+  proves horizontal no-op behavior before block/flex geometry or surgical WPT
+  admission.

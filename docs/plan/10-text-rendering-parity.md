@@ -18,9 +18,10 @@ Sans Mono, and Serif plus the pinned Chromium 147 FreeType runtime. Each raster 
 is manifest-scoped on both renderers. Exact zero-pixel parity remains the standard;
 AA near misses are never promoted to passes.
 
-SP17 W0A has now reproduced that full snapshot without resume and frozen all
-3,267 exact IDs, the original 842 writing-mode owner rows, and the 19 runnable
-kickoff outcomes. No production behavior changed in the evidence wave.
+SP17 W0A reproduced that full snapshot without resume and froze all 3,267 exact
+IDs, the original 842 writing-mode owner rows, and the 19 runnable kickoff
+outcomes. W0B then froze a faithful porter disposition of 311 actionable and
+531 residual rows without changing generated Rust builders or pixel evidence.
 
 ## Chronological work
 
@@ -47,12 +48,12 @@ family selection, and the real-glyph LCD raster profile are implemented. The glo
 
 ### SP17 — advanced text
 
-Cover bidi/RTL, vertical writing modes, transformation, decoration, emphasis, complex
-scripts, and emoji. W0A is complete on the fresh-main branch: the frozen
-inventory is 19 runnable plus 823 unported `needs_writing_mode` rows. W0B next
-adds transactional CSS handling and probes the 337 direct `writing-mode` plus
-three direct `unicode-bidi` rejections before freezing actionable/residual
-dispositions. Follow `docs/SP17-PLAN.md`.
+Cover bidi/RTL, vertical writing modes, transformation, decoration, emphasis,
+complex scripts, and emoji. W0A and W0B are complete on the fresh-main branch:
+the original 842-row inventory is frozen as 311 actionable and 531 residual
+rows after transactional CSS handling and a real builder probe. W1 next makes
+writing direction authoritative in constraint, block, and flex geometry.
+Follow `docs/SP17-PLAN.md`.
 
 ### SP18 — generated content and text effects
 

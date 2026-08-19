@@ -2,14 +2,15 @@
 
 ## Status
 
-SP17 W0A is complete on `agent/sp17-advanced-text`, branched from `main` commit
+SP17 W0B is complete on `agent/sp17-advanced-text`, branched from `main` commit
 `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on 2026-08-19. No production or
-generated WPT builder code has changed yet.
+generated Rust WPT builder code has changed yet.
 
 The branch has reproduced the complete suite without resume, frozen the kickoff
-ledgers and 19-ID pixel evidence, restored the authoritative full summary, and
-passed the full local 7/7 audit including PNG proof. W0B transactional CSS and
-porter probing is the next implementation boundary.
+ledgers and 19-ID pixel evidence, added transactional SP17 CSS handling, and
+frozen a faithful no-write porter probe over all 823 kickoff-unported rows. The
+authoritative full summary remains restored. W1 authoritative logical geometry
+is the next implementation boundary.
 
 | Starting metric | Value |
 |---|---:|
@@ -22,6 +23,8 @@ porter probing is the next implementation boundary.
 | `needs_writing_mode` inventory | 842 |
 | Runnable `needs_writing_mode` | 19 |
 | Unported `needs_writing_mode` | 823 |
+| Frozen W0B actionable targets | 311 |
+| Frozen W0B residual dispositions | 531 |
 
 Exact means zero mismatched pixels. SP17 must preserve all 3,267 starting exact
 IDs, including the immutable 2,823-ID SP13-R baseline and all 351 exact SP13-R
@@ -43,8 +46,9 @@ boundary. At kickoff it partitions as follows:
 This preserves the handoff's 337/486 split while identifying the operational
 340-row SP17-property probe pool. All 90 sole-owned unported rows are in that
 pool: 62 are `css_flexbox`, 28 are `css_sizing`, and all stop directly on
-`writing-mode` (67 style-block, 23 inline). They are the first functional
-implementation cohort after the parser and ledgers are trustworthy.
+`writing-mode` (67 style-block, 23 inline). W0B found that 85 are generatable;
+five reveal image dependencies and remain residuals. Together with the one
+sole-owned kickoff-runnable row, the first functional cohort is therefore 86.
 
 W0A freezes four sorted immutable kickoff artifacts:
 
@@ -55,17 +59,42 @@ W0A freezes four sorted immutable kickoff artifacts:
 4. `sp17_initial_runnable_results.json`: the exact per-pixel outcome and pinned
    runner provenance from its no-resume focused run.
 
-W0B will add `sp17_actionable_targets.json` and
-`sp17_residual_dispositions.json` after transactional probing. The actionable
-ledger will contain the 19 starting runnable IDs plus every original inventory
-row made runnable by that probe; the residual ledger will preserve every still-
-unported row's Chromium path, actual first rejection, and complete non-SP17
-owners.
+W0B adds `sp17_actionable_targets.json` and
+`sp17_residual_dispositions.json`. The actionable ledger contains the 19
+starting runnable IDs plus 292 kickoff-unported rows that the real deterministic
+Ahem builder can generate. The residual ledger preserves the other 531 rows'
+Chromium paths, actual first rejections, rejection owners, and complete owner
+sets. These ledgers are sorted, disjoint, and cover exactly the frozen 842-row
+inventory.
 
-The future actionable and residual IDs must be disjoint and cover exactly the frozen
-842-row inventory. Actionable does not mean guaranteed exact: after SP17
+Actionable does not mean guaranteed exact: after SP17
 behavior is corrected, a runnable row may remain a functional failure only if
 its remaining pixels have specific, detector-backed non-SP17 owners.
+
+Two residuals intentionally retain SP17 ownership:
+`wpt/css_flexbox/css-flexbox-test1` and its `-ref`. Both contain fullwidth digits
+that neither pinned Ahem nor vendored DejaVu Sans provides, so the deterministic
+font guard rejects them as `text_non_ascii`. W2 must supersede that guard with a
+pinned glyph/fallback path before either row can move. The probe does not strip
+text or depend on ambient fonts to make them appear portable.
+
+The 311 actionable rows are distributed as follows:
+
+| Area | Rows |
+|---|---:|
+| `css2_floats` | 1 |
+| `css_backgrounds` | 3 |
+| `css_break` | 51 |
+| `css_flexbox` | 145 |
+| `css_multicol` | 11 |
+| `css_overflow` | 22 |
+| `css_position` | 35 |
+| `css_sizing` | 43 |
+
+The largest residual first-rejection groups are 310 JavaScript rows, 49 image
+rows, 25 `contain` rows, 20 transform rows, 19 canvas rows, 14 table-display
+rows, and 12 `border-spacing` rows. The ledger, rather than this abbreviated
+table, is authoritative.
 
 ## Kickoff source assessment
 
@@ -127,6 +156,8 @@ inventory, and initial 19 outcomes without changing the runnable inventory.
 
 ### W0B — Transactional SP17 CSS and porter probing
 
+Completed on 2026-08-19; see the progress log and frozen W0B artifacts below.
+
 1. Validate and emit the corpus-used values and CSS-wide keywords for
    `writing-mode`, `direction`, `unicode-bidi`, `text-orientation`,
    `text-combine-upright`, emphasis/decorations, and other target-required
@@ -139,16 +170,19 @@ inventory, and initial 19 outcomes without changing the runnable inventory.
    element's computed writing direction and declaration order. Remove the
    current unconditional horizontal lowering of logical sizes and sides.
 4. Remove only `writing-mode` and `unicode-bidi` from porter rejection after
-   unit coverage is green. Probe all 340 direct SP17-property rejections into a
-   temporary output, recording the next real rejection when a row is still not
-   portable.
+   unit coverage is green. Probe all 823 kickoff-unported inventory rows in
+   memory with the real deterministic-Ahem builder, recording the next real
+   rejection when a row is still not portable. This includes and verifies the
+   complete 340-row direct-property pool rather than assuming all other kickoff
+   rejections remain current.
 5. Freeze the actionable and residual ledgers from probe results. Do not
    batch-regenerate historical WPT modules; use the surgical splice workflow
    and committed upstream fixtures for idempotence tests.
 
-Exit: generated builders represent the source cascade faithfully, the frozen
-842 rows have a disjoint reason-backed disposition, and non-SP17 builders plus
-runner profiles are byte-stable.
+Exit met: prospective generated builders represent the source cascade
+faithfully, the frozen 842 rows have a disjoint reason-backed disposition, and
+historical builders plus runner profiles remain byte-stable. The two explicit
+font-guard residuals above remain SP17-owned until W2 provides their glyphs.
 
 ### W1 — Authoritative logical geometry
 
@@ -175,9 +209,12 @@ after every boundary change.
    orthogonal-flow, and round-trip tests at constraint, block, flex, inline,
    fragmentation, multicol, and positioned boundaries.
 
-The first pixel cohort is the 90 sole-owned direct rows, with the 62 flex rows
-ahead of the 28 sizing rows. A row is promoted only at 0.0%; otherwise continue
-the shared implementation or assign a proven non-SP17 owner.
+The first pixel cohort is the 86 sole-SP17 actionable rows: the original
+runnable `auto-height-with-flex` case plus 85 of the 90 kickoff-unported sole
+owners. Five kickoff sole owners reveal image dependencies and remain in the
+residual ledger. Process the flex-heavy portion before sizing. A row is
+promoted only at 0.0%; otherwise continue the shared implementation or assign a
+proven non-SP17 owner.
 
 ### W2 — Bidi and vertical text integration
 
@@ -201,7 +238,8 @@ the shared implementation or assign a proven non-SP17 owner.
 
 Process targets in this order:
 
-1. 90 sole-owned direct rows (62 flex, then 28 sizing);
+1. 86 sole-SP17 actionable rows (the original runnable case plus 85 newly
+   generatable rows), flex first and then sizing;
 2. remaining direct-property rows with co-owners, clustered by flex/sizing,
    positioned layout, fragmentation/multicol, inline-block, and paint;
 3. the 19 starting runnable rows, with the sole-owned
@@ -294,3 +332,40 @@ render/diff error.
   direct-property rows into temporary output. Do not alter committed builders,
   mapping ownership, or the detector until the probe produces a reviewed
   disjoint actionable/residual disposition.
+
+### 2026-08-19 — W0B transactional probe frozen
+
+- Added transactional parsing for all corpus-used values and CSS-wide keywords
+  of `writing-mode`, `direction`, `unicode-bidi`, `text-orientation`, and
+  `text-combine-upright`. Invalid declarations preserve the prior valid value;
+  shorthand/longhand, specificity, source order, inline declarations,
+  `!important`, and `dir` presentational hints retain cascade priority.
+- Materialized the inherited writing properties across elements,
+  `display:contents`, anonymous text, generated structural text, `html`, and
+  body builders. `unicode-bidi` correctly remains non-inherited.
+- Added late logical-to-physical resolution for corpus-used sizes, insets,
+  margins, padding, border sides/components, and logical corner radii. It uses
+  the computed writing mode and direction and keeps logical/physical aliases in
+  their true cascade order. This is explicitly a porter boundary until W1 makes
+  logical geometry authoritative in layout.
+- Removed only `writing-mode` and `unicode-bidi` from porter rejection and ran
+  the actual deterministic-Ahem builder path over all 823 kickoff-unported
+  rows. It generated 292 and recorded 531 reason-backed residuals. An atomic
+  in-memory splice preparation for all 292 succeeded across 23 prospective
+  files, retained text in every builder, and made no repository writes.
+- Froze 311 actionable IDs (19 kickoff runnable plus 292 newly generatable) and
+  531 residual dispositions. The ledgers are an exact disjoint cover of all
+  842 kickoff rows. Their SHA-256 values are
+  `9d2b53070cf206b6c37a5c66bd0d37ea757e12b7ca6d4a19a5eb98ee4579f96c`
+  and
+  `314a7a27f250ef1fb5f65b86e69f48771e5116a4b6592bce2190d474a9338776`.
+- Preserved the deterministic font guard. The only residuals still carrying
+  `needs_writing_mode` are the fullwidth-digit flex test/reference pair, both
+  rejected as `text_non_ascii`; W2 owns the pinned fallback-font solution.
+- Added eleven W0B ledger and transactional CSS tests (17 SP17 tests total).
+  The combined SP13-R/SP14/SP15/SP16/SP17 closure/porter suite passes all 117 tests,
+  both closure generators check cleanly, and historical builder idempotence is
+  unchanged.
+- Next: W1 begins with `WritingDirectionMode` in `ConstraintSpace`, explicit
+  parent/child orthogonal conversion, and horizontal-no-op Rust tests. Do not
+  splice the 292 builders before that shared geometry is ready.

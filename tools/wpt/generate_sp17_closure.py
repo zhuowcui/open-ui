@@ -11,6 +11,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -27,6 +28,14 @@ BASELINE_JSON = PORTED_DIR / "sp17_baseline_exact.json"
 INVENTORY_JSON = PORTED_DIR / "sp17_writing_mode_inventory.json"
 INITIAL_TARGETS_JSON = PORTED_DIR / "sp17_initial_runnable_targets.json"
 INITIAL_RESULTS_JSON = PORTED_DIR / "sp17_initial_runnable_results.json"
+ACTIONABLE_JSON = PORTED_DIR / "sp17_actionable_targets.json"
+RESIDUALS_JSON = PORTED_DIR / "sp17_residual_dispositions.json"
+WPT_ROOT = Path(os.environ.get(
+    "CHROMIUM_WPT_CSS",
+    os.path.expanduser(
+        "~/chromium/src/third_party/blink/web_tests/external/wpt/css"
+    ),
+))
 
 SP17_CATEGORY = "needs_writing_mode"
 EXPECTED_MAPPING = 7673
@@ -40,6 +49,13 @@ EXPECTED_BASELINE = 3267
 EXPECTED_FAILURES = 299
 EXPECTED_ERRORS = 0
 EXPECTED_UNPORTED = 4107
+EXPECTED_ACTIONABLE = 311
+EXPECTED_RESIDUALS = 531
+EXPECTED_PROBE_SP17_RESIDUALS = 2
+PROBE_LEDGER_SHA256 = {
+    "sp17_actionable_targets.json": "9d2b53070cf206b6c37a5c66bd0d37ea757e12b7ca6d4a19a5eb98ee4579f96c",
+    "sp17_residual_dispositions.json": "314a7a27f250ef1fb5f65b86e69f48771e5116a4b6592bce2190d474a9338776",
+}
 
 # These files are historical evidence, not SP17 generator output.  Pinning
 # their bytes makes accidental regeneration visible immediately.
@@ -59,6 +75,19 @@ HISTORICAL_LEDGER_SHA256 = {
     "sp16_real_font_tests.json": "fc457282f5335773d1081fa9a949aaf29d401bac6dcaf38560564a1bcf3aef86",
     "sp16_residual_dispositions.json": "72df8f9e2d8c6141cf266d51a4d2114101592b58dd006494b5c8eb9196d04bcc",
 }
+
+sys.path.insert(0, str(SCRIPT_DIR))
+import port_wpt  # noqa: E402
+
+ACCOUNTABILITY_DIR = PROJECT_ROOT / "tools" / "accountability"
+sys.path.insert(0, str(ACCOUNTABILITY_DIR))
+from shared_detectors import (  # noqa: E402
+    CATEGORY_FOR_DEP,
+    classify_dependencies,
+    dependency_for_portability_reason,
+)
+
+METADATA_CATEGORIES = {"reference_test", "non_visual_test"}
 
 
 def categories(value: str) -> set[str]:
@@ -246,6 +275,148 @@ def validate_historical_ledgers() -> None:
             raise ValueError(f"historical ledger byte drift: {name}: {actual}")
 
 
+def _probe_owner_categories(
+    item: dict, upstream: Path, rejection_reason: str,
+) -> tuple[str, list[str]]:
+    html = upstream.read_text(encoding="utf-8", errors="ignore")
+    dependencies = classify_dependencies(
+        html, test_id=item["test_id"], excluded={"writing_mode"}
+    )
+    rejection_dependency = dependency_for_portability_reason(rejection_reason)
+    if rejection_dependency not in dependencies:
+        dependencies.append(rejection_dependency)
+    rejection_owner = CATEGORY_FOR_DEP[rejection_dependency]
+    owners = sorted({CATEGORY_FOR_DEP[dependency] for dependency in dependencies})
+    if rejection_owner not in owners or not (set(owners) - METADATA_CATEGORIES):
+        raise ValueError(f"reasonless SP17 residual ownership: {item['test_id']}")
+    return rejection_owner, owners
+
+
+def build_probe_ledgers(
+    inventory: list[dict], wpt_root: Path,
+) -> tuple[list[str], list[dict]]:
+    """Probe W0B with retained deterministic text and no repository writes."""
+    validate_inventory(inventory)
+    actionable = [
+        item["test_id"]
+        for item in inventory if item["kickoff_state"] == "runnable"
+    ]
+    residuals = []
+    old_profile = port_wpt.ACTIVE_PORTER_PROFILE
+    old_emit = port_wpt.EMIT_TEXT_NODES
+    old_retain = port_wpt.RETAIN_TEXT
+    try:
+        port_wpt.set_porter_profile(port_wpt.PorterProfile.DETERMINISTIC_AHEM)
+        for item in inventory:
+            if item["kickoff_state"] == "runnable":
+                continue
+            upstream = wpt_root / item["chromium_test_path"]
+            if not upstream.is_file():
+                raise FileNotFoundError(
+                    f"{item['test_id']}: missing upstream file {upstream}"
+                )
+            parser = port_wpt.parse_wpt_html(str(upstream))
+            portable, reason = port_wpt.analyze_portability(parser)
+            if portable and not port_wpt.has_layout_content(parser):
+                portable, reason = False, "no_layout_content"
+            if portable:
+                function_name = "probe_" + port_wpt.sanitize_fn_name(
+                    item["test_id"].replace("/", "_")
+                )
+                generated = port_wpt.generate_rust_fn(
+                    function_name, parser.root, parser.html_styles
+                )
+                if not generated.strip():
+                    raise ValueError(f"empty SP17 builder probe: {item['test_id']}")
+                actionable.append(item["test_id"])
+                continue
+
+            rejection_owner, owners = _probe_owner_categories(
+                item, upstream, reason
+            )
+            residuals.append({
+                "test_id": item["test_id"],
+                "chromium_test_path": item["chromium_test_path"],
+                "rejection_reason": reason,
+                "rejection_owner": rejection_owner,
+                "owner_categories": owners,
+            })
+    finally:
+        port_wpt.ACTIVE_PORTER_PROFILE = old_profile
+        port_wpt.EMIT_TEXT_NODES = old_emit
+        port_wpt.RETAIN_TEXT = old_retain
+
+    actionable.sort()
+    residuals.sort(key=lambda item: item["test_id"])
+    validate_probe_ledgers(inventory, actionable, residuals)
+    return actionable, residuals
+
+
+def validate_probe_ledgers(
+    inventory: list[dict], actionable: list[str], residuals: list[dict],
+) -> None:
+    validate_inventory(inventory)
+    residual_ids = [item.get("test_id", "") for item in residuals]
+    if (
+        actionable != sorted(set(actionable))
+        or len(actionable) != EXPECTED_ACTIONABLE
+    ):
+        raise ValueError("SP17 W0B actionable ledger is not the sorted 311-ID set")
+    if (
+        residual_ids != sorted(set(residual_ids))
+        or len(residuals) != EXPECTED_RESIDUALS
+    ):
+        raise ValueError("SP17 W0B residual ledger is not the sorted 531-row set")
+    inventory_ids = {item["test_id"] for item in inventory}
+    if set(actionable) & set(residual_ids):
+        raise ValueError("SP17 W0B actionable and residual ledgers overlap")
+    if set(actionable) | set(residual_ids) != inventory_ids:
+        raise ValueError("SP17 W0B ledgers do not cover the frozen 842-row inventory")
+    initial = {
+        item["test_id"] for item in inventory
+        if item["kickoff_state"] == "runnable"
+    }
+    if not initial.issubset(actionable):
+        raise ValueError("SP17 W0B actionable ledger lost a kickoff runnable ID")
+
+    required = {
+        "test_id", "chromium_test_path", "rejection_reason", "rejection_owner",
+        "owner_categories",
+    }
+    sp17_residuals = []
+    for item in residuals:
+        owners = item.get("owner_categories", [])
+        if (
+            set(item) != required
+            or not item.get("chromium_test_path")
+            or not item.get("rejection_reason")
+            or owners != sorted(set(owners))
+            or item.get("rejection_owner") not in owners
+            or not (set(owners) - METADATA_CATEGORIES)
+        ):
+            raise ValueError(f"invalid SP17 W0B residual: {item!r}")
+        if SP17_CATEGORY in owners:
+            sp17_residuals.append(item)
+    if (
+        len(sp17_residuals) != EXPECTED_PROBE_SP17_RESIDUALS
+        or {item["rejection_reason"] for item in sp17_residuals}
+        != {"text_non_ascii"}
+    ):
+        raise ValueError("unexpected SP17-owned W0B probe residual")
+
+
+def load_probe_ledgers(inventory: list[dict]) -> tuple[list[str], list[dict]]:
+    for path in (ACTIONABLE_JSON, RESIDUALS_JSON):
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        expected = PROBE_LEDGER_SHA256[path.name]
+        if actual != expected:
+            raise ValueError(f"SP17 W0B ledger byte drift: {path.name}: {actual}")
+    actionable = json.loads(ACTIONABLE_JSON.read_text(encoding="utf-8"))
+    residuals = json.loads(RESIDUALS_JSON.read_text(encoding="utf-8"))
+    validate_probe_ledgers(inventory, actionable, residuals)
+    return actionable, residuals
+
+
 def validate_full_snapshot(rows: list[dict[str, str]], summary: dict) -> None:
     if len(rows) != EXPECTED_MAPPING:
         raise ValueError(f"SP17 Chromium inventory changed: {len(rows)}")
@@ -308,14 +479,24 @@ def load_ledgers() -> tuple[list, list, list, dict]:
 
 
 def main() -> int:
-    usage = "Usage: generate_sp17_closure.py [--check|--capture-initial-results]"
-    if sys.argv[1:] not in ([], ["--check"], ["--capture-initial-results"]):
+    usage = (
+        "Usage: generate_sp17_closure.py "
+        "[--check|--capture-initial-results|--probe]"
+    )
+    if sys.argv[1:] not in (
+        [], ["--check"], ["--capture-initial-results"], ["--probe"]
+    ):
         print(usage, file=sys.stderr)
         return 2
 
     validate_historical_ledgers()
     rows, summary = load_inputs()
-    if sys.argv[1:] == ["--capture-initial-results"]:
+    if sys.argv[1:] == ["--probe"]:
+        _, inventory, _, _ = load_ledgers()
+        actionable, residuals = build_probe_ledgers(inventory, WPT_ROOT)
+        ACTIONABLE_JSON.write_text(encoded(actionable), encoding="utf-8")
+        RESIDUALS_JSON.write_text(encoded(residuals), encoding="utf-8")
+    elif sys.argv[1:] == ["--capture-initial-results"]:
         _, inventory, targets, _ = load_ledgers()
         if build_inventory(rows) != inventory or build_initial_targets(inventory) != targets:
             raise ValueError("SP17 mapping drifted before initial evidence capture")
@@ -330,11 +511,21 @@ def main() -> int:
             ]
             if drift:
                 raise ValueError("SP17 kickoff ledger drift: " + ", ".join(map(str, drift)))
-            load_ledgers()
+            _, inventory, _, _ = load_ledgers()
+            if ACTIONABLE_JSON.is_file() or RESIDUALS_JSON.is_file():
+                if not ACTIONABLE_JSON.is_file() or not RESIDUALS_JSON.is_file():
+                    raise ValueError("partial SP17 W0B probe ledger state")
+                load_probe_ledgers(inventory)
         else:
             for path, content in outputs.items():
                 path.write_text(content, encoding="utf-8")
-    print("SP17 W0A ledgers: baseline=3267, inventory=842, initial=19")
+    if ACTIONABLE_JSON.is_file() and RESIDUALS_JSON.is_file():
+        print(
+            "SP17 ledgers: baseline=3267, inventory=842, initial=19, "
+            "actionable=311, residuals=531"
+        )
+    else:
+        print("SP17 W0A ledgers: baseline=3267, inventory=842, initial=19")
     return 0
 
 

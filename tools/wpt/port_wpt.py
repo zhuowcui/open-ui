@@ -94,9 +94,18 @@ SUPPORTED_PROPERTIES = {
     'border-style', 'border-top-style', 'border-right-style', 'border-bottom-style', 'border-left-style',
     'border-color', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',
     'border-block', 'border-block-start', 'border-block-end',
+    'border-inline', 'border-inline-start', 'border-inline-end',
     'border-block-width', 'border-inline-width',
+    'border-block-style', 'border-inline-style',
+    'border-block-color', 'border-inline-color',
     'border-block-start-width', 'border-block-end-width',
     'border-inline-start-width', 'border-inline-end-width',
+    'border-block-start-style', 'border-block-end-style',
+    'border-inline-start-style', 'border-inline-end-style',
+    'border-block-start-color', 'border-block-end-color',
+    'border-inline-start-color', 'border-inline-end-color',
+    'border-start-start-radius', 'border-start-end-radius',
+    'border-end-start-radius', 'border-end-end-radius',
     'border-radius', 'border-top-left-radius', 'border-top-right-radius',
     'border-bottom-left-radius', 'border-bottom-right-radius',
     'box-sizing',
@@ -124,6 +133,9 @@ SUPPORTED_PROPERTIES = {
     # Sizing - logical
     'block-size', 'inline-size', 'min-block-size', 'max-block-size',
     'min-inline-size', 'max-inline-size',
+    # Writing modes and bidi
+    'writing-mode', 'direction', 'unicode-bidi', 'text-orientation',
+    'text-combine-upright',
     # Text (basic)
     'line-height', 'vertical-align', 'text-align', 'white-space',
     'ruby-position',
@@ -143,8 +155,6 @@ UNSUPPORTED_FEATURES = {
     # Grid layout — not implemented
     'grid', 'grid-template', 'grid-template-columns', 'grid-template-rows',
     'grid-column', 'grid-row', 'grid-area', 'grid-gap',
-    # Writing modes — changes coordinate system fundamentally
-    'writing-mode', 'unicode-bidi',
     # Transforms & animation — out of scope
     'transform', 'rotate', 'scale', 'translate',
     'animation', 'transition',
@@ -180,7 +190,7 @@ IGNORED_PROPERTIES = {
     'border-image', 'border-image-source', 'border-image-slice',
     'border-image-width', 'border-image-repeat',
     # Print/page
-    'print-color-adjust', 'image-rendering',
+    'print-color-adjust', 'image-rendering', 'size',
     # Scroll
     'scrollbar-gutter', 'scrollbar-width',
 }
@@ -933,6 +943,93 @@ _COLUMN_RULE_STYLES = {
     'groove', 'ridge', 'inset', 'outset',
 }
 
+_SP17_PROPERTY_VALUES = {
+    'writing-mode': {
+        'horizontal-tb', 'vertical-rl', 'vertical-lr', 'sideways-rl', 'sideways-lr',
+    },
+    'direction': {'ltr', 'rtl'},
+    'unicode-bidi': {
+        'normal', 'embed', 'bidi-override', 'isolate', 'isolate-override',
+        'plaintext',
+    },
+    'text-orientation': {'mixed', 'upright', 'sideways'},
+    'text-combine-upright': {'none', 'all'},
+}
+_SP17_INITIAL_VALUES = {
+    'writing-mode': 'horizontal-tb',
+    'direction': 'ltr',
+    'unicode-bidi': 'normal',
+    'text-orientation': 'mixed',
+    'text-combine-upright': 'none',
+}
+_SP17_INHERITED_PROPERTIES = {
+    'writing-mode', 'direction', 'text-orientation', 'text-combine-upright',
+}
+
+
+class CssDeclarations(OrderedDict):
+    """Ordered declarations plus the winning CSS cascade priority per property.
+
+    The generated Rust DOM stores computed physical fields. Logical and physical
+    declarations can therefore converge on one field only after writing-mode
+    and direction are known. Keeping priority metadata lets that late mapping
+    preserve importance, specificity, and declaration order without changing
+    the dict interface used by the historical porter.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.cascade_priority: dict[str, tuple] = {}
+        self.important: dict[str, bool] = {}
+
+
+def _copy_declarations(styles: dict) -> CssDeclarations:
+    copied = CssDeclarations(styles)
+    if isinstance(styles, CssDeclarations):
+        copied.cascade_priority.update(styles.cascade_priority)
+        copied.important.update(styles.important)
+    return copied
+
+
+def _set_declaration(
+    styles: dict,
+    prop: str,
+    value: str,
+    *,
+    priority: tuple | None = None,
+    important: bool = False,
+) -> None:
+    if isinstance(styles, CssDeclarations) and priority is not None:
+        existing = styles.cascade_priority.get(prop)
+        if existing is not None and priority < existing:
+            return
+    styles[prop] = value
+    if isinstance(styles, CssDeclarations):
+        if priority is not None:
+            styles.cascade_priority[prop] = priority
+        styles.important[prop] = important
+
+
+def _split_important(value: str) -> tuple[str, bool]:
+    match = re.search(r'\s*!\s*important\s*$', value, re.IGNORECASE)
+    if not match:
+        return value.strip(), False
+    return value[:match.start()].strip(), True
+
+
+def _normalized_sp17_value(prop: str, value: str) -> str | None:
+    """Return a transactional computed token, or None for an invalid value."""
+    value = value.strip().lower()
+    if value in _SP17_PROPERTY_VALUES[prop]:
+        return value
+    if value not in _CSS_WIDE:
+        return None
+    if value == 'inherit':
+        return value
+    if value == 'unset' and prop in _SP17_INHERITED_PROPERTIES:
+        return 'inherit'
+    return _SP17_INITIAL_VALUES[prop]
+
 
 def _nonnegative_css_length(value: str, *, strictly_positive: bool = False) -> bool:
     """Validate the corpus-used non-negative <length-percentage> grammar."""
@@ -1094,44 +1191,70 @@ def _multicol_initial_value(prop: str) -> str:
 
 def parse_inline_styles(style_str: str) -> dict:
     """Parse declarations transactionally, preserving the valid cascade."""
-    result = OrderedDict()
+    result = CssDeclarations()
     if not style_str:
         return result
-    for decl in style_str.split(';'):
+    for declaration_index, decl in enumerate(style_str.split(';')):
         decl = decl.strip()
         if ':' not in decl:
             continue
         prop, val = decl.split(':', 1)
         prop = prop.strip().lower()
-        val = val.strip()
+        val, important = _split_important(val)
+        priority = (int(important), 1, 0, 0, 0, 0, declaration_index)
         if prop == 'columns':
             expanded = _parse_columns_shorthand(val)
             if expanded is not None:
-                result.update(expanded)
+                for longhand, value in expanded.items():
+                    _set_declaration(
+                        result, longhand, value, priority=priority,
+                        important=important,
+                    )
         elif prop == 'column-rule':
             expanded = _parse_column_rule_shorthand(val)
             if expanded is not None:
-                result.update(expanded)
+                for longhand, value in expanded.items():
+                    _set_declaration(
+                        result, longhand, value, priority=priority,
+                        important=important,
+                    )
         elif prop.startswith('column-') or prop == 'row-gap':
             # Invalid declarations do not replace an earlier valid declaration
             # in the same block (CSS Cascade §5).
             if _valid_multicol_longhand(prop, val):
-                result[prop] = (
+                value = (
                     _multicol_initial_value(prop)
                     if val.strip().lower() in {'initial', 'unset', 'revert', 'revert-layer'}
                     else val
                 )
+                _set_declaration(
+                    result, prop, value, priority=priority, important=important
+                )
+        elif prop in _SP17_PROPERTY_VALUES:
+            value = _normalized_sp17_value(prop, val)
+            if value is not None:
+                _set_declaration(
+                    result, prop, value, priority=priority, important=important
+                )
         elif prop == 'zoom':
             if _valid_zoom(val):
-                result[prop] = (
+                value = (
                     'normal'
                     if val.strip().lower() in {'initial', 'unset', 'revert', 'revert-layer'}
                     else val
                 )
+                _set_declaration(
+                    result, prop, value, priority=priority, important=important
+                )
         elif prop == "font" and is_real_font_profile():
-            result.update(parse_font_shorthand(val))
+            for longhand, value in parse_font_shorthand(val).items():
+                _set_declaration(
+                    result, longhand, value, priority=priority, important=important
+                )
         else:
-            result[prop] = val
+            _set_declaration(
+                result, prop, val, priority=priority, important=important
+            )
     return result
 
 
@@ -1523,23 +1646,64 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
     id_val = node.attrs.get('id', '')
 
     # Save inline styles (highest precedence)
-    inline_styles = OrderedDict(node.styles)
+    inline_styles = _copy_declarations(node.styles)
 
     # Apply stylesheet rules respecting specificity.
     # Higher-specificity rules win; within same specificity, later wins.
-    cascade = OrderedDict()       # prop -> value
-    cascade_spec = {}             # prop -> specificity tuple
-    for selector, styles in rules:
+    cascade = CssDeclarations()   # prop -> value plus winning priority
+    cascade_priority = {}
+
+    # HTML dir is an author-origin presentational hint with zero specificity.
+    # It precedes stylesheet declarations, so any matching author rule wins.
+    dir_hint = node.attrs.get('dir', '').strip().lower()
+    if dir_hint in {'ltr', 'rtl'}:
+        hint_priority = (0, 0, 0, 0, 0, -1, -1)
+        _set_declaration(
+            cascade, 'direction', dir_hint, priority=hint_priority
+        )
+        _set_declaration(
+            cascade, 'unicode-bidi', 'isolate', priority=hint_priority
+        )
+        cascade_priority['direction'] = hint_priority
+        cascade_priority['unicode-bidi'] = hint_priority
+
+    for rule_index, (selector, styles) in enumerate(rules):
         if match_selector(selector, node.tag, classes, id_val, ancestors,
                           sibling_index, sibling_count, preceding_siblings):
             spec = compute_specificity(selector)
-            for prop, val in styles.items():
-                if prop not in cascade_spec or spec >= cascade_spec[prop]:
-                    cascade[prop] = val
-                    cascade_spec[prop] = spec
+            for declaration_index, (prop, val) in enumerate(styles.items()):
+                important = (
+                    styles.important.get(prop, False)
+                    if isinstance(styles, CssDeclarations) else False
+                )
+                if isinstance(styles, CssDeclarations):
+                    declaration_index = styles.cascade_priority.get(
+                        prop, (0, 0, 0, 0, 0, 0, declaration_index)
+                    )[-1]
+                priority = (
+                    int(important), 0, spec[0], spec[1], spec[2],
+                    rule_index, declaration_index,
+                )
+                if prop not in cascade_priority or priority >= cascade_priority[prop]:
+                    _set_declaration(
+                        cascade, prop, val, priority=priority, important=important
+                    )
+                    cascade_priority[prop] = priority
 
     # Inline styles override stylesheet rules (highest precedence)
-    cascade.update(inline_styles)
+    for declaration_index, (prop, val) in enumerate(inline_styles.items()):
+        important = inline_styles.important.get(prop, False)
+        declaration_index = inline_styles.cascade_priority.get(
+            prop, (0, 0, 0, 0, 0, 0, declaration_index)
+        )[-1]
+        priority = (
+            int(important), 1, 0, 0, 0, len(rules), declaration_index,
+        )
+        if prop not in cascade_priority or priority >= cascade_priority[prop]:
+            _set_declaration(
+                cascade, prop, val, priority=priority, important=important
+            )
+            cascade_priority[prop] = priority
     node.styles = cascade
 
     child_ancestors = ancestors + [(node.tag, classes, id_val)]
@@ -1587,7 +1751,8 @@ class WptHtmlParser(HTMLParser):
         self.all_styles = []  # all style dicts encountered
         self.ref_path = None
         self.html_dir = ''  # Set by parse_wpt_html for resolving relative paths
-        self.html_styles = OrderedDict()  # styles applied to <html> (root element)
+        self.html_styles = CssDeclarations()  # styles applied to <html> (root element)
+        self.html_attrs = {}
 
     # Void elements that never have closing tags
     VOID_TAGS = {'link', 'meta', 'br', 'hr', 'img', 'input', 'col', 'area',
@@ -1638,10 +1803,12 @@ class WptHtmlParser(HTMLParser):
 
         if tag in ('head', 'html', 'body'):
             if tag == 'html':
+                self.html_attrs = attrs_dict
                 if 'style' in attrs_dict:
                     self.html_styles = parse_inline_styles(attrs_dict['style'])
             if tag == 'body':
                 self.in_body = True
+                self.root.attrs = attrs_dict
                 if 'style' in attrs_dict:
                     self.root.styles = parse_inline_styles(attrs_dict['style'])
             return
@@ -1773,20 +1940,65 @@ class WptHtmlParser(HTMLParser):
             root_ancestors = [('html', [], '')] if self.root_aware else None
             apply_css_rules(all_rules, self.root, ancestors=root_ancestors)
             # Apply html-targeted rules to self.html_styles for body-bg propagation logic.
-            html_cascade = OrderedDict()
-            html_cascade_spec = {}
-            for selector, styles in all_rules:
+            html_cascade = CssDeclarations()
+            html_cascade_priority = {}
+            html_dir = self.html_attrs.get('dir', '').strip().lower()
+            if html_dir in {'ltr', 'rtl'}:
+                hint_priority = (0, 0, 0, 0, 0, -1, -1)
+                _set_declaration(
+                    html_cascade, 'direction', html_dir, priority=hint_priority
+                )
+                _set_declaration(
+                    html_cascade, 'unicode-bidi', 'isolate', priority=hint_priority
+                )
+                html_cascade_priority['direction'] = hint_priority
+                html_cascade_priority['unicode-bidi'] = hint_priority
+            for rule_index, (selector, styles) in enumerate(all_rules):
                 # Match selectors targeting the html root element only.
                 sel = selector.strip().lower()
                 if sel in ('html', ':root', '*'):
                     spec = compute_specificity(selector)
-                    for prop, val in styles.items():
-                        if prop not in html_cascade_spec or spec >= html_cascade_spec[prop]:
-                            html_cascade[prop] = val
-                            html_cascade_spec[prop] = spec
+                    for declaration_index, (prop, val) in enumerate(styles.items()):
+                        important = (
+                            styles.important.get(prop, False)
+                            if isinstance(styles, CssDeclarations) else False
+                        )
+                        if isinstance(styles, CssDeclarations):
+                            declaration_index = styles.cascade_priority.get(
+                                prop, (0, 0, 0, 0, 0, 0, declaration_index)
+                            )[-1]
+                        priority = (
+                            int(important), 0, spec[0], spec[1], spec[2],
+                            rule_index, declaration_index,
+                        )
+                        if (
+                            prop not in html_cascade_priority
+                            or priority >= html_cascade_priority[prop]
+                        ):
+                            _set_declaration(
+                                html_cascade, prop, val, priority=priority,
+                                important=important,
+                            )
+                            html_cascade_priority[prop] = priority
             # Inline html styles take highest precedence
-            inline = OrderedDict(self.html_styles)
-            html_cascade.update(inline)
+            inline = _copy_declarations(self.html_styles)
+            for declaration_index, (prop, val) in enumerate(inline.items()):
+                important = inline.important.get(prop, False)
+                declaration_index = inline.cascade_priority.get(
+                    prop, (0, 0, 0, 0, 0, 0, declaration_index)
+                )[-1]
+                priority = (
+                    int(important), 1, 0, 0, 0, len(all_rules), declaration_index,
+                )
+                if (
+                    prop not in html_cascade_priority
+                    or priority >= html_cascade_priority[prop]
+                ):
+                    _set_declaration(
+                        html_cascade, prop, val, priority=priority,
+                        important=important,
+                    )
+                    html_cascade_priority[prop] = priority
             self.html_styles = html_cascade
 
             # A style element normally has UA ``display:none``.  If author CSS
@@ -2331,6 +2543,188 @@ def _computed_inherited_line_height(value: str, font_size: float) -> str:
     raise UnsupportedFontShorthand(f"unsupported inherited line-height: {value}")
 
 
+def _sp17_logical_sides(writing_mode: str, direction: str) -> dict[str, str]:
+    """Resolve logical start/end edges to physical sides for one element."""
+    if writing_mode == 'horizontal-tb':
+        block_start, block_end = 'top', 'bottom'
+        inline_start, inline_end = (
+            ('right', 'left') if direction == 'rtl' else ('left', 'right')
+        )
+    elif writing_mode in {'vertical-rl', 'sideways-rl'}:
+        block_start, block_end = 'right', 'left'
+        inline_start, inline_end = (
+            ('bottom', 'top') if direction == 'rtl' else ('top', 'bottom')
+        )
+    elif writing_mode == 'vertical-lr':
+        block_start, block_end = 'left', 'right'
+        inline_start, inline_end = (
+            ('bottom', 'top') if direction == 'rtl' else ('top', 'bottom')
+        )
+    elif writing_mode == 'sideways-lr':
+        block_start, block_end = 'left', 'right'
+        inline_start, inline_end = (
+            ('top', 'bottom') if direction == 'rtl' else ('bottom', 'top')
+        )
+    else:
+        raise ValueError(f"unsupported computed writing-mode: {writing_mode!r}")
+    return {
+        'block-start': block_start,
+        'block-end': block_end,
+        'inline-start': inline_start,
+        'inline-end': inline_end,
+    }
+
+
+def _sp17_declarations_in_cascade_order(styles: dict) -> list[tuple[str, str]]:
+    indexed = list(enumerate(styles.items()))
+    has_logical_box_property = any(
+        re.fullmatch(r'(?:min-|max-)?(?:block|inline)-size', prop)
+        or re.fullmatch(
+            r'(?:margin|padding|inset)-(?:block|inline)(?:-(?:start|end))?',
+            prop,
+        )
+        or re.fullmatch(
+            r'border-(?:block|inline)(?:-(?:start|end))?'
+            r'(?:-(?:width|style|color))?',
+            prop,
+        )
+        or re.fullmatch(
+            r'border-(?:start|end)-(?:start|end)-radius', prop
+        )
+        for _, (prop, _) in indexed
+    )
+    if not isinstance(styles, CssDeclarations) or not has_logical_box_property:
+        return [item for _, item in indexed]
+
+    # Low-priority declarations are materialized first. A later declaration
+    # that maps to the same physical field therefore wins naturally.
+    def key(item):
+        index, (prop, _) = item
+        return styles.cascade_priority.get(
+            prop, (0, 0, 0, 0, 0, 0, index)
+        ), index
+
+    return [item for _, item in sorted(indexed, key=key)]
+
+
+def _assign_resolved_declaration(
+    result: OrderedDict, prop: str, value: str
+) -> None:
+    # Reinsert an overwritten field at the winning declaration's location so
+    # a following physical shorthand still observes the correct cascade order.
+    if prop in result:
+        del result[prop]
+    result[prop] = value
+
+
+def _expand_sp17_logical_declaration(
+    prop: str, value: str, sides: dict[str, str], writing_mode: str,
+) -> list[tuple[str, str]] | None:
+    size_match = re.fullmatch(r'(min-|max-)?(block|inline)-size', prop)
+    if size_match:
+        prefix = size_match.group(1) or ''
+        axis = size_match.group(2)
+        physical_axis = (
+            'height' if (axis == 'block') == (writing_mode == 'horizontal-tb')
+            else 'width'
+        )
+        return [(f'{prefix}{physical_axis}', value)]
+
+    side_match = re.fullmatch(
+        r'(margin|padding|inset)-(block|inline)(?:-(start|end))?', prop
+    )
+    if side_match:
+        family, axis, edge = side_match.groups()
+
+        def physical_name(logical_edge: str) -> str:
+            side = sides[f'{axis}-{logical_edge}']
+            return side if family == 'inset' else f'{family}-{side}'
+
+        if edge:
+            return [(physical_name(edge), value)]
+        parts = _split_respecting_parens(value)
+        if len(parts) == 1:
+            parts *= 2
+        if len(parts) != 2:
+            return None
+        return [
+            (physical_name('start'), parts[0]),
+            (physical_name('end'), parts[1]),
+        ]
+
+    border_match = re.fullmatch(
+        r'border-(block|inline)(?:-(start|end))?(?:-(width|style|color))?',
+        prop,
+    )
+    if border_match:
+        axis, edge, component = border_match.groups()
+
+        def physical_name(logical_edge: str) -> str:
+            base = f"border-{sides[f'{axis}-{logical_edge}']}"
+            return f'{base}-{component}' if component else base
+
+        if edge:
+            return [(physical_name(edge), value)]
+        parts = (
+            _split_respecting_parens(value)
+            if component in {'width', 'style', 'color'} else [value]
+        )
+        if len(parts) == 1:
+            parts *= 2
+        if len(parts) != 2:
+            return None
+        return [
+            (physical_name('start'), parts[0]),
+            (physical_name('end'), parts[1]),
+        ]
+
+    corner_match = re.fullmatch(
+        r'border-(start|end)-(start|end)-radius', prop
+    )
+    if corner_match:
+        block_edge, inline_edge = corner_match.groups()
+        physical = {
+            sides[f'block-{block_edge}'], sides[f'inline-{inline_edge}']
+        }
+        corners = {
+            frozenset({'top', 'left'}): 'border-top-left-radius',
+            frozenset({'top', 'right'}): 'border-top-right-radius',
+            frozenset({'bottom', 'right'}): 'border-bottom-right-radius',
+            frozenset({'bottom', 'left'}): 'border-bottom-left-radius',
+        }
+        return [(corners[frozenset(physical)], value)]
+    return None
+
+
+def resolve_sp17_logical_properties(styles: dict) -> OrderedDict:
+    """Resolve logical CSS only after this element's writing direction exists.
+
+    ComputedStyle currently stores physical box fields. This transaction keeps
+    the authored cascade intact through parsing and selector matching, derives
+    the winning writing-mode/direction, then converts each logical declaration
+    exactly once. It is the porter-side computed-value boundary used until W1
+    teaches layout to consume authoritative logical geometry directly.
+    """
+    writing_mode = styles.get('writing-mode', 'horizontal-tb').strip().lower()
+    direction = styles.get('direction', 'ltr').strip().lower()
+    if writing_mode == 'inherit':
+        writing_mode = 'horizontal-tb'
+    if direction == 'inherit':
+        direction = 'ltr'
+    sides = _sp17_logical_sides(writing_mode, direction)
+    result = OrderedDict()
+    for prop, value in _sp17_declarations_in_cascade_order(styles):
+        expanded = _expand_sp17_logical_declaration(
+            prop, value, sides, writing_mode
+        )
+        if expanded is None:
+            _assign_resolved_declaration(result, prop, value)
+            continue
+        for physical_prop, physical_value in expanded:
+            _assign_resolved_declaration(result, physical_prop, physical_value)
+    return result
+
+
 def generate_style_code(
     styles: dict,
     var_name: str,
@@ -2341,6 +2735,7 @@ def generate_style_code(
     
     inherited_font_size: font-size in px inherited from parent for em resolution.
     """
+    styles = resolve_sp17_logical_properties(styles)
     lines = []
     s = f"doc.node_mut({var_name}).style"
 
@@ -2972,6 +3367,46 @@ def generate_single_style(
         mapping = {'ltr': 'Direction::Ltr', 'rtl': 'Direction::Rtl'}
         if val in mapping:
             return f"{s}.direction = {mapping[val]};"
+
+    if prop == 'writing-mode':
+        mapping = {
+            'horizontal-tb': 'WritingMode::HorizontalTb',
+            'vertical-rl': 'WritingMode::VerticalRl',
+            'vertical-lr': 'WritingMode::VerticalLr',
+            'sideways-rl': 'WritingMode::SidewaysRl',
+            'sideways-lr': 'WritingMode::SidewaysLr',
+        }
+        if val in mapping:
+            return f"{s}.writing_mode = {mapping[val]};"
+
+    if prop == 'unicode-bidi':
+        mapping = {
+            'normal': 'UnicodeBidi::Normal',
+            'embed': 'UnicodeBidi::Embed',
+            'bidi-override': 'UnicodeBidi::Override',
+            'isolate': 'UnicodeBidi::Isolate',
+            'isolate-override': 'UnicodeBidi::IsolateOverride',
+            'plaintext': 'UnicodeBidi::Plaintext',
+        }
+        if val in mapping:
+            return f"{s}.unicode_bidi = {mapping[val]};"
+
+    if prop == 'text-orientation':
+        mapping = {
+            'mixed': 'TextOrientation::Mixed',
+            'upright': 'TextOrientation::Upright',
+            'sideways': 'TextOrientation::Sideways',
+        }
+        if val in mapping:
+            return f"{s}.text_orientation = {mapping[val]};"
+
+    if prop == 'text-combine-upright':
+        mapping = {
+            'none': 'TextCombineUpright::None',
+            'all': 'TextCombineUpright::All',
+        }
+        if val in mapping:
+            return f"{s}.text_combine_upright = {mapping[val]};"
 
     # ── flex properties ──
     if prop == 'flex-direction':
@@ -4357,7 +4792,9 @@ def generate_rust_fn(
         return False
 
     # CSS inherited properties that must propagate to descendants
-    INHERITED_PROPS = {'direction', 'color', 'white-space', 'word-break', 'text-align',
+    INHERITED_PROPS = {'direction', 'writing-mode', 'text-orientation',
+                       'text-combine-upright',
+                       'color', 'white-space', 'word-break', 'text-align',
                        'font-size', 'line-height', 'visibility',
                        'orphans', 'widows', 'ruby-position'}
     if is_real_font_profile():
@@ -4373,6 +4810,7 @@ def generate_rust_fn(
         'column-count', 'column-width', 'column-height', 'column-gap',
         'column-fill', 'column-span', 'column-wrap',
         'column-rule-width', 'column-rule-style', 'column-rule-color',
+        'unicode-bidi',
     }
     EXPLICIT_NON_INHERITED_INITIALS = {
         'background': 'transparent',
@@ -4388,6 +4826,7 @@ def generate_rust_fn(
         'column-rule-width': 'medium',
         'column-rule-style': 'none',
         'column-rule-color': 'currentcolor',
+        'unicode-bidi': 'normal',
     }
     REAL_FONT_INITIALS = {
         'font-family': 'sans-serif',
@@ -4484,6 +4923,8 @@ def generate_rust_fn(
                             'font-weight', 'font-style', 'font-stretch',
                             'font-variant-caps', 'white-space', 'word-break', 'line-height',
                             'text-transform', 'letter-spacing', 'word-spacing',
+                            'direction', 'writing-mode',
+                            'text-orientation', 'text-combine-upright',
                         ):
                             if prop in inherited:
                                 code = generate_single_style(prop, inherited[prop], ts, parent_font_size)
@@ -4595,6 +5036,17 @@ def generate_rust_fn(
                     if code:
                         for cl in (code if isinstance(code, list) else [code]):
                             lines.append(f"{ws}{cl}")
+                for prop in (
+                    'direction', 'writing-mode',
+                    'text-orientation', 'text-combine-upright',
+                ):
+                    if prop in inherited:
+                        code = generate_single_style(
+                            prop, inherited[prop], bs, parent_font_size
+                        )
+                        if code:
+                            for cl in (code if isinstance(code, list) else [code]):
+                                lines.append(f"{ws}{cl}")
                 lines.append(f'{ws}doc.node_mut({bvar}).text = Some("\\n".to_string());')
                 lines.append(f"{ws}doc.append_child({parent_var}, {bvar});")
             else:
@@ -4615,7 +5067,10 @@ def generate_rust_fn(
             # children while retaining the element's inheritance/custom-
             # property boundary; otherwise borders/backgrounds incorrectly
             # paint and block descendants participate in the wrong context.
-            effective_styles = OrderedDict(node.styles)
+            effective_styles = _copy_declarations(node.styles)
+            for prop in sorted(_SP17_INHERITED_PROPERTIES):
+                if prop in inherited and prop not in effective_styles:
+                    effective_styles[prop] = inherited[prop]
             if is_real_font_profile():
                 for prop in sorted(INHERITED_PROPS):
                     if prop in inherited and prop not in effective_styles:
@@ -4745,7 +5200,10 @@ def generate_rust_fn(
                     lines.append(f"{ws}{s}.{field} = {val};")
 
         # Resolve explicit CSS-wide `inherit` before generating style code.
-        effective_styles = OrderedDict(node.styles)
+        effective_styles = _copy_declarations(node.styles)
+        for prop in sorted(_SP17_INHERITED_PROPERTIES):
+            if prop in inherited and prop not in effective_styles:
+                effective_styles[prop] = inherited[prop]
         if is_real_font_profile():
             # Generated DOM nodes do not run a cascade. Materialize inherited
             # font properties before resolving ch/ex/lh so face selection sees
@@ -4929,6 +5387,8 @@ def generate_rust_fn(
                 'font-weight', 'font-style', 'font-stretch',
                 'font-variant-caps', 'white-space', 'word-break', 'line-height',
                 'text-transform', 'letter-spacing', 'word-spacing',
+                'direction', 'writing-mode',
+                'text-orientation', 'text-combine-upright',
             ):
                 if prop in child_inherited:
                     code = generate_single_style(
@@ -4966,7 +5426,7 @@ def generate_rust_fn(
     body_custom_props = {}
     html_zoom = 1.0
     if root_aware and html_styles:
-        computed_html_styles = OrderedDict(html_styles)
+        computed_html_styles = _copy_declarations(html_styles)
         if is_real_font_profile():
             for prop, val in list(computed_html_styles.items()):
                 if val.strip() == 'inherit' and prop in REAL_FONT_INITIALS:
@@ -4982,7 +5442,10 @@ def generate_rust_fn(
         for prop, val in root.styles.items():
             if prop.startswith('--'):
                 body_custom_props[prop] = val
-        computed_root_styles = OrderedDict(root.styles)
+        computed_root_styles = _copy_declarations(root.styles)
+        for prop in sorted(_SP17_INHERITED_PROPERTIES):
+            if prop in body_inherited and prop not in computed_root_styles:
+                computed_root_styles[prop] = body_inherited[prop]
         if is_real_font_profile():
             for prop in sorted(INHERITED_PROPS):
                 if prop in body_inherited and prop not in computed_root_styles:

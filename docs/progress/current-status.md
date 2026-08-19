@@ -21,7 +21,8 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (reproduced at SP17 W0A):
+Latest authoritative accountability snapshot (reproduced at SP17 W0A and
+preserved through W0B):
 
 | Metric | Value |
 |---|---:|
@@ -42,7 +43,7 @@ Latest authoritative accountability snapshot (reproduced at SP17 W0A):
 The full `wpt/` run was executed without resume on 2026-08-19. All 2823 frozen SP13-R baseline
 IDs and all 351 runnable multicol targets remain exact.
 
-## SP17 W0A Kickoff Evidence
+## SP17 W0B Transactional Probe
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -53,9 +54,23 @@ ledgers are byte-pinned and unchanged.
 
 The 19-ID no-resume run produced 19 expected functional failures and zero
 errors. The authoritative 3,566-ID full summary was restored afterward and the
-unflagged audit passes 7/7. No production layout, paint, porter, generated WPT,
-mapping, or detector behavior changed in W0A. See `docs/SP17-PLAN.md` and the
-four `tools/accountability/data/wpt_ported/sp17_*` kickoff artifacts.
+unflagged audit passes 7/7.
+
+W0B now accepts and transactionally computes the corpus-used SP17 declarations,
+preserves importance/specificity/source-order conflicts between logical and
+physical aliases, propagates inherited writing properties, and emits the
+existing Rust style enums. A faithful deterministic-Ahem builder probe over all
+823 kickoff-unported rows found 292 newly generatable rows and 531 actual
+residuals. Together with the 19 kickoff-runnable IDs, the frozen actionable
+ledger contains 311 rows. The two ledgers are sorted, disjoint, and cover all
+842 original owner rows.
+
+No generated Rust WPT module, runner profile, mapping row, or authoritative
+result changed in W0B. The only residuals still owned by SP17 are the
+`css-flexbox-test1` test/reference pair: their fullwidth digits are absent from
+the pinned fonts and remain guarded as `text_non_ascii` until W2 adds a pinned
+glyph path. See `docs/SP17-PLAN.md` and the six
+`tools/accountability/data/wpt_ported/sp17_*` artifacts.
 
 ## SP13-R Closure
 
@@ -157,12 +172,13 @@ Top unported categories:
 
 ## Recommended Next Work
 
-Continue SP17 with W0B transactional CSS and porter probing. Add focused parser,
-cascade, inheritance, logical/physical conflict, and idempotence tests before
-changing rejection policy. Then probe the frozen 337 direct `writing-mode` and
-three direct `unicode-bidi` rows into temporary output and freeze the reviewed
-actionable/residual partition. Do not batch-regenerate builders or retire the
-detector during the probe. Follow `docs/SP17-PLAN.md` for the exact boundary.
+Continue SP17 with W1 authoritative logical geometry. First thread the complete
+writing direction through `ConstraintSpace`, add explicit orthogonal
+parent/child size conversion, and prove horizontal layout remains a no-op. Then
+move shared block and flex geometry to resolved logical axes before surgically
+splicing the first 86 sole-SP17 actionable rows. Do not batch-regenerate the 292
+new builders or retire the detector before shared geometry and exact pixel
+evidence are ready. Follow `docs/SP17-PLAN.md` for the exact boundary.
 
 Hosted pre-merge checks and the separate pinned Chromium parity gate are
 documented in `docs/CI.md`.
