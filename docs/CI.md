@@ -14,7 +14,7 @@ repository permissions.
 | `native-build (Debug)` | Generate the portable GN graph, build `hello_world`, and run it. |
 | `native-build (Release)` | Repeat the portable native smoke test with release flags. |
 | `rust-parity` | Check Rust formatting and run the style, text, layout, and paint test suites. |
-| `python-accountability` | Run the SP13-R through SP16 closure/porter tests, verify the immutable SP13-R ledgers, and require the accountability audit to pass 7/7. |
+| `python-accountability` | Run the SP13-R through SP16 closure/porter tests, verify the immutable SP13-R ledgers, and validate committed exact-result metadata plus accountability checks 2–7. |
 | `clang-format` | Require every tracked C/C++ source under `src/`, `include/`, and `examples/` to match clang-format 18. |
 | `gn-format` | Require every tracked `.gn` and `.gni` file to pass `gn format --dry-run`. |
 
@@ -38,6 +38,13 @@ Porter idempotence tests use the two immutable upstream snapshots under
 `~/chromium`: that can pass on the parity workstation while failing on every
 clean runner. Add only the minimal source fixture needed to reproduce a
 committed builder and record its Chromium revision in the fixture README.
+
+Pixel PNGs are regenerated workstation artifacts and are intentionally ignored
+by Git. Hosted CI therefore runs `audit.py --repository-only`: it still requires
+every pass to have a committed `result.json` with `status=pass` and exactly
+`0.0` mismatch, then runs checks 2–7 unchanged. Only the unflagged `audit.py`
+command is a full 7/7 parity audit because it additionally requires both PNGs.
+Never use repository-only mode to close a pixel-parity sprint.
 
 ## Local equivalents
 

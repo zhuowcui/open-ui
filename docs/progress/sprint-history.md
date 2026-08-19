@@ -377,8 +377,8 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   Release jobs now build and execute the portable `hello_world` target instead
   of implicitly entering the Chromium-dependent Skia POC.
 - Added hosted Rust formatting plus style/text/layout/paint tests, cached
-  source-built Skia, the 99-test Python closure/porter suite, immutable SP13-R
-  ledger verification, and the 7/7 accountability audit.
+  source-built Skia, the 100-test Python closure/porter suite, immutable SP13-R
+  ledger verification, and repository-contained accountability verification.
 - Formatted the tracked C/C++ and GN sources once so the native format gates
   enforce a clean baseline rather than failing on historical drift.
 - Added `docs/CI.md` with hosted-versus-pinned validation boundaries and exact
@@ -387,7 +387,7 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   3,267-pass guard, all 19 runnable writing-mode IDs, the full 842-row owner
   inventory, the 337 direct porter opportunities, implementation waves,
   architecture hotspots, and closure commands.
-- Local pre-push evidence: Rust style/text/layout/paint suites pass; all 99
+- Local pre-push evidence: Rust style/text/layout/paint suites pass; all 100
   Python tests pass; SP13-R ledgers remain 2,823/351/1,018; audit passes 7/7;
   clang-format 18, GN formatting, workflow syntax, and `git diff --check` pass.
 - The first hosted run exposed three porter tests that had silently relied on
@@ -399,3 +399,8 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   `-Wno-gcc-install-dir-libstdcxx` switch under `-Werror`. The compiler config
   now adds that switch only for `chromium_src` hermetic builds, preserving ABI
   behavior while making the standalone native smoke target portable.
+- The clean runner also confirmed that comparison PNGs are deliberately
+  ignored workstation artifacts. Hosted CI now uses an explicit
+  `audit.py --repository-only` mode that keeps exact committed `result.json`
+  proof and checks 2–7 strict; the unflagged local 7/7 audit remains the sole
+  pixel-evidence gate and still requires both screenshots for every pass.

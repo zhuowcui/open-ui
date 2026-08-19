@@ -16,6 +16,7 @@ Checks:
 7. Mapping ↔ deferred classification cross-check
 """
 
+import argparse
 import csv
 import json
 import os
@@ -628,9 +629,14 @@ def sp13r_multicol_closure_errors(
     return errors
 
 
-def check_summary_integrity():
-    """Check 1: Every pass has proof — result.json with status=pass, mismatch_pct=0.0, PNGs exist."""
-    print("\n── Check 1: Pass claims have proof (with image verification) ──")
+def check_summary_integrity(*, require_images=True):
+    """Check 1: Every pass has exact result metadata and, normally, PNG proof."""
+    verification = (
+        "with image verification"
+        if require_images
+        else "committed result verification; image verification deferred"
+    )
+    print(f"\n── Check 1: Pass claims have proof ({verification}) ──")
     summary_path = os.path.join(RESULTS_DIR, "summary.json")
     if not os.path.isfile(summary_path):
         issue("summary.json not found")
@@ -700,13 +706,15 @@ def check_summary_integrity():
                     if proof_failures <= 3:
                         issue(f"Pass claimed but result.json status='{result_status}': {test['id']}")
 
-            # Verify both PNG screenshots exist
-            ours_png = os.path.join(result_dir, "openui.png")
-            chrome_png = os.path.join(result_dir, "chromium.png")
-            if not os.path.isfile(ours_png) or not os.path.isfile(chrome_png):
-                missing_images += 1
-                if missing_images <= 3:
-                    issue(f"Pass claimed but PNG screenshot(s) missing: {test['id']}")
+            if require_images:
+                # PNGs are intentionally workstation artifacts rather than
+                # repository contents, so hosted CI uses --repository-only.
+                ours_png = os.path.join(result_dir, "openui.png")
+                chrome_png = os.path.join(result_dir, "chromium.png")
+                if not os.path.isfile(ours_png) or not os.path.isfile(chrome_png):
+                    missing_images += 1
+                    if missing_images <= 3:
+                        issue(f"Pass claimed but PNG screenshot(s) missing: {test['id']}")
         else:
             # Both 'fail' and 'error' (render/diff failures) are counted as failures.
             fail_count += 1
@@ -719,7 +727,8 @@ def check_summary_integrity():
         issue(f"... and {missing_images - 3} more passes with missing PNGs")
 
     if missing_results == 0 and proof_failures == 0 and missing_images == 0:
-        ok(f"All {pass_count} passes have verified 0.0% mismatch + PNG proof")
+        proof = "0.0% mismatch + PNG proof" if require_images else "committed 0.0% result proof"
+        ok(f"All {pass_count} passes have verified {proof}")
 
     # Verify totals (errors are folded into failed for accounting).
     error_count = sum(1 for t in summary["tests"] if t["status"] == "error")
@@ -1252,12 +1261,26 @@ def check_classification_consistency():
         ok(f"Mapping and deferred classifications consistent for {len(deferred_cats)} tests")
 
 
-def main():
+def parse_args(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--repository-only",
+        action="store_true",
+        help=(
+            "verify committed result.json proof and checks 2-7 without requiring "
+            "ignored PNG artifacts; intended only for clean hosted checkouts"
+        ),
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv=None):
+    args = parse_args(argv)
     print("═══════════════════════════════════════════════")
     print("  OPEN UI WPT PIPELINE AUDIT")
     print("═══════════════════════════════════════════════")
 
-    check_summary_integrity()
+    check_summary_integrity(require_images=not args.repository_only)
     check_template_consistency()
     check_rust_code_exists()
     check_mapping_coverage()

@@ -6,10 +6,12 @@ from __future__ import annotations
 import csv
 import hashlib
 import importlib.util
+import io
 import json
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
 from unittest import mock
 
@@ -35,6 +37,41 @@ _audit_spec.loader.exec_module(audit)
 
 
 class LedgerTests(unittest.TestCase):
+    def test_repository_audit_mode_keeps_exact_metadata_strict(self):
+        with tempfile.TemporaryDirectory() as temp:
+            results = Path(temp)
+            test_id = "wpt/demo/repository-proof"
+            result_dir = results / test_id
+            result_dir.mkdir(parents=True)
+            (results / "summary.json").write_text(
+                json.dumps(
+                    {
+                        "total": 1,
+                        "passed": 1,
+                        "failed": 0,
+                        "errors": 0,
+                        "tests": [
+                            {"id": test_id, "status": "pass", "mismatch_pct": 0.0}
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (result_dir / "result.json").write_text(
+                json.dumps({"status": "pass", "mismatch_pct": 0.0}),
+                encoding="utf-8",
+            )
+            with (
+                mock.patch.object(audit, "RESULTS_DIR", str(results)),
+                mock.patch.object(audit, "issues", []),
+                redirect_stdout(io.StringIO()),
+            ):
+                audit.check_summary_integrity(require_images=False)
+                self.assertEqual(audit.issues, [])
+                audit.check_summary_integrity(require_images=True)
+                self.assertEqual(len(audit.issues), 1)
+                self.assertIn("PNG screenshot(s) missing", audit.issues[0])
+
     def test_runnable_inventory_excludes_native_runner_rows(self):
         summary = {
             "tests": [

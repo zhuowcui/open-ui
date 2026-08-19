@@ -119,4 +119,4 @@ jobs:
         run: python3 tools/wpt/generate_sp13r_multicol_closure.py --check
 
       - name: Audit authoritative accountability artifacts
-        run: python3 tools/accountability/audit.py
+        run: python3 tools/accountability/audit.py --repository-only
