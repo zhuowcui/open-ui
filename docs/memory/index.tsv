@@ -33,3 +33,4 @@
 0032	active	ci sp17 handoff next-steps	CI landing gate and SP17 from-main handoff	2026-08-19	entries/0032-ci-landing-gate-and-sp17-from-main-handoff.md
 0033	active	sp17 accountability writing-mode handoff	SP17 W0A kickoff evidence is frozen before porter or layout changes	2026-08-19	entries/0033-sp17-w0a-kickoff-evidence-frozen.md
 0034	active	sp17 writing-mode porter cascade accountability	SP17 W0B transactional porter probe is frozen at 311 actionable rows	2026-08-19	entries/0034-sp17-w0b-transactional-porter-probe-frozen.md
+0035	active	sp17 writing-mode constraint-space geometry baseline	SP17 W1A logical geometry preserves the full exact baseline	2026-08-19	entries/0035-sp17-w1a-logical-geometry-preserves-the-full-exact-baseline.md

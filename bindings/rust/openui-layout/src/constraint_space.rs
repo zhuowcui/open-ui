@@ -4,10 +4,10 @@
 //! This carries the available size, percentage resolution size, BFC state,
 //! exclusion space, and various flags that the parent layout passes to each child.
 //!
-//! Extended in SP10 with flex-specific fields and SP12 with BFC, float, and
-//! fragmentation fields.
+//! Extended in SP10 with flex-specific fields, SP12 with BFC, float, and
+//! fragmentation fields, and SP17 with an authoritative writing direction.
 
-use openui_geometry::{BfcOffset, LayoutUnit};
+use openui_geometry::{BfcOffset, LayoutUnit, WritingDirectionMode};
 use std::sync::Arc;
 
 use crate::exclusions::ExclusionSpace;
@@ -21,6 +21,11 @@ use crate::exclusions::ExclusionSpace;
 /// Source: `constraint_space.h` (1,652 lines in Blink).
 #[derive(Debug, Clone)]
 pub struct ConstraintSpace {
+    // ── Coordinate system ───────────────────────────────────────────
+    /// Writing direction that defines the inline/block axes of every logical
+    /// size and offset stored in this space.
+    pub writing_direction: WritingDirectionMode,
+
     // ── Available space ──────────────────────────────────────────────
     /// Available inline size (width in horizontal-tb).
     pub available_inline_size: LayoutUnit,
@@ -93,11 +98,30 @@ pub struct ConstraintSpace {
 impl ConstraintSpace {
     /// Create a constraint space for the root viewport.
     pub fn for_root(width: LayoutUnit, height: LayoutUnit) -> Self {
+        Self::for_root_with_writing_direction(width, height, WritingDirectionMode::horizontal_ltr())
+    }
+
+    /// Create a root space from physical viewport dimensions.
+    ///
+    /// The stored sizes are logical in `writing_direction`: vertical and
+    /// sideways roots therefore use viewport height as their inline size and
+    /// viewport width as their block size.
+    pub fn for_root_with_writing_direction(
+        physical_width: LayoutUnit,
+        physical_height: LayoutUnit,
+        writing_direction: WritingDirectionMode,
+    ) -> Self {
+        let (inline_size, block_size) = if writing_direction.is_horizontal() {
+            (physical_width, physical_height)
+        } else {
+            (physical_height, physical_width)
+        };
         Self {
-            available_inline_size: width,
-            available_block_size: height,
-            percentage_resolution_inline_size: width,
-            percentage_resolution_block_size: height,
+            writing_direction,
+            available_inline_size: inline_size,
+            available_block_size: block_size,
+            percentage_resolution_inline_size: inline_size,
+            percentage_resolution_block_size: block_size,
             bfc_offset: BfcOffset::zero(),
             floats_bfc_block_offset: None,
             exclusion_space: None,
@@ -123,7 +147,28 @@ impl ConstraintSpace {
         percentage_block: LayoutUnit,
         is_new_fc: bool,
     ) -> Self {
+        Self::for_block_child_with_writing_direction(
+            available_inline_size,
+            available_block_size,
+            percentage_inline,
+            percentage_block,
+            is_new_fc,
+            WritingDirectionMode::horizontal_ltr(),
+        )
+    }
+
+    /// Create a block-child space from sizes already expressed in the child's
+    /// logical coordinate system.
+    pub fn for_block_child_with_writing_direction(
+        available_inline_size: LayoutUnit,
+        available_block_size: LayoutUnit,
+        percentage_inline: LayoutUnit,
+        percentage_block: LayoutUnit,
+        is_new_fc: bool,
+        writing_direction: WritingDirectionMode,
+    ) -> Self {
         Self {
+            writing_direction,
             available_inline_size,
             available_block_size,
             percentage_resolution_inline_size: percentage_inline,
@@ -145,6 +190,41 @@ impl ConstraintSpace {
         }
     }
 
+    /// Create a block-child space from sizes expressed in the parent's logical
+    /// axes, transposing both available and percentage bases for an orthogonal
+    /// child.
+    #[allow(clippy::too_many_arguments)]
+    pub fn for_block_child_from_parent(
+        parent: &ConstraintSpace,
+        available_inline_size: LayoutUnit,
+        available_block_size: LayoutUnit,
+        percentage_inline: LayoutUnit,
+        percentage_block: LayoutUnit,
+        is_new_fc: bool,
+        child_writing_direction: WritingDirectionMode,
+    ) -> Self {
+        let (available_inline_size, available_block_size) = Self::convert_logical_size_between(
+            available_inline_size,
+            available_block_size,
+            parent.writing_direction,
+            child_writing_direction,
+        );
+        let (percentage_inline, percentage_block) = Self::convert_logical_size_between(
+            percentage_inline,
+            percentage_block,
+            parent.writing_direction,
+            child_writing_direction,
+        );
+        Self::for_block_child_with_writing_direction(
+            available_inline_size,
+            available_block_size,
+            percentage_inline,
+            percentage_block,
+            is_new_fc,
+            child_writing_direction,
+        )
+    }
+
     /// Create a constraint space for a flex child with externally determined sizes.
     pub fn for_flex_child(
         available_inline_size: LayoutUnit,
@@ -152,7 +232,26 @@ impl ConstraintSpace {
         percentage_inline: LayoutUnit,
         percentage_block: LayoutUnit,
     ) -> Self {
+        Self::for_flex_child_with_writing_direction(
+            available_inline_size,
+            available_block_size,
+            percentage_inline,
+            percentage_block,
+            WritingDirectionMode::horizontal_ltr(),
+        )
+    }
+
+    /// Create a flex-child space from sizes already expressed in the child's
+    /// logical coordinate system.
+    pub fn for_flex_child_with_writing_direction(
+        available_inline_size: LayoutUnit,
+        available_block_size: LayoutUnit,
+        percentage_inline: LayoutUnit,
+        percentage_block: LayoutUnit,
+        writing_direction: WritingDirectionMode,
+    ) -> Self {
         Self {
+            writing_direction,
             available_inline_size,
             available_block_size,
             percentage_resolution_inline_size: percentage_inline,
@@ -174,10 +273,60 @@ impl ConstraintSpace {
         }
     }
 
+    /// Create a flex-child space from sizes expressed in the flex container's
+    /// logical axes.
+    pub fn for_flex_child_from_parent(
+        parent: &ConstraintSpace,
+        available_inline_size: LayoutUnit,
+        available_block_size: LayoutUnit,
+        percentage_inline: LayoutUnit,
+        percentage_block: LayoutUnit,
+        child_writing_direction: WritingDirectionMode,
+    ) -> Self {
+        let (available_inline_size, available_block_size) = Self::convert_logical_size_between(
+            available_inline_size,
+            available_block_size,
+            parent.writing_direction,
+            child_writing_direction,
+        );
+        let (percentage_inline, percentage_block) = Self::convert_logical_size_between(
+            percentage_inline,
+            percentage_block,
+            parent.writing_direction,
+            child_writing_direction,
+        );
+        Self::for_flex_child_with_writing_direction(
+            available_inline_size,
+            available_block_size,
+            percentage_inline,
+            percentage_block,
+            child_writing_direction,
+        )
+    }
+
     /// Whether this space has a fragmentation context (non-zero fragmentainer size).
     #[inline]
     pub fn has_block_fragmentation(&self) -> bool {
         self.fragmentainer_block_size > LayoutUnit::zero()
+    }
+
+    /// Convert a logical size pair between parent and child axes.
+    ///
+    /// Direction and line/block flipping affect offsets, not extents. Sizes
+    /// transpose only when one writing mode is horizontal and the other is
+    /// vertical/sideways.
+    #[inline]
+    pub fn convert_logical_size_between(
+        inline_size: LayoutUnit,
+        block_size: LayoutUnit,
+        from: WritingDirectionMode,
+        to: WritingDirectionMode,
+    ) -> (LayoutUnit, LayoutUnit) {
+        if from.is_horizontal() == to.is_horizontal() {
+            (inline_size, block_size)
+        } else {
+            (block_size, inline_size)
+        }
     }
 }
 
@@ -216,6 +365,43 @@ impl ConstraintSpaceBuilder {
     pub fn set_available_size(mut self, inline_size: LayoutUnit, block_size: LayoutUnit) -> Self {
         self.space.available_inline_size = inline_size;
         self.space.available_block_size = block_size;
+        self
+    }
+
+    /// Set the coordinate system for sizes supplied by subsequent setters.
+    /// This does not transpose existing values; use
+    /// `set_writing_direction_from_parent` at a parent/child boundary.
+    pub fn set_writing_direction(mut self, writing_direction: WritingDirectionMode) -> Self {
+        self.space.writing_direction = writing_direction;
+        self
+    }
+
+    /// Change from the inherited parent axes to child axes, transposing all
+    /// inherited size pairs exactly once when the modes are orthogonal.
+    pub fn set_writing_direction_from_parent(
+        mut self,
+        writing_direction: WritingDirectionMode,
+    ) -> Self {
+        let parent_direction = self.space.writing_direction;
+        (
+            self.space.available_inline_size,
+            self.space.available_block_size,
+        ) = ConstraintSpace::convert_logical_size_between(
+            self.space.available_inline_size,
+            self.space.available_block_size,
+            parent_direction,
+            writing_direction,
+        );
+        (
+            self.space.percentage_resolution_inline_size,
+            self.space.percentage_resolution_block_size,
+        ) = ConstraintSpace::convert_logical_size_between(
+            self.space.percentage_resolution_inline_size,
+            self.space.percentage_resolution_block_size,
+            parent_direction,
+            writing_direction,
+        );
+        self.space.writing_direction = writing_direction;
         self
     }
 
@@ -308,5 +494,96 @@ impl ConstraintSpaceBuilder {
 impl Default for ConstraintSpaceBuilder {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn lu(value: i32) -> LayoutUnit {
+        LayoutUnit::from_i32(value)
+    }
+
+    fn vertical_rl_ltr() -> WritingDirectionMode {
+        WritingDirectionMode::new(false, true, false, false)
+    }
+
+    #[test]
+    fn legacy_root_constructor_remains_horizontal_ltr() {
+        let space = ConstraintSpace::for_root(lu(800), lu(600));
+        assert_eq!(
+            space.writing_direction,
+            WritingDirectionMode::horizontal_ltr()
+        );
+        assert_eq!(space.available_inline_size, lu(800));
+        assert_eq!(space.available_block_size, lu(600));
+        assert_eq!(space.percentage_resolution_inline_size, lu(800));
+        assert_eq!(space.percentage_resolution_block_size, lu(600));
+    }
+
+    #[test]
+    fn vertical_root_converts_physical_viewport_to_logical_size() {
+        let space =
+            ConstraintSpace::for_root_with_writing_direction(lu(800), lu(600), vertical_rl_ltr());
+        assert_eq!(space.writing_direction, vertical_rl_ltr());
+        assert_eq!(space.available_inline_size, lu(600));
+        assert_eq!(space.available_block_size, lu(800));
+        assert_eq!(space.percentage_resolution_inline_size, lu(600));
+        assert_eq!(space.percentage_resolution_block_size, lu(800));
+    }
+
+    #[test]
+    fn orthogonal_child_boundary_transposes_size_pairs_once() {
+        let parent = ConstraintSpaceBuilder::new()
+            .set_available_size(lu(700), lu(500))
+            .set_percentage_resolution_size(lu(600), lu(400))
+            .build();
+        let child = ConstraintSpaceBuilder::from_parent(&parent)
+            .set_writing_direction_from_parent(vertical_rl_ltr())
+            .build();
+
+        assert_eq!(child.available_inline_size, lu(500));
+        assert_eq!(child.available_block_size, lu(700));
+        assert_eq!(child.percentage_resolution_inline_size, lu(400));
+        assert_eq!(child.percentage_resolution_block_size, lu(600));
+        assert_eq!(child.writing_direction, vertical_rl_ltr());
+    }
+
+    #[test]
+    fn explicit_block_child_constructor_converts_parent_axes() {
+        let parent = ConstraintSpace::for_root(lu(800), lu(600));
+        let child = ConstraintSpace::for_block_child_from_parent(
+            &parent,
+            lu(700),
+            lu(500),
+            lu(600),
+            lu(400),
+            false,
+            vertical_rl_ltr(),
+        );
+        assert_eq!(child.available_inline_size, lu(500));
+        assert_eq!(child.available_block_size, lu(700));
+        assert_eq!(child.percentage_resolution_inline_size, lu(400));
+        assert_eq!(child.percentage_resolution_block_size, lu(600));
+        assert_eq!(child.writing_direction, vertical_rl_ltr());
+    }
+
+    #[test]
+    fn parallel_or_direction_only_child_boundary_preserves_extents() {
+        let vertical_parent = ConstraintSpaceBuilder::new()
+            .set_writing_direction(vertical_rl_ltr())
+            .set_available_size(lu(500), lu(700))
+            .set_percentage_resolution_size(lu(400), lu(600))
+            .build();
+        let vertical_rtl = WritingDirectionMode::new(false, true, false, true);
+        let child = ConstraintSpaceBuilder::from_parent(&vertical_parent)
+            .set_writing_direction_from_parent(vertical_rtl)
+            .build();
+
+        assert_eq!(child.available_inline_size, lu(500));
+        assert_eq!(child.available_block_size, lu(700));
+        assert_eq!(child.percentage_resolution_inline_size, lu(400));
+        assert_eq!(child.percentage_resolution_block_size, lu(600));
     }
 }

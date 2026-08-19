@@ -20,7 +20,7 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 owner rows | W0B | 🟡 Active; 311 actionable / 531 residual frozen |
+| SP17 | Advanced Text + Writing Modes | 842 owner rows | W1 | 🟡 Active; logical-geometry foundation, 311 actionable / 531 residual frozen |
 
 **Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,566 ported/runnable tests, 3,267 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, and 842 frozen SP17 writing-mode owner rows.**
 
@@ -452,3 +452,18 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 - Next: W1 threads complete writing direction through `ConstraintSpace` and
   proves horizontal no-op behavior before block/flex geometry or surgical WPT
   admission.
+
+### SP17 W1A: constraint and logical-geometry foundation
+
+- Added authoritative writing direction to `ConstraintSpace`, explicit
+  physical-root conversion, parent/child orthogonal size conversion, and
+  horizontal-compatible legacy constructors.
+- Root rendering derives its direction from computed style. Shared
+  `LogicalBoxStrut` and `ResolvedLogicalBox` types now centralize edge, size,
+  inset, and used-border projection while fragments remain physical for paint.
+- Rebuilt the release comparator and ran all 3,267 frozen exact IDs without
+  resume: all remain exact at `0.0%`, with zero failures and zero errors. The
+  authoritative full summary was restored byte-for-byte afterward.
+- No WPT builder, mapping row, runner profile, or committed result changed.
+  Next: migrate normal block and flex child boundaries to the shared logical
+  view, then admit a small sole-SP17 cohort surgically.

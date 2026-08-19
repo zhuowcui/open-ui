@@ -2,15 +2,17 @@
 
 ## Status
 
-SP17 W0B is complete on `agent/sp17-advanced-text`, branched from `main` commit
-`2c1fe78c142c8b83896cd51b1b6d580496611b5e` on 2026-08-19. No production or
-generated Rust WPT builder code has changed yet.
+SP17 W1 is in progress on `agent/sp17-advanced-text`, branched from `main` commit
+`2c1fe78c142c8b83896cd51b1b6d580496611b5e` on 2026-08-19. No generated Rust
+WPT builder code has changed yet.
 
 The branch has reproduced the complete suite without resume, frozen the kickoff
 ledgers and 19-ID pixel evidence, added transactional SP17 CSS handling, and
 frozen a faithful no-write porter probe over all 823 kickoff-unported rows. The
-authoritative full summary remains restored. W1 authoritative logical geometry
-is the next implementation boundary.
+authoritative full summary remains restored. The W1A constraint/logical-geometry
+foundation is implemented and has passed the complete 3,267-ID horizontal
+no-op gate. Migrating normal block and flex child boundaries to consume it is
+the next implementation boundary.
 
 | Starting metric | Value |
 |---|---:|
@@ -369,3 +371,32 @@ render/diff error.
 - Next: W1 begins with `WritingDirectionMode` in `ConstraintSpace`, explicit
   parent/child orthogonal conversion, and horizontal-no-op Rust tests. Do not
   splice the 292 builders before that shared geometry is ready.
+
+### 2026-08-19 — W1A logical-geometry foundation
+
+- Added an authoritative `WritingDirectionMode` to `ConstraintSpace`. Legacy
+  root/block/flex constructors remain horizontal-LTR; explicit root and child
+  constructors convert physical viewport or parent-logical size pairs exactly
+  once when the axes are orthogonal. `ConstraintSpaceBuilder` inherits the
+  direction and exposes a tested parent-to-child conversion boundary.
+- Root paint/render layout now derives the constraint direction from the root's
+  computed `writing-mode` plus `direction`; the pixel comparator's diagnostic
+  layout path uses the same entry point.
+- Added `LogicalBoxStrut` with physical/logical edge conversion and exhaustive
+  round trips across horizontal LTR/RTL, vertical-rl/lr, and sideways flags.
+  Added `ResolvedLogicalBox` as the shared computed-style view for logical
+  min/preferred/max sizes, margins, padding, insets, used borders, and final
+  logical-to-physical fragment sizes.
+- The new APIs have focused unit coverage in geometry, constraint, logical
+  style projection, and paint-root integration. Existing writing-mode tests,
+  geometry tests, and compile checks remain green.
+- Rebuilt `pixel-compare` in release mode and ran the immutable 3,267-ID
+  baseline manifest without resume: 3,267 exact at `0.0%`, zero failures, and
+  zero errors. Restored the authoritative full summary byte-for-byte at
+  SHA-256
+  `67d50eb1ee54fcf7121df5c1f186d2468a24b2f0310303606e0a689e4d2581a4`.
+- This checkpoint is plumbing, not a vertical-layout completion claim.
+  Production normal-block, flex, fragmentation, multicol, and out-of-flow
+  child construction still needs to consume the explicit child direction and
+  `ResolvedLogicalBox`, then convert completed fragments to physical geometry
+  once. No actionable builders have been spliced yet.

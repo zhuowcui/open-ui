@@ -14,6 +14,18 @@ use skia_safe::{
 
 use crate::painter::paint_fragment;
 
+fn root_constraint_space(doc: &Document, width: i32, height: i32) -> ConstraintSpace {
+    let root_style = &doc.node(doc.root()).style;
+    let writing_direction = root_style
+        .direction
+        .writing_direction(root_style.writing_mode);
+    ConstraintSpace::for_root_with_writing_direction(
+        LayoutUnit::from_i32(width),
+        LayoutUnit::from_i32(height),
+        writing_direction,
+    )
+}
+
 /// Render a Document tree to a PNG file.
 ///
 /// 1. Performs block layout starting from the viewport root.
@@ -61,8 +73,7 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
         })
         .unwrap_or(SkColor::WHITE);
     // Layout
-    let space =
-        ConstraintSpace::for_root(LayoutUnit::from_i32(width), LayoutUnit::from_i32(height));
+    let space = root_constraint_space(doc, width, height);
     let fragment = block_layout(doc, doc.root(), &space);
 
     // Chromium's software compositor rasterizes paint records into overlapping
@@ -159,6 +170,21 @@ mod tests {
     use openui_dom::ElementTag;
     use openui_geometry::Length;
     use openui_style::*;
+
+    #[test]
+    fn root_constraint_uses_computed_writing_direction() {
+        let mut doc = Document::new();
+        let root = doc.root();
+        doc.node_mut(root).style.writing_mode = WritingMode::VerticalRl;
+        doc.node_mut(root).style.direction = Direction::Rtl;
+
+        let space = root_constraint_space(&doc, 800, 600);
+        assert!(!space.writing_direction.is_horizontal());
+        assert!(space.writing_direction.is_flipped_blocks());
+        assert!(space.writing_direction.is_rtl());
+        assert_eq!(space.available_inline_size, LayoutUnit::from_i32(600));
+        assert_eq!(space.available_block_size, LayoutUnit::from_i32(800));
+    }
 
     #[test]
     fn render_simple_red_box() {

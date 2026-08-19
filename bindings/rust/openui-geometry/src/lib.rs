@@ -20,7 +20,7 @@ mod physical_size;
 mod writing_mode;
 
 pub use bfc_offset::{BfcDelta, BfcOffset, BfcRect};
-pub use box_strut::BoxStrut;
+pub use box_strut::{BoxStrut, LogicalBoxStrut};
 pub use layout_unit::{LayoutUnit, INDEFINITE_SIZE};
 pub use length::{Length, LengthType};
 pub use logical_offset::LogicalOffset;

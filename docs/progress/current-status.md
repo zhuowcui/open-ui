@@ -43,7 +43,7 @@ preserved through W0B):
 The full `wpt/` run was executed without resume on 2026-08-19. All 2823 frozen SP13-R baseline
 IDs and all 351 runnable multicol targets remain exact.
 
-## SP17 W0B Transactional Probe
+## SP17 W1 Logical Geometry
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -71,6 +71,17 @@ result changed in W0B. The only residuals still owned by SP17 are the
 the pinned fonts and remain guarded as `text_non_ascii` until W2 adds a pinned
 glyph path. See `docs/SP17-PLAN.md` and the six
 `tools/accountability/data/wpt_ported/sp17_*` artifacts.
+
+W1A now gives every `ConstraintSpace` an authoritative writing direction,
+provides one-time physical-root and parent/child orthogonal size conversion,
+and adds shared logical edge and computed-style projections. The production
+render root derives its direction from computed style. A release no-resume run
+of all 3,267 frozen exact IDs remained 3,267 exact at `0.0%` with zero errors,
+and the full 3,566-ID summary was restored byte-identically afterward.
+
+This is intentionally a foundation checkpoint: normal block, flex,
+fragmentation, multicol, and out-of-flow child boundaries do not all consume
+the new projection yet, and no newly actionable WPT builder has been admitted.
 
 ## SP13-R Closure
 
@@ -172,13 +183,13 @@ Top unported categories:
 
 ## Recommended Next Work
 
-Continue SP17 with W1 authoritative logical geometry. First thread the complete
-writing direction through `ConstraintSpace`, add explicit orthogonal
-parent/child size conversion, and prove horizontal layout remains a no-op. Then
-move shared block and flex geometry to resolved logical axes before surgically
-splicing the first 86 sole-SP17 actionable rows. Do not batch-regenerate the 292
-new builders or retire the detector before shared geometry and exact pixel
-evidence are ready. Follow `docs/SP17-PLAN.md` for the exact boundary.
+Continue SP17 W1 by making normal block and flex child construction use the
+explicit parent/child writing directions and `ResolvedLogicalBox`. Keep all
+intermediate layout decisions logical, convert completed child offsets and
+fragment sizes to physical once, and rerun the frozen baseline after each
+horizontal-no-op slice. Only then surgically splice a small sole-SP17 vertical
+cohort; do not batch-regenerate the 292 builders or retire the detector. Follow
+`docs/SP17-PLAN.md` for the exact boundary.
 
 Hosted pre-merge checks and the separate pinned Chromium parity gate are
 documented in `docs/CI.md`.

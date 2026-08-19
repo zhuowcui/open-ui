@@ -52,9 +52,14 @@ fn main() {
                     }
                 }
                 // Also do layout and check fragment
-                let space = openui_layout::ConstraintSpace::for_root(
+                let root_style = &doc.node(root).style;
+                let writing_direction = root_style
+                    .direction
+                    .writing_direction(root_style.writing_mode);
+                let space = openui_layout::ConstraintSpace::for_root_with_writing_direction(
                     openui_geometry::LayoutUnit::from_i32(800),
                     openui_geometry::LayoutUnit::from_i32(600),
+                    writing_direction,
                 );
                 let fragment = openui_layout::block_layout(&doc, root, &space);
                 println!("Fragment size: {:?}", fragment.size);

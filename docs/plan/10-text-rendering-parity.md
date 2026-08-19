@@ -22,6 +22,8 @@ SP17 W0A reproduced that full snapshot without resume and froze all 3,267 exact
 IDs, the original 842 writing-mode owner rows, and the 19 runnable kickoff
 outcomes. W0B then froze a faithful porter disposition of 311 actionable and
 531 residual rows without changing generated Rust builders or pixel evidence.
+W1A has added the shared constraint/logical-geometry foundation and preserved
+all 3,267 exact IDs at `0.0%` in a release no-resume run.
 
 ## Chronological work
 
@@ -51,8 +53,9 @@ family selection, and the real-glyph LCD raster profile are implemented. The glo
 Cover bidi/RTL, vertical writing modes, transformation, decoration, emphasis,
 complex scripts, and emoji. W0A and W0B are complete on the fresh-main branch:
 the original 842-row inventory is frozen as 311 actionable and 531 residual
-rows after transactional CSS handling and a real builder probe. W1 next makes
-writing direction authoritative in constraint, block, and flex geometry.
+rows after transactional CSS handling and a real builder probe. W1 now has an
+authoritative constraint direction and shared logical style/edge projection;
+normal block and flex child geometry must consume that boundary next.
 Follow `docs/SP17-PLAN.md`.
 
 ### SP18 — generated content and text effects
