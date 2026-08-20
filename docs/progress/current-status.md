@@ -21,14 +21,14 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W1D full no-resume run):
+Latest authoritative accountability snapshot (SP17 W1E full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3572 |
-| Unported but explicitly tracked tests | 4101 |
-| Runnable passes | 3273 |
+| Ported/runnable WPT tests | 3586 |
+| Unported but explicitly tracked tests | 4087 |
+| Runnable passes | 3287 |
 | Runnable failures | 299 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
@@ -43,7 +43,7 @@ The full `wpt/` run was executed without resume on 2026-08-20. All 3267 frozen
 SP17 baseline IDs, including all 2823 frozen SP13-R baseline IDs and all 351
 runnable multicol targets, remain exact.
 
-## SP17 W1D Vertical-Container Flex-Flow Matrix Closure
+## SP17 W1E Orthogonal Flex-Item Sizing Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -106,14 +106,23 @@ CMYK item identity. It fixes physical flex-item size projection at the vertical
 fragment boundary while preserving fragmentation-reduced horizontal sizes.
 Only `flexbox-writing-mode-002`, 003, 005, and 006 were admitted; each is exact
 at zero mismatched pixels and its existing reference builder is byte-unchanged.
-The current full result is 3572 runnable, 3273 exact, 299 functional failures,
-and zero errors. Live `needs_writing_mode` ownership is 836 rows; the frozen
+W1E adds a single private flex-axis mapping boundary for container main/cross
+and child logical inline/block sizes. Available sizes, percentage bases,
+fixed/stretch flags, intrinsic measurements, aspect-ratio transfer, and final
+physical fragments now use that mapping consistently, while horizontal
+fragmentation-owned reductions remain authoritative. Fourteen orthogonal flex
+targets covering writing modes, intrinsic and fit-content sizing, alignment,
+wrapping, overflow padding, and aspect ratio were admitted in one transaction.
+All are exact, and the existing 007–009 reference builders are byte-identical.
+
+The current full result is 3586 runnable, 3287 exact, 299 functional failures,
+and zero errors. Live `needs_writing_mode` ownership is 822 rows; the frozen
 842-row kickoff inventory and 311/531 disposition remain immutable.
 
 W1 remains incomplete. Physical-axis decisions remain in normal block layout;
-flex intrinsic/content and aspect-ratio paths, out-of-flow/static positions,
-fragmentation, multicol, and vertical/sideways text shaping and paint still
-need the shared geometry.
+remaining vertical flex families, out-of-flow/static positions, fragmentation,
+multicol, and vertical/sideways text shaping and paint still need shared
+geometry. The 010–015 writing-mode cases remain W2 vertical-text work.
 
 ## SP13-R Closure
 
@@ -191,7 +200,7 @@ Top runnable failure categories:
 
 ## Current Unported Inventory Ownership
 
-The 4101 unported rows are Chromium WPT files that the current porter or renderer cannot
+The 4087 unported rows are Chromium WPT files that the current porter or renderer cannot
 represent yet. They are still tracked with explicit dependency categories.
 
 Top unported categories:
@@ -200,7 +209,7 @@ Top unported categories:
 |---|---:|
 | `needs_javascript` | 1945 |
 | `sp13_multicol` | 1018 |
-| `needs_writing_mode` | 817 |
+| `needs_writing_mode` | 803 |
 | `sp13_fragmentation` | 651 |
 | `needs_table_layout` | 462 |
 | `needs_generated_content` | 443 |
@@ -215,11 +224,10 @@ Top unported categories:
 
 ## Recommended Next Work
 
-Continue SP17 W1 with mixed orthogonal child sizing. Use
-`flexbox-writing-mode-007` next, then 008. Audit flex intrinsic and aspect-ratio
-sizing before expanding the cohort, then
-carry logical geometry through out-of-flow/static positions, fragmentation,
-and multicol.
+Continue SP17 W1 with the remaining vertical flex families, then carry logical
+geometry through out-of-flow/static positions, fragmentation, and multicol.
+Reserve `flexbox-writing-mode-010` through 015 for W2 vertical-text shaping and
+paint; do not substitute geometry-only builders for their glyph requirements.
 Keep all 3267 kickoff exact IDs green, splice surgically, do not batch-regenerate
 the remaining actionable builders, and do not retire the detector. Follow
 `docs/SP17-PLAN.md` for the exact boundary and recorded commands.

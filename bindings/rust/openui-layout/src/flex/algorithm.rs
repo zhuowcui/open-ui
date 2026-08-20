@@ -31,6 +31,125 @@ use super::line::FlexLine;
 use super::line_breaker::break_into_lines;
 use super::line_flexer::LineFlexer;
 
+/// Maps the flex container's main/cross axes to one item's logical axes.
+///
+/// Flex sizing is performed in the container's axes, while a child's
+/// `ConstraintSpace` is always expressed in the child's writing mode. Keep
+/// that conversion at this boundary so available sizes, percentage bases, and
+/// externally-determined-size flags cannot be transposed independently.
+#[derive(Clone, Copy)]
+struct FlexItemAxisMapping {
+    is_column: bool,
+    main_axis_is_horizontal: bool,
+    main_axis_is_child_inline: bool,
+    child_writing_direction: WritingDirectionMode,
+}
+
+impl FlexItemAxisMapping {
+    fn new(
+        child_style: &openui_style::ComputedStyle,
+        is_column: bool,
+        main_axis_is_horizontal: bool,
+    ) -> Self {
+        let child_writing_direction = child_style
+            .direction
+            .writing_direction(child_style.writing_mode);
+        Self {
+            is_column,
+            main_axis_is_horizontal,
+            main_axis_is_child_inline: main_axis_is_horizontal
+                == child_writing_direction.is_horizontal(),
+            child_writing_direction,
+        }
+    }
+
+    #[inline]
+    fn child_logical_size(self, main: LayoutUnit, cross: LayoutUnit) -> LogicalSize {
+        if self.main_axis_is_child_inline {
+            LogicalSize::new(main, cross)
+        } else {
+            LogicalSize::new(cross, main)
+        }
+    }
+
+    #[inline]
+    fn container_logical_to_main_cross(
+        self,
+        inline: LayoutUnit,
+        block: LayoutUnit,
+    ) -> (LayoutUnit, LayoutUnit) {
+        if self.is_column {
+            (block, inline)
+        } else {
+            (inline, block)
+        }
+    }
+
+    fn child_space(
+        self,
+        available_main: LayoutUnit,
+        available_cross: LayoutUnit,
+        percentage_container_inline: LayoutUnit,
+        percentage_container_block: LayoutUnit,
+    ) -> ConstraintSpace {
+        let available = self.child_logical_size(available_main, available_cross);
+        let (percentage_main, percentage_cross) = self.container_logical_to_main_cross(
+            percentage_container_inline,
+            percentage_container_block,
+        );
+        let percentage = self.child_logical_size(percentage_main, percentage_cross);
+        ConstraintSpace::for_flex_child_with_writing_direction(
+            available.inline_size,
+            available.block_size,
+            percentage.inline_size,
+            percentage.block_size,
+            self.child_writing_direction,
+        )
+    }
+
+    #[inline]
+    fn set_main_fixed(self, space: &mut ConstraintSpace) {
+        if self.main_axis_is_child_inline {
+            space.is_fixed_inline_size = true;
+        } else {
+            space.is_fixed_block_size = true;
+        }
+    }
+
+    #[inline]
+    fn set_cross_fixed(self, space: &mut ConstraintSpace) {
+        if self.main_axis_is_child_inline {
+            space.is_fixed_block_size = true;
+        } else {
+            space.is_fixed_inline_size = true;
+        }
+    }
+
+    #[inline]
+    fn set_cross_stretch(self, space: &mut ConstraintSpace) {
+        if self.main_axis_is_child_inline {
+            space.stretch_block_size = true;
+        } else {
+            space.stretch_inline_size = true;
+        }
+    }
+
+    #[inline]
+    fn main_maps_to_child_block(self) -> bool {
+        !self.main_axis_is_child_inline
+    }
+
+    /// Project the flex-resolved main/cross border box into fragment storage.
+    #[inline]
+    fn physical_size(self, main: LayoutUnit, cross: LayoutUnit) -> PhysicalSize {
+        if self.main_axis_is_horizontal {
+            PhysicalSize::new(main, cross)
+        } else {
+            PhysicalSize::new(cross, main)
+        }
+    }
+}
+
 /// Main entry point for flex layout.
 ///
 /// Blink: `FlexLayoutAlgorithm::Layout()` → `LayoutInternal()` → `PlaceFlexItems()`.
@@ -1511,13 +1630,14 @@ fn resolve_content_based_size(
     child_id: NodeId,
     child_style: &openui_style::ComputedStyle,
     is_column: bool,
-    _is_main_axis_horizontal: bool,
+    is_main_axis_horizontal: bool,
     main_axis_border_padding: LayoutUnit,
     child_percentage_inline: LayoutUnit,
     child_percentage_block: LayoutUnit,
     _space: &ConstraintSpace,
     resolved_alignment: ItemPosition,
 ) -> LayoutUnit {
+    let axis_mapping = FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal);
     // Check if aspect-ratio can resolve the main-axis size from a known cross-axis size
     if let Some(ref ar) = child_style.aspect_ratio {
         let ratio = ar.ratio;
@@ -1775,12 +1895,11 @@ fn resolve_content_based_size(
         } else {
             cross_inline
         };
-        ConstraintSpace::for_block_child(
+        axis_mapping.child_space(
+            LayoutUnit::from_raw(-64), // indefinite main axis
             cross_inline,
-            LayoutUnit::from_raw(-64), // indefinite block (main axis)
             pct_inline_for_child,
             child_percentage_block,
-            true,
         )
     } else {
         // Use the flex container's own cross-axis content size, not the parent's.
@@ -1794,13 +1913,11 @@ fn resolve_content_based_size(
         } else {
             LayoutUnit::from_raw(-64)
         };
-        // Row flex: use indefinite inline size for max-content measurement
-        ConstraintSpace::for_block_child(
-            LayoutUnit::from_raw(-64), // indefinite → child gets intrinsic width
+        axis_mapping.child_space(
+            LayoutUnit::from_raw(-64), // indefinite main axis
             cross_block,
             child_percentage_inline,
             child_percentage_block,
-            true,
         )
     };
 
@@ -1817,10 +1934,17 @@ fn resolve_content_based_size(
             let ratio = ar.ratio;
             if ratio.0 > 0.0 && ratio.1 > 0.0 {
                 let child_fragment = layout_flex_item(doc, child_id, &child_space);
-                let cross_size = child_fragment.width();
+                let cross_size = if is_main_axis_horizontal {
+                    child_fragment.height()
+                } else {
+                    child_fragment.width()
+                };
                 if !cross_size.is_indefinite() && cross_size > LayoutUnit::zero() {
-                    let derived_main =
-                        LayoutUnit::from_f32(cross_size.to_f32() * ratio.1 / ratio.0);
+                    let derived_main = if is_main_axis_horizontal {
+                        LayoutUnit::from_f32(cross_size.to_f32() * ratio.0 / ratio.1)
+                    } else {
+                        LayoutUnit::from_f32(cross_size.to_f32() * ratio.1 / ratio.0)
+                    };
                     return (derived_main - main_axis_border_padding).clamp_negative_to_zero();
                 }
             }
@@ -1831,13 +1955,22 @@ fn resolve_content_based_size(
         // from content, accounting for the actual cross-axis width constraint
         // which affects line breaking of inline children.
         let child_fragment = layout_flex_item(doc, child_id, &child_space);
-        let main_size = child_fragment.height().clamp_indefinite_to_zero();
+        let main_size = if is_main_axis_horizontal {
+            child_fragment.width()
+        } else {
+            child_fragment.height()
+        }
+        .clamp_indefinite_to_zero();
         return (main_size - main_axis_border_padding).clamp_negative_to_zero();
     }
 
     let child_fragment = layout_flex_item(doc, child_id, &child_space);
 
-    let main_size = child_fragment.width();
+    let main_size = if is_main_axis_horizontal {
+        child_fragment.width()
+    } else {
+        child_fragment.height()
+    };
 
     // If block_layout returned indefinite (empty element with unconstrained axis),
     // treat as zero content size.
@@ -1847,9 +1980,17 @@ fn resolve_content_based_size(
     if let Some(ref ar) = child_style.aspect_ratio {
         let ratio = ar.ratio;
         if ratio.0 > 0.0 && ratio.1 > 0.0 {
-            let cross_size = child_fragment.height();
+            let cross_size = if is_main_axis_horizontal {
+                child_fragment.height()
+            } else {
+                child_fragment.width()
+            };
             if !cross_size.is_indefinite() && cross_size > LayoutUnit::zero() {
-                let derived_main = LayoutUnit::from_f32(cross_size.to_f32() * ratio.0 / ratio.1);
+                let derived_main = if is_main_axis_horizontal {
+                    LayoutUnit::from_f32(cross_size.to_f32() * ratio.0 / ratio.1)
+                } else {
+                    LayoutUnit::from_f32(cross_size.to_f32() * ratio.1 / ratio.0)
+                };
                 let cross_max_is_definite = !child_style.max_height.is_none()
                     && (!child_percentage_block.is_indefinite()
                         || child_style.max_height.is_fixed());
@@ -2876,6 +3017,8 @@ fn give_items_final_position(
             let item = &mut items[idx];
             let child_style = &doc.node(item.node_id).style;
             let child_logical = crate::ResolvedLogicalBox::from_style(child_style);
+            let axis_mapping =
+                FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal);
             let mut logical_margin = item.margin.to_logical(writing_direction);
 
             // ── Resolve main-axis auto margins ───────────────────────
@@ -3093,12 +3236,6 @@ fn give_items_final_position(
                 }
             }
 
-            let (inline_size, block_size) = if is_column {
-                (cross_size_for_child, final_main)
-            } else {
-                (final_main, cross_size_for_child)
-            };
-
             // CSS Flexbox §9.8: flex item sizes are definite for child
             // percentage resolution only when the flex container has a
             // definite main size. When the container has auto height
@@ -3138,57 +3275,55 @@ fn give_items_final_position(
                 }
             };
 
-            let mut child_space = crate::flex_child_constraint_space(
-                space,
-                child_style,
-                inline_size,
-                block_size,
+            let mut child_space = axis_mapping.child_space(
+                final_main,
+                cross_size_for_child,
                 child_percentage_inline,
                 item_pct_block,
             );
 
+            axis_mapping.set_main_fixed(&mut child_space);
             if is_column {
-                child_space.is_fixed_block_size = true;
                 // CSS Flexbox §9.8: flex item heights are only definite for
                 // child percentage resolution when the container has a definite
                 // main size OR the item has a definite flex-basis. Mark
                 // indefinite only when BOTH container AND basis are indefinite.
-                if child_percentage_block.is_indefinite() && item.is_used_flex_basis_indefinite {
+                if axis_mapping.main_maps_to_child_block()
+                    && child_percentage_block.is_indefinite()
+                    && item.is_used_flex_basis_indefinite
+                {
                     child_space.is_initial_block_size_indefinite = true;
                 }
                 if should_stretch {
-                    child_space.stretch_inline_size = true;
+                    axis_mapping.set_cross_stretch(&mut child_space);
+                } else if !cross_size_is_auto {
+                    axis_mapping.set_cross_fixed(&mut child_space);
                 }
             } else {
-                child_space.is_fixed_inline_size = true;
                 if should_stretch {
-                    child_space.stretch_block_size = true;
+                    axis_mapping.set_cross_stretch(&mut child_space);
                 } else if !cross_size_is_auto {
                     // Row flex: item has explicit cross size (e.g. height + max-height).
                     // The flex algorithm already resolved the used cross size including
                     // min/max constraints. Mark as fixed so block.rs uses the constraint
                     // space value for child percentage resolution instead of re-resolving
                     // from style.height (which ignores max-height clamping).
-                    child_space.is_fixed_block_size = true;
+                    axis_mapping.set_cross_fixed(&mut child_space);
                 }
             }
 
             let mut child_fragment = layout_flex_item(doc, item.node_id, &child_space);
 
-            // Flex resolves the used border-box sizes in the container's
-            // logical main/cross axes. Fragment storage is physical, so make
-            // that projection explicit at the flex-item boundary. In vertical
-            // writing modes, block layout still consumes the fixed child-space
-            // pair as inline/block extents; leaving its provisional size in
-            // the fragment would transpose width and height before placement.
-            // Horizontal fragments are already physical, and may have a
-            // fragmentation-reduced block size that must remain authoritative.
-            if !writing_direction.is_horizontal() {
-                child_fragment.size = if is_main_axis_horizontal {
-                    PhysicalSize::new(final_main, cross_size_for_child)
-                } else {
-                    PhysicalSize::new(cross_size_for_child, final_main)
-                };
+            // Block layout currently returns the externally fixed pair in its
+            // constraint-space order. At the flex boundary, project that pair
+            // to physical storage for vertical block items. Flex children
+            // already perform their own final logical-to-physical conversion,
+            // while horizontal fragments remain untouched so a child-owned
+            // fragmentation reduction stays authoritative.
+            if !axis_mapping.child_writing_direction.is_horizontal()
+                && !child_style.display.is_flex()
+            {
+                child_fragment.size = axis_mapping.physical_size(final_main, cross_size_for_child);
             }
 
             let child_logical_size = converter.to_logical_size(child_fragment.size);
@@ -3630,6 +3765,117 @@ mod tests {
         }
         doc.append_child(parent, child);
         child
+    }
+
+    #[test]
+    fn item_axis_mapping_keeps_sizes_bases_and_flags_in_one_child_coordinate_system() {
+        let cases = [
+            // horizontal-tb row with a vertical child
+            (false, true, WritingMode::VerticalLr, (40, 30), (400, 300)),
+            // vertical row with a horizontal child
+            (
+                false,
+                false,
+                WritingMode::HorizontalTb,
+                (40, 30),
+                (400, 300),
+            ),
+            // vertical row with a parallel child
+            (false, false, WritingMode::VerticalRl, (30, 40), (300, 400)),
+            // vertical column with a horizontal child
+            (true, true, WritingMode::HorizontalTb, (30, 40), (400, 300)),
+        ];
+
+        for (
+            is_column,
+            main_axis_is_horizontal,
+            child_mode,
+            expected_available,
+            expected_percentage,
+        ) in cases
+        {
+            let mut style = openui_style::ComputedStyle::default();
+            style.writing_mode = child_mode;
+            let mapping = FlexItemAxisMapping::new(&style, is_column, main_axis_is_horizontal);
+            let mut space = mapping.child_space(
+                LayoutUnit::from_i32(30),
+                LayoutUnit::from_i32(40),
+                LayoutUnit::from_i32(300),
+                LayoutUnit::from_i32(400),
+            );
+            mapping.set_main_fixed(&mut space);
+            mapping.set_cross_stretch(&mut space);
+
+            assert_eq!(
+                (
+                    space.available_inline_size,
+                    space.available_block_size,
+                    space.percentage_resolution_inline_size,
+                    space.percentage_resolution_block_size,
+                ),
+                (
+                    LayoutUnit::from_i32(expected_available.0),
+                    LayoutUnit::from_i32(expected_available.1),
+                    LayoutUnit::from_i32(expected_percentage.0),
+                    LayoutUnit::from_i32(expected_percentage.1),
+                ),
+                "wrong child-axis mapping for {child_mode:?}",
+            );
+            assert_eq!(
+                (space.is_fixed_inline_size, space.is_fixed_block_size),
+                (
+                    mapping.main_axis_is_child_inline,
+                    !mapping.main_axis_is_child_inline
+                )
+            );
+            assert_eq!(
+                (space.stretch_inline_size, space.stretch_block_size),
+                (
+                    !mapping.main_axis_is_child_inline,
+                    mapping.main_axis_is_child_inline
+                )
+            );
+            assert_eq!(
+                mapping.physical_size(LayoutUnit::from_i32(30), LayoutUnit::from_i32(40)),
+                if main_axis_is_horizontal {
+                    PhysicalSize::new(LayoutUnit::from_i32(30), LayoutUnit::from_i32(40))
+                } else {
+                    PhysicalSize::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(30))
+                }
+            );
+        }
+    }
+
+    #[test]
+    fn overflow_padding_does_not_extend_an_items_existing_overflow_rect() {
+        let mut container = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(100)),
+        );
+        container.padding = BoxStrut::new(
+            LayoutUnit::from_i32(25),
+            LayoutUnit::from_i32(25),
+            LayoutUnit::from_i32(25),
+            LayoutUnit::from_i32(25),
+        );
+        let mut item = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(30), LayoutUnit::from_i32(30)),
+        );
+        item.offset = PhysicalOffset::new(LayoutUnit::from_i32(25), LayoutUnit::from_i32(25));
+        item.overflow_rect = Some(PhysicalRect::new(
+            PhysicalOffset::zero(),
+            PhysicalSize::new(LayoutUnit::from_i32(65), LayoutUnit::from_i32(65)),
+        ));
+        container.children.push(item);
+
+        finalize_flex_fragment(
+            &mut container,
+            &openui_style::ComputedStyle::default(),
+            false,
+        );
+
+        assert_eq!(container.overflow_rect, None);
     }
 
     #[test]

@@ -4,8 +4,8 @@ use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{LayoutUnit, Length};
 use openui_layout::{flex_layout, ConstraintSpace, Fragment};
 use openui_style::{
-    ContentAlignment, ContentDistribution, ContentPosition, Direction, Display, FlexDirection,
-    FlexWrap, ItemAlignment, ItemPosition, WritingMode,
+    AspectRatio, BorderStyle, ContentAlignment, ContentDistribution, ContentPosition, Direction,
+    Display, FlexDirection, FlexWrap, ItemAlignment, ItemPosition, WritingMode,
 };
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -269,6 +269,286 @@ fn vertical_flex_flow_places_cmyk_items_by_logical_main_and_cross_axes() {
                 );
             }
         }
+    }
+}
+
+#[test]
+fn explicit_physical_item_sizes_survive_all_orthogonal_flex_axis_mappings() {
+    let cases = [
+        (
+            "flexbox-writing-mode-007",
+            WritingMode::HorizontalTb,
+            [(0, 0), (20, 0), (0, 15), (20, 15)],
+        ),
+        (
+            "flexbox-writing-mode-008",
+            WritingMode::VerticalLr,
+            [(0, 0), (0, 15), (20, 0), (20, 15)],
+        ),
+        (
+            "flexbox-writing-mode-009",
+            WritingMode::VerticalRl,
+            [(20, 0), (20, 15), (0, 0), (0, 15)],
+        ),
+    ];
+    let child_modes = [
+        WritingMode::HorizontalTb,
+        WritingMode::VerticalLr,
+        WritingMode::VerticalRl,
+    ];
+
+    for (test_id, container_mode, expected_offsets) in cases {
+        for child_mode in child_modes {
+            let mut doc = Document::new();
+            let container = make_flex(&mut doc, 40, 30);
+            {
+                let style = doc.node_mut(container).style_mut();
+                style.writing_mode = container_mode;
+                style.flex_wrap = FlexWrap::Wrap;
+            }
+            let items = [
+                add_child(&mut doc, container, 20, 15),
+                add_child(&mut doc, container, 20, 15),
+                add_child(&mut doc, container, 20, 15),
+                add_child(&mut doc, container, 20, 15),
+            ];
+            for item in items {
+                doc.node_mut(item).style_mut().writing_mode = child_mode;
+            }
+
+            let fragment = lay(&doc, container, 40, 30);
+            for (item, (expected_left, expected_top)) in items.into_iter().zip(expected_offsets) {
+                let child = fragment
+                    .children
+                    .iter()
+                    .find(|child| child.node_id == item)
+                    .expect("CMYK flex item must remain in the fragment tree");
+                assert_eq!(
+                    (
+                        child.offset.left,
+                        child.offset.top,
+                        child.width(),
+                        child.height(),
+                    ),
+                    (lu(expected_left), lu(expected_top), lu(20), lu(15)),
+                    "unexpected geometry for {test_id} with {child_mode:?} children",
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn orthogonal_center_and_stretch_keep_the_resolved_physical_cross_size() {
+    let mut centered_doc = Document::new();
+    let centered_container = make_flex(&mut centered_doc, 200, 100);
+    {
+        let style = centered_doc.node_mut(centered_container).style_mut();
+        style.flex_direction = FlexDirection::Column;
+        style.align_items = ItemAlignment::new(ItemPosition::Center);
+    }
+    let centered = centered_doc.create_node(ElementTag::Div);
+    {
+        let style = centered_doc.node_mut(centered).style_mut();
+        style.display = Display::Block;
+        style.writing_mode = WritingMode::VerticalRl;
+        style.height = Length::px(100.0);
+    }
+    centered_doc.append_child(centered_container, centered);
+    let centered_content = add_child(&mut centered_doc, centered, 100, 0);
+    centered_doc.node_mut(centered_content).style_mut().height = Length::auto();
+
+    let centered_fragment = lay(&centered_doc, centered_container, 200, 100);
+    let centered_fragment = centered_fragment
+        .children
+        .iter()
+        .find(|fragment| fragment.node_id == centered)
+        .unwrap();
+    assert_eq!(
+        (
+            centered_fragment.offset.left,
+            centered_fragment.width(),
+            centered_fragment.height(),
+        ),
+        (lu(50), lu(100), lu(100))
+    );
+
+    let mut stretched_doc = Document::new();
+    let stretched_container = make_flex(&mut stretched_doc, 100, 100);
+    let stretched = stretched_doc.create_node(ElementTag::Div);
+    {
+        let style = stretched_doc.node_mut(stretched).style_mut();
+        style.display = Display::Block;
+        style.writing_mode = WritingMode::VerticalLr;
+    }
+    stretched_doc.append_child(stretched_container, stretched);
+    let percentage_child = stretched_doc.create_node(ElementTag::Div);
+    {
+        let style = stretched_doc.node_mut(percentage_child).style_mut();
+        style.display = Display::Block;
+        style.width = Length::px(30.0);
+        style.padding_right = Length::percent(70.0);
+    }
+    stretched_doc.append_child(stretched, percentage_child);
+
+    let stretched_fragment = lay(&stretched_doc, stretched_container, 100, 100);
+    let stretched_fragment = stretched_fragment
+        .children
+        .iter()
+        .find(|fragment| fragment.node_id == stretched)
+        .unwrap();
+    assert_eq!(
+        (stretched_fragment.width(), stretched_fragment.height()),
+        (lu(100), lu(100))
+    );
+}
+
+#[test]
+fn orthogonal_intrinsic_min_max_and_fit_content_select_the_physical_axis() {
+    for (use_minimum, container_width, basis) in [(true, 0, 0), (false, 200, 200)] {
+        let mut doc = Document::new();
+        let container = make_flex(&mut doc, container_width, 100);
+        let item = doc.create_node(ElementTag::Div);
+        {
+            let style = doc.node_mut(item).style_mut();
+            style.display = Display::Block;
+            style.writing_mode = WritingMode::VerticalRl;
+            style.flex_basis = Length::px(basis as f32);
+            if use_minimum {
+                style.min_width = Length::min_content();
+            } else {
+                style.max_width = Length::min_content();
+            }
+        }
+        doc.append_child(container, item);
+        add_child(&mut doc, item, 100, 0);
+
+        let fragment = lay(&doc, container, 200, 100);
+        let item_fragment = fragment
+            .children
+            .iter()
+            .find(|fragment| fragment.node_id == item)
+            .unwrap();
+        assert_eq!(item_fragment.width(), lu(100));
+        assert_eq!(item_fragment.height(), lu(100));
+    }
+
+    for intrinsic_height in [
+        Length::min_content(),
+        Length::max_content(),
+        Length::fit_content(),
+    ] {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        {
+            let style = doc.node_mut(container).style_mut();
+            style.display = Display::Flex;
+            style.width = Length::px(100.0);
+            style.height = intrinsic_height;
+        }
+        doc.append_child(doc.root(), container);
+        let item = doc.create_node(ElementTag::Div);
+        {
+            let style = doc.node_mut(item).style_mut();
+            style.display = Display::Block;
+            style.width = Length::px(100.0);
+            style.writing_mode = WritingMode::VerticalLr;
+        }
+        doc.append_child(container, item);
+        add_child(&mut doc, container, 0, 100);
+
+        let fragment = lay(&doc, container, 100, 100);
+        let item_fragment = fragment
+            .children
+            .iter()
+            .find(|fragment| fragment.node_id == item)
+            .unwrap();
+        assert_eq!(
+            (item_fragment.width(), item_fragment.height()),
+            (lu(100), lu(100))
+        );
+    }
+}
+
+#[test]
+fn orthogonal_stretch_transfers_aspect_ratio_through_the_border_box() {
+    let mut doc = Document::new();
+    let container = make_flex(&mut doc, 100, 100);
+    let item = doc.create_node(ElementTag::Div);
+    {
+        let style = doc.node_mut(item).style_mut();
+        style.display = Display::Block;
+        style.writing_mode = WritingMode::VerticalRl;
+        style.aspect_ratio = Some(AspectRatio {
+            ratio: (1.0, 1.0),
+            auto_flag: false,
+        });
+        style.margin_top = Length::px(10.0);
+        style.margin_right = Length::px(10.0);
+        style.margin_bottom = Length::px(10.0);
+        style.margin_left = Length::px(10.0);
+        style.padding_top = Length::px(3.0);
+        style.padding_right = Length::px(3.0);
+        style.padding_bottom = Length::px(3.0);
+        style.padding_left = Length::px(3.0);
+        style.border_top_width = 7;
+        style.border_right_width = 7;
+        style.border_bottom_width = 7;
+        style.border_left_width = 7;
+        style.border_top_style = BorderStyle::Solid;
+        style.border_right_style = BorderStyle::Solid;
+        style.border_bottom_style = BorderStyle::Solid;
+        style.border_left_style = BorderStyle::Solid;
+    }
+    doc.append_child(container, item);
+
+    let fragment = lay(&doc, container, 100, 100);
+    let item_fragment = fragment
+        .children
+        .iter()
+        .find(|fragment| fragment.node_id == item)
+        .unwrap();
+    assert_eq!(
+        (item_fragment.width(), item_fragment.height()),
+        (lu(80), lu(80))
+    );
+}
+
+#[test]
+fn vertical_column_wrap_flexes_each_physical_row_independently() {
+    let mut doc = Document::new();
+    let container = doc.create_node(ElementTag::Div);
+    {
+        let style = doc.node_mut(container).style_mut();
+        style.display = Display::Flex;
+        style.writing_mode = WritingMode::VerticalRl;
+        style.flex_direction = FlexDirection::Column;
+        style.flex_wrap = FlexWrap::Wrap;
+        style.max_width = Length::px(100.0);
+        style.height = Length::px(100.0);
+    }
+    doc.append_child(doc.root(), container);
+    let first = add_child(&mut doc, container, 50, 50);
+    doc.node_mut(first).style_mut().flex_grow = 1.0;
+    let second = add_child(&mut doc, container, 100, 50);
+
+    let fragment = lay(&doc, container, 100, 100);
+    assert_eq!((fragment.width(), fragment.height()), (lu(100), lu(100)));
+    for (item, expected_top) in [(first, 0), (second, 50)] {
+        let item_fragment = fragment
+            .children
+            .iter()
+            .find(|fragment| fragment.node_id == item)
+            .unwrap();
+        assert_eq!(
+            (
+                item_fragment.offset.left,
+                item_fragment.offset.top,
+                item_fragment.width(),
+                item_fragment.height(),
+            ),
+            (lu(0), lu(expected_top), lu(100), lu(50))
+        );
     }
 }
 

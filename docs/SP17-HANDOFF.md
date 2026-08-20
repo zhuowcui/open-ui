@@ -1,10 +1,10 @@
 # SP17 Handoff — Advanced Text and Writing Modes
 
 > Historical kickoff contract. SP17 has started from the required landed main
-> state and reached W1D. Continue from `docs/SP17-PLAN.md` and
+> state and reached W1E. Continue from `docs/SP17-PLAN.md` and
 > `docs/progress/current-status.md`; do not repeat this branch-creation or
-> ledger-freeze procedure. The live checkpoint is 3,572 runnable / 3,273 exact /
-> 299 fail / 0 errors with six exact actionable promotions.
+> ledger-freeze procedure. The live checkpoint is 3,586 runnable / 3,287 exact /
+> 299 fail / 0 errors with 20 exact actionable promotions.
 
 This is the starting contract for the next parity agent after PR #1 lands on
 `main`. SP17 owns advanced text behavior: vertical and sideways writing modes,

@@ -8,9 +8,9 @@ then expands from Ahem geometry to real-font and advanced-text parity.
 
 SP14 W0–W4 closed the global `needs_text` category, SP15 closed its inline/layout
 and root/body follow-up, SP16 closed all 776 real-font-metric rows, and SP13-R
-then closed every runnable multicol owner. The text manifest now contains 697
-runner-scoped IDs after the first six SP17 admissions and corrected retained-text
-references. The complete 3,572-test run has 3,273 exact passes, 299 functional
+then closed every runnable multicol owner. The text manifest now contains 711
+runner-scoped IDs after the first 20 SP17 admissions and corrected retained-text
+references. The complete 3,586-test run has 3,287 exact passes, 299 functional
 failures, and zero errors. It preserves the 2,823-ID SP13-R baseline plus all
 351 exact SP13-R targets and passes the 7/7 audit.
 
@@ -31,7 +31,9 @@ pass. W1C corrects final flex placement direction propagation, covers all
 horizontal-tb/RTL flex-flow reversals, and admits companion 004 at exact parity.
 W1D projects vertical flex main/cross sizes into physical fragments, covers all
 four vertical writing-mode/direction matrices, and admits companions 002, 003,
-005, and 006 at exact parity.
+005, and 006 at exact parity. W1E centralizes the flex container/child axis
+mapping and admits 14 orthogonal sizing, alignment, intrinsic, aspect-ratio,
+wrapping, and overflow-padding targets at exact parity.
 
 ## Chronological work
 
@@ -61,13 +63,12 @@ family selection, and the real-glyph LCD raster profile are implemented. The glo
 Cover bidi/RTL, vertical writing modes, transformation, decoration, emphasis,
 complex scripts, and emoji. W0A and W0B are complete on the fresh-main branch:
 the original 842-row inventory is frozen as 311 actionable and 531 residual
-rows after transactional CSS handling and a real builder probe. W1D now has an
+rows after transactional CSS handling and a real builder probe. W1E now has an
 authoritative constraint direction, shared logical style/edge projection, and
 shared normal block/atomic-inline/flex child boundaries. The exact actionable
-set now covers 001–006, including all four vertical-container direction
-combinations. Continue with 007, then 008, for orthogonal-child sizing; follow
-with flex intrinsic sizing, out-of-flow positions, fragmentation/multicol, and
-finally vertical glyph shaping/paint.
+set now covers 001–009 plus 11 named orthogonal flex sizing cases. Continue
+with the remaining vertical flex families, then out-of-flow positions and
+fragmentation/multicol. Keep 010–015 for W2 vertical glyph shaping/paint.
 Follow `docs/SP17-PLAN.md`.
 
 ### SP18 — generated content and text effects

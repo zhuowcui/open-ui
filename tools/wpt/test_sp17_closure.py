@@ -103,12 +103,26 @@ class LedgerTests(unittest.TestCase):
         )
         self.assertTrue(
             {
+                "wpt/css_flexbox/aspect-ratio-intrinsic-size-009",
+                "wpt/css_flexbox/fit-content-item-002",
+                "wpt/css_flexbox/fit-content-item-003",
+                "wpt/css_flexbox/fit-content-item-004",
+                "wpt/css_flexbox/flex-item-max-width-min-content",
+                "wpt/css_flexbox/flex-item-min-width-min-content",
+                "wpt/css_flexbox/flexbox-flex-wrap-flexing-003",
+                "wpt/css_flexbox/flexbox-overflow-padding-002",
                 "wpt/css_flexbox/flexbox-writing-mode-001",
                 "wpt/css_flexbox/flexbox-writing-mode-002",
                 "wpt/css_flexbox/flexbox-writing-mode-003",
                 "wpt/css_flexbox/flexbox-writing-mode-004",
                 "wpt/css_flexbox/flexbox-writing-mode-005",
                 "wpt/css_flexbox/flexbox-writing-mode-006",
+                "wpt/css_flexbox/flexbox-writing-mode-007",
+                "wpt/css_flexbox/flexbox-writing-mode-008",
+                "wpt/css_flexbox/flexbox-writing-mode-009",
+                "wpt/css_flexbox/flexbox_align-items-center-3",
+                "wpt/css_flexbox/flexbox_align-items-stretch-3",
+                "wpt/css_flexbox/stretching-orthogonal-flows",
             }.issubset(promoted)
         )
         self.assertTrue(promoted.issubset(set(actionable)))

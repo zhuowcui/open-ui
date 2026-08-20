@@ -3131,7 +3131,7 @@ css-flexbox/aspect-ratio-intrinsic-size-006.html,aspect-ratio-intrinsic-size-006
 css-flexbox/aspect-ratio-intrinsic-size-007.html,aspect-ratio-intrinsic-size-007,css_flexbox,no,,,,"needs_writing_mode,needs_image",Future SP: Writing Modes/Bidi; SP13: Image Rendering,Porter deferred: unsupported element: <img>
 css-flexbox/aspect-ratio-intrinsic-size-007-ref.html,aspect-ratio-intrinsic-size-007-ref,css_flexbox,no,,,,"reference_test,needs_canvas_svg",Reference Test (not standalone); Future SP: Canvas/SVG Rendering,Porter deferred: unsupported element: <svg>
 css-flexbox/aspect-ratio-intrinsic-size-008.html,aspect-ratio-intrinsic-size-008,css_flexbox,yes,wpt/css_flexbox/aspect-ratio-intrinsic-size-008,pass,0.0,,,
-css-flexbox/aspect-ratio-intrinsic-size-009.html,aspect-ratio-intrinsic-size-009,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: unsupported property: writing-mode
+css-flexbox/aspect-ratio-intrinsic-size-009.html,aspect-ratio-intrinsic-size-009,css_flexbox,yes,wpt/css_flexbox/aspect-ratio-intrinsic-size-009,pass,0.0,,,
 css-flexbox/aspect-ratio-intrinsic-size-010.html,aspect-ratio-intrinsic-size-010,css_flexbox,yes,wpt/css_flexbox/aspect-ratio-intrinsic-size-010,pass,0.0,,,
 css-flexbox/aspect-ratio-transferred-max-size.html,aspect-ratio-transferred-max-size,css_flexbox,yes,wpt/css_flexbox/aspect-ratio-transferred-max-size,pass,0.0,,,
 css-flexbox/auto-height-column-with-border-and-padding.html,auto-height-column-with-border-and-padding,css_flexbox,yes,wpt/css_flexbox/auto-height-column-with-border-and-padding,pass,0.0,,,
@@ -3201,9 +3201,9 @@ css-flexbox/fieldset-as-item-overflow-ref.html,fieldset-as-item-overflow-ref,css
 css-flexbox/fieldset-baseline-alignment.html,fieldset-baseline-alignment,css_flexbox,no,,,,needs_form_controls,Future SP: Native Form Controls,Porter deferred: unsupported element: <fieldset>
 css-flexbox/fieldset-baseline-alignment-ref.html,fieldset-baseline-alignment-ref,css_flexbox,no,,,,"reference_test,needs_inline_block,needs_form_controls",Reference Test (not standalone); SP11: Inline Block Layout; Future SP: Native Form Controls,Porter deferred: unsupported element: <fieldset>
 css-flexbox/fit-content-item-001.html,fit-content-item-001,css_flexbox,yes,wpt/css_flexbox/fit-content-item-001,pass,0.0,,,
-css-flexbox/fit-content-item-002.html,fit-content-item-002,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/fit-content-item-003.html,fit-content-item-003,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/fit-content-item-004.html,fit-content-item-004,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/fit-content-item-002.html,fit-content-item-002,css_flexbox,yes,wpt/css_flexbox/fit-content-item-002,pass,0.0,,,
+css-flexbox/fit-content-item-003.html,fit-content-item-003,css_flexbox,yes,wpt/css_flexbox/fit-content-item-003,pass,0.0,,,
+css-flexbox/fit-content-item-004.html,fit-content-item-004,css_flexbox,yes,wpt/css_flexbox/fit-content-item-004,pass,0.0,,,
 css-flexbox/fixed-table-layout-with-percentage-width-in-flex-item.html,fixed-table-layout-with-percentage-width-in-flex-item,css_flexbox,no,,,,needs_table_layout,Future SP: Table Layout,Porter deferred: style_block_unsupported property: table-layout
 css-flexbox/fixed-table-layout-with-percentage-width-in-flex-item-ref.html,fixed-table-layout-with-percentage-width-in-flex-item-ref,css_flexbox,yes,wpt/css_flexbox/fixed-table-layout-with-percentage-width-in-flex-item-ref,pass,0.0,,,
 css-flexbox/fixedpos-video-in-abspos-quirk-crash.html,fixedpos-video-in-abspos-quirk-crash,css_flexbox,no,,,,"needs_form_controls,needs_image",Future SP: Native Form Controls; SP13: Image Rendering,Porter deferred: unsupported element: <video>
@@ -3331,10 +3331,10 @@ css-flexbox/flex-item-contains-strict.html,flex-item-contains-strict,css_flexbox
 css-flexbox/flex-item-content-is-min-width-max-content.html,flex-item-content-is-min-width-max-content,css_flexbox,yes,wpt/css_flexbox/flex-item-content-is-min-width-max-content,pass,0.0,,,
 css-flexbox/flex-item-content-is-min-width-max-content-ref.html,flex-item-content-is-min-width-max-content-ref,css_flexbox,yes,wpt/css_flexbox/flex-item-content-is-min-width-max-content-ref,pass,0.0,,,
 css-flexbox/flex-item-max-height-min-content.html,flex-item-max-height-min-content,css_flexbox,yes,wpt/css_flexbox/flex-item-max-height-min-content,pass,0.0,,,
-css-flexbox/flex-item-max-width-min-content.html,flex-item-max-width-min-content,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: unsupported property: writing-mode
+css-flexbox/flex-item-max-width-min-content.html,flex-item-max-width-min-content,css_flexbox,yes,wpt/css_flexbox/flex-item-max-width-min-content,pass,0.0,,,
 css-flexbox/flex-item-max-width-min-content-002.html,flex-item-max-width-min-content-002,css_flexbox,yes,wpt/css_flexbox/flex-item-max-width-min-content-002,pass,0.0,,,
 css-flexbox/flex-item-min-height-min-content.html,flex-item-min-height-min-content,css_flexbox,yes,wpt/css_flexbox/flex-item-min-height-min-content,pass,0.0,,,
-css-flexbox/flex-item-min-width-min-content.html,flex-item-min-width-min-content,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: unsupported property: writing-mode
+css-flexbox/flex-item-min-width-min-content.html,flex-item-min-width-min-content,css_flexbox,yes,wpt/css_flexbox/flex-item-min-width-min-content,pass,0.0,,,
 css-flexbox/flex-item-position-relative-001.html,flex-item-position-relative-001,css_flexbox,yes,wpt/css_flexbox/flex-item-position-relative-001,pass,0.0,,,
 css-flexbox/flex-item-position-relative-001-ref.html,flex-item-position-relative-001-ref,css_flexbox,yes,wpt/css_flexbox/flex-item-position-relative-001-ref,pass,0.0,,,
 css-flexbox/flex-item-transferred-sizes-padding-border-sizing.html,flex-item-transferred-sizes-padding-border-sizing,css_flexbox,yes,wpt/css_flexbox/flex-item-transferred-sizes-padding-border-sizing,pass,0.0,,,
@@ -3628,7 +3628,7 @@ css-flexbox/flexbox-flex-flow-002-ref.html,flexbox-flex-flow-002-ref,css_flexbox
 css-flexbox/flexbox-flex-wrap-default.htm,flexbox-flex-wrap-default,css_flexbox,yes,wpt/css_flexbox/flexbox-flex-wrap-default,pass,0.0,,,
 css-flexbox/flexbox-flex-wrap-flexing.html,flexbox-flex-wrap-flexing,css_flexbox,yes,wpt/css_flexbox/flexbox-flex-wrap-flexing,pass,0.0,,,
 css-flexbox/flexbox-flex-wrap-flexing-002.html,flexbox-flex-wrap-flexing-002,css_flexbox,yes,wpt/css_flexbox/flexbox-flex-wrap-flexing-002,pass,0.0,,,
-css-flexbox/flexbox-flex-wrap-flexing-003.html,flexbox-flex-wrap-flexing-003,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: unsupported property: writing-mode
+css-flexbox/flexbox-flex-wrap-flexing-003.html,flexbox-flex-wrap-flexing-003,css_flexbox,yes,wpt/css_flexbox/flexbox-flex-wrap-flexing-003,pass,0.0,,,
 css-flexbox/flexbox-flex-wrap-flexing-ref.html,flexbox-flex-wrap-flexing-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-flex-wrap-flexing-ref,pass,0.0,,,
 css-flexbox/flexbox-flex-wrap-horiz-001.html,flexbox-flex-wrap-horiz-001,css_flexbox,yes,wpt/css_flexbox/flexbox-flex-wrap-horiz-001,pass,0.0,,,
 css-flexbox/flexbox-flex-wrap-horiz-001-ref.html,flexbox-flex-wrap-horiz-001-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-flex-wrap-horiz-001-ref,pass,0.0,,,
@@ -3739,7 +3739,7 @@ css-flexbox/flexbox-overflow-horiz-004-ref.html,flexbox-overflow-horiz-004-ref,c
 css-flexbox/flexbox-overflow-horiz-005.html,flexbox-overflow-horiz-005,css_flexbox,yes,wpt/css_flexbox/flexbox-overflow-horiz-005,pass,0.0,,,
 css-flexbox/flexbox-overflow-horiz-005-ref.html,flexbox-overflow-horiz-005-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-overflow-horiz-005-ref,pass,0.0,,,
 css-flexbox/flexbox-overflow-padding-001.html,flexbox-overflow-padding-001,css_flexbox,yes,wpt/css_flexbox/flexbox-overflow-padding-001,pass,0.0,,,
-css-flexbox/flexbox-overflow-padding-002.html,flexbox-overflow-padding-002,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-overflow-padding-002.html,flexbox-overflow-padding-002,css_flexbox,yes,wpt/css_flexbox/flexbox-overflow-padding-002,pass,0.0,,,
 css-flexbox/flexbox-overflow-vert-001.html,flexbox-overflow-vert-001,css_flexbox,yes,wpt/css_flexbox/flexbox-overflow-vert-001,pass,0.0,,,
 css-flexbox/flexbox-overflow-vert-001-ref.html,flexbox-overflow-vert-001-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-overflow-vert-001-ref,pass,0.0,,,
 css-flexbox/flexbox-overflow-vert-002.html,flexbox-overflow-vert-002,css_flexbox,yes,wpt/css_flexbox/flexbox-overflow-vert-002,pass,0.0,,,
@@ -3807,11 +3807,11 @@ css-flexbox/flexbox-writing-mode-005.html,flexbox-writing-mode-005,css_flexbox,y
 css-flexbox/flexbox-writing-mode-005-ref.html,flexbox-writing-mode-005-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-005-ref,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-006.html,flexbox-writing-mode-006,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-006,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-006-ref.html,flexbox-writing-mode-006-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-006-ref,pass,0.0,,,
-css-flexbox/flexbox-writing-mode-007.html,flexbox-writing-mode-007,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-writing-mode-007.html,flexbox-writing-mode-007,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-007,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-007-ref.html,flexbox-writing-mode-007-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-007-ref,pass,0.0,,,
-css-flexbox/flexbox-writing-mode-008.html,flexbox-writing-mode-008,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-writing-mode-008.html,flexbox-writing-mode-008,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-008,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-008-ref.html,flexbox-writing-mode-008-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-008-ref,pass,0.0,,,
-css-flexbox/flexbox-writing-mode-009.html,flexbox-writing-mode-009,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-writing-mode-009.html,flexbox-writing-mode-009,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-009,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-009-ref.html,flexbox-writing-mode-009-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-009-ref,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-010.html,flexbox-writing-mode-010,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
 css-flexbox/flexbox-writing-mode-010-ref.html,flexbox-writing-mode-010-ref,css_flexbox,no,,,,"reference_test,needs_writing_mode,needs_advanced_selectors",Reference Test (not standalone); Future SP: Writing Modes/Bidi; Future SP: Advanced CSS Selectors,Porter deferred: style_block_unsupported property: writing-mode
@@ -3855,7 +3855,7 @@ css-flexbox/flexbox_align-items-baseline-ref.html,flexbox_align-items-baseline-r
 css-flexbox/flexbox_align-items-center.html,flexbox_align-items-center,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-center,pass,0.0,,,
 css-flexbox/flexbox_align-items-center-2.html,flexbox_align-items-center-2,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-center-2,pass,0.0,,,
 css-flexbox/flexbox_align-items-center-2-ref.html,flexbox_align-items-center-2-ref,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-center-2-ref,pass,0.0,,,
-css-flexbox/flexbox_align-items-center-3.html,flexbox_align-items-center-3,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox_align-items-center-3.html,flexbox_align-items-center-3,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-center-3,pass,0.0,,,
 css-flexbox/flexbox_align-items-center-ref.html,flexbox_align-items-center-ref,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-center-ref,pass,0.0,,,
 css-flexbox/flexbox_align-items-flexend.html,flexbox_align-items-flexend,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-flexend,pass,0.0,,,
 css-flexbox/flexbox_align-items-flexend-2.html,flexbox_align-items-flexend-2,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-flexend-2,pass,0.0,,,
@@ -3868,7 +3868,7 @@ css-flexbox/flexbox_align-items-flexstart-ref.html,flexbox_align-items-flexstart
 css-flexbox/flexbox_align-items-stretch.html,flexbox_align-items-stretch,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-stretch,pass,0.0,,,
 css-flexbox/flexbox_align-items-stretch-2.html,flexbox_align-items-stretch-2,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-stretch-2,pass,0.0,,,
 css-flexbox/flexbox_align-items-stretch-2-ref.html,flexbox_align-items-stretch-2-ref,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-stretch-2-ref,pass,0.0,,,
-css-flexbox/flexbox_align-items-stretch-3.html,flexbox_align-items-stretch-3,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox_align-items-stretch-3.html,flexbox_align-items-stretch-3,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-stretch-3,pass,0.0,,,
 css-flexbox/flexbox_align-items-stretch-4.html,flexbox_align-items-stretch-4,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-stretch-4,pass,0.0,,,
 css-flexbox/flexbox_align-items-stretch-ref.html,flexbox_align-items-stretch-ref,css_flexbox,yes,wpt/css_flexbox/flexbox_align-items-stretch-ref,pass,0.0,,,
 css-flexbox/flexbox_align-self-auto.html,flexbox_align-self-auto,css_flexbox,yes,wpt/css_flexbox/flexbox_align-self-auto,pass,0.0,,,
@@ -4648,7 +4648,7 @@ css-flexbox/stretched-child-in-nested-flexbox-001.html,stretched-child-in-nested
 css-flexbox/stretched-child-in-nested-flexbox-002.html,stretched-child-in-nested-flexbox-002,css_flexbox,yes,wpt/css_flexbox/stretched-child-in-nested-flexbox-002,pass,0.0,,,
 css-flexbox/stretched-child-in-nested-flexbox-003.html,stretched-child-in-nested-flexbox-003,css_flexbox,yes,wpt/css_flexbox/stretched-child-in-nested-flexbox-003,pass,0.0,,,
 css-flexbox/stretched-child-shrink-on-relayout.html,stretched-child-shrink-on-relayout,css_flexbox,no,,,,"needs_empty_block_margin_collapse,needs_javascript,needs_writing_mode",SP12: Empty Block Margin Collapsing; Future SP: JavaScript/Test Harness; Future SP: Writing Modes/Bidi,Porter deferred: uses_javascript
-css-flexbox/stretching-orthogonal-flows.html,stretching-orthogonal-flows,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: unsupported property: writing-mode
+css-flexbox/stretching-orthogonal-flows.html,stretching-orthogonal-flows,css_flexbox,yes,wpt/css_flexbox/stretching-orthogonal-flows,pass,0.0,,,
 css-flexbox/svg-no-natural-size-grandchild.html,svg-no-natural-size-grandchild,css_flexbox,no,,,,needs_canvas_svg,Future SP: Canvas/SVG Rendering,Porter deferred: unsupported element: <svg>
 css-flexbox/svg-root-as-flex-item-001.html,svg-root-as-flex-item-001,css_flexbox,no,,,,"needs_abspos_flex_static_position,needs_canvas_svg",SP12: Abspos Flex Static Position; Future SP: Canvas/SVG Rendering,Porter deferred: unsupported element: <svg>
 css-flexbox/svg-root-as-flex-item-002.html,svg-root-as-flex-item-002,css_flexbox,no,,,,"needs_abspos_flex_static_position,needs_canvas_svg",SP12: Abspos Flex Static Position; Future SP: Canvas/SVG Rendering,Porter deferred: unsupported element: <svg>

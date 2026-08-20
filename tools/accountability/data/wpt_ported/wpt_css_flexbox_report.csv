@@ -963,7 +963,7 @@ aspect-ratio-intrinsic-size-005,not_portable,,uses_javascript
 aspect-ratio-intrinsic-size-006,not_portable,,unsupported element: <img>
 aspect-ratio-intrinsic-size-007-ref,not_portable,,unsupported element: <svg>
 aspect-ratio-intrinsic-size-007,not_portable,,unsupported element: <img>
-aspect-ratio-intrinsic-size-009,not_portable,,unsupported property: writing-mode
+aspect-ratio-intrinsic-size-009,ported,css_flexbox_aspect_ratio_intrinsic_size_009,
 auto-margins-001-ref,not_portable,,unsupported property: writing-mode
 auto-margins-001,not_portable,,uses_javascript
 auto-margins-002,not_portable,,unsupported element: <img>
@@ -1014,9 +1014,9 @@ fieldset-as-item-dynamic,not_portable,,uses_javascript
 fieldset-as-item-overflow,not_portable,,unsupported element: <fieldset>
 fieldset-baseline-alignment-ref,not_portable,,unsupported element: <fieldset>
 fieldset-baseline-alignment,not_portable,,unsupported element: <fieldset>
-fit-content-item-002,not_portable,,style_block_unsupported property: writing-mode
-fit-content-item-003,not_portable,,style_block_unsupported property: writing-mode
-fit-content-item-004,not_portable,,style_block_unsupported property: writing-mode
+fit-content-item-002,ported,css_flexbox_fit_content_item_002,
+fit-content-item-003,ported,css_flexbox_fit_content_item_003,
+fit-content-item-004,ported,css_flexbox_fit_content_item_004,
 fixed-table-layout-with-percentage-width-in-flex-item,not_portable,,style_block_unsupported property: table-layout
 fixedpos-video-in-abspos-quirk-crash,not_portable,,unsupported element: <video>
 flex-aspect-ratio-img-column-001,not_portable,,unsupported element: <img>
@@ -1076,8 +1076,8 @@ flex-item-compressible-001,not_portable,,uses_javascript
 flex-item-compressible-002,not_portable,,uses_javascript
 flex-item-contains-size-layout-001,not_portable,,uses_javascript
 flex-item-contains-strict,not_portable,,uses_javascript
-flex-item-max-width-min-content,not_portable,,unsupported property: writing-mode
-flex-item-min-width-min-content,not_portable,,unsupported property: writing-mode
+flex-item-max-width-min-content,ported,css_flexbox_flex_item_max_width_min_content,
+flex-item-min-width-min-content,ported,css_flexbox_flex_item_min_width_min_content,
 flex-item-z-ordering-001,not_portable,,unsupported element: <img>
 flex-minimum-height-flex-items-004,not_portable,,unsupported element: <img>
 flex-minimum-height-flex-items-005,not_portable,,unsupported element: <img>
@@ -1206,7 +1206,7 @@ flexbox-flex-basis-content-003b,not_portable,,unsupported element: <canvas>
 flexbox-flex-basis-content-004-ref,not_portable,,unsupported element: <canvas>
 flexbox-flex-basis-content-004a,not_portable,,unsupported element: <canvas>
 flexbox-flex-basis-content-004b,not_portable,,unsupported element: <canvas>
-flexbox-flex-wrap-flexing-003,not_portable,,unsupported property: writing-mode
+flexbox-flex-wrap-flexing-003,ported,css_flexbox_flexbox_flex_wrap_flexing_003,
 flexbox-iframe-intrinsic-size-001,not_portable,,unsupported element: <iframe>
 flexbox-ignores-first-letter,not_portable,,uses_javascript
 flexbox-justify-content-wmvert-001,not_portable,,style_block_unsupported property: writing-mode
@@ -1225,7 +1225,7 @@ flexbox-min-width-auto-002b,not_portable,,unsupported element: <img>
 flexbox-min-width-auto-002c,not_portable,,unsupported element: <img>
 flexbox-min-width-auto-005,not_portable,,unsupported element: <img>
 flexbox-min-width-auto-006,not_portable,,unsupported element: <img>
-flexbox-overflow-padding-002,not_portable,,style_block_unsupported property: writing-mode
+flexbox-overflow-padding-002,ported,css_flexbox_flexbox_overflow_padding_002,
 flexbox-root-node-001a,ported,css_flexbox_flexbox_root_node_001a,
 flexbox-root-node-001b,ported,css_flexbox_flexbox_root_node_001b,
 flexbox-safe-overflow-position-005,not_portable,,style_block_unsupported property: writing-mode
@@ -1246,9 +1246,9 @@ flexbox-writing-mode-003,ported,css_flexbox_flexbox_writing_mode_003,
 flexbox-writing-mode-004,ported,css_flexbox_flexbox_writing_mode_004,
 flexbox-writing-mode-005,ported,css_flexbox_flexbox_writing_mode_005,
 flexbox-writing-mode-006,ported,css_flexbox_flexbox_writing_mode_006,
-flexbox-writing-mode-007,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-008,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-009,not_portable,,style_block_unsupported property: writing-mode
+flexbox-writing-mode-007,ported,css_flexbox_flexbox_writing_mode_007,
+flexbox-writing-mode-008,ported,css_flexbox_flexbox_writing_mode_008,
+flexbox-writing-mode-009,ported,css_flexbox_flexbox_writing_mode_009,
 flexbox-writing-mode-010-ref,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-010,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-011-ref,not_portable,,style_block_unsupported property: writing-mode
@@ -1271,8 +1271,8 @@ flexbox-writing-mode-srl-row-mix-ref,not_portable,,style_block_unsupported prope
 flexbox-writing-mode-srl-row-mix,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-srl-rtl,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-srl,not_portable,,style_block_unsupported property: writing-mode
-flexbox_align-items-center-3,not_portable,,style_block_unsupported property: writing-mode
-flexbox_align-items-stretch-3,not_portable,,style_block_unsupported property: writing-mode
+flexbox_align-items-center-3,ported,css_flexbox_flexbox_align_items_center_3,
+flexbox_align-items-stretch-3,ported,css_flexbox_flexbox_align_items_stretch_3,
 flexbox_first-letter,not_portable,,uses_javascript
 flexbox_first-line,not_portable,,complex_css_selector: ul:first-child::first-line
 flexbox_flex-formatting-interop-ref,not_portable,,style_block_unsupported property: table-layout
@@ -1484,7 +1484,7 @@ stretch-flex-item-radio-input,not_portable,,unsupported element: <input>
 stretch-input-in-column,not_portable,,unsupported element: <input>
 stretch-obeys-min-max-002,not_portable,,unsupported property: writing-mode
 stretched-child-shrink-on-relayout,not_portable,,uses_javascript
-stretching-orthogonal-flows,not_portable,,unsupported property: writing-mode
+stretching-orthogonal-flows,ported,css_flexbox_stretching_orthogonal_flows,
 svg-no-natural-size-grandchild,not_portable,,unsupported element: <svg>
 svg-root-as-flex-item-001,not_portable,,unsupported element: <svg>
 svg-root-as-flex-item-002,not_portable,,unsupported element: <svg>
