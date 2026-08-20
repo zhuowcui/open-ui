@@ -21,15 +21,14 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (reproduced at SP17 W0A and
-preserved through W0B):
+Latest authoritative accountability snapshot (SP17 W1B full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3566 |
-| Unported but explicitly tracked tests | 4107 |
-| Runnable passes | 3267 |
+| Ported/runnable WPT tests | 3567 |
+| Unported but explicitly tracked tests | 4106 |
+| Runnable passes | 3268 |
 | Runnable failures | 299 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
@@ -40,21 +39,22 @@ preserved through W0B):
 | Unported `sp13_multicol` residuals | 1018 |
 
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
-The full `wpt/` run was executed without resume on 2026-08-19. All 2823 frozen SP13-R baseline
-IDs and all 351 runnable multicol targets remain exact.
+The full `wpt/` run was executed without resume on 2026-08-19. All 3267 frozen
+SP17 baseline IDs, including all 2823 frozen SP13-R baseline IDs and all 351
+runnable multicol targets, remain exact.
 
-## SP17 W1 Logical Geometry
+## SP17 W1B Shared Child Geometry
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
-kickoff IDs, and their exact per-pixel results. The inventory remains 19
-runnable plus 823 unported; 337 rows stop directly on `writing-mode`, three on
-`unicode-bidi`, and 483 first stop elsewhere. Historical SP13-R through SP16
-ledgers are byte-pinned and unchanged.
+kickoff IDs, and their exact per-pixel results. At kickoff the inventory was 19
+runnable plus 823 unported; 337 rows stopped directly on `writing-mode`, three
+on `unicode-bidi`, and 483 first stopped elsewhere. Historical SP13-R through
+SP16 ledgers are byte-pinned and unchanged.
 
-The 19-ID no-resume run produced 19 expected functional failures and zero
-errors. The authoritative 3,566-ID full summary was restored afterward and the
-unflagged audit passes 7/7.
+The kickoff 19-ID no-resume run produced 19 expected functional failures and
+zero errors. Its evidence remains immutable; live full-suite evidence now
+supersedes the kickoff summary for current accountability.
 
 W0B now accepts and transactionally computes the corpus-used SP17 declarations,
 preserves importance/specificity/source-order conflicts between logical and
@@ -66,22 +66,40 @@ ledger contains 311 rows. The two ledgers are sorted, disjoint, and cover all
 842 original owner rows.
 
 No generated Rust WPT module, runner profile, mapping row, or authoritative
-result changed in W0B. The only residuals still owned by SP17 are the
-`css-flexbox-test1` test/reference pair: their fullwidth digits are absent from
-the pinned fonts and remain guarded as `text_non_ascii` until W2 adds a pinned
-glyph path. See `docs/SP17-PLAN.md` and the six
+result changed in W0B. The only frozen residual dispositions still owned by
+SP17 are the `css-flexbox-test1` test/reference pair: their fullwidth digits are
+absent from the pinned fonts and remain guarded as `text_non_ascii` until W2
+adds a pinned glyph path. See `docs/SP17-PLAN.md` and the six
 `tools/accountability/data/wpt_ported/sp17_*` artifacts.
 
-W1A now gives every `ConstraintSpace` an authoritative writing direction,
+W1A gives every `ConstraintSpace` an authoritative writing direction,
 provides one-time physical-root and parent/child orthogonal size conversion,
 and adds shared logical edge and computed-style projections. The production
 render root derives its direction from computed style. A release no-resume run
 of all 3,267 frozen exact IDs remained 3,267 exact at `0.0%` with zero errors,
 and the full 3,566-ID summary was restored byte-identically afterward.
 
-This is intentionally a foundation checkpoint: normal block, flex,
-fragmentation, multicol, and out-of-flow child boundaries do not all consume
-the new projection yet, and no newly actionable WPT builder has been admitted.
+W1B adds shared child-space helpers and routes normal block children, floats,
+atomic inline/block-in-inline children, and final flex-item layout through the
+computed child writing direction. Flex now chooses and converts its logical
+axes with the container writing direction, including wrapping, direction,
+gaps, margins, placement, and final physical fragments. Overflowing
+right/RTL-start inline alignment also preserves the aligned edge.
+
+The first actionable admission,
+`wpt/css_flexbox/flexbox-writing-mode-001`, is exact at zero mismatched pixels.
+It is a horizontal-tb porter/cascade and shared-flex proof, not a vertical-text
+closure claim. Four retained-text RTL gap reference builders were regenerated
+to correct previously invalid logical-margin lowering; the complete `gap-00`
+slice is 32/32 exact. The current full result is 3567 runnable, 3268 exact, 299
+functional failures, and zero errors. Live `needs_writing_mode` ownership is
+841 rows; the frozen 842-row kickoff inventory and 311/531 disposition remain
+immutable.
+
+W1 remains incomplete. Physical-axis decisions remain in normal block layout;
+flex intrinsic/content and aspect-ratio paths, out-of-flow/static positions,
+fragmentation, multicol, and vertical/sideways text shaping and paint still
+need the shared geometry.
 
 ## SP13-R Closure
 
@@ -159,7 +177,7 @@ Top runnable failure categories:
 
 ## Current Unported Inventory Ownership
 
-The 4107 unported rows are Chromium WPT files that the current porter or renderer cannot
+The 4106 unported rows are Chromium WPT files that the current porter or renderer cannot
 represent yet. They are still tracked with explicit dependency categories.
 
 Top unported categories:
@@ -168,7 +186,7 @@ Top unported categories:
 |---|---:|
 | `needs_javascript` | 1945 |
 | `sp13_multicol` | 1018 |
-| `needs_writing_mode` | 823 |
+| `needs_writing_mode` | 822 |
 | `sp13_fragmentation` | 651 |
 | `needs_table_layout` | 462 |
 | `needs_generated_content` | 443 |
@@ -183,13 +201,15 @@ Top unported categories:
 
 ## Recommended Next Work
 
-Continue SP17 W1 by making normal block and flex child construction use the
-explicit parent/child writing directions and `ResolvedLogicalBox`. Keep all
-intermediate layout decisions logical, convert completed child offsets and
-fragment sizes to physical once, and rerun the frozen baseline after each
-horizontal-no-op slice. Only then surgically splice a small sole-SP17 vertical
-cohort; do not batch-regenerate the 292 builders or retire the detector. Follow
-`docs/SP17-PLAN.md` for the exact boundary.
+Continue SP17 W1 with a focused no-resume probe of the horizontal-RTL companion
+`wpt/css_flexbox/flexbox-writing-mode-004`. If it is not exact, fix only the
+shared direction/geometry path. Then use 002/003/005/006 and 007/008 to drive
+true vertical and mixed orthogonal block/flex behavior. Audit flex intrinsic
+and aspect-ratio sizing before expanding the cohort, then carry logical
+geometry through out-of-flow/static positions, fragmentation, and multicol.
+Keep all 3267 kickoff exact IDs green, splice surgically, do not batch-regenerate
+the remaining actionable builders, and do not retire the detector. Follow
+`docs/SP17-PLAN.md` for the exact boundary and recorded commands.
 
 Hosted pre-merge checks and the separate pinned Chromium parity gate are
 documented in `docs/CI.md`.

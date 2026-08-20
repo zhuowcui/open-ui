@@ -254,6 +254,19 @@ def sp14_text_closure_errors(
         ):
             errors.append(f"W4 target lacks reason-backed functional ownership: {test_id}")
             continue
+        if row and row.get("ported") == "yes":
+            result = summary_by_id.get(test_id)
+            if row.get("our_test_id") != test_id:
+                errors.append(f"later-sprint W4 promotion has wrong identity: {test_id}")
+            if test_id not in templates or test_id not in text_ported_tests:
+                errors.append(f"later-sprint W4 promotion is not manifested: {test_id}")
+            if (
+                not result
+                or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                errors.append(f"later-sprint W4 promotion is not exact: {test_id}")
+            continue
         if not row or row.get("ported") != "no":
             errors.append(f"W4 target is not unported: {test_id}")
             continue
@@ -340,6 +353,19 @@ def sp15_closure_errors(
         ):
             errors.append(f"SP15 residual disposition is invalid: {test_id}")
             continue
+        if row and row.get("ported") == "yes":
+            result = summary_by_id.get(test_id)
+            if row.get("our_test_id") != test_id:
+                errors.append(f"later-sprint SP15 promotion has wrong identity: {test_id}")
+            if test_id not in templates or test_id not in text_ported_tests:
+                errors.append(f"later-sprint SP15 promotion is not manifested: {test_id}")
+            if (
+                not result
+                or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                errors.append(f"later-sprint SP15 promotion is not exact: {test_id}")
+            continue
         if not row or row.get("ported") != "no":
             errors.append(f"SP15 residual is not unported: {test_id}")
             continue
@@ -384,10 +410,16 @@ def sp15_closure_errors(
         )
     if len(rows) != SP14_EXPECTED_INVENTORY:
         errors.append(f"SP15 inventory count {len(rows)} != {SP14_EXPECTED_INVENTORY}")
-    if len(templates) != SP15_EXPECTED_RUNNABLE or len(summary_by_id) != SP15_EXPECTED_RUNNABLE:
+    runnable = sum(row.get("ported") == "yes" for row in rows)
+    if (
+        runnable < SP15_EXPECTED_RUNNABLE
+        or len(templates) != runnable
+        or len(summary_by_id) != runnable
+    ):
         errors.append(
-            f"SP15 runnable count templates={len(templates)}, summary={len(summary_by_id)} "
-            f"!= {SP15_EXPECTED_RUNNABLE}"
+            "SP15 live runnable identity changed incompatibly: "
+            f"mapping={runnable}, templates={len(templates)}, "
+            f"summary={len(summary_by_id)}, floor={SP15_EXPECTED_RUNNABLE}"
         )
     return errors
 
@@ -448,6 +480,19 @@ def sp16_closure_errors(
         ):
             errors.append(f"SP16 residual disposition is invalid: {test_id}")
             continue
+        if row and row.get("ported") == "yes":
+            result = summary_by_id.get(test_id)
+            if row.get("our_test_id") != test_id:
+                errors.append(f"later-sprint SP16 promotion has wrong identity: {test_id}")
+            if test_id not in templates:
+                errors.append(f"later-sprint SP16 promotion lacks a template: {test_id}")
+            if (
+                not result
+                or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                errors.append(f"later-sprint SP16 promotion is not exact: {test_id}")
+            continue
         if not row or row.get("ported") != "no":
             errors.append(f"SP16 residual is not unported: {test_id}")
             continue
@@ -496,12 +541,18 @@ def sp16_closure_errors(
     if len(rows) != SP14_EXPECTED_INVENTORY:
         errors.append(f"SP16 inventory count {len(rows)} != {SP14_EXPECTED_INVENTORY}")
     unported = sum(row.get("ported") == "no" for row in rows)
-    if unported != SP16_EXPECTED_UNPORTED:
-        errors.append(f"SP16 unported count {unported} != {SP16_EXPECTED_UNPORTED}")
-    if len(templates) != SP16_EXPECTED_RUNNABLE or len(summary_by_id) != SP16_EXPECTED_RUNNABLE:
+    runnable = len(rows) - unported
+    if unported > SP16_EXPECTED_UNPORTED:
+        errors.append(f"SP16 unported count grew: {unported} > {SP16_EXPECTED_UNPORTED}")
+    if (
+        runnable < SP16_EXPECTED_RUNNABLE
+        or len(templates) != runnable
+        or len(summary_by_id) != runnable
+    ):
         errors.append(
-            f"SP16 runnable count templates={len(templates)}, summary={len(summary_by_id)} "
-            f"!= {SP16_EXPECTED_RUNNABLE}"
+            "SP16 live runnable identity changed incompatibly: "
+            f"mapping={runnable}, templates={len(templates)}, "
+            f"summary={len(summary_by_id)}, floor={SP16_EXPECTED_RUNNABLE}"
         )
     if any(item.get("status") == "error" for item in summary_by_id.values()):
         errors.append("SP16 closed snapshot contains render/diff errors")
@@ -615,12 +666,18 @@ def sp13r_multicol_closure_errors(
     )
     if len(rows) != SP14_EXPECTED_INVENTORY:
         errors.append(f"SP13-R inventory count {len(rows)} != {SP14_EXPECTED_INVENTORY}")
-    if unported != SP16_EXPECTED_UNPORTED:
-        errors.append(f"SP13-R unported count {unported} != {SP16_EXPECTED_UNPORTED}")
-    if len(templates) != SP16_EXPECTED_RUNNABLE or len(summary_by_id) != SP16_EXPECTED_RUNNABLE:
+    runnable = len(rows) - unported
+    if unported > SP16_EXPECTED_UNPORTED:
+        errors.append(f"SP13-R unported count grew: {unported} > {SP16_EXPECTED_UNPORTED}")
+    if (
+        runnable < SP16_EXPECTED_RUNNABLE
+        or len(templates) != runnable
+        or len(summary_by_id) != runnable
+    ):
         errors.append(
-            f"SP13-R runnable count templates={len(templates)}, summary={len(summary_by_id)} "
-            f"!= {SP16_EXPECTED_RUNNABLE}"
+            "SP13-R live runnable identity changed incompatibly: "
+            f"mapping={runnable}, templates={len(templates)}, "
+            f"summary={len(summary_by_id)}, floor={SP16_EXPECTED_RUNNABLE}"
         )
     if exact < SP13R_EXPECTED_EXACT:
         errors.append(f"SP13-R exact pass count {exact} < {SP13R_EXPECTED_EXACT}")

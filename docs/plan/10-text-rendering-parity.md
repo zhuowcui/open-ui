@@ -8,10 +8,11 @@ then expands from Ahem geometry to real-font and advanced-text parity.
 
 SP14 W0–W4 closed the global `needs_text` category, SP15 closed its inline/layout
 and root/body follow-up, SP16 closed all 776 real-font-metric rows, and SP13-R
-then closed every runnable multicol owner. The text manifest remains 496 IDs.
-The complete 3,566-test run has 3,267 exact passes, 299 functional failures, and
-zero errors. It preserves the 2,823-ID SP13-R baseline plus all 351 exact SP13-R
-targets and passes the 7/7 audit.
+then closed every runnable multicol owner. The text manifest now contains 692
+runner-scoped IDs after the first SP17 admission and its corrected retained-text
+references. The complete 3,567-test run has 3,268 exact passes, 299 functional
+failures, and zero errors. It preserves the 2,823-ID SP13-R baseline plus all
+351 exact SP13-R targets and passes the 7/7 audit.
 
 Deterministic ports use repo-vendored Ahem. Real-font ports use vendored DejaVu Sans,
 Sans Mono, and Serif plus the pinned Chromium 147 FreeType runtime. Each raster policy
@@ -22,8 +23,11 @@ SP17 W0A reproduced that full snapshot without resume and froze all 3,267 exact
 IDs, the original 842 writing-mode owner rows, and the 19 runnable kickoff
 outcomes. W0B then froze a faithful porter disposition of 311 actionable and
 531 residual rows without changing generated Rust builders or pixel evidence.
-W1A has added the shared constraint/logical-geometry foundation and preserved
-all 3,267 exact IDs at `0.0%` in a release no-resume run.
+W1A added the shared constraint/logical-geometry foundation and preserved all
+3,267 exact IDs at `0.0%`. W1B routes normal block, atomic-inline, and flex-item
+child spaces through it, converts flex placement through logical axes, and
+admits `flexbox-writing-mode-001` at exact parity while retaining every kickoff
+pass.
 
 ## Chronological work
 
@@ -53,9 +57,12 @@ family selection, and the real-glyph LCD raster profile are implemented. The glo
 Cover bidi/RTL, vertical writing modes, transformation, decoration, emphasis,
 complex scripts, and emoji. W0A and W0B are complete on the fresh-main branch:
 the original 842-row inventory is frozen as 311 actionable and 531 residual
-rows after transactional CSS handling and a real builder probe. W1 now has an
-authoritative constraint direction and shared logical style/edge projection;
-normal block and flex child geometry must consume that boundary next.
+rows after transactional CSS handling and a real builder probe. W1B now has an
+authoritative constraint direction, shared logical style/edge projection, and
+shared normal block/atomic-inline/flex child boundaries. One horizontal-tb
+actionable target is exact. Continue with horizontal RTL, then vertical/mixed
+orthogonal geometry, flex intrinsic sizing, out-of-flow positions,
+fragmentation/multicol, and finally vertical glyph shaping/paint.
 Follow `docs/SP17-PLAN.md`.
 
 ### SP18 — generated content and text effects

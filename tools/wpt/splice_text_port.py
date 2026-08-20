@@ -351,6 +351,18 @@ def _promote_report_rows(
     rows = list(reader)
     by_name = {replacement.test_id.rsplit("/", 1)[1]: replacement for replacement in replacements}
     seen: set[str] = set()
+    updated = original
+
+    def encoded_row(row: dict[str, str], line_terminator: str) -> str:
+        output = io.StringIO(newline="")
+        writer = csv.DictWriter(
+            output,
+            fieldnames=REPORT_COLUMNS,
+            lineterminator=line_terminator,
+        )
+        writer.writerow(row)
+        return output.getvalue()
+
     for row in rows:
         name = row["filename"]
         replacement = by_name.get(name)
@@ -358,26 +370,43 @@ def _promote_report_rows(
             continue
         if name in seen:
             raise ValueError(f"duplicate porter report row for {replacement.test_id}")
-        row.update(status="ported", fn_name=replacement.fn_name, reason="")
+        replacement_row = dict(row)
+        replacement_row.update(
+            status="ported", fn_name=replacement.fn_name, reason=""
+        )
+        if replacement_row != row:
+            old_variants = (
+                encoded_row(row, "\r\n"),
+                encoded_row(row, "\n"),
+            )
+            matches = [value for value in old_variants if updated.count(value) == 1]
+            if len(matches) != 1:
+                raise ValueError(
+                    f"cannot isolate porter report row for {replacement.test_id}"
+                )
+            # Changed records use LF so `git diff --check` does not treat a
+            # newly introduced CR as trailing whitespace. All untouched report
+            # bytes, including historical CRLF records and quoted newlines,
+            # remain byte-identical.
+            updated = updated.replace(
+                matches[0], encoded_row(replacement_row, "\n"), 1
+            )
         seen.add(name)
     missing = sorted(set(by_name) - seen)
     for name in missing:
         replacement = by_name[name]
-        rows.append(
+        if updated and not updated.endswith(("\n", "\r")):
+            updated += "\n"
+        updated += encoded_row(
             {
                 "filename": name,
                 "status": "ported",
                 "fn_name": replacement.fn_name,
                 "reason": "",
-            }
+            },
+            "\n",
         )
-    rows.sort(key=lambda row: row["filename"])
-
-    output = io.StringIO(newline="")
-    writer = csv.DictWriter(output, fieldnames=REPORT_COLUMNS, lineterminator="\n")
-    writer.writeheader()
-    writer.writerows(rows)
-    return original, output.getvalue()
+    return original, updated
 
 
 def _function_count(rust_src: str, fn_name: str) -> int:

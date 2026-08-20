@@ -389,6 +389,19 @@ class SpliceTransactionTests(unittest.TestCase):
         self.assertEqual(once, self.snapshot())
         self.assertEqual(json.loads(self.manifest.read_text()), ["wpt/demo/sample"])
 
+    def test_surgical_report_update_preserves_untouched_crlf_records(self):
+        report = self.template_dir / "wpt_demo_report.csv"
+        report.write_bytes(
+            b"filename,status,fn_name,reason\r\n"
+            b"sample,not_portable,,no_layout_content\r\n"
+        )
+        _generated, _originals, changes = splice_text_port.prepare_changes(
+            ["wpt/demo/sample"], self.mapping
+        )
+        updated = changes[str(report)].encode("utf-8")
+        self.assertEqual(updated.count(b"\r\n"), 1)
+        self.assertTrue(updated.endswith(b"sample,ported,demo_sample,\n"))
+
     def test_mixed_add_and_replace_transaction_is_idempotent(self):
         added = self.add_unported_fixture("added")
         generated, originals, changes = splice_text_port.prepare_changes(
@@ -412,6 +425,13 @@ class SpliceTransactionTests(unittest.TestCase):
         self.assertEqual(report_rows["added"]["status"], "ported")
         self.assertEqual(report_rows["added"]["fn_name"], "demo_added")
         self.assertEqual(report_rows["added"]["reason"], "")
+        report_text = (self.template_dir / "wpt_demo_report.csv").read_text(
+            encoding="utf-8"
+        )
+        self.assertLess(
+            report_text.index("sample,ported"),
+            report_text.index("added,ported"),
+        )
         self.assertEqual(
             json.loads(self.manifest.read_text()), sorted([added, "wpt/demo/sample"])
         )
@@ -563,8 +583,12 @@ class RunnerScopeTests(unittest.TestCase):
         self.assertFalse(set(w2) & set(w3))
         sp15 = json.loads((ported_dir / "sp15_actionable_targets.json").read_text())
         sp13r = json.loads((ported_dir / "sp13r_multicol_targets.json").read_text())
-        self.assertEqual(len(manifest), 687)
-        self.assertEqual(len(set(manifest) - set(w2) - set(w3)), 290)
+        # SP14 froze a 687-ID manifest, but later exact ports legitimately add
+        # runner-scoped IDs. Preserve the historical floor and its membership
+        # instead of turning that kickoff count into a permanent ceiling.
+        self.assertEqual(manifest, sorted(set(manifest)))
+        self.assertGreaterEqual(len(manifest), 687)
+        self.assertGreaterEqual(len(set(manifest) - set(w2) - set(w3)), 290)
         self.assertTrue(set(w2) | set(w3) <= set(manifest))
         self.assertTrue(set(sp15) <= set(manifest))
         self.assertTrue(set(sp13r) <= set(manifest))

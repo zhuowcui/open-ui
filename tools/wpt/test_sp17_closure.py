@@ -80,6 +80,32 @@ class LedgerTests(unittest.TestCase):
     def test_historical_sp13r_through_sp16_ledgers_are_byte_pinned(self):
         closure.validate_historical_ledgers()
 
+    def test_sp17_kickoff_ledgers_are_byte_pinned_after_live_promotions(self):
+        for path in (
+            closure.BASELINE_JSON,
+            closure.INVENTORY_JSON,
+            closure.INITIAL_TARGETS_JSON,
+            closure.INITIAL_RESULTS_JSON,
+        ):
+            self.assertEqual(
+                closure.hashlib.sha256(path.read_bytes()).hexdigest(),
+                closure.KICKOFF_LEDGER_SHA256[path.name],
+            )
+
+    def test_live_snapshot_accepts_only_exact_actionable_promotions(self):
+        baseline, inventory, _, _ = closure.load_ledgers()
+        actionable, _ = closure.load_probe_ledgers(inventory)
+        with closure.MAPPING_CSV.open(newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        summary = json.loads(closure.SUMMARY_JSON.read_text(encoding="utf-8"))
+        promoted = closure.validate_live_snapshot(
+            rows, summary, baseline, inventory, actionable
+        )
+        self.assertIn(
+            "wpt/css_flexbox/flexbox-writing-mode-001", promoted
+        )
+        self.assertTrue(promoted.issubset(set(actionable)))
+
     def test_w0b_probe_is_a_disjoint_cover_of_the_frozen_inventory(self):
         _, inventory, initial, _ = closure.load_ledgers()
         actionable, residuals = closure.load_probe_ledgers(inventory)

@@ -1055,7 +1055,7 @@ fn text_align_does_not_affect_height() {
 
 #[test]
 fn text_align_with_overflow() {
-    // When text overflows the container, alignment offset should be 0
+    // Overflow must still produce text fragments for the requested alignment.
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
@@ -1073,7 +1073,6 @@ fn text_align_with_overflow() {
     let sp = ConstraintSpace::for_block_child(lu_i(10), lu_i(600), lu_i(10), lu_i(600), false);
     let frag = inline_layout(&doc, block, &sp);
     let texts = collect_text_fragments(&frag);
-    // When text overflows, offset should be 0 (can't push right)
     assert!(!texts.is_empty());
 }
 

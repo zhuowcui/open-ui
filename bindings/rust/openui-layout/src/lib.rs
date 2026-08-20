@@ -48,7 +48,10 @@ pub use intrinsic_sizing::{
 };
 pub use layout_result::{AdjoiningObjectTypes, BreakBetween, LayoutResult, LayoutStatus};
 pub use length_resolver::resolve_length;
-pub use logical_geometry::{LogicalLengthSides, LogicalSizeLengths, ResolvedLogicalBox};
+pub use logical_geometry::{
+    block_child_constraint_space, flex_child_constraint_space, LogicalLengthSides,
+    LogicalSizeLengths, ResolvedLogicalBox,
+};
 pub use multicol::{layout_columns, resolve_column_count_and_width};
 pub use new_formatting_context::{creates_new_formatting_context, layout_new_formatting_context};
 pub use out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate};

@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 owner rows | W1 | 🟡 Active; logical-geometry foundation, 311 actionable / 531 residual frozen |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1B | 🟡 Active; shared child/flex geometry, first exact promotion |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,566 ported/runnable tests, 3,267 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, and 842 frozen SP17 writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,567 ported/runnable tests, 3,268 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 841 live writing-mode owner rows.**
 
 ---
 
@@ -271,11 +271,11 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Metric | Value |
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
-| Current runnable WPT tests | 3,566 |
-| Current runnable WPT passes | 3,267 |
+| Current runnable WPT tests | 3,567 |
+| Current runnable WPT passes | 3,268 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
-| Pixel comparison tests | 3,566 generated WPT comparisons + earlier SP pages/apps |
+| Pixel comparison tests | 3,567 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
@@ -467,3 +467,31 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 - No WPT builder, mapping row, runner profile, or committed result changed.
   Next: migrate normal block and flex child boundaries to the shared logical
   view, then admit a small sole-SP17 cohort surgically.
+
+### SP17 W1B: shared child/flex geometry and first exact promotion
+
+- Centralized normal block, float, atomic-inline, block-in-inline, and flex-item
+  child constraint construction around computed child writing direction with
+  one orthogonal conversion of available and percentage size pairs.
+- Converted flex axis selection, logical sizing, wrapping, alignment, gaps,
+  margins, item positions, and final fragment conversion to the container
+  writing direction. Added vertical-lr/rl and RTL geometry regressions, plus
+  correct overflowing RTL-start inline alignment.
+- Surgically admitted `flexbox-writing-mode-001` at exactly `0.0%`. The
+  authoritative no-resume full suite is now **3,567 runnable / 3,268 exact /
+  299 fail / 0 errors**, with all 3,267 kickoff exact IDs
+  preserved. Live unported inventory is 4,106 and `needs_writing_mode` is 841.
+- Corrected four existing RTL gap reference builders whose historical generated
+  CSS lowering was invalid or omitted retained text. All 32 `gap-00` cases are
+  exact; the five-builder transaction is byte-idempotent.
+- Historical ledgers remain byte-pinned. Standalone SP13-R and the audit accept
+  later growth only when mapping/template/summary identities agree and the
+  promoted result is exact. The 1,018 SP13-R multicol residuals remain frozen.
+- Verification: 122 Python closure/porter tests; full locked Rust
+  style/text/layout/paint tests; release comparator build; both ledger checks;
+  double byte-identical mapping/deferred/report regeneration; and unflagged
+  PNG-backed audit 7/7.
+- Next: probe horizontal-RTL `flexbox-writing-mode-004`, then use 002/003/005/006
+  and 007/008 to finish shared vertical/mixed geometry. W1 still needs physical
+  normal-block decisions, flex intrinsic/aspect-ratio paths, out-of-flow/static
+  positions, fragmentation/multicol, and vertical glyph shaping/paint.

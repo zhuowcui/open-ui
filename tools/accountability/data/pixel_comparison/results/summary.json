@@ -1,6 +1,6 @@
 {
-  "total": 3566,
-  "passed": 3267,
+  "total": 3567,
+  "passed": 3268,
   "failed": 299,
   "errors": 0,
   "near_miss_aa": 63,
@@ -5687,6 +5687,11 @@
       "id": "wpt/css_flexbox/flexbox_quirks_body",
       "status": "fail",
       "mismatch_pct": 22.753291
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_multicol/abspos-after-spanner-static-pos",

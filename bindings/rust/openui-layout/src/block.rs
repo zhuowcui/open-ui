@@ -2234,7 +2234,9 @@ fn handle_float(
 
     // Layout the float child to determine its size.
     // Floats always establish a new formatting context.
-    let child_space = ConstraintSpace::for_block_child(
+    let child_space = crate::block_child_constraint_space(
+        space,
+        child_style,
         float_inline_size,
         space.available_block_size,
         child_available_inline,
@@ -2541,7 +2543,9 @@ fn layout_block_child(
         (child_available_inline - child_non_auto_margin_inline).clamp_negative_to_zero();
 
     let child_is_new_fc = establishes_new_fc(child_style);
-    let mut child_space = ConstraintSpace::for_block_child(
+    let mut child_space = crate::block_child_constraint_space(
+        space,
+        child_style,
         child_constrained_inline,
         children_available_block_size,
         child_available_inline,

@@ -427,9 +427,6 @@ fn compute_text_align_offset(
     text_align_last: TextAlignLast,
 ) -> LayoutUnit {
     let remaining = available_width - line_info.used_width;
-    if remaining <= LayoutUnit::zero() {
-        return LayoutUnit::zero();
-    }
 
     // On the last line or forced-break line, always check text-align-last
     // first. Per CSS Text Level 3 §7.3, text-align-last overrides the
@@ -805,6 +802,7 @@ pub fn inline_layout_from_items(
 
             let line_fragment = create_line_box(
                 doc,
+                space,
                 &working_items_data,
                 &line_info,
                 line_avail.available_inline_size,
@@ -967,7 +965,9 @@ pub fn inline_layout_from_items(
         if block_info.item_index < item_start || block_info.item_index >= item_end {
             continue;
         }
-        let block_space = ConstraintSpace::for_block_child(
+        let block_space = crate::block_child_constraint_space(
+            space,
+            &doc.node(block_info.node_id).style,
             available_inline_size,
             space.available_block_size,
             available_inline_size,
@@ -1703,6 +1703,7 @@ pub fn inline_layout_for_children(
 
             let line_fragment = create_line_box(
                 doc,
+                space,
                 &items_data,
                 &line_info,
                 line_avail.available_inline_size,
@@ -1859,6 +1860,7 @@ pub fn inline_layout_for_children(
 /// Blink: `InlineLayoutAlgorithm::CreateLine()`.
 fn create_line_box(
     doc: &Document,
+    space: &ConstraintSpace,
     items_data: &InlineItemsData,
     line_info: &LineInfo,
     available_width: LayoutUnit,
@@ -1958,7 +1960,14 @@ fn create_line_box(
                 } else {
                     available_block
                 };
-                let child_space = ConstraintSpace::for_block_child(
+                let child_space = crate::block_child_constraint_space(
+                    // Atomic inline sizing is resolved in this IFC's logical
+                    // axes. Derive the child's writing direction at the
+                    // boundary so direction-only and orthogonal descendants
+                    // consume the same authoritative constraint conversion as
+                    // normal block and flex children.
+                    space,
+                    style,
                     item_width,
                     available_block,
                     percentage_base,
@@ -3453,8 +3462,9 @@ mod tests {
     }
 
     #[test]
-    fn text_align_overflow_no_offset() {
-        // When content overflows, offset should be 0.
+    fn text_align_right_overflow_extends_toward_line_left() {
+        // Right alignment preserves the right edge even when the content is
+        // wider than the line, so overflow extends toward physical left.
         let line = make_test_line_info(100.0, 150.0, TextAlign::Right, false);
         let offset = compute_text_align_offset(
             &line,
@@ -3462,7 +3472,19 @@ mod tests {
             Direction::Ltr,
             TextAlignLast::Auto,
         );
-        assert_eq!(offset, LayoutUnit::zero());
+        assert_eq!(offset, LayoutUnit::from_i32(-50));
+    }
+
+    #[test]
+    fn text_align_start_rtl_overflow_extends_toward_inline_end() {
+        let line = make_test_line_info(100.0, 150.0, TextAlign::Start, false);
+        let offset = compute_text_align_offset(
+            &line,
+            LayoutUnit::from_i32(100),
+            Direction::Rtl,
+            TextAlignLast::Auto,
+        );
+        assert_eq!(offset, LayoutUnit::from_i32(-50));
     }
 
     #[test]

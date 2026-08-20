@@ -8,6 +8,8 @@
 use openui_geometry::{LayoutUnit, Length, LogicalBoxStrut, LogicalSize, PhysicalSize};
 use openui_style::ComputedStyle;
 
+use crate::ConstraintSpace;
+
 /// Four computed length values addressed by logical edge.
 #[derive(Debug, Clone, Copy)]
 pub struct LogicalLengthSides<'a> {
@@ -104,6 +106,60 @@ impl<'a> ResolvedLogicalBox<'a> {
             PhysicalSize::new(size.block_size, size.inline_size)
         }
     }
+}
+
+/// Build the constraint space for a normal-flow child from values expressed
+/// in the parent's logical axes.
+///
+/// Keeping this boundary next to the computed-style projection makes it hard
+/// for block, flex, and fragmentation callers to forget the child's computed
+/// writing direction or to transpose only one of the available/percentage
+/// size pairs.
+#[allow(clippy::too_many_arguments)]
+pub fn block_child_constraint_space(
+    parent: &ConstraintSpace,
+    child_style: &ComputedStyle,
+    available_inline_size: LayoutUnit,
+    available_block_size: LayoutUnit,
+    percentage_inline_size: LayoutUnit,
+    percentage_block_size: LayoutUnit,
+    is_new_formatting_context: bool,
+) -> ConstraintSpace {
+    let child_direction = child_style
+        .direction
+        .writing_direction(child_style.writing_mode);
+    ConstraintSpace::for_block_child_from_parent(
+        parent,
+        available_inline_size,
+        available_block_size,
+        percentage_inline_size,
+        percentage_block_size,
+        is_new_formatting_context,
+        child_direction,
+    )
+}
+
+/// Build a flex-item constraint space from sizes resolved in the flex
+/// container's logical axes.
+pub fn flex_child_constraint_space(
+    parent: &ConstraintSpace,
+    child_style: &ComputedStyle,
+    available_inline_size: LayoutUnit,
+    available_block_size: LayoutUnit,
+    percentage_inline_size: LayoutUnit,
+    percentage_block_size: LayoutUnit,
+) -> ConstraintSpace {
+    let child_direction = child_style
+        .direction
+        .writing_direction(child_style.writing_mode);
+    ConstraintSpace::for_flex_child_from_parent(
+        parent,
+        available_inline_size,
+        available_block_size,
+        percentage_inline_size,
+        percentage_block_size,
+        child_direction,
+    )
 }
 
 fn logical_length_sides<'a>(
@@ -229,5 +285,66 @@ mod tests {
         ));
         assert_eq!(physical.width, LayoutUnit::from_i32(80));
         assert_eq!(physical.height, LayoutUnit::from_i32(120));
+    }
+
+    #[test]
+    fn block_child_boundary_uses_computed_direction_and_transposes_both_bases() {
+        let parent =
+            ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
+        let child_style = distinctive_style(WritingMode::VerticalRl, Direction::Rtl);
+        let child = block_child_constraint_space(
+            &parent,
+            &child_style,
+            LayoutUnit::from_i32(700),
+            LayoutUnit::from_i32(500),
+            LayoutUnit::from_i32(600),
+            LayoutUnit::from_i32(400),
+            false,
+        );
+
+        assert_eq!(child.available_inline_size, LayoutUnit::from_i32(500));
+        assert_eq!(child.available_block_size, LayoutUnit::from_i32(700));
+        assert_eq!(
+            child.percentage_resolution_inline_size,
+            LayoutUnit::from_i32(400)
+        );
+        assert_eq!(
+            child.percentage_resolution_block_size,
+            LayoutUnit::from_i32(600)
+        );
+        assert!(child.writing_direction.is_flipped_blocks());
+        assert!(child.writing_direction.is_rtl());
+    }
+
+    #[test]
+    fn flex_child_boundary_preserves_parallel_axes() {
+        let parent_direction = Direction::Ltr.writing_direction(WritingMode::VerticalLr);
+        let parent = ConstraintSpace::for_root_with_writing_direction(
+            LayoutUnit::from_i32(800),
+            LayoutUnit::from_i32(600),
+            parent_direction,
+        );
+        let child_style = distinctive_style(WritingMode::SidewaysRl, Direction::Rtl);
+        let child = flex_child_constraint_space(
+            &parent,
+            &child_style,
+            LayoutUnit::from_i32(500),
+            LayoutUnit::from_i32(700),
+            LayoutUnit::from_i32(400),
+            LayoutUnit::from_i32(600),
+        );
+
+        assert_eq!(child.available_inline_size, LayoutUnit::from_i32(500));
+        assert_eq!(child.available_block_size, LayoutUnit::from_i32(700));
+        assert_eq!(
+            child.percentage_resolution_inline_size,
+            LayoutUnit::from_i32(400)
+        );
+        assert_eq!(
+            child.percentage_resolution_block_size,
+            LayoutUnit::from_i32(600)
+        );
+        assert!(child.writing_direction.is_flipped_blocks());
+        assert!(child.writing_direction.is_rtl());
     }
 }

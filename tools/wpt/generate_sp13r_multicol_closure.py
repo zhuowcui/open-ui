@@ -134,10 +134,25 @@ def validate_closed_snapshot(
     mapping = {canonical_id(row): row for row in rows}
     if len(rows) != 7673:
         raise ValueError(f"SP13-R mapping inventory changed: {len(rows)}")
-    if len(summary_by_id) != EXPECTED_RUNNABLE:
-        raise ValueError(f"SP13-R runnable inventory changed: {len(summary_by_id)}")
-    if sum(row.get("ported") == "no" for row in rows) != EXPECTED_UNPORTED:
-        raise ValueError("SP13-R unported inventory changed")
+    if len(mapping) != len(rows):
+        raise ValueError("SP13-R mapping contains duplicate identities")
+    ported_ids = {
+        test_id for test_id, row in mapping.items() if row.get("ported") == "yes"
+    }
+    unported = len(rows) - len(ported_ids)
+    if (
+        len(ported_ids) < EXPECTED_RUNNABLE
+        or set(summary_by_id) != ported_ids
+    ):
+        raise ValueError(
+            "SP13-R live runnable identity changed incompatibly: "
+            f"mapping={len(ported_ids)}, summary={len(summary_by_id)}, "
+            f"floor={EXPECTED_RUNNABLE}"
+        )
+    if unported > EXPECTED_UNPORTED:
+        raise ValueError(
+            f"SP13-R unported inventory grew: {unported} > {EXPECTED_UNPORTED}"
+        )
     if sum(
         item.get("status") == "pass" and item.get("mismatch_pct") == 0.0
         for item in summary_by_id.values()

@@ -551,6 +551,16 @@ class GenerationAndRunnerTests(unittest.TestCase):
                 set(item["owner_categories"]),
             )
 
+    def test_closed_snapshot_accepts_later_exact_non_multicol_promotions(self):
+        with closure.MAPPING_CSV.open(newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        summary = json.loads(closure.SUMMARY_JSON.read_text(encoding="utf-8"))
+        closure.validate_closed_snapshot(rows, summary, *closure.load_ledgers())
+        self.assertGreater(
+            len(closure.runnable_wpt_results(summary)),
+            closure.EXPECTED_RUNNABLE,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -3795,7 +3795,7 @@ css-flexbox/flexbox-with-pseudo-elements-002.html,flexbox-with-pseudo-elements-0
 css-flexbox/flexbox-with-pseudo-elements-002-ref.html,flexbox-with-pseudo-elements-002-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-with-pseudo-elements-002-ref,pass,0.0,,,
 css-flexbox/flexbox-with-pseudo-elements-003.html,flexbox-with-pseudo-elements-003,css_flexbox,no,,,,"needs_table_layout,needs_generated_content",Future SP: Table Layout; Future SP: Generated Content,Porter deferred: complex_css_selector: div.withBefore::before
 css-flexbox/flexbox-with-pseudo-elements-003-ref.html,flexbox-with-pseudo-elements-003-ref,css_flexbox,no,,,,"reference_test,needs_generated_content",Reference Test (not standalone); Future SP: Generated Content,Porter deferred: style_block_unsupported property: content
-css-flexbox/flexbox-writing-mode-001.html,flexbox-writing-mode-001,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-writing-mode-001.html,flexbox-writing-mode-001,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-001,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-001-ref.html,flexbox-writing-mode-001-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-001-ref,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-002.html,flexbox-writing-mode-002,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
 css-flexbox/flexbox-writing-mode-002-ref.html,flexbox-writing-mode-002-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-002-ref,pass,0.0,,,

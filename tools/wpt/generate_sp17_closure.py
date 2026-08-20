@@ -52,6 +52,12 @@ EXPECTED_UNPORTED = 4107
 EXPECTED_ACTIONABLE = 311
 EXPECTED_RESIDUALS = 531
 EXPECTED_PROBE_SP17_RESIDUALS = 2
+KICKOFF_LEDGER_SHA256 = {
+    "sp17_baseline_exact.json": "59a514d3b76b83ecc44efd43dda5a16ec2a0203803849407f3dce035d9e9fc20",
+    "sp17_writing_mode_inventory.json": "b72a0b0b4e74f4c1cb912ab65642dd6f5bef76a570f0a9b219f68729de6d10ad",
+    "sp17_initial_runnable_targets.json": "f82d99182bf276ddd524b2894e2de6b21e8f1f5bf7d8f3bd984c8ef0e2c040c4",
+    "sp17_initial_runnable_results.json": "1fcc02a0e742df04cec80e06750f74e6859ef11552d5488300c590095432d00d",
+}
 PROBE_LEDGER_SHA256 = {
     "sp17_actionable_targets.json": "9d2b53070cf206b6c37a5c66bd0d37ea757e12b7ca6d4a19a5eb98ee4579f96c",
     "sp17_residual_dispositions.json": "314a7a27f250ef1fb5f65b86e69f48771e5116a4b6592bce2190d474a9338776",
@@ -417,25 +423,102 @@ def load_probe_ledgers(inventory: list[dict]) -> tuple[list[str], list[dict]]:
     return actionable, residuals
 
 
-def validate_full_snapshot(rows: list[dict[str, str]], summary: dict) -> None:
+def validate_live_snapshot(
+    rows: list[dict[str, str]],
+    summary: dict,
+    baseline: list[str],
+    inventory: list[dict],
+    actionable: list[str],
+) -> set[str]:
+    """Validate the evolving live snapshot against immutable kickoff facts.
+
+    W0A counts describe the start of SP17, not a permanent runnable ceiling.
+    A kickoff-unported row may move only from the frozen actionable ledger to
+    an exact, zero-error runnable result, and losing SP17 ownership is allowed
+    only for such an exact runnable row.
+    """
     if len(rows) != EXPECTED_MAPPING:
         raise ValueError(f"SP17 Chromium inventory changed: {len(rows)}")
-    if sum(row.get("ported") == "yes" for row in rows) != EXPECTED_RUNNABLE:
-        raise ValueError("SP17 runnable mapping inventory changed")
-    if sum(row.get("ported") == "no" for row in rows) != EXPECTED_UNPORTED:
-        raise ValueError("SP17 unported mapping inventory changed")
+
+    row_by_id = {canonical_id(row): row for row in rows}
+    if len(row_by_id) != EXPECTED_MAPPING:
+        raise ValueError("SP17 live mapping contains duplicate IDs")
+    ported_ids = {
+        test_id for test_id, row in row_by_id.items()
+        if row.get("ported") == "yes"
+    }
+    unported_ids = set(row_by_id) - ported_ids
+
+    kickoff_unported = {
+        item["test_id"] for item in inventory
+        if item["kickoff_state"] == "unported"
+    }
+    promoted = kickoff_unported & ported_ids
+    if not promoted.issubset(actionable):
+        raise ValueError(
+            "SP17 live mapping promoted a row outside the frozen actionable ledger"
+        )
+    expected_runnable = EXPECTED_RUNNABLE + len(promoted)
+    expected_unported = EXPECTED_UNPORTED - len(promoted)
+    if len(ported_ids) != expected_runnable:
+        raise ValueError(
+            "SP17 runnable mapping changed outside exact actionable promotions: "
+            f"{len(ported_ids)} != {expected_runnable}"
+        )
+    if len(unported_ids) != expected_unported:
+        raise ValueError("SP17 unported mapping inventory changed unexpectedly")
+
     tests = summary.get("tests", [])
-    counts = (
-        len(tests), summary.get("passed"), summary.get("failed"), summary.get("errors")
-    )
-    expected = (
-        EXPECTED_RUNNABLE, EXPECTED_BASELINE, EXPECTED_FAILURES, EXPECTED_ERRORS
-    )
-    if counts != expected:
-        raise ValueError(f"SP17 full pixel snapshot changed: {counts} != {expected}")
-    ids = [item.get("id") for item in tests]
-    if len(set(ids)) != EXPECTED_RUNNABLE:
+    summary_by_id = {item.get("id"): item for item in tests}
+    if len(summary_by_id) != len(tests):
         raise ValueError("SP17 full pixel summary contains duplicate IDs")
+    if set(summary_by_id) != ported_ids:
+        raise ValueError("SP17 full pixel summary and runnable mapping IDs differ")
+    passed = summary.get("passed")
+    failed = summary.get("failed")
+    errors = summary.get("errors")
+    if (
+        len(tests) != expected_runnable
+        or errors != EXPECTED_ERRORS
+        or not isinstance(passed, int)
+        or not isinstance(failed, int)
+        or passed + failed + errors != expected_runnable
+        or passed < EXPECTED_BASELINE + len(promoted)
+    ):
+        raise ValueError(
+            "SP17 live pixel snapshot violates monotonic exact closure: "
+            f"tests={len(tests)}, pass={passed}, fail={failed}, errors={errors}"
+        )
+
+    for test_id in baseline:
+        result = summary_by_id.get(test_id, {})
+        if result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
+            raise ValueError(f"SP17 frozen baseline regressed: {test_id}")
+    for test_id in promoted:
+        result = summary_by_id[test_id]
+        if result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
+            raise ValueError(f"SP17 promotion is not exact: {test_id}")
+        if SP17_CATEGORY in categories(row_by_id[test_id]["failure_category"]):
+            raise ValueError(f"SP17 exact promotion retained live ownership: {test_id}")
+
+    inventory_ids = {item["test_id"] for item in inventory}
+    live_owned = {
+        test_id for test_id, row in row_by_id.items()
+        if SP17_CATEGORY in categories(row["failure_category"])
+    }
+    if not live_owned.issubset(inventory_ids):
+        raise ValueError("SP17 ownership expanded outside the frozen inventory")
+    for test_id in inventory_ids - live_owned:
+        result = summary_by_id.get(test_id, {})
+        if (
+            test_id not in ported_ids
+            or result.get("status") != "pass"
+            or result.get("mismatch_pct") != 0.0
+        ):
+            raise ValueError(
+                f"SP17 ownership disappeared without an exact runnable result: {test_id}"
+            )
+    return promoted
 
 
 def encoded(value: object) -> str:
@@ -449,13 +532,9 @@ def load_inputs() -> tuple[list[dict[str, str]], dict]:
 
 
 def build_outputs(rows: list[dict[str, str]], summary: dict) -> dict[Path, str]:
-    validate_full_snapshot(rows, summary)
-    baseline = build_baseline(summary)
-    inventory = build_inventory(rows)
-    targets = build_initial_targets(inventory)
-    evidence = build_initial_results(targets, summary)
-    if set(baseline) & set(targets):
-        raise ValueError("SP17 exact baseline overlaps the failing initial target slice")
+    baseline, inventory, targets, evidence = load_ledgers()
+    actionable, _ = load_probe_ledgers(inventory)
+    validate_live_snapshot(rows, summary, baseline, inventory, actionable)
     return {
         BASELINE_JSON: encoded(baseline),
         INVENTORY_JSON: encoded(inventory),
@@ -465,6 +544,13 @@ def build_outputs(rows: list[dict[str, str]], summary: dict) -> dict[Path, str]:
 
 
 def load_ledgers() -> tuple[list, list, list, dict]:
+    for path in (
+        BASELINE_JSON, INVENTORY_JSON, INITIAL_TARGETS_JSON, INITIAL_RESULTS_JSON,
+    ):
+        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        expected = KICKOFF_LEDGER_SHA256[path.name]
+        if actual != expected:
+            raise ValueError(f"SP17 kickoff ledger byte drift: {path.name}: {actual}")
     baseline = json.loads(BASELINE_JSON.read_text(encoding="utf-8"))
     inventory = json.loads(INVENTORY_JSON.read_text(encoding="utf-8"))
     targets = json.loads(INITIAL_TARGETS_JSON.read_text(encoding="utf-8"))

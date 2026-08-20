@@ -94,7 +94,9 @@ condition, continue work or clarify the condition; do not self-certify completio
 
 ## Recommended Next Phase
 
-SP13-R is closed. Land PR #1 only after the hosted checks described in
-`docs/CI.md` are green, then start SP17 from fresh `main` using
-`docs/SP17-HANDOFF.md`. Preserve the 2,823-ID SP13-R frozen exact baseline, the
-351-ID exact target ledger, and the zero-pixel passing threshold.
+SP13-R is closed and SP17 is active on `agent/sp17-advanced-text` from the
+landed PR #1 main state. `docs/SP17-HANDOFF.md` is the historical kickoff
+contract; use `docs/SP17-PLAN.md` and `docs/progress/current-status.md` for the
+live W1B continuation. Preserve the 3,267-ID SP17 kickoff baseline (including
+the 2,823-ID SP13-R baseline and 351-ID exact target ledger) and the zero-pixel
+passing threshold.

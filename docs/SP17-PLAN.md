@@ -2,31 +2,30 @@
 
 ## Status
 
-SP17 W1 is in progress on `agent/sp17-advanced-text`, branched from `main` commit
-`2c1fe78c142c8b83896cd51b1b6d580496611b5e` on 2026-08-19. No generated Rust
-WPT builder code has changed yet.
+SP17 W1B is in progress on `agent/sp17-advanced-text`, branched from `main`
+commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on 2026-08-19.
 
 The branch has reproduced the complete suite without resume, frozen the kickoff
 ledgers and 19-ID pixel evidence, added transactional SP17 CSS handling, and
 frozen a faithful no-write porter probe over all 823 kickoff-unported rows. The
-authoritative full summary remains restored. The W1A constraint/logical-geometry
-foundation is implemented and has passed the complete 3,267-ID horizontal
-no-op gate. Migrating normal block and flex child boundaries to consume it is
-the next implementation boundary.
+W1A established the constraint/logical-geometry foundation and preserved the
+complete 3,267-ID exact baseline. W1B now routes normal block, atomic-inline,
+and final flex-item child spaces through the shared writing-direction boundary,
+uses logical flex axes through final physical fragment conversion, and admits
+the first exact actionable target. The authoritative live full-suite result is
+3,567 runnable, 3,268 exact, 299 functional failures, and zero errors.
 
-| Starting metric | Value |
-|---|---:|
-| Chromium inventory | 7,673 |
-| Runnable WPTs | 3,566 |
-| Exact passes | 3,267 |
-| Functional failures | 299 |
-| Render/diff errors | 0 |
-| Unported rows | 4,107 |
-| `needs_writing_mode` inventory | 842 |
-| Runnable `needs_writing_mode` | 19 |
-| Unported `needs_writing_mode` | 823 |
-| Frozen W0B actionable targets | 311 |
-| Frozen W0B residual dispositions | 531 |
+| Metric | Kickoff | Live W1B |
+|---|---:|---:|
+| Chromium inventory | 7,673 | 7,673 |
+| Runnable WPTs | 3,566 | 3,567 |
+| Exact passes | 3,267 | 3,268 |
+| Functional failures | 299 | 299 |
+| Render/diff errors | 0 | 0 |
+| Unported rows | 4,107 | 4,106 |
+| `needs_writing_mode` owner rows | 842 | 841 |
+| Frozen W0B actionable targets | 311 | 311 |
+| Frozen W0B residual dispositions | 531 | 531 |
 
 Exact means zero mismatched pixels. SP17 must preserve all 3,267 starting exact
 IDs, including the immutable 2,823-ID SP13-R baseline and all 351 exact SP13-R
@@ -400,3 +399,51 @@ render/diff error.
   child construction still needs to consume the explicit child direction and
   `ResolvedLogicalBox`, then convert completed fragments to physical geometry
   once. No actionable builders have been spliced yet.
+
+### 2026-08-19 — W1B shared child geometry and first exact promotion
+
+- Added shared block- and flex-child constraint helpers that derive the child's
+  computed writing direction and transpose both available and percentage size
+  pairs exactly once. Normal-flow block children, floats, atomic inline flex
+  children, block-in-inline children, and final flex-item layout now use this
+  boundary.
+- Converted the flex container's axis selection, logical size constraints,
+  gaps, margins, wrapping, alignment, child placement, final fragment size, and
+  containing-block size to the container writing direction. Direction and
+  block-flow flips are applied by `WritingModeConverter`; only authored
+  `*-reverse` values reverse logical item order. Focused tests cover vertical-lr,
+  vertical-rl, RTL inline starts, row wrapping, and gap/reference geometry.
+- Fixed overflowing right/RTL-start inline alignment so the aligned edge is
+  preserved and overflow extends toward the logical end. This was required for
+  retained-text RTL flex gap references and is covered by direct inline tests.
+- Surgically admitted `wpt/css_flexbox/flexbox-writing-mode-001`. It is an
+  authored `horizontal-tb` case and proves the SP17 porter/cascade plus shared
+  flex path without claiming vertical text closure. Its 800x600 result has zero
+  mismatched pixels. The live full no-resume run is **3,567 total / 3,268 exact /
+  299 fail / 0 errors**, and all 3,267 frozen baseline IDs remain exact.
+- Regenerated four already-runnable RTL reference builders
+  (`gap-001-rtl-ref`, `gap-003-rtl-ref`, `gap-006-rtl`, and
+  `gap-006-rtl-ref`) because the old generated forms encoded logical margins
+  in the wrong physical direction or omitted retained text. The current porter
+  output and runtime fixes make the full `gap-00` slice 32/32 exact. This is a
+  standards-based builder correction, not a test-specific geometry exception.
+- Strengthened the live SP17 check and historical SP13-R through SP16 audit
+  validators so immutable ledgers remain byte-pinned while later promotions
+  are accepted only when their mapping/template/summary identity is complete,
+  the result is exact at `0.0%`, and the applicable historical runnable floor
+  is preserved. SP13-R's 1,018 residual rows remain strictly unported and
+  ownership-identical.
+- The five-builder splice is byte-idempotent. Mapping, deferred CSV, and HTML
+  report generation were each run twice with identical hashes. The combined
+  closure/porter suite passes 122 tests, the full style/text/layout/paint Rust
+  matrix passes, release `pixel-compare` builds, both ledger checks pass, and
+  the unflagged PNG-backed audit is clean 7/7. The live summary SHA-256 is
+  `6f99e956b4a3eed7a2c4427c429ccff54baaeb7fa5af3f161c81354ae80c5df4`.
+- W1 is not complete. Normal block layout still makes substantial physical-axis
+  decisions; flex intrinsic/content-based and aspect-ratio branches need an
+  orthogonal audit; out-of-flow/static-position propagation, fragmentation,
+  multicol, and vertical/sideways glyph shaping and paint remain open. The next
+  lowest-risk admission probe is the horizontal-RTL companion
+  `wpt/css_flexbox/flexbox-writing-mode-004`; then use 002/003/005/006 and
+  007/008 to drive true vertical and mixed orthogonal geometry. Promote none of
+  them without a focused no-resume `0.0%` result and baseline preservation.

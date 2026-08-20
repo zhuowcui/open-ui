@@ -128,6 +128,44 @@ class RootAwarePorterTests(unittest.TestCase):
 
 
 class SupersessionTests(unittest.TestCase):
+    def test_later_exact_promotion_supersedes_historical_w4_ceiling(self):
+        test_id = "wpt/css_flexbox/later-exact"
+        row = {
+            "sp_area": "css_flexbox",
+            "test_name": "later-exact",
+            "ported": "yes",
+            "our_test_id": test_id,
+            "chromium_test_path": "css-flexbox/later-exact.html",
+            "failure_category": "",
+            "notes": "",
+        }
+        w4 = [{
+            "test_id": test_id,
+            "chromium_test_path": "css-flexbox/later-exact.html",
+            "rejection_reason": "style_block_unsupported property: writing-mode",
+            "rejection_owner": "needs_writing_mode",
+            "owner_categories": ["needs_writing_mode"],
+        }]
+        result = {test_id: {
+            "id": test_id,
+            "status": "pass",
+            "mismatch_pct": 0.0,
+        }}
+        errors = audit.sp14_text_closure_errors(
+            [row], result, {test_id: "template"}, {test_id}, [], [], w4,
+            enforce_frozen_counts=False,
+        )
+        self.assertEqual(errors, [])
+
+        result[test_id]["mismatch_pct"] = 0.01
+        errors = audit.sp14_text_closure_errors(
+            [row], result, {test_id: "template"}, {test_id}, [], [], w4,
+            enforce_frozen_counts=False,
+        )
+        self.assertIn(
+            f"later-sprint W4 promotion is not exact: {test_id}", errors
+        )
+
     def test_sp14_w4_entry_can_be_superseded_by_sp15_promotion(self):
         test_id = "wpt/css_backgrounds/example"
         row = {
