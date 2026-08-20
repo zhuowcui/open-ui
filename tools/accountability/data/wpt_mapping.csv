@@ -3797,15 +3797,15 @@ css-flexbox/flexbox-with-pseudo-elements-003.html,flexbox-with-pseudo-elements-0
 css-flexbox/flexbox-with-pseudo-elements-003-ref.html,flexbox-with-pseudo-elements-003-ref,css_flexbox,no,,,,"reference_test,needs_generated_content",Reference Test (not standalone); Future SP: Generated Content,Porter deferred: style_block_unsupported property: content
 css-flexbox/flexbox-writing-mode-001.html,flexbox-writing-mode-001,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-001,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-001-ref.html,flexbox-writing-mode-001-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-001-ref,pass,0.0,,,
-css-flexbox/flexbox-writing-mode-002.html,flexbox-writing-mode-002,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-writing-mode-002.html,flexbox-writing-mode-002,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-002,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-002-ref.html,flexbox-writing-mode-002-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-002-ref,pass,0.0,,,
-css-flexbox/flexbox-writing-mode-003.html,flexbox-writing-mode-003,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-writing-mode-003.html,flexbox-writing-mode-003,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-003,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-003-ref.html,flexbox-writing-mode-003-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-003-ref,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-004.html,flexbox-writing-mode-004,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-004,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-004-ref.html,flexbox-writing-mode-004-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-004-ref,pass,0.0,,,
-css-flexbox/flexbox-writing-mode-005.html,flexbox-writing-mode-005,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-writing-mode-005.html,flexbox-writing-mode-005,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-005,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-005-ref.html,flexbox-writing-mode-005-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-005-ref,pass,0.0,,,
-css-flexbox/flexbox-writing-mode-006.html,flexbox-writing-mode-006,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-writing-mode-006.html,flexbox-writing-mode-006,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-006,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-006-ref.html,flexbox-writing-mode-006-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-006-ref,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-007.html,flexbox-writing-mode-007,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
 css-flexbox/flexbox-writing-mode-007-ref.html,flexbox-writing-mode-007-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-007-ref,pass,0.0,,,

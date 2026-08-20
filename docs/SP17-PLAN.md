@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1C is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W1D is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -15,19 +15,21 @@ and final flex-item child spaces through the shared writing-direction boundary,
 uses logical flex axes through final physical fragment conversion, and admits
 the first exact actionable target. W1C fixes final flex placement to consume
 the resolved container direction, proves all horizontal-tb/RTL flex-flow
-combinations, and admits its exact companion target. The authoritative live
-full-suite result is 3,568 runnable, 3,269 exact, 299 functional failures, and
-zero errors.
+combinations, and admits its exact companion target. W1D closes the four
+vertical-container companions by projecting resolved flex-item main/cross sizes
+back to physical fragment width/height at the vertical writing boundary. The
+authoritative live full-suite result is 3,572 runnable, 3,273 exact, 299
+functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1C |
+| Metric | Kickoff | Live W1D |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,568 |
-| Exact passes | 3,267 | 3,269 |
+| Runnable WPTs | 3,566 | 3,572 |
+| Exact passes | 3,267 | 3,273 |
 | Functional failures | 299 | 299 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 4,105 |
-| `needs_writing_mode` owner rows | 842 | 840 |
+| Unported rows | 4,107 | 4,101 |
+| `needs_writing_mode` owner rows | 842 | 836 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -486,3 +488,39 @@ render/diff error.
   order: 002, 003, 005, 006, then 007 and 008. Flex intrinsic/aspect-ratio
   auditing, out-of-flow/static positions, fragmentation, multicol, and vertical
   glyph shaping/paint remain outside W1C.
+
+### 2026-08-20 — W1D vertical-container flex-flow matrix closure
+
+- Added one parameterized regression for vertical-rl/LTR, vertical-lr/LTR,
+  vertical-rl/RTL, and vertical-lr/RTL across all eight flex-direction and
+  wrap-reversal combinations. It asserts physical offsets and 20×15 physical
+  item sizes by original cyan, magenta, yellow, and black identity.
+- Diagnosed a shared fragment-boundary defect: vertical flex resolved logical
+  main/cross sizes correctly, but the provisional child fragment retained the
+  transposed fixed child-space pair. Non-horizontal flex placement now projects
+  the resolved main/cross border-box sizes into physical width/height before
+  logical placement. Horizontal fragment sizes remain untouched so
+  fragmentation-reduced block sizes are preserved.
+- Surgically admitted only `flexbox-writing-mode-002`, 003, 005, and 006 in one
+  transaction. Their exact-ID no-resume run is 4/4 exact with zero mismatched
+  pixels and zero errors. All four already-exact reference builders remain
+  byte-identical, repeating the splice is byte-idempotent, and no 007/008
+  builder was generated.
+- Rebuilt release `pixel-compare`, then ran the frozen 3,267-ID baseline without
+  resume: 3,267/3,267 exact. The authoritative complete no-resume run is
+  **3,572 runnable / 3,273 exact / 299 fail / 0 errors**. Its `summary.json`
+  SHA-256 is
+  `2c041fc33000a20ea899bf2be6bf53354dd10530a072acaa35fbf29d9aecf88d`.
+- The live inventory is 4,101 unported rows, 836 `needs_writing_mode` rows, and
+  697 text-manifest IDs. The SP17 live check now requires exact actionable
+  promotions 001–006 while every kickoff and historical ledger remains
+  byte-pinned.
+- Mapping, deferred CSV, and HTML report generation were run twice with
+  byte-identical hashes. Verification passes 179 focused flex/logical-writing
+  Rust tests, the full locked style/text/layout/paint matrix, all 122 SP13-R
+  through SP17 Python tests, both closure-generator checks, formatter and diff
+  checks, release comparator, splice/reference idempotence, and the unflagged
+  PNG-backed audit 7/7.
+- W1 remains open. Drive orthogonal-child sizing next with 007, then 008. Flex
+  intrinsic/aspect-ratio auditing, out-of-flow/static positions, fragmentation,
+  multicol, and vertical glyph shaping/paint remain outside W1D.

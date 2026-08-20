@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1C | 🟡 Active; horizontal RTL flex-flow closure, two exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1D | 🟡 Active; vertical-container flex-flow closure, six exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,568 ported/runnable tests, 3,269 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 840 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,572 ported/runnable tests, 3,273 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 836 live writing-mode owner rows.**
 
 ---
 
@@ -271,11 +271,11 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Metric | Value |
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
-| Current runnable WPT tests | 3,568 |
-| Current runnable WPT passes | 3,269 |
+| Current runnable WPT tests | 3,572 |
+| Current runnable WPT passes | 3,273 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
-| Pixel comparison tests | 3,568 generated WPT comparisons + earlier SP pages/apps |
+| Pixel comparison tests | 3,572 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
@@ -516,3 +516,25 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 - Next: drive vertical and mixed orthogonal geometry with 002, 003, 005, 006,
   then 007 and 008. Intrinsic/aspect-ratio, out-of-flow, fragmentation,
   multicol, and vertical glyph work remain open.
+
+### SP17 W1D: vertical-container flex-flow matrix closure
+
+- Added an identity-based parameterized regression for the four vertical
+  writing-mode/direction combinations and all eight flex-flow reversals,
+  including physical item-size assertions.
+- Fixed vertical flex items' resolved logical main/cross border-box projection
+  into physical fragment width/height. Horizontal fragment sizes remain owned
+  by child layout so fragmentation reductions are not overwritten.
+- Surgically admitted only `flexbox-writing-mode-002`, 003, 005, and 006 at
+  exactly `0.0%`. The exact actionable promotion set is now 001–006; all four
+  existing references remain byte-identical and no 007/008 builder was added.
+- The frozen 3,267-ID baseline remains 3,267/3,267 exact. The authoritative
+  full no-resume suite is **3,572 runnable / 3,273 exact / 299 fail / 0
+  errors**; live unported inventory is 4,101, writing-mode ownership is 836,
+  and the text manifest contains 697 IDs.
+- Verification: 179 focused flex/logical-writing tests, full locked Rust
+  matrix, 122 Python closure/porter tests, both ledger checks, release
+  comparator, double deterministic accountability generation, splice and
+  reference idempotence, formatter/diff checks, and audit 7/7.
+- Next: drive orthogonal-child sizing with 007, then 008. Intrinsic/aspect-ratio,
+  out-of-flow, fragmentation, multicol, and vertical glyph work remain open.

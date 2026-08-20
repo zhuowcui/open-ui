@@ -104,7 +104,11 @@ class LedgerTests(unittest.TestCase):
         self.assertTrue(
             {
                 "wpt/css_flexbox/flexbox-writing-mode-001",
+                "wpt/css_flexbox/flexbox-writing-mode-002",
+                "wpt/css_flexbox/flexbox-writing-mode-003",
                 "wpt/css_flexbox/flexbox-writing-mode-004",
+                "wpt/css_flexbox/flexbox-writing-mode-005",
+                "wpt/css_flexbox/flexbox-writing-mode-006",
             }.issubset(promoted)
         )
         self.assertTrue(promoted.issubset(set(actionable)))

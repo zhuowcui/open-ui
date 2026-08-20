@@ -5,7 +5,7 @@ use openui_geometry::{LayoutUnit, Length};
 use openui_layout::{flex_layout, ConstraintSpace, Fragment};
 use openui_style::{
     ContentAlignment, ContentDistribution, ContentPosition, Direction, Display, FlexDirection,
-    FlexWrap, ItemAlignment, ItemPosition,
+    FlexWrap, ItemAlignment, ItemPosition, WritingMode,
 };
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -142,6 +142,132 @@ fn horizontal_rtl_flex_flow_places_items_by_logical_main_and_cross_axes() {
                 (lu(expected_left), lu(expected_top)),
                 "unexpected offset for {item:?} with {flex_direction:?} {flex_wrap:?}",
             );
+        }
+    }
+}
+
+#[test]
+fn vertical_flex_flow_places_cmyk_items_by_logical_main_and_cross_axes() {
+    let flows = [
+        (FlexDirection::Row, FlexWrap::Wrap),
+        (FlexDirection::Row, FlexWrap::WrapReverse),
+        (FlexDirection::RowReverse, FlexWrap::Wrap),
+        (FlexDirection::RowReverse, FlexWrap::WrapReverse),
+        (FlexDirection::Column, FlexWrap::Wrap),
+        (FlexDirection::Column, FlexWrap::WrapReverse),
+        (FlexDirection::ColumnReverse, FlexWrap::Wrap),
+        (FlexDirection::ColumnReverse, FlexWrap::WrapReverse),
+    ];
+    let cases = [
+        (
+            "flexbox-writing-mode-002",
+            WritingMode::VerticalRl,
+            Direction::Ltr,
+            [
+                [(20, 0), (20, 15), (0, 0), (0, 15)],
+                [(0, 0), (0, 15), (20, 0), (20, 15)],
+                [(20, 15), (20, 0), (0, 15), (0, 0)],
+                [(0, 15), (0, 0), (20, 15), (20, 0)],
+                [(20, 0), (0, 0), (20, 15), (0, 15)],
+                [(20, 15), (0, 15), (20, 0), (0, 0)],
+                [(0, 0), (20, 0), (0, 15), (20, 15)],
+                [(0, 15), (20, 15), (0, 0), (20, 0)],
+            ],
+        ),
+        (
+            "flexbox-writing-mode-003",
+            WritingMode::VerticalLr,
+            Direction::Ltr,
+            [
+                [(0, 0), (0, 15), (20, 0), (20, 15)],
+                [(20, 0), (20, 15), (0, 0), (0, 15)],
+                [(0, 15), (0, 0), (20, 15), (20, 0)],
+                [(20, 15), (20, 0), (0, 15), (0, 0)],
+                [(0, 0), (20, 0), (0, 15), (20, 15)],
+                [(0, 15), (20, 15), (0, 0), (20, 0)],
+                [(20, 0), (0, 0), (20, 15), (0, 15)],
+                [(20, 15), (0, 15), (20, 0), (0, 0)],
+            ],
+        ),
+        (
+            "flexbox-writing-mode-005",
+            WritingMode::VerticalRl,
+            Direction::Rtl,
+            [
+                [(20, 15), (20, 0), (0, 15), (0, 0)],
+                [(0, 15), (0, 0), (20, 15), (20, 0)],
+                [(20, 0), (20, 15), (0, 0), (0, 15)],
+                [(0, 0), (0, 15), (20, 0), (20, 15)],
+                [(20, 15), (0, 15), (20, 0), (0, 0)],
+                [(20, 0), (0, 0), (20, 15), (0, 15)],
+                [(0, 15), (20, 15), (0, 0), (20, 0)],
+                [(0, 0), (20, 0), (0, 15), (20, 15)],
+            ],
+        ),
+        (
+            "flexbox-writing-mode-006",
+            WritingMode::VerticalLr,
+            Direction::Rtl,
+            [
+                [(0, 15), (0, 0), (20, 15), (20, 0)],
+                [(20, 15), (20, 0), (0, 15), (0, 0)],
+                [(0, 0), (0, 15), (20, 0), (20, 15)],
+                [(20, 0), (20, 15), (0, 0), (0, 15)],
+                [(0, 15), (20, 15), (0, 0), (20, 0)],
+                [(0, 0), (20, 0), (0, 15), (20, 15)],
+                [(20, 15), (0, 15), (20, 0), (0, 0)],
+                [(20, 0), (0, 0), (20, 15), (0, 15)],
+            ],
+        ),
+    ];
+
+    for (test_id, writing_mode, direction, expected_by_flow) in cases {
+        for ((flex_direction, flex_wrap), expected_offsets) in
+            flows.into_iter().zip(expected_by_flow)
+        {
+            let mut doc = Document::new();
+            let container = make_flex(&mut doc, 40, 30);
+            {
+                let style = doc.node_mut(container).style_mut();
+                style.writing_mode = writing_mode;
+                style.direction = direction;
+                style.flex_direction = flex_direction;
+                style.flex_wrap = flex_wrap;
+            }
+            let items = [
+                add_child(&mut doc, container, 20, 15),
+                add_child(&mut doc, container, 20, 15),
+                add_child(&mut doc, container, 20, 15),
+                add_child(&mut doc, container, 20, 15),
+            ];
+            for item in items {
+                let style = doc.node_mut(item).style_mut();
+                style.writing_mode = writing_mode;
+                style.direction = direction;
+            }
+
+            let writing_direction = direction.writing_direction(writing_mode);
+            let space =
+                ConstraintSpace::for_root_with_writing_direction(lu(40), lu(30), writing_direction);
+            let fragment = flex_layout(&doc, container, &space);
+            assert_eq!(fragment.children.len(), items.len());
+            for (item, (expected_left, expected_top)) in items.into_iter().zip(expected_offsets) {
+                let child = fragment
+                    .children
+                    .iter()
+                    .find(|child| child.node_id == item)
+                    .expect("original CMYK flex item must remain in the fragment tree");
+                assert_eq!(
+                    (
+                        child.offset.left,
+                        child.offset.top,
+                        child.width(),
+                        child.height(),
+                    ),
+                    (lu(expected_left), lu(expected_top), lu(20), lu(15)),
+                    "unexpected offset for {test_id} item {item:?} with {flex_direction:?} {flex_wrap:?}",
+                );
+            }
         }
     }
 }

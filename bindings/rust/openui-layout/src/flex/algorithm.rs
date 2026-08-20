@@ -3173,7 +3173,23 @@ fn give_items_final_position(
                 }
             }
 
-            let child_fragment = layout_flex_item(doc, item.node_id, &child_space);
+            let mut child_fragment = layout_flex_item(doc, item.node_id, &child_space);
+
+            // Flex resolves the used border-box sizes in the container's
+            // logical main/cross axes. Fragment storage is physical, so make
+            // that projection explicit at the flex-item boundary. In vertical
+            // writing modes, block layout still consumes the fixed child-space
+            // pair as inline/block extents; leaving its provisional size in
+            // the fragment would transpose width and height before placement.
+            // Horizontal fragments are already physical, and may have a
+            // fragmentation-reduced block size that must remain authoritative.
+            if !writing_direction.is_horizontal() {
+                child_fragment.size = if is_main_axis_horizontal {
+                    PhysicalSize::new(final_main, cross_size_for_child)
+                } else {
+                    PhysicalSize::new(cross_size_for_child, final_main)
+                };
+            }
 
             let child_logical_size = converter.to_logical_size(child_fragment.size);
             let item_cross_margin_box = if is_column {
