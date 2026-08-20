@@ -101,8 +101,11 @@ class LedgerTests(unittest.TestCase):
         promoted = closure.validate_live_snapshot(
             rows, summary, baseline, inventory, actionable
         )
-        self.assertIn(
-            "wpt/css_flexbox/flexbox-writing-mode-001", promoted
+        self.assertTrue(
+            {
+                "wpt/css_flexbox/flexbox-writing-mode-001",
+                "wpt/css_flexbox/flexbox-writing-mode-004",
+            }.issubset(promoted)
         )
         self.assertTrue(promoted.issubset(set(actionable)))
 

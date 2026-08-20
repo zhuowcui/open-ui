@@ -1243,7 +1243,7 @@ flexbox-with-pseudo-elements-003,not_portable,,complex_css_selector: div.withBef
 flexbox-writing-mode-001,ported,css_flexbox_flexbox_writing_mode_001,
 flexbox-writing-mode-002,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-003,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-004,not_portable,,style_block_unsupported property: writing-mode
+flexbox-writing-mode-004,ported,css_flexbox_flexbox_writing_mode_004,
 flexbox-writing-mode-005,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-006,not_portable,,style_block_unsupported property: writing-mode
 flexbox-writing-mode-007,not_portable,,style_block_unsupported property: writing-mode

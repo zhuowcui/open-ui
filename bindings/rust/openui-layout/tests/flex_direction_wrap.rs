@@ -4,8 +4,8 @@ use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{LayoutUnit, Length};
 use openui_layout::{flex_layout, ConstraintSpace, Fragment};
 use openui_style::{
-    ContentAlignment, ContentDistribution, ContentPosition, Display, FlexDirection, FlexWrap,
-    ItemAlignment, ItemPosition,
+    ContentAlignment, ContentDistribution, ContentPosition, Direction, Display, FlexDirection,
+    FlexWrap, ItemAlignment, ItemPosition,
 };
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -66,6 +66,84 @@ fn lay(doc: &Document, container: NodeId, w: i32, h: i32) -> Fragment {
 
 fn lu(v: i32) -> LayoutUnit {
     LayoutUnit::from_i32(v)
+}
+
+#[test]
+fn horizontal_rtl_flex_flow_places_items_by_logical_main_and_cross_axes() {
+    let cases = [
+        (
+            FlexDirection::Row,
+            FlexWrap::Wrap,
+            [(20, 0), (0, 0), (20, 15), (0, 15)],
+        ),
+        (
+            FlexDirection::Row,
+            FlexWrap::WrapReverse,
+            [(20, 15), (0, 15), (20, 0), (0, 0)],
+        ),
+        (
+            FlexDirection::RowReverse,
+            FlexWrap::Wrap,
+            [(0, 0), (20, 0), (0, 15), (20, 15)],
+        ),
+        (
+            FlexDirection::RowReverse,
+            FlexWrap::WrapReverse,
+            [(0, 15), (20, 15), (0, 0), (20, 0)],
+        ),
+        (
+            FlexDirection::Column,
+            FlexWrap::Wrap,
+            [(20, 0), (20, 15), (0, 0), (0, 15)],
+        ),
+        (
+            FlexDirection::Column,
+            FlexWrap::WrapReverse,
+            [(0, 0), (0, 15), (20, 0), (20, 15)],
+        ),
+        (
+            FlexDirection::ColumnReverse,
+            FlexWrap::Wrap,
+            [(20, 15), (20, 0), (0, 15), (0, 0)],
+        ),
+        (
+            FlexDirection::ColumnReverse,
+            FlexWrap::WrapReverse,
+            [(0, 15), (0, 0), (20, 15), (20, 0)],
+        ),
+    ];
+
+    for (flex_direction, flex_wrap, expected_offsets) in cases {
+        let mut doc = Document::new();
+        let container = make_flex(&mut doc, 40, 30);
+        {
+            let style = doc.node_mut(container).style_mut();
+            style.direction = Direction::Rtl;
+            style.flex_direction = flex_direction;
+            style.flex_wrap = flex_wrap;
+        }
+        let items = [
+            add_child(&mut doc, container, 20, 15),
+            add_child(&mut doc, container, 20, 15),
+            add_child(&mut doc, container, 20, 15),
+            add_child(&mut doc, container, 20, 15),
+        ];
+
+        let fragment = lay(&doc, container, 40, 30);
+        assert_eq!(fragment.children.len(), items.len());
+        for (item, (expected_left, expected_top)) in items.into_iter().zip(expected_offsets) {
+            let child = fragment
+                .children
+                .iter()
+                .find(|child| child.node_id == item)
+                .expect("original CMYK flex item must remain in the fragment tree");
+            assert_eq!(
+                (child.offset.left, child.offset.top),
+                (lu(expected_left), lu(expected_top)),
+                "unexpected offset for {item:?} with {flex_direction:?} {flex_wrap:?}",
+            );
+        }
+    }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

@@ -9,7 +9,7 @@ use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::Length;
 use openui_geometry::{
     BoxStrut, LayoutUnit, LengthType, LogicalOffset, LogicalSize, MinMaxSizes, PhysicalOffset,
-    PhysicalRect, PhysicalSize, WritingModeConverter,
+    PhysicalRect, PhysicalSize, WritingDirectionMode, WritingModeConverter,
 };
 use openui_style::{
     ContentAlignment, ContentDistribution, ContentPosition, FlexWrap, ItemPosition,
@@ -585,6 +585,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         is_reverse,
         is_wrap_reverse,
         is_horizontal_flow,
+        writing_direction,
         effective_main_axis_inner_size,
         content_cross_size,
         gap_between_items,
@@ -2751,6 +2752,7 @@ fn give_items_final_position(
     is_reverse: bool,
     is_wrap_reverse: bool,
     is_main_axis_horizontal: bool,
+    writing_direction: WritingDirectionMode,
     main_axis_inner_size: LayoutUnit,
     content_cross_size: LayoutUnit,
     gap_between_items: LayoutUnit,
@@ -2766,7 +2768,6 @@ fn give_items_final_position(
     space: &ConstraintSpace,
 ) -> (Vec<Fragment>, Option<LayoutUnit>, Option<LayoutUnit>) {
     let content_offset_y = border.top + padding.top;
-    let writing_direction = space.writing_direction;
     let logical_border = border.to_logical(writing_direction);
     let logical_padding = padding.to_logical(writing_direction);
     let content_logical_offset = LogicalOffset::new(

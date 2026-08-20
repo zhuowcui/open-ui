@@ -2,28 +2,32 @@
 
 ## Status
 
-SP17 W1B is in progress on `agent/sp17-advanced-text`, branched from `main`
-commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on 2026-08-19.
+SP17 W1C is the current checkpoint on `agent/sp17-advanced-text`, branched
+from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
+2026-08-19.
 
 The branch has reproduced the complete suite without resume, frozen the kickoff
 ledgers and 19-ID pixel evidence, added transactional SP17 CSS handling, and
 frozen a faithful no-write porter probe over all 823 kickoff-unported rows. The
 W1A established the constraint/logical-geometry foundation and preserved the
-complete 3,267-ID exact baseline. W1B now routes normal block, atomic-inline,
+complete 3,267-ID exact baseline. W1B routes normal block, atomic-inline,
 and final flex-item child spaces through the shared writing-direction boundary,
 uses logical flex axes through final physical fragment conversion, and admits
-the first exact actionable target. The authoritative live full-suite result is
-3,567 runnable, 3,268 exact, 299 functional failures, and zero errors.
+the first exact actionable target. W1C fixes final flex placement to consume
+the resolved container direction, proves all horizontal-tb/RTL flex-flow
+combinations, and admits its exact companion target. The authoritative live
+full-suite result is 3,568 runnable, 3,269 exact, 299 functional failures, and
+zero errors.
 
-| Metric | Kickoff | Live W1B |
+| Metric | Kickoff | Live W1C |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,567 |
-| Exact passes | 3,267 | 3,268 |
+| Runnable WPTs | 3,566 | 3,568 |
+| Exact passes | 3,267 | 3,269 |
 | Functional failures | 299 | 299 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 4,106 |
-| `needs_writing_mode` owner rows | 842 | 841 |
+| Unported rows | 4,107 | 4,105 |
+| `needs_writing_mode` owner rows | 842 | 840 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -447,3 +451,38 @@ render/diff error.
   `wpt/css_flexbox/flexbox-writing-mode-004`; then use 002/003/005/006 and
   007/008 to drive true vertical and mixed orthogonal geometry. Promote none of
   them without a focused no-resume `0.0%` result and baseline preservation.
+
+### 2026-08-19 — W1C horizontal RTL flex-flow closure
+
+- Added a parameterized Rust regression for the eight combinations of
+  row/row-reverse/column/column-reverse with wrap/wrap-reverse under
+  horizontal-tb/RTL. It asserts physical offsets by original cyan, magenta,
+  yellow, and black item identity, so ordering and mirroring cannot cancel out.
+- Diagnosed the failure in shared geometry: flex resolved the container's
+  writing direction for axis construction, but final item placement converted
+  logical offsets with the parent `ConstraintSpace` direction. Final placement
+  now receives the already-resolved container `WritingDirectionMode` directly.
+  No per-test offsets, substitutions, raster changes, or vertical behavior were
+  added.
+- Surgically admitted only
+  `wpt/css_flexbox/flexbox-writing-mode-004`. Its exact-ID no-resume run is
+  1/1 exact with zero mismatched pixels and zero errors; repeating the splice
+  produces byte-identical builder, template, report, and manifest artifacts.
+- Rebuilt release `pixel-compare`, then ran the frozen 3,267-ID baseline without
+  resume: 3,267/3,267 exact. The authoritative complete no-resume run is
+  **3,568 runnable / 3,269 exact / 299 fail / 0 errors**. The full summary
+  SHA-256 is
+  `50c8a52b36c479357f9e89b5e8ea520608a69974d04616d36a7099639d25f0d1`.
+- Mapping, deferred CSV, and HTML report generation were run twice with
+  byte-identical hashes. The live inventory is 4,105 unported rows and 840
+  `needs_writing_mode` rows. Every kickoff and historical ledger remains
+  byte-pinned, and the SP17 live check now requires both 001 and 004 in the
+  exact actionable promotion set.
+- Verification passes: 178 focused flex/logical-writing Rust tests, the full
+  locked style/text/layout/paint matrix, 122 SP13-R through SP17 Python tests,
+  both closure-generator checks, release comparator build, surgical-splice
+  idempotence, `cargo fmt --check`, and the unflagged PNG-backed audit 7/7.
+- W1 remains open. Drive genuine vertical and orthogonal geometry next in this
+  order: 002, 003, 005, 006, then 007 and 008. Flex intrinsic/aspect-ratio
+  auditing, out-of-flow/static positions, fragmentation, multicol, and vertical
+  glyph shaping/paint remain outside W1C.

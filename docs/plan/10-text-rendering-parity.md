@@ -8,9 +8,9 @@ then expands from Ahem geometry to real-font and advanced-text parity.
 
 SP14 W0–W4 closed the global `needs_text` category, SP15 closed its inline/layout
 and root/body follow-up, SP16 closed all 776 real-font-metric rows, and SP13-R
-then closed every runnable multicol owner. The text manifest now contains 692
-runner-scoped IDs after the first SP17 admission and its corrected retained-text
-references. The complete 3,567-test run has 3,268 exact passes, 299 functional
+then closed every runnable multicol owner. The text manifest now contains 693
+runner-scoped IDs after the first two SP17 admissions and corrected retained-text
+references. The complete 3,568-test run has 3,269 exact passes, 299 functional
 failures, and zero errors. It preserves the 2,823-ID SP13-R baseline plus all
 351 exact SP13-R targets and passes the 7/7 audit.
 
@@ -27,7 +27,8 @@ W1A added the shared constraint/logical-geometry foundation and preserved all
 3,267 exact IDs at `0.0%`. W1B routes normal block, atomic-inline, and flex-item
 child spaces through it, converts flex placement through logical axes, and
 admits `flexbox-writing-mode-001` at exact parity while retaining every kickoff
-pass.
+pass. W1C corrects final flex placement direction propagation, covers all
+horizontal-tb/RTL flex-flow reversals, and admits companion 004 at exact parity.
 
 ## Chronological work
 
@@ -57,12 +58,13 @@ family selection, and the real-glyph LCD raster profile are implemented. The glo
 Cover bidi/RTL, vertical writing modes, transformation, decoration, emphasis,
 complex scripts, and emoji. W0A and W0B are complete on the fresh-main branch:
 the original 842-row inventory is frozen as 311 actionable and 531 residual
-rows after transactional CSS handling and a real builder probe. W1B now has an
+rows after transactional CSS handling and a real builder probe. W1C now has an
 authoritative constraint direction, shared logical style/edge projection, and
-shared normal block/atomic-inline/flex child boundaries. One horizontal-tb
-actionable target is exact. Continue with horizontal RTL, then vertical/mixed
-orthogonal geometry, flex intrinsic sizing, out-of-flow positions,
-fragmentation/multicol, and finally vertical glyph shaping/paint.
+shared normal block/atomic-inline/flex child boundaries. Both horizontal-tb
+001 and horizontal-tb/RTL 004 are exact. Continue with 002, 003, 005, and 006,
+then 007 and 008 for vertical/mixed orthogonal geometry, flex intrinsic
+sizing, out-of-flow positions, fragmentation/multicol, and finally vertical
+glyph shaping/paint.
 Follow `docs/SP17-PLAN.md`.
 
 ### SP18 — generated content and text effects

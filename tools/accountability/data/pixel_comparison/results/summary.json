@@ -1,6 +1,6 @@
 {
-  "total": 3567,
-  "passed": 3268,
+  "total": 3568,
+  "passed": 3269,
   "failed": 299,
   "errors": 0,
   "near_miss_aa": 63,
@@ -5690,6 +5690,11 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-writing-mode-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-004",
       "status": "pass",
       "mismatch_pct": 0.0
     },

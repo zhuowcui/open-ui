@@ -21,14 +21,14 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W1B full no-resume run):
+Latest authoritative accountability snapshot (SP17 W1C full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3567 |
-| Unported but explicitly tracked tests | 4106 |
-| Runnable passes | 3268 |
+| Ported/runnable WPT tests | 3568 |
+| Unported but explicitly tracked tests | 4105 |
+| Runnable passes | 3269 |
 | Runnable failures | 299 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
@@ -43,7 +43,7 @@ The full `wpt/` run was executed without resume on 2026-08-19. All 3267 frozen
 SP17 baseline IDs, including all 2823 frozen SP13-R baseline IDs and all 351
 runnable multicol targets, remain exact.
 
-## SP17 W1B Shared Child Geometry
+## SP17 W1C Horizontal RTL Flex-Flow Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -91,10 +91,17 @@ The first actionable admission,
 It is a horizontal-tb porter/cascade and shared-flex proof, not a vertical-text
 closure claim. Four retained-text RTL gap reference builders were regenerated
 to correct previously invalid logical-margin lowering; the complete `gap-00`
-slice is 32/32 exact. The current full result is 3567 runnable, 3268 exact, 299
-functional failures, and zero errors. Live `needs_writing_mode` ownership is
-841 rows; the frozen 842-row kickoff inventory and 311/531 disposition remain
-immutable.
+slice is 32/32 exact.
+
+W1C fixes a shared direction-propagation defect in final flex item placement:
+the resolved container direction now reaches logical-to-physical conversion
+instead of falling back to the parent constraint direction. A parameterized
+regression covers every flex-direction and wrap reversal under
+horizontal-tb/RTL by original item identity. The sole surgical admission is
+`wpt/css_flexbox/flexbox-writing-mode-004`, exact at zero mismatched pixels.
+The current full result is 3568 runnable, 3269 exact, 299 functional failures,
+and zero errors. Live `needs_writing_mode` ownership is 840 rows; the frozen
+842-row kickoff inventory and 311/531 disposition remain immutable.
 
 W1 remains incomplete. Physical-axis decisions remain in normal block layout;
 flex intrinsic/content and aspect-ratio paths, out-of-flow/static positions,
@@ -177,7 +184,7 @@ Top runnable failure categories:
 
 ## Current Unported Inventory Ownership
 
-The 4106 unported rows are Chromium WPT files that the current porter or renderer cannot
+The 4105 unported rows are Chromium WPT files that the current porter or renderer cannot
 represent yet. They are still tracked with explicit dependency categories.
 
 Top unported categories:
@@ -186,7 +193,7 @@ Top unported categories:
 |---|---:|
 | `needs_javascript` | 1945 |
 | `sp13_multicol` | 1018 |
-| `needs_writing_mode` | 822 |
+| `needs_writing_mode` | 821 |
 | `sp13_fragmentation` | 651 |
 | `needs_table_layout` | 462 |
 | `needs_generated_content` | 443 |
@@ -201,12 +208,11 @@ Top unported categories:
 
 ## Recommended Next Work
 
-Continue SP17 W1 with a focused no-resume probe of the horizontal-RTL companion
-`wpt/css_flexbox/flexbox-writing-mode-004`. If it is not exact, fix only the
-shared direction/geometry path. Then use 002/003/005/006 and 007/008 to drive
-true vertical and mixed orthogonal block/flex behavior. Audit flex intrinsic
-and aspect-ratio sizing before expanding the cohort, then carry logical
-geometry through out-of-flow/static positions, fragmentation, and multicol.
+Continue SP17 W1 with true vertical and mixed orthogonal block/flex behavior.
+Use `flexbox-writing-mode-002`, 003, 005, and 006 first, then 007 and 008.
+Audit flex intrinsic and aspect-ratio sizing before expanding the cohort, then
+carry logical geometry through out-of-flow/static positions, fragmentation,
+and multicol.
 Keep all 3267 kickoff exact IDs green, splice surgically, do not batch-regenerate
 the remaining actionable builders, and do not retire the detector. Follow
 `docs/SP17-PLAN.md` for the exact boundary and recorded commands.

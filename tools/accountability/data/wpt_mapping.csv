@@ -3801,7 +3801,7 @@ css-flexbox/flexbox-writing-mode-002.html,flexbox-writing-mode-002,css_flexbox,n
 css-flexbox/flexbox-writing-mode-002-ref.html,flexbox-writing-mode-002-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-002-ref,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-003.html,flexbox-writing-mode-003,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
 css-flexbox/flexbox-writing-mode-003-ref.html,flexbox-writing-mode-003-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-003-ref,pass,0.0,,,
-css-flexbox/flexbox-writing-mode-004.html,flexbox-writing-mode-004,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-writing-mode-004.html,flexbox-writing-mode-004,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-004,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-004-ref.html,flexbox-writing-mode-004-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-004-ref,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-005.html,flexbox-writing-mode-005,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
 css-flexbox/flexbox-writing-mode-005-ref.html,flexbox-writing-mode-005-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-005-ref,pass,0.0,,,

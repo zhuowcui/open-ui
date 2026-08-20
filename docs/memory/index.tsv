@@ -35,3 +35,4 @@
 0034	active	sp17 writing-mode porter cascade accountability	SP17 W0B transactional porter probe is frozen at 311 actionable rows	2026-08-19	entries/0034-sp17-w0b-transactional-porter-probe-frozen.md
 0035	active	sp17 writing-mode constraint-space geometry baseline	SP17 W1A logical geometry preserves the full exact baseline	2026-08-19	entries/0035-sp17-w1a-logical-geometry-preserves-the-full-exact-baseline.md
 0036	active	sp17 writing-mode flex geometry accountability handoff	SP17 W1B shared child geometry admits the first exact actionable target	2026-08-19	entries/0036-sp17-w1b-shared-child-geometry-and-first-exact-promotion.md
+0037	active	sp17 writing-mode flex rtl geometry accountability handoff	SP17 W1C closes horizontal RTL flex flow with shared direction propagation	2026-08-19	entries/0037-sp17-w1c-horizontal-rtl-flex-flow-closure.md
