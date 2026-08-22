@@ -1531,12 +1531,12 @@ text-as-flexitem-size-001,not_portable,,uses_javascript
 total-min-max-violation-zero,not_portable,,uses_javascript
 webkit-box-vertical-writing-mode-ref,not_portable,,unsupported property: writing-mode
 webkit-box-vertical-writing-mode,not_portable,,unsupported property: writing-mode
-abspos_abspos-autopos-htb-ltr,not_portable,,style_block_unsupported property: writing-mode
-abspos_abspos-autopos-htb-rtl,not_portable,,style_block_unsupported property: writing-mode
-abspos_abspos-autopos-vlr-ltr,not_portable,,style_block_unsupported property: writing-mode
-abspos_abspos-autopos-vlr-rtl,not_portable,,style_block_unsupported property: writing-mode
-abspos_abspos-autopos-vrl-ltr,not_portable,,style_block_unsupported property: writing-mode
-abspos_abspos-autopos-vrl-rtl,not_portable,,style_block_unsupported property: writing-mode
+abspos_abspos-autopos-htb-ltr,ported,css_flexbox_abspos_abspos_autopos_htb_ltr,
+abspos_abspos-autopos-htb-rtl,ported,css_flexbox_abspos_abspos_autopos_htb_rtl,
+abspos_abspos-autopos-vlr-ltr,ported,css_flexbox_abspos_abspos_autopos_vlr_ltr,
+abspos_abspos-autopos-vlr-rtl,ported,css_flexbox_abspos_abspos_autopos_vlr_rtl,
+abspos_abspos-autopos-vrl-ltr,ported,css_flexbox_abspos_abspos_autopos_vrl_ltr,
+abspos_abspos-autopos-vrl-rtl,ported,css_flexbox_abspos_abspos_autopos_vrl_rtl,
 abspos_abspos-descendent-001,not_portable,,uses_javascript
 abspos_dynamic-align-self-001,not_portable,,uses_javascript
 abspos_flex-abspos-staticpos-align-content-001,not_portable,,uses_javascript

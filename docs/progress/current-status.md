@@ -21,14 +21,14 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W1F full no-resume run):
+Latest authoritative accountability snapshot (SP17 W1G full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3630 |
-| Unported but explicitly tracked tests | 4043 |
-| Runnable passes | 3331 |
+| Ported/runnable WPT tests | 3657 |
+| Unported but explicitly tracked tests | 4016 |
+| Runnable passes | 3358 |
 | Runnable failures | 299 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
@@ -43,7 +43,7 @@ The full `wpt/` run was executed without resume on 2026-08-22. All 3267 frozen
 SP17 baseline IDs, including all 2823 frozen SP13-R baseline IDs and all 351
 runnable multicol targets, remain exact.
 
-## SP17 W1F Vertical Flex, Gap, and Atomic-Inline Closure
+## SP17 W1G Logical Out-of-Flow Core Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -125,16 +125,31 @@ clockwise. Upright CJK and general mixed-script splitting remain deferred.
 The complete 44-ID cohort was spliced atomically and is 44/44 exact with zero
 mismatched pixels or errors. Shared reference builders remain byte-identical,
 the repeated splice is byte-idempotent, and writing-mode 010–016 were not
-generated. The live validator now requires all 64 exact SP17 promotions.
+generated. The W1F validator required all 64 exact SP17 promotions.
 
-The current full result is 3630 runnable, 3331 exact, 299 functional failures,
-and zero errors. Live `needs_writing_mode` ownership is 778 rows; the frozen
+W1G separates the containing-block, static-position parent, and abspos child's
+complete writing directions. Physical insets, margins, and authored sizes keep
+their physical semantics while intrinsic contributions, child constraints,
+static anchors, and fragments cross explicit logical/physical boundaries.
+Flex abspos static positions now use the flex main/cross mapping and the
+padding-box containing block, including direction reversal and asymmetric
+borders and padding.
+
+The atomic 27-ID W1G cohort covers six flex abspos auto-position cases, three
+vertical aspect-ratio transfers, twelve orthogonal intrinsic-sizing targets,
+their four shared references, and the orthogonal over-constrained margin pair.
+It is 27/27 exact with zero mismatched pixels or errors. The live validator now
+requires all 91 exact SP17 promotions, and writing-mode 010–016 remain absent.
+
+The current full result is 3657 runnable, 3358 exact, 299 functional failures,
+and zero errors. Live `needs_writing_mode` ownership is 751 rows; the frozen
 842-row kickoff inventory and 311/531 disposition remain immutable. The text
-manifest contains 755 IDs.
+manifest contains 782 IDs.
 
-W1 remains incomplete for out-of-flow/static positions, fragmentation, and
-multicol logical geometry. W2 retains upright CJK and mixed-script run
-splitting, sideways text, and writing-mode 010–015.
+W1 remains incomplete for fragmentation and multicol logical geometry.
+Positioned-inline static positions, flex safe-alignment abspos behavior, and
+fragmented/multicol out-of-flow layout remain later work. W2 retains upright
+CJK and mixed-script run splitting, sideways text, and writing-mode 010–015.
 
 ## SP13-R Closure
 
@@ -236,8 +251,9 @@ Top unported categories:
 
 ## Recommended Next Work
 
-Continue SP17 W1 by carrying logical geometry through out-of-flow/static
-positions, fragmentation, and multicol. Reserve upright CJK and mixed-script
+Continue SP17 W1 by carrying logical geometry through fragmentation and
+multicol. Keep positioned-inline and fragmented out-of-flow behavior in their
+explicit later cohorts. Reserve upright CJK and mixed-script
 run splitting, sideways text, and `flexbox-writing-mode-010` through 015 for W2;
 do not substitute geometry-only builders for their glyph requirements.
 Keep all 3267 kickoff exact IDs green, splice surgically, do not batch-regenerate

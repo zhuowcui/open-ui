@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1F | 🟡 Active; vertical flex/gap/atomic-inline closure, 64 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1G | 🟡 Active; logical out-of-flow core closure, 91 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,630 ported/runnable tests, 3,331 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 778 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,657 ported/runnable tests, 3,358 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 751 live writing-mode owner rows.**
 
 ---
 
@@ -271,11 +271,11 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Metric | Value |
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
-| Current runnable WPT tests | 3,630 |
-| Current runnable WPT passes | 3,331 |
+| Current runnable WPT tests | 3,657 |
+| Current runnable WPT passes | 3,358 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
-| Pixel comparison tests | 3,630 generated WPT comparisons + earlier SP pages/apps |
+| Pixel comparison tests | 3,657 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
@@ -592,3 +592,34 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 - Next: continue logical geometry through out-of-flow/static positions,
   fragmentation, and multicol. W2 retains upright/mixed vertical text,
   sideways modes, and writing-mode 010–015.
+
+### SP17 W1G: logical out-of-flow core closure
+
+- Added a private out-of-flow axis mapping that preserves distinct complete
+  writing directions for the containing block, static-position parent, and
+  abspos child. Physical properties remain physical while child constraints,
+  intrinsic inputs, static anchors, and fragments transpose only at explicit
+  logical/physical boundaries.
+- Reworked flex abspos static positioning through the existing main/cross
+  mapping and padding-box containing block, including reverse direction,
+  asymmetric borders and padding, and one final physical projection.
+- Added parameterized regressions for all horizontal-tb/vertical-lr/vertical-rl
+  × LTR/RTL physical polarities, orthogonal child constraints and relayout,
+  flex static positions, intrinsic keywords, auto and over-constrained margins,
+  vertical aspect-ratio transfer, percentage descendants, and physical
+  fragments.
+- Surgically admitted the complete 27-ID cohort in one transaction. Its focused
+  comparison is 27/27 exact with zero mismatched pixels or errors, repeat
+  splicing is byte-idempotent, and writing-mode 010–016 remain absent.
+- The frozen 3,267-ID baseline remains 3,267/3,267 exact. The authoritative
+  full no-resume suite is **3,657 runnable / 3,358 exact / 299 fail / 0
+  errors**; live unported inventory is 4,016, writing-mode ownership is 751,
+  and the text manifest contains 782 IDs.
+- Verification: focused and full locked Rust matrices, all 122 Python
+  closure/porter tests, both ledger checks, release comparator, double
+  deterministic accountability generation, splice idempotence, formatter/diff
+  checks, and audit 7/7.
+- Next: continue fragmentation and multicol logical geometry. Positioned-inline
+  static positions, flex safe-alignment abspos behavior, fragmented out-of-flow
+  layout, upright/mixed vertical text, sideways modes, and writing-mode 010–015
+  remain later scoped work.

@@ -754,9 +754,15 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     // ── Lay out out-of-flow (absolute/fixed) children ────────────────
     let content_inline = (final_inline_size - border_padding_inline).clamp_negative_to_zero();
     let content_block = (total_block_size - border_padding_block).clamp_negative_to_zero();
-    let cb_size = logical_box.physical_size(LogicalSize::new(content_inline, content_block));
-    let content_width = cb_size.width;
-    let content_height = cb_size.height;
+    let content_size = logical_box.physical_size(LogicalSize::new(content_inline, content_block));
+    // CSS Position: the padding box establishes the abspos containing block;
+    // flex alignment itself continues to use the content box below.
+    let cb_size = logical_box.physical_size(LogicalSize::new(
+        content_inline + logical_padding.inline_sum(),
+        content_block + logical_padding.block_sum(),
+    ));
+    let content_width = content_size.width;
+    let content_height = content_size.height;
 
     let mut oof_candidates = Vec::new();
     let mut bubbled_oof_candidates = Vec::new();
@@ -3723,25 +3729,68 @@ fn compute_abspos_static_position(
     border: &BoxStrut,
     padding: &BoxStrut,
 ) -> (LayoutUnit, LayoutUnit) {
-    use openui_style::{ContentDistribution, ContentPosition, ItemPosition};
+    use openui_style::{ContentPosition, ItemPosition};
+
+    let writing_direction = container_style
+        .direction
+        .writing_direction(container_style.writing_mode);
+    let child_direction = child_style
+        .direction
+        .writing_direction(child_style.writing_mode);
+    let physical_padding_box = PhysicalSize::new(
+        content_width + padding.left + padding.right,
+        content_height + padding.top + padding.bottom,
+    );
+    let child_percentage_size = WritingModeConverter::new(child_direction, physical_padding_box)
+        .to_logical_size(physical_padding_box);
+    let child_available_size = WritingModeConverter::new(
+        child_direction,
+        PhysicalSize::new(content_width, content_height),
+    )
+    .to_logical_size(PhysicalSize::new(content_width, content_height));
 
     // Layout the abspos child to determine its hypothetical size.
-    let child_space = crate::constraint_space::ConstraintSpace::for_block_child(
-        content_width,
-        content_height,
-        content_width,
-        content_height,
-        false,
-    );
+    let child_space =
+        crate::constraint_space::ConstraintSpace::for_block_child_with_writing_direction(
+            child_available_size.inline_size,
+            child_available_size.block_size,
+            child_percentage_size.inline_size,
+            child_percentage_size.block_size,
+            false,
+            child_direction,
+        );
     let child_fragment = crate::block::block_layout(doc, child_id, &child_space);
-    let child_margins = resolve_margins(child_style, content_width);
-    let child_w = child_fragment.size.width + child_margins.left + child_margins.right;
-    let child_h = child_fragment.size.height + child_margins.top + child_margins.bottom;
+    let child_margins = resolve_margins(child_style, physical_padding_box.width);
+    let child_margin_box = PhysicalSize::new(
+        child_fragment.size.width + child_margins.left + child_margins.right,
+        child_fragment.size.height + child_margins.top + child_margins.bottom,
+    );
+
+    let container_content_physical = PhysicalSize::new(content_width, content_height);
+    let converter = WritingModeConverter::new(
+        writing_direction,
+        PhysicalSize::new(
+            content_width + border.left + border.right + padding.left + padding.right,
+            content_height + border.top + border.bottom + padding.top + padding.bottom,
+        ),
+    );
+    let content_logical = converter.to_logical_size(container_content_physical);
+    let child_logical = converter.to_logical_size(child_margin_box);
 
     let (main_size, cross_size, child_main, child_cross) = if is_column {
-        (content_height, content_width, child_h, child_w)
+        (
+            content_logical.block_size,
+            content_logical.inline_size,
+            child_logical.block_size,
+            child_logical.inline_size,
+        )
     } else {
-        (content_width, content_height, child_w, child_h)
+        (
+            content_logical.inline_size,
+            content_logical.block_size,
+            child_logical.inline_size,
+            child_logical.block_size,
+        )
     };
 
     // Main axis: apply justify-content
@@ -3787,16 +3836,19 @@ fn compute_abspos_static_position(
         _ => LayoutUnit::zero(),
     };
 
-    let (x_off, y_off) = if is_column {
-        (cross_offset, main_offset)
+    let logical_offset = if is_column {
+        LogicalOffset::new(cross_offset, main_offset)
     } else {
-        (main_offset, cross_offset)
+        LogicalOffset::new(main_offset, cross_offset)
     };
-
-    (
-        border.left + padding.left + x_off,
-        border.top + padding.top + y_off,
-    )
+    let logical_border = border.to_logical(writing_direction);
+    let logical_padding = padding.to_logical(writing_direction);
+    let logical_anchor = LogicalOffset::new(
+        logical_border.inline_start + logical_padding.inline_start + logical_offset.inline_offset,
+        logical_border.block_start + logical_padding.block_start + logical_offset.block_offset,
+    );
+    let physical_anchor = converter.to_physical_offset(logical_anchor, PhysicalSize::zero());
+    (physical_anchor.left, physical_anchor.top)
 }
 
 #[cfg(test)]

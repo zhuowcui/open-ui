@@ -39,3 +39,4 @@
 0038	active	sp17 writing-mode flex vertical geometry accountability handoff	SP17 W1D closes the vertical-container flex-flow matrix	2026-08-20	entries/0038-sp17-w1d-vertical-container-flex-flow-matrix-closure.md
 0039	active	sp17 writing-mode flex orthogonal intrinsic-sizing geometry accountability handoff	SP17 W1E closes orthogonal flex-item sizing	2026-08-20	entries/0039-sp17-w1e-orthogonal-flex-item-sizing-closure.md
 0040	active	sp17 writing-mode flex gap atomic-inline vertical-text intrinsic-sizing accountability handoff	SP17 W1F closes vertical flex, logical gaps, and atomic inline layout	2026-08-22	entries/0040-sp17-w1f-vertical-flex-gap-atomic-inline-closure.md
+0041	active	sp17 writing-mode out-of-flow abspos flex intrinsic-sizing aspect-ratio accountability handoff	SP17 W1G closes the logical out-of-flow core	2026-08-22	entries/0041-sp17-w1g-logical-out-of-flow-core-closure.md

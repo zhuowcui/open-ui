@@ -130,6 +130,45 @@ fn project_logical_child_to_physical(
     }
 }
 
+/// Resolve the block algorithm's logical OOF geometry at its physical API
+/// boundary.  Direct block descendants are collected while this algorithm's
+/// working `(left, top)` pair means `(inline, block)`; positioned layout keeps
+/// authored physical insets and sizes, so it must receive a physical
+/// containing-block size and a physical start-edge anchor.
+fn project_oof_candidate_to_physical(
+    candidate: &mut OutOfFlowCandidate,
+    writing_direction: WritingDirectionMode,
+    logical_containing_block_size: LogicalSize,
+    logical_border: &BoxStrut,
+    physical_border: &BoxStrut,
+) {
+    if candidate.has_inline_containing_block {
+        return;
+    }
+
+    let physical_containing_block_size =
+        WritingModeConverter::new(writing_direction, PhysicalSize::zero())
+            .to_physical_size(logical_containing_block_size);
+    let converter = WritingModeConverter::new(writing_direction, physical_containing_block_size);
+
+    // Static positions are start-edge anchors rather than completed box
+    // origins.  A zero-size conversion therefore preserves right/bottom start
+    // edges until positioned layout knows the child's final physical size.
+    let logical_static = LogicalOffset::new(
+        candidate.static_position.left
+            - candidate.containing_block_offset.left
+            - logical_border.left,
+        candidate.static_position.top - candidate.containing_block_offset.top - logical_border.top,
+    );
+    let physical_static = converter.to_physical_offset(logical_static, PhysicalSize::zero());
+    candidate.static_position = PhysicalOffset::new(
+        candidate.containing_block_offset.left + physical_border.left + physical_static.left,
+        candidate.containing_block_offset.top + physical_border.top + physical_static.top,
+    );
+    candidate.containing_block_size = physical_containing_block_size;
+    candidate.containing_block_border = physical_border.clone();
+}
+
 /// Perform block layout on a node and its descendants.
 ///
 /// This is the main entry point, equivalent to Blink's
@@ -2093,15 +2132,26 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // earlier. Must happen AFTER height resolution so that the containing
     // block height is the actual padding-box height (not just the available
     // block size from the parent constraint).
+    let oof_children_start = child_fragments.len();
     if !oof_candidates.is_empty() {
         // Update containing block to use this block's resolved dimensions.
         // CSS 2.1 §10.1: The containing block for abspos descendants is
         // the padding box of the nearest positioned ancestor.
-        let cb_height = resolved_block_size - border.top - border.bottom;
-        let cb_width = child_available_inline + padding.left + padding.right;
+        let cb_block_size = resolved_block_size - border.top - border.bottom;
+        let cb_inline_size = child_available_inline + padding.left + padding.right;
+        let logical_cb_size = LogicalSize::new(cb_inline_size, cb_block_size);
+        let physical_cb_size =
+            WritingModeConverter::new(space.writing_direction, PhysicalSize::zero())
+                .to_physical_size(logical_cb_size);
         for c in &mut oof_candidates {
-            c.containing_block_size = PhysicalSize::new(cb_width, cb_height);
-            c.containing_block_border = border.clone();
+            project_oof_candidate_to_physical(
+                c,
+                space.writing_direction,
+                logical_cb_size,
+                &border,
+                &physical_border,
+            );
+            c.containing_block_size = physical_cb_size;
             c.containing_block_direction = style.direction;
             c.containing_block_node = node_id;
         }
@@ -2126,8 +2176,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         establishes_cb_for_abspos
                     };
                     if captures {
-                        c.containing_block_size = PhysicalSize::new(cb_width, cb_height);
-                        c.containing_block_border = border.clone();
+                        c.containing_block_size = physical_cb_size;
+                        c.containing_block_border = physical_border.clone();
                         c.containing_block_direction = style.direction;
                         c.containing_block_node = node_id;
                         pending.push(c);
@@ -2151,7 +2201,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             .to_physical_size(logical_border_box_size);
 
     if !space.writing_direction.is_horizontal() {
-        for child in &mut child_fragments {
+        for child in &mut child_fragments[..oof_children_start] {
             project_logical_child_to_physical(child, space.writing_direction, border_box_size);
         }
     }

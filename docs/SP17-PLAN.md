@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1F is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W1G is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -24,18 +24,22 @@ padding paths, and admits the next 14 exact targets. W1F closes the vertical
 flex-flow, logical-gap, and vertical atomic-inline cohort, makes normal block
 and intrinsic flex sizing consume logical axes, and adds the first production
 clockwise rotated Latin/Ahem paint path for homogeneous mixed-orientation runs.
-The authoritative live full-suite result is 3,630 runnable, 3,331 exact, 299
+W1G closes the logical out-of-flow core by keeping containing-block,
+static-position, and child writing directions distinct, transposing abspos
+constraints and intrinsic inputs at explicit boundaries, and routing flex
+static positions through the existing main/cross mapping. The authoritative
+live full-suite result is 3,657 runnable, 3,358 exact, 299
 functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1F |
+| Metric | Kickoff | Live W1G |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,630 |
-| Exact passes | 3,267 | 3,331 |
+| Runnable WPTs | 3,566 | 3,657 |
+| Exact passes | 3,267 | 3,358 |
 | Functional failures | 299 | 299 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 4,043 |
-| `needs_writing_mode` owner rows | 842 | 778 |
+| Unported rows | 4,107 | 4,016 |
+| `needs_writing_mode` owner rows | 842 | 751 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -599,7 +603,7 @@ render/diff error.
   fail / 0 errors**. Its `summary.json` SHA-256 is
   `76b70d2d6b32e5899de6b03a76df28c1111643f0307475e386cbbb822bc00a55`.
 - The live inventory is 4,043 unported rows, 778 `needs_writing_mode` owner
-  rows, and 755 text-manifest IDs. The live validator requires all 64 exact
+  rows, and 755 text-manifest IDs. The W1F validator required all 64 exact
   SP17 promotions while every frozen kickoff and historical ledger remains
   byte-pinned.
 - Mapping, deferred CSV, and HTML report generation were run twice with
@@ -610,3 +614,49 @@ render/diff error.
 - Continue W1 with out-of-flow/static-position, fragmentation, and multicol
   logical geometry. W2 owns upright CJK and mixed-script run splitting,
   sideways modes, and writing-mode 010–015.
+
+### 2026-08-22 — W1G logical out-of-flow core closure
+
+- Added a private out-of-flow axis mapping without changing
+  `OutOfFlowCandidate` or any public API. The containing block,
+  static-position parent, and child keep distinct complete writing directions;
+  physical sizes, insets, and margins remain physical while intrinsic inputs,
+  child constraints, static anchors, and fragments transpose at explicit
+  logical/physical boundaries.
+- Physical start/end polarity now follows horizontal-tb LTR/RTL, vertical-lr
+  versus vertical-rl block flow, and vertical inline progression plus RTL.
+  Child available sizes, percentage bases, fixed flags, clamped relayout, and
+  aspect-ratio inputs enter the abspos child's writing mode before block layout.
+- Flex abspos static positioning now consumes the existing flex main/cross
+  mapping, uses the padding-box containing block, respects reversal and
+  asymmetric borders/padding, and projects its final start-edge anchor exactly
+  once.
+- Added parameterized regressions for the six writing-mode/direction physical
+  polarities, flex static positions, vertical min/max/fit-content sizing,
+  physical auto and over-constrained margins, vertical aspect-ratio transfer,
+  percentage descendants, child constraint transposition and clamped relayout,
+  and final physical fragments. A baseline-discovered vertical negative-margin
+  regression is independently pinned to Chromium's symmetric behavior.
+- Surgically admitted the complete 27-ID W1G cohort in one transaction: six
+  flex abspos auto-position cases; three vertical abspos aspect-ratio cases;
+  twelve orthogonal min/max/fit-content sizing targets and their four shared
+  references; and the orthogonal over-constrained margin target/reference pair.
+  The focused result is 27/27 exact with zero mismatched pixels or errors.
+- The frozen 3,267-ID kickoff baseline remains 3,267/3,267 exact. The
+  authoritative complete no-resume run is **3,657 runnable / 3,358 exact / 299
+  fail / 0 errors**. Its `summary.json` SHA-256 is
+  `3974f4cbda275e0f8a63ea5b2aedf589c611e2dac600f39b6ffa193abb8c056c`.
+- The live inventory is 4,016 unported rows, 751 `needs_writing_mode` owner
+  rows, and 782 text-manifest IDs. The live validator requires all 91 exact
+  SP17 promotions while every frozen kickoff and historical ledger remains
+  byte-pinned.
+- Mapping, deferred CSV, and HTML report generation were run twice with
+  byte-identical hashes. Verification passes the full locked
+  style/text/layout/paint matrix, all 122 SP13-R through SP17 Python tests,
+  both closure-generator checks, formatter and diff checks, release comparator,
+  27-ID splice idempotence, the writing-mode 010–016 exclusion, and the
+  unflagged PNG-backed audit 7/7.
+- Continue W1 with fragmentation and multicol logical geometry. Positioned
+  inline static positions, flex safe-alignment abspos behavior,
+  fragmented/multicol out-of-flow layout, upright/mixed vertical text,
+  sideways modes, and writing-mode 010–015 remain later scoped work.

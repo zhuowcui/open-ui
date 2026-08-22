@@ -311,24 +311,24 @@ calc-margins-fieldset-content,not_portable,,unsupported element: <fieldset>
 calc-margins-fieldset-legend,not_portable,,unsupported element: <fieldset>
 calc-margins-table-caption,not_portable,,unsupported display: table
 canvas-intrinsic-dynamic,not_portable,,uses_javascript
-div-fit-content-orthogonal-auto-margin-left.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-fit-content-orthogonal-auto-margin-right.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-fit-content-orthogonal-auto-margin.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-fit-content-orthogonal-block-size.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-max-content-orthogonal-auto-margin-left.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-max-content-orthogonal-auto-margin-right.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-max-content-orthogonal-auto-margin.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-max-content-orthogonal-block-size.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-min-content-orthogonal-auto-margin-left.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-min-content-orthogonal-auto-margin-right.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-min-content-orthogonal-auto-margin.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-min-content-orthogonal-block-size.tentative,not_portable,,style_block_unsupported property: writing-mode
-div-orthogonal-auto-margin-left-ref,not_portable,,style_block_unsupported property: writing-mode
-div-orthogonal-auto-margin-ref,not_portable,,style_block_unsupported property: writing-mode
-div-orthogonal-auto-margin-right-ref,not_portable,,style_block_unsupported property: writing-mode
-div-orthogonal-block-size-ref,not_portable,,style_block_unsupported property: writing-mode
-div-orthogonal-left-and-non-auto-margin-ref,not_portable,,style_block_unsupported property: writing-mode
-div-orthogonal-left-and-non-auto-margin.tentative,not_portable,,style_block_unsupported property: writing-mode
+div-fit-content-orthogonal-auto-margin-left.tentative,ported,css_sizing_div_fit_content_orthogonal_auto_margin_left_tentative,
+div-fit-content-orthogonal-auto-margin-right.tentative,ported,css_sizing_div_fit_content_orthogonal_auto_margin_right_tentative,
+div-fit-content-orthogonal-auto-margin.tentative,ported,css_sizing_div_fit_content_orthogonal_auto_margin_tentative,
+div-fit-content-orthogonal-block-size.tentative,ported,css_sizing_div_fit_content_orthogonal_block_size_tentative,
+div-max-content-orthogonal-auto-margin-left.tentative,ported,css_sizing_div_max_content_orthogonal_auto_margin_left_tentative,
+div-max-content-orthogonal-auto-margin-right.tentative,ported,css_sizing_div_max_content_orthogonal_auto_margin_right_tentative,
+div-max-content-orthogonal-auto-margin.tentative,ported,css_sizing_div_max_content_orthogonal_auto_margin_tentative,
+div-max-content-orthogonal-block-size.tentative,ported,css_sizing_div_max_content_orthogonal_block_size_tentative,
+div-min-content-orthogonal-auto-margin-left.tentative,ported,css_sizing_div_min_content_orthogonal_auto_margin_left_tentative,
+div-min-content-orthogonal-auto-margin-right.tentative,ported,css_sizing_div_min_content_orthogonal_auto_margin_right_tentative,
+div-min-content-orthogonal-auto-margin.tentative,ported,css_sizing_div_min_content_orthogonal_auto_margin_tentative,
+div-min-content-orthogonal-block-size.tentative,ported,css_sizing_div_min_content_orthogonal_block_size_tentative,
+div-orthogonal-auto-margin-left-ref,ported,css_sizing_div_orthogonal_auto_margin_left_ref,
+div-orthogonal-auto-margin-ref,ported,css_sizing_div_orthogonal_auto_margin_ref,
+div-orthogonal-auto-margin-right-ref,ported,css_sizing_div_orthogonal_auto_margin_right_ref,
+div-orthogonal-block-size-ref,ported,css_sizing_div_orthogonal_block_size_ref,
+div-orthogonal-left-and-non-auto-margin-ref,ported,css_sizing_div_orthogonal_left_and_non_auto_margin_ref,
+div-orthogonal-left-and-non-auto-margin.tentative,ported,css_sizing_div_orthogonal_left_and_non_auto_margin_tentative,
 dynamic-available-size-iframe,not_portable,,uses_javascript
 dynamic-change-inline-size-001,not_portable,,uses_javascript
 dynamic-change-inline-size-002,not_portable,,uses_javascript
@@ -558,11 +558,11 @@ animation_min-width-composition,not_portable,,uses_javascript
 animation_min-width-interpolation,not_portable,,uses_javascript
 animation_width-composition,not_portable,,uses_javascript
 animation_width-interpolation,not_portable,,uses_javascript
-aspect-ratio_abspos-004,not_portable,,unsupported property: writing-mode
+aspect-ratio_abspos-004,ported,css_sizing_aspect_ratio_abspos_004,
 aspect-ratio_abspos-014,not_portable,,unsupported property: contain-intrinsic-size
-aspect-ratio_abspos-015,not_portable,,unsupported property: writing-mode
+aspect-ratio_abspos-015,ported,css_sizing_aspect_ratio_abspos_015,
 aspect-ratio_abspos-016,not_portable,,unsupported element: <img>
-aspect-ratio_abspos-020,not_portable,,unsupported property: writing-mode
+aspect-ratio_abspos-020,ported,css_sizing_aspect_ratio_abspos_020,
 aspect-ratio_block-aspect-ratio-003,not_portable,,unsupported property: writing-mode
 aspect-ratio_block-aspect-ratio-014,not_portable,,unsupported property: writing-mode
 aspect-ratio_block-aspect-ratio-017,not_portable,,unsupported property: writing-mode
