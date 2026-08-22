@@ -222,7 +222,12 @@ def sp14_text_closure_errors(
             if not result or result.get("status") == "error":
                 errors.append(f"SP15-superseded W4 target is not runnable: {test_id}")
             continue
-        if test_id in superseded_residuals:
+        # A frozen SP15/SP16 residual may itself be closed by a still-later
+        # sprint.  In that case the exact live promotion below supersedes the
+        # intermediate residual disposition too.
+        if test_id in superseded_residuals and not (
+            row and row.get("ported") == "yes"
+        ):
             disposition = superseded_residuals[test_id]
             if not row or row.get("ported") != "no":
                 errors.append(f"SP15-superseded W4 residual is not unported: {test_id}")

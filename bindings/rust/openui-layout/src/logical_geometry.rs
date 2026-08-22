@@ -128,7 +128,7 @@ pub fn block_child_constraint_space(
     let child_direction = child_style
         .direction
         .writing_direction(child_style.writing_mode);
-    ConstraintSpace::for_block_child_from_parent(
+    let mut child_space = ConstraintSpace::for_block_child_from_parent(
         parent,
         available_inline_size,
         available_block_size,
@@ -136,7 +136,50 @@ pub fn block_child_constraint_space(
         percentage_block_size,
         is_new_formatting_context,
         child_direction,
-    )
+    );
+
+    // Percentage margins and padding resolve against the containing block's
+    // logical inline size, even when the child establishes an orthogonal
+    // writing mode. Width/height percentage bases transpose with physical
+    // axes above; retain the containing inline measure for edge resolution
+    // when this simplified constraint space has to serve both purposes.
+    let edge_uses_percentage = [
+        &child_style.margin_top,
+        &child_style.margin_right,
+        &child_style.margin_bottom,
+        &child_style.margin_left,
+        &child_style.padding_top,
+        &child_style.padding_right,
+        &child_style.padding_bottom,
+        &child_style.padding_left,
+    ]
+    .iter()
+    .any(|length| length.is_percent() || length.is_calculated());
+    let is_orthogonal = parent.writing_direction.is_horizontal() != child_direction.is_horizontal();
+    if is_orthogonal && edge_uses_percentage {
+        child_space.percentage_resolution_inline_size = percentage_inline_size;
+    }
+
+    // The document flow-root fills the orthogonal viewport's inline measure.
+    // Ordinary orthogonal block/flex children remain shrink-to-fit in that
+    // axis; extending this stretch to them turns vertical flex test boxes into
+    // viewport-wide strips. Atomic inlines are excluded for the same reason.
+    let child_logical = ResolvedLogicalBox::from_style(child_style);
+    if is_orthogonal
+        && child_style.display == openui_style::Display::FlowRoot
+        && child_logical.sizes.block_size.is_auto()
+    {
+        child_space.stretch_block_size = true;
+    }
+    if is_orthogonal
+        && child_style.display.is_block_level()
+        && child_style.display != openui_style::Display::FlowRoot
+        && child_logical.sizes.inline_size.is_auto()
+    {
+        child_space.available_inline_size = openui_geometry::INDEFINITE_SIZE;
+    }
+
+    child_space
 }
 
 /// Build a flex-item constraint space from sizes resolved in the flex

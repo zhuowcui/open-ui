@@ -16,8 +16,8 @@
 
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{
-    BfcOffset, BfcRect, BoxStrut, LayoutUnit, Length, LengthType, MarginStrut, PhysicalOffset,
-    PhysicalRect, PhysicalSize,
+    BfcOffset, BfcRect, BoxStrut, LayoutUnit, LengthType, LogicalOffset, LogicalSize, MarginStrut,
+    PhysicalOffset, PhysicalRect, PhysicalSize, WritingDirectionMode, WritingModeConverter,
 };
 use openui_style::{
     BoxDecorationBreak, BoxSizing, BreakInside, BreakValue, Clear, ColumnSpan, ComputedStyle,
@@ -32,6 +32,104 @@ use crate::fragment::{Fragment, FragmentKind};
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 use crate::out_of_flow::OutOfFlowCandidate;
 
+fn style_with_logical_dimensions(
+    style: &ComputedStyle,
+    writing_direction: WritingDirectionMode,
+) -> Option<ComputedStyle> {
+    if writing_direction.is_horizontal() {
+        return None;
+    }
+
+    let mut logical = style.clone();
+    std::mem::swap(&mut logical.width, &mut logical.height);
+    std::mem::swap(&mut logical.min_width, &mut logical.min_height);
+    std::mem::swap(&mut logical.max_width, &mut logical.max_height);
+    if let Some(aspect_ratio) = logical.aspect_ratio.as_mut() {
+        aspect_ratio.ratio = (aspect_ratio.ratio.1, aspect_ratio.ratio.0);
+    }
+    Some(logical)
+}
+
+fn algorithm_box_from_logical_strut(strut: openui_geometry::LogicalBoxStrut) -> BoxStrut {
+    BoxStrut::new(
+        strut.block_start,
+        strut.inline_end,
+        strut.block_end,
+        strut.inline_start,
+    )
+}
+
+fn resolve_margins_in_parent_axes(
+    style: &ComputedStyle,
+    percentage_base: LayoutUnit,
+    parent_writing_direction: WritingDirectionMode,
+) -> BoxStrut {
+    algorithm_box_from_logical_strut(
+        resolve_margins(style, percentage_base).to_logical(parent_writing_direction),
+    )
+}
+
+fn inline_size_in_parent_axes<'a>(
+    style: &'a ComputedStyle,
+    parent_writing_direction: WritingDirectionMode,
+) -> &'a openui_geometry::Length {
+    if parent_writing_direction.is_horizontal() {
+        &style.width
+    } else {
+        &style.height
+    }
+}
+
+fn block_size_in_parent_axes<'a>(
+    style: &'a ComputedStyle,
+    parent_writing_direction: WritingDirectionMode,
+) -> &'a openui_geometry::Length {
+    if parent_writing_direction.is_horizontal() {
+        &style.height
+    } else {
+        &style.width
+    }
+}
+
+/// Store one completed physical child size in the current block formatting
+/// context's logical `(inline, block)` pair while the block algorithm runs.
+/// Fragment storage is converted back to physical exactly once in
+/// `project_logical_child_to_physical` below.
+fn normalize_child_size_for_block_axes(
+    fragment: &mut Fragment,
+    writing_direction: WritingDirectionMode,
+) {
+    if !writing_direction.is_horizontal() {
+        let logical = WritingModeConverter::new(writing_direction, PhysicalSize::zero())
+            .to_logical_size(fragment.size);
+        fragment.size = PhysicalSize::new(logical.inline_size, logical.block_size);
+    }
+}
+
+/// Convert an immediate child from this block's logical coordinate system to
+/// physical fragment storage. Anonymous line boxes and non-atomic inline-box
+/// continuations share the same logical coordinate system, so recurse through
+/// those generated layers. A real box child already owns physical descendants;
+/// only its outer size and offset are projected here.
+fn project_logical_child_to_physical(
+    fragment: &mut Fragment,
+    writing_direction: WritingDirectionMode,
+    parent_physical_size: PhysicalSize,
+) {
+    let converter = WritingModeConverter::new(writing_direction, parent_physical_size);
+    let logical_size = LogicalSize::new(fragment.size.width, fragment.size.height);
+    let physical_size = converter.to_physical_size(logical_size);
+    let logical_offset = LogicalOffset::new(fragment.offset.left, fragment.offset.top);
+    fragment.offset = converter.to_physical_offset(logical_offset, physical_size);
+    fragment.size = physical_size;
+
+    if fragment.node_id.is_none() || fragment.is_inline_box_fragment {
+        for child in &mut fragment.children {
+            project_logical_child_to_physical(child, writing_direction, physical_size);
+        }
+    }
+}
+
 /// Perform block layout on a node and its descendants.
 ///
 /// This is the main entry point, equivalent to Blink's
@@ -39,19 +137,29 @@ use crate::out_of_flow::OutOfFlowCandidate;
 ///
 /// Returns a `Fragment` with resolved sizes and positioned children.
 pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
-    let style = &doc.node(node_id).style;
+    let physical_style = &doc.node(node_id).style;
 
     // Dispatch flex containers to the flex algorithm
-    if style.display.is_flex() {
+    if physical_style.display.is_flex() {
         return crate::flex::flex_layout(doc, node_id, space);
     }
+
+    // The established block algorithm stores its working pair as
+    // (inline, block). Project physical width/height fields once, at entry,
+    // so all existing sizing and min/max logic consumes the right axes.
+    let logical_style = style_with_logical_dimensions(physical_style, space.writing_direction);
+    let style = logical_style.as_ref().unwrap_or(physical_style);
 
     // ── Step 1: Resolve border + padding ─────────────────────────────
     // Blink: uses pre-resolved border widths (integers) and resolves padding
     // against percentage_resolution_inline_size.
 
-    let border = resolve_border(style);
-    let padding = resolve_padding(style, space.percentage_resolution_inline_size);
+    let physical_border = resolve_border(physical_style);
+    let physical_padding = resolve_padding(physical_style, space.percentage_resolution_inline_size);
+    let border =
+        algorithm_box_from_logical_strut(physical_border.to_logical(space.writing_direction));
+    let padding =
+        algorithm_box_from_logical_strut(physical_padding.to_logical(space.writing_direction));
 
     let border_padding_inline = border.left + border.right + padding.left + padding.right;
     let border_padding_block = border.top + border.bottom + padding.top + padding.bottom;
@@ -764,12 +872,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         } else {
             // No block-in-inline: standard inline layout path.
             // Build constraint space with exclusion data for per-line float avoidance.
-            let mut inline_space = ConstraintSpace::for_block_child(
+            let mut inline_space = ConstraintSpace::for_block_child_with_writing_direction(
                 child_available_inline,
                 space.available_block_size,
                 child_available_inline,
                 child_percentage_block_size,
                 false,
+                space.writing_direction,
             );
             if exclusion_space_inline.has_floats() {
                 inline_space.exclusion_space = Some(std::sync::Arc::new(exclusion_space_inline));
@@ -1098,7 +1207,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 // then determine clearance as additional distance needed.
                 // Clearance also inhibits margin collapsing.
                 if child_style.clear != Clear::None {
-                    let child_margin = resolve_margins(child_style, child_available_inline);
+                    let child_margin = resolve_margins_in_parent_axes(
+                        child_style,
+                        child_available_inline,
+                        space.writing_direction,
+                    );
                     let child_top_margin = child_margin.top;
                     let mut hyp_strut = margin_strut;
                     hyp_strut.append_normal(child_top_margin);
@@ -1126,7 +1239,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     .has_floats()
                     && child_is_new_fc_caller
                 {
-                    let child_margin = resolve_margins(child_style, child_available_inline);
+                    let child_margin = resolve_margins_in_parent_axes(
+                        child_style,
+                        child_available_inline,
+                        space.writing_direction,
+                    );
                     let child_top_margin = child_margin.top;
                     let mut temp_strut = margin_strut;
                     temp_strut.append_normal(child_top_margin);
@@ -1139,13 +1256,15 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     };
 
                     // Use height-aware opportunity search for explicit-height BFCs.
-                    let child_block_size = if !child_style.height.is_auto()
-                        && !child_style.height.is_stretch()
-                        && !child_style.height.is_content_or_intrinsic()
-                        && !child_style.height.is_percent()
+                    let child_block_length =
+                        block_size_in_parent_axes(child_style, space.writing_direction);
+                    let child_block_size = if !child_block_length.is_auto()
+                        && !child_block_length.is_stretch()
+                        && !child_block_length.is_content_or_intrinsic()
+                        && !child_block_length.is_percent()
                     {
                         let raw = resolve_length(
-                            &child_style.height,
+                            child_block_length,
                             LayoutUnit::zero(),
                             LayoutUnit::zero(),
                             LayoutUnit::zero(),
@@ -1337,7 +1456,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             // then determine clearance as additional distance needed.
             // Clearance inhibits margin collapsing.
             if child_style.clear != Clear::None {
-                let child_margin = resolve_margins(child_style, child_available_inline);
+                let child_margin = resolve_margins_in_parent_axes(
+                    child_style,
+                    child_available_inline,
+                    space.writing_direction,
+                );
                 let child_top_margin = child_margin.top;
                 let mut hyp_strut = margin_strut;
                 hyp_strut.append_normal(child_top_margin);
@@ -1362,7 +1485,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             // boxes avoid floats (handled in inline layout).
             let child_is_new_fc_caller = establishes_new_fc(child_style);
             let child_margin_for_fc = if child_is_new_fc_caller {
-                resolve_margins(child_style, child_available_inline)
+                resolve_margins_in_parent_axes(
+                    child_style,
+                    child_available_inline,
+                    space.writing_direction,
+                )
             } else {
                 BoxStrut::zero()
             };
@@ -1460,13 +1587,15 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     };
 
                     // Height-aware opportunity search if child has explicit height.
-                    let child_block_size = if !child_style.height.is_auto()
-                        && !child_style.height.is_stretch()
-                        && !child_style.height.is_content_or_intrinsic()
-                        && !child_style.height.is_percent()
+                    let child_block_length =
+                        block_size_in_parent_axes(child_style, space.writing_direction);
+                    let child_block_size = if !child_block_length.is_auto()
+                        && !child_block_length.is_stretch()
+                        && !child_block_length.is_content_or_intrinsic()
+                        && !child_block_length.is_percent()
                     {
                         let raw = resolve_length(
-                            &child_style.height,
+                            child_block_length,
                             LayoutUnit::zero(),
                             LayoutUnit::zero(),
                             LayoutUnit::zero(),
@@ -2011,11 +2140,25 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         }
     }
 
-    let border_box_size = PhysicalSize::new(border_box_inline, resolved_block_size);
+    let logical_border_box_size = LogicalSize::new(border_box_inline, resolved_block_size);
+    let provisional_physical_size = if space.writing_direction.is_horizontal() {
+        PhysicalSize::new(border_box_inline, resolved_block_size)
+    } else {
+        PhysicalSize::new(resolved_block_size, border_box_inline)
+    };
+    let border_box_size =
+        WritingModeConverter::new(space.writing_direction, provisional_physical_size)
+            .to_physical_size(logical_border_box_size);
+
+    if !space.writing_direction.is_horizontal() {
+        for child in &mut child_fragments {
+            project_logical_child_to_physical(child, space.writing_direction, border_box_size);
+        }
+    }
 
     let mut fragment = Fragment::new_box(node_id, border_box_size);
-    fragment.border = border;
-    fragment.padding = padding;
+    fragment.border = physical_border;
+    fragment.padding = physical_padding;
     fragment.children = child_fragments;
     fragment.kind = if doc.node(node_id).tag == openui_dom::ElementTag::Viewport {
         FragmentKind::Viewport
@@ -2206,31 +2349,36 @@ fn handle_float(
     max_float_bottom: &mut LayoutUnit,
 ) {
     let child_style = &doc.node(child_id).style;
-    let child_margin = resolve_margins(child_style, child_available_inline);
+    let child_margin = resolve_margins_in_parent_axes(
+        child_style,
+        child_available_inline,
+        space.writing_direction,
+    );
     let is_left = child_style.float == Float::Left;
 
     // CSS 2.1 §10.3.5: Floats with auto width use shrink-to-fit sizing.
     // The available width for shrink-to-fit is the containing block width
     // minus the float's own non-auto horizontal margins.
-    let float_inline_size = if child_style.width.is_auto() {
-        let margin_inline = {
-            let ml = if child_style.margin_left.is_auto() {
-                LayoutUnit::zero()
-            } else {
-                child_margin.left
+    let float_inline_size =
+        if inline_size_in_parent_axes(child_style, space.writing_direction).is_auto() {
+            let margin_inline = {
+                let ml = if child_style.margin_left.is_auto() {
+                    LayoutUnit::zero()
+                } else {
+                    child_margin.left
+                };
+                let mr = if child_style.margin_right.is_auto() {
+                    LayoutUnit::zero()
+                } else {
+                    child_margin.right
+                };
+                ml + mr
             };
-            let mr = if child_style.margin_right.is_auto() {
-                LayoutUnit::zero()
-            } else {
-                child_margin.right
-            };
-            ml + mr
+            let stf_available = (child_available_inline - margin_inline).clamp_negative_to_zero();
+            crate::out_of_flow::compute_shrink_to_fit_width(doc, child_id, stf_available)
+        } else {
+            child_available_inline
         };
-        let stf_available = (child_available_inline - margin_inline).clamp_negative_to_zero();
-        crate::out_of_flow::compute_shrink_to_fit_width(doc, child_id, stf_available)
-    } else {
-        child_available_inline
-    };
 
     // Layout the float child to determine its size.
     // Floats always establish a new formatting context.
@@ -2244,6 +2392,7 @@ fn handle_float(
         true,
     );
     let mut child_fragment = block_layout(doc, child_id, &child_space);
+    normalize_child_size_for_block_axes(&mut child_fragment, space.writing_direction);
 
     // Take OOF candidates from the float's descendants for post-positioning
     // translation (same pattern as the normal block path at lines 1009-1027).
@@ -2515,7 +2664,11 @@ fn layout_block_child(
         return;
     }
 
-    let child_margin = resolve_margins(child_style, child_available_inline);
+    let child_margin = resolve_margins_in_parent_axes(
+        child_style,
+        child_available_inline,
+        space.writing_direction,
+    );
     margin_strut.append_normal(child_margin.top);
 
     // ── Layout child BEFORE resolving the margin strut ───────────────
@@ -2573,6 +2726,7 @@ fn layout_block_child(
     }
 
     let mut child_fragment = block_layout(doc, child_id, &child_space);
+    normalize_child_size_for_block_axes(&mut child_fragment, space.writing_direction);
 
     // Early self-collapsing check — needed BEFORE float cascade gating.
     // CSS 2.1 §8.3.1: Empty blocks (no height, no border/padding, no FC,

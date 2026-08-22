@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused regressions for the SP17 W0A kickoff evidence."""
+"""Focused regressions for the SP17 kickoff and live W1F closure evidence."""
 
 from __future__ import annotations
 
@@ -17,6 +17,51 @@ sys.path.insert(0, str(HERE))
 
 import generate_sp17_closure as closure  # noqa: E402
 import port_wpt  # noqa: E402
+
+
+EXPECTED_LIVE_PROMOTIONS = {
+    "wpt/css_flexbox/aspect-ratio-intrinsic-size-009",
+    "wpt/css_flexbox/fit-content-item-002",
+    "wpt/css_flexbox/fit-content-item-003",
+    "wpt/css_flexbox/fit-content-item-004",
+    "wpt/css_flexbox/flex-item-max-width-min-content",
+    "wpt/css_flexbox/flex-item-min-width-min-content",
+    "wpt/css_flexbox/flexbox-flex-wrap-flexing-003",
+    "wpt/css_flexbox/flexbox-overflow-padding-002",
+    "wpt/css_flexbox/flexbox-writing-mode-001",
+    "wpt/css_flexbox/flexbox-writing-mode-002",
+    "wpt/css_flexbox/flexbox-writing-mode-003",
+    "wpt/css_flexbox/flexbox-writing-mode-004",
+    "wpt/css_flexbox/flexbox-writing-mode-005",
+    "wpt/css_flexbox/flexbox-writing-mode-006",
+    "wpt/css_flexbox/flexbox-writing-mode-007",
+    "wpt/css_flexbox/flexbox-writing-mode-008",
+    "wpt/css_flexbox/flexbox-writing-mode-009",
+    "wpt/css_flexbox/flexbox_align-items-center-3",
+    "wpt/css_flexbox/flexbox_align-items-stretch-3",
+    "wpt/css_flexbox/stretching-orthogonal-flows",
+    "wpt/css_flexbox/css-flexbox-row",
+    "wpt/css_flexbox/css-flexbox-row-reverse",
+    "wpt/css_flexbox/css-flexbox-row-reverse-wrap",
+    "wpt/css_flexbox/css-flexbox-row-reverse-wrap-reverse",
+    "wpt/css_flexbox/css-flexbox-row-wrap",
+    "wpt/css_flexbox/css-flexbox-row-wrap-reverse",
+    "wpt/css_flexbox/flex-direction-row-vertical",
+    "wpt/css_flexbox/flex-direction-row-vertical-ref",
+    "wpt/css_flexbox/flexbox-flex-direction-default",
+    "wpt/css_flexbox/flexbox-flex-direction-row",
+    "wpt/css_flexbox/flexbox-flex-direction-row-reverse",
+    "wpt/css_flexbox/flexbox-flex-direction-column",
+    "wpt/css_flexbox/flexbox-flex-direction-column-reverse",
+    "wpt/css_flexbox/flexbox-flex-wrap-wrap",
+    "wpt/css_flexbox/flexbox-flex-wrap-wrap-reverse",
+    "wpt/css_flexbox/intrinsic-size_col-wrap-crash",
+} | {
+    f"wpt/css_flexbox/gap-{number:03d}-{direction}{reference}"
+    for number in range(1, 8)
+    for direction in ("lr", "rl")
+    for reference in ("", "-ref")
+}
 
 
 class LedgerTests(unittest.TestCase):
@@ -101,30 +146,8 @@ class LedgerTests(unittest.TestCase):
         promoted = closure.validate_live_snapshot(
             rows, summary, baseline, inventory, actionable
         )
-        self.assertTrue(
-            {
-                "wpt/css_flexbox/aspect-ratio-intrinsic-size-009",
-                "wpt/css_flexbox/fit-content-item-002",
-                "wpt/css_flexbox/fit-content-item-003",
-                "wpt/css_flexbox/fit-content-item-004",
-                "wpt/css_flexbox/flex-item-max-width-min-content",
-                "wpt/css_flexbox/flex-item-min-width-min-content",
-                "wpt/css_flexbox/flexbox-flex-wrap-flexing-003",
-                "wpt/css_flexbox/flexbox-overflow-padding-002",
-                "wpt/css_flexbox/flexbox-writing-mode-001",
-                "wpt/css_flexbox/flexbox-writing-mode-002",
-                "wpt/css_flexbox/flexbox-writing-mode-003",
-                "wpt/css_flexbox/flexbox-writing-mode-004",
-                "wpt/css_flexbox/flexbox-writing-mode-005",
-                "wpt/css_flexbox/flexbox-writing-mode-006",
-                "wpt/css_flexbox/flexbox-writing-mode-007",
-                "wpt/css_flexbox/flexbox-writing-mode-008",
-                "wpt/css_flexbox/flexbox-writing-mode-009",
-                "wpt/css_flexbox/flexbox_align-items-center-3",
-                "wpt/css_flexbox/flexbox_align-items-stretch-3",
-                "wpt/css_flexbox/stretching-orthogonal-flows",
-            }.issubset(promoted)
-        )
+        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 64)
+        self.assertEqual(promoted, EXPECTED_LIVE_PROMOTIONS)
         self.assertTrue(promoted.issubset(set(actionable)))
 
     def test_w0b_probe_is_a_disjoint_cover_of_the_frozen_inventory(self):

@@ -1581,10 +1581,13 @@ fn resolve_flex_basis(
             return (content, false);
         }
 
-        let pct_base = if is_main_axis_horizontal {
-            child_percentage_inline
-        } else {
+        // Percentage main sizes resolve in the container's logical main
+        // axis. Physical width/height happens to match this only in
+        // horizontal writing modes.
+        let pct_base = if is_column {
             child_percentage_block
+        } else {
+            child_percentage_inline
         };
 
         if !pct_base.is_indefinite() || main_length.is_fixed() {
@@ -1849,6 +1852,14 @@ fn resolve_content_based_size(
         }
     }
 
+    if axis_mapping.main_axis_is_child_inline
+        && !axis_mapping.child_writing_direction.is_horizontal()
+    {
+        let intrinsic =
+            crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(doc, child_id);
+        return (intrinsic.max - main_axis_border_padding).clamp_negative_to_zero();
+    }
+
     // For content-based sizing, lay out the child with unconstrained main axis.
     // CSS Flexbox §9.2: When computing the flex base size from content, the cross-
     // axis available size depends on alignment and the item's own constraints.
@@ -1857,16 +1868,26 @@ fn resolve_content_based_size(
     // for column, max-height for row) to bound the layout, since the item
     // will shrink-wrap to its content.
     // CSS Flexbox §9.4: Cross-axis auto margins prevent stretching.
-    let has_cross_auto_margin_for_stretch = if is_column {
-        child_style.margin_left.is_auto() || child_style.margin_right.is_auto()
-    } else {
+    let has_cross_auto_margin_for_stretch = if is_main_axis_horizontal {
         child_style.margin_top.is_auto() || child_style.margin_bottom.is_auto()
+    } else {
+        child_style.margin_left.is_auto() || child_style.margin_right.is_auto()
     };
     let would_stretch_cross =
         resolved_alignment == ItemPosition::Stretch && !has_cross_auto_margin_for_stretch;
+    let physical_margin = resolve_margins(child_style, LayoutUnit::zero());
+    let cross_margin = if is_main_axis_horizontal {
+        physical_margin.top + physical_margin.bottom
+    } else {
+        physical_margin.left + physical_margin.right
+    };
     let child_space = if is_column {
         let cross_inline = if would_stretch_cross {
-            child_percentage_inline
+            if child_percentage_inline.is_indefinite() {
+                child_percentage_inline
+            } else {
+                (child_percentage_inline - cross_margin).clamp_negative_to_zero()
+            }
         } else if child_style.aspect_ratio.is_some() && child_style.width.is_auto() {
             // AR items with auto cross-size: use indefinite so AR derives
             // main from content, not from container width.
@@ -1905,7 +1926,7 @@ fn resolve_content_based_size(
         // Use the flex container's own cross-axis content size, not the parent's.
         let container_cross_block = child_percentage_block;
         let cross_block = if would_stretch_cross && !container_cross_block.is_indefinite() {
-            container_cross_block
+            (container_cross_block - cross_margin).clamp_negative_to_zero()
         } else if child_style.aspect_ratio.is_some() && child_style.height.is_auto() {
             LayoutUnit::from_raw(-64)
         } else if !container_cross_block.is_indefinite() {
@@ -2217,11 +2238,14 @@ fn resolve_main_axis_min_max(
     is_basis_from_content: bool,
     resolved_alignment: ItemPosition,
 ) -> MinMaxSizes {
-    let (min_prop, max_prop, pct_base) = if is_main_axis_horizontal {
-        (&child_style.min_width, &child_style.max_width, pct_inline)
+    let axis_mapping = FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal);
+    let main_is_child_inline = axis_mapping.main_axis_is_child_inline;
+    let (min_prop, max_prop) = if is_main_axis_horizontal {
+        (&child_style.min_width, &child_style.max_width)
     } else {
-        (&child_style.min_height, &child_style.max_height, pct_block)
+        (&child_style.min_height, &child_style.max_height)
     };
+    let pct_base = if is_column { pct_block } else { pct_inline };
 
     // ── Resolve min ──────────────────────────────────────────────────
     let min = if min_prop.is_auto() {
@@ -2235,7 +2259,7 @@ fn resolve_main_axis_min_max(
             // size in the main axis. Always compute min-content intrinsic
             // size — base_content_size is max-content when flex-basis was
             // content-based, which is NOT the right value here.
-            let content_size = if is_main_axis_horizontal {
+            let content_size = if main_is_child_inline {
                 let min_max =
                     crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
                 let mut cs = (min_max.min - main_axis_border_padding).clamp_negative_to_zero();
@@ -2349,8 +2373,19 @@ fn resolve_main_axis_min_max(
             } else {
                 let intrinsic =
                     crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
-                let mut cs = (intrinsic.min_content_block_size - main_axis_border_padding)
-                    .clamp_negative_to_zero();
+                // In an established horizontal IFC, the min-content block
+                // contribution is fragmentation-sensitive and remains the
+                // automatic minimum used by the existing flex path. Vertical
+                // text is shaped horizontally for W1F; measuring its block
+                // contribution at a manufactured min-content inline width
+                // would add lines in the wrong physical axis, so use the
+                // unfragmented max-content contribution there.
+                let intrinsic_block = if axis_mapping.child_writing_direction.is_horizontal() {
+                    intrinsic.min_content_block_size
+                } else {
+                    intrinsic.max_content_block_size
+                };
+                let mut cs = (intrinsic_block - main_axis_border_padding).clamp_negative_to_zero();
                 // Same AR transfer for row flex (cross = block)
                 if !is_basis_from_content {
                     if let Some(ref ar) = child_style.aspect_ratio {
@@ -2620,7 +2655,7 @@ fn compute_line_cross_sizes(
     doc: &Document,
     items: &[FlexItem],
     lines: &mut [FlexLine],
-    _is_column: bool,
+    is_column: bool,
     is_main_axis_horizontal: bool,
     child_percentage_inline: LayoutUnit,
     child_percentage_block: LayoutUnit,
@@ -2648,6 +2683,7 @@ fn compute_line_cross_sizes(
                 doc,
                 item,
                 child_style,
+                is_column,
                 is_main_axis_horizontal,
                 cross_border_padding,
                 child_percentage_inline,
@@ -2713,6 +2749,7 @@ fn resolve_cross_size(
     doc: &Document,
     item: &FlexItem,
     child_style: &openui_style::ComputedStyle,
+    is_column: bool,
     is_main_axis_horizontal: bool,
     cross_border_padding: LayoutUnit,
     child_percentage_inline: LayoutUnit,
@@ -2793,6 +2830,35 @@ fn resolve_cross_size(
                     return cross_content;
                 }
             }
+        }
+
+        let axis_mapping =
+            FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal);
+        if !axis_mapping.main_axis_is_child_inline
+            && !axis_mapping.child_writing_direction.is_horizontal()
+        {
+            let intrinsic =
+                crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(doc, item.node_id);
+            let available_cross = if is_column {
+                child_percentage_inline
+            } else {
+                child_percentage_block
+            };
+            let available_cross = if available_cross.is_indefinite() {
+                available_cross
+            } else {
+                (available_cross - item.cross_axis_margin_extent()).clamp_negative_to_zero()
+            };
+            let border_box = if available_cross.is_indefinite() {
+                intrinsic.max
+            } else {
+                crate::intrinsic_sizing::shrink_to_fit_inline_size(
+                    intrinsic.min,
+                    intrinsic.max,
+                    available_cross,
+                )
+            };
+            return (border_box - cross_border_padding).clamp_negative_to_zero();
         }
 
         // Auto cross size → lay out child to get intrinsic size.
@@ -3130,6 +3196,7 @@ fn give_items_final_position(
                     doc,
                     item,
                     child_style,
+                    is_column,
                     is_main_axis_horizontal,
                     cross_border_padding,
                     child_percentage_inline,
@@ -4347,6 +4414,371 @@ mod tests {
         assert_eq!(fragment.children[1].offset.top, LayoutUnit::from_i32(50));
         // Cross axis (x): explicit width=50 doesn't stretch
         assert_eq!(fragment.children[0].width(), LayoutUnit::from_i32(50));
+    }
+
+    #[test]
+    fn vertical_lr_column_wrap_uses_block_main_and_inline_cross_axes() {
+        let mut doc = Document::new();
+        let container = make_flex_container(&mut doc, 100, 560);
+        {
+            let style = doc.node_mut(container).style_mut();
+            style.writing_mode = WritingMode::VerticalLr;
+            style.flex_direction = FlexDirection::Column;
+            style.flex_wrap = FlexWrap::Wrap;
+            style.row_gap = Some(Length::px(20.0));
+            style.column_gap = Some(Length::px(20.0));
+        }
+        for _ in 0..4 {
+            let child = add_flex_child(&mut doc, container, 40, 0);
+            let child_style = doc.node_mut(child).style_mut();
+            child_style.writing_mode = WritingMode::VerticalLr;
+            child_style.width = Length::calc_percent_px(50.0, -10.0);
+            child_style.height = Length::auto();
+        }
+
+        let direction = doc
+            .node(container)
+            .style
+            .direction
+            .writing_direction(WritingMode::VerticalLr);
+        let space = ConstraintSpace::for_root_with_writing_direction(
+            LayoutUnit::from_i32(560),
+            LayoutUnit::from_i32(100),
+            direction,
+        );
+        let fragment = flex_layout(&doc, container, &space);
+
+        let geometry: Vec<_> = fragment
+            .children
+            .iter()
+            .map(|child| (child.offset, child.size))
+            .collect();
+        assert_eq!(
+            geometry,
+            vec![
+                (
+                    PhysicalOffset::new(LayoutUnit::zero(), LayoutUnit::zero()),
+                    PhysicalSize::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(270)),
+                ),
+                (
+                    PhysicalOffset::new(LayoutUnit::from_i32(60), LayoutUnit::zero()),
+                    PhysicalSize::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(270)),
+                ),
+                (
+                    PhysicalOffset::new(LayoutUnit::zero(), LayoutUnit::from_i32(290)),
+                    PhysicalSize::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(270)),
+                ),
+                (
+                    PhysicalOffset::new(LayoutUnit::from_i32(60), LayoutUnit::from_i32(290)),
+                    PhysicalSize::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(270)),
+                ),
+            ]
+        );
+    }
+
+    #[test]
+    fn vertical_inline_flex_column_shrink_wraps_logical_block_contributions() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        {
+            let style = doc.node_mut(container).style_mut();
+            style.display = Display::InlineFlex;
+            style.writing_mode = WritingMode::VerticalLr;
+            style.flex_direction = FlexDirection::Column;
+            style.row_gap = Some(Length::px(20.0));
+            style.column_gap = Some(Length::px(20.0));
+        }
+        doc.append_child(doc.root(), container);
+        for text in ["Black Panther", "Wonder Woman", "Storm", "Flash"] {
+            let child = doc.create_node(ElementTag::Div);
+            doc.node_mut(child).style.display = Display::Block;
+            doc.node_mut(child).style.writing_mode = WritingMode::VerticalLr;
+            doc.append_child(container, child);
+            let text_node = doc.create_node(ElementTag::Text);
+            doc.node_mut(text_node).style.writing_mode = WritingMode::VerticalLr;
+            doc.node_mut(text_node).text = Some(text.to_string());
+            doc.append_child(child, text_node);
+        }
+
+        let direction = doc
+            .node(container)
+            .style
+            .direction
+            .writing_direction(WritingMode::VerticalLr);
+        let space = ConstraintSpace::for_root_with_writing_direction(
+            LayoutUnit::from_i32(208),
+            openui_geometry::INDEFINITE_SIZE,
+            direction,
+        );
+        let fragment = flex_layout(&doc, container, &space);
+
+        let total_child_block: LayoutUnit = fragment
+            .children
+            .iter()
+            .map(|child| child.width())
+            .fold(LayoutUnit::zero(), |sum, size| sum + size);
+        assert_eq!(
+            fragment.width(),
+            total_child_block + LayoutUnit::from_i32(60)
+        );
+        assert_eq!(
+            fragment.height(),
+            fragment
+                .children
+                .iter()
+                .map(|child| child.height())
+                .max()
+                .unwrap()
+        );
+        assert!(fragment
+            .children
+            .iter()
+            .all(|child| child.width() < child.height()));
+    }
+
+    #[test]
+    fn vertical_gap_001_through_007_patterns_preserve_logical_axes() {
+        let patterns = [
+            (Display::Flex, FlexDirection::Row, FlexWrap::Nowrap),
+            (Display::Flex, FlexDirection::Column, FlexWrap::Nowrap),
+            (Display::Flex, FlexDirection::Column, FlexWrap::Wrap),
+            (Display::InlineFlex, FlexDirection::Row, FlexWrap::Nowrap),
+            (Display::InlineFlex, FlexDirection::Column, FlexWrap::Nowrap),
+            (Display::InlineFlex, FlexDirection::Row, FlexWrap::Wrap),
+            (Display::InlineFlex, FlexDirection::Column, FlexWrap::Wrap),
+        ];
+
+        for mode in [WritingMode::VerticalLr, WritingMode::VerticalRl] {
+            for (index, (display, direction, wrap)) in patterns.into_iter().enumerate() {
+                let mut doc = Document::new();
+                let container = make_flex_container(&mut doc, 100, 100);
+                {
+                    let style = doc.node_mut(container).style_mut();
+                    style.display = display;
+                    style.writing_mode = mode;
+                    style.flex_direction = direction;
+                    style.flex_wrap = wrap;
+                    style.row_gap = Some(Length::px(20.0));
+                    style.column_gap = Some(Length::px(20.0));
+                }
+                for _ in 0..3 {
+                    let child = add_flex_child(&mut doc, container, 40, 40);
+                    let style = doc.node_mut(child).style_mut();
+                    style.writing_mode = mode;
+                    style.flex_shrink = 0.0;
+                }
+
+                let writing_direction = doc.node(container).style.direction.writing_direction(mode);
+                let space = ConstraintSpace::for_root_with_writing_direction(
+                    LayoutUnit::from_i32(100),
+                    LayoutUnit::from_i32(100),
+                    writing_direction,
+                );
+                let fragment = flex_layout(&doc, container, &space);
+                let main_offsets: Vec<_> = fragment
+                    .children
+                    .iter()
+                    .map(|child| {
+                        if direction.is_column() {
+                            child.offset.left
+                        } else {
+                            child.offset.top
+                        }
+                    })
+                    .collect();
+                let cross_offsets: Vec<_> = fragment
+                    .children
+                    .iter()
+                    .map(|child| {
+                        if direction.is_column() {
+                            child.offset.top
+                        } else {
+                            child.offset.left
+                        }
+                    })
+                    .collect();
+
+                assert_eq!(
+                    (main_offsets[1] - main_offsets[0]).abs(),
+                    LayoutUnit::from_i32(60),
+                    "gap pattern {} failed in {mode:?}",
+                    index + 1
+                );
+                if wrap == FlexWrap::Wrap {
+                    assert_eq!(main_offsets[2], main_offsets[0]);
+                    assert_ne!(cross_offsets[2], cross_offsets[0]);
+                } else {
+                    assert_eq!(
+                        (main_offsets[2] - main_offsets[1]).abs(),
+                        LayoutUnit::from_i32(60)
+                    );
+                    assert_eq!(cross_offsets[2], cross_offsets[0]);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn vertical_nowrap_matrix_preserves_axes_and_reverse_order() {
+        let modes = [WritingMode::VerticalLr, WritingMode::VerticalRl];
+        let directions = [
+            FlexDirection::Row,
+            FlexDirection::RowReverse,
+            FlexDirection::Column,
+            FlexDirection::ColumnReverse,
+        ];
+
+        for mode in modes {
+            for flex_direction in directions {
+                let mut doc = Document::new();
+                let container = make_flex_container(&mut doc, 40, 30);
+                {
+                    let style = doc.node_mut(container).style_mut();
+                    style.writing_mode = mode;
+                    style.flex_direction = flex_direction;
+                    style.flex_wrap = FlexWrap::Nowrap;
+                }
+                let mut item_ids = Vec::new();
+                for _ in 0..4 {
+                    let child = add_flex_child(&mut doc, container, 20, 15);
+                    doc.node_mut(child).style.writing_mode = mode;
+                    item_ids.push(child);
+                }
+
+                let direction = doc.node(container).style.direction.writing_direction(mode);
+                let space = ConstraintSpace::for_root_with_writing_direction(
+                    LayoutUnit::from_i32(30),
+                    LayoutUnit::from_i32(40),
+                    direction,
+                );
+                let fragment = flex_layout(&doc, container, &space);
+                assert_eq!(fragment.children.len(), 4);
+                assert!(fragment.children.iter().all(|child| {
+                    if flex_direction.is_column() {
+                        child.height() == LayoutUnit::from_i32(15)
+                            && child.width() > LayoutUnit::zero()
+                    } else {
+                        child.width() == LayoutUnit::from_i32(20)
+                            && child.height() > LayoutUnit::zero()
+                    }
+                }));
+
+                let positions: Vec<_> = fragment
+                    .children
+                    .iter()
+                    .map(|child| {
+                        if flex_direction.is_column() {
+                            child.offset.left
+                        } else {
+                            child.offset.top
+                        }
+                    })
+                    .collect();
+                let physical_forward =
+                    !flex_direction.is_column() || mode == WritingMode::VerticalLr;
+                assert!(
+                    positions.windows(2).all(|pair| {
+                        if physical_forward {
+                            pair[0] < pair[1]
+                        } else {
+                            pair[0] > pair[1]
+                        }
+                    }),
+                    "unexpected nowrap order for {mode:?} {flex_direction:?}: {positions:?}"
+                );
+                if flex_direction.is_reverse() {
+                    item_ids.reverse();
+                }
+                assert_eq!(
+                    fragment
+                        .children
+                        .iter()
+                        .map(|child| child.node_id)
+                        .collect::<Vec<_>>(),
+                    item_ids
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn vertical_column_cross_margin_reduces_fit_content_before_wrapping() {
+        fn content_base(cross_margin: i32) -> LayoutUnit {
+            let mut doc = Document::new();
+            let item = doc.create_node(ElementTag::Div);
+            {
+                let style = doc.node_mut(item).style_mut();
+                style.display = Display::Block;
+                style.writing_mode = WritingMode::VerticalLr;
+                style.margin_bottom = Length::px(cross_margin as f32);
+            }
+            doc.append_child(doc.root(), item);
+            for _ in 0..2 {
+                let atomic = doc.create_node(ElementTag::Span);
+                let style = doc.node_mut(atomic).style_mut();
+                style.display = Display::InlineBlock;
+                style.writing_mode = WritingMode::VerticalLr;
+                style.width = Length::px(15.0);
+                style.height = Length::px(95.0);
+                doc.append_child(item, atomic);
+            }
+
+            let direction = doc
+                .node(item)
+                .style
+                .direction
+                .writing_direction(WritingMode::VerticalLr);
+            let space = ConstraintSpace::for_root_with_writing_direction(
+                LayoutUnit::from_i32(200),
+                LayoutUnit::from_i32(100),
+                direction,
+            );
+            resolve_content_based_size(
+                &doc,
+                item,
+                &doc.node(item).style,
+                true,
+                true,
+                LayoutUnit::zero(),
+                LayoutUnit::from_i32(200),
+                LayoutUnit::from_i32(100),
+                &space,
+                ItemPosition::Stretch,
+            )
+        }
+
+        let without_margin = content_base(0);
+        let with_margin = content_base(20);
+        assert_eq!(without_margin, LayoutUnit::from_i32(19));
+        assert_eq!(with_margin, without_margin * 2);
+    }
+
+    #[test]
+    fn vertical_inline_flex_column_wrap_intrinsic_sizing_is_crash_safe() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        {
+            let style = doc.node_mut(container).style_mut();
+            style.display = Display::InlineFlex;
+            style.writing_mode = WritingMode::VerticalRl;
+            style.flex_direction = FlexDirection::Column;
+            style.flex_wrap = FlexWrap::Wrap;
+            style.max_width = Length::px(100.0);
+        }
+        doc.append_child(doc.root(), container);
+        for size in [30.0, 40.0, 50.0] {
+            let child = doc.create_node(ElementTag::Div);
+            let style = doc.node_mut(child).style_mut();
+            style.display = Display::Block;
+            style.writing_mode = WritingMode::VerticalRl;
+            style.width = Length::px(size);
+            style.height = Length::px(20.0);
+            doc.append_child(container, child);
+        }
+
+        let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(&doc, container);
+        assert!(sizes.max_content_inline_size >= sizes.min_content_inline_size);
+        assert!(sizes.max_content_block_size >= sizes.min_content_block_size);
     }
 
     #[test]

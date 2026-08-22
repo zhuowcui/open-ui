@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1E | 🟡 Active; orthogonal flex-item sizing closure, 20 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1F | 🟡 Active; vertical flex/gap/atomic-inline closure, 64 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,586 ported/runnable tests, 3,287 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 822 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,630 ported/runnable tests, 3,331 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 778 live writing-mode owner rows.**
 
 ---
 
@@ -271,11 +271,11 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Metric | Value |
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
-| Current runnable WPT tests | 3,586 |
-| Current runnable WPT passes | 3,287 |
+| Current runnable WPT tests | 3,630 |
+| Current runnable WPT passes | 3,331 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
-| Pixel comparison tests | 3,586 generated WPT comparisons + earlier SP pages/apps |
+| Pixel comparison tests | 3,630 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
@@ -563,3 +563,32 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 - Next: close the remaining vertical flex families in W1, then out-of-flow,
   fragmentation, and multicol geometry. Writing-mode 010–015 remains W2
   vertical-text shaping and paint work.
+
+### SP17 W1F: vertical flex flow, gaps, and atomic-inline closure
+
+- Added private logical-axis mappings for normal block, atomic inline, and
+  flex intrinsic/content sizing. Vertical fragments are transposed once at the
+  writing-mode boundary; automatic flex minima use the child logical main axis
+  while explicit physical min/max keywords keep physical-property semantics.
+- Added the first vertical mixed-text production path: homogeneous Latin/Ahem
+  runs shape horizontally and rotate their complete paint stack clockwise.
+  Upright CJK, mixed-script splitting, and sideways modes remain W2 work.
+- Added parameterized regressions for vertical-lr/rl direction, reverse flow,
+  nowrap/wrap/wrap-reverse, all seven gap patterns, vertical atomic-inline
+  sizing/offsets, logical intrinsic contributions, rotated Ahem paint, and the
+  column-wrap intrinsic crash.
+- Surgically admitted all 44 builders as one cohort. The no-resume target run
+  is 44/44 exact with zero mismatched pixels or errors; shared references are
+  byte-identical, repeat splicing is idempotent, and writing-mode 010–016 were
+  not generated.
+- The frozen 3,267-ID baseline remains 3,267/3,267 exact. The authoritative
+  full no-resume suite is **3,630 runnable / 3,331 exact / 299 fail / 0
+  errors**; live unported inventory is 4,043, writing-mode ownership is 778,
+  and the text manifest contains 755 IDs.
+- Verification: focused logical-writing/flex/text/paint regressions, full
+  locked Rust matrix, 122 Python closure/porter tests, both ledger checks,
+  release comparator, double deterministic accountability generation, splice
+  and reference idempotence, formatter/diff checks, and audit 7/7.
+- Next: continue logical geometry through out-of-flow/static positions,
+  fragmentation, and multicol. W2 retains upright/mixed vertical text,
+  sideways modes, and writing-mode 010–015.

@@ -987,12 +987,12 @@ cross-axis-scrollbar,not_portable,,complex_css_selector: .flexbox::before
 css-flexbox-height-animation-stretch-ref,not_portable,,style_block_unsupported property: animation
 css-flexbox-height-animation-stretch,not_portable,,style_block_unsupported property: animation
 css-flexbox-img-expand-evenly,not_portable,,unsupported element: <img>
-css-flexbox-row-reverse-wrap-reverse,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-row-reverse-wrap,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-row-reverse,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-row-wrap-reverse,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-row-wrap,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-row,not_portable,,style_block_unsupported property: writing-mode
+css-flexbox-row-reverse-wrap-reverse,ported,css_flexbox_css_flexbox_row_reverse_wrap_reverse,
+css-flexbox-row-reverse-wrap,ported,css_flexbox_css_flexbox_row_reverse_wrap,
+css-flexbox-row-reverse,ported,css_flexbox_css_flexbox_row_reverse,
+css-flexbox-row-wrap-reverse,ported,css_flexbox_css_flexbox_row_wrap_reverse,
+css-flexbox-row-wrap,ported,css_flexbox_css_flexbox_row_wrap,
+css-flexbox-row,ported,css_flexbox_css_flexbox_row,
 css-flexbox-test1-ref,not_portable,,style_block_unsupported property: writing-mode
 css-flexbox-test1,not_portable,,style_block_unsupported property: writing-mode
 dynamic-baseline-change-nested,not_portable,,uses_javascript
@@ -1067,8 +1067,8 @@ flex-container-min-content-001,not_portable,,style_block_unsupported property: g
 flex-container-min-content-002.tentative,not_portable,,uses_javascript
 flex-direction-column-overlap-001,not_portable,,uses_javascript
 flex-direction-modify,not_portable,,uses_javascript
-flex-direction-row-vertical-ref,not_portable,,style_block_unsupported property: writing-mode
-flex-direction-row-vertical,not_portable,,style_block_unsupported property: writing-mode
+flex-direction-row-vertical-ref,ported,css_flexbox_flex_direction_row_vertical_ref,
+flex-direction-row-vertical,ported,css_flexbox_flex_direction_row_vertical,
 flex-direction-with-element-insert,not_portable,,uses_javascript
 flex-factor-less-than-one,not_portable,,uses_javascript
 flex-flow-013,not_portable,,uses_javascript
@@ -1327,34 +1327,34 @@ flexitem-stretch-image,not_portable,,uses_javascript
 flexitem-stretch-range,not_portable,,unsupported element: <input>
 frame-flex-item-crash,not_portable,,uses_javascript
 frameset-crash,not_portable,,uses_javascript
-gap-001-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-001-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-001-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-001-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-002-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-002-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-002-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-002-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-003-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-003-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-003-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-003-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-004-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-004-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-004-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-004-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-005-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-005-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-005-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-005-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-006-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-006-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-006-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-006-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-007-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-007-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-007-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-007-rl,not_portable,,style_block_unsupported property: writing-mode
+gap-001-lr-ref,ported,css_flexbox_gap_001_lr_ref,
+gap-001-lr,ported,css_flexbox_gap_001_lr,
+gap-001-rl-ref,ported,css_flexbox_gap_001_rl_ref,
+gap-001-rl,ported,css_flexbox_gap_001_rl,
+gap-002-lr-ref,ported,css_flexbox_gap_002_lr_ref,
+gap-002-lr,ported,css_flexbox_gap_002_lr,
+gap-002-rl-ref,ported,css_flexbox_gap_002_rl_ref,
+gap-002-rl,ported,css_flexbox_gap_002_rl,
+gap-003-lr-ref,ported,css_flexbox_gap_003_lr_ref,
+gap-003-lr,ported,css_flexbox_gap_003_lr,
+gap-003-rl-ref,ported,css_flexbox_gap_003_rl_ref,
+gap-003-rl,ported,css_flexbox_gap_003_rl,
+gap-004-lr-ref,ported,css_flexbox_gap_004_lr_ref,
+gap-004-lr,ported,css_flexbox_gap_004_lr,
+gap-004-rl-ref,ported,css_flexbox_gap_004_rl_ref,
+gap-004-rl,ported,css_flexbox_gap_004_rl,
+gap-005-lr-ref,ported,css_flexbox_gap_005_lr_ref,
+gap-005-lr,ported,css_flexbox_gap_005_lr,
+gap-005-rl-ref,ported,css_flexbox_gap_005_rl_ref,
+gap-005-rl,ported,css_flexbox_gap_005_rl,
+gap-006-lr-ref,ported,css_flexbox_gap_006_lr_ref,
+gap-006-lr,ported,css_flexbox_gap_006_lr,
+gap-006-rl-ref,ported,css_flexbox_gap_006_rl_ref,
+gap-006-rl,ported,css_flexbox_gap_006_rl,
+gap-007-lr-ref,ported,css_flexbox_gap_007_lr_ref,
+gap-007-lr,ported,css_flexbox_gap_007_lr,
+gap-007-rl-ref,ported,css_flexbox_gap_007_rl_ref,
+gap-007-rl,ported,css_flexbox_gap_007_rl,
 gap-017,not_portable,,uses_javascript
 gap-018,not_portable,,uses_javascript
 grid-flex-item-001,not_portable,,unsupported property: grid
@@ -1697,7 +1697,7 @@ intrinsic-size_col-wrap-009,not_portable,,uses_javascript
 intrinsic-size_col-wrap-010,not_portable,,uses_javascript
 intrinsic-size_col-wrap-018,not_portable,,uses_javascript
 intrinsic-size_col-wrap-019,not_portable,,uses_javascript
-intrinsic-size_col-wrap-crash,not_portable,,unsupported property: writing-mode
+intrinsic-size_col-wrap-crash,ported,css_flexbox_intrinsic_size_col_wrap_crash,
 intrinsic-size_row-005,not_portable,,uses_javascript
 intrinsic-size_row-008,not_portable,,uses_javascript
 intrinsic-size_row-compat-001,not_portable,,uses_javascript
@@ -1750,3 +1750,10 @@ alignment_flex-align-baseline-table-002,not_portable,,uses_javascript
 alignment_flex-align-baseline-table-003,not_portable,,uses_javascript
 alignment_flex-content-alignment-with-abspos-001,not_portable,,uses_javascript
 alignment_multiline-align-self,not_portable,,uses_javascript
+flexbox-flex-direction-column,ported,css_flexbox_flexbox_flex_direction_column,
+flexbox-flex-direction-column-reverse,ported,css_flexbox_flexbox_flex_direction_column_reverse,
+flexbox-flex-direction-default,ported,css_flexbox_flexbox_flex_direction_default,
+flexbox-flex-direction-row,ported,css_flexbox_flexbox_flex_direction_row,
+flexbox-flex-direction-row-reverse,ported,css_flexbox_flexbox_flex_direction_row_reverse,
+flexbox-flex-wrap-wrap,ported,css_flexbox_flexbox_flex_wrap_wrap,
+flexbox-flex-wrap-wrap-reverse,ported,css_flexbox_flexbox_flex_wrap_wrap_reverse,

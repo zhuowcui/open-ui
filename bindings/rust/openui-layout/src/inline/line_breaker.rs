@@ -15,7 +15,7 @@
 //! - Forced breaks (`<br>`, newlines in pre/pre-line)
 //! - Trailing space stripping per CSS Text §4.1.3
 
-use openui_geometry::{LayoutUnit, LengthType};
+use openui_geometry::{LayoutUnit, Length, LengthType, WritingDirectionMode};
 use openui_style::{
     BoxSizing, ComputedStyle, Hyphens, LineBreak, OverflowWrap, TextAlign, WhiteSpace, WordBreak,
 };
@@ -53,6 +53,8 @@ pub struct LineBreaker<'a> {
     /// Percentages on inline margin/border/padding resolve against this,
     /// not the per-line available width (CSS 2.2 §10.3.3).
     containing_block_width: LayoutUnit,
+    /// Logical inline direction of the containing inline formatting context.
+    writing_direction: WritingDirectionMode,
     /// CSS `hyphens` property value for the block container.
     hyphens: Hyphens,
     /// Hyphenation engine for `hyphens: auto` (lazily initialized).
@@ -88,6 +90,7 @@ impl<'a> LineBreaker<'a> {
             text_align: TextAlign::Start,
             container_white_space: WhiteSpace::Normal,
             containing_block_width,
+            writing_direction: WritingDirectionMode::horizontal_ltr(),
             hyphens: Hyphens::Manual,
             hyphenation: None,
             char_map,
@@ -101,6 +104,13 @@ impl<'a> LineBreaker<'a> {
 
     pub fn set_container_white_space(&mut self, ws: WhiteSpace) {
         self.container_white_space = ws;
+    }
+
+    /// Select the logical inline axis used by atomic-inline sizing. Text is
+    /// still shaped horizontally; vertical homogeneous rotated runs are
+    /// projected and painted at the inline-layout boundary.
+    pub(crate) fn set_writing_direction(&mut self, writing_direction: WritingDirectionMode) {
+        self.writing_direction = writing_direction;
     }
 
     /// Configure hyphenation from computed style properties.
@@ -1025,14 +1035,16 @@ impl<'a> LineBreaker<'a> {
         // For `auto` or percentage widths without a definite containing block,
         // fall back to zero (full box layout integration is required for
         // intrinsic sizing of inline-block content).
-        let width = resolve_atomic_inline_width(
+        let width = resolve_atomic_inline_size(
             style,
             self.containing_block_width,
             item.intrinsic_inline_size,
+            self.writing_direction,
         );
+        let axis = AtomicInlineAxisMapping::new(self.writing_direction);
         let margin_inline =
-            resolve_margin_or_padding(&style.margin_left, self.containing_block_width)
-                + resolve_margin_or_padding(&style.margin_right, self.containing_block_width);
+            resolve_margin_or_padding(axis.margin_start(style), self.containing_block_width)
+                + resolve_margin_or_padding(axis.margin_end(style), self.containing_block_width);
         let margin_box_width = width + margin_inline;
         let remaining = line.remaining_width();
         // Use the container's white-space for wrapping decisions (CSS inheritance).
@@ -1528,17 +1540,107 @@ fn allows_line_wrap(white_space: WhiteSpace) -> bool {
     }
 }
 
-/// Compute the horizontal border+padding for an element's style.
+/// Maps the parent inline axis to the physical fields retained by
+/// `ComputedStyle`. Atomic inline outer geometry belongs to the parent IFC,
+/// even when the atomic box establishes an orthogonal child writing mode.
+#[derive(Clone, Copy)]
+struct AtomicInlineAxisMapping {
+    is_horizontal: bool,
+}
+
+impl AtomicInlineAxisMapping {
+    fn new(writing_direction: WritingDirectionMode) -> Self {
+        Self {
+            is_horizontal: writing_direction.is_horizontal(),
+        }
+    }
+
+    fn size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.width
+        } else {
+            &style.height
+        }
+    }
+
+    fn min_size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.min_width
+        } else {
+            &style.min_height
+        }
+    }
+
+    fn max_size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.max_width
+        } else {
+            &style.max_height
+        }
+    }
+
+    fn padding_start<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.padding_left
+        } else {
+            &style.padding_top
+        }
+    }
+
+    fn padding_end<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.padding_right
+        } else {
+            &style.padding_bottom
+        }
+    }
+
+    fn margin_start<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.margin_left
+        } else {
+            &style.margin_top
+        }
+    }
+
+    fn margin_end<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.margin_right
+        } else {
+            &style.margin_bottom
+        }
+    }
+
+    fn border_start(self, style: &ComputedStyle) -> i32 {
+        if self.is_horizontal {
+            style.effective_border_left()
+        } else {
+            style.effective_border_top()
+        }
+    }
+
+    fn border_end(self, style: &ComputedStyle) -> i32 {
+        if self.is_horizontal {
+            style.effective_border_right()
+        } else {
+            style.effective_border_bottom()
+        }
+    }
+}
+
+/// Compute logical-inline border+padding for an element's style.
 ///
 /// Used to convert content-box widths to border-box widths for atomic inlines.
 fn compute_border_padding_inline(
     style: &ComputedStyle,
     containing_block_width: LayoutUnit,
+    writing_direction: WritingDirectionMode,
 ) -> LayoutUnit {
-    let border_left = LayoutUnit::from_i32(style.effective_border_left());
-    let border_right = LayoutUnit::from_i32(style.effective_border_right());
-    let pad_left = resolve_margin_or_padding(&style.padding_left, containing_block_width);
-    let pad_right = resolve_margin_or_padding(&style.padding_right, containing_block_width);
+    let axis = AtomicInlineAxisMapping::new(writing_direction);
+    let border_left = LayoutUnit::from_i32(axis.border_start(style));
+    let border_right = LayoutUnit::from_i32(axis.border_end(style));
+    let pad_left = resolve_margin_or_padding(axis.padding_start(style), containing_block_width);
+    let pad_right = resolve_margin_or_padding(axis.padding_end(style), containing_block_width);
     border_left + border_right + pad_left + pad_right
 }
 
@@ -1551,16 +1653,36 @@ fn compute_border_padding_inline(
 /// The returned value is always a **border-box** width: for `content-box` sizing
 /// the element's own border+padding is added; for `border-box` the CSS width
 /// already includes them.
+#[cfg(test)]
 fn resolve_atomic_inline_width(
     style: &ComputedStyle,
     containing_block_width: LayoutUnit,
     intrinsic_inline_size: Option<f32>,
 ) -> LayoutUnit {
-    let border_padding = compute_border_padding_inline(style, containing_block_width);
+    resolve_atomic_inline_size(
+        style,
+        containing_block_width,
+        intrinsic_inline_size,
+        WritingDirectionMode::horizontal_ltr(),
+    )
+}
 
-    let base = match style.width.length_type() {
+fn resolve_atomic_inline_size(
+    style: &ComputedStyle,
+    containing_block_width: LayoutUnit,
+    intrinsic_inline_size: Option<f32>,
+    writing_direction: WritingDirectionMode,
+) -> LayoutUnit {
+    let axis = AtomicInlineAxisMapping::new(writing_direction);
+    let size = axis.size(style);
+    let min_size = axis.min_size(style);
+    let max_size = axis.max_size(style);
+    let border_padding =
+        compute_border_padding_inline(style, containing_block_width, writing_direction);
+
+    let base = match size.length_type() {
         LengthType::Fixed => {
-            let css_w = LayoutUnit::from_f32(style.width.value());
+            let css_w = LayoutUnit::from_f32(size.value());
             if style.box_sizing == BoxSizing::ContentBox {
                 css_w + border_padding
             } else {
@@ -1569,9 +1691,8 @@ fn resolve_atomic_inline_width(
         }
         LengthType::Percent => {
             if containing_block_width > LayoutUnit::zero() {
-                let css_w = LayoutUnit::from_f32(
-                    style.width.value() / 100.0 * containing_block_width.to_f32(),
-                );
+                let css_w =
+                    LayoutUnit::from_f32(size.value() / 100.0 * containing_block_width.to_f32());
                 if style.box_sizing == BoxSizing::ContentBox {
                     css_w + border_padding
                 } else {
@@ -1597,9 +1718,9 @@ fn resolve_atomic_inline_width(
                 .unwrap_or(border_padding);
 
             // Apply min-width as a floor.
-            let min_w = match style.min_width.length_type() {
+            let min_w = match min_size.length_type() {
                 LengthType::Fixed => {
-                    let mw = LayoutUnit::from_f32(style.min_width.value());
+                    let mw = LayoutUnit::from_f32(min_size.value());
                     if style.box_sizing == BoxSizing::ContentBox {
                         mw + border_padding
                     } else {
@@ -1609,7 +1730,7 @@ fn resolve_atomic_inline_width(
                 LengthType::Percent => {
                     if containing_block_width > LayoutUnit::zero() {
                         let mw = LayoutUnit::from_f32(
-                            style.min_width.value() / 100.0 * containing_block_width.to_f32(),
+                            min_size.value() / 100.0 * containing_block_width.to_f32(),
                         );
                         if style.box_sizing == BoxSizing::ContentBox {
                             mw + border_padding
@@ -1641,9 +1762,9 @@ fn resolve_atomic_inline_width(
     };
 
     // Clamp to max-width if specified.
-    match style.max_width.length_type() {
+    match max_size.length_type() {
         LengthType::Fixed => {
-            let max = LayoutUnit::from_f32(style.max_width.value());
+            let max = LayoutUnit::from_f32(max_size.value());
             let max = if style.box_sizing == BoxSizing::ContentBox {
                 max + border_padding
             } else {
@@ -1658,7 +1779,7 @@ fn resolve_atomic_inline_width(
         LengthType::Percent => {
             if containing_block_width > LayoutUnit::zero() {
                 let max = LayoutUnit::from_f32(
-                    style.max_width.value() / 100.0 * containing_block_width.to_f32(),
+                    max_size.value() / 100.0 * containing_block_width.to_f32(),
                 );
                 let max = if style.box_sizing == BoxSizing::ContentBox {
                     max + border_padding
@@ -2646,6 +2767,30 @@ mod tests {
             100.0,
             "auto width: intrinsic(80) + border(6) + padding(14) = 100"
         );
+    }
+
+    #[test]
+    fn vertical_atomic_inline_uses_height_and_logical_inline_edges() {
+        use openui_style::BorderStyle;
+
+        let mut style = ComputedStyle::default();
+        style.width = openui_geometry::Length::px(15.0);
+        style.height = openui_geometry::Length::px(45.0);
+        style.border_top_width = 2;
+        style.border_bottom_width = 3;
+        style.border_top_style = BorderStyle::Solid;
+        style.border_bottom_style = BorderStyle::Solid;
+        style.padding_top = openui_geometry::Length::px(4.0);
+        style.padding_bottom = openui_geometry::Length::px(6.0);
+
+        let inline_size = resolve_atomic_inline_size(
+            &style,
+            LayoutUnit::from_i32(200),
+            None,
+            WritingDirectionMode::new(false, false, false, false),
+        );
+
+        assert_eq!(inline_size, LayoutUnit::from_i32(60));
     }
 
     // ── Trailing space hanging — hang_width tracking ─────────────────

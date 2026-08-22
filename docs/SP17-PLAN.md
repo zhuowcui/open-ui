@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1E is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W1F is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -20,19 +20,22 @@ vertical-container companions by projecting resolved flex-item main/cross sizes
 back to physical fragment width/height at the vertical writing boundary. W1E
 centralizes container main/cross to child inline/block mapping, closes
 orthogonal intrinsic, stretch, percentage, aspect-ratio, wrapping, and overflow
-padding paths, and admits the next 14 exact targets. The authoritative live
-full-suite result is 3,586 runnable, 3,287 exact, 299 functional failures, and
-zero errors.
+padding paths, and admits the next 14 exact targets. W1F closes the vertical
+flex-flow, logical-gap, and vertical atomic-inline cohort, makes normal block
+and intrinsic flex sizing consume logical axes, and adds the first production
+clockwise rotated Latin/Ahem paint path for homogeneous mixed-orientation runs.
+The authoritative live full-suite result is 3,630 runnable, 3,331 exact, 299
+functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1E |
+| Metric | Kickoff | Live W1F |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,586 |
-| Exact passes | 3,267 | 3,287 |
+| Runnable WPTs | 3,566 | 3,630 |
+| Exact passes | 3,267 | 3,331 |
 | Functional failures | 299 | 299 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 4,087 |
-| `needs_writing_mode` owner rows | 842 | 822 |
+| Unported rows | 4,107 | 4,043 |
+| `needs_writing_mode` owner rows | 842 | 778 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -567,3 +570,43 @@ render/diff error.
   out-of-flow/static positions, fragmentation, and multicol. Keep
   `flexbox-writing-mode-010` through 015 in W2 for vertical-text shaping and
   paint; do not generate them as geometry-only substitutes.
+
+### 2026-08-22 — W1F vertical flex flow, gap, and atomic-inline closure
+
+- Added private logical-axis boundaries for normal block layout, atomic inline
+  layout, flex content/intrinsic sizing, gaps, wrapping, reverse flow, child
+  constraints, and final physical fragments. Explicit physical min/max
+  keywords remain resolved at the physical-property boundary, while automatic
+  flex minima use the child's logical main axis.
+- Vertical atomic inline layout now measures and positions fragments in the
+  parent's logical axes before one writing-mode projection. Homogeneous
+  Latin/Ahem runs in vertical mixed orientation are shaped horizontally and
+  their complete paint stack is rotated clockwise; upright CJK and general
+  mixed-script splitting remain W2 work.
+- Added regressions for vertical-lr/vertical-rl flex direction and wrapping,
+  logical gaps, atomic-inline transposition and shrink-to-fit sizing, logical
+  intrinsic contributions, rotated Ahem classification/painting, and the
+  column-wrap intrinsic crash case.
+- Surgically admitted the complete 44-ID W1F cohort in one transaction: six
+  `css-flexbox-row*` variants; `flex-direction-row-vertical` and its reference;
+  five `flexbox-flex-direction-*` targets; two `flexbox-flex-wrap-*` targets;
+  `gap-001` through `gap-007` in lr/rl target/reference forms; and
+  `intrinsic-size_col-wrap-crash`. The focused no-resume result is 44/44 exact
+  with zero mismatched pixels and zero errors. Shared references are reused,
+  the splice is byte-idempotent, and no writing-mode 010–016 builder exists.
+- The frozen 3,267-ID kickoff baseline remains 3,267/3,267 exact. The
+  authoritative complete no-resume run is **3,630 runnable / 3,331 exact / 299
+  fail / 0 errors**. Its `summary.json` SHA-256 is
+  `76b70d2d6b32e5899de6b03a76df28c1111643f0307475e386cbbb822bc00a55`.
+- The live inventory is 4,043 unported rows, 778 `needs_writing_mode` owner
+  rows, and 755 text-manifest IDs. The live validator requires all 64 exact
+  SP17 promotions while every frozen kickoff and historical ledger remains
+  byte-pinned.
+- Mapping, deferred CSV, and HTML report generation were run twice with
+  byte-identical hashes. Verification passes the full locked
+  style/text/layout/paint matrix, all 122 SP13-R through SP17 Python tests,
+  both closure-generator checks, formatter and diff checks, release comparator,
+  splice/reference idempotence, and the unflagged PNG-backed audit 7/7.
+- Continue W1 with out-of-flow/static-position, fragmentation, and multicol
+  logical geometry. W2 owns upright CJK and mixed-script run splitting,
+  sideways modes, and writing-mode 010–015.

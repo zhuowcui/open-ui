@@ -10,7 +10,7 @@
 //! §10.8 (line height calculations), and §16.2 (text alignment).
 
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSize};
+use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSize, WritingModeConverter};
 use openui_style::{
     BoxDecorationBreak, Clear, ComputedStyle, Direction, Display, LineHeight, TextAlign,
     TextAlignLast, TextJustify, VerticalAlign,
@@ -681,6 +681,7 @@ pub fn inline_layout_from_items(
 
     // Create line breaker from the (possibly filtered) items.
     let mut line_breaker = LineBreaker::new(&working_items_data, available_inline_size);
+    line_breaker.set_writing_direction(space.writing_direction);
     line_breaker.set_text_align(style.text_align);
     line_breaker.set_container_white_space(style.white_space);
 
@@ -1606,6 +1607,7 @@ pub fn inline_layout_for_children(
     items_data.shape_text();
 
     let mut line_breaker = LineBreaker::new(&items_data, available_inline_size);
+    line_breaker.set_writing_direction(space.writing_direction);
     line_breaker.set_text_align(style.text_align);
     line_breaker.set_container_white_space(style.white_space);
 
@@ -1942,9 +1944,14 @@ fn create_line_box(
             if !item.node_id.is_none() {
                 let item_width = item_result.inline_size;
                 let style = &items_data.styles[item.style_index];
-                let available_block = match style.height.length_type() {
+                let logical_block_size = if space.writing_direction.is_horizontal() {
+                    &style.height
+                } else {
+                    &style.width
+                };
+                let available_block = match logical_block_size.length_type() {
                     openui_geometry::LengthType::Fixed => {
-                        LayoutUnit::from_f32(style.height.value())
+                        LayoutUnit::from_f32(logical_block_size.value())
                     }
                     _ => LayoutUnit::max(),
                 };
@@ -1974,11 +1981,21 @@ fn create_line_box(
                     percentage_block,
                     true,
                 );
-                let result = if doc.node(item.node_id).tag == ElementTag::Ruby {
+                let mut result = if doc.node(item.node_id).tag == ElementTag::Ruby {
                     layout_ruby_atomic(doc, item.node_id, item_width, percentage_block)
                 } else {
                     crate::block::block_layout(doc, item.node_id, &child_space)
                 };
+                // Inline layout stores coordinates as (inline, block). A child
+                // layout returns a physical fragment, so normalize the atomic
+                // box at this boundary before line metrics and placement use it.
+                if !space.writing_direction.is_horizontal() {
+                    let logical_size =
+                        WritingModeConverter::new(space.writing_direction, PhysicalSize::zero())
+                            .to_logical_size(result.size);
+                    result.size =
+                        PhysicalSize::new(logical_size.inline_size, logical_size.block_size);
+                }
                 atomic_layout_results[idx] = Some(result);
             }
         }
@@ -2046,8 +2063,13 @@ fn create_line_box(
                 let item_height = if let Some(ref result) = atomic_layout_results[step2_idx] {
                     result.size.height.to_f32()
                 } else {
-                    match style.height.length_type() {
-                        openui_geometry::LengthType::Fixed => style.height.value(),
+                    let logical_block_size = if space.writing_direction.is_horizontal() {
+                        &style.height
+                    } else {
+                        &style.width
+                    };
+                    match logical_block_size.length_type() {
+                        openui_geometry::LengthType::Fixed => logical_block_size.value(),
                         _ => {
                             let font_desc = style_to_font_description(style);
                             let font = Font::new(font_desc);
@@ -2058,10 +2080,18 @@ fn create_line_box(
                 };
 
                 // Resolve vertical margins for line box contribution.
+                let (block_start_margin, block_end_margin) =
+                    if space.writing_direction.is_horizontal() {
+                        (&style.margin_top, &style.margin_bottom)
+                    } else if space.writing_direction.is_flipped_blocks() {
+                        (&style.margin_right, &style.margin_left)
+                    } else {
+                        (&style.margin_left, &style.margin_right)
+                    };
                 let margin_top =
-                    resolve_margin_or_padding(&style.margin_top, percentage_base).to_f32();
+                    resolve_margin_or_padding(block_start_margin, percentage_base).to_f32();
                 let margin_bottom =
-                    resolve_margin_or_padding(&style.margin_bottom, percentage_base).to_f32();
+                    resolve_margin_or_padding(block_end_margin, percentage_base).to_f32();
                 let margin_box_height = item_height + margin_top + margin_bottom;
                 let baseline_from_top = atomic_layout_results[step2_idx]
                     .as_ref()
@@ -2632,9 +2662,14 @@ fn create_line_box(
                 let item_height = if let Some(ref result) = atomic_layout_results[step4_idx] {
                     result.size.height
                 } else {
-                    match style.height.length_type() {
+                    let logical_block_size = if space.writing_direction.is_horizontal() {
+                        &style.height
+                    } else {
+                        &style.width
+                    };
+                    match logical_block_size.length_type() {
                         openui_geometry::LengthType::Fixed => {
-                            LayoutUnit::from_f32(style.height.value())
+                            LayoutUnit::from_f32(logical_block_size.value())
                         }
                         _ => {
                             let font_desc = style_to_font_description(style);
@@ -2646,9 +2681,16 @@ fn create_line_box(
                 };
 
                 // Resolve vertical margins (CSS 2.1 §10.8.1: margin box participates in line box).
-                let margin_top_lu = resolve_margin_or_padding(&style.margin_top, percentage_base);
-                let margin_bottom_lu =
-                    resolve_margin_or_padding(&style.margin_bottom, percentage_base);
+                let (block_start_margin, block_end_margin) =
+                    if space.writing_direction.is_horizontal() {
+                        (&style.margin_top, &style.margin_bottom)
+                    } else if space.writing_direction.is_flipped_blocks() {
+                        (&style.margin_right, &style.margin_left)
+                    } else {
+                        (&style.margin_left, &style.margin_right)
+                    };
+                let margin_top_lu = resolve_margin_or_padding(block_start_margin, percentage_base);
+                let margin_bottom_lu = resolve_margin_or_padding(block_end_margin, percentage_base);
                 let margin_box_height_lu = margin_top_lu + item_height + margin_bottom_lu;
                 let baseline_from_top = atomic_layout_results[step4_idx]
                     .as_ref()
@@ -2718,9 +2760,15 @@ fn create_line_box(
                 };
 
                 // Apply horizontal margins to offset.
-                let margin_left_lu = resolve_margin_or_padding(&style.margin_left, percentage_base);
-                let margin_right_lu =
-                    resolve_margin_or_padding(&style.margin_right, percentage_base);
+                let (inline_start_margin, inline_end_margin) =
+                    if space.writing_direction.is_horizontal() {
+                        (&style.margin_left, &style.margin_right)
+                    } else {
+                        (&style.margin_top, &style.margin_bottom)
+                    };
+                let margin_left_lu =
+                    resolve_margin_or_padding(inline_start_margin, percentage_base);
+                let margin_right_lu = resolve_margin_or_padding(inline_end_margin, percentage_base);
 
                 // Use the pre-computed block_layout result as the atomic fragment,
                 // preserving its computed size, border, padding, margin, and children.

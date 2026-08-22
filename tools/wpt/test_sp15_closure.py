@@ -157,6 +157,19 @@ class SupersessionTests(unittest.TestCase):
         )
         self.assertEqual(errors, [])
 
+        errors = audit.sp14_text_closure_errors(
+            [row],
+            {test_id: {"id": test_id, "status": "pass", "mismatch_pct": 0.0}},
+            {test_id: "template"},
+            {test_id},
+            [],
+            [],
+            w4,
+            enforce_frozen_counts=False,
+            superseded_residuals={test_id: w4[0]},
+        )
+        self.assertEqual(errors, [])
+
         result[test_id]["mismatch_pct"] = 0.01
         errors = audit.sp14_text_closure_errors(
             [row], result, {test_id: "template"}, {test_id}, [], [], w4,

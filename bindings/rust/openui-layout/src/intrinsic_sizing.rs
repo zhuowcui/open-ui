@@ -13,7 +13,7 @@
 //! Source: CSS Sizing 3 §4-5, CSS 2.1 §10.3.5-7, §10.6.7.
 
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_geometry::{LayoutUnit, LengthType, MinMaxSizes};
+use openui_geometry::{LayoutUnit, Length, LengthType, MinMaxSizes, WritingDirectionMode};
 use openui_style::{BoxSizing, ColumnSpan, ComputedStyle, WhiteSpace, WordBreak};
 use openui_text::Font;
 
@@ -24,6 +24,101 @@ use crate::length_resolver::resolve_length;
 /// Check if a style represents an inline-level element.
 fn is_inline_level(style: &ComputedStyle) -> bool {
     style.display.is_inline_level()
+}
+
+/// Private projection between the logical axes used by intrinsic/flex
+/// algorithms and the physical size properties retained by ComputedStyle.
+#[derive(Clone, Copy)]
+struct IntrinsicAxisMapping {
+    writing_direction: WritingDirectionMode,
+}
+
+impl IntrinsicAxisMapping {
+    fn for_style(style: &ComputedStyle) -> Self {
+        Self {
+            writing_direction: style.writing_mode.to_writing_direction(style.direction),
+        }
+    }
+
+    fn inline_size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.writing_direction.is_horizontal() {
+            &style.width
+        } else {
+            &style.height
+        }
+    }
+
+    fn block_size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.writing_direction.is_horizontal() {
+            &style.height
+        } else {
+            &style.width
+        }
+    }
+
+    fn min_inline_size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.writing_direction.is_horizontal() {
+            &style.min_width
+        } else {
+            &style.min_height
+        }
+    }
+
+    fn max_inline_size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.writing_direction.is_horizontal() {
+            &style.max_width
+        } else {
+            &style.max_height
+        }
+    }
+
+    fn min_block_size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.writing_direction.is_horizontal() {
+            &style.min_height
+        } else {
+            &style.min_width
+        }
+    }
+
+    fn max_block_size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.writing_direction.is_horizontal() {
+            &style.max_height
+        } else {
+            &style.max_width
+        }
+    }
+
+    fn main_size<'a>(self, style: &'a ComputedStyle, is_column: bool) -> &'a Length {
+        if is_column {
+            self.block_size(style)
+        } else {
+            self.inline_size(style)
+        }
+    }
+
+    fn cross_size<'a>(self, style: &'a ComputedStyle, is_column: bool) -> &'a Length {
+        if is_column {
+            self.inline_size(style)
+        } else {
+            self.block_size(style)
+        }
+    }
+
+    fn min_main_size<'a>(self, style: &'a ComputedStyle, is_column: bool) -> &'a Length {
+        if is_column {
+            self.min_block_size(style)
+        } else {
+            self.min_inline_size(style)
+        }
+    }
+
+    fn max_main_size<'a>(self, style: &'a ComputedStyle, is_column: bool) -> &'a Length {
+        if is_column {
+            self.max_block_size(style)
+        } else {
+            self.max_inline_size(style)
+        }
+    }
 }
 
 fn has_spanner_descendant_through_transparent_wrappers(doc: &Document, node_id: NodeId) -> bool {
@@ -341,10 +436,14 @@ fn compute_flex_intrinsic_sizes(
     node_id: NodeId,
     style: &ComputedStyle,
 ) -> IntrinsicSizes {
+    let axes = IntrinsicAxisMapping::for_style(style);
+    let writing_direction = axes.writing_direction;
     let border = resolve_border(style);
     let padding = resolve_padding(style, LayoutUnit::zero());
-    let bp_inline = border.inline_sum() + padding.inline_sum();
-    let bp_block = border.block_sum() + padding.block_sum();
+    let logical_border = border.to_logical(writing_direction);
+    let logical_padding = padding.to_logical(writing_direction);
+    let bp_inline = logical_border.inline_sum() + logical_padding.inline_sum();
+    let bp_block = logical_border.block_sum() + logical_padding.block_sum();
 
     let is_column = style.flex_direction == openui_style::FlexDirection::Column
         || style.flex_direction == openui_style::FlexDirection::ColumnReverse;
@@ -424,11 +523,7 @@ fn compute_flex_intrinsic_sizes(
     // Resolve the container's definite cross size (if any) for aspect-ratio children.
     // Row flex: cross = block (height); Column flex: cross = inline (width).
     let container_definite_cross = {
-        let cross_prop = if is_column {
-            &style.width
-        } else {
-            &style.height
-        };
+        let cross_prop = axes.cross_size(style, is_column);
         if !cross_prop.is_auto() && cross_prop.is_fixed() {
             let val = resolve_length(
                 cross_prop,
@@ -467,7 +562,95 @@ fn compute_flex_intrinsic_sizes(
             continue;
         }
 
-        let child_sizes = compute_child_intrinsic_contribution(doc, child_id);
+        let child_axes = IntrinsicAxisMapping::for_style(child_style);
+        let child_border = resolve_border(child_style);
+        let child_padding = resolve_padding(child_style, LayoutUnit::zero());
+        let child_margin = resolve_margins(child_style, LayoutUnit::zero());
+
+        // Preserve the established horizontal contribution path exactly.
+        // Non-horizontal flex containers need an explicit logical projection:
+        // strip the legacy physical edge additions, restore each child's
+        // logical decorations, then project them to the container axes.
+        let mut child_sizes = compute_child_intrinsic_contribution(doc, child_id);
+        if !writing_direction.is_horizontal() {
+            let old_inline_edges =
+                child_border.inline_sum() + child_padding.inline_sum() + child_margin.inline_sum();
+            let old_block_edges =
+                child_border.block_sum() + child_padding.block_sum() + child_margin.block_sum();
+            child_sizes.min_content_inline_size =
+                (child_sizes.min_content_inline_size - old_inline_edges).clamp_negative_to_zero();
+            child_sizes.max_content_inline_size =
+                (child_sizes.max_content_inline_size - old_inline_edges).clamp_negative_to_zero();
+            child_sizes.min_content_block_size =
+                (child_sizes.min_content_block_size - old_block_edges).clamp_negative_to_zero();
+            child_sizes.max_content_block_size =
+                (child_sizes.max_content_block_size - old_block_edges).clamp_negative_to_zero();
+
+            let child_logical_border = child_border.to_logical(child_axes.writing_direction);
+            let child_logical_padding = child_padding.to_logical(child_axes.writing_direction);
+            let child_bp_inline =
+                child_logical_border.inline_sum() + child_logical_padding.inline_sum();
+            let child_bp_block =
+                child_logical_border.block_sum() + child_logical_padding.block_sum();
+            child_sizes.min_content_inline_size =
+                child_sizes.min_content_inline_size + child_bp_inline;
+            child_sizes.max_content_inline_size =
+                child_sizes.max_content_inline_size + child_bp_inline;
+            child_sizes.min_content_block_size =
+                child_sizes.min_content_block_size + child_bp_block;
+            child_sizes.max_content_block_size =
+                child_sizes.max_content_block_size + child_bp_block;
+
+            if child_axes.writing_direction.is_horizontal() != writing_direction.is_horizontal() {
+                child_sizes = IntrinsicSizes {
+                    min_content_inline_size: child_sizes.min_content_block_size,
+                    max_content_inline_size: child_sizes.max_content_block_size,
+                    min_content_block_size: child_sizes.min_content_inline_size,
+                    max_content_block_size: child_sizes.max_content_inline_size,
+                };
+            }
+
+            let logical_margin = child_margin.to_logical(writing_direction);
+            let margin_inline = logical_margin.inline_sum();
+            let margin_block = logical_margin.block_sum();
+            child_sizes.min_content_inline_size =
+                child_sizes.min_content_inline_size + margin_inline;
+            child_sizes.max_content_inline_size =
+                child_sizes.max_content_inline_size + margin_inline;
+            child_sizes.min_content_block_size = child_sizes.min_content_block_size + margin_block;
+            child_sizes.max_content_block_size = child_sizes.max_content_block_size + margin_block;
+
+            // A definite physical size overrides the contribution in whichever
+            // logical container axis owns that physical dimension.
+            let fixed_border_box = |size: &Length, bp: LayoutUnit| -> Option<LayoutUnit> {
+                size.is_fixed().then(|| {
+                    let value = resolve_length(
+                        size,
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                    );
+                    if child_style.box_sizing == BoxSizing::BorderBox {
+                        value.max_of(bp)
+                    } else {
+                        value + bp
+                    }
+                })
+            };
+            let child_physical_bp_inline = child_border.inline_sum() + child_padding.inline_sum();
+            let child_physical_bp_block = child_border.block_sum() + child_padding.block_sum();
+            let physical_width = fixed_border_box(&child_style.width, child_physical_bp_inline);
+            let physical_height = fixed_border_box(&child_style.height, child_physical_bp_block);
+            let (fixed_inline, fixed_block) = (physical_height, physical_width);
+            if let Some(size) = fixed_inline {
+                child_sizes.min_content_inline_size = size + margin_inline;
+                child_sizes.max_content_inline_size = size + margin_inline;
+            }
+            if let Some(size) = fixed_block {
+                child_sizes.min_content_block_size = size + margin_block;
+                child_sizes.max_content_block_size = size + margin_block;
+            }
+        }
 
         // Determine main-axis and cross-axis contributions
         let (mut main_min, mut main_max, cross_min, cross_max) = if is_column {
@@ -492,11 +675,8 @@ fn compute_flex_intrinsic_sizes(
         // This handles cases like `inline-flex; height:100px` with child `aspect-ratio:1/1`.
         if let Some(ref ar) = child_style.aspect_ratio {
             if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
-                let (cross_size_prop, main_size_prop) = if is_column {
-                    (&child_style.width, &child_style.height)
-                } else {
-                    (&child_style.height, &child_style.width)
-                };
+                let cross_size_prop = axes.cross_size(child_style, is_column);
+                let main_size_prop = axes.main_size(child_style, is_column);
                 // Only apply when cross size is definite (from container or child)
                 // and main size is auto
                 if main_size_prop.is_auto() {
@@ -566,11 +746,8 @@ fn compute_flex_intrinsic_sizes(
         }
 
         // CSS Flexbox §9.9.1: Clamp item contributions by main-axis min/max constraints.
-        let (min_main_prop, max_main_prop) = if is_column {
-            (&child_style.min_height, &child_style.max_height)
-        } else {
-            (&child_style.min_width, &child_style.max_width)
-        };
+        let min_main_prop = axes.min_main_size(child_style, is_column);
+        let max_main_prop = axes.max_main_size(child_style, is_column);
         let clamped_min_val = if !min_main_prop.is_auto() && min_main_prop.is_fixed() {
             resolve_length(
                 min_main_prop,
@@ -637,9 +814,11 @@ fn compute_flex_intrinsic_sizes(
     let (min_cross_total, max_cross_total) = if is_column && is_wrap && !items.is_empty() {
         let main_constraint = {
             let mut c = LayoutUnit::from_i32(33554431);
-            if style.height.is_fixed() {
+            let main_size = axes.main_size(style, true);
+            let max_main_size = axes.max_main_size(style, true);
+            if main_size.is_fixed() {
                 let h = resolve_length(
-                    &style.height,
+                    main_size,
                     LayoutUnit::zero(),
                     LayoutUnit::zero(),
                     LayoutUnit::zero(),
@@ -651,9 +830,9 @@ fn compute_flex_intrinsic_sizes(
                 };
                 c = c.min_of(ch);
             }
-            if !style.max_height.is_none() && style.max_height.is_fixed() {
+            if !max_main_size.is_none() && max_main_size.is_fixed() {
                 let mh = resolve_length(
-                    &style.max_height,
+                    max_main_size,
                     LayoutUnit::zero(),
                     LayoutUnit::zero(),
                     LayoutUnit::zero(),
@@ -981,6 +1160,127 @@ pub fn compute_intrinsic_inline_sizes(doc: &Document, node_id: NodeId) -> MinMax
             MinMaxSizes::new(sizes.min_content_inline_size, sizes.max_content_inline_size)
         }
     }
+}
+
+/// Compute an element's intrinsic inline contribution in its own writing
+/// mode. The older intrinsic-sizing entry points store physical width/height
+/// in their inline/block slots; flex and atomic-inline layout need a stable
+/// logical value before they cross back into physical fragment storage.
+pub(crate) fn compute_logical_intrinsic_inline_sizes(
+    doc: &Document,
+    node_id: NodeId,
+) -> MinMaxSizes {
+    let node = doc.node(node_id);
+    if node.tag == ElementTag::Text {
+        return node
+            .text
+            .as_deref()
+            .map(|text| compute_text_intrinsic_sizes(text, &node.style))
+            .unwrap_or_else(MinMaxSizes::zero);
+    }
+    if is_replaced_element(node.tag) {
+        let physical = compute_replaced_intrinsic_sizes(&node.style);
+        let direction = IntrinsicAxisMapping::for_style(&node.style).writing_direction;
+        return if direction.is_horizontal() {
+            MinMaxSizes::new(
+                physical.min_content_inline_size,
+                physical.max_content_inline_size,
+            )
+        } else {
+            MinMaxSizes::new(
+                physical.min_content_block_size,
+                physical.max_content_block_size,
+            )
+        };
+    }
+
+    let direction = IntrinsicAxisMapping::for_style(&node.style).writing_direction;
+    if direction.is_horizontal() {
+        return compute_intrinsic_inline_sizes(doc, node_id);
+    }
+
+    let border = resolve_border(&node.style).to_logical(direction);
+    let padding = resolve_padding(&node.style, LayoutUnit::zero()).to_logical(direction);
+    let container_edges = border.inline_sum() + padding.inline_sum();
+
+    let mut min_inline = LayoutUnit::zero();
+    let mut max_inline = LayoutUnit::zero();
+    let mut current_line_max = LayoutUnit::zero();
+
+    for child_id in doc.children(node_id) {
+        let child = doc.node(child_id);
+        let child_style = &child.style;
+        if child_style.display == openui_style::Display::None
+            || child_style.position.is_absolutely_positioned()
+        {
+            continue;
+        }
+
+        let is_preserved_newline_control = child.tag == ElementTag::Text
+            && matches!(
+                child_style.white_space,
+                WhiteSpace::Pre
+                    | WhiteSpace::PreWrap
+                    | WhiteSpace::PreLine
+                    | WhiteSpace::BreakSpaces
+            )
+            && child.text.as_deref().is_some_and(|text| {
+                !text.is_empty() && text.chars().all(|ch| matches!(ch, '\n' | '\r'))
+            });
+        if child.tag == ElementTag::Break || is_preserved_newline_control {
+            max_inline = max_inline.max_of(current_line_max);
+            current_line_max = LayoutUnit::zero();
+            continue;
+        }
+
+        let physical_border = resolve_border(child_style);
+        let physical_padding = resolve_padding(child_style, LayoutUnit::zero());
+        let logical_border = physical_border.to_logical(direction);
+        let logical_padding = physical_padding.to_logical(direction);
+        let child_edges = logical_border.inline_sum() + logical_padding.inline_sum();
+        let logical_margin = resolve_margins(child_style, LayoutUnit::zero()).to_logical(direction);
+        let margin_inline = logical_margin.inline_sum();
+
+        let contribution = if child.tag == ElementTag::Text {
+            child
+                .text
+                .as_deref()
+                .map(|text| compute_text_intrinsic_sizes(text, child_style))
+                .unwrap_or_else(MinMaxSizes::zero)
+        } else if child_style.height.is_fixed() {
+            let specified = resolve_length(
+                &child_style.height,
+                LayoutUnit::zero(),
+                LayoutUnit::zero(),
+                LayoutUnit::zero(),
+            );
+            let border_box = if child_style.box_sizing == BoxSizing::BorderBox {
+                specified.max_of(child_edges)
+            } else {
+                specified + child_edges
+            };
+            MinMaxSizes::new(border_box, border_box)
+        } else {
+            let child_direction = IntrinsicAxisMapping::for_style(child_style).writing_direction;
+            if child_direction.is_horizontal() == direction.is_horizontal() {
+                compute_logical_intrinsic_inline_sizes(doc, child_id)
+            } else {
+                let physical = compute_intrinsic_block_sizes(doc, child_id);
+                MinMaxSizes::new(
+                    physical.min_content_block_size,
+                    physical.max_content_block_size,
+                )
+            }
+        };
+
+        let child_min = contribution.min + margin_inline;
+        let child_max = contribution.max + margin_inline;
+        min_inline = min_inline.max_of(child_min);
+        current_line_max = current_line_max + child_max;
+    }
+
+    max_inline = max_inline.max_of(current_line_max);
+    MinMaxSizes::new(min_inline + container_edges, max_inline + container_edges)
 }
 
 /// Compute intrinsic inline sizes when the element has a definite content
@@ -1809,5 +2109,35 @@ mod tests {
         let sizes = compute_text_intrinsic_sizes("indivisible", &ComputedStyle::default());
         // Both min and max are the full word
         assert_eq!(sizes.min, sizes.max);
+    }
+
+    #[test]
+    fn vertical_inline_intrinsic_uses_atomic_height_and_forced_lines() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.writing_mode = openui_style::WritingMode::VerticalLr;
+        doc.append_child(doc.root(), container);
+
+        for index in 0..2 {
+            let atomic = doc.create_node(ElementTag::Span);
+            let style = doc.node_mut(atomic).style_mut();
+            style.display = openui_style::Display::InlineBlock;
+            style.writing_mode = openui_style::WritingMode::VerticalLr;
+            style.width = Length::px(15.0);
+            style.height = Length::px(45.0);
+            doc.append_child(container, atomic);
+
+            if index == 0 {
+                let line_break = doc.create_node(ElementTag::Break);
+                doc.node_mut(line_break).style.writing_mode = openui_style::WritingMode::VerticalLr;
+                doc.append_child(container, line_break);
+            }
+        }
+
+        let sizes = compute_logical_intrinsic_inline_sizes(&doc, container);
+        assert_eq!(
+            sizes,
+            MinMaxSizes::new(LayoutUnit::from_i32(45), LayoutUnit::from_i32(45))
+        );
     }
 }

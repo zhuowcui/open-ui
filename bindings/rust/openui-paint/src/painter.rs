@@ -22,7 +22,7 @@ use openui_layout::{Fragment, FragmentKind};
 use openui_style::{
     BackgroundAttachment, BackgroundClip, BorderStyle, Color, ComputedStyle, Display,
     GradientStopPosition, LineHeight, ListStylePosition, ListStyleType, Overflow, OverflowClipBox,
-    StyleColor, Visibility,
+    StyleColor, TextOrientation, Visibility, WritingMode,
 };
 use openui_text::font::FontMetrics;
 use skia_safe::{
@@ -2815,6 +2815,23 @@ fn resolve_decoration_metrics(
         .unwrap_or_else(|| crate::text_painter::metrics_from_shape_result(shape_result))
 }
 
+/// The W1F vertical-text path intentionally handles only homogeneous runs
+/// whose Unicode vertical-orientation class is rotated. Upright CJK and
+/// mixed-orientation splitting remain on the existing path until the next
+/// text closure.
+fn is_homogeneous_rotated_vertical_run(style: &ComputedStyle, text: Option<&str>) -> bool {
+    matches!(
+        style.writing_mode,
+        WritingMode::VerticalLr | WritingMode::VerticalRl
+    ) && style.text_orientation == TextOrientation::Mixed
+        && text.is_some_and(|text| {
+            !text.is_empty()
+                && text
+                    .chars()
+                    .all(|character| !openui_text::is_upright_in_mixed_vertical(character))
+        })
+}
+
 /// Paint a text fragment — shadows, decorations, glyphs, and emphasis marks.
 ///
 /// Extracted from Blink's `TextFragmentPainter::Paint()`.
@@ -2840,15 +2857,31 @@ fn paint_text_fragment(
     // from the first shaped run which may be a fallback font (emoji, CJK).
     let metrics = resolve_decoration_metrics(style, shape_result);
 
-    // Use the layout-computed baseline offset stored on the fragment,
-    // rather than recomputing from font metrics (which can differ with
-    // fallback fonts, vertical-align shifts, or fractional ascents).
-    let x = abs_offset.left.to_f32();
-    let baseline_y = abs_offset.top.to_f32() + fragment.baseline_offset;
-    let origin = (x, baseline_y);
-
     // Text content for CJK detection in skip-ink Auto mode.
     let text_content = fragment.text_content.as_deref();
+
+    // Shape homogeneous Latin/Ahem runs horizontally, then rotate the whole
+    // text paint stack clockwise into the physical vertical fragment. Keeping
+    // the transform outside shadows/decorations/glyphs/emphasis guarantees
+    // they share one origin and one culling coordinate system.
+    let rotate_run = is_homogeneous_rotated_vertical_run(style, text_content);
+    let origin = if rotate_run {
+        canvas.save();
+        canvas.translate(Point::new(
+            abs_offset.left.to_f32() + fragment.size.width.to_f32(),
+            abs_offset.top.to_f32(),
+        ));
+        canvas.rotate(90.0, None);
+        (0.0, fragment.baseline_offset)
+    } else {
+        // Use the layout-computed baseline offset stored on the fragment,
+        // rather than recomputing from font metrics (which can differ with
+        // fallback fonts, vertical-align shifts, or fractional ascents).
+        (
+            abs_offset.left.to_f32(),
+            abs_offset.top.to_f32() + fragment.baseline_offset,
+        )
+    };
 
     // 1. Text shadows
     crate::text_painter::paint_text_shadows(canvas, shape_result, origin, style);
@@ -2890,6 +2923,10 @@ fn paint_text_fragment(
         crate::decoration_painter::DecorationPhase::AfterText,
         text_content,
     );
+
+    if rotate_run {
+        canvas.restore();
+    }
 }
 
 /// Paint box shadows for a single box fragment.
@@ -5134,6 +5171,37 @@ fn lighten_color(color: &Color4f) -> Color4f {
 mod tests {
     #[allow(unused_imports)]
     use super::*;
+
+    #[test]
+    fn homogeneous_latin_and_ahem_runs_rotate_only_in_vertical_mixed_mode() {
+        for writing_mode in [WritingMode::VerticalLr, WritingMode::VerticalRl] {
+            let mut style = ComputedStyle::default();
+            style.writing_mode = writing_mode;
+            style.text_orientation = TextOrientation::Mixed;
+            assert!(is_homogeneous_rotated_vertical_run(
+                &style,
+                Some("Latin AHEM")
+            ));
+            assert!(!is_homogeneous_rotated_vertical_run(
+                &style,
+                Some("Latin 文")
+            ));
+            assert!(!is_homogeneous_rotated_vertical_run(&style, Some("文")));
+            assert!(!is_homogeneous_rotated_vertical_run(&style, Some("")));
+        }
+
+        let mut horizontal = ComputedStyle::default();
+        horizontal.text_orientation = TextOrientation::Mixed;
+        assert!(!is_homogeneous_rotated_vertical_run(
+            &horizontal,
+            Some("AHEM")
+        ));
+
+        let mut upright = ComputedStyle::default();
+        upright.writing_mode = WritingMode::VerticalLr;
+        upright.text_orientation = TextOrientation::Upright;
+        assert!(!is_homogeneous_rotated_vertical_run(&upright, Some("AHEM")));
+    }
 
     #[test]
     fn gradient_stop_fixup_is_monotonic_and_resolves_absolute_lengths() {

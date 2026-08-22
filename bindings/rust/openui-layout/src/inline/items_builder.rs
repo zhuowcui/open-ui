@@ -11,6 +11,7 @@
 //! - Text shaping via openui-text
 
 use openui_dom::{Document, ElementTag, NodeId};
+use openui_geometry::WritingDirectionMode;
 use openui_style::{
     ComputedStyle, Direction, Display, Float, TabSize, TextTransform, UnicodeBidi, WhiteSpace,
 };
@@ -430,6 +431,8 @@ pub fn style_to_font_description(style: &ComputedStyle) -> FontDescription {
 /// Builder that walks the DOM and collects inline items.
 pub struct InlineItemsBuilder<'a> {
     doc: &'a Document,
+    /// Writing direction of the inline formatting context being collected.
+    inline_writing_direction: WritingDirectionMode,
     text: String,
     items: Vec<InlineItem>,
     styles: Vec<ComputedStyle>,
@@ -450,6 +453,7 @@ impl<'a> InlineItemsBuilder<'a> {
     pub fn new(doc: &'a Document) -> Self {
         Self {
             doc,
+            inline_writing_direction: WritingDirectionMode::horizontal_ltr(),
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),
@@ -466,6 +470,10 @@ impl<'a> InlineItemsBuilder<'a> {
     /// and produces a flat `InlineItemsData`.
     pub fn collect(doc: &Document, block_node_id: NodeId) -> InlineItemsData {
         let mut builder = InlineItemsBuilder::new(doc);
+        let block_style = &doc.node(block_node_id).style;
+        builder.inline_writing_direction = block_style
+            .direction
+            .writing_direction(block_style.writing_mode);
         builder.collect_children(block_node_id);
         InlineItemsData {
             text: builder.text,
@@ -482,10 +490,14 @@ impl<'a> InlineItemsBuilder<'a> {
     /// a subset of children should participate in the inline formatting context.
     pub fn collect_for_children(
         doc: &Document,
-        _block_node_id: NodeId,
+        block_node_id: NodeId,
         children: &[NodeId],
     ) -> InlineItemsData {
         let mut builder = InlineItemsBuilder::new(doc);
+        let block_style = &doc.node(block_node_id).style;
+        builder.inline_writing_direction = block_style
+            .direction
+            .writing_direction(block_style.writing_mode);
         for &child_id in children {
             builder.collect_single_child(child_id);
         }
@@ -825,7 +837,15 @@ impl<'a> InlineItemsBuilder<'a> {
             self.compute_ruby_intrinsic_inline_size(node_id)
         } else if style.display.is_flex() {
             let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(self.doc, node_id);
-            let max_w = sizes.max_content_inline_size.to_f32();
+            let child_direction = style.direction.writing_direction(style.writing_mode);
+            let max_w = if child_direction.is_horizontal()
+                == self.inline_writing_direction.is_horizontal()
+            {
+                sizes.max_content_inline_size
+            } else {
+                sizes.max_content_block_size
+            }
+            .to_f32();
             if max_w > 0.0 {
                 Some(max_w)
             } else {

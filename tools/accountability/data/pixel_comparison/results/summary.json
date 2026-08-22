@@ -1,12 +1,12 @@
 {
-  "total": 3586,
-  "passed": 3287,
+  "total": 3630,
+  "passed": 3331,
   "failed": 299,
   "errors": 0,
-  "near_miss_aa": 63,
+  "near_miss_aa": 62,
   "aa_threshold_pct": 0.5,
-  "reference_tests": 950,
-  "reference_tests_pass": 858,
+  "reference_tests": 965,
+  "reference_tests_pass": 873,
   "tests": [
     {
       "id": "wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline",
@@ -2446,7 +2446,7 @@
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-horiz-006-ref",
       "status": "fail",
-      "mismatch_pct": 0.233546
+      "mismatch_pct": 0.658174
     },
     {
       "id": "wpt/css_flexbox/flexbox-justify-content-horiz-006",
@@ -5785,6 +5785,226 @@
     },
     {
       "id": "wpt/css_flexbox/stretching-orthogonal-flows",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/css-flexbox-row",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/css-flexbox-row-reverse",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/css-flexbox-row-reverse-wrap",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/css-flexbox-row-reverse-wrap-reverse",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/css-flexbox-row-wrap",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/css-flexbox-row-wrap-reverse",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flex-direction-row-vertical",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flex-direction-row-vertical-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-flex-direction-column",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-flex-direction-column-reverse",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-flex-direction-default",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-flex-direction-row",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-flex-direction-row-reverse",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-flex-wrap-wrap",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-flex-wrap-wrap-reverse",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-001-lr",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-001-lr-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-001-rl",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-001-rl-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-002-lr",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-002-lr-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-002-rl",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-002-rl-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-003-lr",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-003-lr-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-003-rl",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-003-rl-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-004-lr",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-004-lr-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-004-rl",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-004-rl-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-005-lr",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-005-lr-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-005-rl",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-005-rl-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-006-lr",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-006-lr-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-006-rl",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-006-rl-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-007-lr",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-007-lr-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-007-rl",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/gap-007-rl-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/intrinsic-size_col-wrap-crash",
       "status": "pass",
       "mismatch_pct": 0.0
     },
