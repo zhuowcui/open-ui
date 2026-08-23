@@ -206,16 +206,16 @@ static-position_inline-level-absolute-in-block-level-context-009,not_portable,,u
 static-position_inline-level-absolute-in-block-level-context-010,not_portable,,unsupported property: transform
 static-position_inline-level-absolute-in-block-level-context-011,not_portable,,unsupported property: transform
 static-position_inline-level-absolute-in-block-level-context-012,not_portable,,unsupported property: transform
-static-position_vlr-ltr-ltr,not_portable,,style_block_unsupported property: writing-mode
-static-position_vlr-ltr-rtl.tentative,not_portable,,style_block_unsupported property: writing-mode
-static-position_vlr-ref,not_portable,,style_block_unsupported property: writing-mode
-static-position_vlr-rtl-ltr.tentative,not_portable,,style_block_unsupported property: writing-mode
-static-position_vlr-rtl-rtl,not_portable,,style_block_unsupported property: writing-mode
-static-position_vrl-ltr-ltr,not_portable,,style_block_unsupported property: writing-mode
-static-position_vrl-ltr-rtl.tentative,not_portable,,style_block_unsupported property: writing-mode
-static-position_vrl-ref,not_portable,,style_block_unsupported property: writing-mode
-static-position_vrl-rtl-ltr.tentative,not_portable,,style_block_unsupported property: writing-mode
-static-position_vrl-rtl-rtl,not_portable,,style_block_unsupported property: writing-mode
+static-position_vlr-ltr-ltr,ported,css_position_static_position_vlr_ltr_ltr,
+static-position_vlr-ltr-rtl.tentative,ported,css_position_static_position_vlr_ltr_rtl_tentative,
+static-position_vlr-ref,ported,css_position_static_position_vlr_ref,
+static-position_vlr-rtl-ltr.tentative,ported,css_position_static_position_vlr_rtl_ltr_tentative,
+static-position_vlr-rtl-rtl,ported,css_position_static_position_vlr_rtl_rtl,
+static-position_vrl-ltr-ltr,ported,css_position_static_position_vrl_ltr_ltr,
+static-position_vrl-ltr-rtl.tentative,ported,css_position_static_position_vrl_ltr_rtl_tentative,
+static-position_vrl-ref,ported,css_position_static_position_vrl_ref,
+static-position_vrl-rtl-ltr.tentative,ported,css_position_static_position_vrl_rtl_ltr_tentative,
+static-position_vrl-rtl-rtl,ported,css_position_static_position_vrl_rtl_rtl,
 parsing_bottom-computed,not_portable,,uses_javascript
 parsing_bottom-invalid,not_portable,,uses_javascript
 parsing_bottom-valid,not_portable,,uses_javascript
@@ -366,26 +366,26 @@ sticky_position-sticky-writing-modes-ref,not_portable,,uses_javascript
 sticky_position-sticky-writing-modes,not_portable,,uses_javascript
 sticky_sticky-after-input,not_portable,,uses_javascript
 sticky_sticky-continuation-crash,not_portable,,uses_javascript
-multicol_vlr-in-multicols-ref,not_portable,,style_block_unsupported property: writing-mode
-multicol_vlr-ltr-ltr-in-multicols,not_portable,,style_block_unsupported property: writing-mode
-multicol_vlr-ltr-rtl-in-multicols.tentative,not_portable,,style_block_unsupported property: writing-mode
-multicol_vlr-rtl-ltr-in-multicols.tentative,not_portable,,style_block_unsupported property: writing-mode
-multicol_vlr-rtl-rtl-in-multicols,not_portable,,style_block_unsupported property: writing-mode
-multicol_vrl-in-multicols-ref,not_portable,,style_block_unsupported property: writing-mode
-multicol_vrl-ltr-ltr-in-multicols,not_portable,,style_block_unsupported property: writing-mode
-multicol_vrl-ltr-rtl-in-multicols.tentative,not_portable,,style_block_unsupported property: writing-mode
-multicol_vrl-rtl-ltr-in-multicols.tentative,not_portable,,style_block_unsupported property: writing-mode
-multicol_vrl-rtl-rtl-in-multicols,not_portable,,style_block_unsupported property: writing-mode
-multicol_static-position_vlr-in-multicol-ref,not_portable,,style_block_unsupported property: writing-mode
-multicol_static-position_vlr-ltr-ltr-in-multicol,not_portable,,style_block_unsupported property: writing-mode
-multicol_static-position_vlr-ltr-rtl-in-multicol.tentative,not_portable,,style_block_unsupported property: writing-mode
-multicol_static-position_vlr-rtl-ltr-in-multicol.tentative,not_portable,,style_block_unsupported property: writing-mode
-multicol_static-position_vlr-rtl-rtl-in-multicol,not_portable,,style_block_unsupported property: writing-mode
-multicol_static-position_vrl-in-multicol-ref,not_portable,,style_block_unsupported property: writing-mode
-multicol_static-position_vrl-ltr-ltr-in-multicol,not_portable,,style_block_unsupported property: writing-mode
-multicol_static-position_vrl-ltr-rtl-in-multicol.tentative,not_portable,,style_block_unsupported property: writing-mode
-multicol_static-position_vrl-rtl-ltr-in-multicol.tentative,not_portable,,style_block_unsupported property: writing-mode
-multicol_static-position_vrl-rtl-rtl-in-multicol,not_portable,,style_block_unsupported property: writing-mode
+multicol_vlr-in-multicols-ref,ported,css_position_multicol_vlr_in_multicols_ref,
+multicol_vlr-ltr-ltr-in-multicols,ported,css_position_multicol_vlr_ltr_ltr_in_multicols,
+multicol_vlr-ltr-rtl-in-multicols.tentative,ported,css_position_multicol_vlr_ltr_rtl_in_multicols_tentative,
+multicol_vlr-rtl-ltr-in-multicols.tentative,ported,css_position_multicol_vlr_rtl_ltr_in_multicols_tentative,
+multicol_vlr-rtl-rtl-in-multicols,ported,css_position_multicol_vlr_rtl_rtl_in_multicols,
+multicol_vrl-in-multicols-ref,ported,css_position_multicol_vrl_in_multicols_ref,
+multicol_vrl-ltr-ltr-in-multicols,ported,css_position_multicol_vrl_ltr_ltr_in_multicols,
+multicol_vrl-ltr-rtl-in-multicols.tentative,ported,css_position_multicol_vrl_ltr_rtl_in_multicols_tentative,
+multicol_vrl-rtl-ltr-in-multicols.tentative,ported,css_position_multicol_vrl_rtl_ltr_in_multicols_tentative,
+multicol_vrl-rtl-rtl-in-multicols,ported,css_position_multicol_vrl_rtl_rtl_in_multicols,
+multicol_static-position_vlr-in-multicol-ref,ported,css_position_multicol_static_position_vlr_in_multicol_ref,
+multicol_static-position_vlr-ltr-ltr-in-multicol,ported,css_position_multicol_static_position_vlr_ltr_ltr_in_multicol,
+multicol_static-position_vlr-ltr-rtl-in-multicol.tentative,ported,css_position_multicol_static_position_vlr_ltr_rtl_in_multicol_tentative,
+multicol_static-position_vlr-rtl-ltr-in-multicol.tentative,ported,css_position_multicol_static_position_vlr_rtl_ltr_in_multicol_tentative,
+multicol_static-position_vlr-rtl-rtl-in-multicol,ported,css_position_multicol_static_position_vlr_rtl_rtl_in_multicol,
+multicol_static-position_vrl-in-multicol-ref,ported,css_position_multicol_static_position_vrl_in_multicol_ref,
+multicol_static-position_vrl-ltr-ltr-in-multicol,ported,css_position_multicol_static_position_vrl_ltr_ltr_in_multicol,
+multicol_static-position_vrl-ltr-rtl-in-multicol.tentative,ported,css_position_multicol_static_position_vrl_ltr_rtl_in_multicol_tentative,
+multicol_static-position_vrl-rtl-ltr-in-multicol.tentative,ported,css_position_multicol_static_position_vrl_rtl_ltr_in_multicol_tentative,
+multicol_static-position_vrl-rtl-rtl-in-multicol,ported,css_position_multicol_static_position_vrl_rtl_rtl_in_multicol,
 animations_bottom-composition,not_portable,,uses_javascript
 animations_bottom-interpolation,not_portable,,uses_javascript
 animations_left-composition,not_portable,,uses_javascript

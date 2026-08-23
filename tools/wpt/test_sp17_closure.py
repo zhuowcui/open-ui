@@ -105,6 +105,39 @@ EXPECTED_LIVE_PROMOTIONS = {
     "wpt/css_multicol/orthogonal-writing-mode-spanner",
     "wpt/css_overflow/no-scrollable-overflow-vertical-rl",
     "wpt/css_overflow/no-scrollable-overflow-vertical-rl-2",
+} | {
+    f"wpt/css_position/static-position_{mode}-{suffix}"
+    for mode in ("vlr", "vrl")
+    for suffix in (
+        "ltr-ltr",
+        "ltr-rtl.tentative",
+        "ref",
+        "rtl-ltr.tentative",
+        "rtl-rtl",
+    )
+} | {
+    "wpt/css_position/static-position_htb-rtl-ltr.tentative",
+    "wpt/css_position/static-position_htb-rtl-rtl",
+} | {
+    f"wpt/css_position/multicol_static-position_{mode}-{suffix}"
+    for mode in ("vlr", "vrl")
+    for suffix in (
+        "in-multicol-ref",
+        "ltr-ltr-in-multicol",
+        "ltr-rtl-in-multicol.tentative",
+        "rtl-ltr-in-multicol.tentative",
+        "rtl-rtl-in-multicol",
+    )
+} | {
+    f"wpt/css_position/multicol_{mode}-{suffix}"
+    for mode in ("vlr", "vrl")
+    for suffix in (
+        "in-multicols-ref",
+        "ltr-ltr-in-multicols",
+        "ltr-rtl-in-multicols.tentative",
+        "rtl-ltr-in-multicols.tentative",
+        "rtl-rtl-in-multicols",
+    )
 }
 
 
@@ -190,7 +223,7 @@ class LedgerTests(unittest.TestCase):
         promoted = closure.validate_live_snapshot(
             rows, summary, baseline, inventory, actionable
         )
-        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 107)
+        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 139)
         self.assertEqual(promoted, EXPECTED_LIVE_PROMOTIONS)
         self.assertTrue(promoted.issubset(set(actionable)))
 

@@ -453,13 +453,13 @@ def validate_live_snapshot(
         item["test_id"] for item in inventory
         if item["kickoff_state"] == "unported"
     }
-    promoted = kickoff_unported & ported_ids
-    if not promoted.issubset(actionable):
+    promoted_unported = kickoff_unported & ported_ids
+    if not promoted_unported.issubset(actionable):
         raise ValueError(
             "SP17 live mapping promoted a row outside the frozen actionable ledger"
         )
-    expected_runnable = EXPECTED_RUNNABLE + len(promoted)
-    expected_unported = EXPECTED_UNPORTED - len(promoted)
+    expected_runnable = EXPECTED_RUNNABLE + len(promoted_unported)
+    expected_unported = EXPECTED_UNPORTED - len(promoted_unported)
     if len(ported_ids) != expected_runnable:
         raise ValueError(
             "SP17 runnable mapping changed outside exact actionable promotions: "
@@ -474,6 +474,16 @@ def validate_live_snapshot(
         raise ValueError("SP17 full pixel summary contains duplicate IDs")
     if set(summary_by_id) != ported_ids:
         raise ValueError("SP17 full pixel summary and runnable mapping IDs differ")
+    repaired_kickoff_runnable = {
+        item["test_id"]
+        for item in inventory
+        if item["kickoff_state"] == "runnable"
+        and summary_by_id.get(item["test_id"], {}).get("status") == "pass"
+        and summary_by_id[item["test_id"]].get("mismatch_pct") == 0.0
+    }
+    promoted = promoted_unported | repaired_kickoff_runnable
+    if not promoted.issubset(actionable):
+        raise ValueError("SP17 exact promotion is outside the actionable ledger")
     passed = summary.get("passed")
     failed = summary.get("failed")
     errors = summary.get("errors")

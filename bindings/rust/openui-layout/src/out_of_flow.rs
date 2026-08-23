@@ -329,15 +329,41 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     // shrink-to-fit = min(max-content, max(min-content, available))
     // intrinsic sizes include border+padding, so convert to content-box.
     let intrinsic = compute_intrinsic_block_sizes(doc, candidate.node_id);
-    let shrink_to_fit_max =
-        (intrinsic.max_content_inline_size - border_padding_h).clamp_negative_to_zero();
-    let shrink_to_fit_min =
-        (intrinsic.min_content_inline_size - border_padding_h).clamp_negative_to_zero();
+    let vertical_inline_formatting_context = !axes.child.is_horizontal()
+        && crate::inline::algorithm::has_inline_children(doc, candidate.node_id)
+        && !crate::block::has_block_children(doc, candidate.node_id);
+    let (intrinsic_width_min, intrinsic_width_max) = if vertical_inline_formatting_context {
+        // The legacy intrinsic entry point stores physical width/height for
+        // block descendants, but its inline-layout probe reports line advance
+        // and line thickness in inline/block slots. For a vertical IFC the
+        // latter is the physical shrink-to-fit width. Replace its legacy
+        // top/bottom decoration with the physical left/right decoration.
+        (
+            (intrinsic.min_content_block_size - border_padding_v).clamp_negative_to_zero()
+                + border_padding_h,
+            (intrinsic.max_content_block_size - border_padding_v).clamp_negative_to_zero()
+                + border_padding_h,
+        )
+    } else {
+        (
+            intrinsic.min_content_inline_size,
+            intrinsic.max_content_inline_size,
+        )
+    };
+    let shrink_to_fit_max = (intrinsic_width_max - border_padding_h).clamp_negative_to_zero();
+    let shrink_to_fit_min = (intrinsic_width_min - border_padding_h).clamp_negative_to_zero();
 
     // Resolve horizontal axis (CSS 2.1 §10.3.7)
     let cb_horizontal_start_is_left = axes.containing_horizontal_start_is_left();
     let cb_vertical_start_is_top = axes.containing_vertical_start_is_top();
-    let sp_horizontal_start_is_left = axes.static_horizontal_start_is_left();
+    // An inline-level hypothetical box starts at the insertion cursor and
+    // advances from there. In horizontal flow that cursor is its physical
+    // left edge even when the surrounding paragraph is RTL (the box's
+    // hypothetical right edge is cursor + its resolved width). Treating the
+    // zero-width cursor itself as static-right shifts the box one full width
+    // toward inline-end.
+    let sp_horizontal_start_is_left = axes.static_horizontal_start_is_left()
+        || (axes.static_position.is_horizontal() && style.display.is_inline_level());
     let sp_vertical_start_is_top = axes.static_vertical_start_is_top();
 
     // If we have AR width-from-height, use it as a known width in the constraint equation
@@ -358,9 +384,9 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
             // CSS Sizing 3: intrinsic keywords resolve to the element's
             // intrinsic size (border-box), then feed into the constraint equation.
             let known_bb_width = if style.width.is_min_content() {
-                intrinsic.min_content_inline_size
+                intrinsic_width_min
             } else {
-                intrinsic.max_content_inline_size
+                intrinsic_width_max
             };
             resolve_horizontal_with_known_width(
                 style,
@@ -375,7 +401,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
         } else if style.width.is_fit_content() && !style.width.is_fit_content_function() {
             // Bare fit-content keyword: use shrink-to-fit (max-content) as a
             // known width so auto margins and insets work correctly.
-            let known_bb_width = intrinsic.max_content_inline_size;
+            let known_bb_width = intrinsic_width_max;
             resolve_horizontal_with_known_width(
                 style,
                 cb_width,
@@ -700,6 +726,11 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     let fixed_block = height_is_definite && !ar_content_floor;
     let available_block = if fixed_block || height_from_ar {
         resolved_height
+    } else if !axes.child.is_horizontal() && style.height.is_auto() {
+        // A vertical child's physical auto height is its logical inline size.
+        // Passing the tentative zero from the physical block-axis equation
+        // would force an empty inline measure and leave its text as overflow.
+        openui_geometry::INDEFINITE_SIZE
     } else {
         content_height
     };
@@ -848,7 +879,17 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
         && final_height == child_fragment.size.height
     // was NOT clamped by min/max
     {
-        if style.top.is_auto() && !style.bottom.is_auto() {
+        if style.display.is_inline_level()
+            && style.top.is_auto()
+            && style.bottom.is_auto()
+            && !sp_vertical_start_is_top
+        {
+            // The tentative static-position equation uses a zero auto height.
+            // Once vertical child layout supplies its physical inline extent,
+            // keep the completed hypothetical box's bottom edge on the
+            // static-position anchor.
+            static_top - resolved_margin_bottom - final_height
+        } else if style.top.is_auto() && !style.bottom.is_auto() {
             let zero = LayoutUnit::zero();
             let bottom_val = resolve_length(&style.bottom, cb_height, zero, zero);
             let mb = resolved_margin_bottom;

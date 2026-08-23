@@ -474,6 +474,18 @@ fn compute_text_align_offset(
     }
 }
 
+/// Physical offset contributed by a first-line text indent. The line's
+/// available inline size has already been shortened by the indent. For RTL
+/// that shortening moves the aligned run toward physical left, so adding the
+/// indent again would cancel it instead of indenting from inline-start.
+fn physical_text_indent_offset(direction: Direction, indent: LayoutUnit) -> LayoutUnit {
+    if direction == Direction::Rtl {
+        LayoutUnit::zero()
+    } else {
+        indent
+    }
+}
+
 /// Count expansion opportunities (spaces between words) for justification.
 ///
 /// Excludes trailing spaces, which are already stripped from width measurement
@@ -615,6 +627,42 @@ fn is_cjk_character(ch: char) -> bool {
 
 // ── Main entry point ─────────────────────────────────────────────────────
 
+/// Vertical RTL line construction uses visual inline coordinates. Keep the
+/// legacy physical path for monolithic direct flow, but normalize to logical
+/// start-relative coordinates when an owning fragmentation context will map
+/// the line through multicol geometry.
+fn needs_logical_positioned_inline_geometry(
+    doc: &Document,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+) -> bool {
+    if space.has_block_fragmentation() {
+        return true;
+    }
+    let mut ancestor = doc.node(node_id).parent;
+    while !ancestor.is_none() {
+        let ancestor_style = &doc.node(ancestor).style;
+        if crate::multicol::ColumnLayoutAlgorithm::from_style(ancestor_style).is_some() {
+            let owner_block_size = if ancestor_style.writing_mode.is_horizontal() {
+                &ancestor_style.height
+            } else {
+                &ancestor_style.width
+            };
+            let node_style = &doc.node(node_id).style;
+            let node_block_size = if ancestor_style.writing_mode.is_horizontal() {
+                &node_style.height
+            } else {
+                &node_style.width
+            };
+            return node_block_size.is_fixed()
+                && owner_block_size.is_fixed()
+                && node_block_size.value() > owner_block_size.value();
+        }
+        ancestor = doc.node(ancestor).parent;
+    }
+    false
+}
+
 /// Perform inline layout for a block node that has inline children.
 ///
 /// This is the inline formatting context (IFC) layout algorithm.
@@ -651,6 +699,7 @@ pub fn inline_layout_from_items(
     item_end: usize,
 ) -> Fragment {
     let style = &doc.node(node_id).style;
+    let normalize_vertical_rtl = needs_logical_positioned_inline_geometry(doc, node_id, space);
 
     let available_inline_size = space.available_inline_size.clamp_negative_to_zero();
 
@@ -798,7 +847,7 @@ pub fn inline_layout_from_items(
                     style.direction,
                     style.text_align_last,
                 )
-                + line_indent;
+                + physical_text_indent_offset(style.direction, line_indent);
             line_static_inline_data.push((line_info.clone(), static_inline_origin));
 
             let line_fragment = create_line_box(
@@ -818,6 +867,7 @@ pub fn inline_layout_from_items(
                 },
                 space.percentage_resolution_block_size,
                 &boxes_open_at_line_start,
+                normalize_vertical_rtl,
             );
 
             // Update open inline box state for the next line:
@@ -887,76 +937,18 @@ pub fn inline_layout_from_items(
 
     collect_atomic_inline_oof_candidates(doc, node_id, space, border_box_size, &mut fragment);
 
-    // Generate OOF candidates from inline content.
-    // CSS 2.1 §10.3.7: The static position of an absolutely-positioned element
-    // within inline content is where it would have been placed in normal flow.
-    // Use the item_index to find the block offset of the line containing the
-    // OOF child, and set inline offset to 0 (line start).
-    for oof in &items_data.oof_children {
-        let oof_style = doc.node(oof.node_id).style.clone();
-        let static_block = find_static_block_for_item_index(
-            oof.item_index,
-            &fragment.children,
-            &line_item_bounds,
-            intrinsic_block_size,
-            oof_style.display.is_block_level()
-                && items_data.items[..oof.item_index]
-                    .iter()
-                    .any(|item| match item.item_type {
-                        InlineItemType::Text => !items_data.text[item.text_range.clone()]
-                            .trim_matches(char::is_whitespace)
-                            .is_empty(),
-                        InlineItemType::AtomicInline => true,
-                        _ => false,
-                    }),
-        );
-        let inline_cb = oof.inline_containing_block.and_then(|cb_node_id| {
-            inline_containing_block_geometry(
-                cb_node_id,
-                &fragment.children,
-                doc.node(cb_node_id).style.direction,
-            )
-            .map(|(offset, size)| {
-                let (offset, size) = normalize_fragmented_inline_containing_block(
-                    doc,
-                    node_id,
-                    space,
-                    border_box_size,
-                    offset,
-                    size,
-                );
-                (cb_node_id, offset, size)
-            })
-        });
-        let (containing_block_offset, containing_block_size, containing_block_direction) =
-            inline_cb.map_or(
-                (
-                    PhysicalOffset::zero(),
-                    border_box_size,
-                    doc.node(node_id).style.direction,
-                ),
-                |(cb_node_id, offset, size)| (offset, size, doc.node(cb_node_id).style.direction),
-            );
-        let static_inline = find_static_inline_for_item_index(
-            oof.item_index,
-            &line_static_inline_data,
-            doc.node(node_id).style.direction,
-            oof_style.display.is_block_level(),
-        );
-        fragment.oof_candidates.push(OutOfFlowCandidate {
-            node_id: oof.node_id,
-            style: oof_style,
-            static_position: PhysicalOffset::new(static_inline, static_block),
-            containing_block_offset,
-            containing_block_node: inline_cb.map_or(NodeId::NONE, |(cb_node_id, _, _)| cb_node_id),
-            containing_block_size,
-            containing_block_border: openui_geometry::BoxStrut::zero(),
-            containing_block_direction,
-            static_position_direction: doc.node(node_id).style.direction,
-            has_inline_containing_block: inline_cb.is_some(),
-            inline_containing_block_node: oof.inline_containing_block,
-        });
-    }
+    append_positioned_inline_candidates(
+        doc,
+        node_id,
+        space,
+        &working_items_data,
+        &line_item_bounds,
+        &line_static_inline_data,
+        intrinsic_block_size,
+        border_box_size,
+        normalize_vertical_rtl,
+        &mut fragment,
+    );
 
     // A block-in-inline interruption is laid out by the block caller, but its
     // out-of-flow descendants still belong to this IFC's positioned inline
@@ -1005,6 +997,9 @@ pub fn inline_layout_from_items(
                 cb_node_id,
                 &fragment.children,
                 doc.node(cb_node_id).style.direction,
+                space.writing_direction,
+                border_box_size.width,
+                normalize_vertical_rtl,
             )
             .map(|(offset, size)| {
                 let (offset, size) = normalize_fragmented_inline_containing_block(
@@ -1027,6 +1022,7 @@ pub fn inline_layout_from_items(
                 candidate.containing_block_direction = doc.node(cb_node_id).style.direction;
                 candidate.containing_block_node = cb_node_id;
                 candidate.has_inline_containing_block = true;
+                candidate.inline_containing_block_node = Some(cb_node_id);
             }
             fragment.oof_candidates.push(candidate);
         }
@@ -1035,25 +1031,159 @@ pub fn inline_layout_from_items(
     fragment
 }
 
+/// Shared logical geometry path for positioned children discovered by either
+/// inline layout entry point. Static anchors, first/last-fragment inline
+/// containing blocks, and relative translations are resolved together before
+/// the owning block or multicol projects them to the physical public API.
+#[allow(clippy::too_many_arguments)]
+fn append_positioned_inline_candidates(
+    doc: &Document,
+    node_id: NodeId,
+    space: &ConstraintSpace,
+    items_data: &InlineItemsData,
+    line_item_bounds: &[Option<(usize, usize)>],
+    line_static_inline_data: &[(LineInfo, LayoutUnit)],
+    intrinsic_block_size: LayoutUnit,
+    border_box_size: PhysicalSize,
+    normalize_vertical_rtl: bool,
+    fragment: &mut Fragment,
+) {
+    for oof in &items_data.oof_children {
+        let oof_style = doc.node(oof.node_id).style.clone();
+        let mut static_block = find_static_block_for_item_index(
+            oof.item_index,
+            &fragment.children,
+            line_item_bounds,
+            intrinsic_block_size,
+            oof_style.display.is_block_level()
+                && items_data.items[..oof.item_index]
+                    .iter()
+                    .any(|item| match item.item_type {
+                        InlineItemType::Text => !items_data.text[item.text_range.clone()]
+                            .trim_matches(char::is_whitespace)
+                            .is_empty(),
+                        InlineItemType::AtomicInline => true,
+                        _ => false,
+                    }),
+        );
+        let inline_cb = oof.inline_containing_block.and_then(|cb_node_id| {
+            inline_containing_block_geometry(
+                cb_node_id,
+                &fragment.children,
+                doc.node(cb_node_id).style.direction,
+                space.writing_direction,
+                border_box_size.width,
+                normalize_vertical_rtl,
+            )
+            .map(|(offset, size)| {
+                let (offset, size) = normalize_fragmented_inline_containing_block(
+                    doc,
+                    node_id,
+                    space,
+                    border_box_size,
+                    offset,
+                    size,
+                );
+                (cb_node_id, offset, size)
+            })
+        });
+        let (containing_block_offset, containing_block_size, containing_block_direction) =
+            inline_cb.map_or(
+                (
+                    PhysicalOffset::zero(),
+                    border_box_size,
+                    doc.node(node_id).style.direction,
+                ),
+                |(cb_node_id, offset, size)| (offset, size, doc.node(cb_node_id).style.direction),
+            );
+        let mut static_inline = find_static_inline_for_item_index(
+            oof.item_index,
+            line_static_inline_data,
+            doc.node(node_id).style.direction,
+            oof_style.display.is_block_level(),
+            border_box_size.width,
+        );
+        static_inline = logical_inline_axis_offset(
+            static_inline,
+            LayoutUnit::zero(),
+            border_box_size.width,
+            space.writing_direction,
+            normalize_vertical_rtl,
+        );
+        if !space.writing_direction.is_horizontal() {
+            if let Some(cb_node_id) = oof.inline_containing_block {
+                // Horizontal inline fragments already carry their relative
+                // visual translation. Vertical IFC geometry is normalized
+                // back to logical coordinates before the block projection,
+                // so reconstruct that translation once on the retained
+                // logical anchor here.
+                let relative = crate::relative::compute_relative_offset(
+                    &doc.node(cb_node_id).style,
+                    space.percentage_resolution_inline_size,
+                    LayoutUnit::zero(),
+                );
+                static_inline += relative.left;
+                static_block += relative.top;
+            }
+        }
+        fragment.oof_candidates.push(OutOfFlowCandidate {
+            node_id: oof.node_id,
+            style: oof_style,
+            static_position: PhysicalOffset::new(static_inline, static_block),
+            containing_block_offset,
+            containing_block_node: inline_cb.map_or(NodeId::NONE, |(cb_node_id, _, _)| cb_node_id),
+            containing_block_size,
+            containing_block_border: openui_geometry::BoxStrut::zero(),
+            containing_block_direction,
+            static_position_direction: doc.node(node_id).style.direction,
+            has_inline_containing_block: inline_cb.is_some(),
+            inline_containing_block_node: oof.inline_containing_block,
+        });
+    }
+}
+
 /// Resolve the containing block formed by a positioned inline's first and
 /// last line fragments (CSS 2.1 §10.1).
 fn inline_containing_block_geometry(
     target: NodeId,
     roots: &[Fragment],
     direction: Direction,
+    writing_direction: openui_geometry::WritingDirectionMode,
+    container_inline_size: LayoutUnit,
+    normalize_vertical_rtl: bool,
 ) -> Option<(PhysicalOffset, PhysicalSize)> {
     fn collect(
         target: NodeId,
         fragment: &Fragment,
         parent_offset: PhysicalOffset,
-        fragments: &mut Vec<(PhysicalOffset, PhysicalSize)>,
+        fragments: &mut Vec<(PhysicalOffset, PhysicalSize, bool)>,
     ) {
+        fn has_nonempty_in_flow_content(fragment: &Fragment) -> bool {
+            fragment.children.iter().any(|child| {
+                if child.positioned_fragmentation.is_some() {
+                    return false;
+                }
+                if child.kind == FragmentKind::Text {
+                    return child.size.width > LayoutUnit::zero()
+                        || child.size.height > LayoutUnit::zero();
+                }
+                if child.node_id.is_none() || child.is_inline_box_fragment {
+                    return has_nonempty_in_flow_content(child);
+                }
+                child.size.width > LayoutUnit::zero() || child.size.height > LayoutUnit::zero()
+            })
+        }
+
         let offset = PhysicalOffset::new(
             parent_offset.left + fragment.offset.left,
             parent_offset.top + fragment.offset.top,
         );
         if fragment.node_id == target && fragment.is_inline_box_fragment {
-            fragments.push((offset, fragment.size));
+            fragments.push((
+                offset,
+                fragment.size,
+                has_nonempty_in_flow_content(fragment),
+            ));
         }
         for child in &fragment.children {
             collect(target, child, offset, fragments);
@@ -1070,29 +1200,111 @@ fn inline_containing_block_geometry(
     // zero-width geometry for genuinely empty positioned inlines.
     let nonempty: Vec<_> = fragments
         .iter()
-        .filter(|(_, size)| size.width > LayoutUnit::zero())
+        .filter(|(_, size, has_content)| size.width > LayoutUnit::zero() || *has_content)
         .collect();
     let endpoints = if nonempty.is_empty() {
         fragments.first().zip(fragments.last())
     } else {
         nonempty.first().copied().zip(nonempty.last().copied())
     };
-    endpoints.map(|((first_offset, first_size), (last_offset, last_size))| {
-        let (left, right) = if direction == Direction::Rtl {
-            (last_offset.left, first_offset.left + first_size.width)
-        } else {
-            (first_offset.left, last_offset.left + last_size.width)
-        };
-        let top = first_offset.top;
-        let bottom = last_offset.top + last_size.height;
-        (
-            PhysicalOffset::new(left, top),
-            PhysicalSize::new(
+    endpoints.map(
+        |((first_offset, first_size, _), (last_offset, last_size, _))| {
+            let (left, right) = if direction == Direction::Rtl {
+                (last_offset.left, first_offset.left + first_size.width)
+            } else {
+                (first_offset.left, last_offset.left + last_size.width)
+            };
+            let (top, bottom) = if writing_direction.is_horizontal() {
+                // Preserve the established horizontal continuation geometry;
+                // its fragment list already carries CSS 2.1 first/last-box
+                // affinity used by horizontal multicol fragmentation.
+                (first_offset.top, last_offset.top + last_size.height)
+            } else {
+                // Vertical line fragments are still collected before their
+                // owning block/multicol projection. Retain their logical line
+                // endpoints here so that block-axis column affinity survives
+                // the later transpose.
+                let (block_first_offset, _, _) = fragments.first().unwrap();
+                let (block_last_offset, block_last_size, _) = fragments.last().unwrap();
+                (
+                    block_first_offset.top,
+                    block_last_offset.top + block_last_size.height,
+                )
+            };
+            let size = PhysicalSize::new(
                 (right - left).clamp_negative_to_zero(),
                 (bottom - top).clamp_negative_to_zero(),
-            ),
-        )
-    })
+            );
+            (
+                PhysicalOffset::new(
+                    logical_inline_axis_offset(
+                        left,
+                        size.width,
+                        container_inline_size,
+                        writing_direction,
+                        normalize_vertical_rtl,
+                    ),
+                    top,
+                ),
+                size,
+            )
+        },
+    )
+}
+
+/// Inline layout places runs in visual start/end order so text alignment and
+/// bidi stay local to the line. Positioned geometry crosses a different
+/// boundary: it must be expressed as a start-relative logical coordinate
+/// before the owning block projects it to physical fragment storage.
+fn logical_inline_axis_offset(
+    visual_offset: LayoutUnit,
+    inline_extent: LayoutUnit,
+    container_inline_size: LayoutUnit,
+    writing_direction: openui_geometry::WritingDirectionMode,
+    normalize_vertical_rtl: bool,
+) -> LayoutUnit {
+    // Line construction stores visual inline coordinates in both horizontal
+    // and vertical modes.  The owning block consumes start-relative logical
+    // coordinates, so RTL must reverse the cursor before either a horizontal
+    // or transposed physical boundary consumes it.
+    if writing_direction.is_rtl() && (writing_direction.is_horizontal() || normalize_vertical_rtl) {
+        container_inline_size - visual_offset - inline_extent
+    } else {
+        visual_offset
+    }
+}
+
+/// Convert the visual inline coordinates produced while constructing a line
+/// into the logical start-relative coordinates consumed by vertical block
+/// layout. Horizontal IFC fragments remain in their established physical
+/// storage path; their positioned geometry is normalized separately above.
+fn normalize_vertical_line_inline_axis(
+    fragment: &mut Fragment,
+    writing_direction: openui_geometry::WritingDirectionMode,
+) {
+    if writing_direction.is_horizontal() || !writing_direction.is_rtl() {
+        return;
+    }
+
+    fn normalize_children(fragment: &mut Fragment) {
+        let inline_size = fragment.size.width;
+        for child in &mut fragment.children {
+            child.offset.left = inline_size - child.offset.left - child.size.width;
+            if child.node_id.is_none() || child.is_inline_box_fragment {
+                normalize_children(child);
+            }
+        }
+    }
+
+    normalize_children(fragment);
+    for candidate in &mut fragment.oof_candidates {
+        candidate.static_position.left = fragment.size.width - candidate.static_position.left;
+        if candidate.has_inline_containing_block {
+            candidate.containing_block_offset.left = fragment.size.width
+                - candidate.containing_block_offset.left
+                - candidate.containing_block_size.width;
+        }
+    }
 }
 
 fn normalize_fragmented_inline_containing_block(
@@ -1153,6 +1365,9 @@ fn collect_atomic_inline_oof_candidates(
                 cb_node_id,
                 &fragment.children,
                 doc.node(cb_node_id).style.direction,
+                space.writing_direction,
+                block_size.width,
+                needs_logical_positioned_inline_geometry(doc, block_node_id, space),
             ) {
                 let (offset, size) = normalize_fragmented_inline_containing_block(
                     doc,
@@ -1218,6 +1433,7 @@ fn find_static_inline_for_item_index(
     lines: &[(LineInfo, LayoutUnit)],
     direction: Direction,
     block_level_hypothetical_box: bool,
+    formatting_context_inline_size: LayoutUnit,
 ) -> LayoutUnit {
     let line_index = lines
         .iter()
@@ -1247,7 +1463,7 @@ fn find_static_inline_for_item_index(
         // block box. Its static inline edge remains the formatting context's
         // start edge.
         if direction == Direction::Rtl {
-            *origin + line.used_width
+            formatting_context_inline_size
         } else {
             LayoutUnit::zero()
         }
@@ -1592,6 +1808,7 @@ pub fn inline_layout_for_children(
     space: &ConstraintSpace,
 ) -> Fragment {
     let style = &doc.node(node_id).style;
+    let normalize_vertical_rtl = needs_logical_positioned_inline_geometry(doc, node_id, space);
 
     let available_inline_size = space.available_inline_size.clamp_negative_to_zero();
 
@@ -1700,7 +1917,7 @@ pub fn inline_layout_for_children(
                     style.direction,
                     style.text_align_last,
                 )
-                + line_indent;
+                + physical_text_indent_offset(style.direction, line_indent);
             line_static_inline_data.push((line_info.clone(), static_inline_origin));
 
             let line_fragment = create_line_box(
@@ -1720,6 +1937,7 @@ pub fn inline_layout_for_children(
                 },
                 space.percentage_resolution_block_size,
                 &boxes_open_at_line_start,
+                normalize_vertical_rtl,
             );
 
             // Update open inline box state for the next line.
@@ -1781,72 +1999,18 @@ pub fn inline_layout_for_children(
 
     collect_atomic_inline_oof_candidates(doc, node_id, space, border_box_size, &mut fragment);
 
-    // OOF candidates from anonymous inline wrapper.
-    for oof in &items_data.oof_children {
-        let oof_style = doc.node(oof.node_id).style.clone();
-        let static_block = find_static_block_for_item_index(
-            oof.item_index,
-            &fragment.children,
-            &line_item_bounds,
-            intrinsic_block_size,
-            oof_style.display.is_block_level()
-                && items_data.items[..oof.item_index]
-                    .iter()
-                    .any(|item| match item.item_type {
-                        InlineItemType::Text => !items_data.text[item.text_range.clone()]
-                            .trim_matches(char::is_whitespace)
-                            .is_empty(),
-                        InlineItemType::AtomicInline => true,
-                        _ => false,
-                    }),
-        );
-        let inline_cb = oof.inline_containing_block.and_then(|cb_node_id| {
-            inline_containing_block_geometry(
-                cb_node_id,
-                &fragment.children,
-                doc.node(cb_node_id).style.direction,
-            )
-            .map(|(offset, size)| {
-                let (offset, size) = normalize_fragmented_inline_containing_block(
-                    doc,
-                    node_id,
-                    space,
-                    border_box_size,
-                    offset,
-                    size,
-                );
-                (cb_node_id, offset, size)
-            })
-        });
-        let (containing_block_offset, containing_block_size, containing_block_direction) =
-            inline_cb.map_or(
-                (
-                    PhysicalOffset::zero(),
-                    border_box_size,
-                    doc.node(node_id).style.direction,
-                ),
-                |(cb_node_id, offset, size)| (offset, size, doc.node(cb_node_id).style.direction),
-            );
-        let static_inline = find_static_inline_for_item_index(
-            oof.item_index,
-            &line_static_inline_data,
-            doc.node(node_id).style.direction,
-            oof_style.display.is_block_level(),
-        );
-        fragment.oof_candidates.push(OutOfFlowCandidate {
-            node_id: oof.node_id,
-            style: oof_style,
-            static_position: PhysicalOffset::new(static_inline, static_block),
-            containing_block_offset,
-            containing_block_node: inline_cb.map_or(NodeId::NONE, |(cb_node_id, _, _)| cb_node_id),
-            containing_block_size,
-            containing_block_border: openui_geometry::BoxStrut::zero(),
-            containing_block_direction,
-            static_position_direction: doc.node(node_id).style.direction,
-            has_inline_containing_block: inline_cb.is_some(),
-            inline_containing_block_node: oof.inline_containing_block,
-        });
-    }
+    append_positioned_inline_candidates(
+        doc,
+        node_id,
+        space,
+        &items_data,
+        &line_item_bounds,
+        &line_static_inline_data,
+        intrinsic_block_size,
+        border_box_size,
+        normalize_vertical_rtl,
+        &mut fragment,
+    );
 
     fragment
 }
@@ -1873,6 +2037,7 @@ fn create_line_box(
     text_indent: LayoutUnit,
     percentage_block_base: LayoutUnit,
     boxes_open_at_line_start: &[InlineBoxState],
+    normalize_vertical_rtl: bool,
 ) -> Fragment {
     // === STEP 0: Check if line has content (CSS 2.1 §9.4.2) ===
     // "Line boxes that contain no text, no preserved white space, no inline
@@ -2329,7 +2494,8 @@ fn create_line_box(
     let mut inline_boxes: Vec<InlineLineBox> = Vec::new();
     let mut inline_box_roots: Vec<InlineLineChild> = Vec::new();
     let mut inline_box_record_stack: Vec<usize> = Vec::new();
-    let mut inline_offset = text_align_offset + text_indent;
+    let physical_text_indent = physical_text_indent_offset(block_style.direction, text_indent);
+    let mut inline_offset = text_align_offset + physical_text_indent;
     let mut justification_accumulator = 0.0f32;
     // Track how many characters we've seen before this item (for inter-character
     // justification boundary gaps — Issue 4 fix).
@@ -2866,7 +3032,7 @@ fn create_line_box(
                     PhysicalOffset::new(child.offset.left + hyphen_width, child.offset.top);
             }
             hyphen_fragment.offset =
-                PhysicalOffset::new(text_align_offset + text_indent, hyphen_top);
+                PhysicalOffset::new(text_align_offset + physical_text_indent, hyphen_top);
             let child_index = children.len();
             children.push(hyphen_fragment);
             attach_inline_line_child(
@@ -2920,7 +3086,7 @@ fn create_line_box(
                 ellipsis_text.to_string(),
             );
             ellipsis_fragment.offset =
-                PhysicalOffset::new(text_align_offset + text_indent, ellipsis_top);
+                PhysicalOffset::new(text_align_offset + physical_text_indent, ellipsis_top);
             ellipsis_fragment.inherited_style = Some(block_style.clone());
             ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
             let child_index = children.len();
@@ -2980,6 +3146,9 @@ fn create_line_box(
     line_fragment.baseline_offset = baseline.to_f32();
     line_fragment.children = children;
     line_fragment.oof_candidates = line_oof_candidates;
+    if normalize_vertical_rtl {
+        normalize_vertical_line_inline_axis(&mut line_fragment, space.writing_direction);
+    }
     line_fragment
 }
 

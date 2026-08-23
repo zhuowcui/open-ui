@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1H is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W1I is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -30,18 +30,20 @@ constraints and intrinsic inputs at explicit boundaries, and routing flex
 static positions through the existing main/cross mapping. W1H closes logical
 multicol sizing and projection, axis-aware fragmented decoration and clipping,
 vertical float overflow propagation, and three vertical flex continuation
-shapes. The authoritative live full-suite result is 3,673 runnable, 3,374 exact, 299
-functional failures, and zero errors.
+shapes. W1I closes positioned-inline static geometry in direct block flow and
+vertical multicol, including first/last continuation containing blocks and
+logical out-of-flow projection. The authoritative live full-suite result is
+3,703 runnable, 3,406 exact, 297 functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1H |
+| Metric | Kickoff | Live W1I |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,673 |
-| Exact passes | 3,267 | 3,374 |
-| Functional failures | 299 | 299 |
+| Runnable WPTs | 3,566 | 3,703 |
+| Exact passes | 3,267 | 3,406 |
+| Functional failures | 299 | 297 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 4,000 |
-| `needs_writing_mode` owner rows | 842 | 735 |
+| Unported rows | 4,107 | 3,970 |
+| `needs_writing_mode` owner rows | 842 | 703 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -702,3 +704,51 @@ render/diff error.
   layout, neighboring flex-abspos cases, tables, images/print-only cases,
   sideways modes, material vertical text/bidi, extreme column-rule geometry,
   and writing-mode 010–016 in later scoped work.
+
+### 2026-08-23 — W1I positioned-inline static geometry closure
+
+- Added one private positioned-inline geometry path shared by both inline
+  layout entry points. Static anchors and first/last continuation containing
+  blocks stay in logical inline/block coordinates until their owning block or
+  multicol boundary, with direction-aware continuation affinity and synthetic
+  empty-continuation filtering.
+- Text indent, asymmetric edges, relative inline translation, atomic-inline
+  bubbling, and block-in-inline interruption now contribute exactly once.
+  Logical-to-physical out-of-flow projection carries each candidate's static
+  anchor, containing-block offset, and containing-block size together while
+  retaining the inline containing-block node, direction, and zero-border
+  contract.
+- Vertical multicol maps the positioned inline's first and last endpoints
+  through the W1H column index/remainder and vertical-lr/vertical-rl projection.
+  The physical containing block is constructed before out-of-flow layout, and
+  the returned positioned fragment remains outside multicol's final in-flow
+  projection with single descendant ownership.
+- Surgically admitted the complete 30-ID cohort: five direct-flow
+  `static-position_*` cases, five `static-position_*-in-multicol` cases, and
+  five `*-in-multicols` cases for each of vertical-lr and vertical-rl. The two
+  existing horizontal-tb failures `static-position_htb-rtl-ltr.tentative` and
+  `static-position_htb-rtl-rtl` were repaired by the same shared path. The
+  required 35-ID family proof is 35/35 exact with zero mismatched pixels or
+  errors.
+- The frozen 3,267-ID kickoff baseline remains 3,267/3,267 exact. The
+  authoritative complete no-resume run is **3,703 runnable / 3,406 exact / 297
+  fail / 0 errors**. Its committed `summary.json` SHA-256 is
+  `13a7c9181f86b213a81a183eb164d0d05d1bd03911850bdc22d57e42c65cf416`.
+  The live inventory is 3,970 unported rows, 703 `needs_writing_mode` rows,
+  and 828 text-manifest IDs; the validator requires exactly 139 promotions
+  without changing frozen ledgers.
+- All 30 builders dry-run deterministically, two transactional splices are
+  byte-identical, and the SP13-R later-promotion allowlist now recognizes the
+  20 admitted multicol-position IDs without modifying its frozen ledger.
+  Mapping, deferred CSV/plan, and HTML generation are byte-identical across
+  two runs.
+- Verification covers the 35-ID proof, three frozen-regression guards, the
+  full release pixel suite, parameterized layout regressions, the locked Rust
+  matrix, all 122 closure/porter tests, both closure-generator checks,
+  formatter and diff checks, the writing-mode 010–016 exclusion, and the
+  unflagged PNG-backed audit at 7/7.
+- Keep the six true out-of-flow multicol fragmentation cases, fragmented
+  abspos boxes, seven safe-alignment flex cases, absolute centering, tables,
+  transforms, generated content, images/print cases, and tolerance/reference
+  changes outside W1I. W2 retains authoritative mixed-script bidi, upright and
+  sideways glyph work, fallback shaping, and writing-mode 010–016.

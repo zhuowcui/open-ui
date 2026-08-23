@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1H | 🟡 Active; logical multicol/fragmentation closure, 107 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1I | 🟡 Active; positioned-inline static geometry closure, 139 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,673 ported/runnable tests, 3,374 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 735 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,703 ported/runnable tests, 3,406 runnable passes, 297 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 703 live writing-mode owner rows.**
 
 ---
 
@@ -271,11 +271,11 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Metric | Value |
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
-| Current runnable WPT tests | 3,673 |
-| Current runnable WPT passes | 3,374 |
+| Current runnable WPT tests | 3,703 |
+| Current runnable WPT passes | 3,406 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
-| Pixel comparison tests | 3,673 generated WPT comparisons + earlier SP pages/apps |
+| Pixel comparison tests | 3,703 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
@@ -648,3 +648,35 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   Rust matrix, all 122 closure/porter tests, both ledger checks, release
   comparator, double deterministic accountability generation, splice
   idempotence, formatter/diff checks, and audit 7/7.
+
+### SP17 W1I: positioned-inline static geometry closure
+
+- Added a private logical positioned-inline candidate path shared by both
+  inline layout entry points. First/last continuation containing blocks now
+  honor the inline ancestor direction and logical line positions while text
+  indent, relative offsets, atomic-inline bubbling, block-in-inline
+  interruption, and synthetic empty continuations are resolved once.
+- Extended the out-of-flow projection boundary to carry logical static anchors
+  and inline containing-block geometry together without losing the inline
+  node, direction, or zero-border contract. Vertical multicol maps both
+  endpoints through its existing column index/remainder and vertical-lr or
+  vertical-rl projection before physical positioned layout.
+- Surgically admitted all 30 selected builders and repaired both existing
+  horizontal-tb RTL family failures. The 35-ID proof is 35/35 exact with zero
+  mismatched pixels or errors; two dry-runs and two transactional splices are
+  byte-identical.
+- The frozen 3,267-ID baseline remains exact. The authoritative full suite is
+  **3,703 runnable / 3,406 exact / 297 fail / 0 errors**; live unported
+  inventory is 3,970, writing-mode ownership is 703, the text manifest is 828,
+  and the live validator requires exactly 139 promotions. The committed
+  `summary.json` SHA-256 is
+  `13a7c9181f86b213a81a183eb164d0d05d1bd03911850bdc22d57e42c65cf416`.
+- Verification: focused positioned-inline and regression-guard comparisons,
+  the complete no-resume release suite, the full locked Rust matrix, all 122
+  closure/porter tests, both ledger checks, release comparator, double
+  deterministic mapping/deferred/HTML generation, splice idempotence,
+  formatter/diff checks, the writing-mode 010–016 exclusion, and audit 7/7.
+- Next: keep the six true multicol out-of-flow fragmentation cases,
+  fragmented abspos boxes, flex safe alignment, absolute centering, tables,
+  transforms, generated content, and image/print cases in later atomic W1
+  cohorts. W2 retains material bidi and vertical glyph shaping.

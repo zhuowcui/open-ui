@@ -261,8 +261,11 @@ impl InlineItemsData {
         // Re-derive runs in original text coordinates from orig_levels.
         let orig_runs = derive_runs_from_levels(&self.text, &orig_levels);
 
-        let mut new_items = Vec::with_capacity(self.items.len());
-        for item in self.items.drain(..) {
+        let old_item_count = self.items.len();
+        let mut boundary_map = vec![0usize; old_item_count + 1];
+        let mut new_items = Vec::with_capacity(old_item_count);
+        for (old_index, item) in self.items.drain(..).enumerate() {
+            boundary_map[old_index] = new_items.len();
             if item.item_type != InlineItemType::Text || item.text_range.is_empty() {
                 new_items.push(item);
                 continue;
@@ -313,6 +316,13 @@ impl InlineItemsData {
             }
         }
 
+        boundary_map[old_item_count] = new_items.len();
+        for placeholder in &mut self.oof_children {
+            placeholder.item_index = boundary_map[placeholder.item_index.min(old_item_count)];
+        }
+        for interruption in &mut self.block_in_inline {
+            interruption.item_index = boundary_map[interruption.item_index.min(old_item_count)];
+        }
         self.items = new_items;
     }
 }

@@ -21,31 +21,31 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W1H full no-resume run):
+Latest authoritative accountability snapshot (SP17 W1I full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3673 |
-| Unported but explicitly tracked tests | 4000 |
-| Runnable passes | 3374 |
-| Runnable failures | 299 |
+| Ported/runnable WPT tests | 3703 |
+| Unported but explicitly tracked tests | 3970 |
+| Runnable passes | 3406 |
+| Runnable failures | 297 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
 | Empty unported dependency rows | 0 |
 | `sp12_layout_bug` rows | 0 |
 | `needs_font_metrics` rows | 0 |
 | Runnable `sp13_multicol` rows | 0 |
-| Unported `sp13_multicol` residuals | 1002 |
+| Unported `sp13_multicol` residuals | 982 |
 
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
-The full `wpt/` run was executed without resume on 2026-08-22. Its committed
+The full `wpt/` run was executed without resume on 2026-08-23. Its committed
 `summary.json` SHA-256 is
-`ed78d9c2fd09c64a52c5de47ece6e7077a8fbab34e3eff6a12d6814ede1c6474`.
+`13a7c9181f86b213a81a183eb164d0d05d1bd03911850bdc22d57e42c65cf416`.
 All 3267 frozen SP17 baseline IDs, including all 2823 frozen SP13-R baseline
 IDs and all 351 runnable multicol targets, remain exact.
 
-## SP17 W1H Logical Multicol and Vertical Fragmentation Closure
+## SP17 W1I Positioned-Inline Static Geometry Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -165,16 +165,40 @@ css-multicol sizing/scrolling targets, and two css-overflow float targets. The
 live validator requires all 107 exact SP17 promotions, and writing-mode
 010–016 remain absent.
 
-The current full result is 3673 runnable, 3374 exact, 299 functional failures,
-and zero errors. Live `needs_writing_mode` ownership is 735 rows; the frozen
-842-row kickoff inventory and 311/531 disposition remain immutable. The text
-manifest contains 798 IDs.
+W1I introduces one private logical positioned-inline geometry path shared by
+both inline layout entry points. It derives first/last containing-block
+endpoints from the inline ancestor's direction and logical line positions,
+ignores synthetic empty continuations when content exists, and incorporates
+text indent, asymmetric edges, relative inline translation, atomic-inline
+bubbling, and block-in-inline interruption exactly once.
 
-W1 remains incomplete for positioned-inline static positions, flex
-safe-alignment abspos behavior, and fragmented/multicol out-of-flow layout.
-Tables, images/print-specific cases, sideways modes, and extreme column-rule
-geometry remain later work. W2 retains upright
-CJK and mixed-script run splitting, sideways text, and writing-mode 010–015.
+The out-of-flow projection boundary now accepts inline containing blocks. It
+projects each candidate's logical static anchor, containing-block offset, and
+containing-block size together while preserving its inline containing-block
+node, direction, and zero-border contract. Vertical multicol sends the same
+first/last endpoints through W1H's column index/remainder and vertical-lr or
+vertical-rl mapping before physical out-of-flow layout; positioned fragments
+remain outside the final in-flow projection and have one owner.
+
+The atomic 30-ID admission contains the five direct `static-position_*`, five
+`static-position_*-in-multicol`, and five `*-in-multicols` shapes for each of
+vertical-lr and vertical-rl. The shared fix also repairs the two existing
+horizontal-tb RTL family failures. All 35 family IDs are exact with zero
+mismatched pixels or errors. The live validator requires exactly 139 SP17
+promotions; the SP13-R later-promotion allowlist recognizes the 20 multicol
+position IDs without changing any frozen ledger.
+
+The current full result is 3703 runnable, 3406 exact, 297 functional failures,
+and zero errors. Live `needs_writing_mode` ownership is 703 rows; the frozen
+842-row kickoff inventory and 311/531 disposition remain immutable. The text
+manifest contains 828 IDs. All 3,267 frozen kickoff exact IDs remain exact.
+
+W1 remains incomplete for true fragmented/multicol out-of-flow layout, flex
+safe-alignment abspos behavior, and absolute centering. Tables,
+images/print-specific cases, sideways modes, transforms, and extreme
+column-rule geometry remain later work. W2 retains authoritative mixed-script
+bidi and fallback shaping, upright and sideways glyph work, and writing-mode
+010–016.
 
 ## SP13-R Closure
 
@@ -230,7 +254,7 @@ categories rather than `sp12_layout_bug`.
 
 ## Current Runnable Failure Ownership
 
-The 299 non-passing runnable tests are ported tests classified by the feature that owns the
+The 297 non-passing runnable tests are ported tests classified by the feature that owns the
 remaining gap. Categories can overlap because one test may depend on multiple systems.
 
 Top runnable failure categories:
@@ -242,17 +266,17 @@ Top runnable failure categories:
 | `needs_image` | 66 |
 | `needs_inline_block` | 55 |
 | `needs_complex_border` | 52 |
-| `needs_empty_block_margin_collapse` | 42 |
+| `needs_empty_block_margin_collapse` | 40 |
 | `needs_body_canvas_background_extent` | 24 |
 | `needs_generated_content` | 23 |
 | `needs_rounded_border_paint` | 22 |
-| `needs_writing_mode` | 19 |
 | `needs_box_shadow` | 18 |
+| `needs_writing_mode` | 17 |
 | `sp13_fragmentation` | 17 |
 
 ## Current Unported Inventory Ownership
 
-The 4000 unported rows are Chromium WPT files that the current porter or renderer cannot
+The 3970 unported rows are Chromium WPT files that the current porter or renderer cannot
 represent yet. They are still tracked with explicit dependency categories.
 
 Top unported categories:
@@ -260,28 +284,29 @@ Top unported categories:
 | Category | Count |
 |---|---:|
 | `needs_javascript` | 1945 |
-| `sp13_multicol` | 1002 |
-| `needs_writing_mode` | 716 |
+| `sp13_multicol` | 982 |
+| `needs_writing_mode` | 686 |
 | `sp13_fragmentation` | 643 |
 | `needs_table_layout` | 462 |
 | `needs_generated_content` | 443 |
-| `reference_test` | 421 |
+| `reference_test` | 415 |
 | `needs_inline_block` | 408 |
 | `needs_containment` | 335 |
 | `needs_image` | 325 |
 | `needs_advanced_selectors` | 306 |
 | `needs_grid` | 304 |
-| `needs_empty_block_margin_collapse` | 304 |
+| `needs_empty_block_margin_collapse` | 294 |
 | `needs_form_controls` | 264 |
 
 ## Recommended Next Work
 
-Continue SP17 W1 with positioned-inline and fragmented/multicol out-of-flow
-behavior in their explicit later cohorts. Keep the neighboring flex-abspos,
-table, image/print-only, and extreme column-rule cases out of the closed W1H
-cohort. Reserve upright CJK and mixed-script
-run splitting, sideways text, and `flexbox-writing-mode-010` through 015 for W2;
-do not substitute geometry-only builders for their glyph requirements.
+Continue SP17 W1 with the explicitly excluded true fragmented/multicol
+out-of-flow, safe-alignment flex-abspos, and absolute-centering cohorts. Keep
+tables, transforms, generated content, image/print-only cases, and extreme
+column-rule geometry out of the closed W1I cohort. Reserve authoritative bidi,
+upright CJK and mixed-script run splitting, fallback shaping, sideways text,
+and `flexbox-writing-mode-010` through 016 for W2; do not substitute
+geometry-only builders for their glyph requirements.
 Keep all 3267 kickoff exact IDs green, splice surgically, do not batch-regenerate
 the remaining actionable builders, and do not retire the detector. Follow
 `docs/SP17-PLAN.md` for the exact boundary and recorded commands.
@@ -310,6 +335,7 @@ Regenerate tracking:
 ```bash
 python3 tools/accountability/generate_wpt_mapping.py
 python3 tools/accountability/generate_sp12_5_csv.py
+python3 tools/accountability/generate_html_report.py
 python3 tools/wpt/generate_sp17_closure.py --check
 ```
 
