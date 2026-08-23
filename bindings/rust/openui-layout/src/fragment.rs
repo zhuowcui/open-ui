@@ -6,7 +6,9 @@
 //! sizes and offsets.
 
 use openui_dom::NodeId;
-use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize};
+use openui_geometry::{
+    BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize, WritingDirectionMode,
+};
 use openui_style::ComputedStyle;
 use openui_text::ShapeResult;
 use std::sync::Arc;
@@ -186,6 +188,12 @@ pub struct Fragment {
     /// Resolved column geometry when this fragment is a multicol container.
     pub multicol_fragmentation: Option<MulticolFragmentationData>,
 
+    /// Writing direction of the fragmentation context that produced this
+    /// physical fragment. `None` means the fragment is not a fragmentainer or
+    /// an in-flow continuation. Paint uses this to map logical block slicing
+    /// to the physical X or Y axis without rediscovering layout state.
+    pub fragmentation_writing_direction: Option<WritingDirectionMode>,
+
     /// Optional block-axis limit for this fragment's own decorations
     /// (background/border/shadow), while leaving children free to overflow.
     pub decoration_paint_block_size: Option<LayoutUnit>,
@@ -342,6 +350,7 @@ impl Fragment {
             fragmentation_visual_offset: PhysicalOffset::zero(),
             positioned_fragmentation: None,
             multicol_fragmentation: None,
+            fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
             decoration_slice: None,
             paint_zero_block_outline: false,
@@ -394,6 +403,7 @@ impl Fragment {
             fragmentation_visual_offset: PhysicalOffset::zero(),
             positioned_fragmentation: None,
             multicol_fragmentation: None,
+            fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
             decoration_slice: None,
             paint_zero_block_outline: false,

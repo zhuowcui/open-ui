@@ -1276,7 +1276,18 @@ pub(crate) fn compute_logical_intrinsic_inline_sizes(
         let child_min = contribution.min + margin_inline;
         let child_max = contribution.max + margin_inline;
         min_inline = min_inline.max_of(child_min);
-        current_line_max = current_line_max + child_max;
+        if child_style.display.is_block_level() && child_style.float == openui_style::Float::None {
+            // Normal-flow block children occupy separate block-axis rows. Their
+            // inline intrinsic contribution is therefore the maximum child,
+            // not the sum used by consecutive inline-level children on one
+            // max-content line. This distinction is axis-independent: in a
+            // vertical container, two vertical flex children still stack in
+            // the horizontal block direction.
+            max_inline = max_inline.max_of(current_line_max).max_of(child_max);
+            current_line_max = LayoutUnit::zero();
+        } else {
+            current_line_max = current_line_max + child_max;
+        }
     }
 
     max_inline = max_inline.max_of(current_line_max);
@@ -2138,6 +2149,29 @@ mod tests {
         assert_eq!(
             sizes,
             MinMaxSizes::new(LayoutUnit::from_i32(45), LayoutUnit::from_i32(45))
+        );
+    }
+
+    #[test]
+    fn vertical_inline_intrinsic_maxes_normal_flow_block_children() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.writing_mode = openui_style::WritingMode::VerticalLr;
+        doc.append_child(doc.root(), container);
+
+        for _ in 0..2 {
+            let child = doc.create_node(ElementTag::Div);
+            let style = doc.node_mut(child).style_mut();
+            style.display = openui_style::Display::Flex;
+            style.writing_mode = openui_style::WritingMode::VerticalLr;
+            style.height = Length::px(48.0);
+            doc.append_child(container, child);
+        }
+
+        let sizes = compute_logical_intrinsic_inline_sizes(&doc, container);
+        assert_eq!(
+            sizes,
+            MinMaxSizes::new(LayoutUnit::from_i32(48), LayoutUnit::from_i32(48))
         );
     }
 }

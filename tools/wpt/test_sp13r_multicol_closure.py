@@ -540,11 +540,22 @@ class GenerationAndRunnerTests(unittest.TestCase):
             for test_id, row in mapping.items()
             if closure.OWNER in closure.categories(row["failure_category"])
         }
-        self.assertEqual(owned, set(residual_by_id))
+        self.assertEqual(
+            owned,
+            set(residual_by_id) - closure.LATER_EXACT_PROMOTIONS,
+        )
+        self.assertEqual(len(closure.LATER_EXACT_PROMOTIONS), 16)
         for test_id in targets:
             self.assertEqual(mapping[test_id]["ported"], "yes")
         for test_id, item in residual_by_id.items():
             row = mapping[test_id]
+            if test_id in closure.LATER_EXACT_PROMOTIONS:
+                self.assertEqual(row["ported"], "yes")
+                self.assertNotIn(
+                    closure.OWNER,
+                    closure.categories(row["failure_category"]),
+                )
+                continue
             self.assertEqual(row["ported"], "no")
             self.assertEqual(
                 closure.categories(row["failure_category"]),
@@ -556,6 +567,21 @@ class GenerationAndRunnerTests(unittest.TestCase):
             rows = list(csv.DictReader(stream))
         summary = json.loads(closure.SUMMARY_JSON.read_text(encoding="utf-8"))
         closure.validate_closed_snapshot(rows, summary, *closure.load_ledgers())
+        summary_by_id = closure.runnable_wpt_results(summary)
+        templates = set(
+            json.loads(
+                (PORTED / "all_wpt_templates.json").read_text(encoding="utf-8")
+            )
+        )
+        self.assertEqual(
+            audit.sp13r_multicol_closure_errors(
+                rows,
+                summary_by_id,
+                templates,
+                *closure.load_ledgers(),
+            ),
+            [],
+        )
         self.assertGreater(
             len(closure.runnable_wpt_results(summary)),
             closure.EXPECTED_RUNNABLE,

@@ -1,6 +1,6 @@
 {
-  "total": 3657,
-  "passed": 3358,
+  "total": 3673,
+  "passed": 3374,
   "failed": 299,
   "errors": 0,
   "near_miss_aa": 60,
@@ -8589,6 +8589,36 @@
       "mismatch_pct": 0.0
     },
     {
+      "id": "wpt/css_multicol/multicol-fill-balance-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/multicol-span-auto-size-in-vertical-writing-mode-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/multicol-span-auto-size-in-vertical-writing-mode-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/multicol-under-vertical-rl-scroll",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/orthogonal-writing-mode-shrink-to-fit",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/orthogonal-writing-mode-spanner",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
       "id": "wpt/css_overflow/clip-001-ref",
       "status": "pass",
       "mismatch_pct": 0.0
@@ -9237,6 +9267,16 @@
       "id": "wpt/css_overflow/scrollbar-gutter-with-background-gradient-ref",
       "status": "fail",
       "mismatch_pct": 100.0
+    },
+    {
+      "id": "wpt/css_overflow/no-scrollable-overflow-vertical-rl",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_overflow/no-scrollable-overflow-vertical-rl-2",
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_sizing/abspos-auto-sizing-fit-content-percentage-001",
@@ -14145,6 +14185,46 @@
     },
     {
       "id": "wpt/css_break/root-margin-001-print",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/borders-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/borders-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-056",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/flexbox_single-line-column-flex-fragmentation-044",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/flexbox_single-line-row-flex-fragmentation-030",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/overflow-clip-000",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/overflow-clip-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/overflow-clip-002",
       "status": "pass",
       "mismatch_pct": 0.0
     },

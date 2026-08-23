@@ -29,10 +29,15 @@ PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
 DATA_DIR = os.path.join(SCRIPT_DIR, "data")
 RESULTS_DIR = os.path.join(DATA_DIR, "pixel_comparison", "results")
 WPT_DIR = os.path.join(PROJECT_ROOT, "bindings", "rust", "pixel-compare", "src", "wpt")
+WPT_TOOLS_DIR = os.path.join(PROJECT_ROOT, "tools", "wpt")
 
 # Import from shared_detectors to stay in sync automatically
 sys.path.insert(0, SCRIPT_DIR)
+sys.path.insert(0, WPT_TOOLS_DIR)
 from shared_detectors import CATEGORY_FOR_DEP
+from generate_sp13r_multicol_closure import (
+    LATER_EXACT_PROMOTIONS as SP13R_LATER_EXACT_PROMOTIONS,
+)
 
 VALID_FAILURE_CATEGORIES = set(CATEGORY_FOR_DEP.values()) | {"sp12_layout_bug", "sp13_fragmentation_architecture", "not_ported"}
 TEXT_PORT_METADATA_CATEGORIES = {"reference_test", "non_visual_test"}
@@ -565,13 +570,20 @@ def sp16_closure_errors(
 
 
 def sp13r_multicol_closure_errors(
-    rows, summary_by_id, templates, baseline, targets, residuals
+    rows,
+    summary_by_id,
+    templates,
+    baseline,
+    targets,
+    residuals,
+    later_exact_promotions=SP13R_LATER_EXACT_PROMOTIONS,
 ):
     """Validate SP13-R's immutable multicol cover and exact closed snapshot."""
     errors = []
     residual_ids = [
         item.get("test_id", "") for item in residuals if isinstance(item, dict)
     ]
+    later_exact_promotions = set(later_exact_promotions)
     if baseline != sorted(set(baseline)) or len(baseline) != SP13R_EXPECTED_BASELINE:
         errors.append("SP13-R baseline is not the frozen sorted 2,823-ID set")
     if targets != sorted(set(targets)) or len(targets) != SP13R_EXPECTED_TARGETS:
@@ -587,6 +599,8 @@ def sp13r_multicol_closure_errors(
         errors.append("SP13-R ledgers are not a complete disjoint 1,369-ID cover")
     if set(baseline) & (set(targets) | set(residual_ids)):
         errors.append("SP13-R baseline overlaps the multicol inventory")
+    if not later_exact_promotions <= set(residual_ids):
+        errors.append("SP13-R later-promotion allowlist escapes the residual ledger")
 
     mapping_by_id = {canonical_mapping_id(row): row for row in rows}
     for test_id in baseline:
@@ -630,6 +644,27 @@ def sp13r_multicol_closure_errors(
         ):
             errors.append(f"SP13-R residual disposition is invalid: {test_id}")
             continue
+        if test_id in later_exact_promotions:
+            result = summary_by_id.get(test_id)
+            mapped = {
+                part.strip()
+                for part in row.get("failure_category", "").split(",")
+                if part.strip()
+            } if row else set()
+            if (
+                not row
+                or row.get("ported") != "yes"
+                or row.get("our_test_id") != test_id
+                or test_id not in templates
+                or SP13R_OWNER in mapped
+                or not result
+                or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                errors.append(
+                    f"SP13-R later promotion is not runnable and exact: {test_id}"
+                )
+            continue
         if not row or row.get("ported") != "no":
             errors.append(f"SP13-R residual is not unported: {test_id}")
             continue
@@ -659,8 +694,11 @@ def sp13r_multicol_closure_errors(
             multicol_rows.append(canonical_mapping_id(row))
             if row.get("ported") != "no":
                 stale_runnable.append(canonical_mapping_id(row))
-    if sorted(multicol_rows) != residual_ids:
-        errors.append("SP13-R owner does not exactly identify the frozen residual ledger")
+    expected_owned_residuals = sorted(set(residual_ids) - later_exact_promotions)
+    if sorted(multicol_rows) != expected_owned_residuals:
+        errors.append(
+            "SP13-R owner does not exactly identify the live unported residuals"
+        )
     if stale_runnable:
         errors.append(f"runnable row retains SP13-R ownership: {stale_runnable[0]}")
 

@@ -11008,6 +11008,332 @@ fn css_overflow_scrollbar_gutter_with_background_gradient_ref() -> Document {
     doc
 }
 
+// Source: css-overflow/no-scrollable-overflow-vertical-rl.html
+fn css_overflow_no_scrollable_overflow_vertical_rl() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.writing_mode = WritingMode::VerticalRl;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.overflow_x = Overflow::Auto;
+    doc.node_mut(n1).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.writing_mode = WritingMode::VerticalRl;
+    doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.height = Length::px(100.0);
+    doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n2).style.column_count = Some(2);
+    doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.writing_mode = WritingMode::VerticalRl;
+    doc.node_mut(n3).style.width = Length::px(100.0);
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n3).style.background_linear_gradient = None;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.writing_mode = WritingMode::VerticalRl;
+    doc.node_mut(n4).style.float = Float::Left;
+    doc.node_mut(n4).style.height = Length::px(50.0);
+    doc.node_mut(n4).style.width = Length::px(100.0);
+    doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n2, n4);
+    doc
+}
+
+// Source: css-overflow/no-scrollable-overflow-vertical-rl-2.html
+fn css_overflow_no_scrollable_overflow_vertical_rl_2() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.writing_mode = WritingMode::VerticalRl;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.overflow_x = Overflow::Auto;
+    doc.node_mut(n1).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.writing_mode = WritingMode::VerticalRl;
+    doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.height = Length::px(100.0);
+    doc.node_mut(n2).style.column_fill = ColumnFill::Auto;
+    doc.node_mut(n2).style.column_count = Some(2);
+    doc.node_mut(n2).style.column_gap = Some(Length::px(0.0));
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.display = Display::Block;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.writing_mode = WritingMode::VerticalRl;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n2, n3);
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.writing_mode = WritingMode::VerticalRl;
+    doc.node_mut(n4).style.width = Length::px(100.0);
+    doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.writing_mode = WritingMode::VerticalRl;
+    doc.node_mut(n5).style.float = Float::Left;
+    doc.node_mut(n5).style.height = Length::px(50.0);
+    doc.node_mut(n5).style.width = Length::px(100.0);
+    doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n5).style.background_linear_gradient = None;
+    doc.node_mut(n5).style.display = Display::Block;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n3, n5);
+    doc
+}
+
 pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
     vec![
         (
@@ -11533,6 +11859,14 @@ pub fn css_overflow_registry() -> Vec<(&'static str, fn() -> Document)> {
         (
             "wpt/css_overflow/scrollbar-gutter-with-background-gradient-ref",
             css_overflow_scrollbar_gutter_with_background_gradient_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_overflow/no-scrollable-overflow-vertical-rl",
+            css_overflow_no_scrollable_overflow_vertical_rl as fn() -> Document,
+        ),
+        (
+            "wpt/css_overflow/no-scrollable-overflow-vertical-rl-2",
+            css_overflow_no_scrollable_overflow_vertical_rl_2 as fn() -> Document,
         ),
     ]
 }

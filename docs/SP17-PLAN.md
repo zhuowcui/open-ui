@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1G is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W1H is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -27,19 +27,21 @@ clockwise rotated Latin/Ahem paint path for homogeneous mixed-orientation runs.
 W1G closes the logical out-of-flow core by keeping containing-block,
 static-position, and child writing directions distinct, transposing abspos
 constraints and intrinsic inputs at explicit boundaries, and routing flex
-static positions through the existing main/cross mapping. The authoritative
-live full-suite result is 3,657 runnable, 3,358 exact, 299
+static positions through the existing main/cross mapping. W1H closes logical
+multicol sizing and projection, axis-aware fragmented decoration and clipping,
+vertical float overflow propagation, and three vertical flex continuation
+shapes. The authoritative live full-suite result is 3,673 runnable, 3,374 exact, 299
 functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1G |
+| Metric | Kickoff | Live W1H |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,657 |
-| Exact passes | 3,267 | 3,358 |
+| Runnable WPTs | 3,566 | 3,673 |
+| Exact passes | 3,267 | 3,374 |
 | Functional failures | 299 | 299 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 4,016 |
-| `needs_writing_mode` owner rows | 842 | 751 |
+| Unported rows | 4,107 | 4,000 |
+| `needs_writing_mode` owner rows | 842 | 735 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -660,3 +662,43 @@ render/diff error.
   inline static positions, flex safe-alignment abspos behavior,
   fragmented/multicol out-of-flow layout, upright/mixed vertical text,
   sideways modes, and writing-mode 010–015 remain later scoped work.
+
+### 2026-08-22 — W1H logical multicol and vertical fragmentation closure
+
+- Added one private multicol axis mapping and one shared finalizer. Column
+  resolution, balancing, spanners, break progress, flex continuations, and
+  in-flow geometry remain logical until the final physical projection;
+  positioned fragments retain their existing physical contract.
+- Child, probe, spanner, flex, and balance-relayout spaces consume complete
+  computed writing directions. Available sizes, percentage bases, intrinsic
+  contributions, fixed/stretch flags, and fragmentainer capacity transpose at
+  the parent/child boundary; orthogonal children do not acquire general
+  fragmentation support.
+- Extended fragments with optional fragmentation writing-direction metadata.
+  Paint maps clips, decoration slices, physical border suppression,
+  backgrounds, shadows, radii, and ink overflow to horizontal Y,
+  vertical-lr X-from-left, or vertical-rl X-from-right, with independent RTL
+  inline progression.
+- Normalized flex continuation inputs and vertical in-flow descendant extents
+  into the multicol logical block axis. Authored overflow clips now reject
+  negative block-start ink owned by a later fragment, and direct or nested
+  vertical-rl floats do not enlarge the multicol scrollable-overflow union.
+- Surgically admitted the complete 16-ID W1H cohort in one transaction. The
+  focused proof is 18/18 exact, including existing `borders-006-ref` and
+  `borders-007-ref`, with zero mismatched pixels or errors. Repeat splicing is
+  byte-identical and writing-mode 010–016 remain absent.
+- The frozen 3,267-ID kickoff baseline remains 3,267/3,267 exact. The
+  authoritative complete no-resume run is **3,673 runnable / 3,374 exact / 299
+  fail / 0 errors**. Its committed `summary.json` SHA-256 is
+  `ed78d9c2fd09c64a52c5de47ece6e7077a8fbab34e3eff6a12d6814ede1c6474`.
+  The live inventory is 4,000 unported rows, 735 `needs_writing_mode` rows,
+  and 798 text-manifest IDs; the validator requires exactly 107 promotions
+  without changing frozen ledgers.
+- Verification covers parameterized layout/paint regressions, the locked Rust
+  matrix, all 122 closure/porter tests, both closure-generator checks, double
+  deterministic accountability generation, splice idempotence, formatter and
+  diff checks, the unflagged audit at 7/7, and one local checkpoint commit.
+- Keep positioned-inline containing blocks, fragmented/multicol out-of-flow
+  layout, neighboring flex-abspos cases, tables, images/print-only cases,
+  sideways modes, material vertical text/bidi, extreme column-rule geometry,
+  and writing-mode 010–016 in later scoped work.

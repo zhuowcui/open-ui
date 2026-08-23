@@ -16,8 +16,9 @@
 
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{
-    BfcOffset, BfcRect, BoxStrut, LayoutUnit, LengthType, LogicalOffset, LogicalSize, MarginStrut,
-    PhysicalOffset, PhysicalRect, PhysicalSize, WritingDirectionMode, WritingModeConverter,
+    BfcOffset, BfcRect, BoxStrut, LayoutUnit, LengthType, LogicalBoxStrut, LogicalOffset,
+    LogicalRect, LogicalSize, MarginStrut, PhysicalOffset, PhysicalRect, PhysicalSize,
+    WritingDirectionMode, WritingModeConverter,
 };
 use openui_style::{
     BoxDecorationBreak, BoxSizing, BreakInside, BreakValue, Clear, ColumnSpan, ComputedStyle,
@@ -104,6 +105,195 @@ fn normalize_child_size_for_block_axes(
             .to_logical_size(fragment.size);
         fragment.size = PhysicalSize::new(logical.inline_size, logical.block_size);
     }
+}
+
+/// Convert a completed physical child outer box into the multicol
+/// container's logical working axes. Descendants stay in the coordinate
+/// system of the layout algorithm that produced them.
+fn normalize_multicol_child_outer_box(
+    fragment: &mut Fragment,
+    writing_direction: WritingDirectionMode,
+) {
+    if writing_direction.is_horizontal() {
+        return;
+    }
+
+    let physical_size = fragment.size;
+    for child in &mut fragment.children {
+        normalize_multicol_owned_subtree(child, writing_direction, physical_size);
+    }
+
+    let converter = WritingModeConverter::new(writing_direction, physical_size);
+    let logical = converter.to_logical_size(physical_size);
+    fragment.size = PhysicalSize::new(logical.inline_size, logical.block_size);
+    fragment.overflow_rect = fragment.overflow_rect.map(|rect| {
+        let logical = converter.to_logical_rect(rect);
+        PhysicalRect::new(
+            PhysicalOffset::new(logical.offset.inline_offset, logical.offset.block_offset),
+            PhysicalSize::new(logical.size.inline_size, logical.size.block_size),
+        )
+    });
+    fragment.border =
+        algorithm_box_from_logical_strut(fragment.border.to_logical(writing_direction));
+    fragment.padding =
+        algorithm_box_from_logical_strut(fragment.padding.to_logical(writing_direction));
+    fragment.margin =
+        algorithm_box_from_logical_strut(fragment.margin.to_logical(writing_direction));
+}
+
+fn normalize_multicol_owned_subtree(
+    fragment: &mut Fragment,
+    writing_direction: WritingDirectionMode,
+    parent_physical_size: PhysicalSize,
+) {
+    if writing_direction.is_horizontal() || fragment.positioned_fragmentation.is_some() {
+        return;
+    }
+
+    let physical_size = fragment.size;
+    let converter = WritingModeConverter::new(writing_direction, parent_physical_size);
+    let logical_offset = converter.to_logical_offset(fragment.offset, physical_size);
+    let logical_size = converter.to_logical_size(physical_size);
+    fragment.offset =
+        PhysicalOffset::new(logical_offset.inline_offset, logical_offset.block_offset);
+    fragment.size = PhysicalSize::new(logical_size.inline_size, logical_size.block_size);
+    fragment.overflow_rect = fragment.overflow_rect.map(|rect| {
+        let logical =
+            WritingModeConverter::new(writing_direction, physical_size).to_logical_rect(rect);
+        PhysicalRect::new(
+            PhysicalOffset::new(logical.offset.inline_offset, logical.offset.block_offset),
+            PhysicalSize::new(logical.size.inline_size, logical.size.block_size),
+        )
+    });
+    fragment.border =
+        algorithm_box_from_logical_strut(fragment.border.to_logical(writing_direction));
+    fragment.padding =
+        algorithm_box_from_logical_strut(fragment.padding.to_logical(writing_direction));
+    fragment.margin =
+        algorithm_box_from_logical_strut(fragment.margin.to_logical(writing_direction));
+
+    for child in &mut fragment.children {
+        normalize_multicol_owned_subtree(child, writing_direction, physical_size);
+    }
+}
+
+fn physical_strut_from_algorithm_box(
+    strut: BoxStrut,
+    writing_direction: WritingDirectionMode,
+) -> BoxStrut {
+    LogicalBoxStrut::new(strut.left, strut.right, strut.top, strut.bottom)
+        .to_physical(writing_direction)
+}
+
+/// Project one multicol-owned logical fragment outer box to physical storage.
+/// Anonymous column/line layers share the multicol axes and are traversed;
+/// descendants of a real box keep the physical geometry produced by their own
+/// writing mode. Direct out-of-flow fragments are already physical.
+fn project_multicol_child_to_physical(
+    fragment: &mut Fragment,
+    writing_direction: WritingDirectionMode,
+    parent_physical_size: PhysicalSize,
+) {
+    if fragment.positioned_fragmentation.is_some() {
+        return;
+    }
+
+    let converter = WritingModeConverter::new(writing_direction, parent_physical_size);
+    let physical_size =
+        converter.to_physical_size(LogicalSize::new(fragment.size.width, fragment.size.height));
+    fragment.offset = converter.to_physical_offset(
+        LogicalOffset::new(fragment.offset.left, fragment.offset.top),
+        physical_size,
+    );
+    fragment.size = physical_size;
+    fragment.overflow_rect = fragment.overflow_rect.map(|rect| {
+        WritingModeConverter::new(writing_direction, physical_size).to_physical_rect(
+            LogicalRect::new(
+                LogicalOffset::new(rect.offset.left, rect.offset.top),
+                LogicalSize::new(rect.size.width, rect.size.height),
+            ),
+        )
+    });
+    fragment.border = physical_strut_from_algorithm_box(fragment.border, writing_direction);
+    fragment.padding = physical_strut_from_algorithm_box(fragment.padding, writing_direction);
+    fragment.margin = physical_strut_from_algorithm_box(fragment.margin, writing_direction);
+
+    if fragment.kind == FragmentKind::ColumnBox
+        || (!fragment.is_first_for_node || !fragment.is_last_for_node)
+    {
+        fragment.fragmentation_writing_direction = Some(writing_direction);
+    }
+
+    for child in &mut fragment.children {
+        project_multicol_child_to_physical(child, writing_direction, physical_size);
+    }
+}
+
+fn recompute_physical_overflow(fragment: &mut Fragment) {
+    let border_box = PhysicalRect::new(PhysicalOffset::zero(), fragment.size);
+    let mut overflow = border_box;
+    for child in &fragment.children {
+        overflow = overflow.unite(&PhysicalRect::new(child.offset, child.size));
+        if !child.has_overflow_clip && child.kind != FragmentKind::ColumnBox {
+            if let Some(child_overflow) = child.overflow_rect {
+                overflow = overflow.unite(&PhysicalRect::new(
+                    PhysicalOffset::new(
+                        child.offset.left + child_overflow.offset.left,
+                        child.offset.top + child_overflow.offset.top,
+                    ),
+                    child_overflow.size,
+                ));
+            }
+        }
+    }
+    fragment.overflow_rect = (overflow != border_box).then_some(overflow);
+}
+
+/// Shared physical boundary for both inline-content and block-content
+/// multicol layout. The body of the multicol algorithm remains entirely in
+/// logical inline/block coordinates and reaches fragment storage once.
+fn finalize_multicol_fragment(
+    fragment: &mut Fragment,
+    writing_direction: WritingDirectionMode,
+    physical_border: BoxStrut,
+    physical_padding: BoxStrut,
+) {
+    if !writing_direction.is_horizontal() {
+        let physical_size = WritingModeConverter::new(writing_direction, PhysicalSize::zero())
+            .to_physical_size(LogicalSize::new(fragment.size.width, fragment.size.height));
+        for child in &mut fragment.children {
+            project_multicol_child_to_physical(child, writing_direction, physical_size);
+        }
+        fragment.size = physical_size;
+        fragment.first_baseline = fragment.first_baseline.map(|baseline| {
+            if writing_direction.is_flipped_blocks() {
+                physical_size.width - baseline
+            } else {
+                baseline
+            }
+        });
+        fragment.last_baseline = fragment.last_baseline.map(|baseline| {
+            if writing_direction.is_flipped_blocks() {
+                physical_size.width - baseline
+            } else {
+                baseline
+            }
+        });
+    } else {
+        for child in &mut fragment.children {
+            if writing_direction.is_rtl() && child.positioned_fragmentation.is_none() {
+                child.offset.left = fragment.size.width - child.offset.left - child.size.width;
+            }
+            if child.kind == FragmentKind::ColumnBox
+                || (!child.is_first_for_node || !child.is_last_for_node)
+            {
+                child.fragmentation_writing_direction = Some(writing_direction);
+            }
+        }
+    }
+    fragment.border = physical_border;
+    fragment.padding = physical_padding;
+    recompute_physical_overflow(fragment);
 }
 
 /// Convert an immediate child from this block's logical coordinate system to
@@ -324,20 +514,43 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // CSS Multi-column Layout §3-4: if column-count or column-width is set,
     // lay out children across columns instead of normal block flow.
     if let Some(algo) = crate::multicol::ColumnLayoutAlgorithm::from_style(style) {
-        return layout_multicol(
+        // The multicol formatting context owns its complete writing direction.
+        // Most callers already provide a matching child space, but direct
+        // layout entry points historically only carried horizontal-ltr. Keep
+        // the public ConstraintSpace contract intact while making direction
+        // polarity (including asymmetric logical edges) container-owned.
+        let multicol_writing_direction = physical_style
+            .direction
+            .writing_direction(physical_style.writing_mode);
+        let mut multicol_space = space.clone();
+        multicol_space.writing_direction = multicol_writing_direction;
+        let multicol_border = algorithm_box_from_logical_strut(
+            physical_border.to_logical(multicol_writing_direction),
+        );
+        let multicol_padding = algorithm_box_from_logical_strut(
+            physical_padding.to_logical(multicol_writing_direction),
+        );
+        let mut fragment = layout_multicol(
             doc,
             node_id,
             style,
-            space,
+            &multicol_space,
             &algo,
-            &border,
-            &padding,
+            &multicol_border,
+            &multicol_padding,
             border_padding_inline,
             border_padding_block,
             child_available_inline,
             content_inline_size,
             border_box_inline,
         );
+        finalize_multicol_fragment(
+            &mut fragment,
+            multicol_writing_direction,
+            physical_border,
+            physical_padding,
+        );
+        return fragment;
     }
 
     // ── Step 3: Layout children (the main loop) ─────────────────────
@@ -628,12 +841,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             // containing blocks. The anonymous block reconstruction below
             // supplies in-flow fragments; this probe supplies OOF candidates
             // whose containing-block geometry crosses that interruption.
-            let probe_space = ConstraintSpace::for_block_child(
+            let probe_space = ConstraintSpace::for_block_child_with_writing_direction(
                 child_available_inline,
                 space.available_block_size,
                 child_available_inline,
                 child_percentage_block_size,
                 false,
+                space.writing_direction,
             );
             let mut inline_probe =
                 crate::inline::algorithm::inline_layout(doc, node_id, &probe_space);
@@ -666,12 +880,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                             )
                         });
                     if has_content {
-                        let mut seg_space = ConstraintSpace::for_block_child(
+                        let mut seg_space = ConstraintSpace::for_block_child_with_writing_direction(
                             child_available_inline,
                             space.available_block_size,
                             child_available_inline,
                             child_percentage_block_size,
                             false,
+                            space.writing_direction,
                         );
                         if exclusion_space_inline.has_floats() {
                             seg_space.exclusion_space =
@@ -715,14 +930,17 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 // Lay out the block-level element.
                 let block_child_id = bi_info.node_id;
                 let block_child_style = &doc.node(block_child_id).style;
-                let block_child_space = ConstraintSpace::for_block_child(
+                let block_child_space = crate::logical_geometry::block_child_constraint_space(
+                    space,
+                    block_child_style,
                     child_available_inline,
                     space.available_block_size,
                     child_available_inline,
                     child_percentage_block_size,
                     false,
                 );
-                let block_child_frag = block_layout(doc, block_child_id, &block_child_space);
+                let mut block_child_frag = block_layout(doc, block_child_id, &block_child_space);
+                normalize_multicol_child_outer_box(&mut block_child_frag, space.writing_direction);
 
                 let bm_top = resolve_margin_or_padding(
                     &block_child_style.margin_top,
@@ -774,12 +992,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     )
                 });
                 if has_content {
-                    let mut seg_space = ConstraintSpace::for_block_child(
+                    let mut seg_space = ConstraintSpace::for_block_child_with_writing_direction(
                         child_available_inline,
                         space.available_block_size,
                         child_available_inline,
                         child_percentage_block_size,
                         false,
+                        space.writing_direction,
                     );
                     if exclusion_space_inline.has_floats() {
                         seg_space.exclusion_space =
@@ -1127,12 +1346,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 // Lay out this anonymous inline wrapper.
                 // Pass the exclusion space so inline layout can do per-line
                 // float avoidance (CSS 2.1 §9.5.1).
-                let mut inline_space = ConstraintSpace::for_block_child(
+                let mut inline_space = ConstraintSpace::for_block_child_with_writing_direction(
                     child_available_inline,
                     space.available_block_size,
                     child_available_inline,
                     child_percentage_block_size,
                     false,
+                    space.writing_direction,
                 );
                 if exclusion_space_mixed.has_floats() {
                     // The exclusion space uses content-edge-relative coordinates.
@@ -2929,10 +3149,19 @@ fn layout_block_child(
         }
     }
 
-    child_fragment.offset = PhysicalOffset::new(
-        border.left + padding.left + resolved_margin_left,
-        *block_offset,
-    );
+    let physical_content_left =
+        if space.writing_direction.is_horizontal() && space.writing_direction.is_rtl() {
+            // The block algorithm's strut stores logical inline-start in `left`.
+            // Horizontal RTL fragment offsets are already physical at this API
+            // boundary, so their physical left padding edge is logical inline-end.
+            // Converting the edge here keeps relative offsets and float-placement
+            // adjustments physical and avoids a later double reversal.
+            border.right + padding.right
+        } else {
+            border.left + padding.left
+        };
+    child_fragment.offset =
+        PhysicalOffset::new(physical_content_left + resolved_margin_left, *block_offset);
 
     // Apply relative positioning offsets (CSS 2.1 §9.4.3).
     // The fragment retains its normal-flow position for sibling layout;
@@ -3177,7 +3406,7 @@ fn resolve_intrinsic_inline(
     available: LayoutUnit,
     border_padding: LayoutUnit,
 ) -> LayoutUnit {
-    let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id);
+    let intrinsic = crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(doc, node_id);
     let style = &doc.node(node_id).style;
 
     // Apply AR transfer: if the element has aspect-ratio + definite height,
@@ -3381,7 +3610,8 @@ fn resolve_inline_size(
             // Indefinite available inline → shrink-to-fit (max-content width).
             // CSS 2.1 §10.3.5: shrink-to-fit width = min(available, max(preferred_min, preferred)).
             // With no available constraint, this reduces to max-content.
-            let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id);
+            let intrinsic =
+                crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(doc, node_id);
             if style.box_sizing == BoxSizing::BorderBox {
                 intrinsic.max
             } else {
@@ -3492,10 +3722,15 @@ fn resolve_inline_size(
                     } else {
                         raw_h
                     };
-                    let sizes =
+                    let sizes = if space.writing_direction.is_horizontal() {
                         crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
                             doc, node_id, content_h,
-                        );
+                        )
+                    } else {
+                        crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(
+                            doc, node_id,
+                        )
+                    };
                     let transferred = match style.width.length_type() {
                         LengthType::MinContent => sizes.min,
                         LengthType::MaxContent => sizes.max,
@@ -3551,7 +3786,8 @@ fn resolve_inline_size(
             && !style.is_scroll_container()
             && (style.width.is_auto() || style.width.is_content_or_intrinsic())
         {
-            let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, node_id);
+            let intrinsic =
+                crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(doc, node_id);
             let auto_min = if style.box_sizing == BoxSizing::BorderBox {
                 intrinsic.min
             } else {
@@ -5999,18 +6235,22 @@ fn assign_split_portion_containing_block_geometry(
     doc: &Document,
     container_id: NodeId,
     portions: &mut [MulticolChildInfo],
+    parent_space: &ConstraintSpace,
     available_inline_size: LayoutUnit,
     percentage_block_size: LayoutUnit,
 ) {
     let container_style = &doc.node(container_id).style;
-    let probe_space = ConstraintSpace::for_block_child(
+    let probe_space = crate::logical_geometry::block_child_constraint_space(
+        parent_space,
+        container_style,
         available_inline_size,
         openui_geometry::INDEFINITE_SIZE,
         available_inline_size,
         percentage_block_size,
         establishes_new_fc(container_style),
     );
-    let probe = block_layout(doc, container_id, &probe_space);
+    let mut probe = block_layout(doc, container_id, &probe_space);
+    normalize_multicol_child_outer_box(&mut probe, parent_space.writing_direction);
     let containing_block_height = if container_style.height.is_auto() {
         // Spanners sit between column rows, outside the fragmentainers that
         // form the positioned containing block. They advance the multicol's
@@ -6047,6 +6287,7 @@ fn assign_split_portion_containing_block_geometry(
 fn split_multicol_child_at_nested_spanners(
     doc: &Document,
     child_id: NodeId,
+    parent_space: &ConstraintSpace,
     child_available_inline: LayoutUnit,
     child_percentage_block_size: LayoutUnit,
 ) -> Option<Vec<MulticolChildInfo>> {
@@ -6146,21 +6387,23 @@ fn split_multicol_child_at_nested_spanners(
 
     let natural_group_height = |group: &[NodeId], fallback: LayoutUnit| {
         if !group.is_empty() && group.iter().all(|id| is_inline_level_child(doc, *id)) {
-            let inline_space = ConstraintSpace::for_block_child(
+            let inline_space = crate::logical_geometry::block_child_constraint_space(
+                parent_space,
+                child_style,
                 child_available_inline,
                 openui_geometry::INDEFINITE_SIZE,
                 child_available_inline,
                 openui_geometry::INDEFINITE_SIZE,
                 false,
             );
-            crate::inline::algorithm::inline_layout_for_children(
+            let mut fragment = crate::inline::algorithm::inline_layout_for_children(
                 doc,
                 child_id,
                 group,
                 &inline_space,
-            )
-            .size
-            .height
+            );
+            normalize_multicol_child_outer_box(&mut fragment, parent_space.writing_direction);
+            fragment.size.height
         } else {
             fallback
         }
@@ -6240,16 +6483,18 @@ fn split_multicol_child_at_nested_spanners(
                     LayoutUnit::zero(),
                 )
             } else {
-                let grandchild_space = ConstraintSpace::for_block_child(
+                let grandchild_space = crate::logical_geometry::block_child_constraint_space(
+                    parent_space,
+                    grandchild_style,
                     child_available_inline,
                     container_height,
                     child_available_inline,
                     container_height,
                     establishes_new_fc(grandchild_style),
                 );
-                block_layout(doc, grandchild_id, &grandchild_space)
-                    .size
-                    .height
+                let mut grandchild = block_layout(doc, grandchild_id, &grandchild_space);
+                normalize_multicol_child_outer_box(&mut grandchild, parent_space.writing_direction);
+                grandchild.size.height
             };
             current_group.push(grandchild_id);
             current_group_content = current_group_content + grandchild_height;
@@ -6312,6 +6557,7 @@ fn split_multicol_child_at_nested_spanners(
         doc,
         child_id,
         &mut result,
+        parent_space,
         child_available_inline,
         child_percentage_block_size,
     );
@@ -8845,14 +9091,16 @@ fn layout_inline_multicol(
     use openui_style::{ColumnFill, ColumnWrap};
 
     let column_width = resolved.width;
-    let inline_space = ConstraintSpace::for_block_child(
+    let inline_space = ConstraintSpace::for_block_child_with_writing_direction(
         column_width,
         openui_geometry::INDEFINITE_SIZE,
         column_width,
         percentage_block_size,
         false,
+        outer_space.writing_direction,
     );
     let mut full = crate::inline::algorithm::inline_layout(doc, node_id, &inline_space);
+    normalize_multicol_child_outer_box(&mut full, outer_space.writing_direction);
     if let Some(trailing_inline) = remove_trailing_empty_inline_continuation(&mut full) {
         mark_last_inline_continuation(&mut full, trailing_inline);
     }
@@ -8969,17 +9217,12 @@ fn layout_inline_multicol(
         } else {
             index
         };
-        let ltr_offset = if logical_index < positions.len() {
+        if logical_index < positions.len() {
             positions[logical_index].inline_offset
         } else if let Some(last) = positions.last() {
             last.inline_offset + stride * (logical_index + 1 - positions.len()) as i32
         } else {
             LayoutUnit::zero()
-        };
-        if style.direction == Direction::Rtl && logical_index < resolved.count as usize {
-            child_available_inline - ltr_offset - column_width
-        } else {
-            ltr_offset
         }
     };
     let column_extra_block_offset = |index: usize| -> LayoutUnit {
@@ -9511,6 +9754,7 @@ fn layout_multicol(
         if let Some(split_entries) = split_multicol_child_at_nested_spanners(
             doc,
             child_id,
+            space,
             child_available_inline,
             child_percentage_block_size,
         ) {
@@ -9627,12 +9871,13 @@ fn layout_multicol(
                             .iter()
                             .all(|id| is_inline_level_child(doc, *id))
                     {
-                        let inline_space = ConstraintSpace::for_block_child(
+                        let inline_space = ConstraintSpace::for_block_child_with_writing_direction(
                             child_available_inline,
                             openui_geometry::INDEFINITE_SIZE,
                             child_available_inline,
                             openui_geometry::INDEFINITE_SIZE,
                             false,
+                            space.writing_direction,
                         );
                         crate::inline::algorithm::inline_layout_for_children(
                             doc,
@@ -9697,14 +9942,17 @@ fn layout_multicol(
                         )
                     } else {
                         let gc_is_new_fc = establishes_new_fc(&doc.node(gc_id).style);
-                        let gc_space = ConstraintSpace::for_block_child(
+                        let gc_space = crate::logical_geometry::block_child_constraint_space(
+                            space,
+                            gc_style,
                             child_available_inline,
                             container_height,
                             child_available_inline,
                             container_height,
                             gc_is_new_fc,
                         );
-                        let gc_frag = block_layout(doc, gc_id, &gc_space);
+                        let mut gc_frag = block_layout(doc, gc_id, &gc_space);
+                        normalize_multicol_child_outer_box(&mut gc_frag, space.writing_direction);
                         gc_frag.size.height
                     };
                     current_group.push(gc_id);
@@ -9720,12 +9968,13 @@ fn layout_multicol(
                         .iter()
                         .all(|id| is_inline_level_child(doc, *id))
                 {
-                    let inline_space = ConstraintSpace::for_block_child(
+                    let inline_space = ConstraintSpace::for_block_child_with_writing_direction(
                         child_available_inline,
                         openui_geometry::INDEFINITE_SIZE,
                         child_available_inline,
                         openui_geometry::INDEFINITE_SIZE,
                         false,
+                        space.writing_direction,
                     );
                     crate::inline::algorithm::inline_layout_for_children(
                         doc,
@@ -9814,6 +10063,7 @@ fn layout_multicol(
                 doc,
                 child_id,
                 &mut children_info[split_entries_start..],
+                space,
                 child_available_inline,
                 child_percentage_block_size,
             );
@@ -9824,12 +10074,13 @@ fn layout_multicol(
             // before/after inline portions. Give the multicol distributor the
             // real ordered portions so the intervening block participates in
             // fragmentation instead of disappearing inside one inline run.
-            let inline_probe_space = ConstraintSpace::for_block_child(
+            let inline_probe_space = ConstraintSpace::for_block_child_with_writing_direction(
                 column_width,
                 space.available_block_size,
                 column_width,
                 child_percentage_block_size,
                 false,
+                space.writing_direction,
             );
             let mut inline_probe =
                 crate::inline::algorithm::inline_layout(doc, node_id, &inline_probe_space);
@@ -9899,6 +10150,7 @@ fn layout_multicol(
                         } else if let Some(split_entries) = split_multicol_child_at_nested_spanners(
                             doc,
                             block_id,
+                            space,
                             column_width,
                             child_percentage_block_size,
                         ) {
@@ -10202,20 +10454,27 @@ fn layout_multicol(
                             {
                                 split_child_index += 1;
                             }
-                            let inline_space = ConstraintSpace::for_block_child(
-                                inner_width,
-                                split.portion_height,
-                                inner_width,
-                                split.portion_height,
-                                false,
-                            );
-                            let inline_fragment =
+                            let inline_space =
+                                crate::logical_geometry::block_child_constraint_space(
+                                    space,
+                                    &doc.node(split.container_id).style,
+                                    inner_width,
+                                    split.portion_height,
+                                    inner_width,
+                                    split.portion_height,
+                                    false,
+                                );
+                            let mut inline_fragment =
                                 crate::inline::algorithm::inline_layout_for_children(
                                     doc,
                                     split.container_id,
                                     &split.child_ids[inline_start..split_child_index],
                                     &inline_space,
                                 );
+                            normalize_multicol_child_outer_box(
+                                &mut inline_fragment,
+                                space.writing_direction,
+                            );
                             let inline_height = inline_fragment.size.height;
                             for mut line in inline_fragment.children {
                                 line.offset.left = line.offset.left + c_border_left + c_pad_left;
@@ -10227,7 +10486,9 @@ fn layout_multicol(
                         }
                         let gc_style = &doc.node(gc_id).style;
                         let gc_is_new_fc = establishes_new_fc(gc_style);
-                        let gc_space = ConstraintSpace::for_block_child(
+                        let gc_space = crate::logical_geometry::block_child_constraint_space(
+                            space,
+                            gc_style,
                             inner_width,
                             split.portion_height,
                             inner_width,
@@ -10235,6 +10496,7 @@ fn layout_multicol(
                             gc_is_new_fc,
                         );
                         let mut gc_frag = block_layout(doc, gc_id, &gc_space);
+                        normalize_multicol_child_outer_box(&mut gc_frag, space.writing_direction);
                         let gc_margin_left =
                             resolve_margin_or_padding(&gc_style.margin_left, inner_width);
                         gc_frag.offset = PhysicalOffset::new(
@@ -10407,13 +10669,17 @@ fn layout_multicol(
                     prev_break_after_forced_fp = prop_ba.is_forced();
                 } else {
                     let child_style = &doc.node(info.id).style;
-                    let child_margin_top =
-                        resolve_margin_or_padding(&child_style.margin_top, column_width);
-                    let child_margin_bottom =
-                        resolve_margin_or_padding(&child_style.margin_bottom, column_width);
+                    let child_margin = resolve_margins_in_parent_axes(
+                        child_style,
+                        column_width,
+                        space.writing_direction,
+                    );
+                    let child_margin_top = child_margin.top;
+                    let child_margin_bottom = child_margin.bottom;
                     let child_is_new_fc = establishes_new_fc(child_style);
-                    let child_auto_float =
-                        child_style.float != Float::None && child_style.width.is_auto();
+                    let child_auto_float = child_style.float != Float::None
+                        && inline_size_in_parent_axes(child_style, space.writing_direction)
+                            .is_auto();
                     let child_column_algo =
                         crate::multicol::ColumnLayoutAlgorithm::from_style(child_style);
                     let child_is_multicol = child_column_algo.is_some();
@@ -10458,8 +10724,11 @@ fn layout_multicol(
                         )
                     } else if sole_auto_nested_multicol_in_fixed_auto_fill {
                         child_available_inline
-                    } else if child_style.width.is_auto() || child_style.width.is_stretch() {
-                        let child_margin = resolve_margins(child_style, column_width);
+                    } else if inline_size_in_parent_axes(child_style, space.writing_direction)
+                        .is_auto()
+                        || inline_size_in_parent_axes(child_style, space.writing_direction)
+                            .is_stretch()
+                    {
                         let margin_left = if child_style.margin_left.is_auto() {
                             LayoutUnit::zero()
                         } else {
@@ -10474,7 +10743,9 @@ fn layout_multicol(
                     } else {
                         column_width
                     };
-                    let mut child_space = ConstraintSpace::for_block_child(
+                    let mut child_space = crate::logical_geometry::block_child_constraint_space(
+                        space,
+                        child_style,
                         child_available_inline,
                         group_available_block,
                         column_width,
@@ -10505,7 +10776,10 @@ fn layout_multicol(
                             child_algo.column_height.is_none()
                                 && child_algo.column_wrap == openui_style::ColumnWrap::Auto
                         });
-                    if !inherited_fragmentainer_block.is_indefinite()
+                    let child_parallel_to_multicol = child_space.writing_direction.is_horizontal()
+                        == space.writing_direction.is_horizontal();
+                    if child_parallel_to_multicol
+                        && !inherited_fragmentainer_block.is_indefinite()
                         && !auto_column_flex_uses_outer_fragmentation
                         && !auto_nested_multicol_owns_fragmentation
                     {
@@ -10572,6 +10846,7 @@ fn layout_multicol(
                     } else {
                         block_layout(doc, info.id, &child_space)
                     };
+                    normalize_multicol_child_outer_box(&mut child_frag, space.writing_direction);
                     if sole_auto_nested_multicol_in_fixed_auto_fill {
                         child_frag.has_overflow_clip = true;
                         child_frag.block_axis_clip_only = false;
@@ -10623,6 +10898,8 @@ fn layout_multicol(
                         && !subtree_has_flex_descendant(doc, info.id))
                     .then(|| nested_multicol_oversized_inline_flow_size(&child_frag, doc))
                     .flatten();
+                    let child_block_size =
+                        block_size_in_parent_axes(child_style, space.writing_direction);
                     let in_flow_overflow_size = if auto_nested_multicol_in_flow_size.is_some() {
                         // The nested multicol's overflow columns already
                         // encode its complete logical continuation. A generic
@@ -10630,7 +10907,7 @@ fn layout_multicol(
                         // as additional ancestor block flow and would fragment
                         // the nested box a second time.
                         child_frag.size.height
-                    } else if (!child_style.height.is_auto()
+                    } else if (!child_block_size.is_auto()
                         || transparent_auto_wrapper_with_flex_overflow
                         || auto_column_flex_in_flow_size.is_some())
                         && child_style.overflow_x == Overflow::Visible
@@ -10649,7 +10926,7 @@ fn layout_multicol(
                     {
                         child_frag.decoration_paint_block_size = Some(child_frag.size.height);
                     }
-                    let fragmentable_in_flow_overflow = !child_style.height.is_auto()
+                    let fragmentable_in_flow_overflow = !child_block_size.is_auto()
                         && child_style.display != Display::Flex
                         && child_style.float == Float::None
                         && in_flow_overflow_size > child_frag.size.height
@@ -11811,20 +12088,27 @@ fn layout_multicol(
                                 {
                                     split_child_index += 1;
                                 }
-                                let inline_space = ConstraintSpace::for_block_child(
-                                    inner_width,
-                                    split.portion_height,
-                                    inner_width,
-                                    split.portion_height,
-                                    false,
-                                );
-                                let inline_fragment =
+                                let inline_space =
+                                    crate::logical_geometry::block_child_constraint_space(
+                                        space,
+                                        &doc.node(split.container_id).style,
+                                        inner_width,
+                                        split.portion_height,
+                                        inner_width,
+                                        split.portion_height,
+                                        false,
+                                    );
+                                let mut inline_fragment =
                                     crate::inline::algorithm::inline_layout_for_children(
                                         doc,
                                         split.container_id,
                                         &split.child_ids[inline_start..split_child_index],
                                         &inline_space,
                                     );
+                                normalize_multicol_child_outer_box(
+                                    &mut inline_fragment,
+                                    space.writing_direction,
+                                );
                                 let inline_height = inline_fragment.size.height;
                                 for mut line in inline_fragment.children {
                                     line.offset.left =
@@ -11837,7 +12121,9 @@ fn layout_multicol(
                             }
                             let gc_style = &doc.node(gc_id).style;
                             let gc_is_new_fc = establishes_new_fc(gc_style);
-                            let gc_space = ConstraintSpace::for_block_child(
+                            let gc_space = crate::logical_geometry::block_child_constraint_space(
+                                space,
+                                gc_style,
                                 inner_width,
                                 split.portion_height,
                                 inner_width,
@@ -11845,6 +12131,10 @@ fn layout_multicol(
                                 gc_is_new_fc,
                             );
                             let mut gc_frag = block_layout(doc, gc_id, &gc_space);
+                            normalize_multicol_child_outer_box(
+                                &mut gc_frag,
+                                space.writing_direction,
+                            );
                             let gc_margin_left =
                                 resolve_margin_or_padding(&gc_style.margin_left, inner_width);
                             gc_frag.offset = PhysicalOffset::new(
@@ -11933,13 +12223,17 @@ fn layout_multicol(
                         prev_break_after_forced_rp = prop_ba.is_forced();
                     } else {
                         let child_style = &doc.node(info.id).style;
-                        let child_margin_top =
-                            resolve_margin_or_padding(&child_style.margin_top, column_width);
-                        let child_margin_bottom =
-                            resolve_margin_or_padding(&child_style.margin_bottom, column_width);
+                        let child_margin = resolve_margins_in_parent_axes(
+                            child_style,
+                            column_width,
+                            space.writing_direction,
+                        );
+                        let child_margin_top = child_margin.top;
+                        let child_margin_bottom = child_margin.bottom;
                         let child_is_new_fc = establishes_new_fc(child_style);
-                        let child_auto_float =
-                            child_style.float != Float::None && child_style.width.is_auto();
+                        let child_auto_float = child_style.float != Float::None
+                            && inline_size_in_parent_axes(child_style, space.writing_direction)
+                                .is_auto();
                         let child_available_inline = if child_auto_float {
                             let child_margin = resolve_margins(child_style, column_width);
                             let margin_inline = {
@@ -11960,8 +12254,11 @@ fn layout_multicol(
                                 info.id,
                                 (column_width - margin_inline).clamp_negative_to_zero(),
                             )
-                        } else if child_style.width.is_auto() || child_style.width.is_stretch() {
-                            let child_margin = resolve_margins(child_style, column_width);
+                        } else if inline_size_in_parent_axes(child_style, space.writing_direction)
+                            .is_auto()
+                            || inline_size_in_parent_axes(child_style, space.writing_direction)
+                                .is_stretch()
+                        {
                             let margin_left = if child_style.margin_left.is_auto() {
                                 LayoutUnit::zero()
                             } else {
@@ -11976,7 +12273,9 @@ fn layout_multicol(
                         } else {
                             column_width
                         };
-                        let mut child_space = ConstraintSpace::for_block_child(
+                        let mut child_space = crate::logical_geometry::block_child_constraint_space(
+                            space,
+                            child_style,
                             child_available_inline,
                             column_height,
                             column_width,
@@ -11992,7 +12291,11 @@ fn layout_multicol(
                             && !child_style.flex_direction.is_reverse()
                             && child_style.height.is_auto()
                             && !column_flex_has_main_axis_margin(doc, info.id, column_width);
-                        if !column_height.is_indefinite()
+                        let child_parallel_to_multicol =
+                            child_space.writing_direction.is_horizontal()
+                                == space.writing_direction.is_horizontal();
+                        if child_parallel_to_multicol
+                            && !column_height.is_indefinite()
                             && !auto_column_flex_uses_outer_fragmentation
                         {
                             child_space.fragmentainer_block_size = column_height;
@@ -12050,6 +12353,10 @@ fn layout_multicol(
                         } else {
                             block_layout(doc, info.id, &child_space)
                         };
+                        normalize_multicol_child_outer_box(
+                            &mut child_frag,
+                            space.writing_direction,
+                        );
                         let auto_column_flex_in_flow_size =
                             auto_column_flex_in_flow_block_size(&child_frag, child_style, doc);
                         let row_flex_inline_fragmentation_size = (child_style.display
@@ -12072,7 +12379,9 @@ fn layout_multicol(
                                 && !subtree_has_flex_descendant(doc, info.id))
                             .then(|| nested_multicol_oversized_inline_flow_size(&child_frag, doc))
                             .flatten();
-                        let in_flow_overflow_size = if (!child_style.height.is_auto()
+                        let child_block_size =
+                            block_size_in_parent_axes(child_style, space.writing_direction);
+                        let in_flow_overflow_size = if (!child_block_size.is_auto()
                             || auto_column_flex_in_flow_size.is_some())
                             && child_style.overflow_x == Overflow::Visible
                             && child_style.overflow_y == Overflow::Visible
@@ -12201,27 +12510,16 @@ fn layout_multicol(
                     idx
                 };
                 if position_idx < positions.len() {
-                    let position = positions[position_idx];
-                    if style.direction == Direction::Rtl {
-                        child_available_inline - position.inline_offset - position.width
-                    } else {
-                        position.inline_offset
-                    }
+                    positions[position_idx].inline_offset
                 } else if let Some(last) = positions.last() {
-                    // Overflow columns continue in the inline direction: to
-                    // the right in LTR and to the left in RTL.
+                    // Overflow columns remain in logical inline progression;
+                    // the shared finalizer applies RTL physical polarity.
                     let overflow = (position_idx - positions.len() + 1) as i32;
                     let stride = column_width + algo.column_gap;
-                    if style.direction == Direction::Rtl {
-                        let last_rtl_offset =
-                            child_available_inline - last.inline_offset - last.width;
-                        last_rtl_offset - stride * LayoutUnit::from_i32(overflow)
-                    } else {
-                        last.inline_offset
-                            + last.width
-                            + algo.column_gap
-                            + stride * LayoutUnit::from_i32(overflow - 1)
-                    }
+                    last.inline_offset
+                        + last.width
+                        + algo.column_gap
+                        + stride * LayoutUnit::from_i32(overflow - 1)
                 } else {
                     LayoutUnit::zero()
                 }
@@ -12588,13 +12886,15 @@ fn layout_multicol(
                         col_block_offset = pending_float_flow.normal_block_offset;
                         col_remaining = (column_height - col_block_offset).clamp_negative_to_zero();
 
-                        let mut inline_space = ConstraintSpace::for_block_child(
-                            column_width,
-                            group_available_block,
-                            column_width,
-                            first_pass_pct_basis,
-                            false,
-                        );
+                        let mut inline_space =
+                            ConstraintSpace::for_block_child_with_writing_direction(
+                                column_width,
+                                group_available_block,
+                                column_width,
+                                first_pass_pct_basis,
+                                false,
+                                space.writing_direction,
+                            );
                         if !column_height.is_indefinite() {
                             inline_space.fragmentainer_block_size = column_height;
                         }
@@ -12622,6 +12922,10 @@ fn layout_multicol(
                                 inline_run,
                                 &inline_space,
                             );
+                            normalize_multicol_child_outer_box(
+                                &mut child_frag,
+                                space.writing_direction,
+                            );
                             child_frag.node_id = child_node_id;
                             child_height = child_frag.size.height;
                         }
@@ -12634,14 +12938,20 @@ fn layout_multicol(
                             col_remaining =
                                 (column_height - col_block_offset).clamp_negative_to_zero();
 
-                            let mut inherited_space = ConstraintSpace::for_block_child(
-                                column_width,
-                                group_available_block,
-                                column_width,
-                                first_pass_pct_basis,
-                                false,
-                            );
-                            if !column_height.is_indefinite() {
+                            let mut inherited_space =
+                                crate::logical_geometry::block_child_constraint_space(
+                                    space,
+                                    child_style,
+                                    column_width,
+                                    group_available_block,
+                                    column_width,
+                                    first_pass_pct_basis,
+                                    false,
+                                );
+                            let child_parallel_to_multicol =
+                                inherited_space.writing_direction.is_horizontal()
+                                    == space.writing_direction.is_horizontal();
+                            if child_parallel_to_multicol && !column_height.is_indefinite() {
                                 inherited_space.fragmentainer_block_size = column_height;
                             }
                             let mut exclusions = ExclusionSpace::new();
@@ -12663,6 +12973,10 @@ fn layout_multicol(
                             }
                             inherited_space.exclusion_space = Some(std::sync::Arc::new(exclusions));
                             child_frag = block_layout(doc, child_node_id, &inherited_space);
+                            normalize_multicol_child_outer_box(
+                                &mut child_frag,
+                                space.writing_direction,
+                            );
                             child_height = child_frag.size.height;
                             col_block_sizes[i] = child_height;
                         }
@@ -12855,15 +13169,22 @@ fn layout_multicol(
                     && crate::multicol::ColumnLayoutAlgorithm::from_style(child_style).is_some()
                     && (prop_break_before.is_avoid() || child_style.break_before.is_avoid())
                 {
-                    let mut nested_space = ConstraintSpace::for_block_child(
+                    let mut nested_space = crate::logical_geometry::block_child_constraint_space(
+                        space,
+                        child_style,
                         child_frag.size.width,
                         col_remaining,
                         column_width,
                         first_pass_pct_basis,
                         establishes_new_fc(child_style),
                     );
-                    nested_space.fragmentainer_block_size = col_remaining;
+                    let child_parallel_to_multicol = nested_space.writing_direction.is_horizontal()
+                        == space.writing_direction.is_horizontal();
+                    if child_parallel_to_multicol {
+                        nested_space.fragmentainer_block_size = col_remaining;
+                    }
                     child_frag = block_layout(doc, child_node_id, &nested_space);
+                    normalize_multicol_child_outer_box(&mut child_frag, space.writing_direction);
                     child_height = child_frag.size.height;
                     col_block_sizes[i] = child_height;
                 }
@@ -12945,7 +13266,9 @@ fn layout_multicol(
                     };
                     let relaid_available_inline =
                         (column_width - non_auto_inline_margins).clamp_negative_to_zero();
-                    let mut relaid_space = ConstraintSpace::for_block_child(
+                    let mut relaid_space = crate::logical_geometry::block_child_constraint_space(
+                        space,
+                        child_style,
                         relaid_available_inline,
                         group_available_block,
                         column_width,
@@ -12955,10 +13278,13 @@ fn layout_multicol(
                     relaid_space.bfc_offset =
                         BfcOffset::new(child_content_inline_start, child_content_linear_start);
                     relaid_space.exclusion_space = Some(std::sync::Arc::new(inherited_exclusions));
-                    if column_height > LayoutUnit::zero() {
+                    let child_parallel_to_multicol = relaid_space.writing_direction.is_horizontal()
+                        == space.writing_direction.is_horizontal();
+                    if child_parallel_to_multicol && column_height > LayoutUnit::zero() {
                         relaid_space.fragmentainer_block_size = column_height;
                     }
                     child_frag = block_layout(doc, child_node_id, &relaid_space);
+                    normalize_multicol_child_outer_box(&mut child_frag, space.writing_direction);
                     // A clearing BR has no glyph or line-box height of its
                     // own, but its clearance still advances the containing
                     // block to the float's block-end edge.  Keep that used
@@ -13344,16 +13670,17 @@ fn layout_multicol(
                     } else {
                         fragment_in_flow_block_bottom(&child_frag, doc)
                     };
-                let child_has_fragmentable_in_flow_overflow = !child_style.height.is_auto()
-                    && child_style.display != Display::Flex
-                    && child_style.overflow_x == Overflow::Visible
-                    && child_style.overflow_y == Overflow::Visible
-                    && child_in_flow_overflow_height > child_height
-                    && child_frag.float_exclusions.is_empty()
-                    && !subtree_has_positioned_descendant(doc, child_node_id)
-                    && !subtree_has_in_flow_spanner_descendant(doc, child_node_id)
-                    && !subtree_has_flex_descendant(doc, child_node_id)
-                    && !subtree_has_forced_break_descendant(doc, child_node_id);
+                let child_has_fragmentable_in_flow_overflow =
+                    !block_size_in_parent_axes(child_style, space.writing_direction).is_auto()
+                        && child_style.display != Display::Flex
+                        && child_style.overflow_x == Overflow::Visible
+                        && child_style.overflow_y == Overflow::Visible
+                        && child_in_flow_overflow_height > child_height
+                        && child_frag.float_exclusions.is_empty()
+                        && !subtree_has_positioned_descendant(doc, child_node_id)
+                        && !subtree_has_in_flow_spanner_descendant(doc, child_node_id)
+                        && !subtree_has_flex_descendant(doc, child_node_id)
+                        && !subtree_has_forced_break_descendant(doc, child_node_id);
                 let child_has_avoidable_float_break =
                     doc.children(child_node_id).any(|descendant| {
                         let descendant_style = &doc.node(descendant).style;
@@ -13804,17 +14131,24 @@ fn layout_multicol(
                             BoxStrut::zero(),
                             column_width,
                         );
-                        let mut relaid_space = ConstraintSpace::for_block_child(
-                            available_inline,
-                            group_available_block,
-                            available_inline,
-                            first_pass_pct_basis,
-                            true,
-                        );
-                        if !group_available_block.is_indefinite() {
+                        let mut relaid_space =
+                            crate::logical_geometry::block_child_constraint_space(
+                                space,
+                                child_style,
+                                available_inline,
+                                group_available_block,
+                                available_inline,
+                                first_pass_pct_basis,
+                                true,
+                            );
+                        let child_parallel_to_multicol =
+                            relaid_space.writing_direction.is_horizontal()
+                                == space.writing_direction.is_horizontal();
+                        if child_parallel_to_multicol && !group_available_block.is_indefinite() {
                             relaid_space.fragmentainer_block_size = group_available_block;
                         }
                         let mut part = block_layout(doc, child_node_id, &relaid_space);
+                        normalize_multicol_child_outer_box(&mut part, space.writing_direction);
                         let part_height = remaining.min_of(column_height);
                         part.size.height = part_height;
                         part.offset =
@@ -16212,6 +16546,35 @@ fn layout_multicol(
                             // principal box may still require continuations.
                             let slice_start = content_consumed;
                             let slice_end = content_consumed + content_in_part;
+                            if child_style.overflow_x != Overflow::Visible
+                                || child_style.overflow_y != Overflow::Visible
+                            {
+                                // A negative block-start margin may pull a box's
+                                // ink into the preceding geometric slice. The
+                                // box is nevertheless created by the slice that
+                                // owns its pre-margin normal-flow start. An
+                                // authored overflow clip must not clone that ink
+                                // backward across the fragmentation boundary.
+                                part.children.retain(|descendant| {
+                                    let block_start_margin = if descendant.node_id.is_none() {
+                                        descendant.margin.top
+                                    } else {
+                                        resolve_margins_in_parent_axes(
+                                            &doc.node(descendant.node_id).style,
+                                            column_width,
+                                            space.writing_direction,
+                                        )
+                                        .top
+                                    };
+                                    if block_start_margin >= LayoutUnit::zero() {
+                                        return true;
+                                    }
+                                    let normal_flow_start =
+                                        descendant.offset.top - block_start_margin;
+                                    normal_flow_start >= slice_start
+                                        && normal_flow_start < slice_end
+                                });
+                            }
                             if child_is_multicol
                                 && !child_is_fragmentable_multicol
                                 && !child_is_nested_flex_multicol
@@ -18562,7 +18925,11 @@ fn layout_multicol(
         if group_end < children_info.len() && children_info[group_end].is_spanner {
             let spanner_id = children_info[group_end].id;
             let spanner_style = &doc.node(spanner_id).style;
-            let spanner_margin = resolve_margins(spanner_style, child_available_inline);
+            let spanner_margin = resolve_margins_in_parent_axes(
+                spanner_style,
+                child_available_inline,
+                space.writing_direction,
+            );
             let spanner_margin_top = spanner_margin.top;
             let spanner_margin_bottom = spanner_margin.bottom;
             let collapsed_spanner_margin_top = if let Some(previous_margin_bottom) =
@@ -18591,7 +18958,9 @@ fn layout_multicol(
             };
             let spanner_constrained_inline =
                 (child_available_inline - spanner_non_auto_margin_inline).clamp_negative_to_zero();
-            let spanner_space = ConstraintSpace::for_block_child(
+            let spanner_space = crate::logical_geometry::block_child_constraint_space(
+                space,
+                spanner_style,
                 spanner_constrained_inline,
                 space.available_block_size,
                 child_available_inline,
@@ -18599,6 +18968,7 @@ fn layout_multicol(
                 false,
             );
             let mut spanner_frag = block_layout(doc, spanner_id, &spanner_space);
+            normalize_multicol_child_outer_box(&mut spanner_frag, space.writing_direction);
             let mut spanner_oof = std::mem::take(&mut spanner_frag.oof_candidates);
             if let Some(index) = extracted_inline_oof_by_block
                 .iter()

@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1G | 🟡 Active; logical out-of-flow core closure, 91 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1H | 🟡 Active; logical multicol/fragmentation closure, 107 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,657 ported/runnable tests, 3,358 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 751 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,673 ported/runnable tests, 3,374 runnable passes, 299 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 735 live writing-mode owner rows.**
 
 ---
 
@@ -271,11 +271,11 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Metric | Value |
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
-| Current runnable WPT tests | 3,657 |
-| Current runnable WPT passes | 3,358 |
+| Current runnable WPT tests | 3,673 |
+| Current runnable WPT passes | 3,374 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
-| Pixel comparison tests | 3,657 generated WPT comparisons + earlier SP pages/apps |
+| Pixel comparison tests | 3,673 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
@@ -623,3 +623,28 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   static positions, flex safe-alignment abspos behavior, fragmented out-of-flow
   layout, upright/mixed vertical text, sideways modes, and writing-mode 010–015
   remain later scoped work.
+
+### SP17 W1H: logical multicol and vertical fragmentation closure
+
+- Kept multicol sizing, balancing, spanners, break progress, and in-flow
+  continuations in logical coordinates, with complete writing-aware child and
+  relayout constraints and one final physical projection.
+- Added fragmentation writing-direction metadata and mapped column/overflow
+  clips, decoration slices, border polarity, backgrounds, shadows, radii, and
+  ink overflow across horizontal-tb, vertical-lr, and vertical-rl plus RTL.
+- Closed wrapping-row, growing-column, and break-before flex continuation
+  shapes, per-fragment negative-start clipping, and direct/nested vertical-rl
+  float overflow propagation.
+- Surgically admitted all 16 builders as one cohort. The 18-ID proof set is
+  18/18 exact with zero mismatched pixels or errors, repeat splicing is
+  byte-identical, and writing-mode 010–016 remain absent.
+- The frozen 3,267-ID baseline remains exact. The authoritative full suite is
+  **3,673 runnable / 3,374 exact / 299 fail / 0 errors**; live unported
+  inventory is 4,000, writing-mode ownership is 735, the text manifest is 798,
+  and the live validator requires exactly 107 promotions. The committed
+  `summary.json` SHA-256 is
+  `ed78d9c2fd09c64a52c5de47ece6e7077a8fbab34e3eff6a12d6814ede1c6474`.
+- Verification: focused logical multicol/paint regressions, the full locked
+  Rust matrix, all 122 closure/porter tests, both ledger checks, release
+  comparator, double deterministic accountability generation, splice
+  idempotence, formatter/diff checks, and audit 7/7.

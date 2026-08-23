@@ -37,7 +37,7 @@ pub use css_sizing::{
 };
 pub use exclusions::ExclusionSpace;
 pub use flex::flex_layout;
-pub use fragment::{Fragment, FragmentKind};
+pub use fragment::{DecorationSlice, Fragment, FragmentKind};
 pub use fragmentation::{
     BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,
 };

@@ -1538,9 +1538,9 @@ css-break/borders-004.html,borders-004,css_break,yes,wpt/css_break/borders-004,p
 css-break/borders-004-ref.html,borders-004-ref,css_break,yes,wpt/css_break/borders-004-ref,pass,0.0,,,
 css-break/borders-005.html,borders-005,css_break,yes,wpt/css_break/borders-005,pass,0.0,,,
 css-break/borders-005-ref.html,borders-005-ref,css_break,yes,wpt/css_break/borders-005-ref,pass,0.0,,,
-css-break/borders-006.html,borders-006,css_break,no,,,,"needs_writing_mode,sp13_fragmentation,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
+css-break/borders-006.html,borders-006,css_break,yes,wpt/css_break/borders-006,pass,0.0,,,
 css-break/borders-006-ref.html,borders-006-ref,css_break,yes,wpt/css_break/borders-006-ref,pass,0.0,,,
-css-break/borders-007.html,borders-007,css_break,no,,,,"needs_writing_mode,sp13_fragmentation,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
+css-break/borders-007.html,borders-007,css_break,yes,wpt/css_break/borders-007,pass,0.0,,,
 css-break/borders-007-ref.html,borders-007-ref,css_break,yes,wpt/css_break/borders-007-ref,pass,0.0,,,
 css-break/borders-008.html,borders-008,css_break,yes,wpt/css_break/borders-008,pass,0.0,,,
 css-break/borders-008-ref.html,borders-008-ref,css_break,yes,wpt/css_break/borders-008-ref,pass,0.0,,,
@@ -1839,7 +1839,7 @@ css-break/flexbox/multi-line-row-flex-fragmentation-052.html,flexbox_multi-line-
 css-break/flexbox/multi-line-row-flex-fragmentation-053.html,flexbox_multi-line-row-flex-fragmentation-053,css_break,yes,wpt/css_break/flexbox_multi-line-row-flex-fragmentation-053,pass,0.0,,,
 css-break/flexbox/multi-line-row-flex-fragmentation-054.html,flexbox_multi-line-row-flex-fragmentation-054,css_break,no,,,,"needs_containment,needs_abspos_flex_static_position,sp13_fragmentation,sp13_multicol",Future SP: CSS Containment; SP12: Abspos Flex Static Position; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: contain
 css-break/flexbox/multi-line-row-flex-fragmentation-055.html,flexbox_multi-line-row-flex-fragmentation-055,css_break,yes,wpt/css_break/flexbox_multi-line-row-flex-fragmentation-055,pass,0.0,,,
-css-break/flexbox/multi-line-row-flex-fragmentation-056.html,flexbox_multi-line-row-flex-fragmentation-056,css_break,no,,,,"needs_writing_mode,sp13_fragmentation,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
+css-break/flexbox/multi-line-row-flex-fragmentation-056.html,flexbox_multi-line-row-flex-fragmentation-056,css_break,yes,wpt/css_break/flexbox_multi-line-row-flex-fragmentation-056,pass,0.0,,,
 css-break/flexbox/multi-line-row-flex-fragmentation-057.html,flexbox_multi-line-row-flex-fragmentation-057,css_break,no,,,,"needs_abspos_flex_static_position,needs_writing_mode,sp13_fragmentation,sp13_multicol",SP12: Abspos Flex Static Position; Future SP: Writing Modes/Bidi; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
 css-break/flexbox/multi-line-row-flex-fragmentation-058.html,flexbox_multi-line-row-flex-fragmentation-058,css_break,no,,,,"needs_containment,needs_abspos_flex_static_position,sp13_fragmentation,sp13_multicol",Future SP: CSS Containment; SP12: Abspos Flex Static Position; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: contain
 css-break/flexbox/multi-line-row-flex-fragmentation-059.html,flexbox_multi-line-row-flex-fragmentation-059,css_break,yes,wpt/css_break/flexbox_multi-line-row-flex-fragmentation-059,pass,0.0,,,
@@ -1952,7 +1952,7 @@ css-break/flexbox/single-line-column-flex-fragmentation-040-ref.html,flexbox_sin
 css-break/flexbox/single-line-column-flex-fragmentation-041.html,flexbox_single-line-column-flex-fragmentation-041,css_break,yes,wpt/css_break/flexbox_single-line-column-flex-fragmentation-041,pass,0.0,,,
 css-break/flexbox/single-line-column-flex-fragmentation-042.html,flexbox_single-line-column-flex-fragmentation-042,css_break,no,,,,"needs_containment,needs_abspos_flex_static_position,needs_writing_mode,needs_generated_content,sp13_fragmentation,sp13_multicol",Future SP: CSS Containment; SP12: Abspos Flex Static Position; Future SP: Writing Modes/Bidi; Future SP: Generated Content; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: contain
 css-break/flexbox/single-line-column-flex-fragmentation-043.html,flexbox_single-line-column-flex-fragmentation-043,css_break,yes,wpt/css_break/flexbox_single-line-column-flex-fragmentation-043,pass,0.0,,,
-css-break/flexbox/single-line-column-flex-fragmentation-044.html,flexbox_single-line-column-flex-fragmentation-044,css_break,no,,,,"needs_writing_mode,sp13_fragmentation,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
+css-break/flexbox/single-line-column-flex-fragmentation-044.html,flexbox_single-line-column-flex-fragmentation-044,css_break,yes,wpt/css_break/flexbox_single-line-column-flex-fragmentation-044,pass,0.0,,,
 css-break/flexbox/single-line-column-flex-fragmentation-045.html,flexbox_single-line-column-flex-fragmentation-045,css_break,no,,,,"needs_abspos_flex_static_position,needs_writing_mode,sp13_fragmentation,sp13_multicol",SP12: Abspos Flex Static Position; Future SP: Writing Modes/Bidi; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
 css-break/flexbox/single-line-column-flex-fragmentation-046.html,flexbox_single-line-column-flex-fragmentation-046,css_break,yes,wpt/css_break/flexbox_single-line-column-flex-fragmentation-046,pass,0.0,,,
 css-break/flexbox/single-line-column-flex-fragmentation-047.html,flexbox_single-line-column-flex-fragmentation-047,css_break,yes,wpt/css_break/flexbox_single-line-column-flex-fragmentation-047,pass,0.0,,,
@@ -2024,7 +2024,7 @@ css-break/flexbox/single-line-row-flex-fragmentation-027.html,flexbox_single-lin
 css-break/flexbox/single-line-row-flex-fragmentation-027-ref.html,flexbox_single-line-row-flex-fragmentation-027-ref,css_break,yes,wpt/css_break/flexbox_single-line-row-flex-fragmentation-027-ref,pass,0.0,,,
 css-break/flexbox/single-line-row-flex-fragmentation-028.html,flexbox_single-line-row-flex-fragmentation-028,css_break,yes,wpt/css_break/flexbox_single-line-row-flex-fragmentation-028,pass,0.0,,,
 css-break/flexbox/single-line-row-flex-fragmentation-029.html,flexbox_single-line-row-flex-fragmentation-029,css_break,no,,,,"needs_containment,sp13_fragmentation,sp13_multicol",Future SP: CSS Containment; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: contain
-css-break/flexbox/single-line-row-flex-fragmentation-030.html,flexbox_single-line-row-flex-fragmentation-030,css_break,no,,,,"needs_writing_mode,sp13_fragmentation,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
+css-break/flexbox/single-line-row-flex-fragmentation-030.html,flexbox_single-line-row-flex-fragmentation-030,css_break,yes,wpt/css_break/flexbox_single-line-row-flex-fragmentation-030,pass,0.0,,,
 css-break/flexbox/single-line-row-flex-fragmentation-031.html,flexbox_single-line-row-flex-fragmentation-031,css_break,no,,,,"needs_abspos_flex_static_position,needs_writing_mode,sp13_fragmentation,sp13_multicol",SP12: Abspos Flex Static Position; Future SP: Writing Modes/Bidi; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
 css-break/flexbox/single-line-row-flex-fragmentation-032.html,flexbox_single-line-row-flex-fragmentation-032,css_break,yes,wpt/css_break/flexbox_single-line-row-flex-fragmentation-032,pass,0.0,,,
 css-break/flexbox/single-line-row-flex-fragmentation-033.html,flexbox_single-line-row-flex-fragmentation-033,css_break,no,,,,"needs_containment,needs_abspos_flex_static_position,sp13_fragmentation,sp13_multicol",Future SP: CSS Containment; SP12: Abspos Flex Static Position; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: unsupported property: contain
@@ -2404,9 +2404,9 @@ css-break/out-of-flow-in-new-column-crash.html,out-of-flow-in-new-column-crash,c
 css-break/out-of-flow-with-negative-offset-crash.html,out-of-flow-with-negative-offset-crash,css_break,yes,wpt/css_break/out-of-flow-with-negative-offset-crash,pass,0.0,,,
 css-break/out-of-order-float-in-inline-crash.html,out-of-order-float-in-inline-crash,css_break,yes,wpt/css_break/out-of-order-float-in-inline-crash,pass,0.0,,,
 css-break/overflow-auto-height-with-bottom-padding-crash.html,overflow-auto-height-with-bottom-padding-crash,css_break,yes,wpt/css_break/overflow-auto-height-with-bottom-padding-crash,pass,0.0,,,
-css-break/overflow-clip-000.html,overflow-clip-000,css_break,no,,,,"needs_writing_mode,sp13_fragmentation,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: style_block_unsupported property: writing-mode
-css-break/overflow-clip-001.html,overflow-clip-001,css_break,no,,,,"needs_writing_mode,sp13_fragmentation,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: style_block_unsupported property: writing-mode
-css-break/overflow-clip-002.html,overflow-clip-002,css_break,no,,,,"needs_writing_mode,sp13_fragmentation,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Block Fragmentation; SP13: Multi-Column Layout,Porter deferred: style_block_unsupported property: writing-mode
+css-break/overflow-clip-000.html,overflow-clip-000,css_break,yes,wpt/css_break/overflow-clip-000,pass,0.0,,,
+css-break/overflow-clip-001.html,overflow-clip-001,css_break,yes,wpt/css_break/overflow-clip-001,pass,0.0,,,
+css-break/overflow-clip-002.html,overflow-clip-002,css_break,yes,wpt/css_break/overflow-clip-002,pass,0.0,,,
 css-break/overflow-clip-003.html,overflow-clip-003,css_break,yes,wpt/css_break/overflow-clip-003,pass,0.0,,,
 css-break/overflow-clip-004.html,overflow-clip-004,css_break,yes,wpt/css_break/overflow-clip-004,pass,0.0,,,
 css-break/overflow-clip-005.html,overflow-clip-005,css_break,yes,wpt/css_break/overflow-clip-005,pass,0.0,,,
@@ -5095,7 +5095,7 @@ css-multicol/multicol-fill-balance-001.xht,multicol-fill-balance-001,css_multico
 css-multicol/multicol-fill-balance-001-ref.xht,multicol-fill-balance-001-ref,css_multicol,yes,wpt/css_multicol/multicol-fill-balance-001-ref,pass,0.0,,,
 css-multicol/multicol-fill-balance-002.html,multicol-fill-balance-002,css_multicol,yes,wpt/css_multicol/multicol-fill-balance-002,pass,0.0,,,
 css-multicol/multicol-fill-balance-003.html,multicol-fill-balance-003,css_multicol,yes,wpt/css_multicol/multicol-fill-balance-003,pass,0.0,,,
-css-multicol/multicol-fill-balance-004.html,multicol-fill-balance-004,css_multicol,no,,,,"needs_writing_mode,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
+css-multicol/multicol-fill-balance-004.html,multicol-fill-balance-004,css_multicol,yes,wpt/css_multicol/multicol-fill-balance-004,pass,0.0,,,
 css-multicol/multicol-fill-balance-005.html,multicol-fill-balance-005,css_multicol,yes,wpt/css_multicol/multicol-fill-balance-005,pass,0.0,,,
 css-multicol/multicol-fill-balance-006.html,multicol-fill-balance-006,css_multicol,yes,wpt/css_multicol/multicol-fill-balance-006,pass,0.0,,,
 css-multicol/multicol-fill-balance-007.html,multicol-fill-balance-007,css_multicol,no,,,,"needs_containment,needs_javascript,sp13_multicol",Future SP: CSS Containment; Future SP: JavaScript/Test Harness; SP13: Multi-Column Layout,Porter deferred: uses_javascript
@@ -5445,8 +5445,8 @@ css-multicol/multicol-span-all-rule-001.html,multicol-span-all-rule-001,css_mult
 css-multicol/multicol-span-all-rule-001-ref.html,multicol-span-all-rule-001-ref,css_multicol,yes,wpt/css_multicol/multicol-span-all-rule-001-ref,pass,0.0,,,
 css-multicol/multicol-span-all-rule-002.html,multicol-span-all-rule-002,css_multicol,no,,,,"needs_inline_block,needs_writing_mode,sp13_multicol",SP11: Inline Block Layout; Future SP: Writing Modes/Bidi; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
 css-multicol/multicol-span-all-rule-002-ref.html,multicol-span-all-rule-002-ref,css_multicol,yes,wpt/css_multicol/multicol-span-all-rule-002-ref,pass,0.0,,,
-css-multicol/multicol-span-auto-size-in-vertical-writing-mode-001.html,multicol-span-auto-size-in-vertical-writing-mode-001,css_multicol,no,,,,"needs_writing_mode,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
-css-multicol/multicol-span-auto-size-in-vertical-writing-mode-002.html,multicol-span-auto-size-in-vertical-writing-mode-002,css_multicol,no,,,,"needs_writing_mode,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
+css-multicol/multicol-span-auto-size-in-vertical-writing-mode-001.html,multicol-span-auto-size-in-vertical-writing-mode-001,css_multicol,yes,wpt/css_multicol/multicol-span-auto-size-in-vertical-writing-mode-001,pass,0.0,,,
+css-multicol/multicol-span-auto-size-in-vertical-writing-mode-002.html,multicol-span-auto-size-in-vertical-writing-mode-002,css_multicol,yes,wpt/css_multicol/multicol-span-auto-size-in-vertical-writing-mode-002,pass,0.0,,,
 css-multicol/multicol-span-float-001.xht,multicol-span-float-001,css_multicol,yes,wpt/css_multicol/multicol-span-float-001,pass,0.0,,,
 css-multicol/multicol-span-float-001-ref.xht,multicol-span-float-001-ref,css_multicol,no,,,,"reference_test,sp13_multicol,needs_image",Reference Test (not standalone); SP13: Multi-Column Layout; SP13: Image Rendering,Porter deferred: unsupported element: <img>
 css-multicol/multicol-span-float-002.html,multicol-span-float-002,css_multicol,yes,wpt/css_multicol/multicol-span-float-002,pass,0.0,,,
@@ -5455,7 +5455,7 @@ css-multicol/multicol-span-float-003.html,multicol-span-float-003,css_multicol,y
 css-multicol/multicol-span-float-004.html,multicol-span-float-004,css_multicol,no,,,,"needs_javascript,sp13_multicol",Future SP: JavaScript/Test Harness; SP13: Multi-Column Layout,Porter deferred: uses_javascript
 css-multicol/multicol-span-none-001.xht,multicol-span-none-001,css_multicol,yes,wpt/css_multicol/multicol-span-none-001,pass,0.0,,,
 css-multicol/multicol-span-none-001-ref.xht,multicol-span-none-001-ref,css_multicol,no,,,,"reference_test,sp13_multicol,needs_image",Reference Test (not standalone); SP13: Multi-Column Layout; SP13: Image Rendering,Porter deferred: unsupported element: <img>
-css-multicol/multicol-under-vertical-rl-scroll.html,multicol-under-vertical-rl-scroll,css_multicol,no,,,,"needs_writing_mode,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
+css-multicol/multicol-under-vertical-rl-scroll.html,multicol-under-vertical-rl-scroll,css_multicol,yes,wpt/css_multicol/multicol-under-vertical-rl-scroll,pass,0.0,,,
 css-multicol/multicol-under-vertical-rl-scroll-ref.html,multicol-under-vertical-rl-scroll-ref,css_multicol,no,,,,"reference_test,needs_javascript,sp13_multicol",Reference Test (not standalone); Future SP: JavaScript/Test Harness; SP13: Multi-Column Layout,Porter deferred: uses_javascript
 css-multicol/multicol-width-001.xht,multicol-width-001,css_multicol,yes,wpt/css_multicol/multicol-width-001,pass,0.0,,,
 css-multicol/multicol-width-001-ref.xht,multicol-width-001-ref,css_multicol,yes,wpt/css_multicol/multicol-width-001-ref,pass,0.0,,,
@@ -5505,8 +5505,8 @@ css-multicol/non-adjacent-spanners-001.html,non-adjacent-spanners-001,css_multic
 css-multicol/offsetProps-001.html,offsetProps-001,css_multicol,no,,,,"needs_javascript,sp13_multicol",Future SP: JavaScript/Test Harness; SP13: Multi-Column Layout,Porter deferred: uses_javascript
 css-multicol/offsetProps-002.html,offsetProps-002,css_multicol,no,,,,"needs_javascript,sp13_multicol",Future SP: JavaScript/Test Harness; SP13: Multi-Column Layout,Porter deferred: uses_javascript
 css-multicol/oof-nested-in-single-column.html,oof-nested-in-single-column,css_multicol,yes,wpt/css_multicol/oof-nested-in-single-column,pass,0.0,,,
-css-multicol/orthogonal-writing-mode-shrink-to-fit.html,orthogonal-writing-mode-shrink-to-fit,css_multicol,no,,,,"needs_writing_mode,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
-css-multicol/orthogonal-writing-mode-spanner.html,orthogonal-writing-mode-spanner,css_multicol,no,,,,"needs_writing_mode,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Multi-Column Layout,Porter deferred: unsupported property: writing-mode
+css-multicol/orthogonal-writing-mode-shrink-to-fit.html,orthogonal-writing-mode-shrink-to-fit,css_multicol,yes,wpt/css_multicol/orthogonal-writing-mode-shrink-to-fit,pass,0.0,,,
+css-multicol/orthogonal-writing-mode-spanner.html,orthogonal-writing-mode-spanner,css_multicol,yes,wpt/css_multicol/orthogonal-writing-mode-spanner,pass,0.0,,,
 css-multicol/overflow-scroll-in-multicol-crash.html,overflow-scroll-in-multicol-crash,css_multicol,yes,wpt/css_multicol/overflow-scroll-in-multicol-crash,pass,0.0,,,
 css-multicol/overflow-unsplittable-001.html,overflow-unsplittable-001,css_multicol,yes,wpt/css_multicol/overflow-unsplittable-001,pass,0.0,,,
 css-multicol/overflow-unsplittable-001-ref.html,overflow-unsplittable-001-ref,css_multicol,yes,wpt/css_multicol/overflow-unsplittable-001-ref,pass,0.0,,,
@@ -5914,8 +5914,8 @@ css-overflow/line-clamp/webkit-line-clamp-with-max-height.tentative.html,line-cl
 css-overflow/logical-overflow-001.html,logical-overflow-001,css_overflow,no,,,,"needs_javascript,needs_writing_mode",Future SP: JavaScript/Test Harness; Future SP: Writing Modes/Bidi,Porter deferred: uses_javascript
 css-overflow/margin-block-end-scroll-area-001.html,margin-block-end-scroll-area-001,css_overflow,yes,wpt/css_overflow/margin-block-end-scroll-area-001,pass,0.0,,,
 css-overflow/multicol-in-orthogonal-writing-mode-crash.html,multicol-in-orthogonal-writing-mode-crash,css_overflow,no,,,,"needs_inline_block,needs_writing_mode",SP11: Inline Block Layout; Future SP: Writing Modes/Bidi,Porter deferred: unsupported property: writing-mode
-css-overflow/no-scrollable-overflow-vertical-rl.html,no-scrollable-overflow-vertical-rl,css_overflow,no,,,,"needs_writing_mode,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Multi-Column Layout,Porter deferred: style_block_unsupported property: writing-mode
-css-overflow/no-scrollable-overflow-vertical-rl-2.html,no-scrollable-overflow-vertical-rl-2,css_overflow,no,,,,"needs_writing_mode,sp13_multicol",Future SP: Writing Modes/Bidi; SP13: Multi-Column Layout,Porter deferred: style_block_unsupported property: writing-mode
+css-overflow/no-scrollable-overflow-vertical-rl.html,no-scrollable-overflow-vertical-rl,css_overflow,yes,wpt/css_overflow/no-scrollable-overflow-vertical-rl,pass,0.0,,,
+css-overflow/no-scrollable-overflow-vertical-rl-2.html,no-scrollable-overflow-vertical-rl-2,css_overflow,yes,wpt/css_overflow/no-scrollable-overflow-vertical-rl-2,pass,0.0,,,
 css-overflow/orthogonal-flow-with-inline-end-margin.html,orthogonal-flow-with-inline-end-margin,css_overflow,no,,,,"needs_javascript,needs_writing_mode",Future SP: JavaScript/Test Harness; Future SP: Writing Modes/Bidi,Porter deferred: uses_javascript
 css-overflow/outline-with-opacity-crash.html,outline-with-opacity-crash,css_overflow,no,,,,needs_javascript,Future SP: JavaScript/Test Harness,Porter deferred: uses_javascript
 css-overflow/overflow-abpos-transform.html,overflow-abpos-transform,css_overflow,no,,,,"needs_javascript,needs_visual_effects",Future SP: JavaScript/Test Harness; Future SP: Transforms/Effects,Porter deferred: uses_javascript

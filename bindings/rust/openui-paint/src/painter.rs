@@ -205,20 +205,11 @@ pub fn paint_fragment(
             // Both passes remain constrained to this fragmentainer's block
             // interval, so rules cannot leak into an adjacent row.
             if !fragment.block_axis_clip_only && !fragment.inline_axis_clip_only {
-                let (clip_y, clip_h) = compute_column_block_clip_rect(fragment, abs_offset);
+                let block_clip = column_block_only_clip_rect(fragment, abs_offset);
                 canvas.save();
+                canvas.clip_rect(block_clip, ClipOp::Intersect, false);
                 canvas.clip_rect(
-                    Rect::from_xywh(-1_000_000.0, clip_y, 2_000_000.0, clip_h),
-                    ClipOp::Intersect,
-                    false,
-                );
-                canvas.clip_rect(
-                    Rect::from_xywh(
-                        abs_offset.left.to_f32(),
-                        clip_y,
-                        fragment.size.width.to_f32(),
-                        clip_h,
-                    ),
+                    column_physical_rect(fragment, abs_offset),
                     ClipOp::Difference,
                     false,
                 );
@@ -226,24 +217,12 @@ pub fn paint_fragment(
                 canvas.restore();
             }
             canvas.save();
-            let (clip_y, clip_h) = compute_column_block_clip_rect(fragment, abs_offset);
             // Multicol fragmentainers clip in the block axis. Inline overflow
             // may normally paint into the column gap. Layout clears
             // `block_axis_clip_only` when a nested fragmentation context owns
             // an inline-axis continuation boundary as well.
-            let (clip_x, clip_w) =
-                if fragment.block_axis_clip_only && !fragment.inline_axis_clip_only {
-                    (-1_000_000.0, 2_000_000.0)
-                } else {
-                    (abs_offset.left.to_f32(), fragment.size.width.to_f32())
-                };
-            let (clip_y, clip_h) = if fragment.inline_axis_clip_only {
-                (-1_000_000.0, 2_000_000.0)
-            } else {
-                (clip_y, clip_h)
-            };
             canvas.clip_rect(
-                skia_safe::Rect::from_xywh(clip_x, clip_y, clip_w, clip_h),
+                column_fragmentainer_clip_rect(fragment, abs_offset),
                 skia_safe::ClipOp::Intersect,
                 false,
             );
@@ -651,8 +630,7 @@ fn paint_shared_inline_oof_across_column_row(
             offset.top + column.offset.top,
         );
         let clip = if column.has_overflow_clip {
-            let (clip_y, clip_h) = compute_column_block_clip_rect(column, column_offset);
-            Rect::from_xywh(-1_000_000.0, clip_y, 2_000_000.0, clip_h)
+            column_block_only_clip_rect(column, column_offset)
         } else {
             Rect::from_xywh(-1_000_000.0, -1_000_000.0, 2_000_000.0, 2_000_000.0)
         };
@@ -786,8 +764,7 @@ fn paint_shared_inline_oof_across_column_row(
                 offset.top + column.offset.top,
             );
             let column_clip = if column.has_overflow_clip {
-                let (clip_y, clip_h) = compute_column_block_clip_rect(column, column_offset);
-                Rect::from_xywh(-1_000_000.0, clip_y, 2_000_000.0, clip_h)
+                column_block_only_clip_rect(column, column_offset)
             } else {
                 Rect::from_xywh(-1_000_000.0, -1_000_000.0, 2_000_000.0, 2_000_000.0)
             };
@@ -1108,19 +1085,8 @@ fn prepaint_shared_column_root_decorations(
         );
         canvas.save();
         if column.has_overflow_clip {
-            let (clip_y, clip_h) = compute_column_block_clip_rect(column, column_offset);
-            let (clip_x, clip_w) = if column.block_axis_clip_only && !column.inline_axis_clip_only {
-                (-1_000_000.0, 2_000_000.0)
-            } else {
-                (column_offset.left.to_f32(), column.size.width.to_f32())
-            };
-            let (clip_y, clip_h) = if column.inline_axis_clip_only {
-                (-1_000_000.0, 2_000_000.0)
-            } else {
-                (clip_y, clip_h)
-            };
             canvas.clip_rect(
-                Rect::from_xywh(clip_x, clip_y, clip_w, clip_h),
+                column_fragmentainer_clip_rect(column, column_offset),
                 ClipOp::Intersect,
                 false,
             );
@@ -1226,19 +1192,7 @@ fn collect_positioned_z_auto_descendants<'a>(
                 frag_offset.top + child.offset.top,
             );
             let column_clip = if child.has_overflow_clip {
-                let (clip_y, clip_h) = compute_column_block_clip_rect(child, column_offset);
-                let (clip_x, clip_w) = if child.block_axis_clip_only && !child.inline_axis_clip_only
-                {
-                    (-1_000_000.0, 2_000_000.0)
-                } else {
-                    (column_offset.left.to_f32(), child.size.width.to_f32())
-                };
-                let (clip_y, clip_h) = if child.inline_axis_clip_only {
-                    (-1_000_000.0, 2_000_000.0)
-                } else {
-                    (clip_y, clip_h)
-                };
-                Some(Rect::from_xywh(clip_x, clip_y, clip_w, clip_h))
+                Some(column_fragmentainer_clip_rect(child, column_offset))
             } else {
                 None
             };
@@ -1680,17 +1634,149 @@ pub fn compute_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> (f32, f
 /// flow (for example, a negative collapsed start margin). Extend only to the
 /// direct fragment's placement; negative offsets inside a continuation remain
 /// protected by the fragmentainer clip.
-fn compute_column_block_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> (f32, f32) {
-    let (_, clip_top, _, clip_height) = compute_clip_rect(fragment, offset);
-    let clip_bottom = clip_top + clip_height + fragment.column_block_end_ink_overflow.to_f32();
-    let clip_top = clip_top - fragment.column_block_start_ink_overflow.to_f32();
-    let direct_ink_top = fragment
-        .children
-        .iter()
-        .filter(|child| child.offset.top < LayoutUnit::zero())
-        .map(|child| (offset.top + child.offset.top).to_f32())
-        .fold(clip_top, f32::min);
-    (direct_ink_top, (clip_bottom - direct_ink_top).max(0.0))
+fn column_physical_rect(fragment: &Fragment, offset: PhysicalOffset) -> Rect {
+    Rect::from_xywh(
+        offset.left.to_f32(),
+        offset.top.to_f32(),
+        fragment.size.width.to_f32(),
+        fragment.size.height.to_f32(),
+    )
+}
+
+fn fragment_block_axis_is_x(fragment: &Fragment) -> bool {
+    fragment
+        .fragmentation_writing_direction
+        .is_some_and(|direction| !direction.is_horizontal())
+}
+
+fn fragment_physical_block_extent(fragment: &Fragment) -> LayoutUnit {
+    if fragment_block_axis_is_x(fragment) {
+        fragment.size.width
+    } else {
+        fragment.size.height
+    }
+}
+
+fn block_start_sized_rect(
+    fragment: &Fragment,
+    rect: Rect,
+    physical_offset: PhysicalOffset,
+    size: LayoutUnit,
+) -> Rect {
+    let extent = size.to_f32();
+    match fragment.fragmentation_writing_direction {
+        Some(direction) if !direction.is_horizontal() && direction.is_flipped_blocks() => {
+            let physical_block_start = (physical_offset.left + fragment.size.width).to_f32();
+            Rect::from_ltrb(
+                (physical_block_start - extent).round().max(rect.left),
+                rect.top,
+                rect.right,
+                rect.bottom,
+            )
+        }
+        Some(direction) if !direction.is_horizontal() => Rect::from_ltrb(
+            rect.left,
+            rect.top,
+            (physical_offset.left.to_f32() + extent)
+                .round()
+                .min(rect.right),
+            rect.bottom,
+        ),
+        _ => Rect::from_ltrb(
+            rect.left,
+            rect.top,
+            rect.right,
+            (physical_offset.top.to_f32() + extent)
+                .round()
+                .min(rect.bottom),
+        ),
+    }
+}
+
+fn decoration_source_rect(fragment: &Fragment, rect: Rect) -> Rect {
+    fragment.decoration_slice.map_or(rect, |slice| {
+        let offset = slice.source_block_offset.to_f32();
+        let size = slice.source_block_size.to_f32();
+        match fragment.fragmentation_writing_direction {
+            Some(direction) if !direction.is_horizontal() && direction.is_flipped_blocks() => {
+                let source_right = rect.right + offset;
+                Rect::from_ltrb(source_right - size, rect.top, source_right, rect.bottom)
+            }
+            Some(direction) if !direction.is_horizontal() => {
+                Rect::from_xywh(rect.left - offset, rect.top, size, rect.height())
+            }
+            _ => Rect::from_xywh(rect.left, rect.top - offset, rect.width(), size),
+        }
+    })
+}
+
+fn compute_column_block_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> Rect {
+    let (clip_x, clip_y, clip_width, clip_height) = compute_clip_rect(fragment, offset);
+    let mut left = clip_x;
+    let mut top = clip_y;
+    let mut right = clip_x + clip_width;
+    let mut bottom = clip_y + clip_height;
+    let start_ink = fragment.column_block_start_ink_overflow.to_f32();
+    let end_ink = fragment.column_block_end_ink_overflow.to_f32();
+
+    match fragment.fragmentation_writing_direction {
+        Some(direction) if !direction.is_horizontal() && direction.is_flipped_blocks() => {
+            right += start_ink;
+            left -= end_ink;
+            right = fragment
+                .children
+                .iter()
+                .map(|child| (offset.left + child.offset.left + child.size.width).to_f32())
+                .fold(right, f32::max);
+        }
+        Some(direction) if !direction.is_horizontal() => {
+            left -= start_ink;
+            right += end_ink;
+            left = fragment
+                .children
+                .iter()
+                .map(|child| (offset.left + child.offset.left).to_f32())
+                .fold(left, f32::min);
+        }
+        _ => {
+            top -= start_ink;
+            bottom += end_ink;
+            top = fragment
+                .children
+                .iter()
+                .map(|child| (offset.top + child.offset.top).to_f32())
+                .fold(top, f32::min);
+        }
+    }
+    Rect::from_ltrb(left, top, right.max(left), bottom.max(top))
+}
+
+fn column_block_only_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> Rect {
+    let block = compute_column_block_clip_rect(fragment, offset);
+    if fragment_block_axis_is_x(fragment) {
+        Rect::from_ltrb(block.left, -1_000_000.0, block.right, 1_000_000.0)
+    } else {
+        Rect::from_ltrb(-1_000_000.0, block.top, 1_000_000.0, block.bottom)
+    }
+}
+
+fn column_inline_only_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> Rect {
+    let physical = column_physical_rect(fragment, offset);
+    if fragment_block_axis_is_x(fragment) {
+        Rect::from_ltrb(-1_000_000.0, physical.top, 1_000_000.0, physical.bottom)
+    } else {
+        Rect::from_ltrb(physical.left, -1_000_000.0, physical.right, 1_000_000.0)
+    }
+}
+
+fn column_fragmentainer_clip_rect(fragment: &Fragment, offset: PhysicalOffset) -> Rect {
+    if fragment.block_axis_clip_only && !fragment.inline_axis_clip_only {
+        column_block_only_clip_rect(fragment, offset)
+    } else if fragment.inline_axis_clip_only {
+        column_inline_only_clip_rect(fragment, offset)
+    } else {
+        compute_column_block_clip_rect(fragment, offset)
+    }
 }
 
 fn overflow_clip_reference_box(style: &ComputedStyle) -> OverflowClipBox {
@@ -1802,32 +1888,55 @@ fn paint_with_overflow_clip(
     //   border a second time.
     let (clip_x, clip_y, clip_w, clip_h) =
         if !fragment.is_first_for_node || !fragment.is_last_for_node {
+            let frag_left = offset.left.to_f32();
             let frag_top = offset.top.to_f32();
-            let mut cy = clip_y;
-            let mut ch = clip_h;
+            let frag_right = frag_left + fragment.size.width.to_f32();
+            let frag_bottom = frag_top + fragment.size.height.to_f32();
+            let mut left = clip_x;
+            let mut top = clip_y;
+            let mut right = clip_x + clip_w;
+            let mut bottom = clip_y + clip_h;
 
-            if !fragment.is_first_for_node && cy > frag_top {
-                // Expand clip upward to the fragment's top edge, preserving
-                // the existing clip_bottom (the rendered end of the content).
-                let clip_bottom = cy + ch;
-                cy = frag_top;
-                ch = (clip_bottom - cy).max(0.0);
+            match fragment.fragmentation_writing_direction {
+                Some(direction) if !direction.is_horizontal() && direction.is_flipped_blocks() => {
+                    if !fragment.is_first_for_node {
+                        right = right.max(frag_right);
+                    }
+                    if !fragment.is_last_for_node {
+                        left = frag_left;
+                    }
+                }
+                Some(direction) if !direction.is_horizontal() => {
+                    if !fragment.is_first_for_node {
+                        left = left.min(frag_left);
+                    }
+                    if !fragment.is_last_for_node {
+                        right = frag_right;
+                    }
+                }
+                _ => {
+                    if !fragment.is_first_for_node {
+                        top = top.min(frag_top);
+                    }
+                    if !fragment.is_last_for_node {
+                        bottom = frag_bottom;
+                    }
+                }
             }
 
-            if !fragment.is_last_for_node {
-                let fragment_bottom = frag_top + fragment.size.height.to_f32();
-                ch = (fragment_bottom - cy).max(0.0);
-            }
-
-            (clip_x, cy, clip_w, ch)
+            (left, top, (right - left).max(0.0), (bottom - top).max(0.0))
         } else {
             (clip_x, clip_y, clip_w, clip_h)
         };
 
-    let (clip_x, clip_w) = if fragment.block_axis_clip_only {
-        (-100_000.0_f32, 200_000.0_f32)
+    let (clip_x, clip_y, clip_w, clip_h) = if fragment.block_axis_clip_only {
+        if fragment_block_axis_is_x(fragment) {
+            (clip_x, -100_000.0_f32, clip_w, 200_000.0_f32)
+        } else {
+            (-100_000.0_f32, clip_y, 200_000.0_f32, clip_h)
+        }
     } else {
-        (clip_x, clip_w)
+        (clip_x, clip_y, clip_w, clip_h)
     };
     let clip_rect = Rect::from_xywh(clip_x, clip_y, clip_w, clip_h);
 
@@ -2024,13 +2133,37 @@ fn slice_adjust_border_radii(mut radii: [Point; 4], fragment: &Fragment) -> [Poi
             radii[2] = Point::new(0.0, 0.0);
         }
     } else {
-        if !fragment.is_first_for_node {
-            radii[0] = Point::new(0.0, 0.0);
-            radii[1] = Point::new(0.0, 0.0);
-        }
-        if !fragment.is_last_for_node {
-            radii[2] = Point::new(0.0, 0.0);
-            radii[3] = Point::new(0.0, 0.0);
+        match fragment.fragmentation_writing_direction {
+            Some(direction) if !direction.is_horizontal() && direction.is_flipped_blocks() => {
+                if !fragment.is_first_for_node {
+                    radii[1] = Point::new(0.0, 0.0);
+                    radii[2] = Point::new(0.0, 0.0);
+                }
+                if !fragment.is_last_for_node {
+                    radii[0] = Point::new(0.0, 0.0);
+                    radii[3] = Point::new(0.0, 0.0);
+                }
+            }
+            Some(direction) if !direction.is_horizontal() => {
+                if !fragment.is_first_for_node {
+                    radii[0] = Point::new(0.0, 0.0);
+                    radii[3] = Point::new(0.0, 0.0);
+                }
+                if !fragment.is_last_for_node {
+                    radii[1] = Point::new(0.0, 0.0);
+                    radii[2] = Point::new(0.0, 0.0);
+                }
+            }
+            _ => {
+                if !fragment.is_first_for_node {
+                    radii[0] = Point::new(0.0, 0.0);
+                    radii[1] = Point::new(0.0, 0.0);
+                }
+                if !fragment.is_last_for_node {
+                    radii[2] = Point::new(0.0, 0.0);
+                    radii[3] = Point::new(0.0, 0.0);
+                }
+            }
         }
     }
     radii
@@ -2042,18 +2175,59 @@ fn fragment_border_radii(
     rect: &Rect,
     border_width: f32,
 ) -> [Point; 4] {
-    let normalization_rect = fragment.decoration_slice.map_or(*rect, |slice| {
-        Rect::from_xywh(
-            rect.left,
-            rect.top - slice.source_block_offset.to_f32(),
-            rect.width(),
-            slice.source_block_size.to_f32(),
-        )
-    });
+    let normalization_rect = decoration_source_rect(fragment, *rect);
     slice_adjust_border_radii(
         thin_uniform_circular_border_radii(style, &normalization_rect, border_width),
         fragment,
     )
+}
+
+fn sliced_physical_border_widths(
+    fragment: &Fragment,
+    style: &ComputedStyle,
+) -> (f32, f32, f32, f32) {
+    let mut top = style.effective_border_top() as f32;
+    let mut right = style.effective_border_right() as f32;
+    let mut bottom = style.effective_border_bottom() as f32;
+    let mut left = style.effective_border_left() as f32;
+    if fragment.is_inline_box_fragment {
+        let clone_inline = style.box_decoration_break == openui_style::BoxDecorationBreak::Clone;
+        if !clone_inline && !fragment.is_first_for_node {
+            left = 0.0;
+        }
+        if !clone_inline && !fragment.is_last_for_node {
+            right = 0.0;
+        }
+        return (top, right, bottom, left);
+    }
+
+    match fragment.fragmentation_writing_direction {
+        Some(direction) if !direction.is_horizontal() && direction.is_flipped_blocks() => {
+            if !fragment.is_first_for_node {
+                right = 0.0;
+            }
+            if !fragment.is_last_for_node {
+                left = 0.0;
+            }
+        }
+        Some(direction) if !direction.is_horizontal() => {
+            if !fragment.is_first_for_node {
+                left = 0.0;
+            }
+            if !fragment.is_last_for_node {
+                right = 0.0;
+            }
+        }
+        _ => {
+            if !fragment.is_first_for_node {
+                top = 0.0;
+            }
+            if !fragment.is_last_for_node {
+                bottom = 0.0;
+            }
+        }
+    }
+    (top, right, bottom, left)
 }
 
 fn has_any_radius(radii: &[Point; 4]) -> bool {
@@ -3058,12 +3232,19 @@ fn paint_box_decoration_background(
     // the same snapped pixel edge — no gaps.
     let x = abs_offset.left.round().to_f32();
     let y = abs_offset.top.round().to_f32();
-    let decoration_block_size = fragment
-        .decoration_paint_block_size
-        .filter(|limit| limit.raw() >= 0 && limit.raw() < fragment.size.height.raw())
-        .unwrap_or(fragment.size.height);
-    let right = (abs_offset.left + fragment.size.width).round().to_f32();
-    let bottom = (abs_offset.top + decoration_block_size).round().to_f32();
+    let full_right = (abs_offset.left + fragment.size.width).round().to_f32();
+    let full_bottom = (abs_offset.top + fragment.size.height).round().to_f32();
+    let full_border_box_rect = Rect::from_ltrb(x, y, full_right, full_bottom);
+    let decoration_block_size = fragment.decoration_paint_block_size.filter(|limit| {
+        limit.raw() >= 0 && limit.raw() < fragment_physical_block_extent(fragment).raw()
+    });
+    let border_box_rect = decoration_block_size.map_or(full_border_box_rect, |limit| {
+        block_start_sized_rect(fragment, full_border_box_rect, abs_offset, limit)
+    });
+    let x = border_box_rect.left;
+    let y = border_box_rect.top;
+    let right = border_box_rect.right;
+    let bottom = border_box_rect.bottom;
     let w = right - x;
     let h = bottom - y;
 
@@ -3072,25 +3253,11 @@ fn paint_box_decoration_background(
         return;
     }
 
-    let border_box_rect = Rect::from_xywh(x, y, w, h);
-    let shadow_border_box_rect = fragment.decoration_slice.map_or(border_box_rect, |slice| {
-        let source_top = y - slice.source_block_offset.to_f32();
-        Rect::from_xywh(x, source_top, w, slice.source_block_size.to_f32())
-    });
-    let decoration_clip_saved = fragment
-        .decoration_paint_block_size
-        .filter(|limit| limit.raw() >= 0 && limit.raw() < fragment.size.height.raw())
-        .is_some();
-    if let Some(limit) = fragment.decoration_paint_block_size {
-        if limit.raw() >= 0 && limit.raw() < fragment.size.height.raw() {
-            let clip_bottom = (abs_offset.top + limit).round().to_f32();
-            canvas.save();
-            canvas.clip_rect(
-                Rect::from_ltrb(x, y, right, clip_bottom.max(y)),
-                ClipOp::Intersect,
-                false,
-            );
-        }
+    let shadow_border_box_rect = decoration_source_rect(fragment, border_box_rect);
+    let decoration_clip_saved = decoration_block_size.is_some();
+    if decoration_clip_saved {
+        canvas.save();
+        canvas.clip_rect(border_box_rect, ClipOp::Intersect, false);
     }
 
     // ── 1. Outset box shadows (painted behind everything) ────────────
@@ -3105,30 +3272,7 @@ fn paint_box_decoration_background(
     let br_bw = style.effective_border_right() as f32;
     let bb_bw = style.effective_border_bottom() as f32;
     let bl_bw = style.effective_border_left() as f32;
-    let clone_inline = fragment.is_inline_box_fragment
-        && style.box_decoration_break == openui_style::BoxDecorationBreak::Clone;
-    let paint_bt = if fragment.is_inline_box_fragment || fragment.is_first_for_node {
-        bt
-    } else {
-        0.0
-    };
-    let paint_br = if !fragment.is_inline_box_fragment || clone_inline || fragment.is_last_for_node
-    {
-        br_bw
-    } else {
-        0.0
-    };
-    let paint_bb = if fragment.is_inline_box_fragment || fragment.is_last_for_node {
-        bb_bw
-    } else {
-        0.0
-    };
-    let paint_bl = if !fragment.is_inline_box_fragment || clone_inline || fragment.is_first_for_node
-    {
-        bl_bw
-    } else {
-        0.0
-    };
+    let (paint_bt, paint_br, paint_bb, paint_bl) = sliced_physical_border_widths(fragment, style);
     let fragment_radii = fragment_border_radii(style, fragment, &border_box_rect, bt);
     let has_radius = has_any_radius(&fragment_radii);
     let uniform_border = bt == br_bw
@@ -3519,27 +3663,29 @@ fn paint_box_decoration_background(
                 (right - border_right).max(x + border_left),
                 (bottom - border_bottom).max(y + border_top),
             );
-            let positioning_padding_rect =
-                fragment.decoration_slice.map_or(padding_rect, |slice| {
-                    // A sliced continuation suppresses its block-start border,
-                    // but that decoration still occupies source-space in the
-                    // unfragmented background positioning area. Advance past
-                    // it before sampling the continuation image.
-                    let suppressed_block_start_border = if fragment.is_first_for_node {
-                        0.0
-                    } else {
-                        border_top
-                    };
-                    let source_top =
-                        y - slice.source_block_offset.to_f32() - suppressed_block_start_border;
-                    let source_bottom = source_top + slice.source_block_size.to_f32();
-                    Rect::from_ltrb(
-                        x + border_left,
-                        source_top + border_top,
-                        (right - border_right).max(x + border_left),
-                        (source_bottom - border_bottom).max(source_top + border_top),
-                    )
-                });
+            let mut positioning_padding_rect = decoration_source_rect(fragment, padding_rect);
+            // A sliced continuation suppresses its block-start border, but
+            // that decoration still occupies source space in the unfragmented
+            // background positioning area. Move the source padding edge past
+            // that border on the mapped physical block axis.
+            if fragment.decoration_slice.is_some() && !fragment.is_first_for_node {
+                match fragment.fragmentation_writing_direction {
+                    Some(direction)
+                        if !direction.is_horizontal() && direction.is_flipped_blocks() =>
+                    {
+                        positioning_padding_rect.right += border_right;
+                        positioning_padding_rect.left += border_right;
+                    }
+                    Some(direction) if !direction.is_horizontal() => {
+                        positioning_padding_rect.left -= border_left;
+                        positioning_padding_rect.right -= border_left;
+                    }
+                    _ => {
+                        positioning_padding_rect.top -= border_top;
+                        positioning_padding_rect.bottom -= border_top;
+                    }
+                }
+            }
             let paint_rect = match effective_background_clip {
                 BackgroundClip::BorderBox | BackgroundClip::BorderArea => border_box_rect,
                 BackgroundClip::PaddingBox => padding_rect,
@@ -3723,30 +3869,10 @@ fn paint_borders(
     h: f32,
     outer_rrect_clipped: bool,
 ) {
-    // Slice block fragments on the block axis and inline fragments on the
-    // inline axis. Clone repeats both inline edges for every continuation.
-    let clone_inline = fragment.is_inline_box_fragment
-        && style.box_decoration_break == openui_style::BoxDecorationBreak::Clone;
-    let bt = if fragment.is_inline_box_fragment || fragment.is_first_for_node {
-        style.effective_border_top() as f32
-    } else {
-        0.0
-    };
-    let br = if !fragment.is_inline_box_fragment || clone_inline || fragment.is_last_for_node {
-        style.effective_border_right() as f32
-    } else {
-        0.0
-    };
-    let bb = if fragment.is_inline_box_fragment || fragment.is_last_for_node {
-        style.effective_border_bottom() as f32
-    } else {
-        0.0
-    };
-    let bl = if !fragment.is_inline_box_fragment || clone_inline || fragment.is_first_for_node {
-        style.effective_border_left() as f32
-    } else {
-        0.0
-    };
+    // Slice block fragments on the owning fragmentation context's physical
+    // block axis. Inline continuations keep their established left/right
+    // slicing semantics, including clone.
+    let (bt, br, bb, bl) = sliced_physical_border_widths(fragment, style);
 
     // No borders to paint
     if bt == 0.0 && br == 0.0 && bb == 0.0 && bl == 0.0 {
@@ -5171,6 +5297,9 @@ fn lighten_color(color: &Color4f) -> Color4f {
 mod tests {
     #[allow(unused_imports)]
     use super::*;
+    use openui_dom::NodeId;
+    use openui_geometry::PhysicalSize;
+    use openui_style::Direction;
 
     #[test]
     fn homogeneous_latin_and_ahem_runs_rotate_only_in_vertical_mixed_mode() {
@@ -5216,6 +5345,154 @@ mod tests {
             },
         ];
         assert_eq!(resolved_gradient_positions(&stops, 80.0), vec![1.0, 1.0]);
+    }
+
+    #[test]
+    fn fragmented_column_clip_maps_block_axis_for_all_writing_modes() {
+        let cases = [
+            (
+                Direction::Ltr.writing_direction(WritingMode::HorizontalTb),
+                PhysicalOffset::new(LayoutUnit::zero(), LayoutUnit::from_i32(-5)),
+                PhysicalSize::new(LayoutUnit::from_i32(10), LayoutUnit::from_i32(10)),
+                Rect::from_ltrb(10.0, 15.0, 50.0, 50.0),
+            ),
+            (
+                Direction::Ltr.writing_direction(WritingMode::VerticalLr),
+                PhysicalOffset::new(LayoutUnit::from_i32(-5), LayoutUnit::zero()),
+                PhysicalSize::new(LayoutUnit::from_i32(10), LayoutUnit::from_i32(10)),
+                Rect::from_ltrb(5.0, 20.0, 50.0, 50.0),
+            ),
+            (
+                Direction::Ltr.writing_direction(WritingMode::VerticalRl),
+                PhysicalOffset::new(LayoutUnit::from_i32(35), LayoutUnit::zero()),
+                PhysicalSize::new(LayoutUnit::from_i32(10), LayoutUnit::from_i32(10)),
+                Rect::from_ltrb(10.0, 20.0, 55.0, 50.0),
+            ),
+        ];
+
+        for (direction, child_offset, child_size, expected) in cases {
+            let mut fragment = Fragment::new_box(
+                NodeId::NONE,
+                PhysicalSize::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(30)),
+            );
+            fragment.fragmentation_writing_direction = Some(direction);
+            let mut child = Fragment::new_box(NodeId::NONE, child_size);
+            child.offset = child_offset;
+            fragment.children.push(child);
+            assert_eq!(
+                compute_column_block_clip_rect(
+                    &fragment,
+                    PhysicalOffset::new(LayoutUnit::from_i32(10), LayoutUnit::from_i32(20)),
+                ),
+                expected
+            );
+        }
+    }
+
+    #[test]
+    fn decoration_source_slice_uses_physical_block_polarity() {
+        let rect = Rect::from_ltrb(10.0, 20.0, 50.0, 50.0);
+        let cases = [
+            (
+                Direction::Ltr.writing_direction(WritingMode::HorizontalTb),
+                Rect::from_ltrb(10.0, 13.0, 50.0, 113.0),
+            ),
+            (
+                Direction::Ltr.writing_direction(WritingMode::VerticalLr),
+                Rect::from_ltrb(3.0, 20.0, 103.0, 50.0),
+            ),
+            (
+                Direction::Ltr.writing_direction(WritingMode::VerticalRl),
+                Rect::from_ltrb(-43.0, 20.0, 57.0, 50.0),
+            ),
+        ];
+        for (direction, expected) in cases {
+            let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+            fragment.fragmentation_writing_direction = Some(direction);
+            fragment.decoration_slice = Some(openui_layout::DecorationSlice {
+                source_block_offset: LayoutUnit::from_i32(7),
+                source_block_size: LayoutUnit::from_i32(100),
+            });
+            assert_eq!(decoration_source_rect(&fragment, rect), expected);
+        }
+    }
+
+    #[test]
+    fn decoration_paint_limit_snaps_the_physical_block_edge() {
+        let rect = Rect::from_ltrb(10.0, 20.0, 50.0, 60.0);
+        let size = LayoutUnit::from_f32(7.34);
+        let offset = PhysicalOffset::new(LayoutUnit::from_f32(10.34), LayoutUnit::from_f32(20.34));
+        let cases = [
+            (
+                Direction::Ltr.writing_direction(WritingMode::HorizontalTb),
+                Rect::from_ltrb(10.0, 20.0, 50.0, 28.0),
+            ),
+            (
+                Direction::Ltr.writing_direction(WritingMode::VerticalLr),
+                Rect::from_ltrb(10.0, 20.0, 18.0, 60.0),
+            ),
+            (
+                Direction::Ltr.writing_direction(WritingMode::VerticalRl),
+                Rect::from_ltrb(43.0, 20.0, 50.0, 60.0),
+            ),
+        ];
+        for (direction, expected) in cases {
+            let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+            fragment.fragmentation_writing_direction = Some(direction);
+            fragment.size = PhysicalSize::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(40));
+            assert_eq!(
+                block_start_sized_rect(&fragment, rect, offset, size),
+                expected
+            );
+        }
+    }
+
+    #[test]
+    fn sliced_borders_map_first_middle_and_last_physical_block_edges() {
+        let mut style = ComputedStyle::default();
+        style.border_top_width = 1;
+        style.border_right_width = 2;
+        style.border_bottom_width = 3;
+        style.border_left_width = 4;
+        style.border_top_style = BorderStyle::Solid;
+        style.border_right_style = BorderStyle::Solid;
+        style.border_bottom_style = BorderStyle::Solid;
+        style.border_left_style = BorderStyle::Solid;
+
+        let cases = [
+            (
+                Direction::Ltr.writing_direction(WritingMode::HorizontalTb),
+                (1.0, 2.0, 0.0, 4.0),
+                (0.0, 2.0, 0.0, 4.0),
+                (0.0, 2.0, 3.0, 4.0),
+            ),
+            (
+                Direction::Ltr.writing_direction(WritingMode::VerticalLr),
+                (1.0, 0.0, 3.0, 4.0),
+                (1.0, 0.0, 3.0, 0.0),
+                (1.0, 2.0, 3.0, 0.0),
+            ),
+            (
+                Direction::Ltr.writing_direction(WritingMode::VerticalRl),
+                (1.0, 2.0, 3.0, 0.0),
+                (1.0, 0.0, 3.0, 0.0),
+                (1.0, 0.0, 3.0, 4.0),
+            ),
+        ];
+        for (direction, first, middle, last) in cases {
+            let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+            fragment.fragmentation_writing_direction = Some(direction);
+
+            fragment.is_first_for_node = true;
+            fragment.is_last_for_node = false;
+            assert_eq!(sliced_physical_border_widths(&fragment, &style), first);
+
+            fragment.is_first_for_node = false;
+            assert_eq!(sliced_physical_border_widths(&fragment, &style), middle);
+
+            fragment.is_last_for_node = true;
+            assert_eq!(sliced_physical_border_widths(&fragment, &style), last);
+        }
     }
 
     // ── Issue 7 (R26): large borders don't produce invalid paint geometry ──

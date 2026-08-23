@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused regressions for the SP17 kickoff and live W1G closure evidence."""
+"""Focused regressions for the SP17 kickoff and live W1H closure evidence."""
 
 from __future__ import annotations
 
@@ -88,6 +88,23 @@ EXPECTED_LIVE_PROMOTIONS = {
     "wpt/css_sizing/aspect-ratio_abspos-020",
     "wpt/css_sizing/div-orthogonal-left-and-non-auto-margin-ref",
     "wpt/css_sizing/div-orthogonal-left-and-non-auto-margin.tentative",
+} | {
+    "wpt/css_break/borders-006",
+    "wpt/css_break/borders-007",
+    "wpt/css_break/overflow-clip-000",
+    "wpt/css_break/overflow-clip-001",
+    "wpt/css_break/overflow-clip-002",
+    "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-056",
+    "wpt/css_break/flexbox_single-line-column-flex-fragmentation-044",
+    "wpt/css_break/flexbox_single-line-row-flex-fragmentation-030",
+    "wpt/css_multicol/multicol-fill-balance-004",
+    "wpt/css_multicol/multicol-span-auto-size-in-vertical-writing-mode-001",
+    "wpt/css_multicol/multicol-span-auto-size-in-vertical-writing-mode-002",
+    "wpt/css_multicol/multicol-under-vertical-rl-scroll",
+    "wpt/css_multicol/orthogonal-writing-mode-shrink-to-fit",
+    "wpt/css_multicol/orthogonal-writing-mode-spanner",
+    "wpt/css_overflow/no-scrollable-overflow-vertical-rl",
+    "wpt/css_overflow/no-scrollable-overflow-vertical-rl-2",
 }
 
 
@@ -173,7 +190,7 @@ class LedgerTests(unittest.TestCase):
         promoted = closure.validate_live_snapshot(
             rows, summary, baseline, inventory, actionable
         )
-        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 91)
+        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 107)
         self.assertEqual(promoted, EXPECTED_LIVE_PROMOTIONS)
         self.assertTrue(promoted.issubset(set(actionable)))
 

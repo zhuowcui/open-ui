@@ -21,14 +21,14 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W1G full no-resume run):
+Latest authoritative accountability snapshot (SP17 W1H full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3657 |
-| Unported but explicitly tracked tests | 4016 |
-| Runnable passes | 3358 |
+| Ported/runnable WPT tests | 3673 |
+| Unported but explicitly tracked tests | 4000 |
+| Runnable passes | 3374 |
 | Runnable failures | 299 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
@@ -36,14 +36,16 @@ Latest authoritative accountability snapshot (SP17 W1G full no-resume run):
 | `sp12_layout_bug` rows | 0 |
 | `needs_font_metrics` rows | 0 |
 | Runnable `sp13_multicol` rows | 0 |
-| Unported `sp13_multicol` residuals | 1018 |
+| Unported `sp13_multicol` residuals | 1002 |
 
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
-The full `wpt/` run was executed without resume on 2026-08-22. All 3267 frozen
-SP17 baseline IDs, including all 2823 frozen SP13-R baseline IDs and all 351
-runnable multicol targets, remain exact.
+The full `wpt/` run was executed without resume on 2026-08-22. Its committed
+`summary.json` SHA-256 is
+`ed78d9c2fd09c64a52c5de47ece6e7077a8fbab34e3eff6a12d6814ede1c6474`.
+All 3267 frozen SP17 baseline IDs, including all 2823 frozen SP13-R baseline
+IDs and all 351 runnable multicol targets, remain exact.
 
-## SP17 W1G Logical Out-of-Flow Core Closure
+## SP17 W1H Logical Multicol and Vertical Fragmentation Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -139,16 +141,39 @@ The atomic 27-ID W1G cohort covers six flex abspos auto-position cases, three
 vertical aspect-ratio transfers, twelve orthogonal intrinsic-sizing targets,
 their four shared references, and the orthogonal over-constrained margin pair.
 It is 27/27 exact with zero mismatched pixels or errors. The live validator now
-requires all 91 exact SP17 promotions, and writing-mode 010–016 remain absent.
+required all 91 exact SP17 promotions.
 
-The current full result is 3657 runnable, 3358 exact, 299 functional failures,
-and zero errors. Live `needs_writing_mode` ownership is 751 rows; the frozen
+W1H keeps multicol sizing, balancing, spanner placement, break progress, and
+continuation geometry in logical inline/block coordinates, then projects the
+container, columns, rules, in-flow fragments, decoration slices, baselines,
+and overflow metadata through one shared finalizer. Child and relayout spaces
+now use the complete computed writing direction; orthogonal children transpose
+sizing inputs without incorrectly inheriting general fragmentation support.
+
+Fragment paint records the fragmentation writing direction. Column and
+overflow clips, first/interior/last decoration edges, border radii, background
+sources, shadows, and ink overflow map to Y for horizontal-tb, left-origin X
+for vertical-lr, and right-origin X for vertical-rl. Vertical inline
+progression applies RTL independently. The same logical continuation boundary
+now covers wrapping row flex, growing column flex, and break-before cases, and
+vertical-rl float descendants no longer enlarge multicol scrollable overflow.
+
+The atomic 16-ID W1H cohort spans eight css-break fragmentation targets, six
+css-multicol sizing/scrolling targets, and two css-overflow float targets. The
+18-ID proof, including the existing exact `borders-006-ref` and
+`borders-007-ref`, is 18/18 exact with zero mismatched pixels or errors. The
+live validator requires all 107 exact SP17 promotions, and writing-mode
+010–016 remain absent.
+
+The current full result is 3673 runnable, 3374 exact, 299 functional failures,
+and zero errors. Live `needs_writing_mode` ownership is 735 rows; the frozen
 842-row kickoff inventory and 311/531 disposition remain immutable. The text
-manifest contains 782 IDs.
+manifest contains 798 IDs.
 
-W1 remains incomplete for fragmentation and multicol logical geometry.
-Positioned-inline static positions, flex safe-alignment abspos behavior, and
-fragmented/multicol out-of-flow layout remain later work. W2 retains upright
+W1 remains incomplete for positioned-inline static positions, flex
+safe-alignment abspos behavior, and fragmented/multicol out-of-flow layout.
+Tables, images/print-specific cases, sideways modes, and extreme column-rule
+geometry remain later work. W2 retains upright
 CJK and mixed-script run splitting, sideways text, and writing-mode 010–015.
 
 ## SP13-R Closure
@@ -227,7 +252,7 @@ Top runnable failure categories:
 
 ## Current Unported Inventory Ownership
 
-The 4043 unported rows are Chromium WPT files that the current porter or renderer cannot
+The 4000 unported rows are Chromium WPT files that the current porter or renderer cannot
 represent yet. They are still tracked with explicit dependency categories.
 
 Top unported categories:
@@ -235,25 +260,26 @@ Top unported categories:
 | Category | Count |
 |---|---:|
 | `needs_javascript` | 1945 |
-| `sp13_multicol` | 1018 |
-| `needs_writing_mode` | 759 |
-| `sp13_fragmentation` | 651 |
+| `sp13_multicol` | 1002 |
+| `needs_writing_mode` | 716 |
+| `sp13_fragmentation` | 643 |
 | `needs_table_layout` | 462 |
 | `needs_generated_content` | 443 |
-| `reference_test` | 441 |
-| `needs_inline_block` | 410 |
+| `reference_test` | 421 |
+| `needs_inline_block` | 408 |
 | `needs_containment` | 335 |
 | `needs_image` | 325 |
-| `needs_advanced_selectors` | 318 |
+| `needs_advanced_selectors` | 306 |
 | `needs_grid` | 304 |
 | `needs_empty_block_margin_collapse` | 304 |
 | `needs_form_controls` | 264 |
 
 ## Recommended Next Work
 
-Continue SP17 W1 by carrying logical geometry through fragmentation and
-multicol. Keep positioned-inline and fragmented out-of-flow behavior in their
-explicit later cohorts. Reserve upright CJK and mixed-script
+Continue SP17 W1 with positioned-inline and fragmented/multicol out-of-flow
+behavior in their explicit later cohorts. Keep the neighboring flex-abspos,
+table, image/print-only, and extreme column-rule cases out of the closed W1H
+cohort. Reserve upright CJK and mixed-script
 run splitting, sideways text, and `flexbox-writing-mode-010` through 015 for W2;
 do not substitute geometry-only builders for their glyph requirements.
 Keep all 3267 kickoff exact IDs green, splice surgically, do not batch-regenerate

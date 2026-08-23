@@ -275,7 +275,7 @@ multicol-fill-balance-001,ported,css_multicol_multicol_fill_balance_001,
 multicol-fill-balance-001-ref,ported,css_multicol_multicol_fill_balance_001_ref,
 multicol-fill-balance-002,ported,css_multicol_multicol_fill_balance_002,
 multicol-fill-balance-003,ported,css_multicol_multicol_fill_balance_003,
-multicol-fill-balance-004,not_portable,,unsupported property: writing-mode
+multicol-fill-balance-004,ported,css_multicol_multicol_fill_balance_004,
 multicol-fill-balance-005,ported,css_multicol_multicol_fill_balance_005,
 multicol-fill-balance-006,ported,css_multicol_multicol_fill_balance_006,
 multicol-fill-balance-007,not_portable,,uses_javascript
@@ -625,8 +625,8 @@ multicol-span-all-rule-001,ported,css_multicol_multicol_span_all_rule_001,
 multicol-span-all-rule-001-ref,ported,css_multicol_multicol_span_all_rule_001_ref,
 multicol-span-all-rule-002,not_portable,,unsupported property: writing-mode
 multicol-span-all-rule-002-ref,ported,css_multicol_multicol_span_all_rule_002_ref,
-multicol-span-auto-size-in-vertical-writing-mode-001,not_portable,,unsupported property: writing-mode
-multicol-span-auto-size-in-vertical-writing-mode-002,not_portable,,unsupported property: writing-mode
+multicol-span-auto-size-in-vertical-writing-mode-001,ported,css_multicol_multicol_span_auto_size_in_vertical_writing_mode_001,
+multicol-span-auto-size-in-vertical-writing-mode-002,ported,css_multicol_multicol_span_auto_size_in_vertical_writing_mode_002,
 multicol-span-float-001,ported,css_multicol_multicol_span_float_001,
 multicol-span-float-001-ref,not_portable,,unsupported element: <img>
 multicol-span-float-002,ported,css_multicol_multicol_span_float_002,
@@ -635,7 +635,7 @@ multicol-span-float-003,ported,css_multicol_multicol_span_float_003,
 multicol-span-float-004,not_portable,,uses_javascript
 multicol-span-none-001,ported,css_multicol_multicol_span_none_001,
 multicol-span-none-001-ref,not_portable,,unsupported element: <img>
-multicol-under-vertical-rl-scroll,not_portable,,unsupported property: writing-mode
+multicol-under-vertical-rl-scroll,ported,css_multicol_multicol_under_vertical_rl_scroll,
 multicol-under-vertical-rl-scroll-ref,not_portable,,uses_javascript
 multicol-width-001,ported,css_multicol_multicol_width_001,
 multicol-width-001-ref,ported,css_multicol_multicol_width_001_ref,
@@ -685,8 +685,8 @@ non-adjacent-spanners-001,ported,css_multicol_non_adjacent_spanners_001,
 offsetProps-001,not_portable,,uses_javascript
 offsetProps-002,not_portable,,uses_javascript
 oof-nested-in-single-column,ported,css_multicol_oof_nested_in_single_column,
-orthogonal-writing-mode-shrink-to-fit,not_portable,,unsupported property: writing-mode
-orthogonal-writing-mode-spanner,not_portable,,unsupported property: writing-mode
+orthogonal-writing-mode-shrink-to-fit,ported,css_multicol_orthogonal_writing_mode_shrink_to_fit,
+orthogonal-writing-mode-spanner,ported,css_multicol_orthogonal_writing_mode_spanner,
 overflow-scroll-in-multicol-crash,ported,css_multicol_overflow_scroll_in_multicol_crash,
 overflow-unsplittable-001,ported,css_multicol_overflow_unsplittable_001,
 overflow-unsplittable-001-ref,ported,css_multicol_overflow_unsplittable_001_ref,

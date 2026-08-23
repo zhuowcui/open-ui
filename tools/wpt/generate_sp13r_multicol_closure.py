@@ -29,6 +29,24 @@ EXPECTED_RESIDUALS = 1018
 EXPECTED_RUNNABLE = 3566
 EXPECTED_UNPORTED = 4107
 EXPECTED_EXACT = EXPECTED_BASELINE + EXPECTED_TARGETS
+LATER_EXACT_PROMOTIONS = frozenset({
+    "wpt/css_break/borders-006",
+    "wpt/css_break/borders-007",
+    "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-056",
+    "wpt/css_break/flexbox_single-line-column-flex-fragmentation-044",
+    "wpt/css_break/flexbox_single-line-row-flex-fragmentation-030",
+    "wpt/css_break/overflow-clip-000",
+    "wpt/css_break/overflow-clip-001",
+    "wpt/css_break/overflow-clip-002",
+    "wpt/css_multicol/multicol-fill-balance-004",
+    "wpt/css_multicol/multicol-span-auto-size-in-vertical-writing-mode-001",
+    "wpt/css_multicol/multicol-span-auto-size-in-vertical-writing-mode-002",
+    "wpt/css_multicol/multicol-under-vertical-rl-scroll",
+    "wpt/css_multicol/orthogonal-writing-mode-shrink-to-fit",
+    "wpt/css_multicol/orthogonal-writing-mode-spanner",
+    "wpt/css_overflow/no-scrollable-overflow-vertical-rl",
+    "wpt/css_overflow/no-scrollable-overflow-vertical-rl-2",
+})
 
 
 def categories(value: str) -> set[str]:
@@ -176,6 +194,21 @@ def validate_closed_snapshot(
     for item in residuals:
         test_id = item["test_id"]
         row = mapping.get(test_id)
+        if test_id in LATER_EXACT_PROMOTIONS:
+            result = summary_by_id.get(test_id)
+            if (
+                not row
+                or row.get("ported") != "yes"
+                or row.get("our_test_id") != test_id
+                or OWNER in categories(row.get("failure_category", ""))
+                or not result
+                or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                raise ValueError(
+                    f"SP13-R later promotion is not runnable and exact: {test_id}"
+                )
+            continue
         if not row or row.get("ported") != "no":
             raise ValueError(f"SP13-R residual unexpectedly became runnable: {test_id}")
         if categories(row.get("failure_category", "")) != set(item["owner_categories"]):
