@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1K | 🟡 Active; safe flex overflow alignment closure, 152 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1L | 🟡 Active; absolute flex centering closure, 154 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,716 ported/runnable tests, 3,419 runnable passes, 297 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 690 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,717 ported/runnable tests, 3,421 runnable passes, 296 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 688 live writing-mode owner rows.**
 
 ---
 
@@ -271,11 +271,11 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Metric | Value |
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
-| Current runnable WPT tests | 3,716 |
-| Current runnable WPT passes | 3,419 |
+| Current runnable WPT tests | 3,717 |
+| Current runnable WPT passes | 3,421 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
-| Pixel comparison tests | 3,716 generated WPT comparisons + earlier SP pages/apps |
+| Pixel comparison tests | 3,717 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
@@ -744,3 +744,30 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 - Next: keep absolute centering, tables, transforms, generated content,
   images/print cases, and unrelated paint/layout work outside W1K. W2 retains
   material bidi and vertical glyph shaping.
+
+### SP17 W1L: absolute flex static-position centering closure
+
+- Added retained start/center/end affinity for both physical static-position
+  axes. Flex emits padding-box anchors plus edge bias; out-of-flow sizing turns
+  that edge into a forward, backward, or symmetric available interval and
+  aligns the complete margin box after final sizing.
+- Auto physical height in vertical writing is recentered after content layout.
+  Multicol reconstructs a fragmented flex candidate's hypothetical margin-box
+  start before column projection, preserving the exact flex-container
+  fragmentation 010/011 guards.
+- Admitted only `position-absolute-center-002`; the shared fix promotes 001.
+  The focused center/W1K/writing-direction proof is 17/17 exact. Two porter
+  dry-runs and two transactional splices are byte-identical.
+- The frozen 3,267-ID baseline remains exact. The authoritative full suite is
+  **3,717 runnable / 3,421 exact / 296 fail / 0 errors**; live unported
+  inventory is 3,956, writing-mode ownership is 688, unported SP13-R multicol
+  ownership is 976, the text manifest is 842, and the live validator requires
+  exactly 154 promotions. The SP13-R later-promotion set remains 42. The
+  committed `summary.json` SHA-256 is
+  `365354dae47ca97f6370a2dcd4edc3e69286de0866ee7e9169e8f7ee3e4f1cd5`.
+- Verification: complete no-resume release suite, locked Rust matrix, all 122
+  closure/porter tests, both ledger checks, deterministic generated artifacts,
+  splice idempotence, formatter/diff checks, 010–016 exclusion, and audit 7/7.
+- Next: keep fallback/justify-self/JavaScript/table/transform/generated-content
+  cases and unrelated paint work outside W1L. W2 retains material bidi and
+  vertical glyph shaping.

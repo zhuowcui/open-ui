@@ -798,7 +798,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             // CSS Flexbox §4.1: The static position of an abspos child of a
             // flex container is determined as if the child were the sole flex
             // item in the container, using the container's alignment properties.
-            let (sp_x, sp_y) = compute_abspos_static_position(
+            let static_position = compute_abspos_static_position(
                 doc,
                 child_id,
                 child_style,
@@ -812,7 +812,9 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             let mut candidate = crate::out_of_flow::OutOfFlowCandidate {
                 node_id: child_id,
                 style: child_style.clone(),
-                static_position: PhysicalOffset::new(sp_x, sp_y),
+                static_position: static_position.offset,
+                static_position_horizontal_edge: static_position.horizontal_edge,
+                static_position_vertical_edge: static_position.vertical_edge,
                 containing_block_offset: PhysicalOffset::zero(),
                 containing_block_node: NodeId::NONE,
                 containing_block_size: cb_size,
@@ -3718,6 +3720,75 @@ fn flex_baseline_from_child(
 /// Per CSS Flexbox §4.1, the child is positioned as if it were the sole flex
 /// item, applying the container's `justify-content` (main axis) and
 /// `align-items` (cross axis) alignment.
+#[derive(Debug, Clone, Copy)]
+struct FlexAbsposStaticPosition {
+    offset: PhysicalOffset,
+    horizontal_edge: crate::out_of_flow::StaticPositionEdge,
+    vertical_edge: crate::out_of_flow::StaticPositionEdge,
+}
+
+fn main_axis_static_position_edge(
+    alignment: &ContentAlignment,
+    is_reverse: bool,
+    is_block_axis: bool,
+) -> crate::out_of_flow::StaticPositionEdge {
+    use crate::out_of_flow::StaticPositionEdge::{Center, End, Start};
+
+    match alignment.position {
+        ContentPosition::FlexEnd => {
+            if is_reverse {
+                Start
+            } else {
+                End
+            }
+        }
+        ContentPosition::Center => Center,
+        ContentPosition::Start => Start,
+        ContentPosition::End => End,
+        ContentPosition::Right if !is_block_axis => End,
+        ContentPosition::Left | ContentPosition::Right => Start,
+        _ => match alignment.distribution {
+            ContentDistribution::SpaceAround | ContentDistribution::SpaceEvenly => Center,
+            _ if is_reverse => End,
+            _ => Start,
+        },
+    }
+}
+
+fn cross_axis_static_position_edge(
+    alignment: ItemPosition,
+    is_wrap_reverse: bool,
+) -> crate::out_of_flow::StaticPositionEdge {
+    use crate::out_of_flow::StaticPositionEdge::{Center, End, Start};
+
+    let alignment = if is_wrap_reverse {
+        match alignment {
+            ItemPosition::FlexStart => ItemPosition::FlexEnd,
+            ItemPosition::FlexEnd => ItemPosition::FlexStart,
+            other => other,
+        }
+    } else {
+        alignment
+    };
+    match alignment {
+        ItemPosition::Center => Center,
+        ItemPosition::FlexEnd
+        | ItemPosition::End
+        | ItemPosition::SelfEnd
+        | ItemPosition::LastBaseline => End,
+        ItemPosition::Stretch if is_wrap_reverse => End,
+        _ => Start,
+    }
+}
+
+fn edge_offset(edge: crate::out_of_flow::StaticPositionEdge, size: LayoutUnit) -> LayoutUnit {
+    match edge {
+        crate::out_of_flow::StaticPositionEdge::Start => LayoutUnit::zero(),
+        crate::out_of_flow::StaticPositionEdge::Center => size / 2,
+        crate::out_of_flow::StaticPositionEdge::End => size,
+    }
+}
+
 fn compute_abspos_static_position(
     doc: &Document,
     child_id: NodeId,
@@ -3728,7 +3799,7 @@ fn compute_abspos_static_position(
     is_column: bool,
     border: &BoxStrut,
     padding: &BoxStrut,
-) -> (LayoutUnit, LayoutUnit) {
+) -> FlexAbsposStaticPosition {
     let writing_direction = container_style
         .direction
         .writing_direction(container_style.writing_mode);
@@ -3791,44 +3862,57 @@ fn compute_abspos_static_position(
         )
     };
 
-    // Keep signed free space until the shared alignment resolvers apply the
-    // specified overflow behavior. Safe alignment falls back to logical start
-    // only when the child's margin box overflows; default/unsafe alignment is
-    // allowed to retain a negative offset.
-    let main_free = main_size - child_main;
-    let main_offset = resolve_content_alignment(
+    // Static alignment carries an edge, not a completed hypothetical-box
+    // origin. Start/end use the corresponding flex-content edge and center is
+    // independent of the child's hypothetical size. Safe overflow alone may
+    // replace the requested edge with logical start.
+    let mut main_edge = main_axis_static_position_edge(
         &container_style.justify_content,
-        main_free,
-        1,
         container_style.flex_direction.is_reverse(),
         is_column,
-    )
-    .initial_offset;
+    );
+    if container_style.justify_content.overflow == OverflowAlignment::Safe && child_main > main_size
+    {
+        main_edge = crate::out_of_flow::StaticPositionEdge::Start;
+    }
 
-    // align-self:auto inherits the complete align-items value, including its
-    // safe/unsafe modifier. Wrap reversal is resolved here, before the single
-    // logical-to-physical projection below.
+    // align-self:auto inherits both position and overflow from align-items.
+    // Resolve wrap reversal once before assigning the retained edge.
     let (cross_alignment, cross_overflow) = resolve_item_alignment(child_style, container_style);
-    let cross_offset = resolve_align_self(
+    let mut cross_edge = cross_axis_static_position_edge(
         cross_alignment,
-        cross_size - child_cross,
-        cross_overflow,
         container_style.flex_wrap.is_wrap_reverse(),
     );
+    if cross_overflow == OverflowAlignment::Safe && child_cross > cross_size {
+        cross_edge = crate::out_of_flow::StaticPositionEdge::Start;
+    }
 
-    let logical_offset = if is_column {
-        LogicalOffset::new(cross_offset, main_offset)
+    let (inline_edge, block_edge) = if is_column {
+        (cross_edge, main_edge)
     } else {
-        LogicalOffset::new(main_offset, cross_offset)
+        (main_edge, cross_edge)
     };
     let logical_border = border.to_logical(writing_direction);
     let logical_padding = padding.to_logical(writing_direction);
     let logical_anchor = LogicalOffset::new(
-        logical_border.inline_start + logical_padding.inline_start + logical_offset.inline_offset,
-        logical_border.block_start + logical_padding.block_start + logical_offset.block_offset,
+        logical_border.inline_start
+            + logical_padding.inline_start
+            + edge_offset(inline_edge, content_logical.inline_size),
+        logical_border.block_start
+            + logical_padding.block_start
+            + edge_offset(block_edge, content_logical.block_size),
     );
     let physical_anchor = converter.to_physical_offset(logical_anchor, PhysicalSize::zero());
-    (physical_anchor.left, physical_anchor.top)
+    let (horizontal_edge, vertical_edge) = if writing_direction.is_horizontal() {
+        (inline_edge, block_edge)
+    } else {
+        (block_edge, inline_edge)
+    };
+    FlexAbsposStaticPosition {
+        offset: physical_anchor,
+        horizontal_edge,
+        vertical_edge,
+    }
 }
 
 #[cfg(test)]

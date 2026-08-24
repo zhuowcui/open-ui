@@ -772,6 +772,7 @@
   "wpt/css_position/multicol_vrl-rtl-rtl-in-multicols",
   "wpt/css_position/overlay_green-ref",
   "wpt/css_position/position-absolute-center-001",
+  "wpt/css_position/position-absolute-center-002",
   "wpt/css_position/position-absolute-in-inline-003",
   "wpt/css_position/position-absolute-in-inline-004",
   "wpt/css_position/position-absolute-root-element-flex",

@@ -54,7 +54,7 @@ pub use logical_geometry::{
 };
 pub use multicol::{layout_columns, resolve_column_count_and_width};
 pub use new_formatting_context::{creates_new_formatting_context, layout_new_formatting_context};
-pub use out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate};
+pub use out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate, StaticPositionEdge};
 pub use relative::apply_relative_offset;
 pub use ruby::{clamp_overhang, compute_ruby_layout, max_ruby_overhang, RubyInfo, RubyLayout};
 pub use size_constraints::{

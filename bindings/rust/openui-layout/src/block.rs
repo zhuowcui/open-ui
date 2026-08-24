@@ -179,6 +179,10 @@ fn normalize_multicol_owned_subtree(
             converter.to_logical_offset(positioned.static_position, PhysicalSize::zero());
         positioned.static_position =
             PhysicalOffset::new(static_logical.inline_offset, static_logical.block_offset);
+        std::mem::swap(
+            &mut positioned.static_position_horizontal_edge,
+            &mut positioned.static_position_vertical_edge,
+        );
         let logical_origin =
             converter.to_logical_offset(PhysicalOffset::zero(), PhysicalSize::zero());
         let logical_visual =
@@ -275,6 +279,10 @@ fn project_multicol_child_to_physical(
                     positioned.static_position.top,
                 ),
                 PhysicalSize::zero(),
+            );
+            std::mem::swap(
+                &mut positioned.static_position_horizontal_edge,
+                &mut positioned.static_position_vertical_edge,
             );
             let physical_origin =
                 converter.to_physical_offset(LogicalOffset::zero(), PhysicalSize::zero());
@@ -1357,6 +1365,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         border.left + padding.left,
                         block_offset + margin_strut.sum(),
                     ),
+                    static_position_horizontal_edge: crate::out_of_flow::StaticPositionEdge::Start,
+                    static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge::Start,
                     containing_block_offset: PhysicalOffset::zero(),
                     containing_block_node: NodeId::NONE,
                     containing_block_size,
@@ -1746,6 +1756,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         border.left + padding.left,
                         block_offset + margin_strut.sum(),
                     ),
+                    static_position_horizontal_edge: crate::out_of_flow::StaticPositionEdge::Start,
+                    static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge::Start,
                     containing_block_offset: PhysicalOffset::zero(),
                     containing_block_node: NodeId::NONE,
                     containing_block_size,
@@ -6781,6 +6793,79 @@ fn attach_extracted_inline_oof_candidates(
     fragment.oof_candidates = attached;
 }
 
+/// Convert a retained physical vertical static edge into its margin-box start
+/// before multicol turns the unfragmented block-flow coordinate into a column
+/// coordinate. Once that projection happens, the original physical axis no
+/// longer represents one continuous interval, so deferring center/end
+/// alignment to the generic positioned solver would select an overflow column.
+fn materialize_fragmented_vertical_static_edge(doc: &Document, candidate: &mut OutOfFlowCandidate) {
+    use crate::out_of_flow::StaticPositionEdge;
+
+    if !candidate.style.top.is_auto() || !candidate.style.bottom.is_auto() {
+        return;
+    }
+
+    let static_parent = doc.node(candidate.node_id).parent;
+    let static_mode = if static_parent.is_none() {
+        openui_style::WritingMode::HorizontalTb
+    } else {
+        doc.node(static_parent).style.writing_mode
+    };
+    let static_direction = candidate
+        .static_position_direction
+        .writing_direction(static_mode);
+    let static_start_is_top = if static_direction.is_horizontal() {
+        true
+    } else {
+        !(static_direction.is_flipped_lines() ^ static_direction.is_rtl())
+    };
+    let physical_bias = match (candidate.static_position_vertical_edge, static_start_is_top) {
+        (StaticPositionEdge::Center, _) => StaticPositionEdge::Center,
+        (StaticPositionEdge::Start, true) | (StaticPositionEdge::End, false) => {
+            StaticPositionEdge::Start
+        }
+        (StaticPositionEdge::Start, false) | (StaticPositionEdge::End, true) => {
+            StaticPositionEdge::End
+        }
+    };
+    if physical_bias == StaticPositionEdge::Start {
+        return;
+    }
+
+    // Flex already performed the same hypothetical layout to decide safe
+    // overflow. Reconstruct it here only when fragmentation must consume the
+    // retained edge; ordinary bubbling and the generic OOF solver stay
+    // independent of hypothetical child size.
+    let child_direction = candidate
+        .style
+        .direction
+        .writing_direction(candidate.style.writing_mode);
+    let converter = WritingModeConverter::new(child_direction, candidate.containing_block_size);
+    let child_available = converter.to_logical_size(candidate.containing_block_size);
+    let child_space = ConstraintSpace::for_block_child_with_writing_direction(
+        child_available.inline_size,
+        child_available.block_size,
+        child_available.inline_size,
+        child_available.block_size,
+        false,
+        child_direction,
+    );
+    let child_fragment = block_layout(doc, candidate.node_id, &child_space);
+    let margins = resolve_margins(&candidate.style, candidate.containing_block_size.width);
+    let margin_box_height = margins.top + child_fragment.size.height + margins.bottom;
+    let shift = match physical_bias {
+        StaticPositionEdge::Center => margin_box_height / 2,
+        StaticPositionEdge::End => margin_box_height,
+        StaticPositionEdge::Start => LayoutUnit::zero(),
+    };
+    candidate.static_position.top = candidate.static_position.top - shift;
+    candidate.static_position_vertical_edge = if static_start_is_top {
+        StaticPositionEdge::Start
+    } else {
+        StaticPositionEdge::End
+    };
+}
+
 fn fragment_visual_translation(
     fragment: &Fragment,
     doc: &Document,
@@ -10927,6 +11012,10 @@ fn layout_multicol(
                                     + split.source_block_offset
                                     + static_block_offset,
                             ),
+                            static_position_horizontal_edge:
+                                crate::out_of_flow::StaticPositionEdge::Start,
+                            static_position_vertical_edge:
+                                crate::out_of_flow::StaticPositionEdge::Start,
                             containing_block_offset: PhysicalOffset::zero(),
                             containing_block_node: if container_style.position.is_positioned()
                                 || container_style.establishes_transform_containing_block
@@ -15789,6 +15878,7 @@ fn layout_multicol(
                             && !wraps_rows
                             && column_height.raw() > 0
                         {
+                            materialize_fragmented_vertical_static_edge(doc, &mut c);
                             let row_flex_gap = child_style
                                 .row_gap
                                 .as_ref()
@@ -19751,6 +19841,8 @@ fn layout_multicol(
                 node_id: *oof_node_id,
                 style: child_style,
                 static_position,
+                static_position_horizontal_edge: crate::out_of_flow::StaticPositionEdge::Start,
+                static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge::Start,
                 containing_block_offset: *containing_block_offset,
                 containing_block_node: if style.position.is_positioned()
                     || style.establishes_transform_containing_block
@@ -19789,6 +19881,8 @@ fn layout_multicol(
                     node_id: oof.node_id,
                     style: child_style,
                     static_position,
+                    static_position_horizontal_edge: crate::out_of_flow::StaticPositionEdge::Start,
+                    static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge::Start,
                     containing_block_offset: PhysicalOffset::zero(),
                     containing_block_node: if style.position.is_positioned()
                         || style.establishes_transform_containing_block

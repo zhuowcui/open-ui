@@ -51,6 +51,9 @@ pub struct DecorationSlice {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PositionedFragmentationData {
     pub static_position: PhysicalOffset,
+    /// Physical-axis edge affinities retained with the static-position point.
+    pub static_position_horizontal_edge: crate::out_of_flow::StaticPositionEdge,
+    pub static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge,
     pub containing_block_offset: PhysicalOffset,
     /// DOM node whose padding box supplies the used containing block.
     pub containing_block_node: NodeId,

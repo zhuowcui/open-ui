@@ -8,9 +8,9 @@ then expands from Ahem geometry to real-font and advanced-text parity.
 
 SP14 W0–W4 closed the global `needs_text` category, SP15 closed its inline/layout
 and root/body follow-up, SP16 closed all 776 real-font-metric rows, and SP13-R
-then closed every runnable multicol owner. The text manifest now contains 841
-runner-scoped IDs after 152 SP17 promotions and corrected retained-text
-references. The complete 3,716-test run has 3,419 exact passes, 297 functional
+then closed every runnable multicol owner. The text manifest now contains 842
+runner-scoped IDs after 154 SP17 promotions and corrected retained-text
+references. The complete 3,717-test run has 3,421 exact passes, 296 functional
 failures, and zero errors. It preserves the 2,823-ID SP13-R baseline plus all
 351 exact SP13-R targets and passes the 7/7 audit.
 
@@ -49,6 +49,9 @@ source-interval record shared by inline, block, and flex containing blocks.
 W1K closes the seven safe flex overflow-alignment builders through the shared
 content/item alignment resolvers while preserving signed free space,
 margin-box sizing, and one-time physical projection.
+W1L closes absolute flex static-position centering by retaining physical-axis
+edge affinity through flex alignment, generic out-of-flow sizing, bubbling,
+vertical auto-height completion, and fragmented column reconstruction.
 
 ## Chronological work
 
@@ -78,12 +81,12 @@ family selection, and the real-glyph LCD raster profile are implemented. The glo
 Cover bidi/RTL, vertical writing modes, transformation, decoration, emphasis,
 complex scripts, and emoji. W0A and W0B are complete on the fresh-main branch:
 the original 842-row inventory is frozen as 311 actionable and 531 residual
-rows after transactional CSS handling and a real builder probe. W1K now has an
+rows after transactional CSS handling and a real builder probe. W1L now has an
 authoritative constraint direction, shared logical style/edge projection, and
 shared normal block/atomic-inline/flex child boundaries. The exact actionable
-set now contains 152 promotions, including the seven-builder safe flex
-overflow-alignment cohort. Continue with absolute centering in a later scoped
-cohort, and keep authoritative bidi, upright CJK, mixed-script splitting,
+set now contains 154 promotions, including the absolute-center 001/002 pair.
+Continue with separately frozen fallback/justify-self abspos work, and keep
+authoritative bidi, upright CJK, mixed-script splitting,
 fallback shaping, sideways modes, and 010–016 for W2.
 Follow `docs/SP17-PLAN.md`.
 

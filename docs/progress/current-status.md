@@ -21,15 +21,15 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W1K full no-resume run):
+Latest authoritative accountability snapshot (SP17 W1L full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3716 |
-| Unported but explicitly tracked tests | 3957 |
-| Runnable passes | 3419 |
-| Runnable failures | 297 |
+| Ported/runnable WPT tests | 3717 |
+| Unported but explicitly tracked tests | 3956 |
+| Runnable passes | 3421 |
+| Runnable failures | 296 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
 | Empty unported dependency rows | 0 |
@@ -39,13 +39,13 @@ Latest authoritative accountability snapshot (SP17 W1K full no-resume run):
 | Unported `sp13_multicol` residuals | 976 |
 
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
-The full `wpt/` run was executed without resume on 2026-08-23. Its committed
+The full `wpt/` run was executed without resume on 2026-08-24. Its committed
 `summary.json` SHA-256 is
-`a3a9be11bd242c330e9de765bbbb7917df4f95ea714c3672f97f6df5567f10df`.
+`365354dae47ca97f6370a2dcd4edc3e69286de0866ee7e9169e8f7ee3e4f1cd5`.
 All 3267 frozen SP17 baseline IDs, including all 2823 frozen SP13-R baseline
 IDs and all 351 runnable multicol targets, remain exact.
 
-## SP17 W1K Safe Flex Overflow Alignment Closure
+## SP17 W1L Absolute Flex Static-Position Centering Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -220,17 +220,32 @@ offsets, reverse flow, wrap-reverse, and one-time margin application are also
 covered by the parameterized Rust matrix. The live validator requires exactly
 152 promotions; the SP13-R later-promotion allowlist remains 42 IDs.
 
-The current full result is 3716 runnable, 3419 exact, 297 functional failures,
-and zero errors. Live `needs_writing_mode` ownership is 690 rows; the frozen
-842-row kickoff inventory and 311/531 disposition remain immutable. The text
-manifest contains 841 IDs. All 3,267 frozen kickoff exact IDs remain exact. The
-committed `summary.json` SHA-256 is
-`a3a9be11bd242c330e9de765bbbb7917df4f95ea714c3672f97f6df5567f10df`.
+W1L adds physical-axis start/center/end affinity to out-of-flow candidates and
+positioned fragmentation records. Flex static positions are now padding-box
+anchors plus an edge bias, while the generic solver owns edge-derived
+available intervals, complete margin-box alignment, shrink-to-fit, and
+post-layout auto-height recentering. Fragmented flex candidates materialize
+their retained block edge before multicol maps flow into columns.
 
-W1 remains incomplete for absolute centering. Tables, images/print-specific
-cases, sideways modes, transforms, and extreme column-rule geometry remain
-later work. W2 retains authoritative mixed-script bidi and fallback shaping,
-upright and sideways glyph work, and writing-mode 010–016.
+The shared fix promotes existing runnable `position-absolute-center-001`, and
+the surgical one-ID splice admits its vertical-rl transpose 002. The 17-ID
+proof is exact and preserves center 003–004, every W1K target, all six abspos
+writing-mode/direction guards. A separate two-ID proof preserves the fragmented
+flex 010/011 baseline guards. The live validator requires exactly 154
+promotions; the SP13-R later-promotion allowlist remains 42 IDs.
+
+The current full result is 3717 runnable, 3421 exact, 296 functional failures,
+and zero errors. Live `needs_writing_mode` ownership is 688 rows; the frozen
+842-row kickoff inventory and 311/531 disposition remain immutable. The text
+manifest contains 842 IDs. All 3,267 frozen kickoff exact IDs remain exact. The
+committed `summary.json` SHA-256 is
+`365354dae47ca97f6370a2dcd4edc3e69286de0866ee7e9169e8f7ee3e4f1cd5`.
+
+W1 remains incomplete for fallback/justify-self/JavaScript-backed abspos
+alignment, tables, transforms, generated content, images/print-specific cases,
+and extreme column-rule geometry. W2 retains authoritative mixed-script bidi
+and fallback shaping, upright and sideways glyph work, and writing-mode
+010–016.
 
 ## SP13-R Closure
 
@@ -286,7 +301,7 @@ categories rather than `sp12_layout_bug`.
 
 ## Current Runnable Failure Ownership
 
-The 297 non-passing runnable tests are ported tests classified by the feature that owns the
+The 296 non-passing runnable tests are ported tests classified by the feature that owns the
 remaining gap. Categories can overlap because one test may depend on multiple systems.
 
 Top runnable failure categories:
@@ -296,19 +311,19 @@ Top runnable failure categories:
 | `reference_test` | 90 |
 | `needs_gradient` | 80 |
 | `needs_image` | 66 |
-| `needs_inline_block` | 55 |
+| `needs_inline_block` | 54 |
 | `needs_complex_border` | 52 |
 | `needs_empty_block_margin_collapse` | 40 |
 | `needs_body_canvas_background_extent` | 24 |
-| `needs_generated_content` | 23 |
+| `needs_generated_content` | 22 |
 | `needs_rounded_border_paint` | 22 |
 | `needs_box_shadow` | 18 |
-| `needs_writing_mode` | 17 |
+| `needs_writing_mode` | 16 |
 | `sp13_fragmentation` | 17 |
 
 ## Current Unported Inventory Ownership
 
-The 3964 unported rows are Chromium WPT files that the current porter or renderer cannot
+The 3956 unported rows are Chromium WPT files that the current porter or renderer cannot
 represent yet. They are still tracked with explicit dependency categories.
 
 Top unported categories:
@@ -317,25 +332,25 @@ Top unported categories:
 |---|---:|
 | `needs_javascript` | 1945 |
 | `sp13_multicol` | 976 |
-| `needs_writing_mode` | 680 |
-| `sp13_fragmentation` | 643 |
+| `needs_writing_mode` | 672 |
+| `sp13_fragmentation` | 637 |
 | `needs_table_layout` | 462 |
-| `needs_generated_content` | 443 |
-| `reference_test` | 415 |
-| `needs_inline_block` | 408 |
+| `needs_generated_content` | 442 |
+| `reference_test` | 412 |
+| `needs_inline_block` | 407 |
 | `needs_containment` | 335 |
 | `needs_image` | 325 |
 | `needs_advanced_selectors` | 306 |
 | `needs_grid` | 304 |
-| `needs_empty_block_margin_collapse` | 294 |
+| `needs_empty_block_margin_collapse` | 288 |
 | `needs_form_controls` | 264 |
 
 ## Recommended Next Work
 
-Continue SP17 W1 with the explicitly excluded safe-alignment flex-abspos and
-absolute-centering cohorts. Keep
-tables, transforms, generated content, image/print-only cases, and extreme
-column-rule geometry out of the closed W1J cohort. Reserve authoritative bidi,
+Continue SP17 with a separately frozen cohort for fallback/justify-self or
+JavaScript-backed abspos alignment. Keep tables, transforms, generated content,
+image/print-only cases, and extreme column-rule geometry out of closed W1L.
+Reserve authoritative bidi,
 upright CJK and mixed-script run splitting, fallback shaping, sideways text,
 and `flexbox-writing-mode-010` through 016 for W2; do not substitute
 geometry-only builders for their glyph requirements.

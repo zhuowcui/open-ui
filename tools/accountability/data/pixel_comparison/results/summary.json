@@ -1,9 +1,9 @@
 {
-  "total": 3716,
-  "passed": 3419,
-  "failed": 297,
+  "total": 3717,
+  "passed": 3421,
+  "failed": 296,
   "errors": 0,
-  "near_miss_aa": 60,
+  "near_miss_aa": 59,
   "aa_threshold_pct": 0.5,
   "reference_tests": 979,
   "reference_tests_pass": 887,
@@ -675,8 +675,8 @@
     },
     {
       "id": "wpt/css_position/position-absolute-center-001",
-      "status": "fail",
-      "mismatch_pct": 0.212314
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/position-absolute-center-003",
@@ -1110,6 +1110,11 @@
     },
     {
       "id": "wpt/css_position/static-position_vrl-rtl-rtl",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-center-002",
       "status": "pass",
       "mismatch_pct": 0.0
     },
@@ -5341,7 +5346,7 @@
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-fallback-justify-content-001",
       "status": "fail",
-      "mismatch_pct": 0.134183
+      "mismatch_pct": 0.132484
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-self-001-ref",

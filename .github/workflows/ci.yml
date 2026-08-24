@@ -106,7 +106,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Run SP17 W1I closure and porter tests
+      - name: Run SP17 W1L closure and porter tests
         run: |
           python3 -m unittest \
             tools.wpt.test_sp13r_multicol_closure \

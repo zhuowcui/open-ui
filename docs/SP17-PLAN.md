@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1K is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W1L is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -37,18 +37,20 @@ positioned-fragmentation shapes through one logical source-interval mapper for
 inline, block, and flex containing blocks. W1K closes safe overflow alignment
 for flex abspos static positions through the existing content/item alignment
 resolvers while retaining signed free space and one-time logical projection.
-The authoritative live full-suite result is 3,716 runnable, 3,419 exact, 297
+W1L closes absolute flex static-position centering by carrying physical-axis
+edge affinity through bubbling, sizing, and fragmented reconstruction.
+The authoritative live full-suite result is 3,717 runnable, 3,421 exact, 296
 functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1K |
+| Metric | Kickoff | Live W1L |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,716 |
-| Exact passes | 3,267 | 3,419 |
-| Functional failures | 299 | 297 |
+| Runnable WPTs | 3,566 | 3,717 |
+| Exact passes | 3,267 | 3,421 |
+| Functional failures | 299 | 296 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 3,957 |
-| `needs_writing_mode` owner rows | 842 | 690 |
+| Unported rows | 4,107 | 3,956 |
+| `needs_writing_mode` owner rows | 842 | 688 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -840,3 +842,40 @@ render/diff error.
   failures, transforms, tables, generated content, and unrelated paint work
   outside W1K. W2 retains authoritative bidi, upright and sideways glyph work,
   fallback shaping, and writing-mode 010–016.
+
+### 2026-08-24 — W1L absolute flex static-position centering closure
+
+- Extended the public out-of-flow candidate carrier with horizontal and
+  vertical start/center/end static-edge affinity and retained it in positioned
+  fragmentation metadata. Flex now emits padding-box edge or center anchors;
+  safe overflow falls back to start before the single writing-mode/direction
+  projection.
+- The generic out-of-flow solver derives the available interval from the
+  retained edge. Start grows forward, end grows backward, and center grows
+  symmetrically to the nearest containing-block edge. Known-size and
+  shrink-to-fit boxes align their complete margin box, and auto physical height
+  is recentered after vertical layout supplies its final size.
+- Fragmented column flex reconstructs center/end margin-box starts before
+  projecting unfragmented block flow into columns. This preserves the exact
+  `flexbox_flex-container-fragmentation-010` and 011 guards without a
+  test-specific branch.
+- Surgically admitted only `position-absolute-center-002`; the shared fix also
+  promotes existing runnable 001. The 17-ID proof covers center 001–004, all
+  seven W1K targets, and six writing-mode/direction abspos auto-position guards.
+  It is 17/17 exact with zero mismatched pixels or errors. Both porter dry-runs
+  and both transactional splices are byte-identical.
+- The frozen 3,267-ID baseline remains exact. The authoritative full suite is
+  **3,717 runnable / 3,421 exact / 296 fail / 0 errors**; live unported
+  inventory is 3,956, writing-mode ownership is 688, unported SP13-R multicol
+  ownership is 976, the text manifest is 842, and the live validator requires
+  exactly 154 promotions. The SP13-R later-promotion compatibility set remains
+  42. The committed `summary.json` SHA-256 is
+  `365354dae47ca97f6370a2dcd4edc3e69286de0866ee7e9169e8f7ee3e4f1cd5`.
+- Verification covers the 17-ID proof, parameterized edge/sizing/reversal/
+  bubbling/fragmentation regressions, the complete no-resume release suite,
+  locked Rust matrix, all 122 closure/porter tests, both ledger checks,
+  deterministic mapping/deferred/HTML generation, splice idempotence,
+  formatter and diff checks, writing-mode 010–016 exclusion, and audit 7/7.
+- Keep fallback/justify-self/JavaScript/table/transform/generated-content
+  cases, `flexbox-safe-overflow-position-006`, and unrelated paint/layout work
+  outside W1L. W2 retains material bidi and vertical glyph shaping.

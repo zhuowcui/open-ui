@@ -97,8 +97,8 @@ condition, continue work or clarify the condition; do not self-certify completio
 SP13-R is closed and SP17 is active on `agent/sp17-advanced-text` from the
 landed PR #1 main state. `docs/SP17-HANDOFF.md` is the historical kickoff
 contract; use `docs/SP17-PLAN.md` and `docs/progress/current-status.md` for the
-live W1K continuation. Preserve the 3,267-ID SP17 kickoff baseline (including
+live W1L continuation. Preserve the 3,267-ID SP17 kickoff baseline (including
 the 2,823-ID SP13-R baseline and 351-ID exact target ledger) and the zero-pixel
-passing threshold. Continue absolute-position centering in a later scoped W1
-cohort. Reserve upright/mixed-script and sideways text,
+passing threshold. Continue fallback/justify-self abspos alignment only in a
+separately frozen cohort. Reserve upright/mixed-script and sideways text,
 including `flexbox-writing-mode-010` through 016, for W2.

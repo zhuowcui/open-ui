@@ -20,6 +20,20 @@ use crate::fragment::Fragment;
 use crate::intrinsic_sizing::compute_intrinsic_block_sizes;
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 
+/// The edge of an out-of-flow box represented by one static-position axis.
+///
+/// The carrier remains physical (`horizontal` and `vertical` below), while
+/// start/end are interpreted in the writing direction of the static-position
+/// containing block. This lets ordinary flow keep its traditional start-edge
+/// anchor and lets flex layout retain center/end alignment without inspecting
+/// flex style again in the generic positioned solver.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StaticPositionEdge {
+    Start,
+    Center,
+    End,
+}
+
 /// A candidate for out-of-flow layout, collected during the in-flow pass.
 ///
 /// When block layout encounters an absolutely or fixed positioned child, it
@@ -33,6 +47,10 @@ pub struct OutOfFlowCandidate {
     pub style: ComputedStyle,
     /// The static position — where this element would appear if `position: static`.
     pub static_position: PhysicalOffset,
+    /// The horizontal margin-box edge represented by `static_position.left`.
+    pub static_position_horizontal_edge: StaticPositionEdge,
+    /// The vertical margin-box edge represented by `static_position.top`.
+    pub static_position_vertical_edge: StaticPositionEdge,
     /// Origin of the containing-block fragment that owns this candidate.
     /// Insets resolve from this origin; static positions remain expressed in
     /// the parent coordinate space and are translated into it below.
@@ -98,9 +116,9 @@ impl OutOfFlowAxisMapping {
 
         Self {
             // Retain the direction components captured when the candidate was
-            // created/bubbled, while recovering the missing writing modes from
-            // the resolved DOM nodes.  This keeps the public candidate ABI
-            // unchanged and preserves the distinct CSS direction contexts.
+            // created/bubbled, while recovering the writing modes from the
+            // resolved DOM nodes. This preserves the distinct CSS direction
+            // contexts without duplicating writing-mode fields in the carrier.
             containing_block: candidate
                 .containing_block_direction
                 .writing_direction(containing_block_mode),
@@ -177,6 +195,74 @@ impl OutOfFlowAxisMapping {
             space.is_fixed_block_size = fixed_width;
         }
         space
+    }
+}
+
+/// Bias of a retained static-position edge on an increasing physical axis.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PhysicalAxisBias {
+    Start,
+    Center,
+    End,
+}
+
+impl PhysicalAxisBias {
+    fn from_static_edge(edge: StaticPositionEdge, static_start_is_low: bool) -> Self {
+        match (edge, static_start_is_low) {
+            (StaticPositionEdge::Center, _) => Self::Center,
+            (StaticPositionEdge::Start, true) | (StaticPositionEdge::End, false) => Self::Start,
+            (StaticPositionEdge::Start, false) | (StaticPositionEdge::End, true) => Self::End,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
+struct StaticPositionInterval {
+    start: LayoutUnit,
+    end: LayoutUnit,
+    bias: PhysicalAxisBias,
+}
+
+impl StaticPositionInterval {
+    fn new(
+        anchor: LayoutUnit,
+        available_size: LayoutUnit,
+        edge: StaticPositionEdge,
+        static_start_is_low: bool,
+    ) -> Self {
+        let bias = PhysicalAxisBias::from_static_edge(edge, static_start_is_low);
+        let (start, end) = match bias {
+            PhysicalAxisBias::Start => (anchor, available_size),
+            PhysicalAxisBias::End => (LayoutUnit::zero(), anchor),
+            PhysicalAxisBias::Center => {
+                let half = anchor
+                    .min_of(available_size - anchor)
+                    .max_of(LayoutUnit::zero());
+                (anchor - half, anchor + half)
+            }
+        };
+        Self { start, end, bias }
+    }
+
+    fn size(self) -> LayoutUnit {
+        (self.end - self.start).clamp_negative_to_zero()
+    }
+
+    /// Align a complete margin box in the interval and return its border edge.
+    fn align_border_box(
+        self,
+        border_box_size: LayoutUnit,
+        margin_start: LayoutUnit,
+        margin_end: LayoutUnit,
+    ) -> LayoutUnit {
+        match self.bias {
+            PhysicalAxisBias::Start => self.start + margin_start,
+            PhysicalAxisBias::End => self.end - margin_end - border_box_size,
+            PhysicalAxisBias::Center => {
+                let margin_box_size = margin_start + border_box_size + margin_end;
+                self.start + (self.size() - margin_box_size) / 2 + margin_start
+            }
+        }
     }
 }
 
@@ -374,6 +460,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 style,
                 cb_width,
                 static_left,
+                candidate.static_position_horizontal_edge,
                 &border,
                 &padding,
                 ar_bb_width,
@@ -392,6 +479,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 style,
                 cb_width,
                 static_left,
+                candidate.static_position_horizontal_edge,
                 &border,
                 &padding,
                 known_bb_width,
@@ -406,6 +494,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 style,
                 cb_width,
                 static_left,
+                candidate.static_position_horizontal_edge,
                 &border,
                 &padding,
                 known_bb_width,
@@ -429,6 +518,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 style,
                 cb_width,
                 static_left,
+                candidate.static_position_horizontal_edge,
                 &border,
                 &padding,
                 known_bb_width,
@@ -440,6 +530,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 style,
                 cb_width,
                 static_left,
+                candidate.static_position_horizontal_edge,
                 &border,
                 &padding,
                 shrink_to_fit_min,
@@ -455,6 +546,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
             cb_width,
             cb_height,
             static_top,
+            candidate.static_position_vertical_edge,
             &border,
             &padding,
             cb_vertical_start_is_top,
@@ -477,6 +569,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 cb_width,
                 cb_height,
                 static_top,
+                candidate.static_position_vertical_edge,
                 &border,
                 &padding,
                 known_bb_height,
@@ -493,6 +586,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 cb_width,
                 cb_height,
                 static_top,
+                candidate.static_position_vertical_edge,
                 &border,
                 &padding,
                 known_bb_height,
@@ -517,6 +611,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 cb_width,
                 cb_height,
                 static_top,
+                candidate.static_position_vertical_edge,
                 &border,
                 &padding,
                 known_bb_height,
@@ -650,6 +745,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 style,
                 cb_width,
                 static_left,
+                candidate.static_position_horizontal_edge,
                 &border,
                 &padding,
                 resolved_width,
@@ -670,6 +766,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 cb_width,
                 cb_height,
                 static_top,
+                candidate.static_position_vertical_edge,
                 &border,
                 &padding,
                 resolved_height,
@@ -699,6 +796,20 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     // The content-box width for the child constraint space
     let content_width = (resolved_width - border_padding_h).clamp_negative_to_zero();
     let content_height = (resolved_height - border_padding_v).clamp_negative_to_zero();
+    let auto_static_height_available = (style.height.is_auto()
+        && style.top.is_auto()
+        && style.bottom.is_auto()
+        && candidate.static_position_vertical_edge != StaticPositionEdge::Start)
+        .then(|| {
+            let interval = StaticPositionInterval::new(
+                static_top,
+                cb_height,
+                candidate.static_position_vertical_edge,
+                sp_vertical_start_is_top,
+            );
+            (interval.size() - resolved_margin_top - resolved_margin_bottom)
+                .max_of(border_padding_v)
+        });
 
     // CSS 2.1 §10.5: When the containing block's height is determined by the
     // constraint equation (top + bottom specified), it IS definite for percentage
@@ -728,9 +839,10 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
         resolved_height
     } else if !axes.child.is_horizontal() && style.height.is_auto() {
         // A vertical child's physical auto height is its logical inline size.
-        // Passing the tentative zero from the physical block-axis equation
-        // would force an empty inline measure and leave its text as overflow.
-        openui_geometry::INDEFINITE_SIZE
+        // With two auto physical insets, the retained static edge supplies the
+        // fit-content interval. Other static positions remain indefinite as
+        // before instead of forcing the tentative zero-height equation.
+        auto_static_height_available.unwrap_or(openui_geometry::INDEFINITE_SIZE)
     } else {
         content_height
     };
@@ -852,6 +964,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 cb_width,
                 cb_height,
                 static_top,
+                candidate.static_position_vertical_edge,
                 &border,
                 &padding,
                 final_height,
@@ -866,9 +979,27 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
         (resolved_top, resolved_margin_top, resolved_margin_bottom)
     };
 
-    // Recompute left when width changed after layout (e.g., shrink-to-fit).
-    // If left:auto and right:specified, left depends on the final width.
-    let final_left = resolved_left;
+    // Recompute horizontal placement if layout supplied a different final
+    // width (for example an aspect-ratio content floor). Center/end static
+    // edges must align the final margin box, not the tentative one.
+    let (final_left, resolved_margin_left, resolved_margin_right) = if final_width != resolved_width
+        && candidate.static_position_horizontal_edge != StaticPositionEdge::Start
+    {
+        let (left, _width, margin_left, margin_right) = resolve_horizontal_with_known_width(
+            style,
+            cb_width,
+            static_left,
+            candidate.static_position_horizontal_edge,
+            &border,
+            &padding,
+            final_width,
+            cb_horizontal_start_is_left,
+            sp_horizontal_start_is_left,
+        );
+        (left, margin_left, margin_right)
+    } else {
+        (resolved_left, resolved_margin_left, resolved_margin_right)
+    };
 
     // Recompute top when height was auto-sized (content-determined) and the
     // vertical constraint equation has a top:auto + bottom:specified pattern.
@@ -879,15 +1010,31 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
         && final_height == child_fragment.size.height
     // was NOT clamped by min/max
     {
-        if style.display.is_inline_level()
+        if style.top.is_auto()
+            && style.bottom.is_auto()
+            && candidate.static_position_vertical_edge != StaticPositionEdge::Start
+        {
+            // The tentative auto-height equation cannot position a completed
+            // center/end margin box. Re-apply the retained edge after layout
+            // reveals the final physical height.
+            StaticPositionInterval::new(
+                static_top,
+                cb_height,
+                candidate.static_position_vertical_edge,
+                sp_vertical_start_is_top,
+            )
+            .align_border_box(
+                final_height,
+                resolved_margin_top,
+                resolved_margin_bottom,
+            )
+        } else if style.display.is_inline_level()
             && style.top.is_auto()
             && style.bottom.is_auto()
             && !sp_vertical_start_is_top
         {
-            // The tentative static-position equation uses a zero auto height.
-            // Once vertical child layout supplies its physical inline extent,
-            // keep the completed hypothetical box's bottom edge on the
-            // static-position anchor.
+            // Preserve the completed hypothetical inline box's legacy
+            // physical end-edge affinity for ordinary start static positions.
             static_top - resolved_margin_bottom - final_height
         } else if style.top.is_auto() && !style.bottom.is_auto() {
             let zero = LayoutUnit::zero();
@@ -915,6 +1062,8 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     );
     child_fragment.positioned_fragmentation = Some(crate::fragment::PositionedFragmentationData {
         static_position: candidate.static_position,
+        static_position_horizontal_edge: candidate.static_position_horizontal_edge,
+        static_position_vertical_edge: candidate.static_position_vertical_edge,
         containing_block_offset: candidate.containing_block_offset,
         containing_block_node: candidate.containing_block_node,
         containing_block_size: candidate.containing_block_size,
@@ -952,6 +1101,7 @@ fn resolve_horizontal(
     style: &ComputedStyle,
     cb_width: LayoutUnit,
     static_left: LayoutUnit,
+    static_edge: StaticPositionEdge,
     border: &BoxStrut,
     padding: &BoxStrut,
     shrink_to_fit_min: LayoutUnit,
@@ -1082,11 +1232,20 @@ fn resolve_horizontal(
     } else {
         margin_right_val
     };
+    let static_interval =
+        StaticPositionInterval::new(static_left, cb_width, static_edge, sp_start_is_left);
 
     // CSS Sizing 4: width: stretch fills the available space in the CB.
     // With both insets auto, use the static-position side just like the
     // corresponding auto-width positioned layout equation.
     if width_stretch {
+        if left_auto && right_auto {
+            let content_width =
+                (static_interval.size() - ml - mr - border_padding_h).clamp_negative_to_zero();
+            let border_box_width = content_width + border_padding_h;
+            let left = static_interval.align_border_box(border_box_width, ml, mr);
+            return (left, border_box_width, ml, mr);
+        }
         let l = if left_auto && right_auto && sp_start_is_left {
             static_left
         } else if left_auto {
@@ -1107,24 +1266,15 @@ fn resolve_horizontal(
     }
 
     if width_auto && left_auto && right_auto {
-        // ── All three auto: use static position, shrink-to-fit for width
-        // CSS 2.1 §10.3.7: Use static-position CB direction (not actual CB).
-        // In LTR use static position for left; in RTL for right.
-        if !sp_start_is_left {
-            let right = cb_width - static_left;
-            let available =
-                (cb_width - right - ml - mr - border_padding_h).clamp_negative_to_zero();
-            let width = shrink_to_fit_max.min_of(shrink_to_fit_min.max_of(available));
-            let border_box_width = width + border_padding_h;
-            let left = cb_width - right - mr - border_box_width - ml;
-            return (left + ml, border_box_width, ml, mr);
-        } else {
-            let left = static_left;
-            let available = (cb_width - left - ml - mr - border_padding_h).clamp_negative_to_zero();
-            let width = shrink_to_fit_max.min_of(shrink_to_fit_min.max_of(available));
-            let border_box_width = width + border_padding_h;
-            return (left + ml, border_box_width, ml, mr);
-        }
+        // All three auto: derive the available interval from the retained
+        // static edge, shrink-to-fit inside it, then align the complete margin
+        // box using the same edge bias.
+        let available =
+            (static_interval.size() - ml - mr - border_padding_h).clamp_negative_to_zero();
+        let width = shrink_to_fit_max.min_of(shrink_to_fit_min.max_of(available));
+        let border_box_width = width + border_padding_h;
+        let left = static_interval.align_border_box(border_box_width, ml, mr);
+        return (left, border_box_width, ml, mr);
     }
 
     if width_auto && left_auto {
@@ -1148,18 +1298,11 @@ fn resolve_horizontal(
     }
 
     if left_auto && right_auto {
-        // left and right auto, width specified
-        // CSS 2.1 §10.3.7: Use static-position CB direction (not actual CB).
-        // In LTR use static position for left; in RTL for right.
+        // Both insets auto: align the complete known-size margin box in the
+        // interval selected by the static edge.
         let border_box_width = border_box_from_specified;
-        if !sp_start_is_left {
-            let right = cb_width - static_left;
-            let left = cb_width - right - mr - border_box_width - ml;
-            return (left + ml, border_box_width, ml, mr);
-        } else {
-            let left = static_left;
-            return (left + ml, border_box_width, ml, mr);
-        }
+        let left = static_interval.align_border_box(border_box_width, ml, mr);
+        return (left, border_box_width, ml, mr);
     }
 
     if left_auto {
@@ -1200,6 +1343,7 @@ fn resolve_vertical(
     cb_width: LayoutUnit,
     cb_height: LayoutUnit,
     static_top: LayoutUnit,
+    static_edge: StaticPositionEdge,
     border: &BoxStrut,
     padding: &BoxStrut,
     cb_start_is_top: bool,
@@ -1307,10 +1451,19 @@ fn resolve_vertical(
     } else {
         margin_bottom_val
     };
+    let static_interval =
+        StaticPositionInterval::new(static_top, cb_height, static_edge, sp_start_is_top);
 
     // CSS Sizing 4: height: stretch fills the available space in the CB.
     // With both insets auto, use the static block position.
     if height_stretch {
+        if top_auto && bottom_auto {
+            let content_height =
+                (static_interval.size() - mt - mb - border_padding_v).clamp_negative_to_zero();
+            let border_box_height = content_height + border_padding_v;
+            let top = static_interval.align_border_box(border_box_height, mt, mb);
+            return (top, border_box_height, mt, mb);
+        }
         let t = if top_auto && bottom_auto && sp_start_is_top {
             static_top
         } else if top_auto && bottom_auto {
@@ -1333,13 +1486,8 @@ fn resolve_vertical(
 
     if height_auto && top_auto && bottom_auto {
         let border_box_height = height_val_bb; // auto height → content-sized (0 for now)
-        let top = if sp_start_is_top {
-            static_top
-        } else {
-            let static_bottom = cb_height - static_top;
-            cb_height - static_bottom - mb - border_box_height - mt
-        };
-        return (top + mt, border_box_height, mt, mb);
+        let top = static_interval.align_border_box(border_box_height, mt, mb);
+        return (top, border_box_height, mt, mb);
     }
 
     if height_auto && top_auto {
@@ -1357,13 +1505,8 @@ fn resolve_vertical(
 
     if top_auto && bottom_auto {
         let border_box_height = height_val_bb;
-        let top = if sp_start_is_top {
-            static_top
-        } else {
-            let static_bottom = cb_height - static_top;
-            cb_height - static_bottom - mb - border_box_height - mt
-        };
-        return (top + mt, border_box_height, mt, mb);
+        let top = static_interval.align_border_box(border_box_height, mt, mb);
+        return (top, border_box_height, mt, mb);
     }
 
     if top_auto {
@@ -1675,6 +1818,7 @@ fn resolve_horizontal_with_known_width(
     style: &ComputedStyle,
     cb_width: LayoutUnit,
     static_left: LayoutUnit,
+    static_edge: StaticPositionEdge,
     _border: &BoxStrut,
     _padding: &BoxStrut,
     border_box_width: LayoutUnit,
@@ -1772,15 +1916,10 @@ fn resolve_horizontal_with_known_width(
     };
 
     if left_auto && right_auto {
-        // Use static-position CB direction for static position choice
-        if !sp_start_is_left {
-            let right = cb_width - static_left;
-            let left = cb_width - right - mr - border_box_width - ml;
-            return (left + ml, border_box_width, ml, mr);
-        } else {
-            let left = static_left;
-            return (left + ml, border_box_width, ml, mr);
-        }
+        let interval =
+            StaticPositionInterval::new(static_left, cb_width, static_edge, sp_start_is_left);
+        let left = interval.align_border_box(border_box_width, ml, mr);
+        return (left, border_box_width, ml, mr);
     }
 
     if left_auto {
@@ -1806,6 +1945,7 @@ fn resolve_vertical_with_known_height(
     cb_width: LayoutUnit,
     cb_height: LayoutUnit,
     static_top: LayoutUnit,
+    static_edge: StaticPositionEdge,
     _border: &BoxStrut,
     _padding: &BoxStrut,
     border_box_height: LayoutUnit,
@@ -1892,13 +2032,10 @@ fn resolve_vertical_with_known_height(
     };
 
     if top_auto && bottom_auto {
-        let top = if sp_start_is_top {
-            static_top
-        } else {
-            let static_bottom = cb_height - static_top;
-            cb_height - static_bottom - mb - border_box_height - mt
-        };
-        return (top + mt, border_box_height, mt, mb);
+        let interval =
+            StaticPositionInterval::new(static_top, cb_height, static_edge, sp_start_is_top);
+        let top = interval.align_border_box(border_box_height, mt, mb);
+        return (top, border_box_height, mt, mb);
     }
 
     if top_auto {
@@ -1966,6 +2103,7 @@ mod tests {
             &style,
             LayoutUnit::from_i32(800),
             LayoutUnit::zero(),
+            StaticPositionEdge::Start,
             &border,
             &padding,
             stf_min,
@@ -1991,6 +2129,7 @@ mod tests {
             &style,
             LayoutUnit::from_i32(800),
             LayoutUnit::zero(),
+            StaticPositionEdge::Start,
             &border,
             &padding,
             stf_min,
@@ -2017,6 +2156,7 @@ mod tests {
             LayoutUnit::from_i32(800),
             LayoutUnit::from_i32(600),
             LayoutUnit::zero(),
+            StaticPositionEdge::Start,
             &border,
             &padding,
             true,
@@ -2039,6 +2179,7 @@ mod tests {
             LayoutUnit::from_i32(800),
             LayoutUnit::from_i32(600),
             LayoutUnit::zero(),
+            StaticPositionEdge::Start,
             &border,
             &padding,
             true,
@@ -2157,6 +2298,7 @@ mod tests {
                 &style,
                 LayoutUnit::from_i32(500),
                 LayoutUnit::zero(),
+                StaticPositionEdge::Start,
                 &zero,
                 &zero,
                 LayoutUnit::from_i32(120),
@@ -2174,6 +2316,7 @@ mod tests {
             &style,
             LayoutUnit::from_i32(500),
             LayoutUnit::zero(),
+            StaticPositionEdge::Start,
             &zero,
             &zero,
             LayoutUnit::from_i32(120),
@@ -2198,6 +2341,7 @@ mod tests {
                 LayoutUnit::from_i32(100),
                 LayoutUnit::from_i32(100),
                 LayoutUnit::zero(),
+                StaticPositionEdge::Start,
                 &zero,
                 &zero,
                 LayoutUnit::from_i32(120),

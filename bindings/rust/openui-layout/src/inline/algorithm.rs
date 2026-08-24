@@ -1130,6 +1130,8 @@ fn append_positioned_inline_candidates(
             node_id: oof.node_id,
             style: oof_style,
             static_position: PhysicalOffset::new(static_inline, static_block),
+            static_position_horizontal_edge: crate::out_of_flow::StaticPositionEdge::Start,
+            static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge::Start,
             containing_block_offset,
             containing_block_node: inline_cb.map_or(NodeId::NONE, |(cb_node_id, _, _)| cb_node_id),
             containing_block_size,

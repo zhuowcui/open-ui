@@ -80,7 +80,7 @@ inheritance,not_portable,,uses_javascript
 invalidate-opacity-negative-z-index,not_portable,,uses_javascript
 nested-positions-crash,not_portable,,uses_javascript
 position-absolute-abspos-table-dynamic,not_portable,,uses_javascript
-position-absolute-center-002,not_portable,,unsupported property: writing-mode
+position-absolute-center-002,ported,css_position_position_absolute_center_002,
 position-absolute-center-006,not_portable,,unsupported display: table
 position-absolute-center-007,not_portable,,unsupported display: table
 position-absolute-chrome-bug-001,not_portable,,uses_javascript
