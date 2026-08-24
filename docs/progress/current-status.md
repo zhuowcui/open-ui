@@ -21,14 +21,14 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W1I full no-resume run):
+Latest authoritative accountability snapshot (SP17 W1J full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3703 |
-| Unported but explicitly tracked tests | 3970 |
-| Runnable passes | 3406 |
+| Ported/runnable WPT tests | 3709 |
+| Unported but explicitly tracked tests | 3964 |
+| Runnable passes | 3412 |
 | Runnable failures | 297 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
@@ -36,16 +36,16 @@ Latest authoritative accountability snapshot (SP17 W1I full no-resume run):
 | `sp12_layout_bug` rows | 0 |
 | `needs_font_metrics` rows | 0 |
 | Runnable `sp13_multicol` rows | 0 |
-| Unported `sp13_multicol` residuals | 982 |
+| Unported `sp13_multicol` residuals | 976 |
 
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
 The full `wpt/` run was executed without resume on 2026-08-23. Its committed
 `summary.json` SHA-256 is
-`13a7c9181f86b213a81a183eb164d0d05d1bd03911850bdc22d57e42c65cf416`.
+`be9c87dcb549fd3566b288749cd278e8430c6a2ad2cf8ec560d6996b2de996b1`.
 All 3267 frozen SP17 baseline IDs, including all 2823 frozen SP13-R baseline
 IDs and all 351 runnable multicol targets, remain exact.
 
-## SP17 W1I Positioned-Inline Static Geometry Closure
+## SP17 W1J Vertical Multicol Out-of-Flow Fragmentation Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -188,13 +188,30 @@ mismatched pixels or errors. The live validator requires exactly 139 SP17
 promotions; the SP13-R later-promotion allowlist recognizes the 20 multicol
 position IDs without changing any frozen ledger.
 
-The current full result is 3703 runnable, 3406 exact, 297 functional failures,
-and zero errors. Live `needs_writing_mode` ownership is 703 rows; the frozen
-842-row kickoff inventory and 311/531 disposition remain immutable. The text
-manifest contains 828 IDs. All 3,267 frozen kickoff exact IDs remain exact.
+W1J gives multicol positioned fragmentation one private logical record for the
+source block interval, static anchor, containing-block geometry, visual
+translation, resolved logical insets/margins, and writing direction. It
+intersects that interval with column flow, preserves source-local descendants
+and single ownership, then projects each continuation once through W1H's
+vertical-lr/vertical-rl mapping.
 
-W1 remains incomplete for true fragmented/multicol out-of-flow layout, flex
-safe-alignment abspos behavior, and absolute centering. Tables,
+The same path now covers relative inline containing blocks (including RTL
+boundary affinity and relative logical insets), fragmented positioned blocks,
+and fragmented flex containing blocks with percentage inline sizing and
+logical borders. The six-ID atomic admission is exact, and the 17-ID focused
+proof preserves guards 001, 050, 057, 062, 117, and 121–126 with zero
+mismatched pixels or errors. The live validator requires exactly 145
+promotions; the SP13-R later-promotion allowlist contains 42 IDs.
+
+The current full result is 3709 runnable, 3412 exact, 297 functional failures,
+and zero errors. Live `needs_writing_mode` ownership is 697 rows; the frozen
+842-row kickoff inventory and 311/531 disposition remain immutable. The text
+manifest contains 834 IDs. All 3,267 frozen kickoff exact IDs remain exact. The
+committed `summary.json` SHA-256 is
+`be9c87dcb549fd3566b288749cd278e8430c6a2ad2cf8ec560d6996b2de996b1`.
+
+W1 remains incomplete for flex safe-alignment abspos behavior and absolute
+centering. Tables,
 images/print-specific cases, sideways modes, transforms, and extreme
 column-rule geometry remain later work. W2 retains authoritative mixed-script
 bidi and fallback shaping, upright and sideways glyph work, and writing-mode
@@ -276,7 +293,7 @@ Top runnable failure categories:
 
 ## Current Unported Inventory Ownership
 
-The 3970 unported rows are Chromium WPT files that the current porter or renderer cannot
+The 3964 unported rows are Chromium WPT files that the current porter or renderer cannot
 represent yet. They are still tracked with explicit dependency categories.
 
 Top unported categories:
@@ -284,8 +301,8 @@ Top unported categories:
 | Category | Count |
 |---|---:|
 | `needs_javascript` | 1945 |
-| `sp13_multicol` | 982 |
-| `needs_writing_mode` | 686 |
+| `sp13_multicol` | 976 |
+| `needs_writing_mode` | 680 |
 | `sp13_fragmentation` | 643 |
 | `needs_table_layout` | 462 |
 | `needs_generated_content` | 443 |
@@ -300,10 +317,10 @@ Top unported categories:
 
 ## Recommended Next Work
 
-Continue SP17 W1 with the explicitly excluded true fragmented/multicol
-out-of-flow, safe-alignment flex-abspos, and absolute-centering cohorts. Keep
+Continue SP17 W1 with the explicitly excluded safe-alignment flex-abspos and
+absolute-centering cohorts. Keep
 tables, transforms, generated content, image/print-only cases, and extreme
-column-rule geometry out of the closed W1I cohort. Reserve authoritative bidi,
+column-rule geometry out of the closed W1J cohort. Reserve authoritative bidi,
 upright CJK and mixed-script run splitting, fallback shaping, sideways text,
 and `flexbox-writing-mode-010` through 016 for W2; do not substitute
 geometry-only builders for their glyph requirements.

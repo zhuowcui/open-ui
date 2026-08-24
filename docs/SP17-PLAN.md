@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1I is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W1J is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -32,18 +32,20 @@ multicol sizing and projection, axis-aware fragmented decoration and clipping,
 vertical float overflow propagation, and three vertical flex continuation
 shapes. W1I closes positioned-inline static geometry in direct block flow and
 vertical multicol, including first/last continuation containing blocks and
-logical out-of-flow projection. The authoritative live full-suite result is
-3,703 runnable, 3,406 exact, 297 functional failures, and zero errors.
+logical out-of-flow projection. W1J closes the six vertical multicol
+positioned-fragmentation shapes through one logical source-interval mapper for
+inline, block, and flex containing blocks. The authoritative live full-suite
+result is 3,709 runnable, 3,412 exact, 297 functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1I |
+| Metric | Kickoff | Live W1J |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,703 |
-| Exact passes | 3,267 | 3,406 |
+| Runnable WPTs | 3,566 | 3,709 |
+| Exact passes | 3,267 | 3,412 |
 | Functional failures | 299 | 297 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 3,970 |
-| `needs_writing_mode` owner rows | 842 | 703 |
+| Unported rows | 4,107 | 3,964 |
+| `needs_writing_mode` owner rows | 842 | 697 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -752,3 +754,43 @@ render/diff error.
   transforms, generated content, images/print cases, and tolerance/reference
   changes outside W1I. W2 retains authoritative mixed-script bidi, upright and
   sideways glyph work, fallback shaping, and writing-mode 010–016.
+
+### 2026-08-23 — W1J vertical multicol out-of-flow fragmentation closure
+
+- Added one private logical positioned-fragment record containing the source
+  block interval, static anchor, containing-block offset and size, visual
+  translation, resolved logical insets and margins, and writing direction.
+  Continuations are the non-empty intersections with column-flow intervals;
+  each retains its authoritative source offset, first/last flags,
+  fragmentainer index, block-axis clip, and decoration slice before one W1H
+  physical projection.
+- Reconstructed block-in-inline relative translations now cross the physical
+  to logical vector boundary once. Positioned descendants remain physical at
+  their completed layout boundary, retain source-local children, and have one
+  owning continuation. The same mapper covers relative inline containing
+  blocks (including RTL boundary affinity), fragmented positioned blocks, and
+  fragmented flex containing blocks with percentage inline sizing and
+  asymmetric logical borders.
+- Surgically admitted only `out-of-flow-in-multicolumn-063`, 064, 066, 067,
+  118, and 119. The required 17-ID proof adds exact guards 001, 050, 057, 062,
+  117, and 121–126 and is 17/17 exact with zero mismatched pixels or errors.
+  Two no-write porter runs and the repeated transactional splice are
+  byte-identical.
+- The frozen 3,267-ID kickoff baseline remains exact. The authoritative
+  complete no-resume run is **3,709 runnable / 3,412 exact / 297 fail / 0
+  errors**. The live inventory is 3,964 unported rows, 697
+  `needs_writing_mode` rows, 976 unported `sp13_multicol` rows, and 834
+  text-manifest IDs. The live validator requires exactly 145 promotions; the
+  SP13-R later-promotion allowlist contains 42 IDs without changing frozen
+  ledgers. The committed `summary.json` SHA-256 is
+  `be9c87dcb549fd3566b288749cd278e8430c6a2ad2cf8ec560d6996b2de996b1`.
+- Verification covers the 17-ID proof, parameterized vertical-lr/vertical-rl
+  × LTR/RTL fixed and stretched geometry, the complete no-resume release
+  suite, the full locked Rust matrix, all 122 closure/porter tests, both
+  closure-generator checks, deterministic mapping/deferred/HTML generation,
+  formatter and diff checks, the unflagged audit at 7/7, and one local
+  checkpoint commit.
+- Keep safe-alignment flex abspos, `position-absolute-center-*`, transforms,
+  filters, containment, JavaScript, generated content, images/print, and all
+  other out-of-flow multicol cases outside W1J. W2 retains authoritative bidi,
+  upright and sideways glyph work, fallback shaping, and writing-mode 010–016.

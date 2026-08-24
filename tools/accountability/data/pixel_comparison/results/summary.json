@@ -1,6 +1,6 @@
 {
-  "total": 3703,
-  "passed": 3406,
+  "total": 3709,
+  "passed": 3412,
   "failed": 297,
   "errors": 0,
   "near_miss_aa": 60,
@@ -14375,6 +14375,36 @@
     },
     {
       "id": "wpt/css_break/overflow-clip-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/out-of-flow-in-multicolumn-063",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/out-of-flow-in-multicolumn-064",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/out-of-flow-in-multicolumn-066",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/out-of-flow-in-multicolumn-067",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/out-of-flow-in-multicolumn-118",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/out-of-flow-in-multicolumn-119",
       "status": "pass",
       "mismatch_pct": 0.0
     },

@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1I | 🟡 Active; positioned-inline static geometry closure, 139 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1J | 🟡 Active; vertical multicol out-of-flow fragmentation closure, 145 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,703 ported/runnable tests, 3,406 runnable passes, 297 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 703 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,709 ported/runnable tests, 3,412 runnable passes, 297 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 697 live writing-mode owner rows.**
 
 ---
 
@@ -271,11 +271,11 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Metric | Value |
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
-| Current runnable WPT tests | 3,703 |
-| Current runnable WPT passes | 3,406 |
+| Current runnable WPT tests | 3,709 |
+| Current runnable WPT passes | 3,412 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
-| Pixel comparison tests | 3,703 generated WPT comparisons + earlier SP pages/apps |
+| Pixel comparison tests | 3,709 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
@@ -680,3 +680,34 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   fragmented abspos boxes, flex safe alignment, absolute centering, tables,
   transforms, generated content, and image/print cases in later atomic W1
   cohorts. W2 retains material bidi and vertical glyph shaping.
+
+### SP17 W1J: vertical multicol out-of-flow fragmentation closure
+
+- Added one private logical positioned-fragment record for source interval,
+  static anchor, containing-block geometry, visual translation, resolved
+  logical insets/margins, and direction. Column-flow intersections now produce
+  source-ordered continuations with authoritative slice metadata and one W1H
+  physical projection.
+- Unified relative inline, fragmented positioned block, and fragmented flex
+  containing blocks, including RTL boundary affinity, relative logical
+  offsets, percentage inline sizes, asymmetric logical borders, source-local
+  descendants, and single ownership.
+- Surgically admitted only out-of-flow multicol IDs 063, 064, 066, 067, 118,
+  and 119. The 17-ID target/guard proof is 17/17 exact with zero mismatched
+  pixels or errors; two dry-runs and two transactional splices are
+  byte-identical.
+- The frozen 3,267-ID baseline remains exact. The authoritative full suite is
+  **3,709 runnable / 3,412 exact / 297 fail / 0 errors**; live unported
+  inventory is 3,964, writing-mode ownership is 697, unported SP13-R multicol
+  ownership is 976, the text manifest is 834, and the live validator requires
+  exactly 145 promotions. The SP13-R later-promotion compatibility set is 42.
+  The committed `summary.json` SHA-256 is
+  `be9c87dcb549fd3566b288749cd278e8430c6a2ad2cf8ec560d6996b2de996b1`.
+- Verification: the 17-ID proof, parameterized vertical writing/direction
+  layout regressions, complete no-resume release suite, locked Rust matrix,
+  all 122 closure/porter tests, both ledger checks, deterministic
+  mapping/deferred/HTML generation, splice idempotence, formatter/diff checks,
+  and audit 7/7.
+- Next: keep flex safe alignment, absolute centering, tables, transforms,
+  generated content, images/print cases, and other excluded out-of-flow cases
+  in later cohorts. W2 retains material bidi and vertical glyph shaping.

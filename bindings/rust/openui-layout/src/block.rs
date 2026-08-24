@@ -218,6 +218,26 @@ fn physical_strut_from_algorithm_box(
         .to_physical(writing_direction)
 }
 
+/// Convert a physical visual translation into the logical working axes used
+/// by block and multicol placement. Subtracting the converted origin keeps
+/// flipped inline/block directions from treating a vector as a box position.
+fn physical_vector_to_logical(
+    offset: PhysicalOffset,
+    writing_direction: WritingDirectionMode,
+) -> PhysicalOffset {
+    if writing_direction.is_horizontal() {
+        return offset;
+    }
+
+    let converter = WritingModeConverter::new(writing_direction, PhysicalSize::zero());
+    let logical_origin = converter.to_logical_offset(PhysicalOffset::zero(), PhysicalSize::zero());
+    let logical_offset = converter.to_logical_offset(offset, PhysicalSize::zero());
+    PhysicalOffset::new(
+        logical_offset.inline_offset - logical_origin.inline_offset,
+        logical_offset.block_offset - logical_origin.block_offset,
+    )
+}
+
 /// Project one multicol-owned logical fragment outer box to physical storage.
 /// Anonymous column/line layers share the multicol axes and are traversed;
 /// descendants of a real box keep the physical geometry produced by their own
@@ -381,6 +401,16 @@ fn project_logical_child_to_physical(
     writing_direction: WritingDirectionMode,
     parent_physical_size: PhysicalSize,
 ) {
+    // Positioned layout is a physical API boundary. A positioned-inline
+    // descendant can be materialized before the block's normal-flow children
+    // are projected (notably around a block-in-inline interruption), but its
+    // completed outer box and retained containing-block geometry are already
+    // physical. Its owning multicol will normalize that complete record into
+    // column-flow coordinates if fragmentation is required.
+    if fragment.positioned_fragmentation.is_some() {
+        return;
+    }
+
     let converter = WritingModeConverter::new(writing_direction, parent_physical_size);
     let logical_size = LogicalSize::new(fragment.size.width, fragment.size.height);
     let physical_size = converter.to_physical_size(logical_size);
@@ -1068,9 +1098,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     child_available_inline,
                     child_percentage_block_size,
                 );
+                let logical_inline_relative_offset =
+                    physical_vector_to_logical(inline_relative_offset, space.writing_direction);
                 positioned_block.offset = PhysicalOffset::new(
-                    border.left + padding.left + inline_relative_offset.left,
-                    current_block_offset + inline_relative_offset.top,
+                    border.left + padding.left + logical_inline_relative_offset.left,
+                    current_block_offset + logical_inline_relative_offset.top,
                 );
                 positioned_block.fragmentation_visual_offset = inline_relative_offset;
                 crate::relative::apply_relative_offset(
@@ -6755,24 +6787,30 @@ fn fragment_visual_translation(
     containing_inline_size: LayoutUnit,
     containing_block_size: LayoutUnit,
 ) -> PhysicalOffset {
-    let authored = if fragment.node_id.is_none() {
-        PhysicalOffset::zero()
+    let (authored, writing_direction) = if fragment.node_id.is_none() {
+        (PhysicalOffset::zero(), None)
     } else {
         let style = &doc.node(fragment.node_id).style;
-        if style.position == Position::Relative {
-            crate::relative::compute_relative_offset(
-                style,
-                containing_inline_size,
-                containing_block_size,
-            )
-        } else {
-            PhysicalOffset::zero()
-        }
+        (
+            if style.position == Position::Relative {
+                crate::relative::compute_relative_offset(
+                    style,
+                    containing_inline_size,
+                    containing_block_size,
+                )
+            } else {
+                PhysicalOffset::zero()
+            },
+            Some(style.direction.writing_direction(style.writing_mode)),
+        )
     };
-    PhysicalOffset::new(
+    let physical = PhysicalOffset::new(
         authored.left + fragment.fragmentation_visual_offset.left,
         authored.top + fragment.fragmentation_visual_offset.top,
-    )
+    );
+    writing_direction.map_or(physical, |direction| {
+        physical_vector_to_logical(physical, direction)
+    })
 }
 
 fn fragment_subtree_has_visual_translation(fragment: &Fragment, doc: &Document) -> bool {
@@ -7791,6 +7829,34 @@ fn resume_nested_multicol_positioned_row(fragment: &mut Fragment, source_block_o
     });
 }
 
+/// Authoritative logical geometry for one positioned source box while it is
+/// intersected with multicol fragmentainer intervals. The retained public
+/// `PositionedFragmentationData` stays unchanged and is projected back to a
+/// physical `Fragment` only after continuations have been selected.
+#[derive(Clone, Copy, Debug)]
+struct LogicalPositionedFragmentRecord {
+    source_block_start: LayoutUnit,
+    source_block_end: LayoutUnit,
+    static_anchor: PhysicalOffset,
+    containing_block_offset: PhysicalOffset,
+    containing_block_size: PhysicalSize,
+    visual_translation: PhysicalOffset,
+    block_start_inset: Option<LayoutUnit>,
+    block_end_inset: Option<LayoutUnit>,
+    inline_start_inset: Option<LayoutUnit>,
+    inline_end_inset: Option<LayoutUnit>,
+    block_start_margin: LayoutUnit,
+    inline_start_margin: LayoutUnit,
+    inline_end_margin: LayoutUnit,
+    writing_direction: WritingDirectionMode,
+}
+
+impl LogicalPositionedFragmentRecord {
+    fn source_block_size(self) -> LayoutUnit {
+        self.source_block_end - self.source_block_start
+    }
+}
+
 /// Convert out-of-flow boxes owned by this multicol into one fragment per
 /// column. Out-of-flow layout retains the logical static/containing-block
 /// inputs on the fragment; the owning multicol is the first ancestor that has
@@ -7886,7 +7952,7 @@ fn fragment_direct_positioned_children_in_multicol(
         in_fragmented_flex_containing_block: bool,
         preserve_fragmented_flex_oof: bool,
         in_nested_multicol: bool,
-        horizontal_writing_mode: bool,
+        writing_direction: WritingDirectionMode,
         inline_boxes: &std::collections::HashMap<NodeId, Vec<(PhysicalOffset, PhysicalSize, bool)>>,
         extracted_nodes: &mut std::collections::HashSet<NodeId>,
         extracted: &mut Vec<Fragment>,
@@ -7932,10 +7998,12 @@ fn fragment_direct_positioned_children_in_multicol(
                 } else {
                     ancestor_reconstructed_inline_offset
                 };
-            let visual_offset = PhysicalOffset::new(
+            let physical_visual_offset = PhysicalOffset::new(
                 authored_visual_offset.left + reconstructed_inline_offset.left,
                 authored_visual_offset.top + reconstructed_inline_offset.top,
             );
+            let visual_offset =
+                physical_vector_to_logical(physical_visual_offset, writing_direction);
             let principal = in_principal_source
                 && (fragment.node_id.is_none()
                     || fragment.is_first_for_node
@@ -7965,7 +8033,8 @@ fn fragment_direct_positioned_children_in_multicol(
                 // an authoritative decoration slice resumes with that block.
                 // Promoting it into a second, parallel continuation flow
                 // makes an ancestor multicol paint the same row twice.
-                && (!resumes_with_fragmented_containing_block || !horizontal_writing_mode)
+                && (!resumes_with_fragmented_containing_block
+                    || !writing_direction.is_horizontal())
                 && !in_fragmented_clipping_containing_block
                 && !(preserve_fragmented_flex_oof && in_fragmented_flex_containing_block)
                 && !fragment.node_id.is_none()
@@ -8040,7 +8109,7 @@ fn fragment_direct_positioned_children_in_multicol(
                 // this multicol.
                 if let Some(target) = positioned.inline_containing_block_node {
                     if let Some(target_boxes) = inline_boxes.get(&target) {
-                        let endpoints = if horizontal_writing_mode {
+                        let endpoints = if writing_direction.is_horizontal() {
                             target_boxes.first().zip(target_boxes.last())
                         } else {
                             let mut nonempty =
@@ -8149,7 +8218,7 @@ fn fragment_direct_positioned_children_in_multicol(
                     || fragment.multicol_fragmentation.is_some()
                     || (!fragment.node_id.is_none()
                         && doc.node(fragment.node_id).style.opacity < 1.0),
-                horizontal_writing_mode,
+                writing_direction,
                 inline_boxes,
                 extracted_nodes,
                 extracted,
@@ -8206,7 +8275,7 @@ fn fragment_direct_positioned_children_in_multicol(
         false,
         preserve_fragmented_flex_oof,
         false,
-        writing_direction.is_horizontal(),
+        writing_direction,
         &inline_boxes,
         &mut std::collections::HashSet::new(),
         &mut extracted,
@@ -8236,7 +8305,10 @@ fn fragment_direct_positioned_children_in_multicol(
                 last.inline_offset + stride * (index + 1 - positions.len()) as i32
             })
         };
-        if style.direction == Direction::Rtl && index < resolved.count as usize {
+        if writing_direction.is_horizontal()
+            && style.direction == Direction::Rtl
+            && index < resolved.count as usize
+        {
             positions.last().map_or(ltr, |last| {
                 last.inline_offset + last.width - ltr - resolved.width
             })
@@ -8369,9 +8441,6 @@ fn fragment_direct_positioned_children_in_multicol(
             continue;
         }
 
-        let (mut containing_column, mut containing_flow) =
-            flow_offset(positioned.containing_block_offset);
-        let (static_column, static_flow) = flow_offset(positioned.static_position);
         let fragment_style = fragment_style.expect("positioned fragment has a DOM node");
         let (
             block_start_inset,
@@ -8431,6 +8500,57 @@ fn fragment_direct_positioned_children_in_multicol(
                 inline_end_margin,
             )
         };
+        let resolve_optional_inset =
+            |inset: &openui_geometry::Length, percentage_base: LayoutUnit| {
+                (!inset.is_auto()).then(|| {
+                    resolve_length(
+                        inset,
+                        percentage_base,
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                    )
+                })
+            };
+        let mut logical_record = LogicalPositionedFragmentRecord {
+            source_block_start: LayoutUnit::zero(),
+            source_block_end: source_size,
+            static_anchor: positioned.static_position,
+            containing_block_offset: positioned.containing_block_offset,
+            containing_block_size: positioned.containing_block_size,
+            visual_translation: positioned.visual_offset,
+            block_start_inset: resolve_optional_inset(
+                block_start_inset,
+                positioned.containing_block_size.height,
+            ),
+            block_end_inset: resolve_optional_inset(
+                block_end_inset,
+                positioned.containing_block_size.height,
+            ),
+            inline_start_inset: resolve_optional_inset(
+                inline_start_inset,
+                positioned.containing_block_size.width,
+            ),
+            inline_end_inset: resolve_optional_inset(
+                inline_end_inset,
+                positioned.containing_block_size.width,
+            ),
+            block_start_margin: resolve_margin_or_padding(
+                block_start_margin,
+                positioned.containing_block_size.width,
+            ),
+            inline_start_margin: resolve_margin_or_padding(
+                inline_start_margin,
+                positioned.containing_block_size.width,
+            ),
+            inline_end_margin: resolve_margin_or_padding(
+                inline_end_margin,
+                positioned.containing_block_size.width,
+            ),
+            writing_direction,
+        };
+        let (mut containing_column, mut containing_flow) =
+            flow_offset(logical_record.containing_block_offset);
+        let (static_column, static_flow) = flow_offset(logical_record.static_anchor);
         let inline_cb_has_backward_boundary_affinity =
             positioned.inline_containing_block_node.is_some()
                 && positioned.containing_block_size.width == LayoutUnit::zero()
@@ -8451,36 +8571,44 @@ fn fragment_direct_positioned_children_in_multicol(
         }
         let translated_inline_cb_uses_static_block_position =
             positioned.inline_containing_block_node.is_some()
-                && positioned.visual_offset != PhysicalOffset::zero()
-                && block_start_inset.is_auto()
-                && block_end_inset.is_auto();
-        let logical_start = if translated_inline_cb_uses_static_block_position {
+                && logical_record.visual_translation != PhysicalOffset::zero()
+                && logical_record.block_start_inset.is_none()
+                && logical_record.block_end_inset.is_none();
+        logical_record.source_block_start = if !logical_record.writing_direction.is_horizontal()
+            && positioned.inline_containing_block_node.is_some()
+            && positioned.block_in_inline_static_advance > LayoutUnit::zero()
+            && logical_record.block_start_inset.is_some()
+        {
+            // A positioned inline split by an in-flow block has its closing
+            // empty fragment after the interruption. That fragment supplies
+            // the static marker, but a specified block-start inset resolves
+            // from the first containing-block edge. Rewind the normal-flow
+            // interruption before intersecting the positioned source interval
+            // with column flow.
+            (containing_flow - positioned.block_in_inline_static_advance).max_of(LayoutUnit::zero())
+                + logical_record.block_start_inset.unwrap()
+                + logical_record.block_start_margin
+        } else if translated_inline_cb_uses_static_block_position {
             // Extraction rebases a descendant of relatively positioned
             // inline/block ancestors into normal-flow coordinates. Its
             // physical offset contains the inverse visual translation, so
             // the retained containing-block flow is the authoritative static
             // block position for fragmentation.
             containing_flow
-        } else if inline_cb_has_backward_boundary_affinity && !block_start_inset.is_auto() {
+        } else if inline_cb_has_backward_boundary_affinity
+            && logical_record.block_start_inset.is_some()
+        {
             // An empty first inline box at the inline end of a column has
             // backward block affinity even though its physical left edge is
             // also the next column's origin.  Keep inline inset resolution
             // relative to that edge, but resolve the block inset in the row
             // containing the empty box.
             containing_flow - fragmentainer_height
-                + resolve_length(
-                    block_start_inset,
-                    positioned.containing_block_size.height,
-                    LayoutUnit::zero(),
-                    LayoutUnit::zero(),
-                )
-                + resolve_margin_or_padding(
-                    block_start_margin,
-                    positioned.containing_block_size.width,
-                )
+                + logical_record.block_start_inset.unwrap()
+                + logical_record.block_start_margin
         } else if positioned.inline_containing_block_node.is_none()
-            && positioned.visual_offset != PhysicalOffset::zero()
-            && !block_start_inset.is_auto()
+            && logical_record.visual_translation != PhysicalOffset::zero()
+            && logical_record.block_start_inset.is_some()
         {
             // A relative containing block can move the laid-out fragment far
             // from its normal-flow coordinate before it reaches this owning
@@ -8488,26 +8616,18 @@ fn fragment_direct_positioned_children_in_multicol(
             // are the authoritative logical inputs; reverse-engineering the
             // start from the translated physical offset clips leading slices.
             containing_flow
-                + resolve_length(
-                    block_start_inset,
-                    positioned.containing_block_size.height,
-                    LayoutUnit::zero(),
-                    LayoutUnit::zero(),
-                )
-                + resolve_margin_or_padding(
-                    block_start_margin,
-                    positioned.containing_block_size.width,
-                )
+                + logical_record.block_start_inset.unwrap()
+                + logical_record.block_start_margin
         } else if positioned.inline_containing_block_node.is_some()
-            && positioned.containing_block_size.width == LayoutUnit::zero()
-            && block_start_inset.is_auto()
-            && !block_end_inset.is_auto()
+            && logical_record.containing_block_size.width == LayoutUnit::zero()
+            && logical_record.block_start_inset.is_none()
+            && logical_record.block_end_inset.is_some()
         {
             static_flow - fragment.size.height
         } else if positioned.inline_containing_block_node.is_some()
-            && block_start_inset.is_auto()
-            && block_end_inset.is_auto()
-            && !inline_end_inset.is_auto()
+            && logical_record.block_start_inset.is_none()
+            && logical_record.block_end_inset.is_none()
+            && logical_record.inline_end_inset.is_some()
             && static_flow > LayoutUnit::zero()
             && static_flow.raw().rem_euclid(fragmentainer_height.raw()) == 0
         {
@@ -8516,13 +8636,14 @@ fn fragment_direct_positioned_children_in_multicol(
             // containing block is the closing inline fragment, so retain the
             // preceding column rather than materializing an overflow column.
             containing_flow + fragment.offset.top
-                - positioned.containing_block_offset.top
+                - logical_record.containing_block_offset.top
                 - fragmentainer_height
         } else {
-            containing_flow + fragment.offset.top - positioned.containing_block_offset.top
+            containing_flow + fragment.offset.top - logical_record.containing_block_offset.top
         };
-        let uses_static_inline_position =
-            inline_start_inset.is_auto() && inline_end_inset.is_auto();
+        logical_record.source_block_end = logical_record.source_block_start + source_size;
+        let uses_static_inline_position = logical_record.inline_start_inset.is_none()
+            && logical_record.inline_end_inset.is_none();
         let fragmented_inline_edges = positioned
             .inline_containing_block_node
             .and_then(|target| inline_boxes.get(&target))
@@ -8573,17 +8694,27 @@ fn fragment_direct_positioned_children_in_multicol(
             offset - content_edge_x - inline_offset(index)
         };
         let inline_containing_block_local_start = fragmented_inline_edges.map_or(
-            positioned.containing_block_offset.left
+            logical_record.containing_block_offset.left
                 - content_edge_x
                 - inline_offset(containing_column),
             |(start, _)| endpoint_inline_local(start),
         );
         let inline_containing_block_local_end = fragmented_inline_edges.map_or(
-            inline_containing_block_local_start + positioned.containing_block_size.width,
+            inline_containing_block_local_start + logical_record.containing_block_size.width,
             |(_, end)| endpoint_inline_end_local(end),
         );
-        let inline_local = if positioned.inline_containing_block_node.is_some()
-            && positioned.visual_offset != PhysicalOffset::zero()
+        let inline_local = if !logical_record.writing_direction.is_horizontal()
+            && positioned.inline_containing_block_node.is_some()
+            && positioned.block_in_inline_static_advance > LayoutUnit::zero()
+            && logical_record.inline_start_inset.is_some()
+            && logical_record.inline_end_inset.is_none()
+        {
+            // The empty inline fragment after a block-in-inline interruption
+            // carries font-metric ink before its logical inline edge. Insets
+            // use the edge itself, not that synthetic ascent.
+            logical_record.inline_start_inset.unwrap() + logical_record.inline_start_margin
+        } else if positioned.inline_containing_block_node.is_some()
+            && logical_record.visual_translation != PhysicalOffset::zero()
             && uses_static_inline_position
         {
             // Relative inline ancestors contribute their authored translation
@@ -8592,58 +8723,44 @@ fn fragment_direct_positioned_children_in_multicol(
             // auto/auto static inline position must not retain that local
             // offset and cancel the translation a second time.
             LayoutUnit::zero()
-        } else if translated_inline_cb_uses_static_block_position && !inline_start_inset.is_auto() {
+        } else if translated_inline_cb_uses_static_block_position
+            && logical_record.inline_start_inset.is_some()
+        {
             // The inline containing block has already been translated into
             // this multicol's visual coordinate space. The mapper applies
             // `visual_offset` below; retaining the inverse local offset here
             // would cancel that translation a second time.
             LayoutUnit::zero()
-        } else if !writing_direction.is_horizontal()
+        } else if !logical_record.writing_direction.is_horizontal()
             && positioned.inline_containing_block_node.is_some()
-            && !inline_start_inset.is_auto()
-            && inline_end_inset.is_auto()
+            && logical_record.inline_start_inset.is_some()
+            && logical_record.inline_end_inset.is_none()
         {
             // The physical start edge comes from the positioned inline's
             // first relevant continuation. Its rectangular union may begin
             // at a different inline coordinate after bidi reordering or a
             // fragmentainer boundary.
             inline_containing_block_local_start
-                + resolve_length(
-                    inline_start_inset,
-                    positioned.containing_block_size.width,
-                    LayoutUnit::zero(),
-                    LayoutUnit::zero(),
-                )
-                + resolve_margin_or_padding(
-                    inline_start_margin,
-                    positioned.containing_block_size.width,
-                )
-        } else if !writing_direction.is_horizontal()
+                + logical_record.inline_start_inset.unwrap()
+                + logical_record.inline_start_margin
+        } else if !logical_record.writing_direction.is_horizontal()
             && positioned.inline_containing_block_node.is_some()
-            && inline_start_inset.is_auto()
-            && !inline_end_inset.is_auto()
+            && logical_record.inline_start_inset.is_none()
+            && logical_record.inline_end_inset.is_some()
         {
             // Likewise, resolve the physical end edge from the last relevant
             // continuation rather than the bounding rectangle. This keeps
             // the endpoint's column affinity when first and last fragments
             // occupy different fragmentainers.
             inline_containing_block_local_end
-                - resolve_length(
-                    inline_end_inset,
-                    positioned.containing_block_size.width,
-                    LayoutUnit::zero(),
-                    LayoutUnit::zero(),
-                )
-                - resolve_margin_or_padding(
-                    inline_end_margin,
-                    positioned.containing_block_size.width,
-                )
+                - logical_record.inline_end_inset.unwrap()
+                - logical_record.inline_end_margin
                 - fragment.size.width
         } else if positioned.inline_containing_block_node.is_some()
-            && inline_start_inset.is_auto()
-            && !inline_end_inset.is_auto()
-            && block_start_inset.is_auto()
-            && block_end_inset.is_auto()
+            && logical_record.inline_start_inset.is_none()
+            && logical_record.inline_end_inset.is_some()
+            && logical_record.block_start_inset.is_none()
+            && logical_record.block_end_inset.is_none()
             && static_flow > LayoutUnit::zero()
             && static_flow.raw().rem_euclid(fragmentainer_height.raw()) == 0
         {
@@ -8656,7 +8773,7 @@ fn fragment_direct_positioned_children_in_multicol(
             // The inline static position belongs to the preceding column at
             // an exact boundary. A fixed-size abspos therefore ends at the
             // empty inline box instead of starting in the following column.
-            positioned.containing_block_offset.left
+            logical_record.containing_block_offset.left
                 - content_edge_x
                 - inline_offset(containing_column - 1)
                 - fragment.size.width
@@ -8665,39 +8782,41 @@ fn fragment_direct_positioned_children_in_multicol(
                 // inline edge inside its fragmentainer.
                 - stride * (containing_column - 1) as i32
         } else if positioned.inline_containing_block_node.is_some()
-            && positioned.containing_block_size.width == LayoutUnit::zero()
+            && logical_record.containing_block_size.width == LayoutUnit::zero()
             && uses_static_inline_position
         {
-            positioned.static_position.left - content_edge_x - inline_offset(containing_column)
+            logical_record.static_anchor.left - content_edge_x - inline_offset(containing_column)
         } else {
             fragment.offset.left - content_edge_x - inline_offset(containing_column)
         };
-        let logical_start =
-            if inline_cb_has_backward_boundary_affinity && !block_start_inset.is_auto() {
-                // The boundary-owned empty inline box selects the preceding
-                // fragmentainer as its containing-block row. A negative inset may
-                // place the used block start before that fragmentation context;
-                // truncate that leading offset without consuming the positioned
-                // box's source block size.
-                logical_start.max_of(LayoutUnit::zero())
-            } else {
-                logical_start
-            };
-        let logical_end = logical_start + source_size;
-        let first_column = if logical_start.raw() > 0 {
-            (logical_start.raw() / fragmentainer_height.raw()) as usize
+        if inline_cb_has_backward_boundary_affinity && logical_record.block_start_inset.is_some() {
+            // The boundary-owned empty inline box selects the preceding
+            // fragmentainer as its containing-block row. A negative inset may
+            // place the used block start before that fragmentation context;
+            // truncate that leading offset without consuming the positioned
+            // box's source block size.
+            logical_record.source_block_start =
+                logical_record.source_block_start.max_of(LayoutUnit::zero());
+            logical_record.source_block_end = logical_record.source_block_start + source_size;
+        }
+        let first_column = if logical_record.source_block_start.raw() > 0 {
+            (logical_record.source_block_start.raw() / fragmentainer_height.raw()) as usize
         } else {
             0
         };
-        let last_column = if logical_end.raw() > 0 {
-            ((logical_end.raw() - 1) / fragmentainer_height.raw()) as usize
+        let last_column = if logical_record.source_block_end.raw() > 0 {
+            ((logical_record.source_block_end.raw() - 1) / fragmentainer_height.raw()) as usize
         } else {
             first_column
         };
 
         let first_column = if inline_cb_has_backward_boundary_affinity
-            && !block_start_inset.is_auto()
-            && logical_start.raw().rem_euclid(fragmentainer_height.raw()) == 0
+            && logical_record.block_start_inset.is_some()
+            && logical_record
+                .source_block_start
+                .raw()
+                .rem_euclid(fragmentainer_height.raw())
+                == 0
             && first_column > 0
         {
             // A negative inset from the boundary-owned inline containing box
@@ -8711,10 +8830,11 @@ fn fragment_direct_positioned_children_in_multicol(
         };
 
         let first_column_start = fragmentainer_height * first_column as i32;
-        let first_capacity = (first_column_start + fragmentainer_height - logical_start)
+        let first_capacity = (first_column_start + fragmentainer_height
+            - logical_record.source_block_start)
             .clamp_negative_to_zero()
-            .min_of(source_size);
-        let first_avoid_break = (source_size > first_capacity
+            .min_of(logical_record.source_block_size());
+        let first_avoid_break = (logical_record.source_block_size() > first_capacity
             && first_capacity > LayoutUnit::zero())
         .then(|| {
             avoid_descendant_break_before(
@@ -8728,8 +8848,8 @@ fn fragment_direct_positioned_children_in_multicol(
         .flatten();
         if first_avoid_break.is_some() {
             let mut source_offset = LayoutUnit::zero();
-            let mut logical_cursor = logical_start;
-            while source_offset < source_size {
+            let mut logical_cursor = logical_record.source_block_start;
+            while source_offset < logical_record.source_block_size() {
                 let index = if logical_cursor.raw() > 0 {
                     (logical_cursor.raw() / fragmentainer_height.raw()) as usize
                 } else {
@@ -8742,7 +8862,7 @@ fn fragment_direct_positioned_children_in_multicol(
                     logical_cursor = column_start + fragmentainer_height;
                     continue;
                 }
-                let remaining = source_size - source_offset;
+                let remaining = logical_record.source_block_size() - source_offset;
                 let natural_amount = capacity.min_of(remaining);
                 let break_at = source_offset + natural_amount;
                 let avoid_break = avoid_descendant_break_before(
@@ -8768,8 +8888,9 @@ fn fragment_direct_positioned_children_in_multicol(
                     content_edge_x
                         + inline_offset(index)
                         + inline_local
-                        + positioned.visual_offset.left,
-                    content_edge_y + logical_cursor - column_start + positioned.visual_offset.top,
+                        + logical_record.visual_translation.left,
+                    content_edge_y + logical_cursor - column_start
+                        + logical_record.visual_translation.top,
                 );
                 continuation.size.height = if avoid_break.is_some() {
                     capacity
@@ -8778,10 +8899,11 @@ fn fragment_direct_positioned_children_in_multicol(
                 };
                 continuation.decoration_slice = Some(crate::fragment::DecorationSlice {
                     source_block_offset: source_offset,
-                    source_block_size: source_size,
+                    source_block_size: logical_record.source_block_size(),
                 });
                 continuation.is_first_for_node = source_offset == LayoutUnit::zero();
-                continuation.is_last_for_node = source_offset + amount == source_size;
+                continuation.is_last_for_node =
+                    source_offset + amount == logical_record.source_block_size();
                 continuation.has_overflow_clip = true;
                 continuation.block_axis_clip_only = true;
                 if let Some(cutoff) = avoid_break {
@@ -8798,7 +8920,7 @@ fn fragment_direct_positioned_children_in_multicol(
                 fragmented.push(continuation);
 
                 source_offset = source_offset + amount;
-                if source_offset < source_size {
+                if source_offset < logical_record.source_block_size() {
                     logical_cursor = column_start + fragmentainer_height;
                 }
             }
@@ -8807,17 +8929,19 @@ fn fragment_direct_positioned_children_in_multicol(
 
         for index in first_column..=last_column {
             let column_start = fragmentainer_height * index as i32;
-            let intersection_start = logical_start.max_of(column_start);
-            let intersection_end = logical_end.min_of(column_start + fragmentainer_height);
+            let intersection_start = logical_record.source_block_start.max_of(column_start);
+            let intersection_end = logical_record
+                .source_block_end
+                .min_of(column_start + fragmentainer_height);
             let boundary_marker = intersection_end == intersection_start
-                && intersection_start == logical_start
+                && intersection_start == logical_record.source_block_start
                 && index < last_column;
             if intersection_end < intersection_start
                 || (intersection_end == intersection_start && !boundary_marker)
             {
                 continue;
             }
-            let source_offset = intersection_start - logical_start;
+            let source_offset = intersection_start - logical_record.source_block_start;
             let mut continuation = fragment.clone();
             if let Some(positioned) = &mut continuation.positioned_fragmentation {
                 positioned.fragmentainer_index = Some(index as u32);
@@ -8826,30 +8950,25 @@ fn fragment_direct_positioned_children_in_multicol(
                 content_edge_x
                     + inline_offset(index)
                     + inline_local
-                    + positioned.visual_offset.left,
-                content_edge_y + intersection_start - column_start + positioned.visual_offset.top,
+                    + logical_record.visual_translation.left,
+                content_edge_y + intersection_start - column_start
+                    + logical_record.visual_translation.top,
             );
             continuation.size.height = intersection_end - intersection_start;
             continuation.decoration_slice = Some(crate::fragment::DecorationSlice {
                 source_block_offset: source_offset,
-                source_block_size: source_size,
+                source_block_size: logical_record.source_block_size(),
             });
             continuation.is_first_for_node = source_offset == LayoutUnit::zero();
-            continuation.is_last_for_node = intersection_end == logical_end;
+            continuation.is_last_for_node = intersection_end == logical_record.source_block_end;
             continuation.has_overflow_clip = true;
             continuation.block_axis_clip_only = true;
             for child in &mut continuation.children {
-                let child_style =
-                    (!child.node_id.is_none()).then(|| &doc.node(child.node_id).style);
                 // Descendants of this positioned fragment inherit the
                 // ancestor's visual translation through their parent. Keep
                 // their offsets source-local so the translation is applied
                 // exactly once by the parent continuation.
-                if child_style.is_some_and(|style| style.position.is_absolutely_positioned()) {
-                    child.offset.top = child.offset.top - source_offset;
-                } else {
-                    child.offset.top = child.offset.top - source_offset;
-                }
+                child.offset.top = child.offset.top - source_offset;
             }
             fragmented.push(continuation);
         }
@@ -14685,9 +14804,13 @@ fn layout_multicol(
                             .iter()
                             .find(|(block_id, _)| *block_id == child_node_id)
                     {
+                        let logical_relative_offset = physical_vector_to_logical(
+                            *inline_relative_offset,
+                            space.writing_direction,
+                        );
                         positioned.offset.left =
-                            positioned.offset.left + inline_relative_offset.left;
-                        positioned.offset.top = positioned.offset.top + inline_relative_offset.top;
+                            positioned.offset.left + logical_relative_offset.left;
+                        positioned.offset.top = positioned.offset.top + logical_relative_offset.top;
                         positioned.fragmentation_visual_offset = *inline_relative_offset;
                     }
                     let spread_zero_height_forced_break_flex_items = !wraps_rows
@@ -17137,8 +17260,12 @@ fn layout_multicol(
                                     .iter()
                                     .find(|(block_id, _)| *block_id == child_node_id)
                             {
-                                part.offset.left = part.offset.left + inline_relative_offset.left;
-                                part.offset.top = part.offset.top + inline_relative_offset.top;
+                                let logical_relative_offset = physical_vector_to_logical(
+                                    *inline_relative_offset,
+                                    space.writing_direction,
+                                );
+                                part.offset.left = part.offset.left + logical_relative_offset.left;
+                                part.offset.top = part.offset.top + logical_relative_offset.top;
                                 part.fragmentation_visual_offset = *inline_relative_offset;
                             }
                             // Fragment relative descendants in normal-flow

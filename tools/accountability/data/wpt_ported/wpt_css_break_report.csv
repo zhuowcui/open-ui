@@ -879,11 +879,11 @@ out-of-flow-in-multicolumn-059,ported,css_break_out_of_flow_in_multicolumn_059,
 out-of-flow-in-multicolumn-060,ported,css_break_out_of_flow_in_multicolumn_060,
 out-of-flow-in-multicolumn-061,not_portable,,unsupported property: transform
 out-of-flow-in-multicolumn-062,ported,css_break_out_of_flow_in_multicolumn_062,
-out-of-flow-in-multicolumn-063,not_portable,,style_block_unsupported property: writing-mode
-out-of-flow-in-multicolumn-064,not_portable,,style_block_unsupported property: writing-mode
+out-of-flow-in-multicolumn-063,ported,css_break_out_of_flow_in_multicolumn_063,
+out-of-flow-in-multicolumn-064,ported,css_break_out_of_flow_in_multicolumn_064,
 out-of-flow-in-multicolumn-065,not_portable,,style_block_unsupported property: writing-mode
-out-of-flow-in-multicolumn-066,not_portable,,style_block_unsupported property: writing-mode
-out-of-flow-in-multicolumn-067,not_portable,,style_block_unsupported property: writing-mode
+out-of-flow-in-multicolumn-066,ported,css_break_out_of_flow_in_multicolumn_066,
+out-of-flow-in-multicolumn-067,ported,css_break_out_of_flow_in_multicolumn_067,
 out-of-flow-in-multicolumn-068,ported,css_break_out_of_flow_in_multicolumn_068,
 out-of-flow-in-multicolumn-069,ported,css_break_out_of_flow_in_multicolumn_069,
 out-of-flow-in-multicolumn-070,ported,css_break_out_of_flow_in_multicolumn_070,
@@ -937,8 +937,8 @@ out-of-flow-in-multicolumn-114,ported,css_break_out_of_flow_in_multicolumn_114,
 out-of-flow-in-multicolumn-115,not_portable,,unsupported property: contain
 out-of-flow-in-multicolumn-116,not_portable,,unsupported property: contain
 out-of-flow-in-multicolumn-117,ported,css_break_out_of_flow_in_multicolumn_117,
-out-of-flow-in-multicolumn-118,not_portable,,style_block_unsupported property: writing-mode
-out-of-flow-in-multicolumn-119,not_portable,,style_block_unsupported property: writing-mode
+out-of-flow-in-multicolumn-118,ported,css_break_out_of_flow_in_multicolumn_118,
+out-of-flow-in-multicolumn-119,ported,css_break_out_of_flow_in_multicolumn_119,
 out-of-flow-in-multicolumn-120,not_portable,,uses_javascript
 out-of-flow-in-multicolumn-121,ported,css_break_out_of_flow_in_multicolumn_121,
 out-of-flow-in-multicolumn-122,ported,css_break_out_of_flow_in_multicolumn_122,
