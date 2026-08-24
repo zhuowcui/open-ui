@@ -3729,8 +3729,6 @@ fn compute_abspos_static_position(
     border: &BoxStrut,
     padding: &BoxStrut,
 ) -> (LayoutUnit, LayoutUnit) {
-    use openui_style::{ContentPosition, ItemPosition};
-
     let writing_direction = container_style
         .direction
         .writing_direction(container_style.writing_mode);
@@ -3793,48 +3791,30 @@ fn compute_abspos_static_position(
         )
     };
 
-    // Main axis: apply justify-content
-    let jc = &container_style.justify_content;
-    let main_free = (main_size - child_main).clamp_negative_to_zero();
-    let main_offset = match jc.position {
-        ContentPosition::Center => main_free / 2,
-        ContentPosition::End | ContentPosition::FlexEnd => {
-            if container_style.flex_direction.is_reverse() {
-                LayoutUnit::zero()
-            } else {
-                main_free
-            }
-        }
-        ContentPosition::Start | ContentPosition::FlexStart | ContentPosition::Normal => {
-            if container_style.flex_direction.is_reverse() {
-                main_free
-            } else {
-                LayoutUnit::zero()
-            }
-        }
-        _ => LayoutUnit::zero(),
-    };
+    // Keep signed free space until the shared alignment resolvers apply the
+    // specified overflow behavior. Safe alignment falls back to logical start
+    // only when the child's margin box overflows; default/unsafe alignment is
+    // allowed to retain a negative offset.
+    let main_free = main_size - child_main;
+    let main_offset = resolve_content_alignment(
+        &container_style.justify_content,
+        main_free,
+        1,
+        container_style.flex_direction.is_reverse(),
+        is_column,
+    )
+    .initial_offset;
 
-    // Cross axis: resolve align-self (auto → container's align-items)
-    let ai_pos = {
-        let self_pos = child_style.align_self.position;
-        if self_pos == ItemPosition::Auto || self_pos == ItemPosition::Normal {
-            let items_pos = container_style.align_items.position;
-            if items_pos == ItemPosition::Normal {
-                ItemPosition::Stretch
-            } else {
-                items_pos
-            }
-        } else {
-            self_pos
-        }
-    };
-    let cross_free = (cross_size - child_cross).clamp_negative_to_zero();
-    let cross_offset = match ai_pos {
-        ItemPosition::Center => cross_free / 2,
-        ItemPosition::End | ItemPosition::FlexEnd => cross_free,
-        _ => LayoutUnit::zero(),
-    };
+    // align-self:auto inherits the complete align-items value, including its
+    // safe/unsafe modifier. Wrap reversal is resolved here, before the single
+    // logical-to-physical projection below.
+    let (cross_alignment, cross_overflow) = resolve_item_alignment(child_style, container_style);
+    let cross_offset = resolve_align_self(
+        cross_alignment,
+        cross_size - child_cross,
+        cross_overflow,
+        container_style.flex_wrap.is_wrap_reverse(),
+    );
 
     let logical_offset = if is_column {
         LogicalOffset::new(cross_offset, main_offset)

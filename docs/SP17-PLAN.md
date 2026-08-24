@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1J is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W1K is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -34,18 +34,21 @@ shapes. W1I closes positioned-inline static geometry in direct block flow and
 vertical multicol, including first/last continuation containing blocks and
 logical out-of-flow projection. W1J closes the six vertical multicol
 positioned-fragmentation shapes through one logical source-interval mapper for
-inline, block, and flex containing blocks. The authoritative live full-suite
-result is 3,709 runnable, 3,412 exact, 297 functional failures, and zero errors.
+inline, block, and flex containing blocks. W1K closes safe overflow alignment
+for flex abspos static positions through the existing content/item alignment
+resolvers while retaining signed free space and one-time logical projection.
+The authoritative live full-suite result is 3,716 runnable, 3,419 exact, 297
+functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1J |
+| Metric | Kickoff | Live W1K |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,709 |
-| Exact passes | 3,267 | 3,412 |
+| Runnable WPTs | 3,566 | 3,716 |
+| Exact passes | 3,267 | 3,419 |
 | Functional failures | 299 | 297 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 3,964 |
-| `needs_writing_mode` owner rows | 842 | 697 |
+| Unported rows | 4,107 | 3,957 |
+| `needs_writing_mode` owner rows | 842 | 690 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -794,3 +797,46 @@ render/diff error.
   filters, containment, JavaScript, generated content, images/print, and all
   other out-of-flow multicol cases outside W1J. W2 retains authoritative bidi,
   upright and sideways glyph work, fallback shaping, and writing-mode 010–016.
+
+### 2026-08-23 — W1K safe flex overflow alignment closure
+
+- Refactored the private flex abspos static-position calculation to retain
+  signed main/cross free space and complete overflow-alignment values. The
+  existing content-alignment resolver now owns main-axis placement and the
+  existing item-alignment resolver owns cross-axis placement, including
+  `align-self:auto` inheritance, safe fallback, unsafe signed offsets, reverse
+  flow, and wrap reversal before one logical-to-physical projection.
+- Kept the child margin box authoritative for alignment, the flex padding box
+  authoritative for the containing/static rectangle, and the out-of-flow
+  constraint solver authoritative for applying margins once. No public style,
+  fragment, candidate, constraint-space, or layout API changed.
+- Surgically admitted the three `flex-abspos-staticpos-align-self-safe-*`
+  test/reference pairs and `flexbox-safe-overflow-position-005`. The required
+  18-ID proof includes safe overflow 001–004 plus all six abspos auto-position
+  writing-mode/direction guards and is 18/18 exact with zero mismatched pixels
+  or errors. Two no-write generations and two transactional splices are
+  byte-identical.
+- Parameterized Rust regressions cover row, row-reverse, column, and
+  column-reverse under horizontal-tb, vertical-lr, and vertical-rl with LTR and
+  RTL. They prove oversized safe center fallback, signed default/unsafe center,
+  fitting safe end, margin/border/padding geometry, `align-items` overflow
+  inheritance, wrap-reverse safe flex-start, physical projection, and single
+  margin application.
+- The frozen 3,267-ID kickoff baseline remains exact. The authoritative
+  complete no-resume run is **3,716 runnable / 3,419 exact / 297 fail / 0
+  errors**. The live inventory is 3,957 unported rows, 690
+  `needs_writing_mode` rows, 976 unported `sp13_multicol` rows, and 841
+  text-manifest IDs. The live validator requires exactly 152 promotions; the
+  SP13-R later-promotion allowlist remains 42 IDs without changing frozen
+  ledgers. The committed `summary.json` SHA-256 is
+  `a3a9be11bd242c330e9de765bbbb7917df4f95ea714c3672f97f6df5567f10df`.
+- Verification covers the 18-ID proof, the complete no-resume release suite,
+  the full locked Rust matrix, all 122 closure/porter tests, both
+  closure-generator checks, deterministic mapping/deferred/HTML generation,
+  splice idempotence, formatter and diff checks, writing-mode 010–016 exclusion,
+  the unflagged audit at 7/7, and one local checkpoint commit.
+- Keep `position-absolute-center-*`, JavaScript-backed abspos alignment,
+  `flexbox-safe-overflow-position-006`, existing `flexbox-align-self-vert-*`
+  failures, transforms, tables, generated content, and unrelated paint work
+  outside W1K. W2 retains authoritative bidi, upright and sideways glyph work,
+  fallback shaping, and writing-mode 010–016.

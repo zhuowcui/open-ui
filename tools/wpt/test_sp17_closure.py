@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused regressions for the SP17 kickoff and live W1J closure evidence."""
+"""Focused regressions for the SP17 kickoff and live W1K closure evidence."""
 
 from __future__ import annotations
 
@@ -65,6 +65,14 @@ EXPECTED_LIVE_PROMOTIONS = {
     f"wpt/css_flexbox/abspos_abspos-autopos-{mode}-{direction}"
     for mode in ("htb", "vlr", "vrl")
     for direction in ("ltr", "rtl")
+} | {
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-001",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-001-ref",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-002",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-002-ref",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-003",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-003-ref",
+    "wpt/css_flexbox/flexbox-safe-overflow-position-005",
 } | {
     f"wpt/css_sizing/div-{keyword}-orthogonal-{case}.tentative"
     for keyword in ("fit-content", "max-content", "min-content")
@@ -229,7 +237,7 @@ class LedgerTests(unittest.TestCase):
         promoted = closure.validate_live_snapshot(
             rows, summary, baseline, inventory, actionable
         )
-        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 145)
+        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 152)
         self.assertEqual(promoted, EXPECTED_LIVE_PROMOTIONS)
         self.assertTrue(promoted.issubset(set(actionable)))
 

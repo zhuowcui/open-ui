@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1J | 🟡 Active; vertical multicol out-of-flow fragmentation closure, 145 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1K | 🟡 Active; safe flex overflow alignment closure, 152 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,709 ported/runnable tests, 3,412 runnable passes, 297 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 697 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,716 ported/runnable tests, 3,419 runnable passes, 297 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 690 live writing-mode owner rows.**
 
 ---
 
@@ -271,11 +271,11 @@ See `docs/progress/current-status.md` and `docs/SP12.5-PLAN.md` for current coun
 | Metric | Value |
 |--------|-------|
 | Current SP12-scope inventory | 7,673 Chromium WPT rows |
-| Current runnable WPT tests | 3,709 |
-| Current runnable WPT passes | 3,412 |
+| Current runnable WPT tests | 3,716 |
+| Current runnable WPT passes | 3,419 |
 | Current SP12-owned layout bugs | 0 |
 | Generic unported bucket rows | 0 |
-| Pixel comparison tests | 3,709 generated WPT comparisons + earlier SP pages/apps |
+| Pixel comparison tests | 3,716 generated WPT comparisons + earlier SP pages/apps |
 | Dual-model review rounds | 55+ (31 SP11 + 6 SP11.5 + 18 SP12) |
 | Total review findings | 250+ |
 | Total real fixes from review | 230+ |
@@ -711,3 +711,36 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 - Next: keep flex safe alignment, absolute centering, tables, transforms,
   generated content, images/print cases, and other excluded out-of-flow cases
   in later cohorts. W2 retains material bidi and vertical glyph shaping.
+
+### SP17 W1K: safe flex overflow alignment closure
+
+- Refactored the private flex abspos static-position path to retain signed
+  main/cross free space and complete safe/unsafe alignment values. It now uses
+  the existing content- and item-alignment resolvers, inherits both fields for
+  `align-self:auto`, and performs reverse-flow, wrap-reverse, writing-mode, and
+  direction projection once.
+- Kept the child margin box authoritative for alignment and preserved W1G's
+  padding-box containing block and one-time out-of-flow margin application.
+  Parameterized regressions cover row/column and both reversals across
+  horizontal-tb, vertical-lr, and vertical-rl under LTR/RTL, including safe
+  fallback, signed unsafe center, fitting safe end, asymmetric edges, inherited
+  overflow alignment, and wrap-reverse.
+- Surgically admitted all three safe align-self test/reference pairs and
+  `flexbox-safe-overflow-position-005`. The 18-ID target/guard proof is 18/18
+  exact with zero mismatched pixels or errors; two dry-runs and two
+  transactional splices are byte-identical.
+- The frozen 3,267-ID baseline remains exact. The authoritative full suite is
+  **3,716 runnable / 3,419 exact / 297 fail / 0 errors**; live unported
+  inventory is 3,957, writing-mode ownership is 690, unported SP13-R multicol
+  ownership is 976, the text manifest is 841, and the live validator requires
+  exactly 152 promotions. The SP13-R later-promotion compatibility set remains
+  42. The committed `summary.json` SHA-256 is
+  `a3a9be11bd242c330e9de765bbbb7917df4f95ea714c3672f97f6df5567f10df`.
+- Verification: the 18-ID proof, full parameterized layout regressions,
+  complete no-resume release suite, locked Rust matrix, all 122
+  closure/porter tests, both ledger checks, deterministic
+  mapping/deferred/HTML generation, splice idempotence, formatter/diff checks,
+  writing-mode 010–016 exclusion, and audit 7/7.
+- Next: keep absolute centering, tables, transforms, generated content,
+  images/print cases, and unrelated paint/layout work outside W1K. W2 retains
+  material bidi and vertical glyph shaping.

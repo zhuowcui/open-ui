@@ -21,14 +21,14 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W1J full no-resume run):
+Latest authoritative accountability snapshot (SP17 W1K full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3709 |
-| Unported but explicitly tracked tests | 3964 |
-| Runnable passes | 3412 |
+| Ported/runnable WPT tests | 3716 |
+| Unported but explicitly tracked tests | 3957 |
+| Runnable passes | 3419 |
 | Runnable failures | 297 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
@@ -41,11 +41,11 @@ Latest authoritative accountability snapshot (SP17 W1J full no-resume run):
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
 The full `wpt/` run was executed without resume on 2026-08-23. Its committed
 `summary.json` SHA-256 is
-`be9c87dcb549fd3566b288749cd278e8430c6a2ad2cf8ec560d6996b2de996b1`.
+`a3a9be11bd242c330e9de765bbbb7917df4f95ea714c3672f97f6df5567f10df`.
 All 3267 frozen SP17 baseline IDs, including all 2823 frozen SP13-R baseline
 IDs and all 351 runnable multicol targets, remain exact.
 
-## SP17 W1J Vertical Multicol Out-of-Flow Fragmentation Closure
+## SP17 W1K Safe Flex Overflow Alignment Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -203,19 +203,34 @@ proof preserves guards 001, 050, 057, 062, 117, and 121–126 with zero
 mismatched pixels or errors. The live validator requires exactly 145
 promotions; the SP13-R later-promotion allowlist contains 42 IDs.
 
-The current full result is 3709 runnable, 3412 exact, 297 functional failures,
-and zero errors. Live `needs_writing_mode` ownership is 697 rows; the frozen
-842-row kickoff inventory and 311/531 disposition remain immutable. The text
-manifest contains 834 IDs. All 3,267 frozen kickoff exact IDs remain exact. The
-committed `summary.json` SHA-256 is
-`be9c87dcb549fd3566b288749cd278e8430c6a2ad2cf8ec560d6996b2de996b1`.
+W1K preserves signed main/cross free space and the complete overflow-alignment
+value in flex abspos static positioning. Main-axis placement now uses the
+shared content-alignment resolver and cross-axis placement uses the shared
+item-alignment resolver. Oversized safe alignment falls back to logical start,
+default/unsafe alignment retains signed offsets, fitting safe end remains at
+logical end, `align-self:auto` inherits both fields from `align-items`, and
+reverse/wrap/writing-direction projection occurs exactly once.
 
-W1 remains incomplete for flex safe-alignment abspos behavior and absolute
-centering. Tables,
-images/print-specific cases, sideways modes, transforms, and extreme
-column-rule geometry remain later work. W2 retains authoritative mixed-script
-bidi and fallback shaping, upright and sideways glyph work, and writing-mode
-010–016.
+The atomic seven-ID admission contains all three safe align-self test/reference
+pairs plus `flexbox-safe-overflow-position-005`. Its 18-ID proof adds safe
+overflow 001–004 and all six horizontal-tb/vertical-lr/vertical-rl × LTR/RTL
+abspos auto-position guards. It is 18/18 exact with zero mismatched pixels or
+errors. Child margin-box alignment, asymmetric borders/padding, signed center
+offsets, reverse flow, wrap-reverse, and one-time margin application are also
+covered by the parameterized Rust matrix. The live validator requires exactly
+152 promotions; the SP13-R later-promotion allowlist remains 42 IDs.
+
+The current full result is 3716 runnable, 3419 exact, 297 functional failures,
+and zero errors. Live `needs_writing_mode` ownership is 690 rows; the frozen
+842-row kickoff inventory and 311/531 disposition remain immutable. The text
+manifest contains 841 IDs. All 3,267 frozen kickoff exact IDs remain exact. The
+committed `summary.json` SHA-256 is
+`a3a9be11bd242c330e9de765bbbb7917df4f95ea714c3672f97f6df5567f10df`.
+
+W1 remains incomplete for absolute centering. Tables, images/print-specific
+cases, sideways modes, transforms, and extreme column-rule geometry remain
+later work. W2 retains authoritative mixed-script bidi and fallback shaping,
+upright and sideways glyph work, and writing-mode 010–016.
 
 ## SP13-R Closure
 
