@@ -2402,9 +2402,45 @@ fn create_line_box(
             InlineItemType::CloseTag => {
                 inline_metrics_stack.pop();
             }
-            // Control: forced breaks have no height contribution.
+            InlineItemType::Control => {
+                // A semantic <br> has no inline-size or painted fragment, but
+                // its computed font and line-height establish the strut for
+                // the forced-break line. This matters when the break inherits
+                // metrics from an inline ancestor that differ from the block.
+                // A clearing break that actually advances past a float keeps
+                // the existing clearance-only zero-height line contract.
+                if !clearance_only_break {
+                    let item = &items_data.items[item_result.item_index];
+                    let style = &items_data.styles[item.style_index];
+                    let initial = ComputedStyle::default();
+                    // Raw Document callers do not run the CSS inheritance
+                    // pass. Treat a completely initial break metric set as
+                    // inherited from its block; generated retained breaks
+                    // carry any non-initial inherited values explicitly.
+                    let uses_initial_metrics = style.font_family == initial.font_family
+                        && style.font_size == initial.font_size
+                        && style.font_weight == initial.font_weight
+                        && style.font_style == initial.font_style
+                        && style.font_stretch == initial.font_stretch
+                        && style.line_height == initial.line_height;
+                    let item_lh = if uses_initial_metrics {
+                        compute_line_height_metrics(
+                            block_metrics,
+                            &block_style.line_height,
+                            block_style.font_size,
+                        )
+                    } else {
+                        let font_desc = style_to_font_description(style);
+                        let font = Font::new(font_desc);
+                        let metrics = font.font_metrics().copied().unwrap_or_default();
+                        compute_line_height_metrics(&metrics, &style.line_height, style.font_size)
+                    };
+                    line_ascent = line_ascent.max(item_lh.ascent);
+                    line_descent = line_descent.max(item_lh.descent);
+                }
+            }
             // BlockInInline: handled separately in block layout.
-            InlineItemType::Control | InlineItemType::BlockInInline => {}
+            InlineItemType::BlockInInline => {}
         }
     }
 

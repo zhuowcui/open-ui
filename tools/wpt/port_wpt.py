@@ -4248,7 +4248,7 @@ def generate_single_style(
                 return [f"{s}.flex_grow = 0.0;", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = Length::auto();"]
             try:
                 g = float(val)
-                return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = Length::px(0.0);"]
+                return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = Length::percent(0.0);"]
             except ValueError:
                 pass
         elif len(parts) == 2:
@@ -4258,7 +4258,7 @@ def generate_single_style(
                 # Try second as shrink factor
                 try:
                     sh = float(parts[1])
-                    return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = {sh};", f"{s}.flex_basis = Length::px(0.0);"]
+                    return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = {sh};", f"{s}.flex_basis = Length::percent(0.0);"]
                 except ValueError:
                     # Second is basis
                     basis = parse_length(parts[1], font_size)
@@ -4271,17 +4271,16 @@ def generate_single_style(
             try:
                 g = float(parts[0])
                 sh = float(parts[1])
-                basis = parse_length(parts[2], font_size)
-                if not basis:
-                    # Unitless non-zero number as flex-basis is invalid per CSS spec.
-                    # The entire flex declaration is invalid → skip it.
-                    try:
-                        bv = float(parts[2])
-                        if bv != 0:
-                            return None  # Invalid declaration
-                        basis = 'Length::px(0.0)'
-                    except ValueError:
-                        pass
+                try:
+                    bv = float(parts[2])
+                    # A unitless zero is accepted in this grammar and the
+                    # shorthand's omitted/zero basis computes as 0%, while a
+                    # unitless non-zero basis invalidates the declaration.
+                    if bv != 0:
+                        return None
+                    basis = 'Length::percent(0.0)'
+                except ValueError:
+                    basis = parse_length(parts[2], font_size)
                 if basis:
                     return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = {sh};", f"{s}.flex_basis = {basis};"]
             except ValueError:
@@ -5059,65 +5058,21 @@ def generate_rust_fn(
             # line break or a principal box.
             return
 
-        if node.tag == 'br' and node.styles.get('clear', 'none') == 'none':
-            if RETAIN_TEXT:
-                # Forced line break: a "\n" Text node with white-space:pre-line
-                # (the items builder preserves newlines in pre-line mode and
-                # emits a Control/forced-break item). Font size matches the
-                # inherited size so the empty-line strut height matches Chrome.
-                counter[0] += 1
-                bvar = f"n{counter[0]}"
-                ws = "    " * indent
-                lines.append(f"{ws}let {bvar} = doc.create_node(ElementTag::Text);")
-                bs = f"doc.node_mut({bvar}).style"
-                lines.append(
-                    f"{ws}{bs}.font_size = "
-                    f"{round(float(parent_font_size) * parent_zoom, 12)};"
-                )
-                if is_real_font_profile():
-                    family = _font_family_to_rust(inherited.get('font-family', 'sans-serif'))
-                    lines.append(f"{ws}{bs}.font_family = {family};")
-                    for prop in ('font-weight', 'font-style', 'font-stretch', 'font-variant-caps'):
-                        if prop in inherited:
-                            code = generate_single_style(prop, inherited[prop], bs, parent_font_size)
-                            if code:
-                                for cl in (code if isinstance(code, list) else [code]):
-                                    lines.append(f"{ws}{cl}")
-                else:
-                    lines.append(
-                        f'{ws}{bs}.font_family = '
-                        f'{DETERMINISTIC_FONT_FAMILY_RUST};'
-                    )
-                lines.append(f"{ws}{bs}.white_space = WhiteSpace::PreLine;")
-                if 'line-height' in inherited:
-                    code = generate_single_style('line-height', inherited['line-height'], bs, parent_font_size)
-                    if code:
-                        for cl in (code if isinstance(code, list) else [code]):
-                            lines.append(f"{ws}{cl}")
-                for prop in (
-                    'direction', 'writing-mode',
-                    'text-orientation', 'text-combine-upright',
-                ):
-                    if prop in inherited:
-                        code = generate_single_style(
-                            prop, inherited[prop], bs, parent_font_size
-                        )
-                        if code:
-                            for cl in (code if isinstance(code, list) else [code]):
-                                lines.append(f"{ws}{cl}")
-                lines.append(f'{ws}doc.node_mut({bvar}).text = Some("\\n".to_string());')
-                lines.append(f"{ws}doc.append_child({parent_var}, {bvar});")
-            else:
-                # Box-only generation may omit glyph-bearing text, but a BR
-                # remains a forced fragmentation opportunity even when it has
-                # no painted content. Keep that structural effect in parity
-                # with the Chrome template, which has always retained BRs.
-                counter[0] += 1
-                bvar = f"n{counter[0]}"
-                ws = "    " * indent
-                lines.append(f"{ws}let {bvar} = doc.create_node(ElementTag::Break);")
-                lines.append(f"{ws}doc.node_mut({bvar}).style.display = Display::Inline;")
-                lines.append(f"{ws}doc.append_child({parent_var}, {bvar});")
+        if (
+            node.tag == 'br'
+            and node.styles.get('clear', 'none') == 'none'
+            and not RETAIN_TEXT
+        ):
+            # Box-only generation may omit glyph-bearing text, but a BR
+            # remains a forced fragmentation opportunity even when it has
+            # no painted content. Keep that structural effect in parity
+            # with the Chrome template, which has always retained BRs.
+            counter[0] += 1
+            bvar = f"n{counter[0]}"
+            ws = "    " * indent
+            lines.append(f"{ws}let {bvar} = doc.create_node(ElementTag::Break);")
+            lines.append(f"{ws}doc.node_mut({bvar}).style.display = Display::Inline;")
+            lines.append(f"{ws}doc.append_child({parent_var}, {bvar});")
             return
 
         if RETAIN_TEXT and node.styles.get('display', '').strip() == 'contents':

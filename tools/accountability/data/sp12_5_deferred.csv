@@ -200,7 +200,6 @@ wpt/css_flexbox/align-content-007,SP12,"gradient,generated_content","Future,SP13
 wpt/css_flexbox/align-content_stretch,SP12,generated_content,Future,14.671762,low,
 wpt/css_flexbox/align-items-002,SP12,gradient,SP13,3.121019,medium,
 wpt/css_flexbox/align-self-016,SP12,gradient,SP13,4.246285,medium,
-wpt/css_flexbox/auto-height-with-flex,SP12,writing_mode,Future,0.328662,low,
 wpt/css_flexbox/css-box-justify-content,SP12,generated_content,Future,1.153291,low,
 wpt/css_flexbox/dynamic-isize-change-001-ref,SP12,"reference_test,flex_intrinsic_sizing","N/A,SP12",0.043312,medium,
 wpt/css_flexbox/flex-basis-011-ref,SP12,"reference_test,writing_mode,generated_content","Future,N/A",0.003397,medium,

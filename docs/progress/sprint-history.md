@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1N | 🟡 Active; column-wrap fit-content cross sizing, 170 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1O | 🟡 Active; auto-height flex basis and semantic break closure, 171 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,746 ported/runnable tests, 3,464 runnable passes, 282 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 672 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,746 ported/runnable tests, 3,465 runnable passes, 281 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 671 live writing-mode owner rows.**
 
 ---
 
@@ -827,3 +827,30 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   parameterized cross-sizing/axis regressions, locked Rust matrix, all 126
   closure/porter tests, both closure generators, deterministic accountability
   generation, formatting, writing-mode 010–016 exclusion, and audit 7/7.
+
+### SP17 W1O: auto-height flex basis and semantic break closure
+
+- Corrected the porter representation of omitted one- and two-value flex
+  shorthand bases and accepted unitless third zero from fixed `0px` to `0%`,
+  while retaining explicit basis values distinctly.
+- Percentage bases now resolve against definite main space and fall back to
+  content sizing when it is indefinite. Content sizing replaces the authored
+  main-size property, while fixed zero remains definite.
+- Retained `<br>` nodes now use semantic break controls with inherited font,
+  line-height, writing-mode, direction, and orientation. Forced-break struts
+  no longer depend on synthetic pre-line text or produce a phantom trailing
+  line through automatic flex minimum sizing.
+- Surgically regenerated only `auto-height-with-flex`. Its one-ID target and
+  15-ID focused proof are exact with zero errors, repeated no-write generation
+  and splice pairs are byte-identical, and the 871-ID text manifest is unchanged.
+- The frozen 3,267-ID baseline and every W1N invariant remain exact. The
+  authoritative full suite is **3,746 runnable / 3,465 exact / 281 fail / 0
+  errors**; live unported inventory is 3,927, writing-mode ownership is 671,
+  and unported SP13-R multicol ownership is 976. The validator requires 171
+  promotions and the SP13-R later-promotion allowlist remains 42. The committed
+  `summary.json` SHA-256 is
+  `d182ff44328df0a6c711990830a62a3e9e6199d2c13bad583360efd68702b2a9`.
+- Verification covers the release proof, complete no-resume suite, locked Rust
+  matrix, all 128 closure/porter tests, both closure generators, deterministic
+  mapping/deferred/HTML generation, formatting, splice idempotence,
+  writing-mode 010–016 exclusion, and audit 7/7.

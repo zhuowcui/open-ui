@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused regressions for the SP17 kickoff and live W1N closure evidence."""
+"""Focused regressions for the SP17 kickoff and live W1O closure evidence."""
 
 from __future__ import annotations
 
@@ -18,9 +18,11 @@ sys.path.insert(0, str(HERE))
 
 import generate_sp17_closure as closure  # noqa: E402
 import port_wpt  # noqa: E402
+import splice_text_port  # noqa: E402
 
 
 EXPECTED_LIVE_PROMOTIONS = {
+    "wpt/css_flexbox/auto-height-with-flex",
     "wpt/css_flexbox/align-content-wrap-004",
     "wpt/css_flexbox/aspect-ratio-intrinsic-size-009",
     "wpt/css_flexbox/fit-content-item-002",
@@ -345,7 +347,7 @@ class LedgerTests(unittest.TestCase):
         promoted = closure.validate_live_snapshot(
             rows, summary, baseline, inventory, actionable
         )
-        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 170)
+        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 171)
         self.assertEqual(promoted, EXPECTED_LIVE_PROMOTIONS)
         residual_admissions = set(closure.load_w1m_manifests()[0]) - set(actionable)
         self.assertTrue(promoted.issubset(set(actionable) | residual_admissions))
@@ -372,6 +374,25 @@ class LedgerTests(unittest.TestCase):
         self.assertEqual(len(focused), 19)
         self.assertTrue(set(targets) <= set(actionable))
         self.assertTrue(set(targets) <= set(focused))
+
+    def test_w1o_manifests_and_target_splice_are_byte_pinned_and_idempotent(self):
+        targets, focused = closure.load_w1o_manifests()
+        self.assertEqual(targets, ["wpt/css_flexbox/auto-height-with-flex"])
+        self.assertEqual(len(focused), 15)
+        self.assertTrue(set(closure.load_w1n_manifests()[0]) <= set(focused))
+
+        mapping = splice_text_port.load_mapping_rows()
+        first = splice_text_port.prepare_changes(targets, mapping)
+        second = splice_text_port.prepare_changes(targets, mapping)
+        self.assertEqual(first[0], second[0])
+        rust_path = str(
+            ROOT / "bindings/rust/pixel-compare/src/wpt/wpt_css_flexbox.rs"
+        )
+        self.assertEqual(first[2][rust_path], first[1][rust_path])
+        self.assertEqual(second[2][rust_path], second[1][rust_path])
+        manifest_path = splice_text_port.TEXT_PORTED_LIST
+        self.assertEqual(first[2][manifest_path], first[1][manifest_path])
+        self.assertEqual(second[2][manifest_path], second[1][manifest_path])
 
     def test_w0b_probe_is_a_disjoint_cover_of_the_frozen_inventory(self):
         _, inventory, initial, _ = closure.load_ledgers()
@@ -612,6 +633,51 @@ class TransactionalSp17CssTests(unittest.TestCase):
         self.assertGreaterEqual(
             output.count("text_orientation = TextOrientation::Sideways"), 3
         )
+
+    def test_flex_shorthand_zero_percent_and_semantic_break_metrics(self):
+        style = "doc.node_mut(n1).style"
+        for value in ("1", "1 1", "1 1 0"):
+            output = "\n".join(
+                port_wpt.generate_single_style("flex", value, style, 16.0)
+            )
+            self.assertIn("flex_basis = Length::percent(0.0)", output)
+            self.assertNotIn("flex_basis = Length::px(0.0)", output)
+        explicit = {
+            "1 1 0px": "Length::px(0.0)",
+            "1 1 0%": "Length::percent(0.0)",
+            "1 1 auto": "Length::auto()",
+            "1 1 4px": "Length::px(4.0)",
+        }
+        for value, basis in explicit.items():
+            output = "\n".join(
+                port_wpt.generate_single_style("flex", value, style, 16.0)
+            )
+            self.assertIn(f"flex_basis = {basis}", output)
+
+        port_wpt.set_porter_profile(port_wpt.PorterProfile.DETERMINISTIC_AHEM)
+        parser = port_wpt.WptHtmlParser()
+        parser.feed(
+            '<body style="font-size:22px;line-height:30px;font-family:serif;'
+            'writing-mode:vertical-rl;direction:rtl;text-orientation:upright">'
+            '<div>A<br><br style="display:none">B'
+            '<br style="display:contents">C<br clear="both">D</div></body>'
+        )
+        rust = port_wpt.generate_rust_fn("semantic_breaks", parser.root)
+        self.assertEqual(rust.count("ElementTag::Break"), 2)
+        self.assertNotIn('Some("\\n".to_string())', rust)
+        first_break = rust.split("ElementTag::Break", 1)[1].split(
+            "doc.append_child", 1
+        )[0]
+        for line in (
+            "font_size = 22.0",
+            "font_family = FontFamilyList",
+            "line_height = LineHeight::Length(30.0)",
+            "writing_mode = WritingMode::VerticalRl",
+            "direction = Direction::Rtl",
+            "text_orientation = TextOrientation::Upright",
+        ):
+            self.assertIn(line, first_break)
+        self.assertIn("style.clear = Clear::Both", rust)
 
     def test_dir_presentational_hint_is_lower_priority_than_author_css(self):
         node = port_wpt.DomNode("div", {"dir": "rtl", "class": "x"}, OrderedDict())

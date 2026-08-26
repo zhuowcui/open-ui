@@ -1,9 +1,9 @@
 {
   "total": 3746,
-  "passed": 3464,
-  "failed": 282,
+  "passed": 3465,
+  "failed": 281,
   "errors": 0,
-  "near_miss_aa": 57,
+  "near_miss_aa": 56,
   "aa_threshold_pct": 0.5,
   "reference_tests": 979,
   "reference_tests_pass": 892,
@@ -1295,8 +1295,8 @@
     },
     {
       "id": "wpt/css_flexbox/auto-height-with-flex",
-      "status": "fail",
-      "mismatch_pct": 0.328662
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/baseline-outside-flex-item",

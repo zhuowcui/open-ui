@@ -9,8 +9,8 @@ then expands from Ahem geometry to real-font and advanced-text parity.
 SP14 W0–W4 closed the global `needs_text` category, SP15 closed its inline/layout
 and root/body follow-up, SP16 closed all 776 real-font-metric rows, and SP13-R
 then closed every runnable multicol owner. The text manifest now contains 871
-runner-scoped IDs after 170 SP17 promotions and corrected retained-text
-references. The complete 3,746-test run has 3,464 exact passes, 282 functional
+runner-scoped IDs after 171 SP17 promotions and corrected retained-text
+references. The complete 3,746-test run has 3,465 exact passes, 281 functional
 failures, and zero errors. It preserves the 2,823-ID SP13-R baseline plus all
 351 exact SP13-R targets and passes the 7/7 audit.
 
@@ -59,6 +59,9 @@ clearance extent without a visible clearing-line strut.
 W1N closes four existing wrapped-column flex failures by resolving an auto
 cross size as logical-inline fit-content against the container cross space
 after specified margins, then reusing that hypothetical size for final layout.
+W1O closes `auto-height-with-flex` by preserving omitted shorthand bases as
+`0%`, resolving indefinite percentage bases through content sizing, and
+retaining `<br>` as a semantic break with inherited line metrics.
 
 ## Chronological work
 
@@ -88,13 +91,14 @@ family selection, and the real-glyph LCD raster profile are implemented. The glo
 Cover bidi/RTL, vertical writing modes, transformation, decoration, emphasis,
 complex scripts, and emoji. W0A and W0B are complete on the fresh-main branch:
 the original 842-row inventory is frozen as 311 actionable and 531 residual
-rows after transactional CSS handling and a real builder probe. W1N now has an
+rows after transactional CSS handling and a real builder probe. W1O now has an
 authoritative constraint direction, shared logical style/edge projection, and
 shared normal block/atomic-inline/flex child boundaries. The exact actionable
-set now contains 170 promotions. The complete atomic W1M cohort is 39/39 exact,
+set now contains 171 promotions. The complete atomic W1M cohort is 39/39 exact,
 including the 29 newly runnable assertion-only layouts and ten existing
 fallback/justify-self/margin test-reference failures. The W1N four-ID target
-cohort and its 19-ID guard proof are also exact. Keep dynamic JavaScript,
+cohort and its 19-ID guard proof are also exact. The W1O target and 15-ID
+flex-basis/break proof are exact without changing the text manifest. Keep dynamic JavaScript,
 authoritative bidi, upright CJK, mixed-script splitting,
 fallback shaping, sideways modes, and 010–016 for W2.
 Follow `docs/SP17-PLAN.md`.

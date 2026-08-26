@@ -21,15 +21,15 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W1N full no-resume run):
+Latest authoritative accountability snapshot (SP17 W1O full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
 | Ported/runnable WPT tests | 3746 |
 | Unported but explicitly tracked tests | 3927 |
-| Runnable passes | 3464 |
-| Runnable failures | 282 |
+| Runnable passes | 3465 |
+| Runnable failures | 281 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
 | Empty unported dependency rows | 0 |
@@ -41,11 +41,11 @@ Latest authoritative accountability snapshot (SP17 W1N full no-resume run):
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
 The full `wpt/` run was executed without resume on 2026-08-26. Its committed
 `summary.json` SHA-256 is
-`3fa96c5a653460785bbec889ece0aa6bbadcdf410fb7edacd8d2c9c194105263`.
+`d182ff44328df0a6c711990830a62a3e9e6199d2c13bad583360efd68702b2a9`.
 All 3267 frozen SP17 baseline IDs, including all 2823 frozen SP13-R baseline
 IDs and all 351 runnable multicol targets, remain exact.
 
-## SP17 W1N Column-Wrap Fit-Content Cross Sizing Closure
+## SP17 W1O Auto-Height Flex Basis and Semantic Break Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -280,6 +280,31 @@ invariant and frozen ledger byte.
 The authoritative W1N `summary.json` SHA-256 is
 `3fa96c5a653460785bbec889ece0aa6bbadcdf410fb7edacd8d2c9c194105263`.
 
+W1O closes the sole remaining SP17-owned runnable failure,
+`auto-height-with-flex`, without changing the runnable inventory. Omitted
+one- and two-value flex shorthand bases, plus an accepted unitless third zero,
+now retain their computed `0%` representation instead of collapsing to fixed
+`0px`. Percentage bases resolve against definite main space and use
+content-based sizing when that space is indefinite; fixed zero remains
+definite.
+
+Retained `<br>` nodes are semantic `ElementTag::Break` controls carrying their
+inherited font, line-height, writing-mode, direction, and orientation. Their
+struts participate in line metrics without synthesizing a pre-line text node
+or a phantom trailing line. Content flex bases ignore the replaced main-size
+property, and semantic-break block contributions preserve forced lines while
+avoiding a synthetic min-inline relayout.
+
+Only the target builder was surgically regenerated. The one-ID target and
+15-ID proof are exact with zero mismatched pixels or errors, both no-write
+generations and splices are byte-identical, and the 871-ID text manifest is
+unchanged. The current full result is 3746 runnable, 3465 exact, 281 functional
+failures, and zero errors. Live `needs_writing_mode` ownership is 671 rows;
+unported inventory remains 3927, and the validator requires exactly 171
+promotions while preserving every W1N and frozen-ledger invariant.
+The authoritative W1O `summary.json` SHA-256 is
+`d182ff44328df0a6c711990830a62a3e9e6199d2c13bad583360efd68702b2a9`.
+
 W1 remains incomplete for JavaScript-backed abspos alignment, tables, grid,
 transforms, generated content, images/print-specific cases,
 and extreme column-rule geometry. W2 retains authoritative mixed-script bidi
@@ -340,7 +365,7 @@ categories rather than `sp12_layout_bug`.
 
 ## Current Runnable Failure Ownership
 
-The 282 non-passing runnable tests are ported tests classified by the feature that owns the
+The 281 non-passing runnable tests are ported tests classified by the feature that owns the
 remaining gap. Categories can overlap because one test may depend on multiple systems.
 
 Top runnable failure categories:
@@ -358,7 +383,7 @@ Top runnable failure categories:
 | `needs_generated_content` | 19 |
 | `needs_box_shadow` | 18 |
 | `sp13_fragmentation` | 17 |
-| `needs_writing_mode` | 12 |
+| `needs_writing_mode` | 11 |
 
 ## Current Unported Inventory Ownership
 
@@ -388,7 +413,7 @@ Top unported categories:
 
 Continue SP17 only with separately frozen dynamic-JavaScript or unrelated
 alignment cohorts. Keep tables, grid, transforms, generated content,
-image/print-only cases, and extreme column-rule geometry out of closed W1N.
+image/print-only cases, and extreme column-rule geometry out of closed W1O.
 Reserve authoritative bidi,
 upright CJK and mixed-script run splitting, fallback shaping, sideways text,
 and `flexbox-writing-mode-010` through 016 for W2; do not substitute

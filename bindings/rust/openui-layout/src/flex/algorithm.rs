@@ -1490,6 +1490,7 @@ fn resolve_flex_basis(
                 main_axis_border_padding,
                 child_percentage_inline,
                 child_percentage_block,
+                false,
                 space,
                 resolved_alignment,
             );
@@ -1527,13 +1528,9 @@ fn resolve_flex_basis(
         };
 
         // CSS Flexbox §9.2 step E: a percentage flex-basis with an indefinite
-        // containing block falls back to content-based sizing.
-        // Exception: flex-basis: 0% resolves to 0 even with indefinite containers,
-        // matching Chromium/Blink behavior for pixel parity (0% of anything is 0).
-        if !pct_base.is_indefinite()
-            || flex_basis.is_fixed()
-            || (flex_basis.is_percent() && flex_basis.value() == 0.0)
-        {
+        // containing block falls back to content-based sizing. This includes
+        // zero percentages: `0%` remains distinct from a definite `0px` basis.
+        if !pct_base.is_indefinite() || flex_basis.is_fixed() {
             let resolved =
                 resolve_length(flex_basis, pct_base, LayoutUnit::zero(), LayoutUnit::zero());
             let content = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
@@ -1556,6 +1553,7 @@ fn resolve_flex_basis(
                 main_axis_border_padding,
                 child_percentage_inline,
                 child_percentage_block,
+                true,
                 space,
                 resolved_alignment,
             ),
@@ -1625,6 +1623,7 @@ fn resolve_flex_basis(
             main_axis_border_padding,
             child_percentage_inline,
             child_percentage_block,
+            false,
             space,
             resolved_alignment,
         ),
@@ -1645,6 +1644,7 @@ fn resolve_content_based_size(
     main_axis_border_padding: LayoutUnit,
     child_percentage_inline: LayoutUnit,
     child_percentage_block: LayoutUnit,
+    replaces_main_size: bool,
     _space: &ConstraintSpace,
     resolved_alignment: ItemPosition,
 ) -> LayoutUnit {
@@ -1979,17 +1979,28 @@ fn resolve_content_based_size(
             }
         }
 
-        // Lay out child with cross-axis constraint to get content-based height.
-        // block_layout with indefinite block (auto height) computes auto height
-        // from content, accounting for the actual cross-axis width constraint
-        // which affects line breaking of inline children.
-        let child_fragment = layout_flex_item(doc, child_id, &child_space);
-        let main_size = if is_main_axis_horizontal {
-            child_fragment.width()
+        let main_size = if replaces_main_size {
+            // An indefinite percentage basis computes from content in place
+            // of the main-size property. Use the intrinsic contribution so a
+            // specified height cannot leak back into that replacement basis.
+            let intrinsic = compute_intrinsic_block_sizes(doc, child_id);
+            if is_main_axis_horizontal {
+                intrinsic.max_content_inline_size
+            } else {
+                intrinsic.max_content_block_size
+            }
         } else {
-            child_fragment.height()
-        }
-        .clamp_indefinite_to_zero();
+            // Preserve the established auto/content path: its layout-based
+            // sizing also carries cross-axis constraints and aspect-ratio
+            // effects that are not part of percentage-basis replacement.
+            let child_fragment = layout_flex_item(doc, child_id, &child_space);
+            if is_main_axis_horizontal {
+                child_fragment.width()
+            } else {
+                child_fragment.height()
+            }
+            .clamp_indefinite_to_zero()
+        };
         return (main_size - main_axis_border_padding).clamp_negative_to_zero();
     }
 
@@ -2231,6 +2242,27 @@ fn compute_transferred_size_suggestion(
     Some(result)
 }
 
+/// Whether this node's own inline formatting context contains a semantic
+/// forced break. Inline wrappers are transparent here; atomic/block children
+/// establish their own formatting context and are measured independently.
+fn has_semantic_break_in_inline_flow(doc: &Document, node_id: NodeId) -> bool {
+    doc.children(node_id).any(|child_id| {
+        let child = doc.node(child_id);
+        if child.style.display == openui_style::Display::None
+            || child.style.position.is_absolutely_positioned()
+        {
+            return false;
+        }
+        if child.tag == ElementTag::Break {
+            return true;
+        }
+        matches!(
+            child.style.display,
+            openui_style::Display::Inline | openui_style::Display::Contents
+        ) && has_semantic_break_in_inline_flow(doc, child_id)
+    })
+}
+
 /// Resolve min/max constraints on the main axis.
 /// Blink: lines 1034-1157.
 fn resolve_main_axis_min_max(
@@ -2388,9 +2420,15 @@ fn resolve_main_axis_min_max(
                 // contribution at a manufactured min-content inline width
                 // would add lines in the wrong physical axis, so use the
                 // unfragmented max-content contribution there.
-                let intrinsic_block = if axis_mapping.child_writing_direction.is_horizontal() {
+                let intrinsic_block = if axis_mapping.child_writing_direction.is_horizontal()
+                    && !has_semantic_break_in_inline_flow(doc, child_id)
+                {
                     intrinsic.min_content_block_size
                 } else {
+                    // Block-axis intrinsic sizing uses the unwrapped line
+                    // contribution. Semantic <br> controls still establish
+                    // every forced line, but a trailing break must not create
+                    // a synthetic extra line through a min-inline relayout.
                     intrinsic.max_content_block_size
                 };
                 let mut cs = (intrinsic_block - main_axis_border_padding).clamp_negative_to_zero();
@@ -5009,6 +5047,7 @@ mod tests {
                 LayoutUnit::zero(),
                 LayoutUnit::from_i32(200),
                 LayoutUnit::from_i32(100),
+                false,
                 &space,
                 ItemPosition::Stretch,
             )

@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1N is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W1O is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -44,18 +44,20 @@ check-layout admission, single logical/physical edge resolution, complete
 margin-box alignment, and clearance-only anonymous-wrapper extent.
 W1N closes four existing column-wrap failures through logical-inline
 fit-content cross sizing and reuses the hypothetical cross size in final child
-layout. The authoritative live full-suite result is 3,746 runnable, 3,464 exact, 282
+layout. W1O closes the remaining sole-owned auto-height flex failure by
+preserving percentage flex bases and semantic break controls. The authoritative
+live full-suite result is 3,746 runnable, 3,465 exact, 281
 functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1N |
+| Metric | Kickoff | Live W1O |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
 | Runnable WPTs | 3,566 | 3,746 |
-| Exact passes | 3,267 | 3,464 |
-| Functional failures | 299 | 282 |
+| Exact passes | 3,267 | 3,465 |
+| Functional failures | 299 | 281 |
 | Render/diff errors | 0 | 0 |
 | Unported rows | 4,107 | 3,927 |
-| `needs_writing_mode` owner rows | 842 | 672 |
+| `needs_writing_mode` owner rows | 842 | 671 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -946,3 +948,30 @@ render/diff error.
   parameterized Rust regressions, locked Rust and Python matrices, both closure
   generators, deterministic accountability generation, formatting, 010–016
   exclusion, audit 7/7, and one local checkpoint commit.
+
+### 2026-08-26 — W1O auto-height flex basis and semantic break closure
+
+- Flex shorthand lowering now preserves the computed `0%` basis for omitted
+  one- and two-value bases and an accepted unitless third zero. Explicit
+  `0px`, `0%`, `auto`, and other bases remain distinct.
+- Percentage flex bases, including zero, resolve only against definite main
+  space. Indefinite percentage bases use content sizing without allowing a
+  specified main-size property to replace the content basis; fixed zero stays
+  definite.
+- Retained `<br>` elements are semantic break controls with inherited font and
+  writing metrics. Their strut establishes each forced line without a
+  synthetic pre-line text node or phantom trailing line.
+- Surgically regenerated only `auto-height-with-flex`. The one-ID target and
+  15-ID proof are exact with zero mismatched pixels or errors; two no-write
+  generations and two splices are byte-identical, and the 871-ID text manifest
+  remains unchanged.
+- The frozen 3,267-ID baseline and every W1N cohort remain exact. The full
+  no-resume result is **3,746 runnable / 3,465 exact / 281 fail / 0 errors**;
+  unported inventory is 3,927, live writing-mode ownership is 671, and the
+  validator requires exactly 171 promotions. The SP13-R compatibility
+  allowlist remains 42. The committed `summary.json` SHA-256 is
+  `d182ff44328df0a6c711990830a62a3e9e6199d2c13bad583360efd68702b2a9`.
+- Verification covers the focused proof, complete no-resume suite, flex-basis
+  and break regressions, locked Rust and 128-test Python matrices, both closure
+  generators, deterministic mapping/deferred/HTML output, formatting, splice
+  idempotence, writing-mode 010–016 exclusion, and audit 7/7.

@@ -2993,13 +2993,13 @@ fn css_flexbox_auto_height_column_with_border_and_padding() -> Document {
 // Source: auto-height-with-flex.html
 fn css_flexbox_auto_height_with_flex() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -3009,6 +3009,13 @@ fn css_flexbox_auto_height_with_flex() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
@@ -3016,6 +3023,7 @@ fn css_flexbox_auto_height_with_flex() -> Document {
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -3043,6 +3051,12 @@ fn css_flexbox_auto_height_with_flex() -> Document {
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255));
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.font_family = FontFamilyList {
@@ -3051,6 +3065,7 @@ fn css_flexbox_auto_height_with_flex() -> Document {
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -3061,6 +3076,12 @@ fn css_flexbox_auto_height_with_flex() -> Document {
     doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n2).style.padding_left = Length::px(0.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Text);
     doc.node_mut(n3).style.font_size = 16.0;
@@ -3079,6 +3100,7 @@ fn css_flexbox_auto_height_with_flex() -> Document {
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
@@ -3091,7 +3113,13 @@ fn css_flexbox_auto_height_with_flex() -> Document {
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n4).style.flex_grow = 1.0;
     doc.node_mut(n4).style.flex_shrink = 1.0;
-    doc.node_mut(n4).style.flex_basis = Length::px(0.0);
+    doc.node_mut(n4).style.flex_basis = Length::percent(0.0);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n4);
     let n5 = doc.create_node(ElementTag::Text);
     doc.node_mut(n5).style.font_size = 16.0;
@@ -3103,16 +3131,30 @@ fn css_flexbox_auto_height_with_flex() -> Document {
     };
     doc.node_mut(n5).text = Some("Flexible content".to_string());
     doc.append_child(n4, n5);
-    let n6 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n6).style.font_size = 16.0;
+    let n6 = doc.create_node(ElementTag::Break);
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n6).style.white_space = WhiteSpace::PreLine;
-    doc.node_mut(n6).text = Some("\n".to_string());
+    doc.node_mut(n6).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n6).style.display = Display::Inline;
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n4, n6);
     doc
 }

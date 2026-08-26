@@ -47,3 +47,4 @@
 0046	active	sp17 writing-mode flex abspos static-position centering fragmentation accountability handoff	SP17 W1L closes absolute flex static-position centering	2026-08-24	entries/0046-sp17-w1l-absolute-flex-static-centering-closure.md
 0047	active	sp17 writing-mode flex abspos alignment float clearance porter accountability handoff	SP17 W1M closes the flex abspos alignment matrix	2026-08-24	entries/0047-sp17-w1m-flex-abspos-alignment-matrix-closure.md
 0048	active	sp17 writing-mode flex wrap intrinsic-sizing fit-content accountability handoff	SP17 W1N closes column-wrap fit-content cross sizing	2026-08-26	entries/0048-sp17-w1n-column-wrap-fit-content-cross-sizing-closure.md
+0049	active	sp17 writing-mode flex flex-basis semantic-break porter accountability handoff	SP17 W1O closes auto-height flex basis and semantic breaks	2026-08-26	entries/0049-sp17-w1o-auto-height-flex-basis-semantic-break-closure.md
