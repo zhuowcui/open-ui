@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1M is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W1N is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -42,18 +42,20 @@ edge affinity through bubbling, sizing, and fragmented reconstruction.
 W1M closes the 39-ID flex abspos alignment matrix through assertion-only
 check-layout admission, single logical/physical edge resolution, complete
 margin-box alignment, and clearance-only anonymous-wrapper extent.
-The authoritative live full-suite result is 3,746 runnable, 3,460 exact, 286
+W1N closes four existing column-wrap failures through logical-inline
+fit-content cross sizing and reuses the hypothetical cross size in final child
+layout. The authoritative live full-suite result is 3,746 runnable, 3,464 exact, 282
 functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1M |
+| Metric | Kickoff | Live W1N |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
 | Runnable WPTs | 3,566 | 3,746 |
-| Exact passes | 3,267 | 3,460 |
-| Functional failures | 299 | 286 |
+| Exact passes | 3,267 | 3,464 |
+| Functional failures | 299 | 282 |
 | Render/diff errors | 0 | 0 |
 | Unported rows | 4,107 | 3,927 |
-| `needs_writing_mode` owner rows | 842 | 676 |
+| `needs_writing_mode` owner rows | 842 | 672 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -919,3 +921,28 @@ render/diff error.
 - Keep dynamic JavaScript and mutation cases, tables, grid, transforms,
   generated content, `flexbox-safe-overflow-position-006`, and unrelated W2
   glyph work outside W1M.
+
+### 2026-08-26 — W1N column-wrap fit-content cross sizing closure
+
+- Generalized the private flex cross-size path so items whose cross axis maps
+  to their logical inline axis use fit-content for horizontal and vertical
+  children. Available container cross space is reduced by specified margins,
+  auto margins remain zero, and indefinite space selects max-content.
+- Border/padding and cross min/max constraints are applied once while computing
+  the hypothetical line contribution. Final child layout reuses that resolved
+  border-box size; row-flex items whose cross axis maps to child block size stay
+  on the existing layout-based intrinsic path.
+- The four target failures are exact, and the 19-ID proof covering nearby
+  wrapping, writing-mode, gap, and fragmentation guards is 19/19 exact with
+  zero mismatched pixels or errors.
+- The frozen 3,267-ID kickoff baseline and W1M cohort remain exact. The full
+  no-resume result is **3,746 runnable / 3,464 exact / 282 fail / 0 errors**;
+  unported inventory is 3,927, live writing-mode ownership is 672, unported
+  SP13-R multicol ownership is 976, and the text manifest stays at 871. The
+  validator requires exactly 170 promotions and keeps the SP13-R compatibility
+  allowlist at 42. The committed `summary.json` SHA-256 is
+  `3fa96c5a653460785bbec889ece0aa6bbadcdf410fb7edacd8d2c9c194105263`.
+- Verification covers the release focused proof, complete no-resume suite,
+  parameterized Rust regressions, locked Rust and Python matrices, both closure
+  generators, deterministic accountability generation, formatting, 010–016
+  exclusion, audit 7/7, and one local checkpoint commit.

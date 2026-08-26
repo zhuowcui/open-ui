@@ -463,7 +463,7 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     }
 
     // ── Step D: Compute line cross sizes (Blink line 1470) ───────────
-    compute_line_cross_sizes(
+    let hypothetical_cross_border_box_sizes = compute_line_cross_sizes(
         doc,
         &flex_items,
         &mut flex_lines,
@@ -715,9 +715,9 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         &padding,
         child_percentage_inline,
         child_percentage_block,
+        &hypothetical_cross_border_box_sizes,
         container_inline_size,
         total_block_size,
-        space,
     );
 
     // ── Build fragment ───────────────────────────────────────────────
@@ -2668,7 +2668,9 @@ fn compute_line_cross_sizes(
     child_percentage_inline: LayoutUnit,
     child_percentage_block: LayoutUnit,
     space: &ConstraintSpace,
-) {
+) -> Vec<LayoutUnit> {
+    let mut hypothetical_cross_border_box_sizes = vec![LayoutUnit::zero(); items.len()];
+
     for line in lines.iter_mut() {
         let mut max_cross_size = LayoutUnit::zero();
 
@@ -2742,6 +2744,7 @@ fn compute_line_cross_sizes(
                 cross_max_raw + cross_border_padding
             };
             let clamped_cross_bb = cross_bb.clamp(cross_min_bb, cross_max_bb);
+            hypothetical_cross_border_box_sizes[idx] = clamped_cross_bb;
 
             let cross_margin_box = clamped_cross_bb + item.cross_axis_margin_extent();
 
@@ -2750,6 +2753,8 @@ fn compute_line_cross_sizes(
 
         line.line_cross_size = max_cross_size;
     }
+
+    hypothetical_cross_border_box_sizes
 }
 
 /// Resolve the cross-axis size of a single flex item.
@@ -2778,28 +2783,6 @@ fn resolve_cross_size(
             resolved
         }
     } else if cross_prop.is_auto() {
-        let (cross_min_prop, _) = if is_main_axis_horizontal {
-            (&child_style.min_height, &child_style.max_height)
-        } else {
-            (&child_style.min_width, &child_style.max_width)
-        };
-        if !cross_min_prop.is_auto()
-            && !cross_min_prop.is_none()
-            && (!pct_base.is_indefinite() || cross_min_prop.is_fixed())
-        {
-            let resolved = resolve_length(
-                cross_min_prop,
-                pct_base,
-                LayoutUnit::zero(),
-                LayoutUnit::zero(),
-            );
-            return if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
-                (resolved - cross_border_padding).clamp_negative_to_zero()
-            } else {
-                resolved
-            };
-        }
-
         // Check if aspect-ratio can derive cross-axis from the flexed main-axis size
         if let Some(ref ar) = child_style.aspect_ratio {
             let ratio = ar.ratio;
@@ -2842,9 +2825,11 @@ fn resolve_cross_size(
 
         let axis_mapping =
             FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal);
-        if !axis_mapping.main_axis_is_child_inline
-            && !axis_mapping.child_writing_direction.is_horizontal()
-        {
+        if axis_mapping.main_maps_to_child_block() {
+            // The flex cross axis is this child's logical inline axis. Its
+            // automatic cross size is fit-content in the container's cross
+            // space, with specified margins reducing that space and auto
+            // margins contributing zero during hypothetical sizing.
             let intrinsic =
                 crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(doc, item.node_id);
             let available_cross = if is_column {
@@ -2867,6 +2852,28 @@ fn resolve_cross_size(
                 )
             };
             return (border_box - cross_border_padding).clamp_negative_to_zero();
+        }
+
+        let (cross_min_prop, _) = if is_main_axis_horizontal {
+            (&child_style.min_height, &child_style.max_height)
+        } else {
+            (&child_style.min_width, &child_style.max_width)
+        };
+        if !cross_min_prop.is_auto()
+            && !cross_min_prop.is_none()
+            && (!pct_base.is_indefinite() || cross_min_prop.is_fixed())
+        {
+            let resolved = resolve_length(
+                cross_min_prop,
+                pct_base,
+                LayoutUnit::zero(),
+                LayoutUnit::zero(),
+            );
+            return if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                (resolved - cross_border_padding).clamp_negative_to_zero()
+            } else {
+                resolved
+            };
         }
 
         // Auto cross size → lay out child to get intrinsic size.
@@ -2978,9 +2985,9 @@ fn give_items_final_position(
     padding: &BoxStrut,
     child_percentage_inline: LayoutUnit,
     child_percentage_block: LayoutUnit,
+    hypothetical_cross_border_box_sizes: &[LayoutUnit],
     container_inline_size: LayoutUnit,
     container_block_size: LayoutUnit,
-    space: &ConstraintSpace,
 ) -> (Vec<Fragment>, Option<LayoutUnit>, Option<LayoutUnit>) {
     let content_offset_y = border.top + padding.top;
     let logical_border = border.to_logical(writing_direction);
@@ -3200,59 +3207,11 @@ fn give_items_final_position(
                 };
                 stretch_size.clamp(cross_min, cross_max)
             } else {
-                let cross_content = resolve_cross_size(
-                    doc,
-                    item,
-                    child_style,
-                    is_column,
-                    is_main_axis_horizontal,
-                    cross_border_padding,
-                    child_percentage_inline,
-                    child_percentage_block,
-                    space,
-                );
-                let natural_bb = cross_content + cross_border_padding;
-                let (cross_min_prop, cross_max_prop) = if is_main_axis_horizontal {
-                    (&child_style.min_height, &child_style.max_height)
-                } else {
-                    (&child_style.min_width, &child_style.max_width)
-                };
-                let cross_pct_base = if is_main_axis_horizontal {
-                    child_percentage_block
-                } else {
-                    child_percentage_inline
-                };
-                let cross_min_raw = resolve_cross_min_max(
-                    doc,
-                    item.node_id,
-                    cross_min_prop,
-                    !is_main_axis_horizontal,
-                    cross_pct_base,
-                    true,
-                );
-                let cross_max_raw = resolve_cross_min_max(
-                    doc,
-                    item.node_id,
-                    cross_max_prop,
-                    !is_main_axis_horizontal,
-                    cross_pct_base,
-                    false,
-                );
-                let cross_min_bb = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
-                    cross_min_raw
-                } else if cross_min_raw > LayoutUnit::zero() {
-                    cross_min_raw + cross_border_padding
-                } else {
-                    cross_min_raw
-                };
-                let cross_max_bb = if cross_max_raw == LayoutUnit::from_i32(33554431) {
-                    cross_max_raw
-                } else if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
-                    cross_max_raw
-                } else {
-                    cross_max_raw + cross_border_padding
-                };
-                natural_bb.clamp(cross_min_bb, cross_max_bb)
+                // Reuse the hypothetical cross size that established this line.
+                // It already includes border/padding and the cross min/max clamp;
+                // resolving it again here can choose a different intrinsic path
+                // after wrapping and double-apply those outer constraints.
+                hypothetical_cross_border_box_sizes[idx]
             };
 
             let mut final_main = flexed_border_box;

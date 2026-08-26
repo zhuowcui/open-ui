@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1M | 🟡 Active; flex abspos alignment matrix closure, 166 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1N | 🟡 Active; column-wrap fit-content cross sizing, 170 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,746 ported/runnable tests, 3,460 runnable passes, 286 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 676 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,746 ported/runnable tests, 3,464 runnable passes, 282 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 672 live writing-mode owner rows.**
 
 ---
 
@@ -802,3 +802,28 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   checks, writing-mode 010–016 exclusion, and audit 7/7.
 - Next: keep dynamic JavaScript/mutation, tables, grid, transforms, generated
   content, safe-overflow 006, and W2 glyph work outside W1M.
+
+### SP17 W1N: column-wrap fit-content cross sizing closure
+
+- Generalized the private flex item axis mapping so an auto cross size uses
+  logical-inline intrinsic sizing whenever the flex main axis maps to the
+  child's logical block axis, for horizontal and vertical children alike.
+- Fit-content clamps the available container cross space after specified
+  margins between min-content and max-content; auto margins remain zero during
+  hypothetical sizing. Border/padding and min/max constraints are applied once,
+  and final child layout reuses the cross size that established its flex line.
+- The four existing failures `align-content-wrap-004` and `flex-wrap-002`
+  through 004 are exact. The 19-ID proof adds `flex-wrap-005`, writing-mode
+  002/003/005/006 and references, gap-003 LTR/RTL and references, and flex
+  fragmentation 010/011; it is 19/19 exact with zero errors.
+- The frozen 3,267-ID baseline and complete W1M cohort remain exact. The
+  authoritative full suite is **3,746 runnable / 3,464 exact / 282 fail / 0
+  errors**; live unported inventory is 3,927, writing-mode ownership is 672,
+  unported SP13-R multicol ownership is 976, and the text manifest is unchanged
+  at 871 IDs. The validator requires exactly 170 promotions and the SP13-R
+  later-promotion set remains 42. The committed `summary.json` SHA-256 is
+  `3fa96c5a653460785bbec889ece0aa6bbadcdf410fb7edacd8d2c9c194105263`.
+- Verification covers the release 19-ID proof, complete no-resume suite,
+  parameterized cross-sizing/axis regressions, locked Rust matrix, all 126
+  closure/porter tests, both closure generators, deterministic accountability
+  generation, formatting, writing-mode 010–016 exclusion, and audit 7/7.

@@ -21,15 +21,15 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W1M full no-resume run):
+Latest authoritative accountability snapshot (SP17 W1N full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
 | Ported/runnable WPT tests | 3746 |
 | Unported but explicitly tracked tests | 3927 |
-| Runnable passes | 3460 |
-| Runnable failures | 286 |
+| Runnable passes | 3464 |
+| Runnable failures | 282 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
 | Empty unported dependency rows | 0 |
@@ -39,13 +39,13 @@ Latest authoritative accountability snapshot (SP17 W1M full no-resume run):
 | Unported `sp13_multicol` residuals | 976 |
 
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
-The full `wpt/` run was executed without resume on 2026-08-24. Its committed
+The full `wpt/` run was executed without resume on 2026-08-26. Its committed
 `summary.json` SHA-256 is
-`94574e79d0c0f5bbf979e57c6168e62aab35e56fed62f5977c2f3ed4784817df`.
+`3fa96c5a653460785bbec889ece0aa6bbadcdf410fb7edacd8d2c9c194105263`.
 All 3267 frozen SP17 baseline IDs, including all 2823 frozen SP13-R baseline
 IDs and all 351 runnable multicol targets, remain exact.
 
-## SP17 W1M Flex Abspos Alignment Matrix Closure
+## SP17 W1N Column-Wrap Fit-Content Cross Sizing Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -261,6 +261,25 @@ manifest contains 871 IDs. All 3,267 frozen kickoff exact IDs remain exact. The
 committed `summary.json` SHA-256 is
 `94574e79d0c0f5bbf979e57c6168e62aab35e56fed62f5977c2f3ed4784817df`.
 
+W1N keeps the W1M mapping and admission boundary unchanged and closes four
+existing runnable failures: `align-content-wrap-004` and `flex-wrap-002`
+through 004. When the flex main axis maps to a child's logical block axis, an
+auto cross size now uses logical-inline fit-content against the available
+container cross space after specified margins. Auto margins contribute zero
+during hypothetical sizing; border/padding and cross min/max constraints apply
+once, and final layout reuses the cross size that established the line.
+
+The four-ID target cohort is exact. Its 19-ID focused proof adds
+`flex-wrap-005`, writing-mode 002/003/005/006 and their references, gap-003
+LTR/RTL and their references, and flex fragmentation 010/011; all 19 are exact
+with zero errors. The current full result is 3746 runnable, 3464 exact, 282
+functional failures, and zero errors. Live `needs_writing_mode` ownership is
+672 rows; unported inventory remains 3927, the text manifest remains 871, and
+the validator requires exactly 170 promotions while preserving every W1M
+invariant and frozen ledger byte.
+The authoritative W1N `summary.json` SHA-256 is
+`3fa96c5a653460785bbec889ece0aa6bbadcdf410fb7edacd8d2c9c194105263`.
+
 W1 remains incomplete for JavaScript-backed abspos alignment, tables, grid,
 transforms, generated content, images/print-specific cases,
 and extreme column-rule geometry. W2 retains authoritative mixed-script bidi
@@ -321,7 +340,7 @@ categories rather than `sp12_layout_bug`.
 
 ## Current Runnable Failure Ownership
 
-The 286 non-passing runnable tests are ported tests classified by the feature that owns the
+The 282 non-passing runnable tests are ported tests classified by the feature that owns the
 remaining gap. Categories can overlap because one test may depend on multiple systems.
 
 Top runnable failure categories:
@@ -331,15 +350,15 @@ Top runnable failure categories:
 | `reference_test` | 85 |
 | `needs_gradient` | 80 |
 | `needs_image` | 66 |
-| `needs_inline_block` | 54 |
 | `needs_complex_border` | 52 |
+| `needs_inline_block` | 50 |
 | `needs_empty_block_margin_collapse` | 34 |
 | `needs_body_canvas_background_extent` | 24 |
 | `needs_rounded_border_paint` | 22 |
-| `needs_generated_content` | 20 |
+| `needs_generated_content` | 19 |
 | `needs_box_shadow` | 18 |
 | `sp13_fragmentation` | 17 |
-| `needs_writing_mode` | 16 |
+| `needs_writing_mode` | 12 |
 
 ## Current Unported Inventory Ownership
 
@@ -369,7 +388,7 @@ Top unported categories:
 
 Continue SP17 only with separately frozen dynamic-JavaScript or unrelated
 alignment cohorts. Keep tables, grid, transforms, generated content,
-image/print-only cases, and extreme column-rule geometry out of closed W1M.
+image/print-only cases, and extreme column-rule geometry out of closed W1N.
 Reserve authoritative bidi,
 upright CJK and mixed-script run splitting, fallback shaping, sideways text,
 and `flexbox-writing-mode-010` through 016 for W2; do not substitute

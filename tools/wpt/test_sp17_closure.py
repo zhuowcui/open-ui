@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused regressions for the SP17 kickoff and live W1M closure evidence."""
+"""Focused regressions for the SP17 kickoff and live W1N closure evidence."""
 
 from __future__ import annotations
 
@@ -21,10 +21,14 @@ import port_wpt  # noqa: E402
 
 
 EXPECTED_LIVE_PROMOTIONS = {
+    "wpt/css_flexbox/align-content-wrap-004",
     "wpt/css_flexbox/aspect-ratio-intrinsic-size-009",
     "wpt/css_flexbox/fit-content-item-002",
     "wpt/css_flexbox/fit-content-item-003",
     "wpt/css_flexbox/fit-content-item-004",
+    "wpt/css_flexbox/flex-wrap-002",
+    "wpt/css_flexbox/flex-wrap-003",
+    "wpt/css_flexbox/flex-wrap-004",
     "wpt/css_flexbox/flex-item-max-width-min-content",
     "wpt/css_flexbox/flex-item-min-width-min-content",
     "wpt/css_flexbox/flexbox-flex-wrap-flexing-003",
@@ -341,7 +345,7 @@ class LedgerTests(unittest.TestCase):
         promoted = closure.validate_live_snapshot(
             rows, summary, baseline, inventory, actionable
         )
-        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 166)
+        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 170)
         self.assertEqual(promoted, EXPECTED_LIVE_PROMOTIONS)
         residual_admissions = set(closure.load_w1m_manifests()[0]) - set(actionable)
         self.assertTrue(promoted.issubset(set(actionable) | residual_admissions))
@@ -359,6 +363,15 @@ class LedgerTests(unittest.TestCase):
         self.assertTrue(
             set(targets) | closure.W1M_EXISTING_RUNNABLE <= set(focused)
         )
+
+    def test_w1n_manifests_pin_the_four_target_cohort_and_focused_guards(self):
+        targets, focused = closure.load_w1n_manifests()
+        _, inventory, _, _ = closure.load_ledgers()
+        actionable, _ = closure.load_probe_ledgers(inventory)
+        self.assertEqual(len(targets), 4)
+        self.assertEqual(len(focused), 19)
+        self.assertTrue(set(targets) <= set(actionable))
+        self.assertTrue(set(targets) <= set(focused))
 
     def test_w0b_probe_is_a_disjoint_cover_of_the_frozen_inventory(self):
         _, inventory, initial, _ = closure.load_ledgers()

@@ -3018,7 +3018,7 @@ css-flexbox/align-content-wmvert-001.html,align-content-wmvert-001,css_flexbox,n
 css-flexbox/align-content-wrap-001.html,align-content-wrap-001,css_flexbox,no,,,,"needs_empty_block_margin_collapse,needs_javascript,needs_writing_mode,needs_generated_content",SP12: Empty Block Margin Collapsing; Future SP: JavaScript/Test Harness; Future SP: Writing Modes/Bidi; Future SP: Generated Content,Porter deferred: uses_javascript
 css-flexbox/align-content-wrap-002.html,align-content-wrap-002,css_flexbox,no,,,,"needs_empty_block_margin_collapse,needs_javascript,needs_writing_mode",SP12: Empty Block Margin Collapsing; Future SP: JavaScript/Test Harness; Future SP: Writing Modes/Bidi,Porter deferred: uses_javascript
 css-flexbox/align-content-wrap-003.html,align-content-wrap-003,css_flexbox,no,,,,"needs_javascript,needs_writing_mode,needs_generated_content,needs_advanced_selectors",Future SP: JavaScript/Test Harness; Future SP: Writing Modes/Bidi; Future SP: Generated Content; Future SP: Advanced CSS Selectors,Porter deferred: uses_javascript
-css-flexbox/align-content-wrap-004.html,align-content-wrap-004,css_flexbox,yes,wpt/css_flexbox/align-content-wrap-004,fail,2.760085,"needs_inline_block,needs_writing_mode,needs_generated_content",SP11: Inline Block Layout; Future SP: Writing Modes/Bidi; Future SP: Generated Content,
+css-flexbox/align-content-wrap-004.html,align-content-wrap-004,css_flexbox,yes,wpt/css_flexbox/align-content-wrap-004,pass,0.0,,,
 css-flexbox/align-content-wrap-005.html,align-content-wrap-005,css_flexbox,no,,,,"needs_javascript,needs_writing_mode,needs_generated_content,needs_advanced_selectors",Future SP: JavaScript/Test Harness; Future SP: Writing Modes/Bidi; Future SP: Generated Content; Future SP: Advanced CSS Selectors,Porter deferred: uses_javascript
 css-flexbox/align-content_center.html,align-content_center,css_flexbox,yes,wpt/css_flexbox/align-content_center,pass,0.0,,,
 css-flexbox/align-content_flex-end.html,align-content_flex-end,css_flexbox,yes,wpt/css_flexbox/align-content_flex-end,pass,0.0,,,
@@ -3418,9 +3418,9 @@ css-flexbox/flex-shrink-007.html,flex-shrink-007,css_flexbox,yes,wpt/css_flexbox
 css-flexbox/flex-shrink-008.html,flex-shrink-008,css_flexbox,yes,wpt/css_flexbox/flex-shrink-008,pass,0.0,,,
 css-flexbox/flex-shrink-large-value-crash.html,flex-shrink-large-value-crash,css_flexbox,yes,wpt/css_flexbox/flex-shrink-large-value-crash,pass,0.0,,,
 css-flexbox/flex-vertical-align-effect.html,flex-vertical-align-effect,css_flexbox,no,,,,needs_form_controls,Future SP: Native Form Controls,Porter deferred: unsupported element: <input>
-css-flexbox/flex-wrap-002.html,flex-wrap-002,css_flexbox,yes,wpt/css_flexbox/flex-wrap-002,fail,3.184713,"needs_inline_block,needs_abspos_flex_static_position,needs_writing_mode",SP11: Inline Block Layout; SP12: Abspos Flex Static Position; Future SP: Writing Modes/Bidi,
-css-flexbox/flex-wrap-003.html,flex-wrap-003,css_flexbox,yes,wpt/css_flexbox/flex-wrap-003,fail,3.184713,"needs_inline_block,needs_abspos_flex_static_position,needs_writing_mode",SP11: Inline Block Layout; SP12: Abspos Flex Static Position; Future SP: Writing Modes/Bidi,
-css-flexbox/flex-wrap-004.html,flex-wrap-004,css_flexbox,yes,wpt/css_flexbox/flex-wrap-004,fail,3.184713,"needs_inline_block,needs_abspos_flex_static_position,needs_writing_mode",SP11: Inline Block Layout; SP12: Abspos Flex Static Position; Future SP: Writing Modes/Bidi,
+css-flexbox/flex-wrap-002.html,flex-wrap-002,css_flexbox,yes,wpt/css_flexbox/flex-wrap-002,pass,0.0,,,
+css-flexbox/flex-wrap-003.html,flex-wrap-003,css_flexbox,yes,wpt/css_flexbox/flex-wrap-003,pass,0.0,,,
+css-flexbox/flex-wrap-004.html,flex-wrap-004,css_flexbox,yes,wpt/css_flexbox/flex-wrap-004,pass,0.0,,,
 css-flexbox/flex-wrap-005.html,flex-wrap-005,css_flexbox,yes,wpt/css_flexbox/flex-wrap-005,pass,0.0,,,
 css-flexbox/flex-wrap-006.html,flex-wrap-006,css_flexbox,no,,,,needs_javascript,Future SP: JavaScript/Test Harness,Porter deferred: uses_javascript
 css-flexbox/flexbox-align-items-center-nested-001.html,flexbox-align-items-center-nested-001,css_flexbox,yes,wpt/css_flexbox/flexbox-align-items-center-nested-001,pass,0.0,,,
