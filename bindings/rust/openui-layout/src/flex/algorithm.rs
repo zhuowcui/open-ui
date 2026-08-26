@@ -3731,6 +3731,7 @@ fn main_axis_static_position_edge(
     alignment: &ContentAlignment,
     is_reverse: bool,
     is_block_axis: bool,
+    writing_direction: WritingDirectionMode,
 ) -> crate::out_of_flow::StaticPositionEdge {
     use crate::out_of_flow::StaticPositionEdge::{Center, End, Start};
 
@@ -3745,8 +3746,12 @@ fn main_axis_static_position_edge(
         ContentPosition::Center => Center,
         ContentPosition::Start => Start,
         ContentPosition::End => End,
-        ContentPosition::Right if !is_block_axis => End,
-        ContentPosition::Left | ContentPosition::Right => Start,
+        ContentPosition::Left => {
+            physical_side_static_position_edge(true, writing_direction, is_block_axis)
+        }
+        ContentPosition::Right => {
+            physical_side_static_position_edge(false, writing_direction, is_block_axis)
+        }
         _ => match alignment.distribution {
             ContentDistribution::SpaceAround | ContentDistribution::SpaceEvenly => Center,
             _ if is_reverse => End,
@@ -3755,28 +3760,81 @@ fn main_axis_static_position_edge(
     }
 }
 
+fn logical_axis_is_horizontal(
+    writing_direction: WritingDirectionMode,
+    is_block_axis: bool,
+) -> bool {
+    writing_direction.is_horizontal() != is_block_axis
+}
+
+fn physical_axis_start_is_low(
+    writing_direction: WritingDirectionMode,
+    physical_axis_is_horizontal: bool,
+) -> bool {
+    if physical_axis_is_horizontal {
+        if writing_direction.is_horizontal() {
+            !writing_direction.is_rtl()
+        } else {
+            !writing_direction.is_flipped_blocks()
+        }
+    } else if writing_direction.is_horizontal() {
+        true
+    } else {
+        !(writing_direction.is_flipped_lines() ^ writing_direction.is_rtl())
+    }
+}
+
+fn physical_side_static_position_edge(
+    is_left: bool,
+    writing_direction: WritingDirectionMode,
+    is_block_axis: bool,
+) -> crate::out_of_flow::StaticPositionEdge {
+    use crate::out_of_flow::StaticPositionEdge::{End, Start};
+
+    let axis_is_horizontal = logical_axis_is_horizontal(writing_direction, is_block_axis);
+    if !axis_is_horizontal {
+        // A physical keyword on a vertical block axis falls back to `start`.
+        // A vertical inline axis retains the corpus-defined left/right
+        // start/end pairing before its logical edge is projected physically.
+        return if is_block_axis || is_left { Start } else { End };
+    }
+    let start_is_left = physical_axis_start_is_low(writing_direction, true);
+    if is_left == start_is_left {
+        Start
+    } else {
+        End
+    }
+}
+
 fn cross_axis_static_position_edge(
     alignment: ItemPosition,
     is_wrap_reverse: bool,
+    container_direction: WritingDirectionMode,
+    child_direction: WritingDirectionMode,
+    cross_axis_is_block: bool,
 ) -> crate::out_of_flow::StaticPositionEdge {
     use crate::out_of_flow::StaticPositionEdge::{Center, End, Start};
 
-    let alignment = if is_wrap_reverse {
-        match alignment {
-            ItemPosition::FlexStart => ItemPosition::FlexEnd,
-            ItemPosition::FlexEnd => ItemPosition::FlexStart,
-            other => other,
-        }
-    } else {
-        alignment
-    };
     match alignment {
         ItemPosition::Center => Center,
-        ItemPosition::FlexEnd
-        | ItemPosition::End
-        | ItemPosition::SelfEnd
-        | ItemPosition::LastBaseline => End,
-        ItemPosition::Stretch if is_wrap_reverse => End,
+        ItemPosition::FlexStart | ItemPosition::Stretch if is_wrap_reverse => End,
+        ItemPosition::FlexEnd if !is_wrap_reverse => End,
+        ItemPosition::End | ItemPosition::LastBaseline => End,
+        ItemPosition::SelfStart | ItemPosition::SelfEnd => {
+            let physical_axis_is_horizontal =
+                logical_axis_is_horizontal(container_direction, cross_axis_is_block);
+            let container_start_is_low =
+                physical_axis_start_is_low(container_direction, physical_axis_is_horizontal);
+            let child_start_is_low =
+                physical_axis_start_is_low(child_direction, physical_axis_is_horizontal);
+            let self_start_is_container_start = container_start_is_low == child_start_is_low;
+            let wants_self_start = alignment == ItemPosition::SelfStart;
+            if wants_self_start == self_start_is_container_start {
+                Start
+            } else {
+                End
+            }
+        }
         _ => Start,
     }
 }
@@ -3870,6 +3928,7 @@ fn compute_abspos_static_position(
         &container_style.justify_content,
         container_style.flex_direction.is_reverse(),
         is_column,
+        writing_direction,
     );
     if container_style.justify_content.overflow == OverflowAlignment::Safe && child_main > main_size
     {
@@ -3882,6 +3941,9 @@ fn compute_abspos_static_position(
     let mut cross_edge = cross_axis_static_position_edge(
         cross_alignment,
         container_style.flex_wrap.is_wrap_reverse(),
+        writing_direction,
+        child_direction,
+        !is_column,
     );
     if cross_overflow == OverflowAlignment::Safe && child_cross > cross_size {
         cross_edge = crate::out_of_flow::StaticPositionEdge::Start;
@@ -3921,7 +3983,7 @@ mod tests {
     use openui_dom::Document;
     use openui_geometry::{LayoutUnit, Length};
     use openui_style::{
-        ContentPosition, Display, FlexDirection, FlexWrap, ItemAlignment, ItemPosition,
+        ContentPosition, Direction, Display, FlexDirection, FlexWrap, ItemAlignment, ItemPosition,
         OverflowAlignment, WritingMode,
     };
 
@@ -3948,6 +4010,136 @@ mod tests {
         }
         doc.append_child(parent, child);
         child
+    }
+
+    #[test]
+    fn abspos_main_edges_resolve_distribution_physical_sides_and_reverse_once() {
+        use crate::out_of_flow::StaticPositionEdge::{Center, End, Start};
+
+        let h_ltr = Direction::Ltr.writing_direction(WritingMode::HorizontalTb);
+        let h_rtl = Direction::Rtl.writing_direction(WritingMode::HorizontalTb);
+        let v_rl = Direction::Ltr.writing_direction(WritingMode::VerticalRl);
+        let v_lr = Direction::Ltr.writing_direction(WritingMode::VerticalLr);
+
+        for (direction, is_block_axis, left, right) in [
+            (h_ltr, false, Start, End),
+            (h_rtl, false, End, Start),
+            (h_ltr, true, Start, Start),
+            (h_rtl, true, Start, Start),
+            (v_rl, true, End, Start),
+            (v_lr, true, Start, End),
+            (v_rl, false, Start, End),
+        ] {
+            assert_eq!(
+                main_axis_static_position_edge(
+                    &ContentAlignment::new(ContentPosition::Left),
+                    false,
+                    is_block_axis,
+                    direction,
+                ),
+                left,
+            );
+            assert_eq!(
+                main_axis_static_position_edge(
+                    &ContentAlignment::new(ContentPosition::Right),
+                    false,
+                    is_block_axis,
+                    direction,
+                ),
+                right,
+            );
+        }
+
+        for (distribution, expected) in [
+            (ContentDistribution::SpaceBetween, End),
+            (ContentDistribution::SpaceAround, Center),
+            (ContentDistribution::SpaceEvenly, Center),
+            (ContentDistribution::Stretch, End),
+        ] {
+            assert_eq!(
+                main_axis_static_position_edge(
+                    &ContentAlignment::with_distribution(distribution),
+                    true,
+                    false,
+                    h_ltr,
+                ),
+                expected,
+            );
+        }
+        assert_eq!(
+            main_axis_static_position_edge(
+                &ContentAlignment::new(ContentPosition::FlexStart),
+                true,
+                false,
+                h_ltr,
+            ),
+            End,
+        );
+        assert_eq!(
+            main_axis_static_position_edge(
+                &ContentAlignment::new(ContentPosition::FlexEnd),
+                true,
+                false,
+                h_ltr,
+            ),
+            Start,
+        );
+    }
+
+    #[test]
+    fn abspos_cross_edges_keep_axis_self_and_wrap_semantics_distinct() {
+        use crate::out_of_flow::StaticPositionEdge::{End, Start};
+
+        let h_rtl = Direction::Rtl.writing_direction(WritingMode::HorizontalTb);
+        let h_ltr = Direction::Ltr.writing_direction(WritingMode::HorizontalTb);
+        let v_rl = Direction::Ltr.writing_direction(WritingMode::VerticalRl);
+        let v_lr_rtl = Direction::Rtl.writing_direction(WritingMode::VerticalLr);
+
+        for (container, child, cross_axis_is_block) in [
+            (h_rtl, h_ltr, false),
+            (v_rl, h_ltr, true),
+            (v_rl, v_lr_rtl, false),
+        ] {
+            assert_eq!(
+                cross_axis_static_position_edge(
+                    ItemPosition::SelfStart,
+                    false,
+                    container,
+                    child,
+                    cross_axis_is_block,
+                ),
+                End,
+            );
+            assert_eq!(
+                cross_axis_static_position_edge(
+                    ItemPosition::SelfEnd,
+                    false,
+                    container,
+                    child,
+                    cross_axis_is_block,
+                ),
+                Start,
+            );
+        }
+
+        for (position, wrap_reverse, expected) in [
+            (ItemPosition::Stretch, false, Start),
+            (ItemPosition::Stretch, true, End),
+            (ItemPosition::FlexStart, true, End),
+            (ItemPosition::FlexEnd, true, Start),
+            (ItemPosition::Start, true, Start),
+            (ItemPosition::End, true, End),
+            (ItemPosition::Baseline, true, Start),
+            (ItemPosition::LastBaseline, true, End),
+            (ItemPosition::Left, false, Start),
+            (ItemPosition::Right, false, Start),
+        ] {
+            assert_eq!(
+                cross_axis_static_position_edge(position, wrap_reverse, h_ltr, h_ltr, true,),
+                expected,
+                "{position:?}, wrap_reverse={wrap_reverse}",
+            );
+        }
     }
 
     #[test]

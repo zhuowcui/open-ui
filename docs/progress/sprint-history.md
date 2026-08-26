@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1L | 🟡 Active; absolute flex centering closure, 154 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1M | 🟡 Active; flex abspos alignment matrix closure, 166 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,717 ported/runnable tests, 3,421 runnable passes, 296 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 688 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,746 ported/runnable tests, 3,460 runnable passes, 286 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 676 live writing-mode owner rows.**
 
 ---
 
@@ -771,3 +771,34 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
 - Next: keep fallback/justify-self/JavaScript/table/transform/generated-content
   cases and unrelated paint work outside W1L. W2 retains material bidi and
   vertical glyph shaping.
+
+### SP17 W1M: flex abspos alignment matrix closure
+
+- Restricted JavaScript admission to the exact inert check-layout harness and
+  stripped it from comparison templates, including quoted `>` selectors.
+  Inline mutation, unknown scripts, extra handlers, and dynamic alignment are
+  still rejected.
+- Completed one-time flex abspos resolution for distribution fallbacks,
+  physical/logical and flex edges, reverse/wrap reversal, writing mode,
+  direction, self alignment, safe overflow, margins, and ignored
+  `justify-self`.
+- Fixed mixed-flow float clearance so a zero-height clearing line contributes
+  `max(clearance, strut)` to its anonymous wrapper and parent exactly once.
+  Parameterized regressions cover left/right/both floats, margins, short
+  floats, no-op clearing breaks, and complete main/cross edge matrices.
+- The mandatory 39-ID cohort combines 29 new assertion-only layouts with ten
+  existing fallback/justify-self/margin failures. The focused 58-ID proof adds
+  all W1L guards plus fragmentation 010/011 and is 58/58 exact. Dry-run and
+  transactional splice pairs are byte-identical.
+- The frozen 3,267-ID baseline remains exact. The authoritative full suite is
+  **3,746 runnable / 3,460 exact / 286 fail / 0 errors**; live unported
+  inventory is 3,927, writing-mode ownership is 676, unported SP13-R multicol
+  ownership is 976, the text manifest is 871, and the validator requires 166
+  exact SP17 promotions. The SP13-R later-promotion set remains 42. The
+  committed `summary.json` SHA-256 is `94574e79d0c0f5bbf979e57c6168e62aab35e56fed62f5977c2f3ed4784817df`.
+- Verification: 58-ID zero-pixel proof, complete no-resume release suite,
+  locked Rust matrix, all 125 closure/porter tests, both ledger checks,
+  deterministic generated artifacts, splice idempotence, formatter/diff
+  checks, writing-mode 010–016 exclusion, and audit 7/7.
+- Next: keep dynamic JavaScript/mutation, tables, grid, transforms, generated
+  content, safe-overflow 006, and W2 glyph work outside W1M.

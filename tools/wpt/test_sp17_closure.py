@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Focused regressions for the SP17 kickoff and live W1L closure evidence."""
+"""Focused regressions for the SP17 kickoff and live W1M closure evidence."""
 
 from __future__ import annotations
 
 import csv
 import json
 import sys
+import tempfile
 import unittest
 from collections import OrderedDict
 from pathlib import Path
@@ -155,7 +156,107 @@ EXPECTED_LIVE_PROMOTIONS = {
         "rtl-ltr-in-multicols.tentative",
         "rtl-rtl-in-multicols",
     )
+} | {
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-001",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-002",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-003",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-004",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-001",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-002",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-003",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-004",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-rtl-001",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-rtl-002",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-vertWM-001",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-vertWM-002",
 }
+
+
+class AssertionOnlyCheckLayoutPorterTests(unittest.TestCase):
+    def setUp(self):
+        self.old_profile = port_wpt.ACTIVE_PORTER_PROFILE
+        self.old_emit = port_wpt.EMIT_TEXT_NODES
+        self.old_retain = port_wpt.RETAIN_TEXT
+        port_wpt.set_porter_profile(port_wpt.PorterProfile.LEGACY_BOX_ONLY)
+        self.temp = tempfile.TemporaryDirectory()
+
+    def tearDown(self):
+        port_wpt.ACTIVE_PORTER_PROFILE = self.old_profile
+        port_wpt.EMIT_TEXT_NODES = self.old_emit
+        port_wpt.RETAIN_TEXT = self.old_retain
+        self.temp.cleanup()
+
+    def parse(self, body: str, scripts: str | None = None):
+        if scripts is None:
+            scripts = """
+              <script src="/resources/testharness.js"></script>
+              <script src="/resources/testharnessreport.js"></script>
+              <script src="/resources/check-layout-th.js"></script>
+            """
+        path = Path(self.temp.name, "check-layout.html")
+        path.write_text(
+            "<!doctype html><html><head>"
+            "<style>.box { width: 10px; height: 10px }</style>"
+            f"{scripts}</head>{body}</html>",
+            encoding="utf-8",
+        )
+        return path, port_wpt.parse_wpt_html(str(path))
+
+    def test_exact_check_layout_harness_is_accepted_and_stripped(self):
+        path, parser = self.parse(
+            "<body onload=\"checkLayout('div > div')\">"
+            "<div class=\"box\" data-offset-x=\"0\"></div></body>"
+        )
+        self.assertEqual(port_wpt.analyze_portability(parser), (True, ""))
+        template = port_wpt.generate_html_template(str(path))
+        rust = port_wpt.generate_rust_fn("check_layout", parser.root)
+        self.assertNotIn("<script", template)
+        self.assertNotIn("checkLayout", template)
+        self.assertNotIn("onload", template)
+        self.assertNotIn("div')", template)
+        self.assertIn('<div class="box" data-offset-x="0"></div>', template)
+        self.assertIn("style.width = Length::px(10.0)", rust)
+
+    def test_mutation_unknown_scripts_handlers_and_dynamic_alignment_stay_rejected(self):
+        cases = {
+            "inline mutation": (
+                "<body onload=\"checkLayout('.box')\"><div class=box></div></body>",
+                """
+                  <script src="/resources/testharness.js"></script>
+                  <script src="/resources/testharnessreport.js"></script>
+                  <script src="/resources/check-layout-th.js">mutate()</script>
+                """,
+            ),
+            "unknown script": (
+                "<body onload=\"checkLayout('.box')\"><div class=box></div></body>",
+                """
+                  <script src="/resources/testharness.js"></script>
+                  <script src="/resources/testharnessreport.js"></script>
+                  <script src="/resources/unknown-helper.js"></script>
+                """,
+            ),
+            "mixed handlers": (
+                "<body onload=\"checkLayout('.box')\">"
+                "<div class=box onclick=\"mutate()\"></div></body>",
+                None,
+            ),
+            "dynamic alignment": (
+                "<body onload=\"target.style.alignSelf='center'; checkLayout('.box')\">"
+                "<div id=target class=box></div></body>",
+                None,
+            ),
+            "handler only": (
+                "<body><div class=box onclick=\"mutate()\"></div></body>",
+                "",
+            ),
+        }
+        for label, (body, scripts) in cases.items():
+            with self.subTest(label=label):
+                _, parser = self.parse(body, scripts)
+                self.assertEqual(
+                    port_wpt.analyze_portability(parser),
+                    (False, "uses_javascript"),
+                )
 
 
 class LedgerTests(unittest.TestCase):
@@ -231,7 +332,7 @@ class LedgerTests(unittest.TestCase):
                 closure.KICKOFF_LEDGER_SHA256[path.name],
             )
 
-    def test_live_snapshot_accepts_only_exact_actionable_promotions(self):
+    def test_live_snapshot_accepts_only_exact_authorized_promotions(self):
         baseline, inventory, _, _ = closure.load_ledgers()
         actionable, _ = closure.load_probe_ledgers(inventory)
         with closure.MAPPING_CSV.open(newline="", encoding="utf-8") as stream:
@@ -240,9 +341,24 @@ class LedgerTests(unittest.TestCase):
         promoted = closure.validate_live_snapshot(
             rows, summary, baseline, inventory, actionable
         )
-        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 154)
+        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 166)
         self.assertEqual(promoted, EXPECTED_LIVE_PROMOTIONS)
-        self.assertTrue(promoted.issubset(set(actionable)))
+        residual_admissions = set(closure.load_w1m_manifests()[0]) - set(actionable)
+        self.assertTrue(promoted.issubset(set(actionable) | residual_admissions))
+
+    def test_w1m_manifests_pin_the_complete_atomic_cohort_and_guards(self):
+        targets, focused = closure.load_w1m_manifests()
+        _, inventory, _, _ = closure.load_ledgers()
+        actionable, residuals = closure.load_probe_ledgers(inventory)
+        inventory_ids = {item["test_id"] for item in inventory}
+        residual_ids = {item["test_id"] for item in residuals}
+        self.assertEqual(len(set(targets) & residual_ids), 12)
+        self.assertEqual(len(set(targets) - inventory_ids), 17)
+        self.assertFalse(set(targets) & set(actionable))
+        self.assertEqual(len(set(targets) | closure.W1M_EXISTING_RUNNABLE), 39)
+        self.assertTrue(
+            set(targets) | closure.W1M_EXISTING_RUNNABLE <= set(focused)
+        )
 
     def test_w0b_probe_is_a_disjoint_cover_of_the_frozen_inventory(self):
         _, inventory, initial, _ = closure.load_ledgers()

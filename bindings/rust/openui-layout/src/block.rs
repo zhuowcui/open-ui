@@ -1502,6 +1502,16 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 let anon_oof_candidates = std::mem::take(&mut anon_fragment.oof_candidates);
                 let anon_block_origin = block_offset;
 
+                // A clearing <br> creates a zero-height line box, but inline
+                // layout still gives its anonymous wrapper the clearance-only
+                // block extent needed to reach the relevant float bottom. Do
+                // not infer the wrapper height only from visible line boxes:
+                // doing so loses the row break between float groups. Taking
+                // the maximum retains that extent exactly once without
+                // synthesizing a line-box strut for the clearing break.
+                intrinsic_block_size =
+                    intrinsic_block_size.max_of(anon_block_origin + anon_fragment.size.height);
+
                 // Capture baselines from anonymous inline wrapper.
                 if let Some(fb) = anon_fragment.first_baseline {
                     if first_baseline_result.is_none() {

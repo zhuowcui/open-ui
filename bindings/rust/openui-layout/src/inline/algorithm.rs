@@ -850,6 +850,24 @@ pub fn inline_layout_from_items(
                 + physical_text_indent_offset(style.direction, line_indent);
             line_static_inline_data.push((line_info.clone(), static_inline_origin));
 
+            let break_clear = line_break_clear(&line_info, &working_items_data);
+            let clearance_target = if break_clear == Clear::None {
+                None
+            } else {
+                exclusion_ref.map(|exclusions| {
+                    exclusions.clearance_offset(clear_type(break_clear)) - bfc_block_start
+                })
+            };
+            let clearance_only_break = clearance_target.is_some_and(|target| target > block_offset);
+            let clearance_only_extent = clearance_only_break.then(|| {
+                let strut = compute_line_height_metrics(
+                    &block_metrics,
+                    &style.line_height,
+                    style.font_size,
+                );
+                block_offset + LayoutUnit::from_f32(strut.ascent + strut.descent)
+            });
+
             let line_fragment = create_line_box(
                 doc,
                 space,
@@ -868,6 +886,7 @@ pub fn inline_layout_from_items(
                 space.percentage_resolution_block_size,
                 &boxes_open_at_line_start,
                 normalize_vertical_rtl,
+                clearance_only_break,
             );
 
             // Update open inline box state for the next line:
@@ -900,12 +919,11 @@ pub fn inline_layout_from_items(
             }
 
             block_offset = block_offset + positioned_line.size.height;
-            let break_clear = line_break_clear(&line_info, &working_items_data);
-            if break_clear != Clear::None {
-                if let Some(exclusions) = exclusion_ref {
-                    let target = exclusions.clearance_offset(clear_type(break_clear));
-                    block_offset = block_offset.max_of(target - bfc_block_start);
-                }
+            if let Some(target) = clearance_target {
+                block_offset = block_offset.max_of(target);
+            }
+            if let Some(extent) = clearance_only_extent {
+                block_offset = block_offset.max_of(extent);
             }
             line_fragments.push(positioned_line);
             is_first_line = false;
@@ -1922,6 +1940,24 @@ pub fn inline_layout_for_children(
                 + physical_text_indent_offset(style.direction, line_indent);
             line_static_inline_data.push((line_info.clone(), static_inline_origin));
 
+            let break_clear = line_break_clear(&line_info, &items_data);
+            let clearance_target = if break_clear == Clear::None {
+                None
+            } else {
+                exclusion_ref.map(|exclusions| {
+                    exclusions.clearance_offset(clear_type(break_clear)) - bfc_block_start
+                })
+            };
+            let clearance_only_break = clearance_target.is_some_and(|target| target > block_offset);
+            let clearance_only_extent = clearance_only_break.then(|| {
+                let strut = compute_line_height_metrics(
+                    &block_metrics,
+                    &style.line_height,
+                    style.font_size,
+                );
+                block_offset + LayoutUnit::from_f32(strut.ascent + strut.descent)
+            });
+
             let line_fragment = create_line_box(
                 doc,
                 space,
@@ -1940,6 +1976,7 @@ pub fn inline_layout_for_children(
                 space.percentage_resolution_block_size,
                 &boxes_open_at_line_start,
                 normalize_vertical_rtl,
+                clearance_only_break,
             );
 
             // Update open inline box state for the next line.
@@ -1970,12 +2007,11 @@ pub fn inline_layout_for_children(
             }
 
             block_offset = block_offset + positioned_line.size.height;
-            let break_clear = line_break_clear(&line_info, &items_data);
-            if break_clear != Clear::None {
-                if let Some(exclusions) = exclusion_ref {
-                    let target = exclusions.clearance_offset(clear_type(break_clear));
-                    block_offset = block_offset.max_of(target - bfc_block_start);
-                }
+            if let Some(target) = clearance_target {
+                block_offset = block_offset.max_of(target);
+            }
+            if let Some(extent) = clearance_only_extent {
+                block_offset = block_offset.max_of(extent);
             }
             line_fragments.push(positioned_line);
             is_first_line = false;
@@ -2040,6 +2076,7 @@ fn create_line_box(
     percentage_block_base: LayoutUnit,
     boxes_open_at_line_start: &[InlineBoxState],
     normalize_vertical_rtl: bool,
+    clearance_only_break: bool,
 ) -> Fragment {
     // === STEP 0: Check if line has content (CSS 2.1 §9.4.2) ===
     // "Line boxes that contain no text, no preserved white space, no inline
@@ -2048,13 +2085,13 @@ fn create_line_box(
     // A forced break (<br> or preserved newline) establishes a strut even
     // when it is the only item on the line. Without this, `<p><br></p>` has
     // zero height and following block content overlaps it.
-    let clearing_break = line_break_clear(line_info, items_data) != Clear::None;
-    let line_has_content = (line_info.has_forced_break && !clearing_break)
+    let line_has_content = (line_info.has_forced_break && !clearance_only_break)
         || line_info
             .items
             .iter()
             .any(|item_result| match item_result.item_type {
-                InlineItemType::Text | InlineItemType::AtomicInline => true,
+                InlineItemType::Text => !item_result.text_range.is_empty(),
+                InlineItemType::AtomicInline => true,
                 InlineItemType::OpenTag => {
                     let item = &items_data.items[item_result.item_index];
                     let s = &items_data.styles[item.style_index];

@@ -30,6 +30,8 @@ INITIAL_TARGETS_JSON = PORTED_DIR / "sp17_initial_runnable_targets.json"
 INITIAL_RESULTS_JSON = PORTED_DIR / "sp17_initial_runnable_results.json"
 ACTIONABLE_JSON = PORTED_DIR / "sp17_actionable_targets.json"
 RESIDUALS_JSON = PORTED_DIR / "sp17_residual_dispositions.json"
+W1M_TARGETS_JSON = SCRIPT_DIR / "sp17_w1m_targets.json"
+W1M_FOCUSED_JSON = SCRIPT_DIR / "sp17_w1m_focused_ids.json"
 WPT_ROOT = Path(os.environ.get(
     "CHROMIUM_WPT_CSS",
     os.path.expanduser(
@@ -52,6 +54,32 @@ EXPECTED_UNPORTED = 4107
 EXPECTED_ACTIONABLE = 311
 EXPECTED_RESIDUALS = 531
 EXPECTED_PROBE_SP17_RESIDUALS = 2
+EXPECTED_W1M_TARGETS = 29
+EXPECTED_W1M_FOCUSED = 58
+EXPECTED_W1M_RESIDUAL_ADMISSIONS = 12
+EXPECTED_W1M_NON_SP17_ADMISSIONS = 17
+EXPECTED_W1M_PROMOTIONS = 166
+EXPECTED_W1M_RUNNABLE = 3746
+EXPECTED_W1M_EXACT = 3460
+EXPECTED_W1M_FAILURES = 286
+EXPECTED_W1M_UNPORTED = 3927
+EXPECTED_W1M_LIVE_OWNED = 676
+W1M_MANIFEST_SHA256 = {
+    "sp17_w1m_targets.json": "778eb7fe073c718ec36f7ed187865c7831699bcd09ef9f4d32f531739d50f496",
+    "sp17_w1m_focused_ids.json": "65ad5944ee26aaed03ab29b28209b72a8fc5ddca8666bd765f9d04196c407c7e",
+}
+W1M_EXISTING_RUNNABLE = frozenset({
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-fallback-justify-content-001",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-fallback-justify-content-001-ref",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-self-001",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-self-001-ref",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-001",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-001-ref",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-002",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-002-ref",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-003",
+    "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-003-ref",
+})
 KICKOFF_LEDGER_SHA256 = {
     "sp17_baseline_exact.json": "59a514d3b76b83ecc44efd43dda5a16ec2a0203803849407f3dce035d9e9fc20",
     "sp17_writing_mode_inventory.json": "b72a0b0b4e74f4c1cb912ab65642dd6f5bef76a570f0a9b219f68729de6d10ad",
@@ -106,6 +134,29 @@ def canonical_id(row: dict[str, str]) -> str:
     if recorded and recorded != test_id:
         raise ValueError(f"mapping identity drift: {recorded!r} != {test_id!r}")
     return test_id
+
+
+def load_w1m_manifests() -> tuple[list[str], list[str]]:
+    manifests = []
+    for path, expected_count in (
+        (W1M_TARGETS_JSON, EXPECTED_W1M_TARGETS),
+        (W1M_FOCUSED_JSON, EXPECTED_W1M_FOCUSED),
+    ):
+        actual_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual_hash != W1M_MANIFEST_SHA256[path.name]:
+            raise ValueError(f"SP17 W1M manifest byte drift: {path.name}: {actual_hash}")
+        values = json.loads(path.read_text(encoding="utf-8"))
+        if values != sorted(set(values)) or len(values) != expected_count:
+            raise ValueError(
+                f"SP17 W1M manifest is not the sorted {expected_count}-ID set: {path.name}"
+            )
+        manifests.append(values)
+    targets, focused = manifests
+    if not set(targets).isdisjoint(W1M_EXISTING_RUNNABLE):
+        raise ValueError("SP17 W1M new and existing runnable cohorts overlap")
+    if not set(targets) | W1M_EXISTING_RUNNABLE <= set(focused):
+        raise ValueError("SP17 W1M focused proof silently shrank the 39-ID cohort")
+    return targets, focused
 
 
 def first_rejection(row: dict[str, str]) -> str | None:
@@ -453,13 +504,40 @@ def validate_live_snapshot(
         item["test_id"] for item in inventory
         if item["kickoff_state"] == "unported"
     }
+    inventory_ids = {item["test_id"] for item in inventory}
+    w1m_targets, _ = load_w1m_manifests()
+    w1m_target_ids = set(w1m_targets)
+    w1m_residual_admissions = w1m_target_ids & (inventory_ids - set(actionable))
+    w1m_non_sp17_admissions = w1m_target_ids - inventory_ids
+    if (
+        len(w1m_residual_admissions) != EXPECTED_W1M_RESIDUAL_ADMISSIONS
+        or len(w1m_non_sp17_admissions) != EXPECTED_W1M_NON_SP17_ADMISSIONS
+        or w1m_target_ids & set(actionable)
+    ):
+        raise ValueError("SP17 W1M admission partition changed")
+
     promoted_unported = kickoff_unported & ported_ids
-    if not promoted_unported.issubset(actionable):
+    authorized_promotions = set(actionable) | w1m_residual_admissions
+    if not promoted_unported.issubset(authorized_promotions):
         raise ValueError(
-            "SP17 live mapping promoted a row outside the frozen actionable ledger"
+            "SP17 live mapping promoted a row outside the frozen W1M authorization"
         )
-    expected_runnable = EXPECTED_RUNNABLE + len(promoted_unported)
-    expected_unported = EXPECTED_UNPORTED - len(promoted_unported)
+    if not w1m_residual_admissions.issubset(promoted_unported):
+        raise ValueError("SP17 W1M residual admission is not runnable")
+    admitted_non_sp17 = w1m_non_sp17_admissions & ported_ids
+    if admitted_non_sp17 != w1m_non_sp17_admissions:
+        raise ValueError("SP17 W1M non-SP17 admission is not runnable")
+    expected_runnable = (
+        EXPECTED_RUNNABLE + len(promoted_unported) + len(admitted_non_sp17)
+    )
+    expected_unported = (
+        EXPECTED_UNPORTED - len(promoted_unported) - len(admitted_non_sp17)
+    )
+    if (
+        expected_runnable != EXPECTED_W1M_RUNNABLE
+        or expected_unported != EXPECTED_W1M_UNPORTED
+    ):
+        raise ValueError("SP17 W1M projected mapping totals changed")
     if len(ported_ids) != expected_runnable:
         raise ValueError(
             "SP17 runnable mapping changed outside exact actionable promotions: "
@@ -482,16 +560,20 @@ def validate_live_snapshot(
         and summary_by_id[item["test_id"]].get("mismatch_pct") == 0.0
     }
     promoted = promoted_unported | repaired_kickoff_runnable
-    if not promoted.issubset(actionable):
-        raise ValueError("SP17 exact promotion is outside the actionable ledger")
+    if not promoted.issubset(authorized_promotions):
+        raise ValueError("SP17 exact promotion is outside the W1M authorization")
+    if len(promoted) != EXPECTED_W1M_PROMOTIONS:
+        raise ValueError(
+            f"SP17 W1M exact promotion count changed: {len(promoted)}"
+        )
     passed = summary.get("passed")
     failed = summary.get("failed")
     errors = summary.get("errors")
     if (
         len(tests) != expected_runnable
         or errors != EXPECTED_ERRORS
-        or not isinstance(passed, int)
-        or not isinstance(failed, int)
+        or passed != EXPECTED_W1M_EXACT
+        or failed != EXPECTED_W1M_FAILURES
         or passed + failed + errors != expected_runnable
         or passed < EXPECTED_BASELINE + len(promoted)
     ):
@@ -511,13 +593,19 @@ def validate_live_snapshot(
         if SP17_CATEGORY in categories(row_by_id[test_id]["failure_category"]):
             raise ValueError(f"SP17 exact promotion retained live ownership: {test_id}")
 
-    inventory_ids = {item["test_id"] for item in inventory}
+    for test_id in w1m_target_ids | W1M_EXISTING_RUNNABLE:
+        result = summary_by_id.get(test_id, {})
+        if result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
+            raise ValueError(f"SP17 W1M cohort is not exact: {test_id}")
+
     live_owned = {
         test_id for test_id, row in row_by_id.items()
         if SP17_CATEGORY in categories(row["failure_category"])
     }
     if not live_owned.issubset(inventory_ids):
         raise ValueError("SP17 ownership expanded outside the frozen inventory")
+    if len(live_owned) != EXPECTED_W1M_LIVE_OWNED:
+        raise ValueError(f"SP17 W1M live ownership changed: {len(live_owned)}")
     for test_id in inventory_ids - live_owned:
         result = summary_by_id.get(test_id, {})
         if (

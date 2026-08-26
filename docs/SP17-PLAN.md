@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1L is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W1M is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -39,18 +39,21 @@ for flex abspos static positions through the existing content/item alignment
 resolvers while retaining signed free space and one-time logical projection.
 W1L closes absolute flex static-position centering by carrying physical-axis
 edge affinity through bubbling, sizing, and fragmented reconstruction.
-The authoritative live full-suite result is 3,717 runnable, 3,421 exact, 296
+W1M closes the 39-ID flex abspos alignment matrix through assertion-only
+check-layout admission, single logical/physical edge resolution, complete
+margin-box alignment, and clearance-only anonymous-wrapper extent.
+The authoritative live full-suite result is 3,746 runnable, 3,460 exact, 286
 functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1L |
+| Metric | Kickoff | Live W1M |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,717 |
-| Exact passes | 3,267 | 3,421 |
-| Functional failures | 299 | 296 |
+| Runnable WPTs | 3,566 | 3,746 |
+| Exact passes | 3,267 | 3,460 |
+| Functional failures | 299 | 286 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 3,956 |
-| `needs_writing_mode` owner rows | 842 | 688 |
+| Unported rows | 4,107 | 3,927 |
+| `needs_writing_mode` owner rows | 842 | 676 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -879,3 +882,40 @@ render/diff error.
 - Keep fallback/justify-self/JavaScript/table/transform/generated-content
   cases, `flexbox-safe-overflow-position-006`, and unrelated paint/layout work
   outside W1L. W2 retains material bidi and vertical glyph shaping.
+
+### 2026-08-24 — W1M flex abspos alignment matrix closure
+
+- Admitted exactly 29 static assertion-only layouts whose only scripting is
+  the ordered `testharness.js`, `testharnessreport.js`, and
+  `check-layout-th.js` harness plus one body `checkLayout(...)` hook. Inline
+  code, unknown scripts, mixed handlers, and dynamic alignment remain hard
+  porter rejections. Quoted `>` selectors are stripped without leaking body
+  attributes into the deterministic comparison template.
+- Flex abspos static positioning now resolves distribution fallbacks,
+  physical left/right, logical and flex edges, reverse flow, wrap reversal,
+  writing mode, and direction once. `align-self:auto`, baseline variants,
+  safe overflow, ignored `justify-self`, auto margins, and specified complete
+  margin-box alignment retain the W1K/W1L contracts.
+- Mixed block/inline flow carries a clearing break's anonymous-wrapper extent
+  to its parent exactly once. The clearing line stays zero-height while the
+  wrapper advances by the greater of its computed clearance and strut; later
+  no-op clearing breaks retain their normal line height.
+- The atomic cohort is the 29 newly runnable IDs plus ten existing
+  fallback/justify-self/margin test-reference failures. The 58-ID proof adds
+  all 17 W1L guards and flex fragmentation 010/011 and is 58/58 exact with
+  zero mismatched pixels or errors. Both no-write generations and both
+  transactional splices are byte-identical.
+- The frozen 3,267-ID baseline remains exact. The authoritative full suite is
+  **3,746 runnable / 3,460 exact / 286 fail / 0 errors**; live unported
+  inventory is 3,927, writing-mode ownership is 676, unported SP13-R multicol
+  ownership is 976, the text manifest is 871, and the validator requires
+  exactly 166 SP17 promotions. The SP13-R later-promotion set remains 42. The
+  committed `summary.json` SHA-256 is `94574e79d0c0f5bbf979e57c6168e62aab35e56fed62f5977c2f3ed4784817df`.
+- Verification covers the exact 58-ID proof, the complete no-resume release
+  suite, parameterized float-clearance and flex-edge regressions, the locked
+  Rust matrix, all 125 closure/porter tests, both closure generators,
+  deterministic mapping/deferred/HTML generation, formatting and diff checks,
+  writing-mode 010–016 exclusion, audit 7/7, and one local checkpoint commit.
+- Keep dynamic JavaScript and mutation cases, tables, grid, transforms,
+  generated content, `flexbox-safe-overflow-position-006`, and unrelated W2
+  glyph work outside W1M.

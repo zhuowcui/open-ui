@@ -1744,6 +1744,9 @@ class WptHtmlParser(HTMLParser):
         self.current_style_attrs = {}
         self.author_style_blocks = []
         self.has_script = False
+        self.script_elements = []
+        self.current_script = None
+        self.event_handlers = []
         self.has_style_block = False
         self.css_rules = []  # Parsed CSS rules from <style>
         self.external_css_rules = []  # Parsed CSS rules from external stylesheets
@@ -1779,6 +1782,10 @@ class WptHtmlParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         attrs_dict = dict(attrs)
 
+        for name, value in attrs:
+            if re.fullmatch(r'on[a-z]+', name, re.IGNORECASE):
+                self.event_handlers.append((tag, name.lower(), value or ''))
+
         # Track reference
         if tag == 'link' and attrs_dict.get('rel') == 'match':
             self.ref_path = attrs_dict.get('href', '')
@@ -1791,6 +1798,11 @@ class WptHtmlParser(HTMLParser):
 
         if tag == 'script':
             self.has_script = True
+            self.current_script = {
+                'attrs': attrs_dict,
+                'content': '',
+            }
+            self.script_elements.append(self.current_script)
             self.skip_depth += 1
             return
 
@@ -1868,6 +1880,7 @@ class WptHtmlParser(HTMLParser):
             self.current_style_attrs = {}
             return
         if tag == 'script':
+            self.current_script = None
             if self.skip_depth > 0:
                 self.skip_depth -= 1
             return
@@ -1893,6 +1906,9 @@ class WptHtmlParser(HTMLParser):
     def handle_data(self, data):
         if self.in_style:
             self.style_content += data
+            return
+        if self.current_script is not None:
+            self.current_script['content'] += data
             return
         if self.skip_depth > 0:
             return
@@ -2062,11 +2078,46 @@ def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser
 
 # ─── Portability analysis ──────────────────────────────────────────────────
 
+_ASSERTION_ONLY_CHECK_LAYOUT_SCRIPTS = [
+    '/resources/testharness.js',
+    '/resources/testharnessreport.js',
+    '/resources/check-layout-th.js',
+]
+
+
+def _is_assertion_only_check_layout(parser: WptHtmlParser) -> bool:
+    """Whether script usage is the inert WPT check-layout assertion harness.
+
+    The generated builders do not execute JavaScript. This narrow exception
+    is safe because ``check-layout-th.js`` only verifies authored
+    ``data-expected-*`` geometry after layout; stripping it does not change the
+    DOM or computed style represented by the builder.
+    """
+    if len(parser.script_elements) != len(_ASSERTION_ONLY_CHECK_LAYOUT_SCRIPTS):
+        return False
+    script_sources = []
+    for script in parser.script_elements:
+        attrs = script['attrs']
+        if set(attrs) != {'src'} or script['content'].strip():
+            return False
+        script_sources.append(attrs['src'])
+    if script_sources != _ASSERTION_ONLY_CHECK_LAYOUT_SCRIPTS:
+        return False
+    if len(parser.event_handlers) != 1:
+        return False
+    tag, name, body = parser.event_handlers[0]
+    if tag != 'body' or name != 'onload':
+        return False
+    return re.fullmatch(
+        r'''\s*checkLayout\(\s*(?:"[^"\\]*"|'[^'\\]*')?\s*\)\s*;?\s*''',
+        body,
+    ) is not None
+
 def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
     """Determine if a WPT test can be ported to our engine.
     Returns (portable, reason_if_not).
     """
-    if parser.has_script:
+    if (parser.has_script or parser.event_handlers) and not _is_assertion_only_check_layout(parser):
         return False, "uses_javascript"
 
     # Pseudo-classes/pseudo-elements we can handle
@@ -3463,9 +3514,12 @@ def generate_single_style(
             'center': 'ItemAlignment::new(ItemPosition::Center)',
             'stretch': 'ItemAlignment::new(ItemPosition::Stretch)',
             'baseline': 'ItemAlignment::new(ItemPosition::Baseline)',
+            'last baseline': 'ItemAlignment::new(ItemPosition::LastBaseline)',
             'normal': 'ItemAlignment::new(ItemPosition::Normal)',
             'self-start': 'ItemAlignment::new(ItemPosition::SelfStart)',
             'self-end': 'ItemAlignment::new(ItemPosition::SelfEnd)',
+            'left': 'ItemAlignment::new(ItemPosition::Left)',
+            'right': 'ItemAlignment::new(ItemPosition::Right)',
         }
         if val in mapping:
             return f"{s}.align_items = {mapping[val]};"
@@ -3492,9 +3546,12 @@ def generate_single_style(
             'center': 'ItemAlignment::new(ItemPosition::Center)',
             'stretch': 'ItemAlignment::new(ItemPosition::Stretch)',
             'baseline': 'ItemAlignment::new(ItemPosition::Baseline)',
+            'last baseline': 'ItemAlignment::new(ItemPosition::LastBaseline)',
             'normal': 'ItemAlignment::new(ItemPosition::Normal)',
             'self-start': 'ItemAlignment::new(ItemPosition::SelfStart)',
             'self-end': 'ItemAlignment::new(ItemPosition::SelfEnd)',
+            'left': 'ItemAlignment::new(ItemPosition::Left)',
+            'right': 'ItemAlignment::new(ItemPosition::Right)',
         }
         if val in mapping:
             return f"{s}.align_self = {mapping[val]};"
@@ -3520,6 +3577,7 @@ def generate_single_style(
             'center': 'ContentAlignment::new(ContentPosition::Center)',
             'normal': 'ContentAlignment::new(ContentPosition::Normal)',
             'baseline': 'ContentAlignment::new(ContentPosition::Baseline)',
+            'last baseline': 'ContentAlignment::new(ContentPosition::LastBaseline)',
             'stretch': 'ContentAlignment::with_distribution(ContentDistribution::Stretch)',
             'space-between': 'ContentAlignment::with_distribution(ContentDistribution::SpaceBetween)',
             'space-around': 'ContentAlignment::with_distribution(ContentDistribution::SpaceAround)',
@@ -5556,7 +5614,12 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     # Preserve inline <body style="..."> declarations in the Chrome template.
     # The Rust generator applies parsed body styles to `vp`; without this,
     # Chromium comparisons silently use the harness default body style instead.
-    body_open = re.search(r'<body\b([^>]*)>', content, re.IGNORECASE)
+    # Attribute values may themselves contain ``>`` (the check-layout corpus
+    # commonly uses selectors such as ``div > div`` in body/onload).  A plain
+    # ``[^>]*`` stops inside the quoted value and leaves the remainder as
+    # visible body text in the comparison template.
+    body_tag = r'<body\b((?:[^>"\']+|"[^"]*"|\'[^\']*\')*)>'
+    body_open = re.search(body_tag, content, re.IGNORECASE)
     if body_open:
         style_attr = re.search(r'\bstyle=["\']([^"\']*)["\']', body_open.group(1), re.IGNORECASE)
         if style_attr:
@@ -5587,9 +5650,13 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     style_prefix = '\n'.join(style_blocks)
 
     # Extract body content
-    body_match = re.search(r'<body[^>]*>(.*?)</body>', content, re.DOTALL | re.IGNORECASE)
+    body_match = re.search(
+        body_tag + r'(.*?)</body>',
+        content,
+        re.DOTALL | re.IGNORECASE,
+    )
     if body_match:
-        body = body_match.group(1)
+        body = body_match.group(2)
     else:
         # No explicit body — use content after meta/link tags
         body = content

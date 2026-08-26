@@ -1,12 +1,12 @@
 {
-  "total": 3717,
-  "passed": 3421,
-  "failed": 296,
+  "total": 3746,
+  "passed": 3460,
+  "failed": 286,
   "errors": 0,
-  "near_miss_aa": 59,
+  "near_miss_aa": 57,
   "aa_threshold_pct": 0.5,
   "reference_tests": 979,
-  "reference_tests_pass": 887,
+  "reference_tests_pass": 892,
   "tests": [
     {
       "id": "wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline",
@@ -5340,53 +5340,53 @@
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-fallback-justify-content-001-ref",
-      "status": "fail",
-      "mismatch_pct": 0.132484
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-fallback-justify-content-001",
-      "status": "fail",
-      "mismatch_pct": 0.132484
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-self-001-ref",
-      "status": "fail",
-      "mismatch_pct": 1.749257
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-self-001",
-      "status": "fail",
-      "mismatch_pct": 1.744161
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-001-ref",
-      "status": "fail",
-      "mismatch_pct": 1.2862
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-001",
-      "status": "fail",
-      "mismatch_pct": 1.279406
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-002-ref",
-      "status": "fail",
-      "mismatch_pct": 1.283652
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-002",
-      "status": "fail",
-      "mismatch_pct": 1.276858
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-003-ref",
-      "status": "fail",
-      "mismatch_pct": 1.311465
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-margin-003",
-      "status": "fail",
-      "mismatch_pct": 1.311465
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_flexbox/abspos_flexbox-abspos-child-001-ref",
@@ -6225,6 +6225,151 @@
     },
     {
       "id": "wpt/css_flexbox/flexbox-safe-overflow-position-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-content-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-008",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-rtl-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-vertWM-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-008",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-rtl-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-rtl-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-vertWM-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-vertWM-002",
       "status": "pass",
       "mismatch_pct": 0.0
     },
