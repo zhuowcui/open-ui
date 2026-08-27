@@ -65,14 +65,12 @@ fn resolve_margins_in_parent_axes(
     percentage_base: LayoutUnit,
     parent_writing_direction: WritingDirectionMode,
 ) -> BoxStrut {
-    // A definite physical axis closes the horizontal block equation at this
-    // boundary, so authored left/right margins must retain their physical
-    // sides even when inline progression is RTL. Fully auto-sized blocks keep
-    // the established logical-strut path while their remaining space is
-    // resolved. Vertical block layout likewise stays logical until projection.
-    if parent_writing_direction.is_horizontal()
-        && (style.width.is_fixed() || style.height.is_fixed())
-    {
+    // Horizontal block layout stores physical left/right coordinates even
+    // when inline progression is RTL. Keep authored physical margins on those
+    // sides for both definite and auto-sized blocks; the block-width equation
+    // below is responsible for resolving any remaining inline space. Vertical
+    // block layout stays logical until its final projection.
+    if parent_writing_direction.is_horizontal() {
         resolve_margins(style, percentage_base)
     } else {
         algorithm_box_from_logical_strut(
@@ -84,13 +82,12 @@ fn resolve_margins_in_parent_axes(
 fn physical_content_left(
     border: &BoxStrut,
     padding: &BoxStrut,
-    writing_direction: WritingDirectionMode,
+    _writing_direction: WritingDirectionMode,
 ) -> LayoutUnit {
-    if writing_direction.is_horizontal() && writing_direction.is_rtl() {
-        border.right + padding.right
-    } else {
-        border.left + padding.left
-    }
+    // Horizontal block edges are stored physically at this API boundary, so
+    // physical left remains left even when inline progression is RTL. Vertical
+    // algorithms store block-start in this slot until their final projection.
+    border.left + padding.left
 }
 
 fn inline_size_in_parent_axes<'a>(
@@ -273,6 +270,7 @@ fn project_multicol_child_to_physical(
     fragment: &mut Fragment,
     writing_direction: WritingDirectionMode,
     parent_physical_size: PhysicalSize,
+    ancestor_has_overflow_clip: bool,
 ) {
     if fragment.positioned_fragmentation.is_some() {
         let converter = WritingModeConverter::new(writing_direction, parent_physical_size);
@@ -344,6 +342,21 @@ fn project_multicol_child_to_physical(
     fragment.padding = physical_strut_from_algorithm_box(fragment.padding, writing_direction);
     fragment.margin = physical_strut_from_algorithm_box(fragment.margin, writing_direction);
 
+    let has_overflow_clip = ancestor_has_overflow_clip
+        || (fragment.has_overflow_clip && !fragment.block_axis_clip_only);
+    if fragment.kind == FragmentKind::Text
+        && fragment.text_run_orientation == TextRunOrientation::Clockwise
+        && !writing_direction.is_flipped_blocks()
+        && has_overflow_clip
+    {
+        // A clipped vertical-lr line uses its physical block-start baseline as
+        // the clip edge. Account for the descent left by the painter's
+        // edge-anchored clockwise rotation. Unclipped multicol text retains
+        // its ordinary inline static-position geometry.
+        fragment.offset.left = fragment.offset.left
+            - (fragment.size.width - LayoutUnit::from_f32(fragment.baseline_offset));
+    }
+
     if fragment.kind == FragmentKind::ColumnBox
         || (!fragment.is_first_for_node || !fragment.is_last_for_node)
     {
@@ -351,7 +364,12 @@ fn project_multicol_child_to_physical(
     }
 
     for child in &mut fragment.children {
-        project_multicol_child_to_physical(child, writing_direction, physical_size);
+        project_multicol_child_to_physical(
+            child,
+            writing_direction,
+            physical_size,
+            has_overflow_clip,
+        );
     }
 }
 
@@ -387,8 +405,69 @@ fn finalize_multicol_fragment(
     if !writing_direction.is_horizontal() {
         let physical_size = WritingModeConverter::new(writing_direction, PhysicalSize::zero())
             .to_physical_size(LogicalSize::new(fragment.size.width, fragment.size.height));
+        let has_overflow_clip = fragment.has_overflow_clip && !fragment.block_axis_clip_only;
         for child in &mut fragment.children {
-            project_multicol_child_to_physical(child, writing_direction, physical_size);
+            project_multicol_child_to_physical(
+                child,
+                writing_direction,
+                physical_size,
+                has_overflow_clip,
+            );
+        }
+        // In vertical writing, a spanner divides the column flow into
+        // independent physical rows.  Each horizontal rule is bounded by the
+        // column row at the same block-axis origin; using the multicol's full
+        // block-size would paint the rule through the spanner gap.
+        let row_widths: Vec<(LayoutUnit, LayoutUnit)> = fragment
+            .children
+            .iter()
+            .filter(|child| child.kind == FragmentKind::ColumnBox)
+            .map(|child| (child.offset.left, child.size.width))
+            .collect();
+        for rule in fragment
+            .children
+            .iter_mut()
+            .filter(|child| child.kind == FragmentKind::ColumnRule)
+        {
+            if let Some((_, row_width)) = row_widths
+                .iter()
+                .filter(|(left, _)| *left == rule.offset.left)
+                .max_by_key(|(_, width)| width.raw())
+            {
+                rule.size.width = rule.size.width.min_of(*row_width);
+            }
+        }
+        // Flipped block flow can project multiple logical row rules to the
+        // same physical start edge. Distribute those equal-thickness rules
+        // across the distinct column-row origins retained by the anonymous
+        // column boxes.
+        let mut rule_groups: Vec<(LayoutUnit, LayoutUnit, Vec<usize>)> = Vec::new();
+        for (index, child) in fragment.children.iter().enumerate() {
+            if child.kind != FragmentKind::ColumnRule {
+                continue;
+            }
+            if let Some((_, _, indexes)) = rule_groups
+                .iter_mut()
+                .find(|(top, height, _)| *top == child.offset.top && *height == child.size.height)
+            {
+                indexes.push(index);
+            } else {
+                rule_groups.push((child.offset.top, child.size.height, vec![index]));
+            }
+        }
+        let mut origins = row_widths.clone();
+        origins.sort_by_key(|(left, _)| left.raw());
+        origins.dedup_by_key(|(left, _)| left.raw());
+        for (_, _, indexes) in rule_groups {
+            let duplicate_origin = indexes.windows(2).any(|pair| {
+                fragment.children[pair[0]].offset.left == fragment.children[pair[1]].offset.left
+            });
+            if duplicate_origin && indexes.len() <= origins.len() {
+                for (index, (left, width)) in indexes.into_iter().zip(origins.iter().copied()) {
+                    fragment.children[index].offset.left = left;
+                    fragment.children[index].size.width = width;
+                }
+            }
         }
         fragment.size = physical_size;
         fragment.first_baseline = fragment.first_baseline.map(|baseline| {
@@ -427,7 +506,7 @@ fn finalize_multicol_fragment(
 /// continuations share the same logical coordinate system, so recurse through
 /// those generated layers. A real box child already owns physical descendants;
 /// only its outer size and offset are projected here.
-fn project_logical_child_to_physical(
+pub(crate) fn project_logical_child_to_physical(
     fragment: &mut Fragment,
     writing_direction: WritingDirectionMode,
     parent_physical_size: PhysicalSize,
@@ -568,10 +647,19 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
     let physical_border = resolve_border(physical_style);
     let physical_padding = resolve_padding(physical_style, space.percentage_resolution_inline_size);
-    let border =
-        algorithm_box_from_logical_strut(physical_border.to_logical(space.writing_direction));
-    let padding =
-        algorithm_box_from_logical_strut(physical_padding.to_logical(space.writing_direction));
+    // Horizontal block layout stores physical x coordinates even when inline
+    // progression is RTL. Preserve authored left/right edges in that path;
+    // vertical layout remains logical until final projection.
+    let border = if space.writing_direction.is_horizontal() {
+        physical_border
+    } else {
+        algorithm_box_from_logical_strut(physical_border.to_logical(space.writing_direction))
+    };
+    let padding = if space.writing_direction.is_horizontal() {
+        physical_padding
+    } else {
+        algorithm_box_from_logical_strut(physical_padding.to_logical(space.writing_direction))
+    };
 
     let border_padding_inline = border.left + border.right + padding.left + padding.right;
     let border_padding_block = border.top + border.bottom + padding.top + padding.bottom;
@@ -687,11 +775,30 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     };
 
     // Available inline size for children = content box width
-    let child_available_inline = if style.box_sizing == BoxSizing::BorderBox {
+    let raw_child_available_inline = if style.box_sizing == BoxSizing::BorderBox {
         border_box_inline - border_padding_inline
     } else {
         content_inline_size
     };
+    // The pinned Chromium profile uses overlay-width `auto` scrollbars and a
+    // 10px gutter for `thin`. A stable gutter consumes the logical inline-end
+    // of the padding box; `both-edges` mirrors it at inline-start.
+    let scrollbar_gutter = if physical_style.scrollbar_gutter.is_stable()
+        && physical_style.scrollbar_width == openui_style::ScrollbarWidth::Thin
+    {
+        LayoutUnit::from_i32(10)
+    } else {
+        LayoutUnit::zero()
+    };
+    let scrollbar_gutter_start = if physical_style.scrollbar_gutter.both_edges() {
+        scrollbar_gutter
+    } else {
+        LayoutUnit::zero()
+    };
+    let scrollbar_gutter_end = scrollbar_gutter;
+    let child_available_inline =
+        (raw_child_available_inline - scrollbar_gutter_start - scrollbar_gutter_end)
+            .clamp_negative_to_zero();
 
     // ── Multicol dispatch ────────────────────────────────────────────
     // CSS Multi-column Layout §3-4: if column-count or column-width is set,
@@ -971,9 +1078,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             }
             if child_style.position.is_absolutely_positioned() {
                 // Inline layout records the same child at its measured
-                // insertion boundary.  Do not also synthesize a block-start
-                // candidate here: doing so duplicates the fragment and loses
-                // the inline-axis static position.
+                // insertion boundary. Do not synthesize a duplicate here.
                 continue;
             }
             // CSS 2.1 §9.5: Float children are positioned as leading floats
@@ -999,6 +1104,26 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     &mut max_float_bottom,
                 );
             }
+        }
+        for child_id in nested_orthogonal_inline_floats(doc, node_id, space.writing_direction) {
+            handle_float(
+                doc,
+                child_id,
+                space,
+                child_available_inline,
+                child_percentage_block_size,
+                &border,
+                &padding,
+                content_edge,
+                &block_offset,
+                &mut exclusion_space_inline,
+                &mut child_fragments,
+                &mut oof_candidates,
+                &mut bubbled_oof_candidates,
+                establishes_cb_for_abspos,
+                captures_fixed_pos_descendants,
+                &mut max_float_bottom,
+            );
         }
 
         // Pre-collect inline items to detect block-in-inline (CSS 2.2 §9.2.1.1).
@@ -1897,7 +2022,12 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             // CSS 2.1 §9.5: Only new-FC children must NOT overlap float margin boxes.
             // Regular (non-FC) block children overlap floats — only their line
             // boxes avoid floats (handled in inline layout).
-            let child_is_new_fc_caller = establishes_new_fc(child_style);
+            let child_direction = child_style
+                .direction
+                .writing_direction(child_style.writing_mode);
+            let child_is_orthogonal =
+                child_direction.is_horizontal() != space.writing_direction.is_horizontal();
+            let child_is_new_fc_caller = establishes_new_fc(child_style) || child_is_orthogonal;
             let child_margin_for_fc = if child_is_new_fc_caller {
                 resolve_margins_in_parent_axes(
                     child_style,
@@ -2577,9 +2707,33 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         WritingModeConverter::new(space.writing_direction, provisional_physical_size)
             .to_physical_size(logical_border_box_size);
 
-    if !space.writing_direction.is_horizontal() {
+    if scrollbar_gutter_start > LayoutUnit::zero() {
         for child in &mut child_fragments[..oof_children_start] {
-            project_logical_child_to_physical(child, space.writing_direction, border_box_size);
+            child.offset.left = child.offset.left + scrollbar_gutter_start;
+        }
+    }
+
+    if !space.writing_direction.is_horizontal() {
+        let child_projection_size = if space.writing_direction.is_flipped_blocks()
+            && doc.node(node_id).tag == ElementTag::Html
+            && !doc.node(node_id).parent.is_none()
+            && doc.node(doc.node(node_id).parent).tag == ElementTag::Viewport
+        {
+            // The initial scroll origin is the physical block-start boundary
+            // for a root-propagated vertical-rl flow.  Unlike an ordinary
+            // nested containing block, the document element must not add its
+            // own used block-size while projecting the body: overflowing root
+            // content grows into the negative scrollable block direction.
+            PhysicalSize::new(LayoutUnit::zero(), border_box_size.height)
+        } else {
+            border_box_size
+        };
+        for child in &mut child_fragments[..oof_children_start] {
+            project_logical_child_to_physical(
+                child,
+                space.writing_direction,
+                child_projection_size,
+            );
         }
     }
 
@@ -2592,6 +2746,20 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     } else {
         FragmentKind::Box
     };
+
+    // Sticky descendants are constrained by their nearest scroll container,
+    // not merely left at their normal-flow position.  At this point the
+    // scrollport and every descendant containing block have final physical
+    // geometry, so the offset can be applied without disturbing sibling flow.
+    if matches!(
+        physical_style.overflow_x,
+        Overflow::Hidden | Overflow::Scroll | Overflow::Auto
+    ) || matches!(
+        physical_style.overflow_y,
+        Overflow::Hidden | Overflow::Scroll | Overflow::Auto
+    ) {
+        apply_sticky_descendants_in_scrollport(doc, &mut fragment);
+    }
 
     // ── Overflow tracking ────────────────────────────────────────────
     // Compute the scrollable overflow rect by unioning all child border-box
@@ -2699,18 +2867,166 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     fragment
 }
 
+fn apply_sticky_descendants_in_scrollport(doc: &Document, scroll_container: &mut Fragment) {
+    let viewport_offset = PhysicalOffset::new(
+        scroll_container.border.left + scroll_container.padding.left,
+        scroll_container.border.top + scroll_container.padding.top,
+    );
+    let viewport_size = PhysicalSize::new(
+        (scroll_container.size.width
+            - scroll_container.border.left
+            - scroll_container.border.right
+            - scroll_container.padding.left
+            - scroll_container.padding.right)
+            .clamp_negative_to_zero(),
+        (scroll_container.size.height
+            - scroll_container.border.top
+            - scroll_container.border.bottom
+            - scroll_container.padding.top
+            - scroll_container.padding.bottom)
+            .clamp_negative_to_zero(),
+    );
+    let viewport = PhysicalRect::new(viewport_offset, viewport_size);
+
+    fn visit(
+        doc: &Document,
+        fragment: &mut Fragment,
+        parent_offset: PhysicalOffset,
+        parent_size: PhysicalSize,
+        viewport: PhysicalRect,
+        parent_is_flex: bool,
+    ) {
+        let normal = PhysicalOffset::new(
+            parent_offset.left + fragment.offset.left,
+            parent_offset.top + fragment.offset.top,
+        );
+        let mut visual = normal;
+        if !fragment.node_id.is_none() {
+            let style = &doc.node(fragment.node_id).style;
+            let has_auto_margin = style.margin_top.is_auto()
+                || style.margin_right.is_auto()
+                || style.margin_bottom.is_auto()
+                || style.margin_left.is_auto();
+            if style.position == Position::Sticky && parent_is_flex && has_auto_margin {
+                let insets = crate::sticky::compute_sticky_constraint_rect(
+                    style,
+                    parent_size.width,
+                    parent_size.height,
+                );
+                let containing_block = PhysicalRect::new(parent_offset, parent_size);
+                let delta = crate::sticky::compute_sticky_offset(
+                    normal,
+                    PhysicalOffset::zero(),
+                    viewport,
+                    &insets,
+                    fragment.size,
+                    containing_block,
+                );
+                fragment.offset.left = fragment.offset.left + delta.left;
+                fragment.offset.top = fragment.offset.top + delta.top;
+                visual.left = visual.left + delta.left;
+                visual.top = visual.top + delta.top;
+            }
+        }
+
+        let size = fragment.size;
+        let fragment_is_flex =
+            !fragment.node_id.is_none() && doc.node(fragment.node_id).style.display.is_flex();
+        for child in &mut fragment.children {
+            visit(doc, child, visual, size, viewport, fragment_is_flex);
+        }
+    }
+
+    for child in &mut scroll_container.children {
+        visit(
+            doc,
+            child,
+            PhysicalOffset::zero(),
+            scroll_container.size,
+            viewport,
+            false,
+        );
+    }
+}
+
 // ── Helper: detect block-level children ──────────────────────────────
+
+/// Collect nested floats that cross the owning inline formatting context's
+/// writing-mode axis. A normal nested float remains on the established block
+/// reconstruction path; an orthogonal float must be hoisted to the nearest
+/// containing BFC so its percentage inline measure can be resolved there.
+fn nested_orthogonal_inline_floats(
+    doc: &Document,
+    node_id: NodeId,
+    parent_direction: WritingDirectionMode,
+) -> Vec<NodeId> {
+    fn collect(
+        doc: &Document,
+        node_id: NodeId,
+        parent_direction: WritingDirectionMode,
+        depth: usize,
+        out: &mut Vec<NodeId>,
+    ) {
+        for child_id in doc.children(node_id) {
+            let child = doc.node(child_id);
+            if child.style.display == Display::None
+                || child.style.position.is_absolutely_positioned()
+            {
+                continue;
+            }
+            if child.style.float != Float::None {
+                let child_direction = child
+                    .style
+                    .direction
+                    .writing_direction(child.style.writing_mode);
+                if depth > 0 && child_direction.is_horizontal() != parent_direction.is_horizontal()
+                {
+                    out.push(child_id);
+                }
+                continue;
+            }
+            if child.style.display == Display::Inline {
+                collect(doc, child_id, parent_direction, depth + 1, out);
+            }
+        }
+    }
+
+    let mut floats = Vec::new();
+    collect(doc, node_id, parent_direction, 0, &mut floats);
+    floats
+}
 
 /// Check if a node has any block-level children (CSS 2.2 §9.2.1.1).
 /// Floated children are treated as block-level for content classification.
 pub fn has_block_children(doc: &Document, node_id: NodeId) -> bool {
+    let parent_style = &doc.node(node_id).style;
+    let parent_direction = parent_style
+        .direction
+        .writing_direction(parent_style.writing_mode);
+    let parent_is_multicol =
+        parent_style.column_count.is_some() || parent_style.column_width.is_some();
+    let has_inline_sibling = crate::inline::algorithm::has_inline_children(doc, node_id);
     for child_id in doc.children(node_id) {
         let child = doc.node(child_id);
         if child.style.position.is_absolutely_positioned() || child.style.display == Display::None {
             continue;
         }
-        // Floated elements trigger block-level content classification
+        // Floated elements trigger block-level content classification.
         if child.style.float != Float::None {
+            // Floats belong to the owning inline formatting context. Preserve
+            // the established block reconstruction generally, while keeping
+            // floated flex boxes and RTL mixed inline/float runs together so
+            // source order, clear, and physical float sides share one IFC.
+            let child_uses_deterministic_text_profile = child.style.font_family.families.iter().any(
+                |family| {
+                    matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
+                },
+            );
+            if (child.style.display.is_flex() && child_uses_deterministic_text_profile)
+                || (parent_direction.is_rtl() && has_inline_sibling && !parent_is_multicol)
+            {
+                continue;
+            }
             return true;
         }
         if matches!(
@@ -3131,7 +3447,14 @@ fn layout_block_child(
     let child_constrained_inline =
         (child_available_inline - child_non_auto_margin_inline).clamp_negative_to_zero();
 
-    let child_is_new_fc = establishes_new_fc(child_style);
+    // Orthogonal flows establish an independent formatting context. Their
+    // logical block-start/end margins cannot collapse into the parent's
+    // differently oriented block axis.
+    let child_direction = child_style
+        .direction
+        .writing_direction(child_style.writing_mode);
+    let child_is_new_fc = establishes_new_fc(child_style)
+        || child_direction.is_horizontal() != space.writing_direction.is_horizontal();
     let mut child_space = crate::block_child_constraint_space(
         space,
         child_style,
@@ -4216,18 +4539,22 @@ fn resolve_block_size(
             )
         }
     } else {
+        let percentage_resolved_to_auto = style.height.length_type()
+            == openui_geometry::LengthType::Percent
+            && space.percentage_resolution_block_size.is_indefinite();
         let raw = resolve_length(
             &style.height,
             space.percentage_resolution_block_size,
-            intrinsic_block_size, // auto fallback
+            if style.box_sizing == BoxSizing::ContentBox {
+                (intrinsic_block_size - border_padding_block).clamp_negative_to_zero()
+            } else {
+                intrinsic_block_size
+            }, // unresolved percentage behaves as auto
             intrinsic_block_size, // none fallback
         );
         // CSS Sizing 4 §5.1: When height is a percentage that resolves to auto
         // (percentage against indefinite containing block), and the element has
         // aspect-ratio + definite width, compute height from width × ratio.
-        let percentage_resolved_to_auto = style.height.length_type()
-            == openui_geometry::LengthType::Percent
-            && space.percentage_resolution_block_size.is_indefinite();
         if percentage_resolved_to_auto {
             if let Some(ref ar) = style.aspect_ratio {
                 if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
@@ -5659,6 +5986,12 @@ fn apply_column_flex_fragmentation_breaks(
         return fragment.size.height;
     }
     let authored_block_size = fragment.size.height;
+    let flex_writing_direction = if fragment.node_id.is_none() {
+        WritingDirectionMode::default()
+    } else {
+        let style = &doc.node(fragment.node_id).style;
+        style.direction.writing_direction(style.writing_mode)
+    };
 
     // A break inside a flex item is owned by that item's block break-token
     // chain. Moving the flex item's top-level fragment as well would apply the
@@ -5698,7 +6031,12 @@ fn apply_column_flex_fragmentation_breaks(
             });
         let previous_bottom = line_flow_bottoms[line_index].1;
         let child_style = &doc.node(child.node_id).style;
-        let margin_top = resolve_margin_or_padding(&child_style.margin_top, fragment.size.width);
+        let margin_top = resolve_margins_in_parent_axes(
+            child_style,
+            fragment.size.width,
+            flex_writing_direction,
+        )
+        .top;
         if flex_is_single_line
             && propagated_break_before(doc, child.node_id).is_forced()
             && margin_top < LayoutUnit::zero()
@@ -5763,15 +6101,14 @@ fn apply_column_flex_fragmentation_breaks(
             .distribution
             != openui_style::ContentDistribution::Default;
     let line_has_main_axis_margin = fragment.children.iter().any(|child| {
-        !child.node_id.is_none()
-            && (resolve_margin_or_padding(
-                &doc.node(child.node_id).style.margin_top,
+        !child.node_id.is_none() && {
+            let margins = resolve_margins_in_parent_axes(
+                &doc.node(child.node_id).style,
                 fragment.size.width,
-            ) != LayoutUnit::zero()
-                || resolve_margin_or_padding(
-                    &doc.node(child.node_id).style.margin_bottom,
-                    fragment.size.width,
-                ) != LayoutUnit::zero())
+                flex_writing_direction,
+            );
+            margins.top != LayoutUnit::zero() || margins.bottom != LayoutUnit::zero()
+        }
     });
     for (_, indices) in line_indices {
         // A main-axis gap that reaches a fragmentainer edge is truncated at
@@ -5792,10 +6129,18 @@ fn apply_column_flex_fragmentation_breaks(
                 }
                 let previous_style = &doc.node(fragment.children[previous_index].node_id).style;
                 let current_style = &doc.node(fragment.children[current_index].node_id).style;
-                if resolve_margin_or_padding(&previous_style.margin_bottom, fragment.size.width)
-                    != LayoutUnit::zero()
-                    || resolve_margin_or_padding(&current_style.margin_top, fragment.size.width)
-                        != LayoutUnit::zero()
+                let previous_margins = resolve_margins_in_parent_axes(
+                    previous_style,
+                    fragment.size.width,
+                    flex_writing_direction,
+                );
+                let current_margins = resolve_margins_in_parent_axes(
+                    current_style,
+                    fragment.size.width,
+                    flex_writing_direction,
+                );
+                if previous_margins.bottom != LayoutUnit::zero()
+                    || current_margins.top != LayoutUnit::zero()
                 {
                     continue;
                 }
@@ -6087,7 +6432,9 @@ fn apply_column_flex_fragmentation_breaks(
         let forced_point_already_inserted_gap = forced_gaps
             .iter()
             .any(|(gap_line, point, _)| *gap_line == line_key && *point == original_top.raw());
-        let margin_top = resolve_margin_or_padding(&child_style.margin_top, flex_inline_size);
+        let child_margins =
+            resolve_margins_in_parent_axes(child_style, flex_inline_size, flex_writing_direction);
+        let margin_top = child_margins.top;
         if child_style.break_before.is_forced()
             && !forced_point_already_inserted_gap
             && remainder == 0
@@ -6121,7 +6468,7 @@ fn apply_column_flex_fragmentation_breaks(
         }
 
         child.offset.top = adjusted_top;
-        let margin_bottom = resolve_margin_or_padding(&child_style.margin_bottom, flex_inline_size);
+        let margin_bottom = child_margins.bottom;
         adjusted_in_flow_bottom =
             adjusted_in_flow_bottom.max_of(adjusted_top + child.size.height + margin_bottom);
     }
@@ -9618,7 +9965,10 @@ fn layout_inline_multicol(
         outer_space.writing_direction,
     );
     let mut full = crate::inline::algorithm::inline_layout(doc, node_id, &inline_space);
-    normalize_multicol_child_outer_box(&mut full, outer_space.writing_direction);
+    // Inline layout's anonymous line boxes are already in the multicol's
+    // logical inline/block axes. Completed atomic descendants have crossed
+    // their own formatting-context boundary, but normalizing the whole IFC as
+    // physical would transpose every vertical line and text run twice.
     if let Some(trailing_inline) = remove_trailing_empty_inline_continuation(&mut full) {
         mark_last_inline_continuation(&mut full, trailing_inline);
     }
@@ -13346,10 +13696,18 @@ fn layout_multicol(
                 // auto/stretched child's available inline size; dropping the
                 // corresponding start offset here shifts every continuation
                 // to the column edge (and loses fractional margin geometry).
-                let child_inline_margin = resolve_margins(child_style, column_width);
+                let child_inline_margin = resolve_margins_in_parent_axes(
+                    child_style,
+                    column_width,
+                    space.writing_direction,
+                );
+                let child_logical_box =
+                    crate::logical_geometry::ResolvedLogicalBox::from_style(child_style);
+                let inline_start_margin_is_auto = child_logical_box.margins.inline_start.is_auto();
+                let inline_end_margin_is_auto = child_logical_box.margins.inline_end.is_auto();
                 let remaining_inline_space = column_width - child_frag.size.width;
                 let (resolved_margin_left, resolved_margin_right) =
-                    if child_style.margin_left.is_auto() && child_style.margin_right.is_auto() {
+                    if inline_start_margin_is_auto && inline_end_margin_is_auto {
                         if remaining_inline_space > LayoutUnit::zero() {
                             let half = remaining_inline_space / 2;
                             (half, remaining_inline_space - half)
@@ -13358,12 +13716,12 @@ fn layout_multicol(
                         } else {
                             (LayoutUnit::zero(), remaining_inline_space)
                         }
-                    } else if child_style.margin_left.is_auto() {
+                    } else if inline_start_margin_is_auto {
                         (
                             remaining_inline_space - child_inline_margin.right,
                             child_inline_margin.right,
                         )
-                    } else if child_style.margin_right.is_auto() {
+                    } else if inline_end_margin_is_auto {
                         (
                             child_inline_margin.left,
                             remaining_inline_space - child_inline_margin.left,
@@ -13381,7 +13739,7 @@ fn layout_multicol(
                     };
                 let mut child_inline_offset = match child_style.float {
                     Float::Right => {
-                        let margin_right = if child_style.margin_right.is_auto() {
+                        let margin_right = if inline_end_margin_is_auto {
                             LayoutUnit::zero()
                         } else {
                             child_inline_margin.right
@@ -13389,7 +13747,7 @@ fn layout_multicol(
                         column_width - child_frag.size.width - margin_right
                     }
                     Float::Left => {
-                        if child_style.margin_left.is_auto() {
+                        if inline_start_margin_is_auto {
                             LayoutUnit::zero()
                         } else {
                             child_inline_margin.left
@@ -14728,6 +15086,23 @@ fn layout_multicol(
                     && needed > col_remaining
                     && column_height > LayoutUnit::zero()
                 {
+                    let mut inline_fragment_pos_margin = pos_margin;
+                    if inline_fragment_pos_margin > LayoutUnit::zero()
+                        && col_block_offset + inline_fragment_pos_margin >= column_height
+                        && child_height > LayoutUnit::zero()
+                    {
+                        // A collapsed margin that consumes the fragmentainer's
+                        // exact remainder ends at this unforced break. The IFC's
+                        // first line/decorative source unit starts at the next
+                        // fragmentainer edge; passing a zero-sized remainder to
+                        // the inline break-token path would instead place the
+                        // complete box as negative overflow in the old column.
+                        max_col_content = max_col_content.max_of(column_height);
+                        col_idx += 1;
+                        col_block_offset = LayoutUnit::zero();
+                        col_remaining = column_height;
+                        inline_fragment_pos_margin = LayoutUnit::zero();
+                    }
                     let mut full_inline_fragment = child_frag.clone();
                     let inline_content_bottom = full_inline_fragment
                         .children
@@ -14767,7 +15142,7 @@ fn layout_multicol(
                     };
                     loop {
                         let available = if first_fragment {
-                            (col_remaining - pos_margin).clamp_negative_to_zero()
+                            (col_remaining - inline_fragment_pos_margin).clamp_negative_to_zero()
                         } else {
                             column_height
                         };
@@ -14804,7 +15179,7 @@ fn layout_multicol(
                             part.size.height = available;
                         }
                         let part_block_offset = if first_fragment {
-                            col_block_offset + pos_margin
+                            col_block_offset + inline_fragment_pos_margin
                         } else {
                             LayoutUnit::zero()
                         };
@@ -21093,6 +21468,60 @@ mod tests {
             "50% height in auto-height parent should be 0 (indefinite), got {}",
             child_frag.size.height.to_i32(),
         );
+    }
+
+    #[test]
+    fn unresolved_percentage_height_does_not_double_count_border() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+
+        let parent = doc.create_node(ElementTag::Div);
+        doc.append_child(vp, parent);
+
+        let child = doc.create_node(ElementTag::Div);
+        doc.node_mut(child).style.height = Length::percent(100.0);
+        doc.node_mut(child).style.border_top_width = 1;
+        doc.node_mut(child).style.border_bottom_width = 1;
+        doc.append_child(parent, child);
+
+        let content = doc.create_node(ElementTag::Div);
+        doc.node_mut(content).style.height = Length::px(16.0);
+        doc.append_child(child, content);
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
+        let fragment = block_layout(&doc, vp, &space);
+        let child_fragment = &fragment.children[0].children[0];
+
+        assert_eq!(child_fragment.size.height.to_i32(), 18);
+    }
+
+    #[test]
+    fn vertical_rl_document_body_grows_from_initial_scroll_origin() {
+        let mut doc = Document::new();
+        let viewport = doc.root();
+        let html = doc.create_node(ElementTag::Html);
+        doc.node_mut(html).style.display = Display::Block;
+        doc.node_mut(html).style.writing_mode = WritingMode::VerticalRl;
+        doc.node_mut(html).style.width = Length::px(320.0);
+        doc.append_child(viewport, html);
+
+        let body = doc.create_node(ElementTag::Body);
+        doc.node_mut(body).style.display = Display::Block;
+        doc.node_mut(body).style.writing_mode = WritingMode::VerticalRl;
+        doc.node_mut(body).style.width = Length::px(1680.0);
+        doc.append_child(html, body);
+
+        let fragment = block_layout(
+            &doc,
+            viewport,
+            &ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600)),
+        );
+        let html_fragment = &fragment.children[0];
+        let body_fragment = &html_fragment.children[0];
+
+        assert_eq!(html_fragment.size.width.to_i32(), 320);
+        assert_eq!(body_fragment.size.width.to_i32(), 1680);
+        assert_eq!(body_fragment.offset.left.to_i32(), -1680);
     }
 
     // ── SP11 Round 15 Issue 5: percentage padding resolves against containing block ──

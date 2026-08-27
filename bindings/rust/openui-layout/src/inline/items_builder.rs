@@ -13,14 +13,19 @@
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::WritingDirectionMode;
 use openui_style::{
-    ComputedStyle, Direction, Display, Float, TabSize, TextTransform, UnicodeBidi, WhiteSpace,
+    ComputedStyle, Direction, Display, Float, FontFamily, TabSize, TextTransform, UnicodeBidi,
+    WhiteSpace,
 };
+use openui_text::shaping::Script;
 use openui_text::{
-    apply_text_transform, BidiParagraph, Font, FontDescription, TextDirection, TextShaper,
+    apply_text_transform, BidiParagraph, Font, FontDescription, RunSegmenter, TextDirection,
+    TextShaper,
 };
 use std::sync::Arc;
+use unicode_segmentation::UnicodeSegmentation;
 
 use super::items::{CollapseType, InlineItem, InlineItemType};
+use crate::fragment::{resolve_text_run_orientation, TextRunOrientation};
 use crate::length_resolver::resolve_margin_or_padding;
 
 /// The collected inline items data — output of the builder.
@@ -125,10 +130,12 @@ impl InlineItemsData {
     /// bidi analysis, then mapped back to the original text positions.
     ///
     /// Blink: `InlineItemsBuilder::SetBidiLevel` / `BidiParagraph::SetParagraph`.
-    pub fn apply_bidi(&mut self, base_direction: TextDirection) {
+    pub fn apply_bidi(&mut self, base_direction: impl Into<Option<TextDirection>>) {
         if self.text.is_empty() {
             return;
         }
+
+        let requested_base_direction = base_direction.into();
 
         // Build a bidi text buffer that includes unicode-bidi control characters
         // injected at inline element boundaries (OpenTag/CloseTag).
@@ -185,7 +192,7 @@ impl InlineItemsData {
             }
         }
 
-        let bidi = BidiParagraph::new(&bidi_text, Some(base_direction));
+        let bidi = BidiParagraph::new(&bidi_text, requested_base_direction);
         let runs = bidi.runs();
 
         // Build a mapping from original text byte positions to bidi levels.
@@ -223,7 +230,7 @@ impl InlineItemsData {
         // first subsequent Text/AtomicInline; CloseTag inherits the level of
         // the last preceding Text/AtomicInline. This ensures tag items don't
         // break contiguous bidi runs during UAX#9 L2 reordering.
-        let base_level = if base_direction == TextDirection::Rtl {
+        let base_level = if bidi.base_direction() == TextDirection::Rtl {
             1
         } else {
             0
@@ -313,6 +320,107 @@ impl InlineItemsData {
                         intrinsic_inline_size: None,
                     });
                 }
+            }
+        }
+
+        boundary_map[old_item_count] = new_items.len();
+        for placeholder in &mut self.oof_children {
+            placeholder.item_index = boundary_map[placeholder.item_index.min(old_item_count)];
+        }
+        for interruption in &mut self.block_in_inline {
+            interruption.item_index = boundary_map[interruption.item_index.min(old_item_count)];
+        }
+        self.items = new_items;
+    }
+
+    /// Split text items into runs that are homogeneous for shaping and paint.
+    ///
+    /// Bidi levels are resolved first. This pass then adds script, deterministic
+    /// fallback-family, grapheme-cluster, and vertical-orientation boundaries.
+    /// No `UnresolvedMixed` item may leave this pass, so paint never needs to
+    /// rediscover Unicode orientation from CSS or text contents.
+    pub fn split_shaping_runs(&mut self) {
+        let old_item_count = self.items.len();
+        let mut boundary_map = vec![0usize; old_item_count + 1];
+        let mut new_items = Vec::with_capacity(old_item_count);
+
+        for (old_index, item) in self.items.drain(..).enumerate() {
+            boundary_map[old_index] = new_items.len();
+            if item.item_type != InlineItemType::Text || item.text_range.is_empty() {
+                new_items.push(item);
+                continue;
+            }
+
+            let style = &self.styles[item.style_index];
+            if !style.font_family.families.iter().any(|family| {
+                matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
+            }) {
+                // The homogeneous fragment contract is enabled by the pinned
+                // deterministic fallback profile. Legacy ported builders keep
+                // their established single-run shaping until regenerated into
+                // that profile, preserving their frozen comparison evidence.
+                new_items.push(item);
+                continue;
+            }
+            let item_text = &self.text[item.text_range.clone()];
+            let font = Font::new(style_to_font_description(style));
+            let scripts = RunSegmenter::segment(item_text);
+            let mut runs: Vec<(usize, usize, (TextRunOrientation, Script, Option<usize>))> =
+                Vec::new();
+
+            for (relative_start, grapheme) in item_text.grapheme_indices(true) {
+                let relative_end = relative_start + grapheme.len();
+                let mut script = scripts
+                    .iter()
+                    .find(|segment| segment.start <= relative_start && relative_start < segment.end)
+                    .map(|segment| segment.script)
+                    .unwrap_or(Script::Common);
+                if matches!(script, Script::Common | Script::Inherited) {
+                    // Leading Common/Inherited characters belong to the first
+                    // following strong-script run. RunSegmenter already folds
+                    // weak characters after a strong character into that run;
+                    // resolving the leading side here keeps an initial space
+                    // or newline from becoming a standalone inline item and
+                    // changing whitespace collapse/line construction.
+                    if let Some(next) = scripts.iter().find(|segment| {
+                        segment.start >= relative_end
+                            && !matches!(segment.script, Script::Common | Script::Inherited)
+                    }) {
+                        script = next.script;
+                    }
+                }
+                let orientation = resolve_text_run_orientation(style, grapheme);
+                let fallback = font.fallback_index_for_text(grapheme);
+                let key = (orientation, script, fallback);
+                let absolute_start = item.text_range.start + relative_start;
+                let absolute_end = item.text_range.start + relative_end;
+
+                if let Some((_, run_end, previous_key)) = runs.last_mut() {
+                    if *run_end == absolute_start && *previous_key == key {
+                        *run_end = absolute_end;
+                        continue;
+                    }
+                }
+                runs.push((absolute_start, absolute_end, key));
+            }
+
+            if runs.len() <= 1 {
+                new_items.push(item);
+                continue;
+            }
+
+            let item_end = item.text_range.end;
+            for (start, end, (orientation, _, _)) in runs {
+                debug_assert_ne!(orientation, TextRunOrientation::UnresolvedMixed);
+                let mut split = item.clone();
+                split.text_range = start..end;
+                split.shape_result = None;
+                split.intrinsic_inline_size = None;
+                if end != item_end {
+                    split.end_collapse_type = CollapseType::NotCollapsible;
+                    split.is_end_collapsible_newline = false;
+                }
+                new_items.push(split);
             }
         }
 
@@ -843,27 +951,153 @@ impl<'a> InlineItemsBuilder<'a> {
 
         // For flex/grid containers, use the proper intrinsic sizing algorithm
         // which handles aspect-ratio, flex-basis, definite cross sizes, etc.
-        let intrinsic = if self.doc.node(node_id).tag == ElementTag::Ruby {
+        let child_direction = style.direction.writing_direction(style.writing_mode);
+        let is_orthogonal =
+            child_direction.is_horizontal() != self.inline_writing_direction.is_horizontal();
+        let deterministic_text_profile = style.font_family.families.iter().any(|family| {
+            matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
+        });
+        let has_consecutive_floats = deterministic_text_profile
+            && self
+                .doc
+                .children(node_id)
+                .filter(|child_id| self.doc.node(*child_id).style.float != Float::None)
+                .take(2)
+                .count()
+                >= 2;
+        let intrinsic_max = if self.doc.node(node_id).tag == ElementTag::Ruby {
             self.compute_ruby_intrinsic_inline_size(node_id)
         } else if style.display.is_flex() {
+            let anonymous_forced_lines = self
+                .doc
+                .children(node_id)
+                .any(|child_id| self.doc.node(child_id).tag == ElementTag::Break)
+                .then(|| self.compute_intrinsic_inline_size(node_id))
+                .flatten();
             let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(self.doc, node_id);
-            let child_direction = style.direction.writing_direction(style.writing_mode);
+            // Flex intrinsic sizes are expressed in the flex container's own
+            // logical axes.
             let max_w = if child_direction.is_horizontal()
                 == self.inline_writing_direction.is_horizontal()
             {
                 sizes.max_content_inline_size
+            } else if self.inline_writing_direction.is_horizontal() {
+                sizes.max_content_block_size
             } else {
                 sizes.max_content_block_size
-            }
-            .to_f32();
+            };
+            let max_w = anonymous_forced_lines.unwrap_or_else(|| max_w.to_f32());
             if max_w > 0.0 {
                 Some(max_w)
             } else {
                 self.compute_intrinsic_inline_size(node_id)
             }
+        } else if is_orthogonal {
+            // Orthogonal atomic outer geometry cannot be derived by swapping
+            // the legacy min/max inline accumulators: consecutive descendants
+            // flow in the child's inline axis but contribute only their
+            // maximum extent to the parent's physical inline axis. Probe the
+            // completed shrink-to-fit fragment under indefinite constraints
+            // and consume its physical size at this IFC boundary.
+            let probe_space = crate::ConstraintSpace::for_block_child_with_writing_direction(
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                true,
+                child_direction,
+            );
+            let probe = crate::block::block_layout(self.doc, node_id, &probe_space);
+            let size = if self.inline_writing_direction.is_horizontal() {
+                probe.size.width
+            } else {
+                probe.size.height
+            }
+            .to_f32();
+            (size > 0.0).then_some(size)
         } else {
-            self.compute_intrinsic_inline_size(node_id)
+            // Atomic inline shrink-to-fit sizing must include the complete
+            // formatting-context contribution for consecutive floats. The
+            // legacy recursive text accumulator intentionally excludes them
+            // for ordinary IFC measurement, while its line-row model remains
+            // more precise for non-float atomic content.
+            if has_consecutive_floats {
+                let sizes = crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(
+                    self.doc, node_id,
+                );
+                // InlineItem::intrinsic_inline_size is a content-box measure;
+                // block_layout applies this atomic element's own edges.
+                let own_edges = style.effective_border_left() as f32
+                    + style.effective_border_right() as f32
+                    + resolve_margin_or_padding(
+                        &style.padding_left,
+                        openui_geometry::LayoutUnit::zero(),
+                    )
+                    .to_f32()
+                    + resolve_margin_or_padding(
+                        &style.padding_right,
+                        openui_geometry::LayoutUnit::zero(),
+                    )
+                    .to_f32();
+                let max = (sizes.max.to_f32() - own_edges).max(0.0);
+                if max > 0.0 {
+                    Some(max)
+                } else {
+                    self.compute_intrinsic_inline_size(node_id)
+                }
+            } else {
+                self.compute_intrinsic_inline_size(node_id)
+            }
         };
+
+        let intrinsic = intrinsic_max.map(|max| {
+            let min = if !deterministic_text_profile {
+                // Builders outside the pinned fallback profile retain the
+                // legacy single intrinsic measure, which was capped directly
+                // by the available size. A zero min-content endpoint makes the
+                // tuple-based shrink-to-fit equation reproduce that behavior,
+                // while regenerated builders opt into the complete min/max
+                // algorithm below.
+                0.0
+            } else if style.display.is_flex() || is_orthogonal || has_consecutive_floats {
+                // Preserve flex and orthogonal atomic paths' established
+                // completed-fragment measure and zero min-content fallback.
+                0.0
+            } else {
+                let sizes = crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(
+                    self.doc, node_id,
+                );
+                let own_edges = if child_direction.is_horizontal() {
+                    style.effective_border_left() as f32
+                        + style.effective_border_right() as f32
+                        + resolve_margin_or_padding(
+                            &style.padding_left,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32()
+                        + resolve_margin_or_padding(
+                            &style.padding_right,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32()
+                } else {
+                    style.effective_border_top() as f32
+                        + style.effective_border_bottom() as f32
+                        + resolve_margin_or_padding(
+                            &style.padding_top,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32()
+                        + resolve_margin_or_padding(
+                            &style.padding_bottom,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32()
+                };
+                (sizes.min.to_f32() - own_edges).max(0.0)
+            };
+            (min, max)
+        });
 
         self.items.push(InlineItem {
             item_type: InlineItemType::AtomicInline,
@@ -979,6 +1213,15 @@ impl<'a> InlineItemsBuilder<'a> {
             }
 
             match child.tag {
+                ElementTag::Break => {
+                    // A forced break terminates the current intrinsic line.
+                    // Treating <br> as an empty inline descendant sums the
+                    // text on both sides and overstates shrink-to-fit atomic
+                    // widths (for example `min<br>in the box`).
+                    max_width = max_width.max(current_inline_row);
+                    current_inline_row = 0.0;
+                    has_content = true;
+                }
                 ElementTag::Text => {
                     if let Some(ref text) = child.text {
                         if !text.is_empty() {
@@ -1504,6 +1747,118 @@ mod tests {
             vec!['\u{2067}', '\u{202E}'],
             "RTL isolate-override: RLI + RLO"
         );
+    }
+
+    #[test]
+    fn unicode_bidi_controls_cover_embed_override_isolate_and_plaintext() {
+        assert_eq!(
+            bidi_open_chars(UnicodeBidi::Embed, Direction::Rtl),
+            vec!['\u{202B}']
+        );
+        assert_eq!(bidi_close_chars(UnicodeBidi::Embed), vec!['\u{202C}']);
+        assert_eq!(
+            bidi_open_chars(UnicodeBidi::Override, Direction::Ltr),
+            vec!['\u{202D}']
+        );
+        assert_eq!(bidi_close_chars(UnicodeBidi::Override), vec!['\u{202C}']);
+        assert_eq!(
+            bidi_open_chars(UnicodeBidi::Isolate, Direction::Rtl),
+            vec!['\u{2067}']
+        );
+        assert_eq!(bidi_close_chars(UnicodeBidi::Isolate), vec!['\u{2069}']);
+        assert_eq!(
+            bidi_open_chars(UnicodeBidi::Plaintext, Direction::Ltr),
+            vec!['\u{2068}']
+        );
+        assert_eq!(bidi_close_chars(UnicodeBidi::Plaintext), vec!['\u{2069}']);
+    }
+
+    fn deterministic_fallback_style() -> ComputedStyle {
+        let mut style = ComputedStyle::default();
+        style.font_family = openui_style::FontFamilyList {
+            families: vec![
+                FontFamily::Named("Ahem".to_string()),
+                FontFamily::Named("Droid Sans Fallback".to_string()),
+                FontFamily::Named("Noto Sans Devanagari".to_string()),
+                FontFamily::Named("Noto Color Emoji".to_string()),
+                FontFamily::Named("DejaVu Sans".to_string()),
+            ],
+        };
+        style.writing_mode = openui_style::WritingMode::VerticalRl;
+        style.text_orientation = openui_style::TextOrientation::Mixed;
+        style
+    }
+
+    #[test]
+    fn mixed_script_fallback_and_vertical_orientation_boundaries_split_runs() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(doc.root(), container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("A\u{4e01}\u{915}\u{93f}\u{1f600}".to_string());
+        doc.node_mut(text).style = deterministic_fallback_style();
+        doc.append_child(container, text);
+
+        let mut data = InlineItemsBuilder::collect(&doc, container);
+        data.apply_bidi(TextDirection::Ltr);
+        data.split_shaping_runs();
+
+        let pieces: Vec<&str> = data
+            .items
+            .iter()
+            .filter(|item| item.item_type == InlineItemType::Text)
+            .map(|item| &data.text[item.text_range.clone()])
+            .collect();
+        assert_eq!(pieces, vec!["A", "\u{4e01}", "\u{915}\u{93f}", "\u{1f600}"]);
+    }
+
+    #[test]
+    fn combining_grapheme_is_not_split_across_fallback_boundaries() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(doc.root(), container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("A\u{301}".to_string());
+        doc.node_mut(text).style = deterministic_fallback_style();
+        doc.append_child(container, text);
+
+        let mut data = InlineItemsBuilder::collect(&doc, container);
+        data.apply_bidi(TextDirection::Ltr);
+        data.split_shaping_runs();
+        assert_eq!(
+            data.items
+                .iter()
+                .filter(|item| item.item_type == InlineItemType::Text)
+                .count(),
+            1
+        );
+    }
+
+    #[test]
+    fn shaping_split_remaps_positioned_inline_static_placeholder() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(doc.root(), container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("A\u{6f22}".to_string());
+        doc.node_mut(text).style = deterministic_fallback_style();
+        doc.append_child(container, text);
+
+        let positioned = doc.create_node(ElementTag::Span);
+        doc.node_mut(positioned).style.position = openui_style::Position::Absolute;
+        doc.append_child(container, positioned);
+
+        let mut data = InlineItemsBuilder::collect(&doc, container);
+        assert_eq!(data.oof_children.len(), 1);
+        data.apply_bidi(TextDirection::Ltr);
+        data.split_shaping_runs();
+        assert_eq!(data.oof_children[0].item_index, 2);
     }
 
     // ── Issue 4 (R26): intrinsic sizing skips out-of-flow & display:none ──

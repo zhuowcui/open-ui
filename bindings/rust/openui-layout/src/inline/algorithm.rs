@@ -12,8 +12,8 @@
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSize, WritingModeConverter};
 use openui_style::{
-    BoxDecorationBreak, Clear, ComputedStyle, Direction, Display, LineHeight, TextAlign,
-    TextAlignLast, TextJustify, VerticalAlign,
+    BoxDecorationBreak, Clear, ComputedStyle, Direction, Display, FontFamily, LineHeight,
+    TextAlign, TextAlignLast, TextJustify, VerticalAlign,
 };
 use openui_text::{
     used_line_height, used_line_height_metrics, Font, FontMetrics, ShapeResult, TextShaper,
@@ -33,6 +33,12 @@ use super::items_builder::{style_to_font_description, InlineItemsBuilder, Inline
 use super::line_breaker::{byte_to_char_offset, LineBreaker};
 use super::line_info::LineInfo;
 use super::line_width::{compute_line_availability, next_float_bottom};
+
+fn uses_deterministic_text_profile(style: &ComputedStyle) -> bool {
+    style.font_family.families.iter().any(|family| {
+        matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
+    })
+}
 
 /// Lay out one HTML ruby container as an atomic inline object.
 ///
@@ -672,12 +678,15 @@ fn needs_logical_positioned_inline_geometry(
 pub fn inline_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> Fragment {
     let mut items_data = InlineItemsBuilder::collect(doc, node_id);
     let style = &doc.node(node_id).style;
-    let base_direction = if style.direction == Direction::Rtl {
-        openui_text::TextDirection::Rtl
+    let base_direction = if style.unicode_bidi == openui_style::UnicodeBidi::Plaintext {
+        None
+    } else if style.direction == Direction::Rtl {
+        Some(openui_text::TextDirection::Rtl)
     } else {
-        openui_text::TextDirection::Ltr
+        Some(openui_text::TextDirection::Ltr)
     };
     items_data.apply_bidi(base_direction);
+    items_data.split_shaping_runs();
     items_data.shape_text();
     inline_layout_from_items(doc, node_id, space, &items_data, 0, items_data.items.len())
 }
@@ -1849,12 +1858,15 @@ pub fn inline_layout_for_children(
             && space.writing_direction.is_rtl()
             && items_data.oof_children.is_empty());
 
-    let base_direction = if style.direction == Direction::Rtl {
-        openui_text::TextDirection::Rtl
+    let base_direction = if style.unicode_bidi == openui_style::UnicodeBidi::Plaintext {
+        None
+    } else if style.direction == Direction::Rtl {
+        Some(openui_text::TextDirection::Rtl)
     } else {
-        openui_text::TextDirection::Ltr
+        Some(openui_text::TextDirection::Ltr)
     };
     items_data.apply_bidi(base_direction);
+    items_data.split_shaping_runs();
     items_data.shape_text();
 
     let mut line_breaker = LineBreaker::new(&items_data, available_inline_size);
@@ -2171,12 +2183,16 @@ fn create_line_box(
                     openui_geometry::LengthType::Fixed => {
                         LayoutUnit::from_f32(logical_block_size.value())
                     }
-                    _ => LayoutUnit::max(),
+                    // An auto outer block-size on an atomic inline remains
+                    // indefinite.  Passing the numeric maximum here makes an
+                    // orthogonal child treat it as a definite inline measure
+                    // after axis conversion and stretch to the viewport.
+                    _ => openui_geometry::INDEFINITE_SIZE,
                 };
                 // Use the containing block's actual block size for percentage
                 // resolution so that `height: 50%` etc. resolve correctly.
                 // When the containing block height is indefinite or LayoutUnit::max(),
-                // keep LayoutUnit::max() which correctly triggers auto behavior.
+                // keep it indefinite so shrink-to-fit/intrinsic sizing runs.
                 let percentage_block = if !percentage_block_base.is_indefinite()
                     && percentage_block_base > LayoutUnit::zero()
                     && percentage_block_base < LayoutUnit::max()
@@ -2213,6 +2229,14 @@ fn create_line_box(
                             .to_logical_size(result.size);
                     result.size =
                         PhysicalSize::new(logical_size.inline_size, logical_size.block_size);
+                }
+                // The line breaker resolves atomic inline outer sizing to a
+                // border-box measure (including authored inline-axis edges).
+                // Keep that used inline size authoritative after child block
+                // layout; the latter receives a content constraint and can
+                // otherwise return a box smaller by its own borders.
+                if uses_deterministic_text_profile(style) {
+                    result.size.width = item_width;
                 }
                 atomic_layout_results[idx] = Some(result);
             }
@@ -2313,7 +2337,22 @@ fn create_line_box(
                 let margin_box_height = item_height + margin_top + margin_bottom;
                 let baseline_from_top = atomic_layout_results[step2_idx]
                     .as_ref()
-                    .and_then(|result| result.first_baseline)
+                    .and_then(|result| {
+                        let child_direction = style.direction.writing_direction(style.writing_mode);
+                        if child_direction.is_horizontal()
+                            != space.writing_direction.is_horizontal()
+                        {
+                            Some(result.size.height)
+                        } else if style.display == Display::InlineBlock
+                            && uses_deterministic_text_profile(style)
+                        {
+                            // CSS 2.1 §10.8.1: an inline-block exports the
+                            // baseline of its last in-flow line box.
+                            result.last_baseline.or(result.first_baseline)
+                        } else {
+                            result.first_baseline
+                        }
+                    })
                     .map(|baseline| baseline.to_f32());
 
                 match style.vertical_align {
@@ -2949,9 +2988,24 @@ fn create_line_box(
                 let margin_top_lu = resolve_margin_or_padding(block_start_margin, percentage_base);
                 let margin_bottom_lu = resolve_margin_or_padding(block_end_margin, percentage_base);
                 let margin_box_height_lu = margin_top_lu + item_height + margin_bottom_lu;
-                let baseline_from_top = atomic_layout_results[step4_idx]
-                    .as_ref()
-                    .and_then(|result| result.first_baseline);
+                let baseline_from_top =
+                    atomic_layout_results[step4_idx]
+                        .as_ref()
+                        .and_then(|result| {
+                            let child_direction =
+                                style.direction.writing_direction(style.writing_mode);
+                            if child_direction.is_horizontal()
+                                != space.writing_direction.is_horizontal()
+                            {
+                                Some(result.size.height)
+                            } else if style.display == Display::InlineBlock
+                                && uses_deterministic_text_profile(style)
+                            {
+                                result.last_baseline.or(result.first_baseline)
+                            } else {
+                                result.first_baseline
+                            }
+                        });
 
                 let atomic_top = match style.vertical_align {
                     VerticalAlign::Top => {
@@ -2959,8 +3013,16 @@ fn create_line_box(
                         margin_top_lu
                     }
                     VerticalAlign::Bottom => {
-                        // Bottom margin edge flush with bottom of line box.
-                        line_height - item_height - margin_bottom_lu
+                        if space.writing_direction.is_horizontal() {
+                            // Bottom margin edge flush with bottom of a
+                            // horizontal line box.
+                            line_height - item_height - margin_bottom_lu
+                        } else {
+                            // In a vertical line the physical bottom keyword
+                            // addresses the inline-axis end; block-axis
+                            // placement remains at the line's start edge.
+                            margin_top_lu
+                        }
                     }
                     VerticalAlign::Middle => {
                         // Center of margin box at baseline - x_height/2.

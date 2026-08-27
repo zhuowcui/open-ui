@@ -400,15 +400,22 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
 
                 if is_column {
                     let child_style = &doc.node(flex_items[idx].node_id).style;
-                    // Only use the height property when flex-basis is auto.
+                    // Only use the physical main-size property when
+                    // flex-basis is auto. A column follows the container's
+                    // logical block axis, which is physical width in a
+                    // vertical writing mode and physical height otherwise.
                     // An explicit flex-basis (e.g. 0%) means the item's main
                     // size was intentionally set and should not be overridden.
                     if child_style.flex_basis.is_auto() {
-                        let height = &child_style.height;
-                        if !height.is_auto() && !height.is_content_or_intrinsic() {
-                            if height.is_fixed() || !child_percentage_block.is_indefinite() {
+                        let main_length = if is_horizontal_flow {
+                            &child_style.width
+                        } else {
+                            &child_style.height
+                        };
+                        if !main_length.is_auto() && !main_length.is_content_or_intrinsic() {
+                            if main_length.is_fixed() || !child_percentage_block.is_indefinite() {
                                 let resolved = resolve_length(
-                                    height,
+                                    main_length,
                                     child_percentage_block,
                                     LayoutUnit::zero(),
                                     LayoutUnit::zero(),
@@ -1374,7 +1381,33 @@ fn construct_flex_items(
 /// produce an empty zero-height box with no paintable text fragment.
 fn layout_flex_item(doc: &Document, child_id: NodeId, space: &ConstraintSpace) -> Fragment {
     if doc.node(child_id).tag == ElementTag::Text {
-        crate::inline::algorithm::inline_layout_for_children(doc, child_id, &[child_id], space)
+        let anonymous_run = anonymous_flex_text_run(doc, child_id);
+        let mut fragment = crate::inline::algorithm::inline_layout_for_children(
+            doc,
+            child_id,
+            &anonymous_run,
+            space,
+        );
+        // The inline algorithm's public working pair is logical
+        // (inline, block). A direct text child has no block wrapper to perform
+        // the normal projection, so the flex-item boundary must do it once.
+        if !space.writing_direction.is_horizontal() {
+            let logical_size = LogicalSize::new(fragment.size.width, fragment.size.height);
+            let physical_size = WritingModeConverter::new(
+                space.writing_direction,
+                PhysicalSize::new(LayoutUnit::zero(), LayoutUnit::zero()),
+            )
+            .to_physical_size(logical_size);
+            for child in &mut fragment.children {
+                crate::block::project_logical_child_to_physical(
+                    child,
+                    space.writing_direction,
+                    physical_size,
+                );
+            }
+            fragment.size = physical_size;
+        }
+        fragment
     } else {
         crate::block::block_layout(doc, child_id, space)
     }
@@ -1387,11 +1420,22 @@ fn flex_box_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
 }
 
 fn append_flex_box_children(doc: &Document, parent_id: NodeId, children: &mut Vec<NodeId>) {
+    let mut in_anonymous_text_run = false;
     for child_id in doc.children(parent_id) {
         let child_style = &doc.node(child_id).style;
         if child_style.display == openui_style::Display::None {
             continue;
         }
+        if matches!(doc.node(child_id).tag, ElementTag::Text | ElementTag::Break) {
+            // A contiguous text/<br> sequence generates one anonymous flex
+            // item whose contents establish an inline formatting context.
+            if !in_anonymous_text_run && doc.node(child_id).tag == ElementTag::Text {
+                children.push(child_id);
+            }
+            in_anonymous_text_run = true;
+            continue;
+        }
+        in_anonymous_text_run = false;
         if child_style.display == openui_style::Display::Contents
             && !child_style.position.is_absolutely_positioned()
         {
@@ -1403,6 +1447,55 @@ fn append_flex_box_children(doc: &Document, parent_id: NodeId, children: &mut Ve
         }
         children.push(child_id);
     }
+}
+
+fn anonymous_flex_text_run(doc: &Document, representative: NodeId) -> Vec<NodeId> {
+    let parent = doc.node(representative).parent;
+    if parent.is_none() {
+        return vec![representative];
+    }
+    let mut result = Vec::new();
+    let mut collecting = false;
+    for child_id in doc.children(parent) {
+        if child_id == representative {
+            collecting = true;
+        }
+        if !collecting {
+            continue;
+        }
+        if matches!(doc.node(child_id).tag, ElementTag::Text | ElementTag::Break) {
+            result.push(child_id);
+        } else {
+            break;
+        }
+    }
+    if result.is_empty() {
+        result.push(representative);
+    }
+    result
+}
+
+fn anonymous_flex_text_run_max_inline_size(
+    doc: &Document,
+    representative: NodeId,
+) -> Option<LayoutUnit> {
+    let run = anonymous_flex_text_run(doc, representative);
+    if run.len() <= 1 {
+        return None;
+    }
+    let mut current = LayoutUnit::zero();
+    let mut maximum = LayoutUnit::zero();
+    for child_id in run {
+        let child = doc.node(child_id);
+        if child.tag == ElementTag::Break {
+            maximum = maximum.max_of(current);
+            current = LayoutUnit::zero();
+        } else {
+            current = current
+                + crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id).max;
+        }
+    }
+    Some(maximum.max_of(current))
 }
 
 fn flex_abspos_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
@@ -1649,6 +1742,11 @@ fn resolve_content_based_size(
     resolved_alignment: ItemPosition,
 ) -> LayoutUnit {
     let axis_mapping = FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal);
+    if is_main_axis_horizontal && doc.node(child_id).tag == ElementTag::Text {
+        if let Some(max_inline) = anonymous_flex_text_run_max_inline_size(doc, child_id) {
+            return (max_inline - main_axis_border_padding).clamp_negative_to_zero();
+        }
+    }
     // Check if aspect-ratio can resolve the main-axis size from a known cross-axis size
     if let Some(ref ar) = child_style.aspect_ratio {
         let ratio = ar.ratio;
@@ -1890,7 +1988,7 @@ fn resolve_content_based_size(
         physical_margin.left + physical_margin.right
     };
     let child_space = if is_column {
-        let cross_inline = if would_stretch_cross {
+        let mut cross_inline = if would_stretch_cross {
             if child_percentage_inline.is_indefinite() {
                 child_percentage_inline
             } else {
@@ -1919,6 +2017,46 @@ fn resolve_content_based_size(
         } else {
             LayoutUnit::from_raw(-64)
         };
+        // The cross constraint used while measuring an automatic column main
+        // size already includes the item's min/max width. Otherwise content is
+        // laid out at the unclamped container width and can wrap into a flex
+        // base that remains too tall after the final cross size is clamped.
+        if !cross_inline.is_indefinite() {
+            let border = resolve_border(child_style);
+            let padding = resolve_padding(child_style, child_percentage_inline);
+            let cross_bp = border.left + border.right + padding.left + padding.right;
+            let min_raw = resolve_cross_min_max(
+                doc,
+                child_id,
+                &child_style.min_width,
+                true,
+                child_percentage_inline,
+                true,
+            );
+            let max_raw = resolve_cross_min_max(
+                doc,
+                child_id,
+                &child_style.max_width,
+                true,
+                child_percentage_inline,
+                false,
+            );
+            let min_border_box = if child_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                min_raw
+            } else if min_raw > LayoutUnit::zero() {
+                min_raw + cross_bp
+            } else {
+                min_raw
+            };
+            let max_border_box = if max_raw == LayoutUnit::from_i32(33554431)
+                || child_style.box_sizing == openui_style::BoxSizing::BorderBox
+            {
+                max_raw
+            } else {
+                max_raw + cross_bp
+            };
+            cross_inline = cross_inline.clamp(min_border_box, max_border_box);
+        }
         let pct_inline_for_child = if cross_inline.is_indefinite() {
             child_percentage_inline
         } else {
@@ -2303,6 +2441,19 @@ fn resolve_main_axis_min_max(
                 let min_max =
                     crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
                 let mut cs = (min_max.min - main_axis_border_padding).clamp_negative_to_zero();
+                if doc.node(child_id).tag == ElementTag::Text {
+                    if let Some(run_minimum) =
+                        anonymous_flex_text_run_max_inline_size(doc, child_id)
+                    {
+                        // Contiguous text nodes form one anonymous flex item.
+                        // Their min-content boundary is computed across the
+                        // concatenated run, not independently per DOM text
+                        // node; an explicit break remains a forced boundary.
+                        cs = cs.max_of(
+                            (run_minimum - main_axis_border_padding).clamp_negative_to_zero(),
+                        );
+                    }
+                }
                 // CSS Flexbox §4.5: When the item has AR and a definite cross
                 // size, the content size suggestion is clamped by min/max cross
                 // sizes transferred through the AR. Also, if the raw min-content
@@ -2413,22 +2564,23 @@ fn resolve_main_axis_min_max(
             } else {
                 let intrinsic =
                     crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, child_id);
-                // In an established horizontal IFC, the min-content block
-                // contribution is fragmentation-sensitive and remains the
-                // automatic minimum used by the existing flex path. Vertical
-                // text is shaped horizontally for W1F; measuring its block
-                // contribution at a manufactured min-content inline width
-                // would add lines in the wrong physical axis, so use the
-                // unfragmented max-content contribution there.
+                let has_definite_inline_constraint = child_style.width.is_fixed()
+                    || child_style.min_width.is_fixed()
+                    || (!child_style.max_width.is_none()
+                        && !child_style.max_width.is_auto()
+                        && child_style.max_width.is_fixed());
+                // A definite eventual cross constraint, an orthogonal item,
+                // or a semantic forced break requires the unwrapped/forced
+                // line contribution. Preserve the fragmentation-sensitive
+                // min-content block contribution for unconstrained horizontal
+                // IFCs so measuring an auto minimum does not invent height.
                 let intrinsic_block = if axis_mapping.child_writing_direction.is_horizontal()
+                    && !axis_mapping.child_writing_direction.is_rtl()
+                    && !has_definite_inline_constraint
                     && !has_semantic_break_in_inline_flow(doc, child_id)
                 {
                     intrinsic.min_content_block_size
                 } else {
-                    // Block-axis intrinsic sizing uses the unwrapped line
-                    // contribution. Semantic <br> controls still establish
-                    // every forced line, but a trailing break must not create
-                    // a synthetic extra line through a min-inline relayout.
                     intrinsic.max_content_block_size
                 };
                 let mut cs = (intrinsic_block - main_axis_border_padding).clamp_negative_to_zero();
@@ -3043,6 +3195,12 @@ fn give_items_final_position(
         container_block_size,
     ));
     let converter = WritingModeConverter::new(writing_direction, container_physical_size);
+    let cross_axis_is_physically_reversed = is_wrap_reverse
+        ^ if is_column {
+            writing_direction.is_rtl()
+        } else {
+            writing_direction.is_flipped_blocks()
+        };
 
     // ── Resolve align-content (cross-axis line offsets) ──────────────
     // NOTE: Line stretching (align-content:stretch/normal) was already
@@ -3109,8 +3267,28 @@ fn give_items_final_position(
             .filter(|&&idx| !items[idx].is_collapsed)
             .count();
 
+        let mut physical_justify = *justify_content;
+        if is_column && is_main_axis_horizontal {
+            physical_justify.position = match justify_content.position {
+                ContentPosition::Left => {
+                    if writing_direction.is_flipped_blocks() {
+                        ContentPosition::End
+                    } else {
+                        ContentPosition::Start
+                    }
+                }
+                ContentPosition::Right => {
+                    if writing_direction.is_flipped_blocks() {
+                        ContentPosition::Start
+                    } else {
+                        ContentPosition::End
+                    }
+                }
+                position => position,
+            };
+        }
         let main_align = resolve_content_alignment(
-            justify_content,
+            &physical_justify,
             effective_free,
             visible_item_count,
             is_reverse,
@@ -3386,14 +3564,14 @@ fn give_items_final_position(
 
             let mut child_fragment = layout_flex_item(doc, item.node_id, &child_space);
 
-            // Block layout currently returns the externally fixed pair in its
-            // constraint-space order. At the flex boundary, project that pair
-            // to physical storage for vertical block items. Flex children
-            // already perform their own final logical-to-physical conversion,
-            // while horizontal fragments remain untouched so a child-owned
-            // fragmentation reduction stays authoritative.
+            // For an externally fixed cross-size, project the resolved pair at
+            // the flex boundary. An automatic cross-size must retain the size
+            // discovered by final child layout: flexing the logical inline
+            // size can wrap vertical text into additional columns, increasing
+            // its physical width after the hypothetical cross-size pass.
             if !axis_mapping.child_writing_direction.is_horizontal()
                 && !child_style.display.is_flex()
+                && (!cross_size_is_auto || should_stretch)
             {
                 child_fragment.size = axis_mapping.physical_size(final_main, cross_size_for_child);
             }
@@ -3454,10 +3632,42 @@ fn give_items_final_position(
                 } else {
                     child_logical_size.block_size
                 };
-                let baseline_from_top = cross_margin_start + frag_baseline.unwrap_or(cross_size);
+                let child_direction = child_style
+                    .direction
+                    .writing_direction(child_style.writing_mode);
+                let cross_baseline =
+                    if child_direction.is_horizontal() != writing_direction.is_horizontal() {
+                        // An orthogonal flex item cannot expose a baseline
+                        // parallel to this row's cross axis. Synthesize it from
+                        // the cross-end border edge.
+                        cross_size
+                    } else if is_column {
+                        // A horizontal child's baseline is parallel to a column
+                        // flex container's cross axis. Synthesize the alignment
+                        // baseline at its cross-start margin edge; this keeps the
+                        // participating border boxes on a shared physical edge in
+                        // both LTR and RTL containers.
+                        LayoutUnit::zero()
+                    } else if !is_main_axis_horizontal {
+                        match (child_style.writing_mode, child_style.text_orientation) {
+                            (
+                                openui_style::WritingMode::VerticalRl,
+                                openui_style::TextOrientation::Mixed
+                                | openui_style::TextOrientation::Upright,
+                            ) => cross_size / 2,
+                            (
+                                openui_style::WritingMode::VerticalLr,
+                                openui_style::TextOrientation::Sideways,
+                            ) => LayoutUnit::zero(),
+                            _ => frag_baseline.unwrap_or(cross_size),
+                        }
+                    } else {
+                        frag_baseline.unwrap_or(cross_size)
+                    };
+                let baseline_from_top = cross_margin_start + cross_baseline;
                 // For wrap-reverse the cross axis runs bottom-to-top, so
                 // "ascent" is measured from the physical bottom (= cross-start).
-                Some(if is_wrap_reverse {
+                Some(if cross_axis_is_physically_reversed {
                     item_cross_margin_box - baseline_from_top
                 } else {
                     baseline_from_top
@@ -3488,6 +3698,21 @@ fn give_items_final_position(
             .filter_map(|d| d.baseline)
             .max()
             .unwrap_or(LayoutUnit::zero());
+        let line_max_last_descent = item_data
+            .iter()
+            .filter(|data| items[data.idx].alignment == ItemPosition::LastBaseline)
+            .filter_map(|data| {
+                data.baseline
+                    .map(|baseline| data.cross_margin_box - baseline)
+            })
+            .max()
+            .unwrap_or(LayoutUnit::zero());
+        let column_baseline_group_cross_size = item_data
+            .iter()
+            .filter(|data| data.is_baseline_aligned)
+            .map(|data| data.cross_margin_box)
+            .max()
+            .unwrap_or(LayoutUnit::zero());
 
         // For row (non-column), non-wrap-reverse flex: export the container's
         // baseline from this line's alignment group.  The baseline is
@@ -3506,6 +3731,41 @@ fn give_items_final_position(
         }
 
         // ── Pass 2: Position items ───────────────────────────────────
+        let sideways_baseline_group_margin = |alignment: ItemPosition, at_start: bool| {
+            item_data
+                .iter()
+                .filter(|data| items[data.idx].alignment == alignment)
+                .filter(|data| {
+                    let child_style = &doc.node(items[data.idx].node_id).style;
+                    let child_direction = child_style
+                        .direction
+                        .writing_direction(child_style.writing_mode);
+                    !is_main_axis_horizontal
+                        && child_direction == writing_direction
+                        && matches!(
+                            child_style.writing_mode,
+                            openui_style::WritingMode::SidewaysRl
+                                | openui_style::WritingMode::SidewaysLr
+                        )
+                })
+                .map(|data| {
+                    if at_start {
+                        data.cross_margin_start
+                    } else {
+                        items[data.idx].cross_axis_margin_extent() - data.cross_margin_start
+                    }
+                })
+                .max()
+                .unwrap_or(LayoutUnit::zero())
+        };
+        let first_baseline_margin_start =
+            sideways_baseline_group_margin(ItemPosition::Baseline, true);
+        let first_baseline_margin_end =
+            sideways_baseline_group_margin(ItemPosition::Baseline, false);
+        let last_baseline_margin_start =
+            sideways_baseline_group_margin(ItemPosition::LastBaseline, true);
+        let last_baseline_margin_end =
+            sideways_baseline_group_margin(ItemPosition::LastBaseline, false);
         let mut main_offset = main_align.initial_offset;
 
         for (item_pos, data) in item_data.into_iter().enumerate() {
@@ -3518,15 +3778,102 @@ fn give_items_final_position(
                     resolve_cross_auto_margins(cross_space, data.is_start_auto, data.is_end_auto);
                 start
             } else if data.is_baseline_aligned {
-                // Offset aligns all baselines on the same cross-axis line.
-                // For wrap-reverse the cross axis is flipped: cross_item_offset
-                // counts from physical top, so items near cross-start (physical
-                // bottom) need offset ≈ cross_space.
-                let item_ascent = data.baseline.unwrap_or(LayoutUnit::zero());
-                if is_wrap_reverse {
-                    cross_space - (line_max_ascent - item_ascent)
+                let child_direction = child_style
+                    .direction
+                    .writing_direction(child_style.writing_mode);
+                if !is_main_axis_horizontal
+                    && child_direction == writing_direction
+                    && matches!(
+                        child_style.writing_mode,
+                        openui_style::WritingMode::SidewaysRl
+                            | openui_style::WritingMode::SidewaysLr
+                    )
+                {
+                    // A sideways run's alphabetic baseline is parallel to the
+                    // row main axis. Its cross-axis baseline is therefore
+                    // synthesized from a border edge: first baseline uses
+                    // cross-start and last baseline uses cross-end. Reuse the
+                    // ordinary start/end alignment path. The flex line's
+                    // cross-axis offset already incorporates wrap reversal;
+                    // do not reverse the synthesized edge a second time.
+                    let place_at_end =
+                        (item.alignment == ItemPosition::LastBaseline) ^ is_wrap_reverse;
+                    let base = resolve_align_self(
+                        if place_at_end {
+                            ItemPosition::End
+                        } else {
+                            ItemPosition::Start
+                        },
+                        cross_space,
+                        item.alignment_overflow,
+                        false,
+                    );
+                    let item_margin_end = item.cross_axis_margin_extent() - data.cross_margin_start;
+                    if place_at_end {
+                        let group_margin_end = if item.alignment == ItemPosition::LastBaseline {
+                            last_baseline_margin_end
+                        } else {
+                            first_baseline_margin_end
+                        };
+                        base - (group_margin_end - item_margin_end)
+                    } else {
+                        let group_margin_start = if item.alignment == ItemPosition::LastBaseline {
+                            last_baseline_margin_start
+                        } else {
+                            first_baseline_margin_start
+                        };
+                        base + (group_margin_start - data.cross_margin_start)
+                    }
+                } else if item.alignment == ItemPosition::LastBaseline
+                    && !is_column
+                    && !cross_axis_is_physically_reversed
+                {
+                    // Last-baseline groups are packed against cross-end. The
+                    // largest post-baseline descent (including the cross-end
+                    // margin) determines the shared baseline coordinate.
+                    line.line_cross_size
+                        - line_max_last_descent
+                        - data.baseline.unwrap_or(LayoutUnit::zero())
+                } else if is_column {
+                    // Column items synthesize their cross-axis baseline at a
+                    // border edge. Keep that edge shared inside a group sized
+                    // by its largest participant; unused container cross
+                    // space remains on the flex-end side.
+                    if cross_axis_is_physically_reversed {
+                        column_baseline_group_cross_size - data.cross_margin_box
+                    } else {
+                        LayoutUnit::zero()
+                    }
                 } else {
-                    line_max_ascent - item_ascent
+                    // Offset aligns all baselines on the same cross-axis line.
+                    // For wrap-reverse the cross axis is flipped:
+                    // cross_item_offset counts from physical top.
+                    let item_ascent = data.baseline.unwrap_or(LayoutUnit::zero());
+                    if cross_axis_is_physically_reversed {
+                        cross_space - (line_max_ascent - item_ascent)
+                    } else {
+                        line_max_ascent - item_ascent
+                    }
+                }
+            } else if matches!(
+                item.alignment,
+                ItemPosition::SelfStart | ItemPosition::SelfEnd
+            ) {
+                let child_direction = child_style
+                    .direction
+                    .writing_direction(child_style.writing_mode);
+                match cross_axis_static_position_edge(
+                    item.alignment,
+                    is_wrap_reverse,
+                    writing_direction,
+                    child_direction,
+                    !is_column,
+                ) {
+                    crate::out_of_flow::StaticPositionEdge::Start => LayoutUnit::zero(),
+                    crate::out_of_flow::StaticPositionEdge::Center => {
+                        LayoutUnit::from_raw(cross_space.raw() / 2)
+                    }
+                    crate::out_of_flow::StaticPositionEdge::End => cross_space,
                 }
             } else {
                 let alignment_cross_space = if item.alignment_overflow == OverflowAlignment::Safe {
@@ -3676,13 +4023,7 @@ fn flex_baseline_from_child(
         fragment.children.last()
     } {
         Some(child) => child,
-        None => {
-            return if is_column {
-                Some(fragment.height())
-            } else {
-                None
-            };
-        }
+        None => return None,
     };
     let child_baseline = if first {
         child.first_baseline.or(child.last_baseline)

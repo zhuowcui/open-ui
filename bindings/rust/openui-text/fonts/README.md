@@ -10,6 +10,23 @@ headless-Chromium reference.
   sha256: b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448
   Must stay byte-identical to the Ahem the Chromium reference renders.
 
+- `DroidSansFallback-reduced.ttf` — Chromium writing-mode test fixture for
+  CJK and fullwidth upright glyphs.
+  sha256: 27db42b79d0846f6fd01b3d6a8233df9a8a5ece80b042299dc4174c48213ffd3
+  Source: Chromium `third_party/blink/web_tests/fast/writing-mode/resources/`.
+- `NotoSansDevanagari-Regular.ttf` — Chromium WPT fixture for representative
+  complex-script shaping.
+  sha256: b1dffa1fccb30dc45287111834a9db15c652b05d4d67201abe73e67717017590
+  Source: Chromium `third_party/blink/web_tests/external/wpt/fonts/noto/`.
+- `NotoColorEmoji.ttf` — Chromium Noto Color Emoji v2.051 fixture for emoji
+  fallback and cluster painting.
+  sha256: 72a635cb3d2f3524c51620cdde406b217204e8a6a06c6a096ff8ed4b5fd6e27b
+  Source: Chromium `third_party/blink/web_tests/third_party/NotoColorEmoji/`.
+
+`DroidSansFallback-reduced.ttf` and `NotoSansDevanagari-Regular.ttf` are
+distributed under Apache-2.0 (`LICENSE-Apache-2.0.txt`). Noto Color Emoji is
+distributed under OFL-1.1 (`LICENSE-OFL-1.1.txt`).
+
 - `DejaVuSans.ttf` — DejaVu Sans Book 2.37.
   sha256: ae7b7855e115a5966d8b1b3f80f254ccc117ec86f9965e202ee2940453837280
 - `DejaVuSans-Bold.ttf` — DejaVu Sans Bold 2.37.

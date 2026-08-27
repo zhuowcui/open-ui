@@ -165,7 +165,9 @@ def requires_distinct_root_box(parser: port_wpt.WptHtmlParser) -> bool:
                 or prop.startswith(("border-", "margin-", "padding-"))
                 or prop in {
                     "width", "min-width", "max-width", "height", "min-height",
-                    "max-height", "transform", "transform-origin",
+                    "max-height", "inline-size", "min-inline-size", "max-inline-size",
+                    "block-size", "min-block-size", "max-block-size", "transform",
+                    "transform-origin",
                 }
             ):
                 return True
@@ -279,13 +281,14 @@ def _generate_one(
     if not upstream_rel or not os.path.isfile(upstream):
         raise FileNotFoundError(f"{test_id}: upstream missing ({upstream})")
 
-    root_aware = test_id in load_root_aware_ids()
-    if root_aware:
-        frozen_targets = set(load_ids_file(SP15_TARGETS_LIST)) | set(
-            load_ids_file(SP13R_TARGETS_LIST)
-        )
-        if test_id not in frozen_targets:
-            raise ValueError(f"{test_id}: not in a frozen root-aware target ledger")
+    frozen_targets = set(load_ids_file(SP15_TARGETS_LIST)) | set(
+        load_ids_file(SP13R_TARGETS_LIST)
+    )
+    # Historical root-aware ports remain authorized by their frozen ledgers.
+    # New cohorts must independently re-derive the need for a distinct root
+    # box from upstream CSS on every splice; a marker written by a prior run is
+    # not itself authorization and therefore cannot make idempotence fail.
+    root_aware = test_id in load_root_aware_ids() and test_id in frozen_targets
     retains_text = (
         True
         if profile is port_wpt.PorterProfile.DETERMINISTIC_AHEM

@@ -113,6 +113,7 @@ SUPPORTED_PROPERTIES = {
     'width', 'height', 'min-width', 'max-width', 'min-height', 'max-height',
     # Overflow
     'overflow', 'overflow-x', 'overflow-y', 'overflow-clip-margin', 'scrollbar-color',
+    'resize', 'scrollbar-width', 'scrollbar-gutter',
     # Visual
     'background', 'background-color', 'background-clip', 'color', 'opacity', 'visibility',
     'zoom',
@@ -148,7 +149,7 @@ SUPPORTED_PROPERTIES = {
     # No-op properties (safe to accept, no visual effect or default-only)
     'will-change',
     # Visual-only properties that don't affect layout
-    'resize', 'box-shadow', 'isolation',
+    'box-shadow', 'isolation',
 }
 
 UNSUPPORTED_FEATURES = {
@@ -182,7 +183,6 @@ IGNORED_PROPERTIES = {
     'word-break', 'overflow-wrap', 'hyphens',
     'list-style', 'list-style-type', 'list-style-position',
     'cursor', 'pointer-events', 'user-select',
-    'text-overflow',
     # Background details that don't affect layout
     'background-image', 'background-repeat', 'background-size',
     'background-position', 'background-origin',
@@ -191,8 +191,6 @@ IGNORED_PROPERTIES = {
     'border-image-width', 'border-image-repeat',
     # Print/page
     'print-color-adjust', 'image-rendering', 'size',
-    # Scroll
-    'scrollbar-gutter', 'scrollbar-width',
 }
 
 # CSS named colors → Rust Color constants
@@ -632,6 +630,7 @@ def _try_eval_calc(expr: str, font_size: float = 16.0) -> str | None:
     # Phase 2: sum up % and px terms with + and - signs
     pct_total = 0.0
     px_total = 0.0
+    has_percentage_term = False
     sign = 1.0
     for item in resolved:
         if item == '+':
@@ -641,14 +640,15 @@ def _try_eval_calc(expr: str, font_size: float = 16.0) -> str | None:
         else:
             val, unit = item
             if unit == '%':
+                has_percentage_term = True
                 pct_total += sign * val
             else:
                 px_total += sign * val
             sign = 1.0
 
-    if pct_total == 0.0:
+    if pct_total == 0.0 and not has_percentage_term:
         return f'Length::px({_zoomed_px(px_total):.6f})'
-    if px_total == 0.0:
+    if px_total == 0.0 and pct_total != 0.0:
         return f'Length::percent({pct_total:.6f})'
     return f'Length::calc_percent_px({pct_total:.6f}, {_zoomed_px(px_total):.6f})'
 
@@ -2189,8 +2189,9 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
     if RETAIN_TEXT:
         # SP14 deterministic text mode accepts only the repertoire exercised by
         # the opted-in corpus. Ahem covers Latin-1 and the ellipsis; directional
-        # controls are non-painting; the two instructional arrows fall through
-        # to the explicitly pinned DejaVu Sans fallback on both renderers.
+        # controls are non-painting. Chromium-pinned Droid/Noto faces cover the
+        # CJK/fullwidth, complex-script, and emoji ranges below before the
+        # explicitly pinned DejaVu Sans terminal fallback on both renderers.
         # Unknown code points remain a hard transactional failure rather than
         # silently depending on ambient font fallback.
         extra_codepoints = {0x2026, 0x2190, 0x2193, 0xFEFF}
@@ -2202,6 +2203,18 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
                 or 0x20 <= cp <= 0x7E
                 or 0xA0 <= cp <= 0xFF
                 or cp in extra_codepoints
+                or 0x0300 <= cp <= 0x036F  # combining diacritics
+                or 0x0600 <= cp <= 0x06FF  # Arabic
+                or 0x0750 <= cp <= 0x077F  # Arabic Supplement
+                or 0x08A0 <= cp <= 0x08FF  # Arabic Extended-A
+                or 0x0900 <= cp <= 0x097F  # Devanagari
+                or 0x200C <= cp <= 0x200D  # ZWNJ / ZWJ
+                or 0x3000 <= cp <= 0x30FF  # CJK punctuation / kana
+                or 0x3400 <= cp <= 0x4DBF  # CJK Extension A
+                or 0x4E00 <= cp <= 0x9FFF  # CJK Unified Ideographs
+                or 0xFE00 <= cp <= 0xFE0F  # variation selectors
+                or 0xFF00 <= cp <= 0xFFEF  # fullwidth / halfwidth forms
+                or 0x1F000 <= cp <= 0x1FAFF  # emoji and pictographs
                 or 0x202A <= cp <= 0x202E
                 or 0x2066 <= cp <= 0x2069
             )
@@ -3183,6 +3196,37 @@ def generate_single_style(
             rust_prop = prop.replace('-', '_')
             return f"{s}.{rust_prop} = {mapping[val]};"
 
+    if prop == 'resize':
+        mapping = {
+            'none': 'Resize::None',
+            'both': 'Resize::Both',
+            'horizontal': 'Resize::Horizontal',
+            'vertical': 'Resize::Vertical',
+            'block': 'Resize::Block',
+            'inline': 'Resize::Inline',
+        }
+        if val in mapping:
+            return f"{s}.resize = {mapping[val]};"
+
+    if prop == 'scrollbar-width':
+        mapping = {
+            'auto': 'ScrollbarWidth::Auto',
+            'thin': 'ScrollbarWidth::Thin',
+            'none': 'ScrollbarWidth::None',
+        }
+        if val in mapping:
+            return f"{s}.scrollbar_width = {mapping[val]};"
+
+    if prop == 'scrollbar-gutter':
+        normalized = ' '.join(val.split())
+        mapping = {
+            'auto': 'ScrollbarGutter::Auto',
+            'stable': 'ScrollbarGutter::Stable',
+            'stable both-edges': 'ScrollbarGutter::StableBothEdges',
+        }
+        if normalized in mapping:
+            return f"{s}.scrollbar_gutter = {mapping[normalized]};"
+
     # ── overflow-clip-margin ──
     if prop == 'overflow-clip-margin':
         # CSS Overflow 3: overflow-clip-margin: <visual-box>? <length>
@@ -3802,6 +3846,13 @@ def generate_single_style(
     # text-retaining ports so box-only output stays byte-identical (they are
     # in IGNORED_PROPERTIES for the legacy corpus).
     if RETAIN_TEXT:
+        if prop == 'text-overflow':
+            mapping = {
+                'clip': 'TextOverflow::Clip',
+                'ellipsis': 'TextOverflow::Ellipsis',
+            }
+            if val in mapping:
+                return f"{s}.text_overflow = {mapping[val]};"
         if prop == 'text-indent':
             length = parse_length(val, font_size)
             if length:
@@ -4514,15 +4565,15 @@ EMIT_TEXT_NODES = False
 RETAIN_TEXT = False
 
 # CSS override appended to text-retaining Chrome templates. Forces Ahem with
-# an explicit deterministic DejaVu Sans fallback for the small verified set of
-# glyphs Ahem does not contain (currently instructional arrows). Both families
-# are no-AA under the manifest-scoped fontconfig used by the comparison runner.
+# an explicit ordered set of Chromium-pinned CJK, complex-script, emoji, and
+# DejaVu terminal fallbacks. Every family is registered by the manifest-scoped
+# fontconfig and OpenUI's in-process manager in the same order.
 # everywhere (deterministic glyph boxes, zero-AA via ahem_noaa.conf) and
 # neutralizes UA styling our engine does not replicate (synthetic bold/italic,
 # underlines, list markers). The Rust side mirrors this by forcing Ahem on
 # every emitted Text node and ignoring font-weight/style/text-decoration.
 TEXT_TEMPLATE_OVERRIDE = (
-    '<style style="display:none!important">body, body * { font-family: Ahem, "DejaVu Sans" !important; '
+    '<style style="display:none!important">body, body * { font-family: Ahem, "Droid Sans Fallback", "Noto Sans Devanagari", "Noto Color Emoji", "DejaVu Sans" !important; '
     "font-weight: normal !important; font-style: normal !important; "
     "font-synthesis: none !important; text-decoration: none !important; "
     "list-style: none !important; font-kerning: none !important; "
@@ -4532,6 +4583,9 @@ TEXT_TEMPLATE_OVERRIDE = (
 DETERMINISTIC_FONT_FAMILY_RUST = (
     'FontFamilyList { families: vec!['
     'FontFamily::Named("Ahem".to_string()), '
+    'FontFamily::Named("Droid Sans Fallback".to_string()), '
+    'FontFamily::Named("Noto Sans Devanagari".to_string()), '
+    'FontFamily::Named("Noto Color Emoji".to_string()), '
     'FontFamily::Named("DejaVu Sans".to_string())] }'
 )
 
@@ -5528,6 +5582,11 @@ def generate_rust_fn(
             _fam = _family_from_font_shorthand(root.styles['font'])
             if _fam:
                 body_inherited['font-family'] = _fam
+            # A shorthand supplies the body's computed font size even though
+            # the parsed declaration is retained as `font`. Generated nodes do
+            # not run inheritance, so descendants need the absolute computed
+            # value just as ordinary element descendants do in `gen_node`.
+            body_inherited['font-size'] = f'{root_font_size}px'
             body_inherited['line-height'] = _line_height_from_font_shorthand(
                 root.styles['font']
             )

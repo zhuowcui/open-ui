@@ -297,7 +297,7 @@ line-clamp_webkit-line-clamp-with-line-height,not_portable,,style_block_vendor/u
 line-clamp_webkit-line-clamp-with-max-height.tentative,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
 logical-overflow-001,not_portable,,uses_javascript
 margin-block-end-scroll-area-001,ported,css_overflow_margin_block_end_scroll_area_001,
-multicol-in-orthogonal-writing-mode-crash,not_portable,,unsupported property: writing-mode
+multicol-in-orthogonal-writing-mode-crash,ported,css_overflow_multicol_in_orthogonal_writing_mode_crash,
 no-scrollable-overflow-vertical-rl,ported,css_overflow_no_scrollable_overflow_vertical_rl,
 no-scrollable-overflow-vertical-rl-2,ported,css_overflow_no_scrollable_overflow_vertical_rl_2,
 orthogonal-flow-with-inline-end-margin,not_portable,,uses_javascript
@@ -325,12 +325,12 @@ overflow-alignment-flex-row-wrap-overflow-001,not_portable,,uses_javascript
 overflow-alignment-flex-row-wrap-overflow-002,not_portable,,uses_javascript
 overflow-alignment-grid-001,not_portable,,uses_javascript
 overflow-alignment-grid-002,not_portable,,uses_javascript
-overflow-auto-scrollbar-gutter-intrinsic-001,not_portable,,unsupported property: writing-mode
-overflow-auto-scrollbar-gutter-intrinsic-001-ref,not_portable,,unsupported property: writing-mode
-overflow-auto-scrollbar-gutter-intrinsic-002,not_portable,,unsupported property: writing-mode
-overflow-auto-scrollbar-gutter-intrinsic-002-ref,not_portable,,unsupported property: writing-mode
-overflow-auto-scrollbar-gutter-intrinsic-003,not_portable,,unsupported property: writing-mode
-overflow-auto-scrollbar-gutter-intrinsic-003-ref,not_portable,,unsupported property: writing-mode
+overflow-auto-scrollbar-gutter-intrinsic-001,ported,css_overflow_overflow_auto_scrollbar_gutter_intrinsic_001,
+overflow-auto-scrollbar-gutter-intrinsic-001-ref,ported,css_overflow_overflow_auto_scrollbar_gutter_intrinsic_001_ref,
+overflow-auto-scrollbar-gutter-intrinsic-002,ported,css_overflow_overflow_auto_scrollbar_gutter_intrinsic_002,
+overflow-auto-scrollbar-gutter-intrinsic-002-ref,ported,css_overflow_overflow_auto_scrollbar_gutter_intrinsic_002_ref,
+overflow-auto-scrollbar-gutter-intrinsic-003,ported,css_overflow_overflow_auto_scrollbar_gutter_intrinsic_003,
+overflow-auto-scrollbar-gutter-intrinsic-003-ref,ported,css_overflow_overflow_auto_scrollbar_gutter_intrinsic_003_ref,
 overflow-auto-scrolling-with-margin-and-transform,not_portable,,uses_javascript
 overflow-body-propagation-001,ported,css_overflow_overflow_body_propagation_001,
 overflow-body-propagation-002,ported,css_overflow_overflow_body_propagation_002,
@@ -452,7 +452,7 @@ overflow-replaced-element-002-ref,not_portable,,unsupported element: <iframe>
 overflow-rtl-scroll-left,not_portable,,uses_javascript
 overflow-scroll-big-border-small-content,not_portable,,uses_javascript
 overflow-scroll-big-border-small-content-ref,not_portable,,uses_javascript
-overflow-scroll-intrinsic-001,not_portable,,unsupported property: writing-mode
+overflow-scroll-intrinsic-001,ported,css_overflow_overflow_scroll_intrinsic_001,
 overflow-scroll-intrinsic-001-ref,ported,css_overflow_overflow_scroll_intrinsic_001_ref,
 overflow-scroll-resize-visibility-hidden,ported,css_overflow_overflow_scroll_resize_visibility_hidden,
 overflow-scroll-resize-visibility-hidden-ref,not_portable,,style_block_unsupported property: filter
@@ -780,17 +780,17 @@ scrollable-overflow-zero-one-axis,not_portable,,uses_javascript
 scrollbar-empty-001,ported,css_overflow_scrollbar_empty_001,
 scrollbar-empty-002,not_portable,,unsupported element: <svg>
 scrollbar-gutter-001,not_portable,,uses_javascript
-scrollbar-gutter-002,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-002,ported,css_overflow_scrollbar_gutter_002,
 scrollbar-gutter-002-ref,not_portable,,uses_javascript
-scrollbar-gutter-003,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-003,ported,css_overflow_scrollbar_gutter_003,
 scrollbar-gutter-abspos-001,ported,css_overflow_scrollbar_gutter_abspos_001,
 scrollbar-gutter-abspos-001-ref,ported,css_overflow_scrollbar_gutter_abspos_001_ref,
 scrollbar-gutter-dynamic-001,not_portable,,uses_javascript
 scrollbar-gutter-dynamic-001-ref,ported,css_overflow_scrollbar_gutter_dynamic_001_ref,
 scrollbar-gutter-dynamic-002,not_portable,,uses_javascript
-scrollbar-gutter-dynamic-002-ref,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-dynamic-002-ref,ported,css_overflow_scrollbar_gutter_dynamic_002_ref,
 scrollbar-gutter-dynamic-003,not_portable,,uses_javascript
-scrollbar-gutter-dynamic-003-ref,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-dynamic-003-ref,ported,css_overflow_scrollbar_gutter_dynamic_003_ref,
 scrollbar-gutter-dynamic-004,not_portable,,uses_javascript
 scrollbar-gutter-dynamic-004-ref,ported,css_overflow_scrollbar_gutter_dynamic_004_ref,
 scrollbar-gutter-fixedpos-001,ported,css_overflow_scrollbar_gutter_fixedpos_001,
@@ -799,8 +799,8 @@ scrollbar-gutter-fixedpos-002,ported,css_overflow_scrollbar_gutter_fixedpos_002,
 scrollbar-gutter-fixedpos-002-ref,ported,css_overflow_scrollbar_gutter_fixedpos_002_ref,
 scrollbar-gutter-fixedpos-003,ported,css_overflow_scrollbar_gutter_fixedpos_003,
 scrollbar-gutter-fixedpos-003-ref,ported,css_overflow_scrollbar_gutter_fixedpos_003_ref,
-scrollbar-gutter-fixedpos-004,not_portable,,style_block_unsupported property: writing-mode
-scrollbar-gutter-fixedpos-004-ref,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-fixedpos-004,ported,css_overflow_scrollbar_gutter_fixedpos_004,
+scrollbar-gutter-fixedpos-004-ref,ported,css_overflow_scrollbar_gutter_fixedpos_004_ref,
 scrollbar-gutter-propagation-001,not_portable,,uses_javascript
 scrollbar-gutter-propagation-002,not_portable,,uses_javascript
 scrollbar-gutter-propagation-003,not_portable,,uses_javascript
@@ -813,15 +813,15 @@ scrollbar-gutter-root-both-edges,not_portable,,style_block_unsupported property:
 scrollbar-gutter-root-both-edges-ref,not_portable,,uses_javascript
 scrollbar-gutter-root-ref,not_portable,,uses_javascript
 scrollbar-gutter-rtl-001,not_portable,,uses_javascript
-scrollbar-gutter-rtl-002,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-rtl-002,ported,css_overflow_scrollbar_gutter_rtl_002,
 scrollbar-gutter-rtl-002-ref,not_portable,,uses_javascript
 scrollbar-gutter-scroll-into-view,not_portable,,uses_javascript
-scrollbar-gutter-scroll-into-view-ref,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-scroll-into-view-ref,ported,css_overflow_scrollbar_gutter_scroll_into_view_ref,
 scrollbar-gutter-vertical-lr-001,not_portable,,uses_javascript
-scrollbar-gutter-vertical-lr-002,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-vertical-lr-002,ported,css_overflow_scrollbar_gutter_vertical_lr_002,
 scrollbar-gutter-vertical-lr-002-ref,not_portable,,uses_javascript
 scrollbar-gutter-vertical-rl-001,not_portable,,uses_javascript
-scrollbar-gutter-vertical-rl-002,not_portable,,style_block_unsupported property: writing-mode
+scrollbar-gutter-vertical-rl-002,ported,css_overflow_scrollbar_gutter_vertical_rl_002,
 scrollbar-gutter-vertical-rl-002-ref,not_portable,,uses_javascript
 scrollbar-gutter-with-background-gradient,ported,css_overflow_scrollbar_gutter_with_background_gradient,
 scrollbar-gutter-with-background-gradient-ref,ported,css_overflow_scrollbar_gutter_with_background_gradient_ref,
@@ -843,8 +843,8 @@ text-overflow-ellipsis-editing-input,not_portable,,uses_javascript
 text-overflow-ellipsis-editing-input-ref,not_portable,,unsupported element: <input>
 text-overflow-ellipsis-rtl-001,ported,css_overflow_text_overflow_ellipsis_rtl_001,
 text-overflow-ellipsis-textarea-with-caret,not_portable,,uses_javascript
-text-overflow-ellipsis-vertical-001,not_portable,,style_block_unsupported property: writing-mode
-text-overflow-ellipsis-vertical-rtl-001,not_portable,,style_block_unsupported property: writing-mode
+text-overflow-ellipsis-vertical-001,ported,css_overflow_text_overflow_ellipsis_vertical_001,
+text-overflow-ellipsis-vertical-rtl-001,ported,css_overflow_text_overflow_ellipsis_vertical_rtl_001,
 text-overflow-scroll-001,not_portable,,uses_javascript
 text-overflow-scroll-rtl-001,not_portable,,uses_javascript
 text-overflow-scroll-vertical-lr-001,not_portable,,uses_javascript

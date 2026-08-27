@@ -100,6 +100,15 @@ pub struct ComputedStyle {
     /// CSS `overflow-y`. Initial: `visible`.
     pub overflow_y: Overflow,
 
+    /// CSS `resize`. Initial: `none`.
+    pub resize: Resize,
+
+    /// CSS `scrollbar-width`. Initial: `auto`.
+    pub scrollbar_width: ScrollbarWidth,
+
+    /// CSS `scrollbar-gutter`. Initial: `auto`.
+    pub scrollbar_gutter: ScrollbarGutter,
+
     /// CSS `overflow-clip-margin`. Initial: `0.0` (px).
     /// Specifies how far content may overflow before being clipped when
     /// `overflow: clip` is used. Only applies to `overflow: clip`.
@@ -596,6 +605,9 @@ impl ComputedStyle {
             clear: Clear::INITIAL,         // none
             overflow_x: Overflow::INITIAL, // visible
             overflow_y: Overflow::INITIAL, // visible
+            resize: Resize::INITIAL,
+            scrollbar_width: ScrollbarWidth::INITIAL,
+            scrollbar_gutter: ScrollbarGutter::INITIAL,
             overflow_clip_margin: 0.0,
             overflow_clip_box: OverflowClipBox::default(),
             scrollbar_thumb_color: None,

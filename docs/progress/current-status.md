@@ -21,31 +21,31 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W2A full no-resume run):
+Latest authoritative accountability snapshot (SP17 W2B–W4 full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3768 |
-| Unported but explicitly tracked tests | 3905 |
-| Runnable passes | 3487 |
-| Runnable failures | 281 |
+| Ported/runnable WPT tests | 3889 |
+| Unported but explicitly tracked tests | 3784 |
+| Runnable passes | 3619 |
+| Runnable failures | 270 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
 | Empty unported dependency rows | 0 |
 | `sp12_layout_bug` rows | 0 |
 | `needs_font_metrics` rows | 0 |
 | Runnable `sp13_multicol` rows | 0 |
-| Unported `sp13_multicol` residuals | 976 |
+| Unported `sp13_multicol` residuals | 945 |
 
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
 The full `wpt/` run was executed without resume on 2026-08-27. Its committed
 `summary.json` SHA-256 is
-`6b8c2d53561027fd561171b5642ef65fc281493d2729559b320871f21e48cbff`.
+`2021d915414b470edddf51ff266ae7494240f7e5b60ede4410452da4c46784ad`.
 All 3267 frozen SP17 baseline IDs, including all 2823 frozen SP13-R baseline
 IDs and all 351 runnable multicol targets, remain exact.
 
-## SP17 W2A Rotated Vertical and Sideways Text Closure
+## SP17 W2B–W4 Remaining Writing-Mode Mega-Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -327,11 +327,40 @@ and zero errors. There are 3905 unported rows, 649 live
 manifest IDs. The validator requires exactly 193 SP17 promotions and preserves
 the frozen ledgers plus the 42-ID SP13-R later-promotion allowlist.
 
-W1 remains incomplete for JavaScript-backed abspos alignment, tables, grid,
-transforms, generated content, images/print-specific cases,
-and extreme column-rule geometry. W2 retains authoritative mixed-script bidi
-and fallback shaping, upright and sideways glyph work, and writing-mode
-010–016.
+W2B–W4 promotes one atomic 132-ID cohort containing every remaining non-exact
+ID from the frozen actionable ledger plus `css-flexbox-test1` and its reference.
+It splits homogeneous shaping runs at bidi, script, grapheme-safe fallback, and
+vertical-orientation boundaries; uses vertical substitutions and advances for
+upright glyphs while preserving horizontal sideways shaping; and carries ruby,
+text-combine, baseline, decoration, emphasis, shadow, clip, and emoji metadata
+from layout into paint.
+
+The same ordered Chromium-pinned fallback families are registered in OpenUI and
+the manifest-scoped Chromium fontconfig. The Droid CJK, Noto Devanagari, and
+Noto Color Emoji hashes are respectively
+`27db42b79d0846f6fd01b3d6a8233df9a8a5ece80b042299dc4174c48213ffd3`,
+`b1dffa1fccb30dc45287111834a9db15c652b05d4d67201abe73e67717017590`, and
+`72a635cb3d2f3524c51620cdde406b217204e8a6a06c6a096ff8ed4b5fd6e27b`.
+
+The 132 targets partition into 43 flexbox, 37 fragmentation, 22 sizing, 20
+overflow, five multicol, three backgrounds, one float, and one positioned ID.
+Their manifest SHA-256 is
+`0085f0df34162f355c1f2a24deae01967cf52f1753049f27a32ec7425e3ce089`.
+The focused proof contains every prior promotion plus the new cohort: 325/325
+exact with zero mismatched pixels or errors, pinned at
+`78efe59229615167e9603c6e40295c3eca0937c2f973f1097cd98a545d2793d3`.
+
+Exactly 121 formerly unported targets became runnable and 11 pinned failures
+became exact without a non-target status or mismatch change. The current full
+result is 3889 runnable, 3619 exact, 270 functional failures, and zero errors.
+There are 3784 unported rows, 517 live `needs_writing_mode` owners, 945
+unported `sp13_multicol` rows, and 1025 text-manifest IDs. The validator
+requires exactly 325 promotions and preserves the frozen ledgers plus the
+73-ID SP13-R later-promotion allowlist.
+
+The remaining residuals are separately owned JavaScript, table, grid, form
+control, transform, generated-content, image, and print-specific work; the
+frozen SP17 actionable writing-mode cohort is closed.
 
 ## SP13-R Closure
 

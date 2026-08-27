@@ -69,6 +69,37 @@ fn lu(v: i32) -> LayoutUnit {
 }
 
 #[test]
+fn vertical_column_auto_block_size_uses_physical_width_as_main_size() {
+    let mut doc = Document::new();
+    let container = doc.create_node(ElementTag::Div);
+    {
+        let style = doc.node_mut(container).style_mut();
+        style.display = Display::Flex;
+        style.flex_direction = FlexDirection::Column;
+        style.writing_mode = WritingMode::VerticalRl;
+        style.direction = Direction::Rtl;
+        style.height = Length::px(300.0);
+    }
+    doc.append_child(doc.root(), container);
+
+    let first = add_child(&mut doc, container, 30, 40);
+    let overflowing = add_child(&mut doc, container, 30, 500);
+    let fragment = lay(&doc, container, 760, 600);
+
+    assert_eq!(fragment.size.width, lu(60));
+    assert_eq!(fragment.size.height, lu(300));
+    assert_eq!(fragment.children.len(), 2);
+    for node_id in [first, overflowing] {
+        let child = fragment
+            .children
+            .iter()
+            .find(|child| child.node_id == node_id)
+            .expect("vertical column flex item must remain in the fragment tree");
+        assert_eq!(child.size.width, lu(30));
+    }
+}
+
+#[test]
 fn horizontal_rtl_flex_flow_places_items_by_logical_main_and_cross_axes() {
     let cases = [
         (

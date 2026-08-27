@@ -721,9 +721,9 @@ border-image-repeat-space-6,ported,css_backgrounds_border_image_repeat_space_6,
 border-image-repeat-space-6-ref,ported,css_backgrounds_border_image_repeat_space_6_ref,
 border-image-repeat-space-7,ported,css_backgrounds_border_image_repeat_space_7,
 border-image-repeat-space-7-ref,ported,css_backgrounds_border_image_repeat_space_7_ref,
-border-image-repeat-space-8,not_portable,,unsupported property: writing-mode
-border-image-repeat-space-8-ref,not_portable,,unsupported property: writing-mode
-border-image-repeat-space-9,not_portable,,unsupported property: writing-mode
+border-image-repeat-space-8,ported,css_backgrounds_border_image_repeat_space_8,
+border-image-repeat-space-8-ref,ported,css_backgrounds_border_image_repeat_space_8_ref,
+border-image-repeat-space-9,ported,css_backgrounds_border_image_repeat_space_9,
 border-image-repeat-stretch-round-001,ported,css_backgrounds_border_image_repeat_stretch_round_001,
 border-image-repeat_repeatnegx_none_50px,not_portable,,uses_javascript
 border-image-round-and-stretch,ported,css_backgrounds_border_image_round_and_stretch,

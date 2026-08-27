@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -19,6 +20,7 @@ sys.path.insert(0, str(HERE))
 import generate_sp17_closure as closure  # noqa: E402
 import port_wpt  # noqa: E402
 import splice_text_port  # noqa: E402
+import generate_sp13r_multicol_closure as sp13r_closure  # noqa: E402
 
 
 EXPECTED_LIVE_PROMOTIONS = {
@@ -189,6 +191,10 @@ EXPECTED_LIVE_PROMOTIONS = {
     "wpt/css_flexbox/flexbox-writing-mode-srl-row-mix-ref",
     "wpt/css_flexbox/flexbox-writing-mode-srl-rtl",
 }
+EXPECTED_W2A_LIVE_PROMOTIONS = frozenset(EXPECTED_LIVE_PROMOTIONS)
+EXPECTED_LIVE_PROMOTIONS |= set(json.loads(
+    (HERE / "sp17_w2b_w4_targets.json").read_text(encoding="utf-8")
+))
 
 
 class AssertionOnlyCheckLayoutPorterTests(unittest.TestCase):
@@ -360,9 +366,10 @@ class LedgerTests(unittest.TestCase):
         promoted = closure.validate_live_snapshot(
             rows, summary, baseline, inventory, actionable
         )
-        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 193)
+        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 325)
         self.assertEqual(promoted, EXPECTED_LIVE_PROMOTIONS)
         residual_admissions = set(closure.load_w1m_manifests()[0]) - set(actionable)
+        residual_admissions |= set(closure.load_w2b_w4_manifests()[0]) - set(actionable)
         self.assertTrue(promoted.issubset(set(actionable) | residual_admissions))
 
     def test_w1m_manifests_pin_the_complete_atomic_cohort_and_guards(self):
@@ -398,11 +405,35 @@ class LedgerTests(unittest.TestCase):
         first = splice_text_port.prepare_changes(targets, mapping)
         second = splice_text_port.prepare_changes(targets, mapping)
         self.assertEqual(first[0], second[0])
+        self.assertEqual(first[1], second[1])
+        self.assertEqual(first[2], second[2])
         rust_path = str(
             ROOT / "bindings/rust/pixel-compare/src/wpt/wpt_css_flexbox.rs"
         )
-        self.assertEqual(first[2][rust_path], first[1][rust_path])
-        self.assertEqual(second[2][rust_path], second[1][rust_path])
+        fn_name = first[0][0].fn_name
+        original_start, original_end = splice_text_port._rust_function_span(
+            first[1][rust_path], fn_name
+        )
+        changed_start, changed_end = splice_text_port._rust_function_span(
+            first[2][rust_path], fn_name
+        )
+        original_fn = first[1][rust_path][original_start:original_end]
+        changed_fn = first[2][rust_path][changed_start:changed_end]
+        # W1O remains byte-pinned on disk. A no-write regeneration now plans
+        # the later deterministic fallback chain, and repeated plans must be
+        # byte-identical without silently rewriting the historical builder.
+        self.assertIn(
+            'FontFamily::Named("DejaVu Sans".to_string())',
+            original_fn,
+        )
+        self.assertNotIn(
+            'FontFamily::Named("Droid Sans Fallback".to_string())',
+            original_fn,
+        )
+        self.assertIn(
+            'FontFamily::Named("Droid Sans Fallback".to_string())',
+            changed_fn,
+        )
         manifest_path = splice_text_port.TEXT_PORTED_LIST
         self.assertEqual(first[2][manifest_path], first[1][manifest_path])
         self.assertEqual(second[2][manifest_path], second[1][manifest_path])
@@ -439,17 +470,144 @@ class LedgerTests(unittest.TestCase):
         )
 
     def test_w2a_two_generations_and_two_surgical_splices_are_byte_identical(self):
-        targets = closure.load_w2a_manifests()[0]
+        first = closure.load_w2a_manifests()
+        second = closure.load_w2a_manifests()
+        self.assertEqual(first, second)
+        for path, values in zip(
+            (closure.W2A_TARGETS_JSON, closure.W2A_FOCUSED_JSON), first
+        ):
+            self.assertEqual(path.read_text(encoding="utf-8"), closure.encoded(values))
+
+    def test_w2b_w4_manifest_projection_and_area_partition_are_pinned(self):
+        targets, focused = closure.load_w2b_w4_manifests()
+        _, inventory, _, _ = closure.load_ledgers()
+        actionable, _ = closure.load_probe_ledgers(inventory)
+        old_promotions = set(focused) - set(targets)
+        self.assertEqual(old_promotions, set(EXPECTED_W2A_LIVE_PROMOTIONS))
+        self.assertEqual(set(actionable) - old_promotions, set(targets) & set(actionable))
+        self.assertEqual(
+            set(targets) - set(actionable),
+            {
+                "wpt/css_flexbox/css-flexbox-test1",
+                "wpt/css_flexbox/css-flexbox-test1-ref",
+            },
+        )
+        counts = {}
+        for test_id in targets:
+            area = test_id.split("/")[1]
+            counts[area] = counts.get(area, 0) + 1
+        self.assertEqual(counts, {
+            "css2_floats": 1,
+            "css_backgrounds": 3,
+            "css_break": 37,
+            "css_flexbox": 43,
+            "css_multicol": 5,
+            "css_overflow": 20,
+            "css_position": 1,
+            "css_sizing": 22,
+        })
+        self.assertEqual(
+            (
+                closure.EXPECTED_W2B_W4_PROMOTIONS,
+                closure.EXPECTED_W2B_W4_RUNNABLE,
+                closure.EXPECTED_W2B_W4_EXACT,
+                closure.EXPECTED_W2B_W4_FAILURES,
+                closure.EXPECTED_W2B_W4_UNPORTED,
+                closure.EXPECTED_W2B_W4_LIVE_OWNED,
+            ),
+            (325, 3889, 3619, 270, 3784, 517),
+        )
+
+    def test_sp17_fallback_font_hashes_and_registration_are_symmetric(self):
+        font_dir = ROOT / "bindings/rust/openui-text/fonts"
+        expected = {
+            "DroidSansFallback-reduced.ttf": "27db42b79d0846f6fd01b3d6a8233df9a8a5ece80b042299dc4174c48213ffd3",
+            "NotoSansDevanagari-Regular.ttf": "b1dffa1fccb30dc45287111834a9db15c652b05d4d67201abe73e67717017590",
+            "NotoColorEmoji.ttf": "72a635cb3d2f3524c51620cdde406b217204e8a6a06c6a096ff8ed4b5fd6e27b",
+        }
+        for name, digest in expected.items():
+            self.assertEqual(closure.hashlib.sha256((font_dir / name).read_bytes()).hexdigest(), digest)
+        families = [
+            "Ahem",
+            "Droid Sans Fallback",
+            "Noto Sans Devanagari",
+            "Noto Color Emoji",
+            "DejaVu Sans",
+        ]
+        fontconfig = (
+            ROOT / "tools/accountability/data/fonts/ahem_noaa.conf"
+        ).read_text(encoding="utf-8")
+        cache = (
+            ROOT / "bindings/rust/openui-text/src/font/cache.rs"
+        ).read_text(encoding="utf-8")
+        self.assertEqual(
+            families,
+            re.findall(r"<string>([^<]+)</string>", fontconfig),
+        )
+        self.assertEqual(
+            families,
+            sorted(families, key=cache.index),
+        )
+        self.assertEqual(
+            families,
+            sorted(families, key=port_wpt.TEXT_TEMPLATE_OVERRIDE.index),
+        )
+        self.assertEqual(
+            families,
+            sorted(families, key=port_wpt.DETERMINISTIC_FONT_FAMILY_RUST.index),
+        )
+        self.assertEqual(
+            json.loads((closure.PORTED_DIR / "sp17_freetype_text_tests.json").read_text()),
+            [
+                "wpt/css_flexbox/css-flexbox-test1",
+                "wpt/css_flexbox/css-flexbox-test1-ref",
+            ],
+        )
+
+    def test_full_w2_metadata_and_live_snapshot_invariants_are_exact(self):
+        baseline, inventory, _, _ = closure.load_ledgers()
+        actionable, _ = closure.load_probe_ledgers(inventory)
+        with closure.MAPPING_CSV.open(newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        summary = json.loads(closure.SUMMARY_JSON.read_text(encoding="utf-8"))
+        promoted = closure.validate_live_snapshot(
+            rows, summary, baseline, inventory, actionable
+        )
+        targets, focused = closure.load_w2b_w4_manifests()
+        self.assertEqual(promoted, set(focused))
+        self.assertTrue(set(targets) <= promoted)
+        text_manifest = json.loads(
+            (closure.PORTED_DIR / "text_ported_tests.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(len(text_manifest), 1025)
+        self.assertTrue(set(targets) <= set(text_manifest))
+
+    def test_frozen_ledgers_and_sp13r_later_promotion_allowlist_are_deterministic(self):
+        closure.validate_historical_ledgers()
+        self.assertEqual(len(sp13r_closure.LATER_EXACT_PROMOTIONS), 73)
+        targets = set(closure.load_w2b_w4_manifests()[0])
+        residuals = {
+            item["test_id"] for item in sp13r_closure.load_ledgers()[2]
+        }
+        self.assertEqual(len(targets & residuals), 31)
+        self.assertTrue(targets & residuals <= sp13r_closure.LATER_EXACT_PROMOTIONS)
+
+    def test_w2b_w4_two_no_write_generations_and_two_splices_match(self):
+        with closure.MAPPING_CSV.open(newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        summary = json.loads(closure.SUMMARY_JSON.read_text(encoding="utf-8"))
+        first_generation = closure.build_outputs(rows, summary)
+        second_generation = closure.build_outputs(rows, summary)
+        self.assertEqual(first_generation, second_generation)
+
+        targets = closure.load_w2b_w4_manifests()[0]
         mapping = splice_text_port.load_mapping_rows()
-        first = splice_text_port.prepare_changes(targets, mapping)
-        second = splice_text_port.prepare_changes(targets, mapping)
-        self.assertEqual(first[0], second[0])
-        self.assertEqual(first[1], second[1])
-        self.assertEqual(first[2], second[2])
-        self.assertEqual(set(first[1]), set(first[2]))
-        for path in sorted(first[1]):
-            self.assertEqual(first[2][path], first[1][path], path)
-            self.assertEqual(second[2][path], second[1][path], path)
+        first_splice = splice_text_port.prepare_changes(targets, mapping)
+        second_splice = splice_text_port.prepare_changes(targets, mapping)
+        self.assertEqual(first_splice, second_splice)
+        self.assertEqual(set(first_splice[1]), set(first_splice[2]))
+        for path in sorted(first_splice[1]):
+            self.assertEqual(first_splice[2][path], first_splice[1][path], path)
 
     def test_w0b_probe_is_a_disjoint_cover_of_the_frozen_inventory(self):
         _, inventory, initial, _ = closure.load_ledgers()
@@ -723,6 +881,41 @@ class TransactionalSp17CssTests(unittest.TestCase):
         self.assertIn("resolve_text_run_orientation(style, text_content)", inline)
         self.assertIn("fragment.text_run_orientation", painter)
         self.assertNotIn("is_homogeneous_rotated_vertical_run", painter)
+
+    def test_w2b_w4_bidi_orientation_and_fragment_metadata_emission(self):
+        style_target = "doc.node_mut(n1).style"
+        expected = {
+            "normal": "UnicodeBidi::Normal",
+            "embed": "UnicodeBidi::Embed",
+            "bidi-override": "UnicodeBidi::Override",
+            "isolate": "UnicodeBidi::Isolate",
+            "isolate-override": "UnicodeBidi::IsolateOverride",
+            "plaintext": "UnicodeBidi::Plaintext",
+        }
+        for value, enum_value in expected.items():
+            output = port_wpt.generate_single_style(
+                "unicode-bidi", value, style_target, 16.0
+            )
+            self.assertIn(f"unicode_bidi = {enum_value}", output)
+
+        builder = (
+            ROOT / "bindings/rust/openui-layout/src/inline/items_builder.rs"
+        ).read_text(encoding="utf-8")
+        fragment = (
+            ROOT / "bindings/rust/openui-layout/src/fragment.rs"
+        ).read_text(encoding="utf-8")
+        painter = (
+            ROOT / "bindings/rust/openui-paint/src/painter.rs"
+        ).read_text(encoding="utf-8")
+        self.assertIn("fn bidi_open_chars", builder)
+        self.assertIn("fn bidi_close_chars", builder)
+        self.assertIn(
+            "debug_assert_ne!(orientation, TextRunOrientation::UnresolvedMixed)",
+            builder,
+        )
+        self.assertIn("pub enum TextRunOrientation", fragment)
+        self.assertIn("fragment.text_combine", painter)
+        self.assertNotIn("style.text_orientation", painter)
 
     def test_flex_shorthand_zero_percent_and_semantic_break_metrics(self):
         style = "doc.node_mut(n1).style"

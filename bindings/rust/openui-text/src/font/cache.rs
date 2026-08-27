@@ -23,6 +23,18 @@ use super::platform::FontPlatformData;
 /// a system fallback. See `fonts/README.md`.
 const PINNED_FONTS: &[(&str, &[u8])] = &[
     ("Ahem", include_bytes!("../../fonts/Ahem.ttf")),
+    (
+        "Droid Sans Fallback",
+        include_bytes!("../../fonts/DroidSansFallback-reduced.ttf"),
+    ),
+    (
+        "Noto Sans Devanagari",
+        include_bytes!("../../fonts/NotoSansDevanagari-Regular.ttf"),
+    ),
+    (
+        "Noto Color Emoji",
+        include_bytes!("../../fonts/NotoColorEmoji.ttf"),
+    ),
     ("DejaVu Sans", include_bytes!("../../fonts/DejaVuSans.ttf")),
     (
         "DejaVu Sans",
@@ -417,5 +429,43 @@ mod tests {
         assert_eq!(cache.len(), 2);
         assert_eq!(ahem.typeface().family_name(), "Ahem");
         assert_ne!(ahem.typeface().unique_id(), first.typeface().unique_id());
+    }
+
+    #[test]
+    fn pinned_sp17_fallback_faces_cover_their_declared_repertoires() {
+        let mut cache = FontCache::new();
+        let description = FontDescription::default();
+        let cases = [
+            ("Droid Sans Fallback", ['\u{4e01}', '\u{ff11}']),
+            ("Noto Sans Devanagari", ['\u{915}', '\u{93f}']),
+            ("Noto Color Emoji", ['\u{1f600}', '\u{1f44d}']),
+        ];
+
+        for (family, characters) in cases {
+            let face = cache
+                .get_font_platform_data(family, &description)
+                .unwrap_or_else(|| panic!("missing pinned {family}"));
+            for character in characters {
+                assert_ne!(
+                    face.sk_font().unichar_to_glyph(character as i32),
+                    0,
+                    "{family} must cover U+{:04X}",
+                    character as u32
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn pinned_cjk_face_exports_finite_vertical_metrics() {
+        let mut cache = FontCache::new();
+        let face = cache
+            .get_font_platform_data("Droid Sans Fallback", &FontDescription::default())
+            .expect("pinned Droid Sans Fallback");
+        let glyph = face.sk_font().unichar_to_glyph('\u{3001}' as i32);
+        assert_ne!(glyph, 0);
+        assert!(face.vertical_advance(glyph).is_finite());
+        assert!(face.vertical_advance(glyph) > 0.0);
+        assert!(face.vertical_origin_y(glyph).is_finite());
     }
 }

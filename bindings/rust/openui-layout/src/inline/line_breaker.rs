@@ -338,7 +338,20 @@ impl<'a> LineBreaker<'a> {
                 text_width
             };
 
-        if fit_width <= remaining || !allows_wrap {
+        // Independently shaped homogeneous runs can quantize one LayoutUnit
+        // wider than the same text measured as a single intrinsic run (for
+        // example, two exact 50px bidi/script runs versus a 99.999px
+        // max-content measurement). Treat that single fixed-point quantum as
+        // an exact fit so a shaping boundary cannot invent a line break.
+        // Each preceding independently-shaped item can contribute the same
+        // subpixel truncation. Accumulate one quantum per item already on the
+        // line plus the candidate, matching the unsplit run's single final
+        // quantization without granting a device-pixel-sized wrapping fudge.
+        let quantization_slack = LayoutUnit::from_raw(
+            i32::try_from(line.items.len().saturating_add(1)).unwrap_or(i32::MAX),
+        );
+        let fits_after_run_quantization = fit_width <= remaining + quantization_slack;
+        if fits_after_run_quantization || !allows_wrap {
             // Entire text fits (or we're in nowrap mode)
             line.items.push(InlineItemResult {
                 item_index,
@@ -1051,7 +1064,11 @@ impl<'a> LineBreaker<'a> {
         // The container's nowrap applies to all inline content within.
         let allows_wrap = allows_line_wrap(self.container_white_space);
 
-        if margin_box_width <= remaining || !line.has_content() || !allows_wrap {
+        let quantization_slack = LayoutUnit::from_raw(
+            i32::try_from(line.items.len().saturating_add(1)).unwrap_or(i32::MAX),
+        );
+        if margin_box_width <= remaining + quantization_slack || !line.has_content() || !allows_wrap
+        {
             line.items.push(InlineItemResult {
                 item_index,
                 text_range: item.text_range.clone(),
@@ -1657,7 +1674,7 @@ fn compute_border_padding_inline(
 fn resolve_atomic_inline_width(
     style: &ComputedStyle,
     containing_block_width: LayoutUnit,
-    intrinsic_inline_size: Option<f32>,
+    intrinsic_inline_size: Option<(f32, f32)>,
 ) -> LayoutUnit {
     resolve_atomic_inline_size(
         style,
@@ -1670,7 +1687,7 @@ fn resolve_atomic_inline_width(
 fn resolve_atomic_inline_size(
     style: &ComputedStyle,
     containing_block_width: LayoutUnit,
-    intrinsic_inline_size: Option<f32>,
+    intrinsic_inline_size: Option<(f32, f32)>,
     writing_direction: WritingDirectionMode,
 ) -> LayoutUnit {
     let axis = AtomicInlineAxisMapping::new(writing_direction);
@@ -1707,15 +1724,16 @@ fn resolve_atomic_inline_size(
         // non-flex atomic intrinsic helper returns content-box sizes.
         _ => {
             let intrinsic = intrinsic_inline_size
-                .map(|v| {
-                    let size = LayoutUnit::from_f32(v);
+                .map(|(min_size, max_size)| {
+                    let min_size = LayoutUnit::from_f32(min_size);
+                    let max_size = LayoutUnit::from_f32(max_size);
                     if style.display.is_flex() {
-                        size
+                        (min_size, max_size)
                     } else {
-                        size + border_padding
+                        (min_size + border_padding, max_size + border_padding)
                     }
                 })
-                .unwrap_or(border_padding);
+                .unwrap_or((border_padding, border_padding));
 
             // Apply min-width as a floor.
             let min_w = match min_size.length_type() {
@@ -1747,13 +1765,18 @@ fn resolve_atomic_inline_size(
             // Shrink-to-fit: min(max(min_content, available), max_content).
             // Since we only have one intrinsic measure, use it clamped to
             // [min_width, containing_block_width].
-            let result = if intrinsic > LayoutUnit::zero() {
-                let capped = if containing_block_width > LayoutUnit::zero() {
-                    intrinsic.min_of(containing_block_width)
+            let result = if intrinsic.1 > LayoutUnit::zero() {
+                let available = if containing_block_width > LayoutUnit::zero() {
+                    containing_block_width
                 } else {
-                    intrinsic
+                    intrinsic.1
                 };
-                capped.max_of(min_w)
+                crate::intrinsic_sizing::shrink_to_fit_inline_size(
+                    intrinsic.0,
+                    intrinsic.1,
+                    available,
+                )
+                .max_of(min_w)
             } else {
                 min_w
             };
@@ -2761,7 +2784,7 @@ mod tests {
         style.box_sizing = openui_style::BoxSizing::ContentBox;
 
         let cb = LayoutUnit::from_i32(500);
-        let w = resolve_atomic_inline_width(&style, cb, Some(80.0));
+        let w = resolve_atomic_inline_width(&style, cb, Some((80.0, 80.0)));
         assert_eq!(
             w.to_f32(),
             100.0,
@@ -3199,7 +3222,7 @@ mod tests {
             end_collapse_type: CollapseType::NotCollapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
-            intrinsic_inline_size: Some(50.0),
+            intrinsic_inline_size: Some((0.0, 50.0)),
         };
 
         let item_result = InlineItemResult {

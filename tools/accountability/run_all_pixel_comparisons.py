@@ -35,6 +35,9 @@ TEXT_PORTED_LIST = os.path.join(
 REAL_FONT_LIST = os.path.join(
     SCRIPT_DIR, "data", "wpt_ported", "sp16_real_font_tests.json"
 )
+FREETYPE_TEXT_LIST = os.path.join(
+    SCRIPT_DIR, "data", "wpt_ported", "sp17_freetype_text_tests.json"
+)
 
 # Chrome binary detection
 CHROME_DIRS = [
@@ -413,7 +416,7 @@ def chrome_environment(chrome_dir, use_ahem_noaa=False, use_real_font=False):
 
 def render_chrome(
     html_file, output_png, chrome_bin, chrome_dir, use_ahem_noaa=False,
-    use_real_font=False,
+    use_real_font=False, use_freetype_backend=False,
 ):
     """Render HTML with Chrome headless.
 
@@ -431,13 +434,13 @@ def render_chrome(
         "--force-device-scale-factor=1", "--window-size=800,687",
         f"--screenshot={raw_png}", f"file://{html_file}"
     ]
-    if use_real_font:
-        # Chromium 147 otherwise constructs Linux system faces through
-        # Fontations while openui-text's Skia FontMgr uses FreeType. Keep the
-        # renderer pinned but select Chromium's supported FreeType parameter so
-        # both sides rasterize the byte-identical vendored face through the
-        # same backend. This remains one manifest-wide profile, never a
-        # per-test substitution.
+    if use_real_font or use_freetype_backend:
+        # Chromium 147 otherwise constructs Linux faces through Fontations
+        # while openui-text's Skia FontMgr uses FreeType. Keep the renderer
+        # pinned but select Chromium's supported FreeType parameter for the
+        # manifest-scoped profiles whose fallback glyph metrics require that
+        # backend. Ordinary deterministic Ahem tests retain their established
+        # Fontations reference rasterization.
         cmd.insert(
             5,
             "--enable-features=FontDataServiceLinux:typeface/Freetype",
@@ -623,6 +626,28 @@ def main():
                 file=sys.stderr,
             )
             sys.exit(1)
+    freetype_text_tests = set()
+    if os.path.isfile(FREETYPE_TEXT_LIST):
+        with open(FREETYPE_TEXT_LIST) as f:
+            freetype_text_data = json.load(f)
+        if (
+            not isinstance(freetype_text_data, list)
+            or any(not isinstance(t, str) or not t for t in freetype_text_data)
+            or freetype_text_data != sorted(set(freetype_text_data))
+        ):
+            print(
+                f"ERROR: invalid FreeType text manifest: {FREETYPE_TEXT_LIST}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        freetype_text_tests = set(freetype_text_data)
+        invalid_profiles = freetype_text_tests - text_ported_tests
+        if invalid_profiles or freetype_text_tests & real_font_tests:
+            print(
+                "ERROR: FreeType text tests must be text-ported and not real-font tests",
+                file=sys.stderr,
+            )
+            sys.exit(1)
     # Get all test IDs
     result = subprocess.run([PIXEL_COMPARE, "list"], capture_output=True, text=True)
     all_tests = result.stdout.strip().split("\n")
@@ -724,6 +749,7 @@ def main():
                 test_id in text_ported_tests and test_id not in real_font_tests
             ),
             use_real_font=test_id in real_font_tests,
+            use_freetype_backend=test_id in freetype_text_tests,
         ):
             print(f"  ERROR  {test_id} — chrome render failed")
             errors += 1

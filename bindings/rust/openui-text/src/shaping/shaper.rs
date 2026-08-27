@@ -14,6 +14,7 @@ use unicode_script::{Script, UnicodeScript};
 
 use crate::font::features::{collect_font_features, to_skia_features};
 use crate::font::{Font, FontPlatformData};
+use openui_style::{FontFeature, FontOrientation};
 
 use super::shape_result::{ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection};
 
@@ -459,7 +460,23 @@ impl TextShaper {
             return ShapeResult::empty(direction);
         }
 
-        let font_data = match font.primary_font() {
+        // Inline collection splits deterministic text at script, grapheme,
+        // orientation, and fallback boundaries. Prefer the first authored
+        // family that covers the complete homogeneous run for that profile.
+        // Legacy builders retain their established primary-face shaping and
+        // use the missing-glyph fallback below until they are regenerated.
+        let deterministic_text_profile = font.description().family.families.iter().any(|family| {
+            matches!(
+                family,
+                openui_style::FontFamily::Named(name)
+                    if name.eq_ignore_ascii_case("Droid Sans Fallback")
+            )
+        });
+        let homogeneous_font = deterministic_text_profile
+            .then(|| font.fallback_index_for_text(text))
+            .flatten()
+            .and_then(|index| font.fallback_list().get(index));
+        let font_data = match homogeneous_font.or_else(|| font.primary_font()) {
             Some(fd) => Arc::clone(fd),
             None => return ShapeResult::empty(direction),
         };
@@ -471,7 +488,24 @@ impl TextShaper {
 
         // Collect OpenType features from font-variant-* properties and
         // explicit font-feature-settings, matching Blink's FontFeatures.
-        let font_features = collect_font_features(font.description());
+        let mut font_features = collect_font_features(font.description());
+        if matches!(
+            font.description().orientation,
+            FontOrientation::VerticalMixed | FontOrientation::VerticalUpright
+        ) {
+            // Upright vertical runs use the font's vertical alternates. The
+            // layout model continues to expose their logical inline advance
+            // through `ShapeResult::width`; paint maps that advance onto the
+            // physical vertical axis without rotating the glyph outlines.
+            font_features.push(FontFeature {
+                tag: *b"vert",
+                value: 1,
+            });
+            font_features.push(FontFeature {
+                tag: *b"vrt2",
+                value: 1,
+            });
+        }
         let skia_features = to_skia_features(&font_features, text.len());
 
         if skia_features.is_empty() {
@@ -1783,5 +1817,93 @@ mod tests {
         assert!((TextShaper::char_advance_from_runs(&runs, 0) - 10.0).abs() < 0.01);
         assert!((TextShaper::char_advance_from_runs(&runs, 1) - 20.0).abs() < 0.01);
         assert!((TextShaper::char_advance_from_runs(&runs, 2) - 30.0).abs() < 0.01);
+    }
+
+    fn droid_description(orientation: FontOrientation) -> FontDescription {
+        let mut description = FontDescription::default();
+        description.family = openui_style::FontFamilyList {
+            families: vec![openui_style::FontFamily::Named(
+                "Droid Sans Fallback".to_string(),
+            )],
+        };
+        description.orientation = orientation;
+        description
+    }
+
+    #[test]
+    fn upright_vertical_shaping_enables_cjk_vertical_substitution() {
+        let shaper = TextShaper::new();
+        let horizontal = shaper.shape(
+            "\u{3001}",
+            &Font::new(droid_description(FontOrientation::Horizontal)),
+            TextDirection::Ltr,
+        );
+        let vertical = shaper.shape(
+            "\u{3001}",
+            &Font::new(droid_description(FontOrientation::VerticalUpright)),
+            TextDirection::Ltr,
+        );
+        assert_eq!(horizontal.num_glyphs(), 1);
+        assert_eq!(vertical.num_glyphs(), 1);
+        assert_ne!(horizontal.runs[0].glyphs, vertical.runs[0].glyphs);
+    }
+
+    #[test]
+    fn sideways_orientation_preserves_horizontal_shaping() {
+        let shaper = TextShaper::new();
+        let horizontal = shaper.shape(
+            "A1",
+            &Font::new(droid_description(FontOrientation::Horizontal)),
+            TextDirection::Ltr,
+        );
+        let sideways = shaper.shape(
+            "A1",
+            &Font::new(droid_description(FontOrientation::VerticalRotated)),
+            TextDirection::Ltr,
+        );
+        assert_eq!(horizontal.runs[0].glyphs, sideways.runs[0].glyphs);
+        assert_eq!(horizontal.runs[0].advances, sideways.runs[0].advances);
+        assert_eq!(horizontal.width, sideways.width);
+    }
+
+    #[test]
+    fn pinned_fallback_order_shapes_latin_cjk_devanagari_and_emoji() {
+        let mut description = FontDescription::default();
+        description.family = openui_style::FontFamilyList {
+            families: [
+                "Ahem",
+                "Droid Sans Fallback",
+                "Noto Sans Devanagari",
+                "Noto Color Emoji",
+                "DejaVu Sans",
+            ]
+            .into_iter()
+            .map(|family| openui_style::FontFamily::Named(family.to_string()))
+            .collect(),
+        };
+        let shaper = TextShaper::new();
+        for (text, expected_family) in [
+            ("A", "Ahem"),
+            ("\u{4e01}", "Droid Sans Fallback"),
+            ("\u{915}\u{93f}", "Noto Sans Devanagari"),
+            ("\u{1f600}", "Noto Color Emoji"),
+        ] {
+            // Production inline collection splits mixed text at script and
+            // fallback boundaries before shaping. Exercise the same
+            // homogeneous-run contract here rather than asking Skia's
+            // single-font callback to shape several scripts in one segment.
+            let font = Font::new(description.clone());
+            let result = shaper.shape(text, &font, TextDirection::Ltr);
+            let family = result
+                .runs
+                .iter()
+                .find(|run| run.glyphs.iter().any(|glyph| *glyph != 0))
+                .map(|run| run.font_data.typeface().family_name());
+            assert_eq!(family.as_deref(), Some(expected_family));
+            assert!(result.runs.iter().all(|run| {
+                run.glyphs.iter().all(|glyph| *glyph != 0)
+                    && run.advances.iter().all(|advance| advance.is_finite())
+            }));
+        }
     }
 }

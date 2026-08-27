@@ -79,6 +79,29 @@ impl Font {
     pub fn fallback_count(&self) -> usize {
         self.fallback_list.len()
     }
+
+    /// Return the first resolved family that covers every painted scalar in a
+    /// grapheme cluster. Joiners, variation selectors, and bidi controls do
+    /// not require a glyph of their own. This lets inline collection split at
+    /// deterministic fallback boundaries before shaping.
+    pub fn fallback_index_for_text(&self, text: &str) -> Option<usize> {
+        self.fallback_list
+            .iter()
+            .enumerate()
+            .find_map(|(index, data)| {
+                text.chars()
+                    .filter(|ch| {
+                        !ch.is_control()
+                            && !matches!(
+                                *ch as u32,
+                                0x200C..=0x200D | 0x202A..=0x202E | 0x2066..=0x2069
+                                    | 0xFE00..=0xFE0F
+                            )
+                    })
+                    .all(|ch| data.sk_font().unichar_to_glyph(ch as i32) != 0)
+                    .then_some(index)
+            })
+    }
 }
 
 impl std::fmt::Debug for Font {

@@ -6,7 +6,7 @@
 
 use skia_safe::{
     font_style::Slant as SkSlant, Font as SkFont, FontHinting, FontMetrics as SkFontMetrics,
-    FontStyle as SkFontStyle, Typeface,
+    FontStyle as SkFontStyle, GlyphId, Rect, Typeface,
 };
 
 use super::metrics::FontMetrics;
@@ -20,10 +20,78 @@ pub struct FontPlatformData {
     sk_font: SkFont,
     size: f32,
     metrics: FontMetrics,
+    vertical_metrics: Option<VerticalMetrics>,
     synthetic_bold: bool,
     /// Oblique angle in degrees for synthetic oblique synthesis.
     /// 0.0 for normal/italic styles. CSS default oblique is 14°.
     synthetic_oblique_angle: f32,
+}
+
+/// OpenType `vhea`/`vmtx` data retained with a resolved face.
+///
+/// Skia exposes horizontal glyph placement but does not surface the vertical
+/// origin and advance used by CSS Writing Modes. Keeping this face-level table
+/// avoids reconstructing vertical metrics from horizontal ascent heuristics.
+struct VerticalMetrics {
+    advances: Vec<u16>,
+    top_side_bearings: Vec<i16>,
+    units_per_em: f32,
+}
+
+impl VerticalMetrics {
+    fn from_typeface(typeface: &Typeface) -> Option<Self> {
+        const VHEA: u32 = u32::from_be_bytes(*b"vhea");
+        const VMTX: u32 = u32::from_be_bytes(*b"vmtx");
+
+        let vhea = typeface.copy_table_data(VHEA)?;
+        let vhea = vhea.as_bytes();
+        let number_of_long_metrics = read_u16(vhea, 34)? as usize;
+        let glyph_count = typeface.count_glyphs();
+        if number_of_long_metrics == 0 || number_of_long_metrics > glyph_count {
+            return None;
+        }
+
+        let vmtx = typeface.copy_table_data(VMTX)?;
+        let vmtx = vmtx.as_bytes();
+        let required = number_of_long_metrics.checked_mul(4)?.checked_add(
+            glyph_count
+                .checked_sub(number_of_long_metrics)?
+                .checked_mul(2)?,
+        )?;
+        if vmtx.len() < required {
+            return None;
+        }
+
+        let mut advances = Vec::with_capacity(glyph_count);
+        let mut top_side_bearings = Vec::with_capacity(glyph_count);
+        for glyph in 0..glyph_count {
+            if glyph < number_of_long_metrics {
+                advances.push(read_u16(vmtx, glyph * 4)?);
+                top_side_bearings.push(read_i16(vmtx, glyph * 4 + 2)?);
+            } else {
+                advances.push(*advances.last()?);
+                let offset = number_of_long_metrics * 4 + (glyph - number_of_long_metrics) * 2;
+                top_side_bearings.push(read_i16(vmtx, offset)?);
+            }
+        }
+
+        Some(Self {
+            advances,
+            top_side_bearings,
+            units_per_em: typeface.units_per_em()? as f32,
+        })
+    }
+}
+
+fn read_u16(data: &[u8], offset: usize) -> Option<u16> {
+    Some(u16::from_be_bytes([
+        *data.get(offset)?,
+        *data.get(offset + 1)?,
+    ]))
+}
+
+fn read_i16(data: &[u8], offset: usize) -> Option<i16> {
+    read_u16(data, offset).map(|value| value as i16)
 }
 
 impl FontPlatformData {
@@ -110,12 +178,14 @@ impl FontPlatformData {
 
         let (_, sk_metrics) = sk_font.metrics();
         let metrics = Self::convert_metrics(&sk_metrics, &typeface, &sk_font);
+        let vertical_metrics = VerticalMetrics::from_typeface(&typeface);
 
         Self {
             typeface,
             sk_font,
             size,
             metrics,
+            vertical_metrics,
             synthetic_bold,
             synthetic_oblique_angle: oblique_angle,
         }
@@ -143,6 +213,38 @@ impl FontPlatformData {
     #[inline]
     pub fn metrics(&self) -> &FontMetrics {
         &self.metrics
+    }
+
+    /// OpenType vertical advance for a glyph, falling back to one em for a
+    /// face without `vhea`/`vmtx` data.
+    pub fn vertical_advance(&self, glyph: GlyphId) -> f32 {
+        self.vertical_metrics
+            .as_ref()
+            .and_then(|metrics| {
+                metrics
+                    .advances
+                    .get(glyph as usize)
+                    .map(|advance| (*advance, metrics.units_per_em))
+            })
+            .map(|(advance, units_per_em)| advance as f32 * self.size / units_per_em)
+            .unwrap_or(self.size)
+    }
+
+    /// Baseline Y relative to a glyph's vertical advance cell.
+    ///
+    /// OpenType defines the vertical origin as glyph `yMax` plus the `vmtx`
+    /// top-side-bearing. Skia bounds use a downward-positive device axis, so
+    /// `-bounds.top` is the scaled `yMax` contribution.
+    pub fn vertical_origin_y(&self, glyph: GlyphId) -> f32 {
+        let Some(metrics) = &self.vertical_metrics else {
+            return self.metrics.ascent;
+        };
+        let Some(top_side_bearing) = metrics.top_side_bearings.get(glyph as usize) else {
+            return self.metrics.ascent;
+        };
+        let mut bounds = [Rect::default()];
+        self.sk_font.get_bounds(&[glyph], &mut bounds, None);
+        -bounds[0].top + *top_side_bearing as f32 * self.size / metrics.units_per_em
     }
 
     /// Whether CSS requested a bold weight that the selected family lacked.

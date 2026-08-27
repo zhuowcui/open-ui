@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W2A | 🟡 Active; rotated vertical and sideways text closure, 193 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W2B–W4 | 🟡 Active; remaining actionable writing-mode mega-closure, 325 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,768 ported/runnable tests, 3,487 runnable passes, 281 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 649 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,889 ported/runnable tests, 3,619 runnable passes, 270 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 517 live writing-mode owner rows.**
 
 ---
 
@@ -872,3 +872,27 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   validator requires 193 exact promotions and keeps the SP13-R later-promotion
   allowlist at 42. The committed `summary.json` SHA-256 is
   `6b8c2d53561027fd561171b5642ef65fc281493d2729559b320871f21e48cbff`.
+
+### SP17 W2B–W4: remaining writing-mode mega-closure
+
+- Made nested bidi, script/fallback/orientation segmentation, upright vertical
+  shaping, ruby/text-combine geometry, and layout-owned paint metadata shared
+  production behavior. Added symmetric byte-pinned CJK, Devanagari, and emoji
+  fallback coverage without ambient fonts.
+- Closed the shared flex, orthogonal fragmentation/multicol, overflow/gutter,
+  sizing/aspect-ratio, float, border-image, background, border, margin-collapse,
+  and sticky defects needed by the remaining frozen actionable cohort.
+- Surgically admitted 132 IDs: 43 flexbox, 37 fragmentation, 22 sizing, 20
+  overflow, five multicol, three backgrounds, one float, and one positioned.
+  The target manifest is pinned at
+  `0085f0df34162f355c1f2a24deae01967cf52f1753049f27a32ec7425e3ce089`;
+  the complete 325-ID promotion proof is 325/325 exact and pinned at
+  `78efe59229615167e9603c6e40295c3eca0937c2f973f1097cd98a545d2793d3`.
+- Exactly 121 formerly unported targets became runnable and 11 pinned failures
+  promoted with no non-target status or mismatch change. The authoritative full
+  suite is **3,889 runnable / 3,619 exact / 270 fail / 0 errors**; live unported
+  inventory is 3,784, writing-mode ownership is 517, unported SP13-R multicol
+  ownership is 945, and the text manifest is 1,025. The validator requires 325
+  exact promotions and the SP13-R later-promotion allowlist contains 73 IDs.
+  The committed `summary.json` SHA-256 is
+  `2021d915414b470edddf51ff266ae7494240f7e5b60ede4410452da4c46784ad`.

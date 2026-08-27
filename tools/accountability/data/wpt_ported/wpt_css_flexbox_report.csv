@@ -967,12 +967,12 @@ aspect-ratio-intrinsic-size-009,ported,css_flexbox_aspect_ratio_intrinsic_size_0
 auto-margins-001-ref,not_portable,,unsupported property: writing-mode
 auto-margins-001,not_portable,,uses_javascript
 auto-margins-002,not_portable,,unsupported element: <img>
-auto-margins-003,not_portable,,unsupported property: writing-mode
-baseline-synthesis-001,not_portable,,unsupported property: writing-mode
-baseline-synthesis-002,not_portable,,unsupported property: writing-mode
-baseline-synthesis-003,not_portable,,unsupported property: writing-mode
-baseline-synthesis-004,not_portable,,unsupported property: writing-mode
-baseline-synthesis-vert-lr-line-under,not_portable,,style_block_unsupported property: writing-mode
+auto-margins-003,ported,css_flexbox_auto_margins_003,
+baseline-synthesis-001,ported,css_flexbox_baseline_synthesis_001,
+baseline-synthesis-002,ported,css_flexbox_baseline_synthesis_002,
+baseline-synthesis-003,ported,css_flexbox_baseline_synthesis_003,
+baseline-synthesis-004,ported,css_flexbox_baseline_synthesis_004,
+baseline-synthesis-vert-lr-line-under,ported,css_flexbox_baseline_synthesis_vert_lr_line_under,
 box-sizing-001,not_portable,,uses_javascript
 box-sizing-min-max-sizes-001,not_portable,,uses_javascript
 button-column-wrap-crash,not_portable,,unsupported element: <button>
@@ -993,8 +993,8 @@ css-flexbox-row-reverse,ported,css_flexbox_css_flexbox_row_reverse,
 css-flexbox-row-wrap-reverse,ported,css_flexbox_css_flexbox_row_wrap_reverse,
 css-flexbox-row-wrap,ported,css_flexbox_css_flexbox_row_wrap,
 css-flexbox-row,ported,css_flexbox_css_flexbox_row,
-css-flexbox-test1-ref,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-test1,not_portable,,style_block_unsupported property: writing-mode
+css-flexbox-test1-ref,ported,css_flexbox_css_flexbox_test1_ref,
+css-flexbox-test1,ported,css_flexbox_css_flexbox_test1,
 dynamic-baseline-change-nested,not_portable,,uses_javascript
 dynamic-baseline-change-ref,not_portable,,unsupported element: <canvas>
 dynamic-baseline-change,not_portable,,uses_javascript
@@ -1118,13 +1118,13 @@ flex-shorthand-flex-basis-middle,not_portable,,uses_javascript
 flex-vertical-align-effect,not_portable,,unsupported element: <input>
 flex-wrap-006,not_portable,,uses_javascript
 flexbox-align-self-baseline-horiz-001-ref,not_portable,,unsupported element: <table>
-flexbox-align-self-baseline-horiz-006-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-align-self-baseline-horiz-006,not_portable,,style_block_unsupported property: writing-mode
-flexbox-align-self-baseline-horiz-008-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-align-self-baseline-horiz-008,not_portable,,style_block_unsupported property: writing-mode
+flexbox-align-self-baseline-horiz-006-ref,ported,css_flexbox_flexbox_align_self_baseline_horiz_006_ref,
+flexbox-align-self-baseline-horiz-006,ported,css_flexbox_flexbox_align_self_baseline_horiz_006,
+flexbox-align-self-baseline-horiz-008-ref,ported,css_flexbox_flexbox_align_self_baseline_horiz_008_ref,
+flexbox-align-self-baseline-horiz-008,ported,css_flexbox_flexbox_align_self_baseline_horiz_008,
 flexbox-align-self-horiz-001-table,not_portable,,unsupported display: table
-flexbox-align-self-horiz-002-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-align-self-horiz-002,not_portable,,style_block_unsupported property: writing-mode
+flexbox-align-self-horiz-002-ref,ported,css_flexbox_flexbox_align_self_horiz_002_ref,
+flexbox-align-self-horiz-002,ported,css_flexbox_flexbox_align_self_horiz_002,
 flexbox-align-self-vert-001-ref,not_portable,,"complex_css_selector: and
            then wrapping that inline-block in a helper-div that has
            ""text-align:center"" set. -->
@@ -1159,8 +1159,8 @@ flexbox-align-self-vert-rtl-005-ref,not_portable,,"complex_css_selector: and
       .centerParent"
 flexbox-baseline-nested-001-ref,not_portable,,unsupported element: <input>
 flexbox-baseline-nested-001,not_portable,,unsupported element: <input>
-flexbox-basic-block-horiz-001v,not_portable,,style_block_unsupported property: writing-mode
-flexbox-basic-block-vert-001v,not_portable,,style_block_unsupported property: writing-mode
+flexbox-basic-block-horiz-001v,ported,css_flexbox_flexbox_basic_block_horiz_001v,
+flexbox-basic-block-vert-001v,ported,css_flexbox_flexbox_basic_block_vert_001v,
 flexbox-basic-canvas-horiz-001-ref,not_portable,,unsupported element: <canvas>
 flexbox-basic-canvas-horiz-001,not_portable,,unsupported element: <canvas>
 flexbox-basic-canvas-horiz-001v,not_portable,,style_block_unsupported property: writing-mode
@@ -1187,10 +1187,10 @@ flexbox-basic-video-horiz-001-ref,not_portable,,unsupported element: <video>
 flexbox-basic-video-horiz-001,not_portable,,unsupported element: <video>
 flexbox-basic-video-vert-001-ref,not_portable,,unsupported element: <video>
 flexbox-basic-video-vert-001,not_portable,,unsupported element: <video>
-flexbox-column-row-gap-002-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-column-row-gap-002,not_portable,,style_block_unsupported property: writing-mode
-flexbox-column-row-gap-004-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-column-row-gap-004,not_portable,,style_block_unsupported property: writing-mode
+flexbox-column-row-gap-002-ref,ported,css_flexbox_flexbox_column_row_gap_002_ref,
+flexbox-column-row-gap-002,ported,css_flexbox_flexbox_column_row_gap_002,
+flexbox-column-row-gap-004-ref,ported,css_flexbox_flexbox_column_row_gap_004_ref,
+flexbox-column-row-gap-004,ported,css_flexbox_flexbox_column_row_gap_004,
 flexbox-definite-cross-size-constrained-percentage-ref,not_portable,,unsupported element: <img>
 flexbox-definite-cross-size-constrained-percentage,not_portable,,unsupported element: <img>
 flexbox-dyn-resize-001,not_portable,,uses_javascript
@@ -1209,12 +1209,12 @@ flexbox-flex-basis-content-004b,not_portable,,unsupported element: <canvas>
 flexbox-flex-wrap-flexing-003,ported,css_flexbox_flexbox_flex_wrap_flexing_003,
 flexbox-iframe-intrinsic-size-001,not_portable,,unsupported element: <iframe>
 flexbox-ignores-first-letter,not_portable,,uses_javascript
-flexbox-justify-content-wmvert-001,not_portable,,style_block_unsupported property: writing-mode
+flexbox-justify-content-wmvert-001,ported,css_flexbox_flexbox_justify_content_wmvert_001,
 flexbox-justify-content-wmvert-002,not_portable,,uses_javascript
 flexbox-justify-content-wmvert-003,not_portable,,uses_javascript
 flexbox-lines-must-be-stretched-by-default,not_portable,,uses_javascript
-flexbox-mbp-horiz-002v,not_portable,,style_block_unsupported property: writing-mode
-flexbox-mbp-horiz-003v,not_portable,,style_block_unsupported property: writing-mode
+flexbox-mbp-horiz-002v,ported,css_flexbox_flexbox_mbp_horiz_002v,
+flexbox-mbp-horiz-003v,ported,css_flexbox_flexbox_mbp_horiz_003v,
 flexbox-min-height-auto-002-ref,not_portable,,unsupported element: <img>
 flexbox-min-height-auto-002a,not_portable,,unsupported element: <img>
 flexbox-min-height-auto-002b,not_portable,,unsupported element: <img>
@@ -1320,7 +1320,7 @@ flexbox_width-wrapping-column,not_portable,,uses_javascript
 flexbox_wrap-long-ref,not_portable,,complex_css_selector: div::after
 flexbox_wrap-ref,not_portable,,complex_css_selector: div::after
 flexbox_wrap-reverse-ref,not_portable,,complex_css_selector: div::after
-flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom,not_portable,,style_block_unsupported property: writing-mode
+flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom,ported,css_flexbox_flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom,
 flexible-box-float,not_portable,,uses_javascript
 flexitem-no-margin-collapsing,not_portable,,uses_javascript
 flexitem-stretch-image,not_portable,,uses_javascript
@@ -1397,7 +1397,7 @@ item-with-table-with-infinite-max-intrinsic-width,not_portable,,unsupported elem
 justify-content-006,not_portable,,uses_javascript
 justify-content-007,not_portable,,uses_javascript
 justify-content-rounding,not_portable,,uses_javascript
-justify-content-sideways-001,not_portable,,unsupported property: writing-mode
+justify-content-sideways-001,ported,css_flexbox_justify_content_sideways_001,
 justify-content_space-between-002,not_portable,,uses_javascript
 layout-with-inline-svg-001,not_portable,,uses_javascript
 main-axis-margin-rounding,not_portable,,uses_javascript
@@ -1422,8 +1422,8 @@ overflow-auto-005,not_portable,,uses_javascript
 overflow-auto-006,not_portable,,uses_javascript
 overflow-auto-007,not_portable,,uses_javascript
 overflow-auto-008,not_portable,,uses_javascript
-overflow-top-left-ref,not_portable,,style_block_unsupported property: writing-mode
-overflow-top-left,not_portable,,style_block_unsupported property: writing-mode
+overflow-top-left-ref,ported,css_flexbox_overflow_top_left_ref,
+overflow-top-left,ported,css_flexbox_overflow_top_left,
 percent-height-flex-items-cross-sizes-with-mutations,not_portable,,uses_javascript
 percentage-descendant-of-anonymous-flex-item,not_portable,,unsupported element: <button>
 percentage-heights-000,not_portable,,uses_javascript
@@ -1447,7 +1447,7 @@ percentage-padding-003,not_portable,,uses_javascript
 percentage-padding-004,not_portable,,uses_javascript
 percentage-size-quirks-002,not_portable,,uses_javascript
 percentage-size-quirks,not_portable,,uses_javascript
-percentage-size-subitems-001,not_portable,,style_block_unsupported property: writing-mode
+percentage-size-subitems-001,ported,css_flexbox_percentage_size_subitems_001,
 percentage-size,not_portable,,uses_javascript
 position-absolute-scrollbar-freeze,not_portable,,uses_javascript
 position-relative-percentage-top-001,not_portable,,uses_javascript
@@ -1482,7 +1482,7 @@ stretch-flex-item-checkbox-input,not_portable,,unsupported element: <input>
 stretch-flex-item-radio-input-ref,not_portable,,unsupported element: <input>
 stretch-flex-item-radio-input,not_portable,,unsupported element: <input>
 stretch-input-in-column,not_portable,,unsupported element: <input>
-stretch-obeys-min-max-002,not_portable,,unsupported property: writing-mode
+stretch-obeys-min-max-002,ported,css_flexbox_stretch_obeys_min_max_002,
 stretched-child-shrink-on-relayout,not_portable,,uses_javascript
 stretching-orthogonal-flows,ported,css_flexbox_stretching_orthogonal_flows,
 svg-no-natural-size-grandchild,not_portable,,unsupported element: <svg>
@@ -1492,7 +1492,7 @@ svg-root-as-flex-item-003,not_portable,,unsupported element: <svg>
 svg-root-as-flex-item-004,not_portable,,unsupported element: <svg>
 svg-root-as-flex-item-005,not_portable,,unsupported element: <svg>
 svg-root-as-flex-item-006,not_portable,,uses_javascript
-synthesize-vrl-baseline,not_portable,,unsupported property: writing-mode
+synthesize-vrl-baseline,ported,css_flexbox_synthesize_vrl_baseline,
 table-as-flex-item-max-content,not_portable,,unsupported display: table
 table-as-item-auto-min-width,not_portable,,unsupported display: table
 table-as-item-change-cell,not_portable,,uses_javascript
@@ -1529,8 +1529,8 @@ table-with-infinite-max-intrinsic-width,not_portable,,unsupported element: <tabl
 table-with-percent-intrinsic-width,not_portable,,uses_javascript
 text-as-flexitem-size-001,not_portable,,uses_javascript
 total-min-max-violation-zero,not_portable,,uses_javascript
-webkit-box-vertical-writing-mode-ref,not_portable,,unsupported property: writing-mode
-webkit-box-vertical-writing-mode,not_portable,,unsupported property: writing-mode
+webkit-box-vertical-writing-mode-ref,ported,css_flexbox_webkit_box_vertical_writing_mode_ref,
+webkit-box-vertical-writing-mode,ported,css_flexbox_webkit_box_vertical_writing_mode,
 abspos_abspos-autopos-htb-ltr,ported,css_flexbox_abspos_abspos_autopos_htb_ltr,
 abspos_abspos-autopos-htb-rtl,ported,css_flexbox_abspos_abspos_autopos_htb_rtl,
 abspos_abspos-autopos-vlr-ltr,ported,css_flexbox_abspos_abspos_autopos_vlr_ltr,
@@ -1724,8 +1724,8 @@ alignment_flex-align-baseline-004,not_portable,,uses_javascript
 alignment_flex-align-baseline-005,not_portable,,uses_javascript
 alignment_flex-align-baseline-006,not_portable,,uses_javascript
 alignment_flex-align-baseline-007,not_portable,,uses_javascript
-alignment_flex-align-baseline-column-vert-lr-rtl-wrap-reverse,not_portable,,style_block_unsupported property: writing-mode
-alignment_flex-align-baseline-column-vert-rl-rtl-wrap-reverse,not_portable,,style_block_unsupported property: writing-mode
+alignment_flex-align-baseline-column-vert-lr-rtl-wrap-reverse,ported,css_flexbox_alignment_flex_align_baseline_column_vert_lr_rtl_wrap_reverse,
+alignment_flex-align-baseline-column-vert-rl-rtl-wrap-reverse,ported,css_flexbox_alignment_flex_align_baseline_column_vert_rl_rtl_wrap_reverse,
 alignment_flex-align-baseline-fieldset-001,not_portable,,uses_javascript
 alignment_flex-align-baseline-fieldset-002,not_portable,,uses_javascript
 alignment_flex-align-baseline-fieldset-003,not_portable,,uses_javascript

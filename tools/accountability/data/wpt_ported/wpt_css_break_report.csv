@@ -20,12 +20,12 @@ auto-overflow-inside-second-abspos-fragment-crash,ported,css_break_auto_overflow
 avoid-border-break,ported,css_break_avoid_border_break,
 background-attachment-fixed,not_portable,,uses_javascript
 background-attachment-fixed-ref,ported,css_break_background_attachment_fixed_ref,
-background-image-000,not_portable,,style_block_unsupported property: writing-mode
-background-image-000-ref,not_portable,,style_block_unsupported property: writing-mode
-background-image-001,not_portable,,style_block_unsupported property: writing-mode
-background-image-001-ref,not_portable,,style_block_unsupported property: writing-mode
-background-image-002,not_portable,,style_block_unsupported property: writing-mode
-background-image-002-ref,not_portable,,style_block_unsupported property: writing-mode
+background-image-000,ported,css_break_background_image_000,
+background-image-000-ref,ported,css_break_background_image_000_ref,
+background-image-001,ported,css_break_background_image_001,
+background-image-001-ref,ported,css_break_background_image_001_ref,
+background-image-002,ported,css_break_background_image_002,
+background-image-002-ref,ported,css_break_background_image_002_ref,
 background-image-003,ported,css_break_background_image_003,
 background-image-004,ported,css_break_background_image_004,
 background-image-005,ported,css_break_background_image_005,
@@ -33,14 +33,14 @@ background-image-006,not_portable,,unsupported display: table
 background-image-007,ported,css_break_background_image_007,
 background-image-007-ref,ported,css_break_background_image_007_ref,
 become-unfragmented-001,not_portable,,uses_javascript
-block-001-wm-vlr-print,not_portable,,style_block_unsupported property: writing-mode
-block-001-wm-vlr-ref,not_portable,,style_block_unsupported property: writing-mode
-block-001-wm-vrl-print,not_portable,,style_block_unsupported property: writing-mode
-block-001-wm-vrl-ref,not_portable,,style_block_unsupported property: writing-mode
-block-002-wm-vlr-print,not_portable,,style_block_unsupported property: writing-mode
-block-002-wm-vlr-ref,not_portable,,style_block_unsupported property: writing-mode
-block-002-wm-vrl-print,not_portable,,style_block_unsupported property: writing-mode
-block-002-wm-vrl-ref,not_portable,,style_block_unsupported property: writing-mode
+block-001-wm-vlr-print,ported,css_break_block_001_wm_vlr_print,
+block-001-wm-vlr-ref,ported,css_break_block_001_wm_vlr_ref,
+block-001-wm-vrl-print,ported,css_break_block_001_wm_vrl_print,
+block-001-wm-vrl-ref,ported,css_break_block_001_wm_vrl_ref,
+block-002-wm-vlr-print,ported,css_break_block_002_wm_vlr_print,
+block-002-wm-vlr-ref,ported,css_break_block_002_wm_vlr_ref,
+block-002-wm-vrl-print,ported,css_break_block_002_wm_vrl_print,
+block-002-wm-vrl-ref,ported,css_break_block_002_wm_vrl_ref,
 block-end-aligned-abspos,not_portable,,uses_javascript
 block-end-aligned-abspos-nested,not_portable,,uses_javascript
 block-end-aligned-abspos-with-overflow,ported,css_break_block_end_aligned_abspos_with_overflow,
@@ -137,10 +137,10 @@ box-shadow-001,ported,css_break_box_shadow_001,
 box-shadow-001-ref,ported,css_break_box_shadow_001_ref,
 box-shadow-002,ported,css_break_box_shadow_002,
 box-shadow-002-ref,ported,css_break_box_shadow_002_ref,
-box-shadow-003,not_portable,,unsupported property: writing-mode
-box-shadow-003-ref,not_portable,,unsupported property: writing-mode
-box-shadow-004,not_portable,,unsupported property: writing-mode
-box-shadow-004-ref,not_portable,,unsupported property: writing-mode
+box-shadow-003,ported,css_break_box_shadow_003,
+box-shadow-003-ref,ported,css_break_box_shadow_003_ref,
+box-shadow-004,ported,css_break_box_shadow_004,
+box-shadow-004-ref,ported,css_break_box_shadow_004_ref,
 box-shadow-005,ported,css_break_box_shadow_005,
 box-shadow-005-ref,ported,css_break_box_shadow_005_ref,
 br-clear-all,ported,css_break_br_clear_all,
@@ -176,8 +176,8 @@ break-float-dynamic-001,not_portable,,uses_javascript
 break-float-dynamic-002,not_portable,,uses_javascript
 break-inside-avoid-min-block-size-1,ported,css_break_break_inside_avoid_min_block_size_1,
 break-inside-avoid-min-block-size-1-ref,ported,css_break_break_inside_avoid_min_block_size_1_ref,
-break-inside-avoid-min-block-size-2,not_portable,,style_block_unsupported property: writing-mode
-break-inside-avoid-min-block-size-2-ref,not_portable,,style_block_unsupported property: writing-mode
+break-inside-avoid-min-block-size-2,ported,css_break_break_inside_avoid_min_block_size_2,
+break-inside-avoid-min-block-size-2-ref,ported,css_break_break_inside_avoid_min_block_size_2_ref,
 break-inside-avoid-multicol-001-print,ported,css_break_break_inside_avoid_multicol_001_print,
 break-inside-avoid-multicol-001-print-ref,ported,css_break_break_inside_avoid_multicol_001_print_ref,
 break-inside-avoid-multicol-iframe-crash-print,not_portable,,unsupported element: <iframe>
@@ -314,8 +314,8 @@ flexbox_multi-line-column-flex-fragmentation-043-ref,ported,css_break_flexbox_mu
 flexbox_multi-line-column-flex-fragmentation-044,ported,css_break_flexbox_multi_line_column_flex_fragmentation_044,
 flexbox_multi-line-column-flex-fragmentation-044-ref,ported,css_break_flexbox_multi_line_column_flex_fragmentation_044_ref,
 flexbox_multi-line-column-flex-fragmentation-045,ported,css_break_flexbox_multi_line_column_flex_fragmentation_045,
-flexbox_multi-line-column-flex-fragmentation-046,not_portable,,unsupported property: writing-mode
-flexbox_multi-line-column-flex-fragmentation-047,not_portable,,unsupported property: writing-mode
+flexbox_multi-line-column-flex-fragmentation-046,ported,css_break_flexbox_multi_line_column_flex_fragmentation_046,
+flexbox_multi-line-column-flex-fragmentation-047,ported,css_break_flexbox_multi_line_column_flex_fragmentation_047,
 flexbox_multi-line-column-flex-fragmentation-048,not_portable,,unsupported property: contain
 flexbox_multi-line-column-flex-fragmentation-049,not_portable,,unsupported property: contain
 flexbox_multi-line-column-flex-fragmentation-050,ported,css_break_flexbox_multi_line_column_flex_fragmentation_050,
@@ -392,7 +392,7 @@ flexbox_multi-line-row-flex-fragmentation-053,ported,css_break_flexbox_multi_lin
 flexbox_multi-line-row-flex-fragmentation-054,not_portable,,unsupported property: contain
 flexbox_multi-line-row-flex-fragmentation-055,ported,css_break_flexbox_multi_line_row_flex_fragmentation_055,
 flexbox_multi-line-row-flex-fragmentation-056,ported,css_break_flexbox_multi_line_row_flex_fragmentation_056,
-flexbox_multi-line-row-flex-fragmentation-057,not_portable,,unsupported property: writing-mode
+flexbox_multi-line-row-flex-fragmentation-057,ported,css_break_flexbox_multi_line_row_flex_fragmentation_057,
 flexbox_multi-line-row-flex-fragmentation-058,not_portable,,unsupported property: contain
 flexbox_multi-line-row-flex-fragmentation-059,ported,css_break_flexbox_multi_line_row_flex_fragmentation_059,
 flexbox_multi-line-row-flex-fragmentation-060,ported,css_break_flexbox_multi_line_row_flex_fragmentation_060,
@@ -505,7 +505,7 @@ flexbox_single-line-column-flex-fragmentation-041,ported,css_break_flexbox_singl
 flexbox_single-line-column-flex-fragmentation-042,not_portable,,unsupported property: contain
 flexbox_single-line-column-flex-fragmentation-043,ported,css_break_flexbox_single_line_column_flex_fragmentation_043,
 flexbox_single-line-column-flex-fragmentation-044,ported,css_break_flexbox_single_line_column_flex_fragmentation_044,
-flexbox_single-line-column-flex-fragmentation-045,not_portable,,unsupported property: writing-mode
+flexbox_single-line-column-flex-fragmentation-045,ported,css_break_flexbox_single_line_column_flex_fragmentation_045,
 flexbox_single-line-column-flex-fragmentation-046,ported,css_break_flexbox_single_line_column_flex_fragmentation_046,
 flexbox_single-line-column-flex-fragmentation-047,ported,css_break_flexbox_single_line_column_flex_fragmentation_047,
 flexbox_single-line-column-flex-fragmentation-048,ported,css_break_flexbox_single_line_column_flex_fragmentation_048,
@@ -577,7 +577,7 @@ flexbox_single-line-row-flex-fragmentation-027-ref,ported,css_break_flexbox_sing
 flexbox_single-line-row-flex-fragmentation-028,ported,css_break_flexbox_single_line_row_flex_fragmentation_028,
 flexbox_single-line-row-flex-fragmentation-029,not_portable,,unsupported property: contain
 flexbox_single-line-row-flex-fragmentation-030,ported,css_break_flexbox_single_line_row_flex_fragmentation_030,
-flexbox_single-line-row-flex-fragmentation-031,not_portable,,unsupported property: writing-mode
+flexbox_single-line-row-flex-fragmentation-031,ported,css_break_flexbox_single_line_row_flex_fragmentation_031,
 flexbox_single-line-row-flex-fragmentation-032,ported,css_break_flexbox_single_line_row_flex_fragmentation_032,
 flexbox_single-line-row-flex-fragmentation-033,not_portable,,unsupported property: contain
 flexbox_single-line-row-flex-fragmentation-034,ported,css_break_flexbox_single_line_row_flex_fragmentation_034,
@@ -1020,8 +1020,8 @@ remove-inline-child,not_portable,,uses_javascript
 resumed-float-and-inline-block-crash,ported,css_break_resumed_float_and_inline_block_crash,
 root-margin-001-print,ported,css_break_root_margin_001_print,
 root-margin-001-print-ref,ported,css_break_root_margin_001_print_ref,
-rounded-clipped-border,not_portable,,unsupported property: writing-mode
-rounded-clipped-border-ref,not_portable,,unsupported property: writing-mode
+rounded-clipped-border,ported,css_break_rounded_clipped_border,
+rounded-clipped-border-ref,ported,css_break_rounded_clipped_border_ref,
 ruby-000,ported,css_break_ruby_000,
 ruby-001,ported,css_break_ruby_001,
 ruby-002,ported,css_break_ruby_002,
@@ -1168,17 +1168,17 @@ table_table-cell-expansion-010,not_portable,,style_block_unsupported property: b
 table_table-col-paint-htb-ltr,not_portable,,unsupported property: border-spacing
 table_table-col-paint-htb-ltr-ref,ported,css_break_table_table_col_paint_htb_ltr_ref,
 table_table-col-paint-vlr-rtl,not_portable,,style_block_unsupported property: writing-mode
-table_table-col-paint-vlr-rtl-ref,not_portable,,style_block_unsupported property: writing-mode
+table_table-col-paint-vlr-rtl-ref,ported,css_break_table_table_col_paint_vlr_rtl_ref,
 table_table-col-paint-vrl-rtl,not_portable,,style_block_unsupported property: writing-mode
-table_table-col-paint-vrl-rtl-ref,not_portable,,style_block_unsupported property: writing-mode
+table_table-col-paint-vrl-rtl-ref,ported,css_break_table_table_col_paint_vrl_rtl_ref,
 table_table-collapsed-borders-paint-at-boundary-ref,ported,css_break_table_table_collapsed_borders_paint_at_boundary_ref,
 table_table-collapsed-borders-paint-at-boundary.tentative,not_portable,,unsupported property: border-collapse
 table_table-collapsed-borders-paint-htb-ltr,not_portable,,unsupported property: border-collapse
 table_table-collapsed-borders-paint-htb-ltr-ref,ported,css_break_table_table_collapsed_borders_paint_htb_ltr_ref,
 table_table-collapsed-borders-paint-vlr-rtl,not_portable,,style_block_unsupported property: writing-mode
-table_table-collapsed-borders-paint-vlr-rtl-ref,not_portable,,style_block_unsupported property: writing-mode
+table_table-collapsed-borders-paint-vlr-rtl-ref,ported,css_break_table_table_collapsed_borders_paint_vlr_rtl_ref,
 table_table-collapsed-borders-paint-vrl-ltr,not_portable,,style_block_unsupported property: writing-mode
-table_table-collapsed-borders-paint-vrl-ltr-ref,not_portable,,style_block_unsupported property: writing-mode
+table_table-collapsed-borders-paint-vrl-ltr-ref,ported,css_break_table_table_collapsed_borders_paint_vrl_ltr_ref,
 table_table-fragmentation-001a-print,not_portable,,style_block_unsupported property: border-spacing
 table_table-fragmentation-001a-print-ref,ported,css_break_table_table_fragmentation_001a_print_ref,
 table_table-fragmentation-001b-print,not_portable,,style_block_unsupported property: border-spacing
@@ -1200,9 +1200,9 @@ table_table-fragmentation-003d-print,not_portable,,style_block_unsupported prope
 table_table-grid-paint-htb-ltr,not_portable,,unsupported property: border-spacing
 table_table-grid-paint-htb-ltr-ref,ported,css_break_table_table_grid_paint_htb_ltr_ref,
 table_table-grid-paint-vlr-rtl,not_portable,,style_block_unsupported property: writing-mode
-table_table-grid-paint-vlr-rtl-ref,not_portable,,style_block_unsupported property: writing-mode
+table_table-grid-paint-vlr-rtl-ref,ported,css_break_table_table_grid_paint_vlr_rtl_ref,
 table_table-grid-paint-vrl-rtl,not_portable,,style_block_unsupported property: writing-mode
-table_table-grid-paint-vrl-rtl-ref,not_portable,,style_block_unsupported property: writing-mode
+table_table-grid-paint-vrl-rtl-ref,ported,css_break_table_table_grid_paint_vrl_rtl_ref,
 table_table-in-abspos-multicol-with-nested-meter-crash,not_portable,,unsupported element: <table>
 table_table-parts-offsetheight,not_portable,,uses_javascript
 table_table-parts-offsets-vertical-lr.tentative,not_portable,,uses_javascript
@@ -1214,16 +1214,16 @@ table_table-row-end-padding-crash,not_portable,,unsupported element: <table>
 table_table-row-paint-htb-ltr,not_portable,,unsupported property: border-spacing
 table_table-row-paint-htb-ltr-ref,ported,css_break_table_table_row_paint_htb_ltr_ref,
 table_table-row-paint-vlr-rtl,not_portable,,style_block_unsupported property: writing-mode
-table_table-row-paint-vlr-rtl-ref,not_portable,,style_block_unsupported property: writing-mode
+table_table-row-paint-vlr-rtl-ref,ported,css_break_table_table_row_paint_vlr_rtl_ref,
 table_table-row-paint-vrl-rtl,not_portable,,style_block_unsupported property: writing-mode
-table_table-row-paint-vrl-rtl-ref,not_portable,,style_block_unsupported property: writing-mode
+table_table-row-paint-vrl-rtl-ref,ported,css_break_table_table_row_paint_vrl_rtl_ref,
 table_table-rowspan-001,not_portable,,unsupported element: <table>
 table_table-section-paint-htb-ltr,not_portable,,unsupported property: border-spacing
 table_table-section-paint-htb-ltr-ref,ported,css_break_table_table_section_paint_htb_ltr_ref,
 table_table-section-paint-vlr-rtl,not_portable,,style_block_unsupported property: writing-mode
-table_table-section-paint-vlr-rtl-ref,not_portable,,style_block_unsupported property: writing-mode
+table_table-section-paint-vlr-rtl-ref,ported,css_break_table_table_section_paint_vlr_rtl_ref,
 table_table-section-paint-vrl-rtl,not_portable,,style_block_unsupported property: writing-mode
-table_table-section-paint-vrl-rtl-ref,not_portable,,style_block_unsupported property: writing-mode
+table_table-section-paint-vrl-rtl-ref,ported,css_break_table_table_section_paint_vrl_rtl_ref,
 table_tall-bottom-aligned-cell-with-bottom-padding,not_portable,,unsupported display: table
 table_tall-padding-crash,not_portable,,unsupported display: table
 table_truncated-border-spacing-at-fragmentainer-end,not_portable,,uses_javascript

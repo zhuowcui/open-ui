@@ -81,6 +81,12 @@ impl FontFallbackList {
     pub fn is_empty(&self) -> bool {
         self.platform_data.is_empty()
     }
+
+    /// Iterate the resolved families in authored order.
+    #[inline]
+    pub fn iter(&self) -> impl Iterator<Item = &Arc<FontPlatformData>> {
+        self.platform_data.iter()
+    }
 }
 
 impl std::fmt::Debug for FontFallbackList {

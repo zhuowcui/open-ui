@@ -38,6 +38,8 @@ W1O_TARGETS_JSON = SCRIPT_DIR / "sp17_w1o_targets.json"
 W1O_FOCUSED_JSON = SCRIPT_DIR / "sp17_w1o_focused_ids.json"
 W2A_TARGETS_JSON = SCRIPT_DIR / "sp17_w2a_targets.json"
 W2A_FOCUSED_JSON = SCRIPT_DIR / "sp17_w2a_focused_ids.json"
+W2B_W4_TARGETS_JSON = SCRIPT_DIR / "sp17_w2b_w4_targets.json"
+W2B_W4_FOCUSED_JSON = SCRIPT_DIR / "sp17_w2b_w4_focused_ids.json"
 WPT_ROOT = Path(os.environ.get(
     "CHROMIUM_WPT_CSS",
     os.path.expanduser(
@@ -109,6 +111,19 @@ EXPECTED_W2A_LIVE_OWNED = 649
 W2A_MANIFEST_SHA256 = {
     "sp17_w2a_targets.json": "4162bd75b614a81ab43c897aef201456660b35f6cdac8109c41b1aa126ec963f",
     "sp17_w2a_focused_ids.json": "b44b3ec2d5c1aea2e6e159f923858d66cdb24ff9f4a958a75ec8092771012511",
+}
+EXPECTED_W2B_W4_TARGETS = 132
+EXPECTED_W2B_W4_FOCUSED = 325
+EXPECTED_W2B_W4_PROMOTIONS = 325
+EXPECTED_W2B_W4_RUNNABLE = 3889
+EXPECTED_W2B_W4_EXACT = 3619
+EXPECTED_W2B_W4_FAILURES = 270
+EXPECTED_W2B_W4_UNPORTED = 3784
+EXPECTED_W2B_W4_LIVE_OWNED = 517
+EXPECTED_W2B_W4_RESIDUAL_ADMISSIONS = 2
+W2B_W4_MANIFEST_SHA256 = {
+    "sp17_w2b_w4_targets.json": "0085f0df34162f355c1f2a24deae01967cf52f1753049f27a32ec7425e3ce089",
+    "sp17_w2b_w4_focused_ids.json": "78efe59229615167e9603c6e40295c3eca0937c2f973f1097cd98a545d2793d3",
 }
 W2A_EXISTING_EXACT_GUARDS = frozenset({
     "wpt/css_flexbox/flexbox-writing-mode-slr-ref",
@@ -291,6 +306,39 @@ def load_w2a_manifests() -> tuple[list[str], list[str]]:
         or EXPECTED_W2A_LIVE_OWNED != EXPECTED_W1O_LIVE_OWNED - len(targets)
     ):
         raise ValueError("SP17 W2A is not the projected 22-ID delta from W1O")
+    return targets, focused
+
+
+def load_w2b_w4_manifests() -> tuple[list[str], list[str]]:
+    manifests = []
+    for path, expected_count in (
+        (W2B_W4_TARGETS_JSON, EXPECTED_W2B_W4_TARGETS),
+        (W2B_W4_FOCUSED_JSON, EXPECTED_W2B_W4_FOCUSED),
+    ):
+        actual_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual_hash != W2B_W4_MANIFEST_SHA256[path.name]:
+            raise ValueError(
+                f"SP17 W2B-W4 manifest byte drift: {path.name}: {actual_hash}"
+            )
+        values = json.loads(path.read_text(encoding="utf-8"))
+        if values != sorted(set(values)) or len(values) != expected_count:
+            raise ValueError(
+                f"SP17 W2B-W4 manifest is not the sorted "
+                f"{expected_count}-ID set: {path.name}"
+            )
+        manifests.append(values)
+    targets, focused = manifests
+    if not set(targets) <= set(focused):
+        raise ValueError("SP17 W2B-W4 focused proof dropped a target")
+    if (
+        EXPECTED_W2B_W4_PROMOTIONS != EXPECTED_W2A_PROMOTIONS + len(targets)
+        or EXPECTED_W2B_W4_RUNNABLE != EXPECTED_W2A_RUNNABLE + 121
+        or EXPECTED_W2B_W4_UNPORTED != EXPECTED_W2A_UNPORTED - 121
+        or EXPECTED_W2B_W4_EXACT != EXPECTED_W2A_EXACT + len(targets)
+        or EXPECTED_W2B_W4_FAILURES != EXPECTED_W2A_FAILURES - 11
+        or EXPECTED_W2B_W4_LIVE_OWNED != EXPECTED_W2A_LIVE_OWNED - len(targets)
+    ):
+        raise ValueError("SP17 W2B-W4 projection is not the pinned 121/11 delta")
     return targets, focused
 
 
@@ -666,6 +714,26 @@ def validate_live_snapshot(
         & (w1m_target_ids | W1M_EXISTING_RUNNABLE | w1n_target_ids | w1o_target_ids)
     ):
         raise ValueError("SP17 W2A targets changed outside the frozen actionable cohort")
+    w2b_w4_targets, w2b_w4_focused = load_w2b_w4_manifests()
+    w2b_w4_target_ids = set(w2b_w4_targets)
+    w2b_w4_residual_admissions = w2b_w4_target_ids - set(actionable)
+    if (
+        len(w2b_w4_residual_admissions) != EXPECTED_W2B_W4_RESIDUAL_ADMISSIONS
+        or w2b_w4_residual_admissions
+        != {
+            "wpt/css_flexbox/css-flexbox-test1",
+            "wpt/css_flexbox/css-flexbox-test1-ref",
+        }
+    ):
+        raise ValueError("SP17 W2B-W4 residual admission partition changed")
+    if w2b_w4_target_ids & (
+        w1m_target_ids
+        | W1M_EXISTING_RUNNABLE
+        | w1n_target_ids
+        | w1o_target_ids
+        | w2a_target_ids
+    ):
+        raise ValueError("SP17 W2B-W4 targets overlap an earlier checkpoint")
     w1m_residual_admissions = w1m_target_ids & (inventory_ids - set(actionable))
     w1m_non_sp17_admissions = w1m_target_ids - inventory_ids
     if (
@@ -676,10 +744,12 @@ def validate_live_snapshot(
         raise ValueError("SP17 W1M admission partition changed")
 
     promoted_unported = kickoff_unported & ported_ids
-    authorized_promotions = set(actionable) | w1m_residual_admissions
+    authorized_promotions = (
+        set(actionable) | w1m_residual_admissions | w2b_w4_residual_admissions
+    )
     if not promoted_unported.issubset(authorized_promotions):
         raise ValueError(
-            "SP17 live mapping promoted a row outside the frozen W1M authorization"
+            "SP17 live mapping promoted a row outside the frozen promotion authorization"
         )
     if not w1m_residual_admissions.issubset(promoted_unported):
         raise ValueError("SP17 W1M residual admission is not runnable")
@@ -693,10 +763,10 @@ def validate_live_snapshot(
         EXPECTED_UNPORTED - len(promoted_unported) - len(admitted_non_sp17)
     )
     if (
-        expected_runnable != EXPECTED_W2A_RUNNABLE
-        or expected_unported != EXPECTED_W2A_UNPORTED
+        expected_runnable != EXPECTED_W2B_W4_RUNNABLE
+        or expected_unported != EXPECTED_W2B_W4_UNPORTED
     ):
-        raise ValueError("SP17 W2A projected mapping totals changed")
+        raise ValueError("SP17 W2B-W4 projected mapping totals changed")
     if len(ported_ids) != expected_runnable:
         raise ValueError(
             "SP17 runnable mapping changed outside exact actionable promotions: "
@@ -725,24 +795,38 @@ def validate_live_snapshot(
         not w1n_target_ids <= promoted
         or not w1o_target_ids <= promoted
         or not w2a_target_ids <= promoted
-        or len(promoted - w1n_target_ids - w1o_target_ids - w2a_target_ids)
-        != EXPECTED_W1M_PROMOTIONS
-        or len(promoted - w1o_target_ids - w2a_target_ids) != EXPECTED_W1N_PROMOTIONS
-        or len(promoted - w2a_target_ids) != EXPECTED_W1O_PROMOTIONS
-    ):
-        raise ValueError("SP17 W2A did not preserve the W1M/W1N/W1O checkpoints")
-    if len(promoted) != EXPECTED_W2A_PROMOTIONS:
-        raise ValueError(
-            f"SP17 W2A exact promotion count changed: {len(promoted)}"
+        or not w2b_w4_target_ids <= promoted
+        or len(
+            promoted
+            - w1n_target_ids
+            - w1o_target_ids
+            - w2a_target_ids
+            - w2b_w4_target_ids
         )
+        != EXPECTED_W1M_PROMOTIONS
+        or len(promoted - w1o_target_ids - w2a_target_ids - w2b_w4_target_ids)
+        != EXPECTED_W1N_PROMOTIONS
+        or len(promoted - w2a_target_ids - w2b_w4_target_ids)
+        != EXPECTED_W1O_PROMOTIONS
+        or len(promoted - w2b_w4_target_ids) != EXPECTED_W2A_PROMOTIONS
+    ):
+        raise ValueError(
+            "SP17 W2B-W4 did not preserve the W1M/W1N/W1O/W2A checkpoints"
+        )
+    if len(promoted) != EXPECTED_W2B_W4_PROMOTIONS:
+        raise ValueError(
+            f"SP17 W2B-W4 exact promotion count changed: {len(promoted)}"
+        )
+    if set(w2b_w4_focused) != promoted:
+        raise ValueError("SP17 W2B-W4 focused proof is not the full promotion set")
     passed = summary.get("passed")
     failed = summary.get("failed")
     errors = summary.get("errors")
     if (
         len(tests) != expected_runnable
         or errors != EXPECTED_ERRORS
-        or passed != EXPECTED_W2A_EXACT
-        or failed != EXPECTED_W2A_FAILURES
+        or passed != EXPECTED_W2B_W4_EXACT
+        or failed != EXPECTED_W2B_W4_FAILURES
         or passed + failed + errors != expected_runnable
         or passed < EXPECTED_BASELINE + len(promoted)
     ):
@@ -782,14 +866,19 @@ def validate_live_snapshot(
         if result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
             raise ValueError(f"SP17 W2A target is not exact: {test_id}")
 
+    for test_id in w2b_w4_target_ids:
+        result = summary_by_id.get(test_id, {})
+        if result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
+            raise ValueError(f"SP17 W2B-W4 target is not exact: {test_id}")
+
     live_owned = {
         test_id for test_id, row in row_by_id.items()
         if SP17_CATEGORY in categories(row["failure_category"])
     }
     if not live_owned.issubset(inventory_ids):
         raise ValueError("SP17 ownership expanded outside the frozen inventory")
-    if len(live_owned) != EXPECTED_W2A_LIVE_OWNED:
-        raise ValueError(f"SP17 W2A live ownership changed: {len(live_owned)}")
+    if len(live_owned) != EXPECTED_W2B_W4_LIVE_OWNED:
+        raise ValueError(f"SP17 W2B-W4 live ownership changed: {len(live_owned)}")
     for test_id in inventory_ids - live_owned:
         result = summary_by_id.get(test_id, {})
         if (

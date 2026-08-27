@@ -156,15 +156,22 @@ pub fn block_child_constraint_space(
     .iter()
     .any(|length| length.is_percent() || length.is_calculated());
     let is_orthogonal = parent.writing_direction.is_horizontal() != child_direction.is_horizontal();
+    let child_logical = ResolvedLogicalBox::from_style(child_style);
     if is_orthogonal && edge_uses_percentage {
         child_space.percentage_resolution_inline_size = percentage_inline_size;
+        if child_logical.sizes.block_size.is_auto() {
+            // A cyclic percentage edge can make an orthogonal block's
+            // intrinsic block contribution equal the containing block's
+            // resolved inline size. Once that size is definite, stretch the
+            // child's auto logical block-size to the same physical measure.
+            child_space.stretch_block_size = true;
+        }
     }
 
     // The document flow-root fills the orthogonal viewport's inline measure.
     // Ordinary orthogonal block/flex children remain shrink-to-fit in that
     // axis; extending this stretch to them turns vertical flex test boxes into
     // viewport-wide strips. Atomic inlines are excluded for the same reason.
-    let child_logical = ResolvedLogicalBox::from_style(child_style);
     if is_orthogonal
         && child_style.display == openui_style::Display::FlowRoot
         && child_logical.sizes.block_size.is_auto()
@@ -174,6 +181,13 @@ pub fn block_child_constraint_space(
     if is_orthogonal
         && child_style.display.is_block_level()
         && child_style.display != openui_style::Display::FlowRoot
+        // An orthogonal float normally shrink-wraps an automatic physical
+        // width and height. A flex float with a definite logical block-size,
+        // however, retains the containing block's definite logical inline
+        // opportunity so its row can flex and wrap within that measure.
+        && (child_style.float == openui_style::Float::None
+            || !child_style.display.is_flex()
+            || child_logical.sizes.block_size.is_auto())
         && child_logical.sizes.inline_size.is_auto()
     {
         child_space.available_inline_size = openui_geometry::INDEFINITE_SIZE;

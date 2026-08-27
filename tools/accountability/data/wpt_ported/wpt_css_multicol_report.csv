@@ -65,7 +65,7 @@ column-balancing-with-overflow-auto-crash,ported,css_multicol_column_balancing_w
 column-balancing-with-span-and-oof-001,ported,css_multicol_column_balancing_with_span_and_oof_001,
 column-balancing-with-span-and-oof-002,ported,css_multicol_column_balancing_with_span_and_oof_002,
 column-count-used-001,ported,css_multicol_column_count_used_001,
-column-fill-balance-orthog-block-001,not_portable,,style_block_unsupported property: writing-mode
+column-fill-balance-orthog-block-001,ported,css_multicol_column_fill_balance_orthog_block_001,
 column-height-001,ported,css_multicol_column_height_001,
 column-height-002,ported,css_multicol_column_height_002,
 column-height-003,ported,css_multicol_column_height_003,
@@ -507,13 +507,13 @@ multicol-span-all-006,not_portable,,unsupported element: <details>
 multicol-span-all-006-ref,not_portable,,unsupported element: <details>
 multicol-span-all-007,ported,css_multicol_multicol_span_all_007,
 multicol-span-all-007-ref,ported,css_multicol_multicol_span_all_007_ref,
-multicol-span-all-008,not_portable,,style_block_unsupported property: unicode-bidi
+multicol-span-all-008,ported,css_multicol_multicol_span_all_008,
 multicol-span-all-008-ref,ported,css_multicol_multicol_span_all_008_ref,
 multicol-span-all-009,not_portable,,style_block_unsupported property: transform
 multicol-span-all-009-ref,not_portable,,style_block_unsupported property: transform
 multicol-span-all-010,not_portable,,unsupported property: transform
 multicol-span-all-010-ref,not_portable,,unsupported property: transform
-multicol-span-all-011,not_portable,,style_block_unsupported property: unicode-bidi
+multicol-span-all-011,ported,css_multicol_multicol_span_all_011,
 multicol-span-all-011-ref,ported,css_multicol_multicol_span_all_011_ref,
 multicol-span-all-012,ported,css_multicol_multicol_span_all_012,
 multicol-span-all-013,ported,css_multicol_multicol_span_all_013,
@@ -623,7 +623,7 @@ multicol-span-all-restyle-004,not_portable,,uses_javascript
 multicol-span-all-restyle-004-ref,ported,css_multicol_multicol_span_all_restyle_004_ref,
 multicol-span-all-rule-001,ported,css_multicol_multicol_span_all_rule_001,
 multicol-span-all-rule-001-ref,ported,css_multicol_multicol_span_all_rule_001_ref,
-multicol-span-all-rule-002,not_portable,,unsupported property: writing-mode
+multicol-span-all-rule-002,ported,css_multicol_multicol_span_all_rule_002,
 multicol-span-all-rule-002-ref,ported,css_multicol_multicol_span_all_rule_002_ref,
 multicol-span-auto-size-in-vertical-writing-mode-001,ported,css_multicol_multicol_span_auto_size_in_vertical_writing_mode_001,
 multicol-span-auto-size-in-vertical-writing-mode-002,ported,css_multicol_multicol_span_auto_size_in_vertical_writing_mode_002,
@@ -795,3 +795,4 @@ with-custom-layout-on-same-element-crash.https,not_portable,,uses_javascript
 with-custom-layout-on-same-element.https,ported,css_multicol_with_custom_layout_on_same_element_https,
 zero-column-width-computed-style,not_portable,,uses_javascript
 zero-column-width-layout,ported,css_multicol_zero_column_width_layout,
+crashtests_vertical-rl-column-rules-wide-columns,ported,css_multicol_crashtests_vertical_rl_column_rules_wide_columns,

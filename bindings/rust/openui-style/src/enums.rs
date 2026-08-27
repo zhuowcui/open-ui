@@ -174,6 +174,76 @@ impl Default for Overflow {
     }
 }
 
+/// CSS Basic UI `resize` property.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum Resize {
+    None = 0,
+    Both = 1,
+    Horizontal = 2,
+    Vertical = 3,
+    Block = 4,
+    Inline = 5,
+}
+
+impl Resize {
+    pub const INITIAL: Self = Self::None;
+}
+
+impl Default for Resize {
+    fn default() -> Self {
+        Self::INITIAL
+    }
+}
+
+/// CSS Scrollbars `scrollbar-width` property.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ScrollbarWidth {
+    Auto = 0,
+    Thin = 1,
+    None = 2,
+}
+
+impl ScrollbarWidth {
+    pub const INITIAL: Self = Self::Auto;
+}
+
+impl Default for ScrollbarWidth {
+    fn default() -> Self {
+        Self::INITIAL
+    }
+}
+
+/// CSS Overflow `scrollbar-gutter` property, including `both-edges`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(u8)]
+pub enum ScrollbarGutter {
+    Auto = 0,
+    Stable = 1,
+    StableBothEdges = 2,
+}
+
+impl ScrollbarGutter {
+    pub const INITIAL: Self = Self::Auto;
+
+    #[inline]
+    pub fn is_stable(self) -> bool {
+        !matches!(self, Self::Auto)
+    }
+
+    #[inline]
+    pub fn both_edges(self) -> bool {
+        matches!(self, Self::StableBothEdges)
+    }
+}
+
+impl Default for ScrollbarGutter {
+    fn default() -> Self {
+        Self::INITIAL
+    }
+}
+
 /// CSS `box-sizing` property.
 /// Blink stores this in 1 bit.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

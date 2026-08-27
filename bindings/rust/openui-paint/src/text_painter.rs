@@ -18,7 +18,9 @@
 //! 2. Letting Skia's `drawTextBlob` handle color/non-color dispatch
 //! 3. Not forcing monochrome rendering paths
 
-use skia_safe::{Canvas, Color4f, ColorSpace, Paint, PaintStyle, Point, Rect, TextBlob};
+use skia_safe::{
+    Canvas, Color4f, ColorSpace, Paint, PaintStyle, Point, Rect, TextBlob, TextBlobBuilder,
+};
 
 use openui_layout::inline::text_combine::TextCombineLayout;
 use openui_style::{Color, ComputedStyle, FontFamily};
@@ -82,6 +84,64 @@ pub fn paint_text(
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
         canvas.draw_text_blob(&text_blob, Point::new(origin.0, origin.1), &paint);
+    }
+}
+
+/// Paint an upright run in a vertical line.
+///
+/// Shaping selects vertical OpenType alternates, while this builder maps each
+/// HarfBuzz cluster to one font-size vertical advance and keeps every glyph
+/// outline upright. Multiple glyphs in one cluster (combining sequences and
+/// emoji) share a baseline. `vertical_baseline_x` is layout's exported
+/// baseline axis and `top_y` is the fragment's physical inline-start.
+pub fn paint_vertical_text(
+    canvas: &Canvas,
+    shape_result: &ShapeResult,
+    vertical_baseline_x: f32,
+    top_y: f32,
+    style: &ComputedStyle,
+) {
+    if shape_result.runs.is_empty() || shape_result.num_glyphs() == 0 {
+        return;
+    }
+
+    let mut builder = TextBlobBuilder::new();
+    let mut run_y = top_y;
+    for run in &shape_result.runs {
+        if run.num_glyphs == 0 {
+            continue;
+        }
+        let font = run.font_data.sk_font();
+        let (glyphs_out, positions_out) = builder.alloc_run_pos(font, run.num_glyphs, None);
+        glyphs_out.copy_from_slice(&run.glyphs);
+
+        let mut cluster_y = run_y;
+        for index in 0..run.num_glyphs {
+            let glyph = run.glyphs[index];
+            let offset = run.offsets.get(index).copied().unwrap_or((0.0, 0.0));
+            positions_out[index] = Point::new(
+                vertical_baseline_x + offset.0,
+                cluster_y + run.font_data.vertical_origin_y(glyph) + offset.1,
+            );
+            let cluster = run.clusters.get(index).copied().unwrap_or(index);
+            let next_cluster = run.clusters.get(index + 1).copied();
+            if next_cluster != Some(cluster) {
+                cluster_y += run.font_data.vertical_advance(glyph);
+            }
+        }
+        run_y = cluster_y;
+    }
+
+    if let Some(blob) = builder.make() {
+        let mut paint = Paint::default();
+        paint.set_anti_alias(true);
+        paint.set_style(PaintStyle::Fill);
+        let color = &style.color;
+        paint.set_color4f(
+            Color4f::new(color.r, color.g, color.b, color.a),
+            None::<&ColorSpace>,
+        );
+        canvas.draw_text_blob(&blob, Point::new(0.0, 0.0), &paint);
     }
 }
 

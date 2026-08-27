@@ -122,7 +122,11 @@ class TextPorterTests(unittest.TestCase):
             r'Some("\u{a0}\u{c9}\u{2026}\u{202e}a\u{202d}\u{2190}\u{2193}".to_string())',
             rust,
         )
-        self.assertIn('font-family: Ahem, "DejaVu Sans"', template)
+        self.assertIn(
+            'font-family: Ahem, "Droid Sans Fallback", '
+            '"Noto Sans Devanagari", "Noto Color Emoji", "DejaVu Sans"',
+            template,
+        )
 
     def test_unsupported_unicode_text_is_rejected(self):
         path = self.html("<!doctype html><body><div>snowman ☃</div></body>")

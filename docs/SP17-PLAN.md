@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W2A is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W2B–W4 is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -48,19 +48,22 @@ layout. W1O closes the remaining sole-owned auto-height flex failure by
 preserving percentage flex bases and semantic break controls. W2A makes
 resolved text-run orientation authoritative from inline layout through paint,
 adds both sideways rotation hands, and closes the rotated vertical/sideways
-writing-mode cohort. The authoritative live full-suite result is 3,768
-runnable, 3,487 exact, 281
-functional failures, and zero errors.
+writing-mode cohort. W2B–W4 makes bidi, script/fallback segmentation, upright
+vertical shaping, and fragment metadata authoritative; completes the remaining
+shared flex, fragmentation, overflow, sizing, multicol, and supporting-paint
+defects; and closes every remaining frozen actionable ID plus the two pinned
+fullwidth-digit residuals. The authoritative live full-suite result is 3,889
+runnable, 3,619 exact, 270 functional failures, and zero errors.
 
-| Metric | Kickoff | Live W2A |
+| Metric | Kickoff | Live W2B–W4 |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,768 |
-| Exact passes | 3,267 | 3,487 |
-| Functional failures | 299 | 281 |
+| Runnable WPTs | 3,566 | 3,889 |
+| Exact passes | 3,267 | 3,619 |
+| Functional failures | 299 | 270 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 3,905 |
-| `needs_writing_mode` owner rows | 842 | 649 |
+| Unported rows | 4,107 | 3,784 |
+| `needs_writing_mode` owner rows | 842 | 517 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -1008,3 +1011,42 @@ render/diff error.
   IDs. The validator requires exactly 193 promotions; the SP13-R compatibility
   allowlist remains 42. The committed `summary.json` SHA-256 is
   `6b8c2d53561027fd561171b5642ef65fc281493d2729559b320871f21e48cbff`.
+
+### 2026-08-27 — W2B–W4 remaining writing-mode mega-closure
+
+- Made bidi authoritative from styled inline collection through line breaking
+  and visual placement. Nested embed, override, isolate, isolate-override, and
+  plaintext boundaries now coexist with atomic inlines and positioned-inline
+  static positions; mixed content is split at bidi, script, grapheme-safe font
+  fallback, and vertical-orientation boundaries before shaping.
+- Retained the public `TextRunOrientation` contract while preventing
+  `UnresolvedMixed` fragments from reaching production paint. Upright runs use
+  vertical OpenType substitutions and advances; sideways runs retain horizontal
+  shaping. Ruby, text-combine, baselines, decorations, emphasis, shadows,
+  clipping, and color emoji continue to consume layout-owned metadata.
+- Added byte-pinned Droid CJK, Noto Devanagari, and Noto Color Emoji fallbacks
+  with symmetric OpenUI/Chromium registration. Their SHA-256 values are
+  `27db42b79d0846f6fd01b3d6a8233df9a8a5ece80b042299dc4174c48213ffd3`,
+  `b1dffa1fccb30dc45287111834a9db15c652b05d4d67201abe73e67717017590`,
+  and `72a635cb3d2f3524c51620cdde406b217204e8a6a06c6a096ff8ed4b5fd6e27b`.
+- Closed the shared flex baseline, reversal, gap, percentage, stretch,
+  min/max, overflow, and auto-margin defects; orthogonal flex/multicol
+  fragmentation, spanners, balancing, rules, backgrounds, shadows, and rounded
+  clipping; vertical ellipsis and scrollbar gutters; orthogonal sizing and
+  aspect ratios; plus float, border-image, root background, complex-border,
+  margin-collapse, and sticky-margin support required by the cohort.
+- Surgically regenerated only the 132 targets: 43 flexbox, 37 fragmentation,
+  22 sizing, 20 overflow, five multicol, three backgrounds, one float, and one
+  positioned ID. The target manifest is pinned at
+  `0085f0df34162f355c1f2a24deae01967cf52f1753049f27a32ec7425e3ce089`.
+  The 325-ID proof combines all 193 prior promotions with the new cohort and is
+  pinned at `78efe59229615167e9603c6e40295c3eca0937c2f973f1097cd98a545d2793d3`;
+  all 325 are exact with zero mismatched pixels or errors.
+- Exactly 121 formerly unported IDs became runnable and the 11 pinned existing
+  failures became exact, with no non-target status or mismatch change. The full
+  no-resume result is **3,889 runnable / 3,619 exact / 270 fail / 0 errors**;
+  unported inventory is 3,784, live writing-mode ownership is 517, unported
+  SP13-R multicol ownership is 945, and the text manifest contains 1,025 IDs.
+  The validator requires 325 promotions and the SP13-R later-promotion allowlist
+  contains 73 IDs. The committed `summary.json` SHA-256 is
+  `2021d915414b470edddf51ff266ae7494240f7e5b60ede4410452da4c46784ad`.
