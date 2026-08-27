@@ -2,7 +2,7 @@
 
 ## Status
 
-SP17 W1O is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W2A is the current checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
@@ -45,19 +45,22 @@ margin-box alignment, and clearance-only anonymous-wrapper extent.
 W1N closes four existing column-wrap failures through logical-inline
 fit-content cross sizing and reuses the hypothetical cross size in final child
 layout. W1O closes the remaining sole-owned auto-height flex failure by
-preserving percentage flex bases and semantic break controls. The authoritative
-live full-suite result is 3,746 runnable, 3,465 exact, 281
+preserving percentage flex bases and semantic break controls. W2A makes
+resolved text-run orientation authoritative from inline layout through paint,
+adds both sideways rotation hands, and closes the rotated vertical/sideways
+writing-mode cohort. The authoritative live full-suite result is 3,768
+runnable, 3,487 exact, 281
 functional failures, and zero errors.
 
-| Metric | Kickoff | Live W1O |
+| Metric | Kickoff | Live W2A |
 |---|---:|---:|
 | Chromium inventory | 7,673 | 7,673 |
-| Runnable WPTs | 3,566 | 3,746 |
-| Exact passes | 3,267 | 3,465 |
+| Runnable WPTs | 3,566 | 3,768 |
+| Exact passes | 3,267 | 3,487 |
 | Functional failures | 299 | 281 |
 | Render/diff errors | 0 | 0 |
-| Unported rows | 4,107 | 3,927 |
-| `needs_writing_mode` owner rows | 842 | 671 |
+| Unported rows | 4,107 | 3,905 |
+| `needs_writing_mode` owner rows | 842 | 649 |
 | Frozen W0B actionable targets | 311 | 311 |
 | Frozen W0B residual dispositions | 531 | 531 |
 
@@ -975,3 +978,33 @@ render/diff error.
   and break regressions, locked Rust and 128-test Python matrices, both closure
   generators, deterministic mapping/deferred/HTML output, formatting, splice
   idempotence, writing-mode 010–016 exclusion, and audit 7/7.
+
+### 2026-08-27 — W2A rotated vertical and sideways text closure
+
+- Inline layout resolves each produced text fragment to a public
+  `TextRunOrientation`. Paint consumes that metadata directly for horizontal,
+  upright, clockwise, and counterclockwise runs without re-reading writing-mode
+  CSS or Unicode contents. `UnresolvedMixed` remains an explicit compatibility
+  sentinel for the later mixed-script splitter.
+- The complete text paint stack—shadows, decorations, glyphs, and emphasis—is
+  transformed and restored as one unit. Sideways-rl and sideways-lr use
+  opposite physical origins and rotation hands, while line layout retains the
+  shaped advance and exported baseline.
+- Shared block projection now preserves rotated leading, definite physical
+  margins, and vertical RTL float sides at their one-time logical/physical
+  boundaries. Parameterized regressions cover vertical-rl/lr, sideways-rl/lr,
+  LTR/RTL, reverse flow, wrapping, padding, margins, advances, and baselines.
+- Surgically regenerated only the 22 target builders: writing-mode 010–016 and
+  references plus the sideways slr/srl matrix. Their focused proof adds
+  writing-mode 001–009 pairs, `slr-ref`, six row-flow guards, and the vertical
+  row pair; all 49 IDs are exact with zero mismatched pixels or errors. The
+  target and focused manifest hashes are respectively
+  `4162bd75b614a81ab43c897aef201456660b35f6cdac8109c41b1aa126ec963f`
+  and `b44b3ec2d5c1aea2e6e159f923858d66cdb24ff9f4a958a75ec8092771012511`.
+- The frozen 3,267-ID kickoff baseline and every W1O invariant remain exact.
+  The full no-resume result is **3,768 runnable / 3,487 exact / 281 fail / 0
+  errors**; unported inventory is 3,905, live writing-mode ownership is 649,
+  unported SP13-R multicol ownership is 976, and the text manifest contains 893
+  IDs. The validator requires exactly 193 promotions; the SP13-R compatibility
+  allowlist remains 42. The committed `summary.json` SHA-256 is
+  `6b8c2d53561027fd561171b5642ef65fc281493d2729559b320871f21e48cbff`.

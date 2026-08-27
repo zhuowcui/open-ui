@@ -9,7 +9,7 @@ use openui_dom::NodeId;
 use openui_geometry::{
     BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize, WritingDirectionMode,
 };
-use openui_style::ComputedStyle;
+use openui_style::{ComputedStyle, TextOrientation, WritingMode};
 use openui_text::ShapeResult;
 use std::sync::Arc;
 
@@ -30,6 +30,62 @@ pub enum FragmentKind {
     /// An anonymous column box in a multicol container.
     /// Clips content to column boundaries (CSS Multicol §3.1).
     ColumnBox,
+}
+
+/// Resolved orientation of one shaped text run in physical fragment storage.
+///
+/// Inline layout is the authority for this value. Paint consumes it without
+/// re-reading CSS or attempting to split the run from its Unicode contents.
+/// `UnresolvedMixed` deliberately keeps genuinely mixed upright/rotated runs
+/// on the pre-W2B path instead of guessing at per-character transforms.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum TextRunOrientation {
+    #[default]
+    Horizontal,
+    Upright,
+    Clockwise,
+    CounterClockwise,
+    UnresolvedMixed,
+}
+
+/// Resolve the paint orientation for a text run during inline construction.
+///
+/// Rotated vertical and sideways runs retain horizontal shaping and logical
+/// inline advance; the fragment projection converts that geometry to physical
+/// axes exactly once. Direction affects progression, never rotation handedness.
+pub fn resolve_text_run_orientation(style: &ComputedStyle, text: &str) -> TextRunOrientation {
+    if text.is_empty() || style.writing_mode == WritingMode::HorizontalTb {
+        return TextRunOrientation::Horizontal;
+    }
+
+    match style.writing_mode {
+        WritingMode::SidewaysRl => TextRunOrientation::Clockwise,
+        WritingMode::SidewaysLr => TextRunOrientation::CounterClockwise,
+        WritingMode::VerticalRl | WritingMode::VerticalLr => match style.text_orientation {
+            TextOrientation::Sideways => TextRunOrientation::Clockwise,
+            TextOrientation::Upright => TextRunOrientation::Upright,
+            TextOrientation::Mixed => {
+                let mut has_upright = false;
+                let mut has_rotated = false;
+                for character in text.chars() {
+                    if openui_text::is_upright_in_mixed_vertical(character) {
+                        has_upright = true;
+                    } else {
+                        has_rotated = true;
+                    }
+                    if has_upright && has_rotated {
+                        return TextRunOrientation::UnresolvedMixed;
+                    }
+                }
+                if has_upright {
+                    TextRunOrientation::Upright
+                } else {
+                    TextRunOrientation::Clockwise
+                }
+            }
+        },
+        WritingMode::HorizontalTb => TextRunOrientation::Horizontal,
+    }
 }
 
 /// Source-space coordinates for decorations sliced across fragmentainers.
@@ -132,6 +188,9 @@ pub struct Fragment {
 
     /// Text content for text fragments (the original string that was shaped).
     pub text_content: Option<String>,
+
+    /// Layout-resolved orientation for the complete text paint stack.
+    pub text_run_orientation: TextRunOrientation,
 
     /// Inherited style for anonymous fragments (e.g., ellipsis "…") that have
     /// no DOM node. Used by the painter to render with the correct color/font.
@@ -341,6 +400,7 @@ impl Fragment {
             children: Vec::new(),
             shape_result: None,
             text_content: None,
+            text_run_orientation: TextRunOrientation::Horizontal,
             inherited_style: None,
             baseline_offset: 0.0,
             text_combine: None,
@@ -394,6 +454,7 @@ impl Fragment {
             children: Vec::new(),
             shape_result: Some(shape_result),
             text_content: Some(text_content),
+            text_run_orientation: TextRunOrientation::Horizontal,
             inherited_style: None,
             baseline_offset: 0.0,
             text_combine: None,
@@ -490,5 +551,75 @@ impl Fragment {
     #[inline]
     pub fn border_box_rect(&self) -> PhysicalRect {
         PhysicalRect::new(PhysicalOffset::zero(), self.size)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use openui_style::Direction;
+
+    #[test]
+    fn text_run_orientation_matrix_is_layout_authoritative() {
+        for direction in [Direction::Ltr, Direction::Rtl] {
+            for text_orientation in [
+                TextOrientation::Mixed,
+                TextOrientation::Upright,
+                TextOrientation::Sideways,
+            ] {
+                let mut style = ComputedStyle::default();
+                style.direction = direction;
+                style.text_orientation = text_orientation;
+
+                style.writing_mode = WritingMode::HorizontalTb;
+                assert_eq!(
+                    resolve_text_run_orientation(&style, "AHEM"),
+                    TextRunOrientation::Horizontal
+                );
+
+                style.writing_mode = WritingMode::SidewaysRl;
+                assert_eq!(
+                    resolve_text_run_orientation(&style, "AHEM"),
+                    TextRunOrientation::Clockwise
+                );
+
+                style.writing_mode = WritingMode::SidewaysLr;
+                assert_eq!(
+                    resolve_text_run_orientation(&style, "AHEM"),
+                    TextRunOrientation::CounterClockwise
+                );
+
+                for writing_mode in [WritingMode::VerticalRl, WritingMode::VerticalLr] {
+                    style.writing_mode = writing_mode;
+                    let expected = match text_orientation {
+                        TextOrientation::Mixed => TextRunOrientation::Clockwise,
+                        TextOrientation::Upright => TextRunOrientation::Upright,
+                        TextOrientation::Sideways => TextRunOrientation::Clockwise,
+                    };
+                    assert_eq!(
+                        resolve_text_run_orientation(&style, "Latin AHEM"),
+                        expected,
+                        "{writing_mode:?} {direction:?} {text_orientation:?}"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn vertical_mixed_keeps_upright_and_unsplit_mixed_runs_explicit() {
+        for writing_mode in [WritingMode::VerticalRl, WritingMode::VerticalLr] {
+            let mut style = ComputedStyle::default();
+            style.writing_mode = writing_mode;
+            style.text_orientation = TextOrientation::Mixed;
+            assert_eq!(
+                resolve_text_run_orientation(&style, "文"),
+                TextRunOrientation::Upright
+            );
+            assert_eq!(
+                resolve_text_run_orientation(&style, "A文"),
+                TextRunOrientation::UnresolvedMixed
+            );
+        }
     }
 }

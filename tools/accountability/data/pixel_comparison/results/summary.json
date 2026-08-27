@@ -1,12 +1,12 @@
 {
-  "total": 3746,
-  "passed": 3465,
+  "total": 3768,
+  "passed": 3487,
   "failed": 281,
   "errors": 0,
   "near_miss_aa": 56,
   "aa_threshold_pct": 0.5,
-  "reference_tests": 979,
-  "reference_tests_pass": 892,
+  "reference_tests": 988,
+  "reference_tests_pass": 901,
   "tests": [
     {
       "id": "wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline",
@@ -6370,6 +6370,116 @@
     },
     {
       "id": "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-vertWM-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-010",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-010-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-011",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-011-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-012",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-012-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-013",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-013-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-014",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-014-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-015",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-015-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-016",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-016-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-slr",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-slr-row-mix",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-slr-row-mix-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-slr-rtl",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-srl",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-srl-row-mix",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-srl-row-mix-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_flexbox/flexbox-writing-mode-srl-rtl",
       "status": "pass",
       "mismatch_pct": 0.0
     },

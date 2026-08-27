@@ -1249,28 +1249,28 @@ flexbox-writing-mode-006,ported,css_flexbox_flexbox_writing_mode_006,
 flexbox-writing-mode-007,ported,css_flexbox_flexbox_writing_mode_007,
 flexbox-writing-mode-008,ported,css_flexbox_flexbox_writing_mode_008,
 flexbox-writing-mode-009,ported,css_flexbox_flexbox_writing_mode_009,
-flexbox-writing-mode-010-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-010,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-011-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-011,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-012-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-012,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-013-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-013,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-014-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-014,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-015-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-015,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-016-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-016,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-slr-row-mix-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-slr-row-mix,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-slr-rtl,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-slr,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-srl-row-mix-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-srl-row-mix,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-srl-rtl,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-srl,not_portable,,style_block_unsupported property: writing-mode
+flexbox-writing-mode-010-ref,ported,css_flexbox_flexbox_writing_mode_010_ref,
+flexbox-writing-mode-010,ported,css_flexbox_flexbox_writing_mode_010,
+flexbox-writing-mode-011-ref,ported,css_flexbox_flexbox_writing_mode_011_ref,
+flexbox-writing-mode-011,ported,css_flexbox_flexbox_writing_mode_011,
+flexbox-writing-mode-012-ref,ported,css_flexbox_flexbox_writing_mode_012_ref,
+flexbox-writing-mode-012,ported,css_flexbox_flexbox_writing_mode_012,
+flexbox-writing-mode-013-ref,ported,css_flexbox_flexbox_writing_mode_013_ref,
+flexbox-writing-mode-013,ported,css_flexbox_flexbox_writing_mode_013,
+flexbox-writing-mode-014-ref,ported,css_flexbox_flexbox_writing_mode_014_ref,
+flexbox-writing-mode-014,ported,css_flexbox_flexbox_writing_mode_014,
+flexbox-writing-mode-015-ref,ported,css_flexbox_flexbox_writing_mode_015_ref,
+flexbox-writing-mode-015,ported,css_flexbox_flexbox_writing_mode_015,
+flexbox-writing-mode-016-ref,ported,css_flexbox_flexbox_writing_mode_016_ref,
+flexbox-writing-mode-016,ported,css_flexbox_flexbox_writing_mode_016,
+flexbox-writing-mode-slr-row-mix-ref,ported,css_flexbox_flexbox_writing_mode_slr_row_mix_ref,
+flexbox-writing-mode-slr-row-mix,ported,css_flexbox_flexbox_writing_mode_slr_row_mix,
+flexbox-writing-mode-slr-rtl,ported,css_flexbox_flexbox_writing_mode_slr_rtl,
+flexbox-writing-mode-slr,ported,css_flexbox_flexbox_writing_mode_slr,
+flexbox-writing-mode-srl-row-mix-ref,ported,css_flexbox_flexbox_writing_mode_srl_row_mix_ref,
+flexbox-writing-mode-srl-row-mix,ported,css_flexbox_flexbox_writing_mode_srl_row_mix,
+flexbox-writing-mode-srl-rtl,ported,css_flexbox_flexbox_writing_mode_srl_rtl,
+flexbox-writing-mode-srl,ported,css_flexbox_flexbox_writing_mode_srl,
 flexbox_align-items-center-3,ported,css_flexbox_flexbox_align_items_center_3,
 flexbox_align-items-stretch-3,ported,css_flexbox_flexbox_align_items_stretch_3,
 flexbox_first-letter,not_portable,,uses_javascript

@@ -3813,29 +3813,29 @@ css-flexbox/flexbox-writing-mode-008.html,flexbox-writing-mode-008,css_flexbox,y
 css-flexbox/flexbox-writing-mode-008-ref.html,flexbox-writing-mode-008-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-008-ref,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-009.html,flexbox-writing-mode-009,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-009,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-009-ref.html,flexbox-writing-mode-009-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-009-ref,pass,0.0,,,
-css-flexbox/flexbox-writing-mode-010.html,flexbox-writing-mode-010,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-010-ref.html,flexbox-writing-mode-010-ref,css_flexbox,no,,,,"reference_test,needs_writing_mode,needs_advanced_selectors",Reference Test (not standalone); Future SP: Writing Modes/Bidi; Future SP: Advanced CSS Selectors,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-011.html,flexbox-writing-mode-011,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-011-ref.html,flexbox-writing-mode-011-ref,css_flexbox,no,,,,"reference_test,needs_writing_mode",Reference Test (not standalone); Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-012.html,flexbox-writing-mode-012,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-012-ref.html,flexbox-writing-mode-012-ref,css_flexbox,no,,,,"reference_test,needs_writing_mode",Reference Test (not standalone); Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-013.html,flexbox-writing-mode-013,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-013-ref.html,flexbox-writing-mode-013-ref,css_flexbox,no,,,,"reference_test,needs_writing_mode",Reference Test (not standalone); Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-014.html,flexbox-writing-mode-014,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-014-ref.html,flexbox-writing-mode-014-ref,css_flexbox,no,,,,"reference_test,needs_writing_mode",Reference Test (not standalone); Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-015.html,flexbox-writing-mode-015,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-015-ref.html,flexbox-writing-mode-015-ref,css_flexbox,no,,,,"reference_test,needs_writing_mode",Reference Test (not standalone); Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-016.html,flexbox-writing-mode-016,css_flexbox,no,,,,"needs_clearing_line_box_metrics,needs_empty_block_margin_collapse,needs_writing_mode",SP11: Clearing Line-Box Metrics; SP12: Empty Block Margin Collapsing; Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-016-ref.html,flexbox-writing-mode-016-ref,css_flexbox,no,,,,"reference_test,needs_clearing_line_box_metrics,needs_empty_block_margin_collapse,needs_writing_mode",Reference Test (not standalone); SP11: Clearing Line-Box Metrics; SP12: Empty Block Margin Collapsing; Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-slr.html,flexbox-writing-mode-slr,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-writing-mode-010.html,flexbox-writing-mode-010,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-010,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-010-ref.html,flexbox-writing-mode-010-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-010-ref,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-011.html,flexbox-writing-mode-011,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-011,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-011-ref.html,flexbox-writing-mode-011-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-011-ref,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-012.html,flexbox-writing-mode-012,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-012,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-012-ref.html,flexbox-writing-mode-012-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-012-ref,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-013.html,flexbox-writing-mode-013,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-013,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-013-ref.html,flexbox-writing-mode-013-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-013-ref,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-014.html,flexbox-writing-mode-014,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-014,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-014-ref.html,flexbox-writing-mode-014-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-014-ref,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-015.html,flexbox-writing-mode-015,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-015,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-015-ref.html,flexbox-writing-mode-015-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-015-ref,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-016.html,flexbox-writing-mode-016,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-016,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-016-ref.html,flexbox-writing-mode-016-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-016-ref,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-slr.html,flexbox-writing-mode-slr,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-slr,pass,0.0,,,
 css-flexbox/flexbox-writing-mode-slr-ref.html,flexbox-writing-mode-slr-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-slr-ref,pass,0.0,,,
-css-flexbox/flexbox-writing-mode-slr-row-mix.html,flexbox-writing-mode-slr-row-mix,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-slr-row-mix-ref.html,flexbox-writing-mode-slr-row-mix-ref,css_flexbox,no,,,,"reference_test,needs_writing_mode",Reference Test (not standalone); Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-slr-rtl.html,flexbox-writing-mode-slr-rtl,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-srl.html,flexbox-writing-mode-srl,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-srl-row-mix.html,flexbox-writing-mode-srl-row-mix,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-srl-row-mix-ref.html,flexbox-writing-mode-srl-row-mix-ref,css_flexbox,no,,,,"reference_test,needs_writing_mode",Reference Test (not standalone); Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
-css-flexbox/flexbox-writing-mode-srl-rtl.html,flexbox-writing-mode-srl-rtl,css_flexbox,no,,,,needs_writing_mode,Future SP: Writing Modes/Bidi,Porter deferred: style_block_unsupported property: writing-mode
+css-flexbox/flexbox-writing-mode-slr-row-mix.html,flexbox-writing-mode-slr-row-mix,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-slr-row-mix,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-slr-row-mix-ref.html,flexbox-writing-mode-slr-row-mix-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-slr-row-mix-ref,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-slr-rtl.html,flexbox-writing-mode-slr-rtl,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-slr-rtl,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-srl.html,flexbox-writing-mode-srl,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-srl,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-srl-row-mix.html,flexbox-writing-mode-srl-row-mix,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-srl-row-mix,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-srl-row-mix-ref.html,flexbox-writing-mode-srl-row-mix-ref,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-srl-row-mix-ref,pass,0.0,,,
+css-flexbox/flexbox-writing-mode-srl-rtl.html,flexbox-writing-mode-srl-rtl,css_flexbox,yes,wpt/css_flexbox/flexbox-writing-mode-srl-rtl,pass,0.0,,,
 css-flexbox/flexbox_align-content-center.html,flexbox_align-content-center,css_flexbox,yes,wpt/css_flexbox/flexbox_align-content-center,pass,0.0,,,
 css-flexbox/flexbox_align-content-center-ref.html,flexbox_align-content-center-ref,css_flexbox,yes,wpt/css_flexbox/flexbox_align-content-center-ref,pass,0.0,,,
 css-flexbox/flexbox_align-content-flexend.html,flexbox_align-content-flexend,css_flexbox,yes,wpt/css_flexbox/flexbox_align-content-flexend,pass,0.0,,,

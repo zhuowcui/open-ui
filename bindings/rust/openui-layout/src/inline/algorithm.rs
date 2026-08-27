@@ -24,7 +24,7 @@ use unicode_segmentation::UnicodeSegmentation;
 
 use crate::constraint_space::ConstraintSpace;
 use crate::exclusions::ClearType;
-use crate::fragment::{Fragment, FragmentKind};
+use crate::fragment::{resolve_text_run_orientation, Fragment, FragmentKind};
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 use crate::out_of_flow::OutOfFlowCandidate;
 
@@ -699,7 +699,8 @@ pub fn inline_layout_from_items(
     item_end: usize,
 ) -> Fragment {
     let style = &doc.node(node_id).style;
-    let normalize_vertical_rtl = needs_logical_positioned_inline_geometry(doc, node_id, space);
+    let normalize_positioned_vertical_rtl =
+        needs_logical_positioned_inline_geometry(doc, node_id, space);
 
     let available_inline_size = space.available_inline_size.clamp_negative_to_zero();
 
@@ -727,6 +728,14 @@ pub fn inline_layout_from_items(
         filtered.block_in_inline = Vec::new(); // already handled by caller
         filtered
     };
+    // Ordinary vertical RTL lines cross the logical-to-physical boundary in
+    // their owning block. Keep the established positioned-inline path when
+    // out-of-flow placeholders are present: their static positions already
+    // share the legacy physical coordinate space.
+    let normalize_vertical_rtl = normalize_positioned_vertical_rtl
+        || (!space.writing_direction.is_horizontal()
+            && space.writing_direction.is_rtl()
+            && working_items_data.oof_children.is_empty());
 
     // Create line breaker from the (possibly filtered) items.
     let mut line_breaker = LineBreaker::new(&working_items_data, available_inline_size);
@@ -1828,12 +1837,17 @@ pub fn inline_layout_for_children(
     space: &ConstraintSpace,
 ) -> Fragment {
     let style = &doc.node(node_id).style;
-    let normalize_vertical_rtl = needs_logical_positioned_inline_geometry(doc, node_id, space);
+    let normalize_positioned_vertical_rtl =
+        needs_logical_positioned_inline_geometry(doc, node_id, space);
 
     let available_inline_size = space.available_inline_size.clamp_negative_to_zero();
 
     // Collect inline items only from the specified children.
     let mut items_data = InlineItemsBuilder::collect_for_children(doc, node_id, children);
+    let normalize_vertical_rtl = normalize_positioned_vertical_rtl
+        || (!space.writing_direction.is_horizontal()
+            && space.writing_direction.is_rtl()
+            && items_data.oof_children.is_empty());
 
     let base_direction = if style.direction == Direction::Rtl {
         openui_text::TextDirection::Rtl
@@ -2811,8 +2825,10 @@ fn create_line_box(
                 text_fragment.kind = FragmentKind::Text;
                 // Populate text_content so paint pipeline can use it for
                 // emphasis marks and skip-ink CJK filtering.
-                text_fragment.text_content =
-                    Some(items_data.text[item_result.text_range.clone()].to_string());
+                let text_content = &items_data.text[item_result.text_range.clone()];
+                text_fragment.text_content = Some(text_content.to_string());
+                text_fragment.text_run_orientation =
+                    resolve_text_run_orientation(style, text_content);
                 text_fragment.offset = PhysicalOffset::new(inline_offset, text_top);
                 // Store the baseline offset (distance from fragment top to baseline)
                 // so paint can use it directly instead of recomputing from metrics.
@@ -3099,6 +3115,7 @@ fn create_line_box(
         );
         hyphen_fragment.inherited_style = Some(hyphen_style.clone());
         hyphen_fragment.baseline_offset = (baseline - hyphen_top).to_f32();
+        hyphen_fragment.text_run_orientation = resolve_text_run_orientation(hyphen_style, "-");
 
         if block_style.direction == Direction::Rtl {
             // RTL: place hyphen at visual start (left of content), shift content right.
@@ -3164,6 +3181,8 @@ fn create_line_box(
                 PhysicalOffset::new(text_align_offset + physical_text_indent, ellipsis_top);
             ellipsis_fragment.inherited_style = Some(block_style.clone());
             ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
+            ellipsis_fragment.text_run_orientation =
+                resolve_text_run_orientation(block_style, ellipsis_text);
             let child_index = children.len();
             children.push(ellipsis_fragment);
             attach_inline_line_child(
@@ -3183,6 +3202,8 @@ fn create_line_box(
             ellipsis_fragment.offset = PhysicalOffset::new(inline_offset, ellipsis_top);
             ellipsis_fragment.inherited_style = Some(block_style.clone());
             ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
+            ellipsis_fragment.text_run_orientation =
+                resolve_text_run_orientation(block_style, ellipsis_text);
             let child_index = children.len();
             children.push(ellipsis_fragment);
             attach_inline_line_child(

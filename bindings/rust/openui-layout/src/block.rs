@@ -29,7 +29,7 @@ use openui_style::{
 use crate::constraint_space::ConstraintSpace;
 use crate::exclusions::float_utils::{position_float, UnpositionedFloat};
 use crate::exclusions::{ClearType, ExclusionArea, ExclusionSpace, ExclusionType};
-use crate::fragment::{Fragment, FragmentKind};
+use crate::fragment::{Fragment, FragmentKind, TextRunOrientation};
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 use crate::out_of_flow::OutOfFlowCandidate;
 
@@ -65,9 +65,32 @@ fn resolve_margins_in_parent_axes(
     percentage_base: LayoutUnit,
     parent_writing_direction: WritingDirectionMode,
 ) -> BoxStrut {
-    algorithm_box_from_logical_strut(
-        resolve_margins(style, percentage_base).to_logical(parent_writing_direction),
-    )
+    // A definite physical axis closes the horizontal block equation at this
+    // boundary, so authored left/right margins must retain their physical
+    // sides even when inline progression is RTL. Fully auto-sized blocks keep
+    // the established logical-strut path while their remaining space is
+    // resolved. Vertical block layout likewise stays logical until projection.
+    if parent_writing_direction.is_horizontal()
+        && (style.width.is_fixed() || style.height.is_fixed())
+    {
+        resolve_margins(style, percentage_base)
+    } else {
+        algorithm_box_from_logical_strut(
+            resolve_margins(style, percentage_base).to_logical(parent_writing_direction),
+        )
+    }
+}
+
+fn physical_content_left(
+    border: &BoxStrut,
+    padding: &BoxStrut,
+    writing_direction: WritingDirectionMode,
+) -> LayoutUnit {
+    if writing_direction.is_horizontal() && writing_direction.is_rtl() {
+        border.right + padding.right
+    } else {
+        border.left + padding.left
+    }
 }
 
 fn inline_size_in_parent_axes<'a>(
@@ -422,7 +445,21 @@ fn project_logical_child_to_physical(
     let converter = WritingModeConverter::new(writing_direction, parent_physical_size);
     let logical_size = LogicalSize::new(fragment.size.width, fragment.size.height);
     let physical_size = converter.to_physical_size(logical_size);
-    let logical_offset = LogicalOffset::new(fragment.offset.left, fragment.offset.top);
+    let logical_block_offset = if fragment.kind == FragmentKind::Text
+        && fragment.text_run_orientation == TextRunOrientation::Clockwise
+        && !writing_direction.is_flipped_blocks()
+        && fragment.offset.top.abs() < LayoutUnit::from_raw(32)
+    {
+        // A clockwise alphabetic run in vertical-lr places subpixel
+        // half-leading on the opposite physical side of the line edge. Keep
+        // explicit leading of at least half a pixel line-start-relative; that
+        // larger spacing is already represented by inline layout and must not
+        // be mirrored during public fragment projection.
+        -fragment.offset.top
+    } else {
+        fragment.offset.top
+    };
+    let logical_offset = LogicalOffset::new(fragment.offset.left, logical_block_offset);
     fragment.offset = converter.to_physical_offset(logical_offset, physical_size);
     fragment.size = physical_size;
 
@@ -2744,7 +2781,15 @@ fn handle_float(
         child_available_inline,
         space.writing_direction,
     );
-    let is_left = child_style.float == Float::Left;
+    // Float left/right selects a physical line-side. The vertical block
+    // algorithm works in start-relative logical coordinates and is projected
+    // once at completion, so RTL must swap which logical side represents the
+    // authored physical side. Horizontal storage remains physical here.
+    let is_left = if !space.writing_direction.is_horizontal() && space.writing_direction.is_rtl() {
+        child_style.float == Float::Right
+    } else {
+        child_style.float == Float::Left
+    };
 
     // CSS 2.1 §10.3.5: Floats with auto width use shrink-to-fit sizing.
     // The available width for shrink-to-fit is the containing block width
@@ -2854,7 +2899,8 @@ fn handle_float(
     // Convert BFC coordinates back to parent border-box coordinates.
     let mut fragment = child_fragment;
     fragment.offset = PhysicalOffset::new(
-        positioned.bfc_offset.line_offset + border.left + padding.left,
+        positioned.bfc_offset.line_offset
+            + physical_content_left(border, padding, space.writing_direction),
         positioned.bfc_offset.block_offset + content_edge,
     );
 
@@ -3241,7 +3287,9 @@ fn layout_block_child(
             // Use the CONTAINING BLOCK's direction per spec (not child's).
             // In RTL, margin-left absorbs the negative remainder (overflow left);
             // in LTR, margin-right absorbs it (overflow right).
-            if containing_block_direction == Direction::Rtl {
+            if space.writing_direction.is_horizontal()
+                && containing_block_direction == Direction::Rtl
+            {
                 resolved_margin_left = remaining_space;
                 resolved_margin_right = LayoutUnit::zero();
             } else {
@@ -3260,7 +3308,7 @@ fn layout_block_child(
         // (width + margin-left + margin-right) exceeds the containing block,
         // the end margin (margin-right in LTR, margin-left in RTL) is
         // recomputed to satisfy the equation. Uses containing block direction.
-        if containing_block_direction == Direction::Rtl {
+        if space.writing_direction.is_horizontal() && containing_block_direction == Direction::Rtl {
             resolved_margin_right = child_margin.right;
             resolved_margin_left = remaining_space - resolved_margin_right;
         } else {
@@ -3269,19 +3317,10 @@ fn layout_block_child(
         }
     }
 
-    let physical_content_left =
-        if space.writing_direction.is_horizontal() && space.writing_direction.is_rtl() {
-            // The block algorithm's strut stores logical inline-start in `left`.
-            // Horizontal RTL fragment offsets are already physical at this API
-            // boundary, so their physical left padding edge is logical inline-end.
-            // Converting the edge here keeps relative offsets and float-placement
-            // adjustments physical and avoids a later double reversal.
-            border.right + padding.right
-        } else {
-            border.left + padding.left
-        };
-    child_fragment.offset =
-        PhysicalOffset::new(physical_content_left + resolved_margin_left, *block_offset);
+    child_fragment.offset = PhysicalOffset::new(
+        physical_content_left(border, padding, space.writing_direction) + resolved_margin_left,
+        *block_offset,
+    );
 
     // Apply relative positioning offsets (CSS 2.1 §9.4.3).
     // The fragment retains its normal-flow position for sibling layout;

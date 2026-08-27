@@ -36,6 +36,8 @@ W1N_TARGETS_JSON = SCRIPT_DIR / "sp17_w1n_targets.json"
 W1N_FOCUSED_JSON = SCRIPT_DIR / "sp17_w1n_focused_ids.json"
 W1O_TARGETS_JSON = SCRIPT_DIR / "sp17_w1o_targets.json"
 W1O_FOCUSED_JSON = SCRIPT_DIR / "sp17_w1o_focused_ids.json"
+W2A_TARGETS_JSON = SCRIPT_DIR / "sp17_w2a_targets.json"
+W2A_FOCUSED_JSON = SCRIPT_DIR / "sp17_w2a_focused_ids.json"
 WPT_ROOT = Path(os.environ.get(
     "CHROMIUM_WPT_CSS",
     os.path.expanduser(
@@ -96,6 +98,21 @@ W1O_MANIFEST_SHA256 = {
     "sp17_w1o_targets.json": "2170b9c4a44cc2419c482b66ad723e45d8b10c9a7ab2d692aac4205bc8c5bcdb",
     "sp17_w1o_focused_ids.json": "dba54fcf13c00bc42737cbaae0d1c459701f569849239621f4f83828bccb21d6",
 }
+EXPECTED_W2A_TARGETS = 22
+EXPECTED_W2A_FOCUSED = 49
+EXPECTED_W2A_PROMOTIONS = 193
+EXPECTED_W2A_RUNNABLE = 3768
+EXPECTED_W2A_EXACT = 3487
+EXPECTED_W2A_FAILURES = 281
+EXPECTED_W2A_UNPORTED = 3905
+EXPECTED_W2A_LIVE_OWNED = 649
+W2A_MANIFEST_SHA256 = {
+    "sp17_w2a_targets.json": "4162bd75b614a81ab43c897aef201456660b35f6cdac8109c41b1aa126ec963f",
+    "sp17_w2a_focused_ids.json": "b44b3ec2d5c1aea2e6e159f923858d66cdb24ff9f4a958a75ec8092771012511",
+}
+W2A_EXISTING_EXACT_GUARDS = frozenset({
+    "wpt/css_flexbox/flexbox-writing-mode-slr-ref",
+})
 W1M_EXISTING_RUNNABLE = frozenset({
     "wpt/css_flexbox/abspos_flex-abspos-staticpos-fallback-justify-content-001",
     "wpt/css_flexbox/abspos_flex-abspos-staticpos-fallback-justify-content-001-ref",
@@ -244,6 +261,36 @@ def load_w1o_manifests() -> tuple[list[str], list[str]]:
         or EXPECTED_W1O_LIVE_OWNED != EXPECTED_W1N_LIVE_OWNED - len(targets)
     ):
         raise ValueError("SP17 W1O is not the projected one-ID delta from W1N")
+    return targets, focused
+
+
+def load_w2a_manifests() -> tuple[list[str], list[str]]:
+    manifests = []
+    for path, expected_count in (
+        (W2A_TARGETS_JSON, EXPECTED_W2A_TARGETS),
+        (W2A_FOCUSED_JSON, EXPECTED_W2A_FOCUSED),
+    ):
+        actual_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual_hash != W2A_MANIFEST_SHA256[path.name]:
+            raise ValueError(f"SP17 W2A manifest byte drift: {path.name}: {actual_hash}")
+        values = json.loads(path.read_text(encoding="utf-8"))
+        if values != sorted(set(values)) or len(values) != expected_count:
+            raise ValueError(
+                f"SP17 W2A manifest is not the sorted {expected_count}-ID set: {path.name}"
+            )
+        manifests.append(values)
+    targets, focused = manifests
+    if not (set(targets) | W2A_EXISTING_EXACT_GUARDS) <= set(focused):
+        raise ValueError("SP17 W2A focused proof dropped a target or exact guard")
+    if (
+        EXPECTED_W2A_PROMOTIONS != EXPECTED_W1O_PROMOTIONS + len(targets)
+        or EXPECTED_W2A_RUNNABLE != EXPECTED_W1O_RUNNABLE + len(targets)
+        or EXPECTED_W2A_UNPORTED != EXPECTED_W1O_UNPORTED - len(targets)
+        or EXPECTED_W2A_EXACT != EXPECTED_W1O_EXACT + len(targets)
+        or EXPECTED_W2A_FAILURES != EXPECTED_W1O_FAILURES
+        or EXPECTED_W2A_LIVE_OWNED != EXPECTED_W1O_LIVE_OWNED - len(targets)
+    ):
+        raise ValueError("SP17 W2A is not the projected 22-ID delta from W1O")
     return targets, focused
 
 
@@ -611,6 +658,14 @@ def validate_live_snapshot(
         )
     ):
         raise ValueError("SP17 W1O target changed outside the frozen actionable cohort")
+    w2a_targets, _ = load_w2a_manifests()
+    w2a_target_ids = set(w2a_targets)
+    if (
+        not w2a_target_ids <= set(actionable)
+        or w2a_target_ids
+        & (w1m_target_ids | W1M_EXISTING_RUNNABLE | w1n_target_ids | w1o_target_ids)
+    ):
+        raise ValueError("SP17 W2A targets changed outside the frozen actionable cohort")
     w1m_residual_admissions = w1m_target_ids & (inventory_ids - set(actionable))
     w1m_non_sp17_admissions = w1m_target_ids - inventory_ids
     if (
@@ -638,14 +693,10 @@ def validate_live_snapshot(
         EXPECTED_UNPORTED - len(promoted_unported) - len(admitted_non_sp17)
     )
     if (
-        expected_runnable != EXPECTED_W1M_RUNNABLE
-        or expected_runnable != EXPECTED_W1N_RUNNABLE
-        or expected_runnable != EXPECTED_W1O_RUNNABLE
-        or expected_unported != EXPECTED_W1M_UNPORTED
-        or expected_unported != EXPECTED_W1N_UNPORTED
-        or expected_unported != EXPECTED_W1O_UNPORTED
+        expected_runnable != EXPECTED_W2A_RUNNABLE
+        or expected_unported != EXPECTED_W2A_UNPORTED
     ):
-        raise ValueError("SP17 W1O projected mapping totals changed")
+        raise ValueError("SP17 W2A projected mapping totals changed")
     if len(ported_ids) != expected_runnable:
         raise ValueError(
             "SP17 runnable mapping changed outside exact actionable promotions: "
@@ -673,14 +724,16 @@ def validate_live_snapshot(
     if (
         not w1n_target_ids <= promoted
         or not w1o_target_ids <= promoted
-        or len(promoted - w1n_target_ids - w1o_target_ids)
+        or not w2a_target_ids <= promoted
+        or len(promoted - w1n_target_ids - w1o_target_ids - w2a_target_ids)
         != EXPECTED_W1M_PROMOTIONS
-        or len(promoted - w1o_target_ids) != EXPECTED_W1N_PROMOTIONS
+        or len(promoted - w1o_target_ids - w2a_target_ids) != EXPECTED_W1N_PROMOTIONS
+        or len(promoted - w2a_target_ids) != EXPECTED_W1O_PROMOTIONS
     ):
-        raise ValueError("SP17 W1O did not preserve the 170-promotion W1N checkpoint")
-    if len(promoted) != EXPECTED_W1O_PROMOTIONS:
+        raise ValueError("SP17 W2A did not preserve the W1M/W1N/W1O checkpoints")
+    if len(promoted) != EXPECTED_W2A_PROMOTIONS:
         raise ValueError(
-            f"SP17 W1O exact promotion count changed: {len(promoted)}"
+            f"SP17 W2A exact promotion count changed: {len(promoted)}"
         )
     passed = summary.get("passed")
     failed = summary.get("failed")
@@ -688,8 +741,8 @@ def validate_live_snapshot(
     if (
         len(tests) != expected_runnable
         or errors != EXPECTED_ERRORS
-        or passed != EXPECTED_W1O_EXACT
-        or failed != EXPECTED_W1O_FAILURES
+        or passed != EXPECTED_W2A_EXACT
+        or failed != EXPECTED_W2A_FAILURES
         or passed + failed + errors != expected_runnable
         or passed < EXPECTED_BASELINE + len(promoted)
     ):
@@ -724,14 +777,19 @@ def validate_live_snapshot(
         if result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
             raise ValueError(f"SP17 W1O target is not exact: {test_id}")
 
+    for test_id in w2a_target_ids:
+        result = summary_by_id.get(test_id, {})
+        if result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
+            raise ValueError(f"SP17 W2A target is not exact: {test_id}")
+
     live_owned = {
         test_id for test_id, row in row_by_id.items()
         if SP17_CATEGORY in categories(row["failure_category"])
     }
     if not live_owned.issubset(inventory_ids):
         raise ValueError("SP17 ownership expanded outside the frozen inventory")
-    if len(live_owned) != EXPECTED_W1O_LIVE_OWNED:
-        raise ValueError(f"SP17 W1O live ownership changed: {len(live_owned)}")
+    if len(live_owned) != EXPECTED_W2A_LIVE_OWNED:
+        raise ValueError(f"SP17 W2A live ownership changed: {len(live_owned)}")
     for test_id in inventory_ids - live_owned:
         result = summary_by_id.get(test_id, {})
         if (

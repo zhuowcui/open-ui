@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused regressions for the SP17 kickoff and live W1O closure evidence."""
+"""Focused regressions for the SP17 kickoff and live W2A closure evidence."""
 
 from __future__ import annotations
 
@@ -175,6 +175,19 @@ EXPECTED_LIVE_PROMOTIONS = {
     "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-rtl-002",
     "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-vertWM-001",
     "wpt/css_flexbox/abspos_flex-abspos-staticpos-justify-content-vertWM-002",
+} | {
+    f"wpt/css_flexbox/flexbox-writing-mode-{number:03d}{reference}"
+    for number in range(10, 17)
+    for reference in ("", "-ref")
+} | {
+    "wpt/css_flexbox/flexbox-writing-mode-slr",
+    "wpt/css_flexbox/flexbox-writing-mode-slr-row-mix",
+    "wpt/css_flexbox/flexbox-writing-mode-slr-row-mix-ref",
+    "wpt/css_flexbox/flexbox-writing-mode-slr-rtl",
+    "wpt/css_flexbox/flexbox-writing-mode-srl",
+    "wpt/css_flexbox/flexbox-writing-mode-srl-row-mix",
+    "wpt/css_flexbox/flexbox-writing-mode-srl-row-mix-ref",
+    "wpt/css_flexbox/flexbox-writing-mode-srl-rtl",
 }
 
 
@@ -347,7 +360,7 @@ class LedgerTests(unittest.TestCase):
         promoted = closure.validate_live_snapshot(
             rows, summary, baseline, inventory, actionable
         )
-        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 171)
+        self.assertEqual(len(EXPECTED_LIVE_PROMOTIONS), 193)
         self.assertEqual(promoted, EXPECTED_LIVE_PROMOTIONS)
         residual_admissions = set(closure.load_w1m_manifests()[0]) - set(actionable)
         self.assertTrue(promoted.issubset(set(actionable) | residual_admissions))
@@ -393,6 +406,50 @@ class LedgerTests(unittest.TestCase):
         manifest_path = splice_text_port.TEXT_PORTED_LIST
         self.assertEqual(first[2][manifest_path], first[1][manifest_path])
         self.assertEqual(second[2][manifest_path], second[1][manifest_path])
+
+    def test_w2a_manifests_membership_and_projected_ledger_are_pinned(self):
+        targets, focused = closure.load_w2a_manifests()
+        expected = {
+            f"wpt/css_flexbox/flexbox-writing-mode-{number:03d}{reference}"
+            for number in range(10, 17)
+            for reference in ("", "-ref")
+        } | {
+            "wpt/css_flexbox/flexbox-writing-mode-slr",
+            "wpt/css_flexbox/flexbox-writing-mode-slr-row-mix",
+            "wpt/css_flexbox/flexbox-writing-mode-slr-row-mix-ref",
+            "wpt/css_flexbox/flexbox-writing-mode-slr-rtl",
+            "wpt/css_flexbox/flexbox-writing-mode-srl",
+            "wpt/css_flexbox/flexbox-writing-mode-srl-row-mix",
+            "wpt/css_flexbox/flexbox-writing-mode-srl-row-mix-ref",
+            "wpt/css_flexbox/flexbox-writing-mode-srl-rtl",
+        }
+        self.assertEqual(set(targets), expected)
+        self.assertEqual(len(focused), 49)
+        self.assertTrue(expected | closure.W2A_EXISTING_EXACT_GUARDS <= set(focused))
+        self.assertEqual(
+            (
+                closure.EXPECTED_W2A_PROMOTIONS,
+                closure.EXPECTED_W2A_RUNNABLE,
+                closure.EXPECTED_W2A_EXACT,
+                closure.EXPECTED_W2A_FAILURES,
+                closure.EXPECTED_W2A_UNPORTED,
+                closure.EXPECTED_W2A_LIVE_OWNED,
+            ),
+            (193, 3768, 3487, 281, 3905, 649),
+        )
+
+    def test_w2a_two_generations_and_two_surgical_splices_are_byte_identical(self):
+        targets = closure.load_w2a_manifests()[0]
+        mapping = splice_text_port.load_mapping_rows()
+        first = splice_text_port.prepare_changes(targets, mapping)
+        second = splice_text_port.prepare_changes(targets, mapping)
+        self.assertEqual(first[0], second[0])
+        self.assertEqual(first[1], second[1])
+        self.assertEqual(first[2], second[2])
+        self.assertEqual(set(first[1]), set(first[2]))
+        for path in sorted(first[1]):
+            self.assertEqual(first[2][path], first[1][path], path)
+            self.assertEqual(second[2][path], second[1][path], path)
 
     def test_w0b_probe_is_a_disjoint_cover_of_the_frozen_inventory(self):
         _, inventory, initial, _ = closure.load_ledgers()
@@ -633,6 +690,39 @@ class TransactionalSp17CssTests(unittest.TestCase):
         self.assertGreaterEqual(
             output.count("text_orientation = TextOrientation::Sideways"), 3
         )
+
+    def test_w2a_sideways_inheritance_emission_and_fragment_metadata(self):
+        root = port_wpt.DomNode(
+            "body",
+            {},
+            port_wpt.parse_inline_styles(
+                "writing-mode:sideways-lr;direction:rtl;text-orientation:sideways"
+            ),
+        )
+        child = port_wpt.DomNode("span", {}, OrderedDict())
+        text = port_wpt.DomNode("#text", {}, OrderedDict())
+        text.is_text = True
+        text.text_content = "Ahem"
+        child.children.append(text)
+        root.children.append(child)
+        port_wpt.set_porter_profile(port_wpt.PorterProfile.DETERMINISTIC_AHEM)
+        output = port_wpt.generate_rust_fn("w2a_sideways", root)
+        self.assertGreaterEqual(output.count("writing_mode = WritingMode::SidewaysLr"), 3)
+        self.assertGreaterEqual(output.count("direction = Direction::Rtl"), 3)
+        self.assertGreaterEqual(
+            output.count("text_orientation = TextOrientation::Sideways"), 3
+        )
+
+        fragment = (ROOT / "bindings/rust/openui-layout/src/fragment.rs").read_text()
+        inline = (
+            ROOT / "bindings/rust/openui-layout/src/inline/algorithm.rs"
+        ).read_text()
+        painter = (ROOT / "bindings/rust/openui-paint/src/painter.rs").read_text()
+        self.assertIn("pub enum TextRunOrientation", fragment)
+        self.assertIn("pub text_run_orientation: TextRunOrientation", fragment)
+        self.assertIn("resolve_text_run_orientation(style, text_content)", inline)
+        self.assertIn("fragment.text_run_orientation", painter)
+        self.assertNotIn("is_homogeneous_rotated_vertical_run", painter)
 
     def test_flex_shorthand_zero_percent_and_semantic_break_metrics(self):
         style = "doc.node_mut(n1).style"

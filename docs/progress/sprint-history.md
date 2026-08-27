@@ -20,9 +20,9 @@
 | SP14 | Deterministic Text Porting | 4,045 owner rows | W0–W4 | ✅ Complete by ownership |
 | SP15 | Inline/Layout + Root/Body Closure | 130 owner rows | closure | ✅ Complete by ownership |
 | SP16 | Real-Font Metrics + Raster Parity | 776 owner rows | closure | ✅ Complete by ownership |
-| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W1O | 🟡 Active; auto-height flex basis and semantic break closure, 171 exact promotions |
+| SP17 | Advanced Text + Writing Modes | 842 frozen owner rows | W2A | 🟡 Active; rotated vertical and sideways text closure, 193 exact promotions |
 
-**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,746 ported/runnable tests, 3,465 runnable passes, 281 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 671 live writing-mode owner rows.**
+**Current accountability snapshot: 7,673 SP12-scope Chromium WPT inventory rows, 3,768 ported/runnable tests, 3,487 runnable passes, 281 functional failures, 0 errors, 0 `sp12_layout_bug` rows, 842 frozen SP17 kickoff owner rows, and 649 live writing-mode owner rows.**
 
 ---
 
@@ -854,3 +854,21 @@ See `docs/plan/10-text-rendering-parity.md` (roadmap) and `docs/SP14-PLAN.md` (f
   matrix, all 128 closure/porter tests, both closure generators, deterministic
   mapping/deferred/HTML generation, formatting, splice idempotence,
   writing-mode 010–016 exclusion, and audit 7/7.
+
+### SP17 W2A: rotated vertical and sideways text closure
+
+- Made fragment `TextRunOrientation` authoritative from inline construction
+  through painting and added clockwise/counterclockwise full-stack transforms
+  for vertical mixed Latin/Ahem and sideways-rl/lr runs.
+- Preserved logical advances and baselines through one-time fragment projection;
+  fixed definite physical margins, vertical RTL float sides, padding, and
+  subpixel leading at the shared block boundary.
+- Surgically admitted the 22 writing-mode 010–016 and sideways matrix builders.
+  The reconstructed 49-ID proof is 49/49 exact and pinned at
+  `b44b3ec2d5c1aea2e6e159f923858d66cdb24ff9f4a958a75ec8092771012511`.
+- The authoritative full suite is **3,768 runnable / 3,487 exact / 281 fail / 0
+  errors**; live unported inventory is 3,905, writing-mode ownership is 649,
+  unported SP13-R multicol ownership is 976, and the text manifest is 893. The
+  validator requires 193 exact promotions and keeps the SP13-R later-promotion
+  allowlist at 42. The committed `summary.json` SHA-256 is
+  `6b8c2d53561027fd561171b5642ef65fc281493d2729559b320871f21e48cbff`.

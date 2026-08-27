@@ -21,14 +21,14 @@ The working standard is strict:
 
 ## Verified WPT Snapshot
 
-Latest authoritative accountability snapshot (SP17 W1O full no-resume run):
+Latest authoritative accountability snapshot (SP17 W2A full no-resume run):
 
 | Metric | Value |
 |---|---:|
 | Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3746 |
-| Unported but explicitly tracked tests | 3927 |
-| Runnable passes | 3465 |
+| Ported/runnable WPT tests | 3768 |
+| Unported but explicitly tracked tests | 3905 |
+| Runnable passes | 3487 |
 | Runnable failures | 281 |
 | Runnable render/diff errors | 0 |
 | Generic `not_ported` bucket rows | 0 |
@@ -39,13 +39,13 @@ Latest authoritative accountability snapshot (SP17 W1O full no-resume run):
 | Unported `sp13_multicol` residuals | 976 |
 
 `python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
-The full `wpt/` run was executed without resume on 2026-08-26. Its committed
+The full `wpt/` run was executed without resume on 2026-08-27. Its committed
 `summary.json` SHA-256 is
-`d182ff44328df0a6c711990830a62a3e9e6199d2c13bad583360efd68702b2a9`.
+`6b8c2d53561027fd561171b5642ef65fc281493d2729559b320871f21e48cbff`.
 All 3267 frozen SP17 baseline IDs, including all 2823 frozen SP13-R baseline
 IDs and all 351 runnable multicol targets, remain exact.
 
-## SP17 W1O Auto-Height Flex Basis and Semantic Break Closure
+## SP17 W2A Rotated Vertical and Sideways Text Closure
 
 SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
 exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
@@ -304,6 +304,28 @@ unported inventory remains 3927, and the validator requires exactly 171
 promotions while preserving every W1N and frozen-ledger invariant.
 The authoritative W1O `summary.json` SHA-256 is
 `d182ff44328df0a6c711990830a62a3e9e6199d2c13bad583360efd68702b2a9`.
+
+W2A promotes 22 formerly unported flex writing-mode builders: the 010–016
+test/reference pairs and the sideways-lr/sideways-rl base, RTL, and row-mix
+matrix. Inline construction resolves a public `TextRunOrientation` for every
+text fragment; paint consumes that fragment metadata and transforms the entire
+shadow/decoration/glyph/emphasis stack with balanced save/restore behavior.
+Clockwise and counterclockwise runs use distinct physical origins, while
+layout preserves their logical advances and exported baselines.
+
+The 49-ID proof contains all 22 targets, writing-mode 001–009 test/reference
+pairs, `flexbox-writing-mode-slr-ref`, the six row-flow guards, and the
+vertical-row pair. It is 49/49 exact with zero mismatched pixels or errors. The
+target manifest SHA-256 is
+`4162bd75b614a81ab43c897aef201456660b35f6cdac8109c41b1aa126ec963f`;
+the reconstructed focused proof is pinned at
+`b44b3ec2d5c1aea2e6e159f923858d66cdb24ff9f4a958a75ec8092771012511`.
+
+The current full result is 3768 runnable, 3487 exact, 281 functional failures,
+and zero errors. There are 3905 unported rows, 649 live
+`needs_writing_mode` owners, 976 unported `sp13_multicol` rows, and 893 text
+manifest IDs. The validator requires exactly 193 SP17 promotions and preserves
+the frozen ledgers plus the 42-ID SP13-R later-promotion allowlist.
 
 W1 remains incomplete for JavaScript-backed abspos alignment, tables, grid,
 transforms, generated content, images/print-specific cases,

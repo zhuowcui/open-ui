@@ -13,7 +13,7 @@ repository permissions.
 |---|---|
 | `native-build (Debug + Release)` | Install native tools once, then generate, build, and run `hello_world` in both configurations. |
 | `rust-parity` | Check Rust formatting and run the style, text, layout, and paint test suites. |
-| `python-accountability` | Run the 128 SP13-R through SP17 W1O closure/porter tests, require all 171 exact live SP17 promotions, the complete 39-ID W1M cohort, four-ID W1N cohort, and one-ID W1O target, verify immutable historical, kickoff, actionable, and residual ledgers plus the unchanged 42-ID SP13-R later-promotion compatibility allowlist, and validate committed exact-result metadata and accountability checks 2–7. |
+| `python-accountability` | Run the 131 SP13-R through SP17 W2A closure/porter tests, require all 193 exact live SP17 promotions and the complete 22-ID W2A target plus 49-ID focused proof, verify immutable historical, kickoff, actionable, and residual ledgers plus the unchanged 42-ID SP13-R later-promotion compatibility allowlist, and validate committed exact-result metadata and accountability checks 2–7. |
 | `clang-format` | Require every tracked C/C++ source under `src/`, `include/`, and `examples/` to match clang-format 18. |
 | `gn-format` | Require every tracked `.gn` and `.gni` file to pass `gn format --dry-run`. |
 

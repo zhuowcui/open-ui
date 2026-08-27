@@ -69,6 +69,41 @@ fn has_non_white_pixels(surface: &mut Surface) -> bool {
     false
 }
 
+fn non_white_bounds(surface: &mut Surface) -> Option<(i32, i32, i32, i32)> {
+    let image = surface.image_snapshot();
+    let info = image.image_info();
+    let row_bytes = info.min_row_bytes();
+    let mut pixels = vec![0u8; info.height() as usize * row_bytes];
+    image.read_pixels(
+        &info,
+        &mut pixels,
+        row_bytes,
+        (0, 0),
+        skia_safe::image::CachingHint::Allow,
+    );
+    let mut bounds: Option<(i32, i32, i32, i32)> = None;
+    for y in 0..info.height() as usize {
+        for x in 0..info.width() as usize {
+            let pixel = &pixels[y * row_bytes + x * 4..][..4];
+            if pixel[0] == 0xff && pixel[1] == 0xff && pixel[2] == 0xff {
+                continue;
+            }
+            bounds = Some(bounds.map_or(
+                (x as i32, y as i32, x as i32, y as i32),
+                |(left, top, right, bottom)| {
+                    (
+                        left.min(x as i32),
+                        top.min(y as i32),
+                        right.max(x as i32),
+                        bottom.max(y as i32),
+                    )
+                },
+            ));
+        }
+    }
+    bounds
+}
+
 /// Create a default style with text decorations disabled.
 fn default_style() -> ComputedStyle {
     ComputedStyle::default()
@@ -1051,6 +1086,7 @@ fn paint_text_fragment_no_shape_result() {
         children: Vec::new(),
         shape_result: None,
         text_content: None,
+        text_run_orientation: openui_layout::TextRunOrientation::Horizontal,
         inherited_style: None,
         baseline_offset: 0.0,
         text_combine: None,
@@ -1232,6 +1268,83 @@ fn paint_text_fragment_with_text_shadow() {
 }
 
 #[test]
+fn rotated_run_paints_one_clipped_stack_and_restores_canvas() {
+    for orientation in [
+        openui_layout::TextRunOrientation::Clockwise,
+        openui_layout::TextRunOrientation::CounterClockwise,
+    ] {
+        let (doc, text_node) = make_doc_with_text_style(|style| {
+            style.color = Color::BLACK;
+            style.text_shadow = vec![TextShadow {
+                offset_x: 3.0,
+                offset_y: 2.0,
+                blur_radius: 1.0,
+                color: Color::from_rgba8(128, 128, 128, 255),
+            }];
+            style.text_decoration_line = TextDecorationLine(
+                TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0,
+            );
+            style.text_decoration_color = StyleColor::CurrentColor;
+            style.text_emphasis_mark = TextEmphasisMark::Dot;
+            style.text_emphasis_fill = TextEmphasisFill::Filled;
+            style.text_emphasis_position = TextEmphasisPosition {
+                over: true,
+                right: true,
+            };
+            style.text_emphasis_color = StyleColor::CurrentColor;
+        });
+        let shape = Arc::new(shape_text("Stack"));
+        let metrics = text_painter::metrics_from_shape_result(&shape);
+        let mut text = make_text_fragment(text_node, &shape, &metrics);
+        text.text_content = Some("Stack".to_string());
+        text.text_run_orientation = orientation;
+        text.offset = PhysicalOffset::new(LayoutUnit::from_i32(18), LayoutUnit::from_i32(8));
+
+        let mut clip = Fragment::new_box(
+            doc.root(),
+            PhysicalSize::new(LayoutUnit::from_i32(64), LayoutUnit::from_i32(64)),
+        );
+        clip.offset = PhysicalOffset::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(40));
+        clip.has_overflow_clip = true;
+        clip.children.push(text);
+
+        let mut surface = make_surface(160, 160);
+        let save_count = surface.canvas().save_count();
+        paint_fragment(surface.canvas(), &clip, &doc, PhysicalOffset::zero());
+        assert_eq!(surface.canvas().save_count(), save_count, "{orientation:?}");
+        let (left, top, right, bottom) =
+            non_white_bounds(&mut surface).expect("rotated paint stack");
+        assert!(left >= 40 && top >= 40, "{orientation:?}: ({left}, {top})");
+        assert!(
+            right < 104 && bottom < 104,
+            "{orientation:?}: ({right}, {bottom})"
+        );
+    }
+}
+
+#[test]
+fn clockwise_and_counterclockwise_use_opposite_physical_origins() {
+    let (doc, text_node) = make_doc_with_text_style(|style| style.color = Color::BLACK);
+    let shape = Arc::new(shape_text("Handed"));
+    let metrics = text_painter::metrics_from_shape_result(&shape);
+    let mut bounds = Vec::new();
+    for orientation in [
+        openui_layout::TextRunOrientation::Clockwise,
+        openui_layout::TextRunOrientation::CounterClockwise,
+    ] {
+        let mut fragment = make_text_fragment(text_node, &shape, &metrics);
+        fragment.text_content = Some("Handed".to_string());
+        fragment.text_run_orientation = orientation;
+        fragment.offset = PhysicalOffset::new(LayoutUnit::from_i32(70), LayoutUnit::from_i32(50));
+        let mut surface = make_surface(180, 180);
+        paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+        bounds.push(non_white_bounds(&mut surface).expect("rotated glyphs"));
+    }
+    assert_ne!(bounds[0], bounds[1]);
+    assert!(bounds[0].1 < bounds[0].3 && bounds[1].1 < bounds[1].3);
+}
+
+#[test]
 fn new_text_fragment_constructor_sets_kind() {
     let sr = Arc::new(shape_text("Test"));
     let (_doc, text_node) = make_doc_with_text_style(|_| {});
@@ -1332,6 +1445,7 @@ fn paint_ellipsis_hidden_visibility_no_output() {
         children: Vec::new(),
         shape_result: Some(Arc::clone(&sr)),
         text_content: Some("\u{2026}".to_string()),
+        text_run_orientation: openui_layout::TextRunOrientation::Horizontal,
         inherited_style: Some({
             let mut s = ComputedStyle::default();
             s.color = Color::BLACK;
