@@ -4,7 +4,20 @@
 //! how Blink stores nodes — a flat arena with pointer-like indices for
 //! parent, first_child, last_child, next_sibling, prev_sibling.
 
-use openui_style::{ComputedStyle, Display, Overflow};
+use openui_style::{ComputedStyle, Display, ImageResourceId, Overflow};
+
+/// Encoded raster or static-SVG bytes owned by a document.
+///
+/// The registry deliberately stores only transport metadata and bytes. Image
+/// decoding and backend caches belong to paint, while style/layout retain a
+/// stable [`ImageResourceId`].
+#[derive(Debug, Clone)]
+pub struct EncodedImageResource {
+    pub source: String,
+    pub mime_type: String,
+    pub sha256: String,
+    pub bytes: Vec<u8>,
+}
 
 /// Opaque handle into the node arena.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -63,6 +76,11 @@ pub struct NodeData {
     pub tag: ElementTag,
     pub style: ComputedStyle,
 
+    /// Current scroll position in CSS pixels. Layout uses it for sticky
+    /// constraints and paint translates scrollable descendants by it.
+    pub scroll_left: f32,
+    pub scroll_top: f32,
+
     // Tree pointers (arena indices)
     pub parent: NodeId,
     pub first_child: NodeId,
@@ -82,6 +100,8 @@ impl NodeData {
         Self {
             tag,
             style: ComputedStyle::initial(),
+            scroll_left: 0.0,
+            scroll_top: 0.0,
             parent: NodeId::NONE,
             first_child: NodeId::NONE,
             last_child: NodeId::NONE,
@@ -106,6 +126,8 @@ impl NodeData {
 pub struct Document {
     nodes: Vec<NodeData>,
     root: NodeId,
+    image_resources: Vec<EncodedImageResource>,
+    legacy_canvas_body: Option<NodeId>,
 }
 
 impl Document {
@@ -114,6 +136,8 @@ impl Document {
         let mut doc = Self {
             nodes: Vec::new(),
             root: NodeId::NONE,
+            image_resources: Vec::new(),
+            legacy_canvas_body: None,
         };
         let root_id = doc.create_node(ElementTag::Viewport);
         doc.root = root_id;
@@ -203,6 +227,46 @@ impl Document {
         self.nodes.len()
     }
 
+    /// Register deterministic encoded image bytes and return their stable
+    /// document-local identifier. Re-registering the same source/hash pair
+    /// reuses the first entry.
+    pub fn register_image_resource(
+        &mut self,
+        source: impl Into<String>,
+        mime_type: impl Into<String>,
+        sha256: impl Into<String>,
+        bytes: impl Into<Vec<u8>>,
+    ) -> ImageResourceId {
+        let source = source.into();
+        let sha256 = sha256.into();
+        if let Some((index, _)) = self
+            .image_resources
+            .iter()
+            .enumerate()
+            .find(|(_, resource)| resource.source == source && resource.sha256 == sha256)
+        {
+            return ImageResourceId::new(index as u32);
+        }
+        let id = ImageResourceId::new(self.image_resources.len() as u32);
+        self.image_resources.push(EncodedImageResource {
+            source,
+            mime_type: mime_type.into(),
+            sha256,
+            bytes: bytes.into(),
+        });
+        id
+    }
+
+    #[inline]
+    pub fn image_resource(&self, id: ImageResourceId) -> Option<&EncodedImageResource> {
+        self.image_resources.get(id.index())
+    }
+
+    #[inline]
+    pub fn image_resource_count(&self) -> usize {
+        self.image_resources.len()
+    }
+
     /// The direct `<html>` child of the viewport, for root-aware documents.
     pub fn document_element(&self) -> Option<NodeId> {
         self.children(self.root)
@@ -216,20 +280,62 @@ impl Document {
             .find(|&id| self.node(id).tag == ElementTag::Body)
     }
 
-    /// Element whose solid background is propagated to the document canvas.
+    /// Identify the synthetic body used by legacy two-node documents.
+    ///
+    /// Browser-shaped documents should use explicit `Html` and `Body` nodes.
+    /// This compatibility hook keeps older generated builders independent of
+    /// element-tag semantics while still allowing body background propagation.
+    pub fn set_legacy_canvas_body(&mut self, body: NodeId) {
+        assert_eq!(
+            self.node(body).parent,
+            self.root,
+            "legacy canvas body must be a direct child of the viewport"
+        );
+        self.legacy_canvas_body = Some(body);
+    }
+
+    /// Element whose complete background is propagated to the document canvas.
     pub fn canvas_background_source(&self) -> Option<NodeId> {
-        let html = self.document_element()?;
+        let Some(html) = self.document_element() else {
+            // Historical generated documents omit an explicit html element,
+            // so an authored root style is represented on the viewport and
+            // their synthetic body is registered explicitly. An authored
+            // root background wins over body propagation just like `<html>`.
+            let root_style = &self.node(self.root).style;
+            if !matches!(root_style.display, Display::None | Display::Contents)
+                && (!root_style.background_color.is_transparent()
+                    || !root_style.background_layers.is_empty()
+                    || root_style.background_linear_gradient.is_some())
+            {
+                return Some(self.root);
+            }
+            // Do not infer a body from an arbitrary first child: ordinary
+            // fragment/unit-test documents contain direct div children that
+            // must retain normal box-scoped backgrounds.
+            let body = self.legacy_canvas_body?;
+            let style = &self.node(body).style;
+            return (!matches!(style.display, Display::None | Display::Contents)
+                && (!style.background_color.is_transparent()
+                    || !style.background_layers.is_empty()
+                    || style.background_linear_gradient.is_some()))
+            .then_some(body);
+        };
         let html_style = &self.node(html).style;
         if matches!(html_style.display, Display::None | Display::Contents) {
             return None;
         }
-        if !html_style.background_color.is_transparent() {
+        if !html_style.background_color.is_transparent()
+            || !html_style.background_layers.is_empty()
+            || html_style.background_linear_gradient.is_some()
+        {
             return Some(html);
         }
         let body = self.body_element()?;
         let body_style = &self.node(body).style;
         if matches!(body_style.display, Display::None | Display::Contents)
-            || body_style.background_color.is_transparent()
+            || (body_style.background_color.is_transparent()
+                && body_style.background_layers.is_empty()
+                && body_style.background_linear_gradient.is_none())
         {
             None
         } else {
@@ -380,6 +486,70 @@ mod tests {
 
         doc.node_mut(html).style.background_color = openui_style::Color::TRANSPARENT;
         assert_eq!(doc.canvas_background_source(), Some(body));
+    }
+
+    #[test]
+    fn image_layers_participate_in_complete_canvas_background_selection() {
+        let (mut doc, html, body) = root_aware_document();
+        let image = openui_style::CssImage::LinearGradient(openui_style::CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: openui_style::GradientColorSpace::Srgb,
+            stops: vec![
+                openui_style::GradientStop {
+                    color: openui_style::StyleColor::Resolved(openui_style::Color::RED),
+                    position: openui_style::GradientStopPosition::Percent(0.0),
+                },
+                openui_style::GradientStop {
+                    color: openui_style::StyleColor::Resolved(openui_style::Color::BLUE),
+                    position: openui_style::GradientStopPosition::Percent(100.0),
+                },
+            ],
+        });
+        doc.node_mut(html)
+            .style
+            .background_layers
+            .push(openui_style::BackgroundLayer::new(image.clone()));
+        assert_eq!(doc.canvas_background_source(), Some(html));
+
+        doc.node_mut(html).style.background_layers.clear();
+        doc.node_mut(body)
+            .style
+            .background_layers
+            .push(openui_style::BackgroundLayer::new(image));
+        assert_eq!(doc.canvas_background_source(), Some(body));
+    }
+
+    #[test]
+    fn explicitly_registered_legacy_body_propagates_canvas_background() {
+        let mut doc = Document::new();
+        let body = doc.create_node(ElementTag::Div);
+        doc.node_mut(body).style.display = Display::Block;
+        doc.node_mut(body).style.background_color = openui_style::Color::BLUE;
+        doc.append_child(doc.root(), body);
+        doc.set_legacy_canvas_body(body);
+        assert_eq!(doc.canvas_background_source(), Some(body));
+
+        let mut ordinary = Document::new();
+        let div = ordinary.create_node(ElementTag::Div);
+        ordinary.node_mut(div).style.display = Display::Block;
+        ordinary.node_mut(div).style.background_color = openui_style::Color::BLUE;
+        ordinary.append_child(ordinary.root(), div);
+        assert_eq!(ordinary.canvas_background_source(), None);
+    }
+
+    #[test]
+    fn authored_legacy_root_background_precedes_registered_body() {
+        let mut doc = Document::new();
+        let body = doc.create_node(ElementTag::Div);
+        doc.node_mut(body).style.display = Display::Block;
+        doc.node_mut(body).style.background_color = openui_style::Color::BLACK;
+        doc.append_child(doc.root(), body);
+        doc.set_legacy_canvas_body(body);
+        doc.node_mut(doc.root()).style.background_color = openui_style::Color::WHITE;
+
+        assert_eq!(doc.canvas_background_source(), Some(doc.root()));
     }
 
     #[test]

@@ -61,6 +61,13 @@ fn is_complex_script(ch: char) -> bool {
     )
 }
 
+/// Legacy bidi embedding/override controls participate in UAX#9 but are
+/// default-ignorable for shaping and painting. Some fonts expose a fallback
+/// advance for these code points; browsers must suppress that advance.
+fn is_bidi_embedding_control(ch: char) -> bool {
+    matches!(ch, '\u{202a}'..='\u{202e}')
+}
+
 /// Collects shaping output from Skia's SkShaper callbacks.
 ///
 /// Implements Skia's `RunHandler` trait to receive glyph data during shaping.
@@ -120,6 +127,7 @@ impl ShapeCollector {
 
         // Build a byte-offset-to-char-index table for cluster mapping.
         let byte_to_char: Vec<usize> = Self::build_byte_to_char_map(text);
+        let chars: Vec<char> = text.chars().collect();
 
         // Per-character advance accumulator.
         let mut char_advances = vec![0.0f32; num_characters];
@@ -134,12 +142,22 @@ impl ShapeCollector {
                 run_glyphs.push(collected.glyphs[i]);
 
                 // Compute advance from position differences.
-                let advance = if i + 1 < collected.positions.len() {
+                let mut advance = if i + 1 < collected.positions.len() {
                     collected.positions[i + 1].x - collected.positions[i].x
                 } else {
                     // Last glyph: use the run's total advance minus position.
                     collected.advance.x - collected.positions[i].x + collected.positions[0].x
                 };
+                if !collected.clusters.is_empty() {
+                    let cluster_byte = collected.clusters[i] as usize;
+                    if cluster_byte < byte_to_char.len()
+                        && chars
+                            .get(byte_to_char[cluster_byte])
+                            .is_some_and(|ch| is_bidi_embedding_control(*ch))
+                    {
+                        advance = 0.0;
+                    }
+                }
                 run_advances.push(advance);
 
                 let offset = if !collected.offsets.is_empty() {
@@ -224,8 +242,6 @@ impl ShapeCollector {
         // Build character data from accumulated advances.
         let mut character_data = Vec::with_capacity(num_characters);
         let mut x = 0.0f32;
-        let chars: Vec<char> = text.chars().collect();
-
         // Determine cluster bases from cluster info.
         let cluster_bases = Self::compute_cluster_bases(text, &self.runs, &byte_to_char);
         let safe_breaks = Self::compute_safe_breaks(&self.runs, &chars, &byte_to_char);
@@ -1435,6 +1451,22 @@ mod tests {
             for &g in &run.glyphs {
                 assert_ne!(g, 0, "Basic Latin should not produce .notdef glyphs");
             }
+        }
+    }
+
+    #[test]
+    fn bidi_format_controls_have_zero_advance() {
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let plain = shaper.shape("a", &font, TextDirection::Ltr);
+        for controlled in ["\u{202e}a", "a\u{202d}"] {
+            let shaped = shaper.shape(controlled, &font, TextDirection::Ltr);
+            assert!(
+                (shaped.width - plain.width).abs() < 0.001,
+                "{controlled:?}: controlled={} plain={}",
+                shaped.width,
+                plain.width
+            );
         }
     }
 

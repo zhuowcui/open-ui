@@ -169,10 +169,21 @@ impl FontCache {
 
         // Extract oblique angle for synthetic oblique synthesis.
         let oblique_angle = match description.style {
-            openui_style::FontStyleEnum::Oblique(angle) => angle,
+            openui_style::FontStyleEnum::Italic
+                if typeface.font_style().slant() == skia_safe::font_style::Slant::Upright =>
+            {
+                // Skia/Blink synthesize CSS italic with a 0.25 shear. Store
+                // its angle equivalent because FontPlatformData accepts
+                // degrees and converts back to the font skew.
+                14.036_243
+            }
+            openui_style::FontStyleEnum::Oblique(angle)
+                if typeface.font_style().slant() == skia_safe::font_style::Slant::Upright =>
+            {
+                angle
+            }
             _ => 0.0,
         };
-
         let data = Arc::new(FontPlatformData::with_synthetic_styles(
             typeface,
             description.size,
@@ -267,7 +278,16 @@ impl FontCache {
         // Thread the oblique angle from the font description so that oblique
         // text falling back for emoji/CJK still gets the synthetic skew.
         let oblique_angle = match description.style {
-            openui_style::FontStyleEnum::Oblique(angle) => angle,
+            openui_style::FontStyleEnum::Italic
+                if typeface.font_style().slant() == skia_safe::font_style::Slant::Upright =>
+            {
+                14.036_243
+            }
+            openui_style::FontStyleEnum::Oblique(angle)
+                if typeface.font_style().slant() == skia_safe::font_style::Slant::Upright =>
+            {
+                angle
+            }
             _ => 0.0,
         };
         let data = Arc::new(FontPlatformData::with_synthetic_styles(

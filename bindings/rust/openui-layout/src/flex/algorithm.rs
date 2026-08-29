@@ -849,7 +849,12 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         fragment.children.extend(oof_fragments);
     }
     fragment.oof_candidates = bubbled_oof_candidates;
-    finalize_flex_fragment(&mut fragment, style, is_column);
+    finalize_flex_fragment(doc, &mut fragment, style, is_column);
+    if style.overflow_x != openui_style::Overflow::Visible
+        || style.overflow_y != openui_style::Overflow::Visible
+    {
+        crate::block::apply_sticky_descendants_in_scrollport(doc, &mut fragment);
+    }
     // Override baselines with values computed from the baseline alignment group.
     // flex_baseline_from_child only examines the first/last child and cannot
     // account for baseline-aligned items (which may be deeper in the list and
@@ -1480,9 +1485,6 @@ fn anonymous_flex_text_run_max_inline_size(
     representative: NodeId,
 ) -> Option<LayoutUnit> {
     let run = anonymous_flex_text_run(doc, representative);
-    if run.len() <= 1 {
-        return None;
-    }
     let mut current = LayoutUnit::zero();
     let mut maximum = LayoutUnit::zero();
     for child_id in run {
@@ -2008,11 +2010,26 @@ fn resolve_content_based_size(
             );
             max_w
         } else if child_style.width.is_auto() {
-            let min_max = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
-            if min_max.max > LayoutUnit::zero() {
-                min_max.max
+            let has_float_descendant = doc.children(child_id).any(|grandchild_id| {
+                let grandchild_style = &doc.node(grandchild_id).style;
+                grandchild_style.display != openui_style::Display::None
+                    && !grandchild_style.position.is_absolutely_positioned()
+                    && grandchild_style.float != openui_style::Float::None
+            });
+            if has_float_descendant && !child_percentage_inline.is_indefinite() {
+                // Flex-base measurement uses the container's cross
+                // opportunity. Floats can stack in that measure and increase
+                // the content-based main size even when the item's eventual
+                // max-content cross size is wider.
+                (child_percentage_inline - cross_margin).clamp_negative_to_zero()
             } else {
-                LayoutUnit::from_raw(-64)
+                let min_max =
+                    crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+                if min_max.max > LayoutUnit::zero() {
+                    min_max.max
+                } else {
+                    LayoutUnit::from_raw(-64)
+                }
             }
         } else {
             LayoutUnit::from_raw(-64)
@@ -2441,7 +2458,9 @@ fn resolve_main_axis_min_max(
                 let min_max =
                     crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
                 let mut cs = (min_max.min - main_axis_border_padding).clamp_negative_to_zero();
-                if doc.node(child_id).tag == ElementTag::Text {
+                if doc.node(child_id).tag == ElementTag::Text
+                    && anonymous_flex_text_run(doc, child_id).len() > 1
+                {
                     if let Some(run_minimum) =
                         anonymous_flex_text_run_max_inline_size(doc, child_id)
                     {
@@ -3027,12 +3046,23 @@ fn resolve_cross_size(
             } else {
                 child_percentage_block
             };
+            let has_float_descendant = doc.children(item.node_id).any(|child_id| {
+                let child_style = &doc.node(child_id).style;
+                child_style.display != openui_style::Display::None
+                    && !child_style.position.is_absolutely_positioned()
+                    && child_style.float != openui_style::Float::None
+            });
             let available_cross = if available_cross.is_indefinite() {
                 available_cross
             } else {
                 (available_cross - item.cross_axis_margin_extent()).clamp_negative_to_zero()
             };
-            let border_box = if available_cross.is_indefinite() {
+            let border_box = if available_cross.is_indefinite() || has_float_descendant {
+                // A non-stretched column flex item with floated contents keeps
+                // its max-content cross contribution. Its main-size probe may
+                // have stacked those floats in the container's narrower cross
+                // opportunity; clamping the final cross size to that same
+                // opportunity loses the float row's preferred width.
                 intrinsic.max
             } else {
                 crate::intrinsic_sizing::shrink_to_fit_inline_size(
@@ -3979,6 +4009,7 @@ fn give_items_final_position(
 }
 
 fn finalize_flex_fragment(
+    doc: &Document,
     fragment: &mut Fragment,
     style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -4007,11 +4038,12 @@ fn finalize_flex_fragment(
     fragment.has_overflow_clip = style.overflow_x != openui_style::Overflow::Visible
         || style.overflow_y != openui_style::Overflow::Visible;
 
-    fragment.first_baseline = flex_baseline_from_child(fragment, style, is_column, true);
-    fragment.last_baseline = flex_baseline_from_child(fragment, style, is_column, false);
+    fragment.first_baseline = flex_baseline_from_child(doc, fragment, style, is_column, true);
+    fragment.last_baseline = flex_baseline_from_child(doc, fragment, style, is_column, false);
 }
 
 fn flex_baseline_from_child(
+    doc: &Document,
     fragment: &Fragment,
     style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -4041,14 +4073,23 @@ fn flex_baseline_from_child(
                 }
             })
     } else {
+        let child_is_nested_flex =
+            !child.node_id.is_none() && doc.node(child.node_id).style.display.is_flex();
         child_baseline
             .map(|baseline| child.offset.top + baseline)
             .or_else(|| {
-                if style.flex_wrap.is_wrap() {
-                    Some(child.offset.top + child.height())
-                } else {
-                    None
-                }
+                // A horizontal flex item without a natural baseline
+                // synthesizes one from its cross-end margin edge. In an
+                // orthogonal vertical inline context this scalar represents
+                // the wrong physical axis, so the owning IFC must synthesize
+                // the atomic baseline from its border edge instead.
+                ((style.writing_mode == openui_style::WritingMode::HorizontalTb
+                    && (matches!(
+                        style.align_items.position,
+                        ItemPosition::Baseline | ItemPosition::LastBaseline
+                    ) || (child.children.is_empty() && !child_is_nested_flex)))
+                    || style.flex_wrap.is_wrap())
+                .then_some(child.offset.top + child.height())
             })
     }
 }
@@ -4321,8 +4362,8 @@ mod tests {
     use openui_dom::Document;
     use openui_geometry::{LayoutUnit, Length};
     use openui_style::{
-        ContentPosition, Direction, Display, FlexDirection, FlexWrap, ItemAlignment, ItemPosition,
-        OverflowAlignment, WritingMode,
+        ComputedStyle, ContentPosition, Direction, Display, FlexDirection, FlexWrap, ItemAlignment,
+        ItemPosition, OverflowAlignment, WritingMode,
     };
 
     fn make_flex_container(doc: &mut Document, width: i32, height: i32) -> NodeId {
@@ -4348,6 +4389,52 @@ mod tests {
         }
         doc.append_child(parent, child);
         child
+    }
+
+    #[test]
+    fn empty_flex_item_synthesizes_container_baseline_from_cross_end() {
+        let doc = Document::new();
+        let mut fragment = Fragment::new_box(
+            NodeId::NONE,
+            openui_geometry::PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(40)),
+        );
+        let mut child = Fragment::new_box(
+            NodeId::NONE,
+            openui_geometry::PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(15)),
+        );
+        child.offset.top = LayoutUnit::from_i32(7);
+        fragment.children.push(child);
+
+        let style = ComputedStyle::default();
+        assert_eq!(
+            flex_baseline_from_child(&doc, &fragment, &style, false, true),
+            Some(LayoutUnit::from_i32(22)),
+        );
+        assert_eq!(
+            flex_baseline_from_child(&doc, &fragment, &style, false, false),
+            Some(LayoutUnit::from_i32(22)),
+        );
+    }
+
+    #[test]
+    fn vertical_nowrap_flex_defers_orthogonal_baseline_synthesis_to_ifc() {
+        let doc = Document::new();
+        let mut fragment = Fragment::new_box(
+            NodeId::NONE,
+            openui_geometry::PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(40)),
+        );
+        let child = Fragment::new_box(
+            NodeId::NONE,
+            openui_geometry::PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(15)),
+        );
+        fragment.children.push(child);
+
+        let mut style = ComputedStyle::default();
+        style.writing_mode = WritingMode::VerticalRl;
+        assert_eq!(
+            flex_baseline_from_child(&doc, &fragment, &style, false, true),
+            None,
+        );
     }
 
     #[test]
@@ -4583,6 +4670,7 @@ mod tests {
         container.children.push(item);
 
         finalize_flex_fragment(
+            &Document::new(),
             &mut container,
             &openui_style::ComputedStyle::default(),
             false,

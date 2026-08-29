@@ -6,7 +6,7 @@ use openui_dom::{Document, ElementTag};
 use openui_geometry::Length;
 use openui_style::*;
 
-use crate::base_doc;
+use crate::{base_doc, root_doc};
 
 // Source: display-contents-alignment-001-ref.html
 fn css_display_display_contents_alignment_001_ref() -> Document {
@@ -5924,9 +5924,28 @@ fn css_display_display_first_line_002_ref() -> Document {
 
 // Source: display-flow-root-001.html
 fn css_display_display_flow_root_001() -> Document {
-    let (mut doc, vp) = base_doc();
+    let (mut doc, html, vp) = root_doc();
     doc.node_mut(vp).style.display = Display::Block;
-    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(html).style.font_size = 16.0;
+    doc.node_mut(html).style.font_weight = FontWeight(400.0);
+    doc.node_mut(html).style.font_style = FontStyleEnum::Normal;
+    doc.node_mut(html).style.font_stretch = FontStretch(100.0);
+    doc.node_mut(html).style.font_variant_caps = FontVariantCaps::Normal;
+    doc.node_mut(html).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
@@ -6110,7 +6129,11 @@ fn css_display_display_flow_root_001() -> Document {
     doc.node_mut(n7).style.width = Length::px(20.0);
     doc.node_mut(n7).style.height = Length::px(40.0);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.node_mut(n7).style.color = Color::BLACK;
+    doc.node_mut(n7).style.background_layers = vec![];
+    doc.node_mut(n7).style.background_linear_gradient = None;
+    doc.node_mut(n7).style.display = Display::Block;
     doc.append_child(n6, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -6167,7 +6190,11 @@ fn css_display_display_flow_root_001() -> Document {
     doc.node_mut(n9).style.width = Length::px(20.0);
     doc.node_mut(n9).style.height = Length::px(40.0);
     doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n9).style.background_linear_gradient = None;
     doc.node_mut(n9).style.color = Color::BLACK;
+    doc.node_mut(n9).style.background_layers = vec![];
+    doc.node_mut(n9).style.background_linear_gradient = None;
+    doc.node_mut(n9).style.display = Display::Block;
     doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Span);
     doc.node_mut(n10).style.font_family = FontFamilyList {
@@ -6254,7 +6281,10 @@ fn css_display_display_flow_root_001() -> Document {
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n13).style.display = Display::FlowRoot;
     doc.node_mut(n13).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n13).style.background_linear_gradient = None;
     doc.node_mut(n13).style.color = Color::BLACK;
+    doc.node_mut(n13).style.background_layers = vec![];
+    doc.node_mut(n13).style.background_linear_gradient = None;
     doc.append_child(n12, n13);
     let n14 = doc.create_node(ElementTag::Div);
     doc.node_mut(n14).style.display = Display::Block;
@@ -6512,9 +6542,28 @@ fn css_display_display_flow_root_dynamic_ref() -> Document {
 
 // Source: display-flow-root-list-item-001.html
 fn css_display_display_flow_root_list_item_001() -> Document {
-    let (mut doc, vp) = base_doc();
+    let (mut doc, html, vp) = root_doc();
     doc.node_mut(vp).style.display = Display::Block;
-    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(html).style.font_size = 16.0;
+    doc.node_mut(html).style.font_weight = FontWeight(400.0);
+    doc.node_mut(html).style.font_style = FontStyleEnum::Normal;
+    doc.node_mut(html).style.font_stretch = FontStretch(100.0);
+    doc.node_mut(html).style.font_variant_caps = FontVariantCaps::Normal;
+    doc.node_mut(html).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
@@ -6585,6 +6634,8 @@ fn css_display_display_flow_root_list_item_001() -> Document {
     doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n2).style.padding_left = Length::px(0.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.display = Display::ListItem;
+    doc.node_mut(n2).style.list_item_is_flow_root = true;
     doc.node_mut(n2).style.color = Color::BLACK;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
@@ -6671,6 +6722,8 @@ fn css_display_display_flow_root_list_item_001() -> Document {
     doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n6).style.padding_left = Length::px(0.0);
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.display = Display::ListItem;
+    doc.node_mut(n6).style.list_item_is_flow_root = true;
     doc.node_mut(n6).style.color = Color::BLACK;
     doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Div);
@@ -6697,7 +6750,11 @@ fn css_display_display_flow_root_list_item_001() -> Document {
     doc.node_mut(n7).style.width = Length::px(20.0);
     doc.node_mut(n7).style.height = Length::px(40.0);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.node_mut(n7).style.color = Color::BLACK;
+    doc.node_mut(n7).style.background_layers = vec![];
+    doc.node_mut(n7).style.background_linear_gradient = None;
+    doc.node_mut(n7).style.display = Display::Block;
     doc.append_child(n6, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -6754,7 +6811,11 @@ fn css_display_display_flow_root_list_item_001() -> Document {
     doc.node_mut(n9).style.width = Length::px(20.0);
     doc.node_mut(n9).style.height = Length::px(40.0);
     doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n9).style.background_linear_gradient = None;
     doc.node_mut(n9).style.color = Color::BLACK;
+    doc.node_mut(n9).style.background_layers = vec![];
+    doc.node_mut(n9).style.background_linear_gradient = None;
+    doc.node_mut(n9).style.display = Display::Block;
     doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Span);
     doc.node_mut(n10).style.font_family = FontFamilyList {
@@ -6775,6 +6836,8 @@ fn css_display_display_flow_root_list_item_001() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.display = Display::ListItem;
+    doc.node_mut(n10).style.list_item_is_flow_root = true;
     doc.node_mut(n10).style.border_top_width = 1;
     doc.node_mut(n10).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n10).style.border_right_width = 1;
@@ -6838,8 +6901,13 @@ fn css_display_display_flow_root_list_item_001() -> Document {
     doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n13).style.padding_left = Length::px(0.0);
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n13).style.display = Display::ListItem;
+    doc.node_mut(n13).style.list_item_is_flow_root = true;
     doc.node_mut(n13).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n13).style.background_linear_gradient = None;
     doc.node_mut(n13).style.color = Color::BLACK;
+    doc.node_mut(n13).style.background_layers = vec![];
+    doc.node_mut(n13).style.background_linear_gradient = None;
     doc.append_child(n12, n13);
     let n14 = doc.create_node(ElementTag::Div);
     doc.node_mut(n14).style.display = Display::Block;
@@ -6895,6 +6963,8 @@ fn css_display_display_flow_root_list_item_001() -> Document {
     doc.node_mut(n16).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n16).style.padding_left = Length::px(0.0);
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n16).style.display = Display::ListItem;
+    doc.node_mut(n16).style.list_item_is_flow_root = true;
     doc.node_mut(n16).style.border_top_width = 3;
     doc.node_mut(n16).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n16).style.border_right_width = 3;

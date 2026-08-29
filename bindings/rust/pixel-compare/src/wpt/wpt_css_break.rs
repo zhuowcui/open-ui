@@ -4186,8 +4186,28 @@ fn css_break_block_max_height_001_ref() -> Document {
 
 // Source: block-max-height-001.html
 fn css_break_block_max_height_001() -> Document {
-    let (mut doc, vp) = base_doc();
-    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(html).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(html).style.font_size = 24.0;
+    doc.node_mut(html).style.font_weight = FontWeight(400.0);
+    doc.node_mut(html).style.font_style = FontStyleEnum::Normal;
+    doc.node_mut(html).style.font_stretch = FontStretch(100.0);
+    doc.node_mut(html).style.font_variant_caps = FontVariantCaps::Normal;
+    doc.node_mut(html).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.width = Length::px(300.0);
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
@@ -4229,10 +4249,14 @@ fn css_break_block_max_height_001() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.column_width = None;
     doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.node_mut(n1).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -4256,7 +4280,10 @@ fn css_break_block_max_height_001() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.max_height = Length::px(160.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.background_layers = vec![];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -4306,11 +4333,15 @@ fn css_break_block_max_height_001() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.column_width = None;
     doc.node_mut(n4).style.column_count = Some(3);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.node_mut(n4).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
     doc.node_mut(n4).style.color = Color::BLACK;
+    doc.node_mut(n4).style.background_layers = vec![];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -4334,7 +4365,10 @@ fn css_break_block_max_height_001() -> Document {
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.max_height = Length::px(160.0);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.node_mut(n5).style.color = Color::BLACK;
+    doc.node_mut(n5).style.background_layers = vec![];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -4384,11 +4418,15 @@ fn css_break_block_max_height_001() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.column_width = None;
     doc.node_mut(n7).style.column_count = Some(3);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.node_mut(n7).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n7).style.height = Length::px(70.0);
     doc.node_mut(n7).style.color = Color::BLACK;
+    doc.node_mut(n7).style.background_layers = vec![];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -4412,7 +4450,10 @@ fn css_break_block_max_height_001() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.max_height = Length::px(160.0);
     doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.node_mut(n8).style.color = Color::BLACK;
+    doc.node_mut(n8).style.background_layers = vec![];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n7, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -4462,11 +4503,15 @@ fn css_break_block_max_height_001() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.column_width = None;
     doc.node_mut(n10).style.column_count = Some(3);
     doc.node_mut(n10).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.node_mut(n10).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n10).style.height = Length::px(50.0);
     doc.node_mut(n10).style.color = Color::BLACK;
+    doc.node_mut(n10).style.background_layers = vec![];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -4490,7 +4535,10 @@ fn css_break_block_max_height_001() -> Document {
     doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n11).style.max_height = Length::px(160.0);
     doc.node_mut(n11).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.node_mut(n11).style.color = Color::BLACK;
+    doc.node_mut(n11).style.background_layers = vec![];
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.append_child(n10, n11);
     let n12 = doc.create_node(ElementTag::Div);
     doc.node_mut(n12).style.display = Display::Block;
@@ -4525,8 +4573,28 @@ fn css_break_block_max_height_001() -> Document {
 
 // Source: block-max-height-001b-ref.html
 fn css_break_block_max_height_001b_ref() -> Document {
-    let (mut doc, vp) = base_doc();
-    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(html).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(html).style.font_size = 24.0;
+    doc.node_mut(html).style.font_weight = FontWeight(400.0);
+    doc.node_mut(html).style.font_style = FontStyleEnum::Normal;
+    doc.node_mut(html).style.font_stretch = FontStretch(100.0);
+    doc.node_mut(html).style.font_variant_caps = FontVariantCaps::Normal;
+    doc.node_mut(html).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.width = Length::px(300.0);
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
@@ -4568,10 +4636,14 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.column_width = None;
     doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.node_mut(n1).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -4595,6 +4667,7 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.height = Length::px(128.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
@@ -4604,6 +4677,8 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n2).style.border_bottom_width = 6;
     doc.node_mut(n2).style.border_left_width = 0;
     doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.background_layers = vec![];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -4653,11 +4728,15 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.column_width = None;
     doc.node_mut(n4).style.column_count = Some(3);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.node_mut(n4).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
     doc.node_mut(n4).style.color = Color::BLACK;
+    doc.node_mut(n4).style.background_layers = vec![];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -4681,6 +4760,7 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.height = Length::px(128.0);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n5).style.border_bottom_style = BorderStyle::Solid;
@@ -4690,6 +4770,8 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n5).style.border_bottom_width = 6;
     doc.node_mut(n5).style.border_left_width = 0;
     doc.node_mut(n5).style.color = Color::BLACK;
+    doc.node_mut(n5).style.background_layers = vec![];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -4739,11 +4821,15 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.column_width = None;
     doc.node_mut(n7).style.column_count = Some(3);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.node_mut(n7).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n7).style.height = Length::px(70.0);
     doc.node_mut(n7).style.color = Color::BLACK;
+    doc.node_mut(n7).style.background_layers = vec![];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -4767,6 +4853,7 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.height = Length::px(128.0);
     doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
@@ -4776,6 +4863,8 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n8).style.border_bottom_width = 6;
     doc.node_mut(n8).style.border_left_width = 0;
     doc.node_mut(n8).style.color = Color::BLACK;
+    doc.node_mut(n8).style.background_layers = vec![];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n7, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -4825,11 +4914,15 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.column_width = None;
     doc.node_mut(n10).style.column_count = Some(3);
     doc.node_mut(n10).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.node_mut(n10).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n10).style.height = Length::px(50.0);
     doc.node_mut(n10).style.color = Color::BLACK;
+    doc.node_mut(n10).style.background_layers = vec![];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -4853,6 +4946,7 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n11).style.height = Length::px(128.0);
     doc.node_mut(n11).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.node_mut(n11).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n11).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n11).style.border_bottom_style = BorderStyle::Solid;
@@ -4862,6 +4956,8 @@ fn css_break_block_max_height_001b_ref() -> Document {
     doc.node_mut(n11).style.border_bottom_width = 6;
     doc.node_mut(n11).style.border_left_width = 0;
     doc.node_mut(n11).style.color = Color::BLACK;
+    doc.node_mut(n11).style.background_layers = vec![];
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.append_child(n10, n11);
     let n12 = doc.create_node(ElementTag::Div);
     doc.node_mut(n12).style.display = Display::Block;
@@ -4896,8 +4992,28 @@ fn css_break_block_max_height_001b_ref() -> Document {
 
 // Source: block-max-height-001b.html
 fn css_break_block_max_height_001b() -> Document {
-    let (mut doc, vp) = base_doc();
-    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(html).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(html).style.font_size = 24.0;
+    doc.node_mut(html).style.font_weight = FontWeight(400.0);
+    doc.node_mut(html).style.font_style = FontStyleEnum::Normal;
+    doc.node_mut(html).style.font_stretch = FontStretch(100.0);
+    doc.node_mut(html).style.font_variant_caps = FontVariantCaps::Normal;
+    doc.node_mut(html).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.width = Length::px(300.0);
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
@@ -4939,10 +5055,14 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.column_width = None;
     doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.node_mut(n1).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -4966,6 +5086,7 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.max_height = Length::px(128.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
@@ -4975,6 +5096,8 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n2).style.border_bottom_width = 6;
     doc.node_mut(n2).style.border_left_width = 0;
     doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.background_layers = vec![];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -5024,11 +5147,15 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.column_width = None;
     doc.node_mut(n4).style.column_count = Some(3);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.node_mut(n4).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
     doc.node_mut(n4).style.color = Color::BLACK;
+    doc.node_mut(n4).style.background_layers = vec![];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -5052,6 +5179,7 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.max_height = Length::px(128.0);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n5).style.border_bottom_style = BorderStyle::Solid;
@@ -5061,6 +5189,8 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n5).style.border_bottom_width = 6;
     doc.node_mut(n5).style.border_left_width = 0;
     doc.node_mut(n5).style.color = Color::BLACK;
+    doc.node_mut(n5).style.background_layers = vec![];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -5110,11 +5240,15 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.column_width = None;
     doc.node_mut(n7).style.column_count = Some(3);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.node_mut(n7).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n7).style.height = Length::px(70.0);
     doc.node_mut(n7).style.color = Color::BLACK;
+    doc.node_mut(n7).style.background_layers = vec![];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -5138,6 +5272,7 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.max_height = Length::px(128.0);
     doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
@@ -5147,6 +5282,8 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n8).style.border_bottom_width = 6;
     doc.node_mut(n8).style.border_left_width = 0;
     doc.node_mut(n8).style.color = Color::BLACK;
+    doc.node_mut(n8).style.background_layers = vec![];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n7, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -5196,11 +5333,15 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.column_width = None;
     doc.node_mut(n10).style.column_count = Some(3);
     doc.node_mut(n10).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.node_mut(n10).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n10).style.height = Length::px(50.0);
     doc.node_mut(n10).style.color = Color::BLACK;
+    doc.node_mut(n10).style.background_layers = vec![];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -5224,6 +5365,7 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n11).style.max_height = Length::px(128.0);
     doc.node_mut(n11).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.node_mut(n11).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n11).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n11).style.border_bottom_style = BorderStyle::Solid;
@@ -5233,6 +5375,8 @@ fn css_break_block_max_height_001b() -> Document {
     doc.node_mut(n11).style.border_bottom_width = 6;
     doc.node_mut(n11).style.border_left_width = 0;
     doc.node_mut(n11).style.color = Color::BLACK;
+    doc.node_mut(n11).style.background_layers = vec![];
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.append_child(n10, n11);
     let n12 = doc.create_node(ElementTag::Div);
     doc.node_mut(n12).style.display = Display::Block;
@@ -5267,8 +5411,28 @@ fn css_break_block_max_height_001b() -> Document {
 
 // Source: block-max-height-002.html
 fn css_break_block_max_height_002() -> Document {
-    let (mut doc, vp) = base_doc();
-    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(html).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(html).style.font_size = 24.0;
+    doc.node_mut(html).style.font_weight = FontWeight(400.0);
+    doc.node_mut(html).style.font_style = FontStyleEnum::Normal;
+    doc.node_mut(html).style.font_stretch = FontStretch(100.0);
+    doc.node_mut(html).style.font_variant_caps = FontVariantCaps::Normal;
+    doc.node_mut(html).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.width = Length::px(300.0);
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
@@ -5310,10 +5474,14 @@ fn css_break_block_max_height_002() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.column_width = None;
     doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.node_mut(n1).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5338,7 +5506,10 @@ fn css_break_block_max_height_002() -> Document {
     doc.node_mut(n2).style.min_height = Length::px(120.0);
     doc.node_mut(n2).style.max_height = Length::px(160.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.background_layers = vec![];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -5388,11 +5559,15 @@ fn css_break_block_max_height_002() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.column_width = None;
     doc.node_mut(n4).style.column_count = Some(3);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.node_mut(n4).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
     doc.node_mut(n4).style.color = Color::BLACK;
+    doc.node_mut(n4).style.background_layers = vec![];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -5417,7 +5592,10 @@ fn css_break_block_max_height_002() -> Document {
     doc.node_mut(n5).style.min_height = Length::px(120.0);
     doc.node_mut(n5).style.max_height = Length::px(160.0);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.node_mut(n5).style.color = Color::BLACK;
+    doc.node_mut(n5).style.background_layers = vec![];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -5467,11 +5645,15 @@ fn css_break_block_max_height_002() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.column_width = None;
     doc.node_mut(n7).style.column_count = Some(3);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.node_mut(n7).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n7).style.height = Length::px(70.0);
     doc.node_mut(n7).style.color = Color::BLACK;
+    doc.node_mut(n7).style.background_layers = vec![];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -5496,7 +5678,10 @@ fn css_break_block_max_height_002() -> Document {
     doc.node_mut(n8).style.min_height = Length::px(120.0);
     doc.node_mut(n8).style.max_height = Length::px(160.0);
     doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.node_mut(n8).style.color = Color::BLACK;
+    doc.node_mut(n8).style.background_layers = vec![];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n7, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -5546,11 +5731,15 @@ fn css_break_block_max_height_002() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.column_width = None;
     doc.node_mut(n10).style.column_count = Some(3);
     doc.node_mut(n10).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.node_mut(n10).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n10).style.height = Length::px(50.0);
     doc.node_mut(n10).style.color = Color::BLACK;
+    doc.node_mut(n10).style.background_layers = vec![];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -5575,7 +5764,10 @@ fn css_break_block_max_height_002() -> Document {
     doc.node_mut(n11).style.min_height = Length::px(120.0);
     doc.node_mut(n11).style.max_height = Length::px(160.0);
     doc.node_mut(n11).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.node_mut(n11).style.color = Color::BLACK;
+    doc.node_mut(n11).style.background_layers = vec![];
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.append_child(n10, n11);
     let n12 = doc.create_node(ElementTag::Div);
     doc.node_mut(n12).style.display = Display::Block;
@@ -5610,8 +5802,28 @@ fn css_break_block_max_height_002() -> Document {
 
 // Source: block-max-height-002b.html
 fn css_break_block_max_height_002b() -> Document {
-    let (mut doc, vp) = base_doc();
-    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(html).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(html).style.font_size = 24.0;
+    doc.node_mut(html).style.font_weight = FontWeight(400.0);
+    doc.node_mut(html).style.font_style = FontStyleEnum::Normal;
+    doc.node_mut(html).style.font_stretch = FontStretch(100.0);
+    doc.node_mut(html).style.font_variant_caps = FontVariantCaps::Normal;
+    doc.node_mut(html).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.width = Length::px(300.0);
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
@@ -5653,10 +5865,14 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.column_width = None;
     doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.node_mut(n1).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5681,6 +5897,7 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n2).style.min_height = Length::px(112.0);
     doc.node_mut(n2).style.max_height = Length::px(128.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
@@ -5690,6 +5907,8 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n2).style.border_bottom_width = 6;
     doc.node_mut(n2).style.border_left_width = 0;
     doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.background_layers = vec![];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -5739,11 +5958,15 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.column_width = None;
     doc.node_mut(n4).style.column_count = Some(3);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.node_mut(n4).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
     doc.node_mut(n4).style.color = Color::BLACK;
+    doc.node_mut(n4).style.background_layers = vec![];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -5768,6 +5991,7 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n5).style.min_height = Length::px(112.0);
     doc.node_mut(n5).style.max_height = Length::px(128.0);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n5).style.border_bottom_style = BorderStyle::Solid;
@@ -5777,6 +6001,8 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n5).style.border_bottom_width = 6;
     doc.node_mut(n5).style.border_left_width = 0;
     doc.node_mut(n5).style.color = Color::BLACK;
+    doc.node_mut(n5).style.background_layers = vec![];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -5826,11 +6052,15 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.column_width = None;
     doc.node_mut(n7).style.column_count = Some(3);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.node_mut(n7).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n7).style.height = Length::px(70.0);
     doc.node_mut(n7).style.color = Color::BLACK;
+    doc.node_mut(n7).style.background_layers = vec![];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -5855,6 +6085,7 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n8).style.min_height = Length::px(112.0);
     doc.node_mut(n8).style.max_height = Length::px(128.0);
     doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
@@ -5864,6 +6095,8 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n8).style.border_bottom_width = 6;
     doc.node_mut(n8).style.border_left_width = 0;
     doc.node_mut(n8).style.color = Color::BLACK;
+    doc.node_mut(n8).style.background_layers = vec![];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n7, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -5913,11 +6146,15 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.column_width = None;
     doc.node_mut(n10).style.column_count = Some(3);
     doc.node_mut(n10).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.node_mut(n10).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n10).style.height = Length::px(50.0);
     doc.node_mut(n10).style.color = Color::BLACK;
+    doc.node_mut(n10).style.background_layers = vec![];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -5942,6 +6179,7 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n11).style.min_height = Length::px(112.0);
     doc.node_mut(n11).style.max_height = Length::px(128.0);
     doc.node_mut(n11).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.node_mut(n11).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n11).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n11).style.border_bottom_style = BorderStyle::Solid;
@@ -5951,6 +6189,8 @@ fn css_break_block_max_height_002b() -> Document {
     doc.node_mut(n11).style.border_bottom_width = 6;
     doc.node_mut(n11).style.border_left_width = 0;
     doc.node_mut(n11).style.color = Color::BLACK;
+    doc.node_mut(n11).style.background_layers = vec![];
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.append_child(n10, n11);
     let n12 = doc.create_node(ElementTag::Div);
     doc.node_mut(n12).style.display = Display::Block;
@@ -5985,8 +6225,28 @@ fn css_break_block_max_height_002b() -> Document {
 
 // Source: block-max-height-003.html
 fn css_break_block_max_height_003() -> Document {
-    let (mut doc, vp) = base_doc();
-    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(html).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(html).style.font_size = 24.0;
+    doc.node_mut(html).style.font_weight = FontWeight(400.0);
+    doc.node_mut(html).style.font_style = FontStyleEnum::Normal;
+    doc.node_mut(html).style.font_stretch = FontStretch(100.0);
+    doc.node_mut(html).style.font_variant_caps = FontVariantCaps::Normal;
+    doc.node_mut(html).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.width = Length::px(300.0);
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
@@ -6028,10 +6288,14 @@ fn css_break_block_max_height_003() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.column_width = None;
     doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.node_mut(n1).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -6056,7 +6320,10 @@ fn css_break_block_max_height_003() -> Document {
     doc.node_mut(n2).style.min_height = Length::px(160.0);
     doc.node_mut(n2).style.max_height = Length::px(110.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.background_layers = vec![];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -6106,11 +6373,15 @@ fn css_break_block_max_height_003() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.column_width = None;
     doc.node_mut(n4).style.column_count = Some(3);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.node_mut(n4).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
     doc.node_mut(n4).style.color = Color::BLACK;
+    doc.node_mut(n4).style.background_layers = vec![];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -6135,7 +6406,10 @@ fn css_break_block_max_height_003() -> Document {
     doc.node_mut(n5).style.min_height = Length::px(160.0);
     doc.node_mut(n5).style.max_height = Length::px(110.0);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.node_mut(n5).style.color = Color::BLACK;
+    doc.node_mut(n5).style.background_layers = vec![];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -6185,11 +6459,15 @@ fn css_break_block_max_height_003() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.column_width = None;
     doc.node_mut(n7).style.column_count = Some(3);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.node_mut(n7).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n7).style.height = Length::px(70.0);
     doc.node_mut(n7).style.color = Color::BLACK;
+    doc.node_mut(n7).style.background_layers = vec![];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -6214,7 +6492,10 @@ fn css_break_block_max_height_003() -> Document {
     doc.node_mut(n8).style.min_height = Length::px(160.0);
     doc.node_mut(n8).style.max_height = Length::px(110.0);
     doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.node_mut(n8).style.color = Color::BLACK;
+    doc.node_mut(n8).style.background_layers = vec![];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n7, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -6264,11 +6545,15 @@ fn css_break_block_max_height_003() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.column_width = None;
     doc.node_mut(n10).style.column_count = Some(3);
     doc.node_mut(n10).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.node_mut(n10).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n10).style.height = Length::px(50.0);
     doc.node_mut(n10).style.color = Color::BLACK;
+    doc.node_mut(n10).style.background_layers = vec![];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -6293,7 +6578,10 @@ fn css_break_block_max_height_003() -> Document {
     doc.node_mut(n11).style.min_height = Length::px(160.0);
     doc.node_mut(n11).style.max_height = Length::px(110.0);
     doc.node_mut(n11).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.node_mut(n11).style.color = Color::BLACK;
+    doc.node_mut(n11).style.background_layers = vec![];
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.append_child(n10, n11);
     let n12 = doc.create_node(ElementTag::Div);
     doc.node_mut(n12).style.display = Display::Block;
@@ -6328,8 +6616,28 @@ fn css_break_block_max_height_003() -> Document {
 
 // Source: block-max-height-003b.html
 fn css_break_block_max_height_003b() -> Document {
-    let (mut doc, vp) = base_doc();
-    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(html).style.font_family = FontFamilyList {
+        families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
+    };
+    doc.node_mut(html).style.font_size = 24.0;
+    doc.node_mut(html).style.font_weight = FontWeight(400.0);
+    doc.node_mut(html).style.font_style = FontStyleEnum::Normal;
+    doc.node_mut(html).style.font_stretch = FontStretch(100.0);
+    doc.node_mut(html).style.font_variant_caps = FontVariantCaps::Normal;
+    doc.node_mut(html).style.line_height = LineHeight::Number(1.0);
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.width = Length::px(300.0);
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
@@ -6371,10 +6679,14 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.column_width = None;
     doc.node_mut(n1).style.column_count = Some(3);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.node_mut(n1).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n1).style.color = Color::BLACK;
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -6399,6 +6711,7 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n2).style.min_height = Length::px(128.0);
     doc.node_mut(n2).style.max_height = Length::px(112.0);
     doc.node_mut(n2).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
@@ -6408,6 +6721,8 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n2).style.border_bottom_width = 6;
     doc.node_mut(n2).style.border_left_width = 0;
     doc.node_mut(n2).style.color = Color::BLACK;
+    doc.node_mut(n2).style.background_layers = vec![];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -6457,11 +6772,15 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.column_width = None;
     doc.node_mut(n4).style.column_count = Some(3);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.node_mut(n4).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n4).style.height = Length::px(100.0);
     doc.node_mut(n4).style.color = Color::BLACK;
+    doc.node_mut(n4).style.background_layers = vec![];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -6486,6 +6805,7 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n5).style.min_height = Length::px(128.0);
     doc.node_mut(n5).style.max_height = Length::px(112.0);
     doc.node_mut(n5).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n5).style.border_bottom_style = BorderStyle::Solid;
@@ -6495,6 +6815,8 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n5).style.border_bottom_width = 6;
     doc.node_mut(n5).style.border_left_width = 0;
     doc.node_mut(n5).style.color = Color::BLACK;
+    doc.node_mut(n5).style.background_layers = vec![];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -6544,11 +6866,15 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.column_width = None;
     doc.node_mut(n7).style.column_count = Some(3);
     doc.node_mut(n7).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.node_mut(n7).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n7).style.height = Length::px(70.0);
     doc.node_mut(n7).style.color = Color::BLACK;
+    doc.node_mut(n7).style.background_layers = vec![];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -6573,6 +6899,7 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n8).style.min_height = Length::px(128.0);
     doc.node_mut(n8).style.max_height = Length::px(112.0);
     doc.node_mut(n8).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
@@ -6582,6 +6909,8 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n8).style.border_bottom_width = 6;
     doc.node_mut(n8).style.border_left_width = 0;
     doc.node_mut(n8).style.color = Color::BLACK;
+    doc.node_mut(n8).style.background_layers = vec![];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n7, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -6631,11 +6960,15 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.column_width = None;
     doc.node_mut(n10).style.column_count = Some(3);
     doc.node_mut(n10).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.node_mut(n10).style.margin_bottom = Length::px(24.0);
     doc.node_mut(n10).style.height = Length::px(50.0);
     doc.node_mut(n10).style.color = Color::BLACK;
+    doc.node_mut(n10).style.background_layers = vec![];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -6660,6 +6993,7 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n11).style.min_height = Length::px(128.0);
     doc.node_mut(n11).style.max_height = Length::px(112.0);
     doc.node_mut(n11).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.node_mut(n11).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n11).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n11).style.border_bottom_style = BorderStyle::Solid;
@@ -6669,6 +7003,8 @@ fn css_break_block_max_height_003b() -> Document {
     doc.node_mut(n11).style.border_bottom_width = 6;
     doc.node_mut(n11).style.border_left_width = 0;
     doc.node_mut(n11).style.color = Color::BLACK;
+    doc.node_mut(n11).style.background_layers = vec![];
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.append_child(n10, n11);
     let n12 = doc.create_node(ElementTag::Div);
     doc.node_mut(n12).style.display = Display::Block;

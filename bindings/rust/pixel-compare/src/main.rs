@@ -542,7 +542,10 @@ pub fn base_doc() -> (Document, NodeId) {
     let viewport = doc.root();
     // Viewport: no margin/padding, just a container matching screen dimensions
     doc.node_mut(viewport).style.display = Display::Block;
-    doc.node_mut(viewport).style.background_color = Color::WHITE;
+    // The raster surface itself supplies the initial white canvas. Keep the
+    // synthetic viewport transparent so an explicitly emitted legacy `html`
+    // background can be distinguished from that initial canvas color.
+    doc.node_mut(viewport).style.background_color = Color::TRANSPARENT;
 
     // Body: child of viewport, carries the default body padding.
     // Use display:flow-root (not overflow:hidden) to establish a BFC.

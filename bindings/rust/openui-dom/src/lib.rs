@@ -10,4 +10,4 @@
 
 mod tree;
 
-pub use tree::{Document, ElementTag, NodeData, NodeId};
+pub use tree::{Document, ElementTag, EncodedImageResource, NodeData, NodeId};

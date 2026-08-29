@@ -143,6 +143,9 @@ _DISTINCT_ROOT_BOX_PROPERTIES = {
     "column-count", "column-width", "column-height", "column-gap",
     "column-rule", "column-rule-width", "column-rule-style",
     "column-rule-color", "column-fill", "column-span",
+    "background", "background-color", "background-image", "background-repeat",
+    "background-position", "background-size", "background-origin",
+    "background-clip", "background-attachment",
 }
 
 
@@ -263,6 +266,8 @@ def _generate_one(
     mapping: dict[str, dict[str, str]],
     profile: port_wpt.PorterProfile,
     text_manifest: set[str],
+    *,
+    paint_layers: bool = False,
 ) -> GeneratedReplacement:
     parts = test_id.split("/")
     if len(parts) != 3 or parts[0] != "wpt" or not parts[1] or not parts[2]:
@@ -300,9 +305,9 @@ def _generate_one(
         root_aware = True
         parser = port_wpt.parse_wpt_html(upstream, root_aware=True)
     portable, reason = port_wpt.analyze_portability(parser)
-    if not root_aware and not portable:
+    if not root_aware and not portable and not paint_layers:
         raise ValueError(f"{test_id}: not text-portable ({reason})")
-    if not root_aware and not port_wpt.has_layout_content(parser):
+    if not root_aware and not port_wpt.has_layout_content(parser) and not paint_layers:
         raise ValueError(f"{test_id}: not text-portable (no_layout_content)")
 
     fn_name = f"{module}_{port_wpt.sanitize_fn_name(name)}"
@@ -512,6 +517,7 @@ def prepare_changes(
     mapping: dict[str, dict[str, str]],
     *,
     profile: port_wpt.PorterProfile = port_wpt.PorterProfile.DETERMINISTIC_AHEM,
+    paint_layers: bool = False,
 ) -> tuple[list[GeneratedReplacement], dict[str, str], dict[str, str]]:
     """Generate and validate a complete transaction without writing files."""
     if len(test_ids) != len(set(test_ids)):
@@ -542,19 +548,29 @@ def prepare_changes(
                 + ", ".join(sorted(outside))
             )
 
-    generated = [
-        _generate_one(
-            test_id,
-            mapping,
-            (
-                port_wpt.PorterProfile.REAL_FONT
-                if test_id in real_font_ids
-                else profile
-            ),
-            text_manifest,
-        )
-        for test_id in sorted(test_ids)
-    ]
+    previous_paint_layers = port_wpt.EMIT_PAINT_LAYERS
+    port_wpt.set_paint_layer_emission(paint_layers)
+    try:
+        generated = [
+            _generate_one(
+                test_id,
+                mapping,
+                (
+                    port_wpt.PorterProfile.REAL_FONT
+                    if test_id in real_font_ids
+                    else port_wpt.PorterProfile.DETERMINISTIC_AHEM
+                    if paint_layers and test_id in text_manifest
+                    else port_wpt.PorterProfile.LEGACY_BOX_ONLY
+                    if paint_layers
+                    else profile
+                ),
+                text_manifest,
+                paint_layers=paint_layers,
+            )
+            for test_id in sorted(test_ids)
+        ]
+    finally:
+        port_wpt.set_paint_layer_emission(previous_paint_layers)
     fn_names = [replacement.fn_name for replacement in generated]
     if len(fn_names) != len(set(fn_names)):
         raise ValueError("generated function-name collision in splice transaction")
@@ -648,7 +664,7 @@ def prepare_changes(
     for path in sorted(template_paths):
         changes[path] = json.dumps(template_data[path], indent=2) + "\n"
 
-    if profile is port_wpt.PorterProfile.DETERMINISTIC_AHEM:
+    if not paint_layers and profile is port_wpt.PorterProfile.DETERMINISTIC_AHEM:
         ported = sorted(set(ported).union(test_ids))
         originals[TEXT_PORTED_LIST] = original_manifest
         changes[TEXT_PORTED_LIST] = json.dumps(ported, indent=2) + "\n"
@@ -724,12 +740,15 @@ def main() -> int:
     dry_run = False
     ids_path = None
     profile = port_wpt.PorterProfile.DETERMINISTIC_AHEM
+    paint_layers = False
     positional = []
     index = 0
     while index < len(args):
         arg = args[index]
         if arg == "--dry-run":
             dry_run = True
+        elif arg == "--paint-layers":
+            paint_layers = True
         elif arg == "--ids-file":
             index += 1
             if index >= len(args) or ids_path is not None:
@@ -768,7 +787,7 @@ def main() -> int:
             raise ValueError("no test IDs supplied")
         mapping = load_mapping_rows()
         generated, originals, changes = prepare_changes(
-            test_ids, mapping, profile=profile
+            test_ids, mapping, profile=profile, paint_layers=paint_layers
         )
         if dry_run:
             for replacement in generated:

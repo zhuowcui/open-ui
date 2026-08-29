@@ -58,20 +58,9 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
     let mut surface = create_raster_surface(width, height, real_font_raster)
         .ok_or_else(|| "Failed to create Skia surface".to_string())?;
 
-    // Clear to the propagated root/body canvas background. Transparent
-    // documents retain the browser's white default canvas.
-    let canvas_color = doc
-        .canvas_background_source()
-        .map(|source| doc.node(source).style.background_color)
-        .map(|color| {
-            SkColor::from_argb(
-                (color.a * 255.0).round() as u8,
-                (color.r * 255.0).round() as u8,
-                (color.g * 255.0).round() as u8,
-                (color.b * 255.0).round() as u8,
-            )
-        })
-        .unwrap_or(SkColor::WHITE);
+    // The browser canvas starts white; the complete selected html/body
+    // background (color plus images) is recorded over it below.
+    let canvas_color = SkColor::WHITE;
     // Layout
     let space = root_constraint_space(doc, width, height);
     let fragment = block_layout(doc, doc.root(), &space);
@@ -85,6 +74,13 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
     let mut recorder = PictureRecorder::new();
     let recording_canvas = recorder.begin_recording(bounds, false);
     recording_canvas.clear(canvas_color);
+    crate::painter::paint_canvas_background(
+        recording_canvas,
+        doc,
+        &fragment,
+        width as f32,
+        height as f32,
+    );
     paint_fragment(
         recording_canvas,
         &fragment,

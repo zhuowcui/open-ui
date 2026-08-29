@@ -10681,6 +10681,7 @@ fn css_position_sticky_position_sticky_bottom_002() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).scroll_top = 25.0;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -10697,6 +10698,29 @@ fn css_position_sticky_position_sticky_bottom_002() -> Document {
     doc.node_mut(n1).style.overflow_y = Overflow::Auto;
     doc.node_mut(n1).style.position = Position::Static;
     doc.node_mut(n1).style.width = Length::px(150.0);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Length(Length::px(75.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -10780,6 +10804,7 @@ fn css_position_sticky_position_sticky_bottom_002() -> Document {
     doc.node_mut(n7).style.height = Length::px(100.0);
     doc.append_child(n1, n7);
     let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).scroll_top = 100.0;
     doc.node_mut(n8).style.margin_top = Length::px(0.0);
     doc.node_mut(n8).style.margin_right = Length::px(0.0);
     doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
@@ -10796,6 +10821,29 @@ fn css_position_sticky_position_sticky_bottom_002() -> Document {
     doc.node_mut(n8).style.overflow_y = Overflow::Auto;
     doc.node_mut(n8).style.position = Position::Static;
     doc.node_mut(n8).style.width = Length::px(150.0);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Length(Length::px(50.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(vp, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -10879,6 +10927,7 @@ fn css_position_sticky_position_sticky_bottom_002() -> Document {
     doc.node_mut(n14).style.height = Length::px(100.0);
     doc.append_child(n8, n14);
     let n15 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n15).scroll_top = 200.0;
     doc.node_mut(n15).style.margin_top = Length::px(0.0);
     doc.node_mut(n15).style.margin_right = Length::px(0.0);
     doc.node_mut(n15).style.margin_bottom = Length::px(0.0);
@@ -10895,6 +10944,29 @@ fn css_position_sticky_position_sticky_bottom_002() -> Document {
     doc.node_mut(n15).style.overflow_y = Overflow::Auto;
     doc.node_mut(n15).style.position = Position::Static;
     doc.node_mut(n15).style.width = Length::px(150.0);
+    let n15_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n15).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n15_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n15).style.background_linear_gradient = None;
     doc.append_child(vp, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -10993,6 +11065,7 @@ fn css_position_sticky_position_sticky_bottom_003() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).scroll_top = 25.0;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -11009,6 +11082,29 @@ fn css_position_sticky_position_sticky_bottom_003() -> Document {
     doc.node_mut(n1).style.overflow_y = Overflow::Auto;
     doc.node_mut(n1).style.position = Position::Static;
     doc.node_mut(n1).style.width = Length::px(150.0);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Length(Length::px(75.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -11092,6 +11188,7 @@ fn css_position_sticky_position_sticky_bottom_003() -> Document {
     doc.node_mut(n7).style.height = Length::px(100.0);
     doc.append_child(n1, n7);
     let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).scroll_top = 100.0;
     doc.node_mut(n8).style.margin_top = Length::px(0.0);
     doc.node_mut(n8).style.margin_right = Length::px(0.0);
     doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
@@ -11108,6 +11205,29 @@ fn css_position_sticky_position_sticky_bottom_003() -> Document {
     doc.node_mut(n8).style.overflow_y = Overflow::Auto;
     doc.node_mut(n8).style.position = Position::Static;
     doc.node_mut(n8).style.width = Length::px(150.0);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Length(Length::px(50.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(vp, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -11191,6 +11311,7 @@ fn css_position_sticky_position_sticky_bottom_003() -> Document {
     doc.node_mut(n14).style.height = Length::px(100.0);
     doc.append_child(n8, n14);
     let n15 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n15).scroll_top = 200.0;
     doc.node_mut(n15).style.margin_top = Length::px(0.0);
     doc.node_mut(n15).style.margin_right = Length::px(0.0);
     doc.node_mut(n15).style.margin_bottom = Length::px(0.0);
@@ -11207,6 +11328,29 @@ fn css_position_sticky_position_sticky_bottom_003() -> Document {
     doc.node_mut(n15).style.overflow_y = Overflow::Auto;
     doc.node_mut(n15).style.position = Position::Static;
     doc.node_mut(n15).style.width = Length::px(150.0);
+    let n15_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n15).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n15_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n15).style.background_linear_gradient = None;
     doc.append_child(vp, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -12858,6 +13002,7 @@ fn css_position_sticky_position_sticky_right_002() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).scroll_left = 25.0;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -12874,6 +13019,29 @@ fn css_position_sticky_position_sticky_right_002() -> Document {
     doc.node_mut(n1).style.position = Position::Static;
     doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.width = Length::px(250.0);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Length(Length::px(75.0)),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -12970,6 +13138,7 @@ fn css_position_sticky_position_sticky_right_002() -> Document {
     doc.node_mut(n7).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(n1, n7);
     let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).scroll_left = 100.0;
     doc.node_mut(n8).style.display = Display::Block;
     doc.node_mut(n8).style.margin_top = Length::px(0.0);
     doc.node_mut(n8).style.margin_right = Length::px(0.0);
@@ -12986,6 +13155,29 @@ fn css_position_sticky_position_sticky_right_002() -> Document {
     doc.node_mut(n8).style.position = Position::Static;
     doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n8).style.width = Length::px(250.0);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Length(Length::px(50.0)),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(vp, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -13082,6 +13274,7 @@ fn css_position_sticky_position_sticky_right_002() -> Document {
     doc.node_mut(n14).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(n8, n14);
     let n15 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n15).scroll_left = 200.0;
     doc.node_mut(n15).style.display = Display::Block;
     doc.node_mut(n15).style.margin_top = Length::px(0.0);
     doc.node_mut(n15).style.margin_right = Length::px(0.0);
@@ -13098,6 +13291,29 @@ fn css_position_sticky_position_sticky_right_002() -> Document {
     doc.node_mut(n15).style.position = Position::Static;
     doc.node_mut(n15).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n15).style.width = Length::px(250.0);
+    let n15_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n15).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n15_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n15).style.background_linear_gradient = None;
     doc.append_child(vp, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -13209,6 +13425,7 @@ fn css_position_sticky_position_sticky_right_003() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).scroll_left = 25.0;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -13225,6 +13442,29 @@ fn css_position_sticky_position_sticky_right_003() -> Document {
     doc.node_mut(n1).style.position = Position::Static;
     doc.node_mut(n1).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n1).style.width = Length::px(250.0);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Length(Length::px(75.0)),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
@@ -13321,6 +13561,7 @@ fn css_position_sticky_position_sticky_right_003() -> Document {
     doc.node_mut(n7).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(n1, n7);
     let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).scroll_left = 100.0;
     doc.node_mut(n8).style.display = Display::Block;
     doc.node_mut(n8).style.margin_top = Length::px(0.0);
     doc.node_mut(n8).style.margin_right = Length::px(0.0);
@@ -13337,6 +13578,29 @@ fn css_position_sticky_position_sticky_right_003() -> Document {
     doc.node_mut(n8).style.position = Position::Static;
     doc.node_mut(n8).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n8).style.width = Length::px(250.0);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Length(Length::px(50.0)),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(vp, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -13433,6 +13697,7 @@ fn css_position_sticky_position_sticky_right_003() -> Document {
     doc.node_mut(n14).style.white_space = WhiteSpace::Nowrap;
     doc.append_child(n8, n14);
     let n15 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n15).scroll_left = 200.0;
     doc.node_mut(n15).style.display = Display::Block;
     doc.node_mut(n15).style.margin_top = Length::px(0.0);
     doc.node_mut(n15).style.margin_right = Length::px(0.0);
@@ -13449,6 +13714,29 @@ fn css_position_sticky_position_sticky_right_003() -> Document {
     doc.node_mut(n15).style.position = Position::Static;
     doc.node_mut(n15).style.white_space = WhiteSpace::Nowrap;
     doc.node_mut(n15).style.width = Length::px(250.0);
+    let n15_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n15).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n15_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n15).style.background_linear_gradient = None;
     doc.append_child(vp, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.margin_top = Length::px(0.0);
@@ -13625,6 +13913,8 @@ fn css_position_sticky_position_sticky_rtl() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.direction = Direction::Rtl;
+    doc.node_mut(n1).style.unicode_bidi = UnicodeBidi::Isolate;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -13639,6 +13929,7 @@ fn css_position_sticky_position_sticky_rtl() -> Document {
     doc.node_mut(n1).style.overflow_y = Overflow::Auto;
     doc.node_mut(n1).style.width = Length::px(500.0);
     doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.scrollbar_width = ScrollbarWidth::None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -13655,6 +13946,10 @@ fn css_position_sticky_position_sticky_rtl() -> Document {
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.flex_shrink = 0.0;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(173, 216, 230, 255);
+    doc.node_mut(n2).style.background_linear_gradient = None;
+    doc.node_mut(n2).style.direction = Direction::Rtl;
+    doc.node_mut(n2).style.background_layers = vec![];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -13673,6 +13968,10 @@ fn css_position_sticky_position_sticky_rtl() -> Document {
     doc.node_mut(n3).style.height = Length::px(100.0);
     doc.node_mut(n3).style.flex_shrink = 0.0;
     doc.node_mut(n3).style.background_color = Color::from_rgba8(144, 238, 144, 255);
+    doc.node_mut(n3).style.background_linear_gradient = None;
+    doc.node_mut(n3).style.direction = Direction::Rtl;
+    doc.node_mut(n3).style.background_layers = vec![];
+    doc.node_mut(n3).style.background_linear_gradient = None;
     doc.append_child(n1, n3);
     doc
 }
@@ -14420,6 +14719,7 @@ fn css_position_sticky_position_sticky_top_and_bottom_003() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).scroll_top = 50.0;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -14436,6 +14736,29 @@ fn css_position_sticky_position_sticky_top_and_bottom_003() -> Document {
     doc.node_mut(n1).style.overflow_y = Overflow::Auto;
     doc.node_mut(n1).style.position = Position::Static;
     doc.node_mut(n1).style.width = Length::px(150.0);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Length(Length::px(125.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -14482,6 +14805,7 @@ fn css_position_sticky_position_sticky_top_and_bottom_003() -> Document {
     doc.node_mut(n4).style.height = Length::px(200.0);
     doc.append_child(n1, n4);
     let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).scroll_top = 150.0;
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -14498,6 +14822,29 @@ fn css_position_sticky_position_sticky_top_and_bottom_003() -> Document {
     doc.node_mut(n5).style.overflow_y = Overflow::Auto;
     doc.node_mut(n5).style.position = Position::Static;
     doc.node_mut(n5).style.width = Length::px(150.0);
+    let n5_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n5).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n5_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Length(Length::px(50.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(vp, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -14544,6 +14891,7 @@ fn css_position_sticky_position_sticky_top_and_bottom_003() -> Document {
     doc.node_mut(n8).style.height = Length::px(200.0);
     doc.append_child(n5, n8);
     let n9 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n9).scroll_top = 250.0;
     doc.node_mut(n9).style.margin_top = Length::px(0.0);
     doc.node_mut(n9).style.margin_right = Length::px(0.0);
     doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
@@ -14560,6 +14908,29 @@ fn css_position_sticky_position_sticky_top_and_bottom_003() -> Document {
     doc.node_mut(n9).style.overflow_y = Overflow::Auto;
     doc.node_mut(n9).style.position = Position::Static;
     doc.node_mut(n9).style.width = Length::px(150.0);
+    let n9_background_image_0 = doc.register_image_resource(
+        "css-position/sticky/support/100x100-red.png",
+        "image/png",
+        "0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/100x100-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n9).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n9_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Length(Length::px(25.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n9).style.background_linear_gradient = None;
     doc.append_child(vp, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;

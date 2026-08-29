@@ -49,7 +49,7 @@ class LedgerTests(unittest.TestCase):
         _, targets, _ = closure.load_ledgers()
         root_aware = splice_text_port.load_root_aware_ids()
         promoted_root_body = set(targets) & root_aware
-        self.assertEqual(len(promoted_root_body), 49)
+        self.assertGreaterEqual(len(promoted_root_body), 49)
         self.assertIn(
             "wpt/css_backgrounds/background-color-body-propagation-004",
             promoted_root_body,

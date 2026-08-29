@@ -11,7 +11,11 @@ mod font_types;
 
 pub use color::{Color, StyleColor};
 pub use computed::{
-    AspectRatio, BoxShadow, ComputedStyle, GradientStopPosition, LinearGradient, LinearGradientStop,
+    AspectRatio, BackgroundLayer, BackgroundPosition, BackgroundRepeat, BackgroundSize,
+    BorderImage, BorderImageLength, BorderImageRepeat, BoxShadow, ComputedStyle, ConicGradient,
+    CssImage, CssLinearGradient, GradientColorSpace, GradientStop, GradientStopPosition,
+    ImageResourceId, LinearGradient, LinearGradientStop, RadialGradient, RadialGradientShape,
+    RadialGradientSize,
 };
 pub use enums::*;
 pub use font_types::*;

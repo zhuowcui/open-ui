@@ -31,6 +31,9 @@ import re
 import sys
 import csv
 import json
+import hashlib
+import html as html_module
+import urllib.parse
 from enum import Enum
 from pathlib import Path
 from html.parser import HTMLParser
@@ -46,6 +49,7 @@ class PorterProfile(Enum):
 
 
 ACTIVE_PORTER_PROFILE = PorterProfile.LEGACY_BOX_ONLY
+EMIT_PAINT_LAYERS = False
 
 
 def set_porter_profile(profile: PorterProfile, *, retain_text: bool | None = None) -> None:
@@ -70,6 +74,16 @@ def set_porter_profile(profile: PorterProfile, *, retain_text: bool | None = Non
 
 def is_real_font_profile() -> bool:
     return ACTIVE_PORTER_PROFILE is PorterProfile.REAL_FONT
+
+
+def set_paint_layer_emission(enabled: bool) -> None:
+    """Opt into the SP13-P production image/layer metadata.
+
+    The default remains false so every historical full-directory generation
+    retains byte-identical legacy output.
+    """
+    global EMIT_PAINT_LAYERS
+    EMIT_PAINT_LAYERS = bool(enabled)
 
 
 # ─── CSS property support map ──────────────────────────────────────────────
@@ -115,7 +129,9 @@ SUPPORTED_PROPERTIES = {
     'overflow', 'overflow-x', 'overflow-y', 'overflow-clip-margin', 'scrollbar-color',
     'resize', 'scrollbar-width', 'scrollbar-gutter',
     # Visual
-    'background', 'background-color', 'background-clip', 'color', 'opacity', 'visibility',
+    'background', 'background-color', 'background-image', 'background-repeat',
+    'background-size', 'background-position', 'background-origin',
+    'background-clip', 'background-attachment', 'color', 'opacity', 'visibility',
     'zoom',
     # Flex
     'flex', 'flex-direction', 'flex-wrap', 'flex-flow',
@@ -150,6 +166,8 @@ SUPPORTED_PROPERTIES = {
     'will-change',
     # Visual-only properties that don't affect layout
     'box-shadow', 'isolation',
+    'border-image', 'border-image-source', 'border-image-slice',
+    'border-image-width', 'border-image-outset', 'border-image-repeat',
 }
 
 UNSUPPORTED_FEATURES = {
@@ -183,12 +201,6 @@ IGNORED_PROPERTIES = {
     'word-break', 'overflow-wrap', 'hyphens',
     'list-style', 'list-style-type', 'list-style-position',
     'cursor', 'pointer-events', 'user-select',
-    # Background details that don't affect layout
-    'background-image', 'background-repeat', 'background-size',
-    'background-position', 'background-origin',
-    # Border image (visual only)
-    'border-image', 'border-image-source', 'border-image-slice',
-    'border-image-width', 'border-image-repeat',
     # Print/page
     'print-color-adjust', 'image-rendering', 'size',
 }
@@ -1189,12 +1201,52 @@ def _multicol_initial_value(prop: str) -> str:
     }[prop]
 
 
+def _split_css_declarations(style_str: str) -> list[str]:
+    """Split a declaration block without breaking quoted/data-URL semicolons."""
+    result = []
+    current = []
+    depth = 0
+    quote = None
+    escaped = False
+    for char in style_str:
+        if escaped:
+            current.append(char)
+            escaped = False
+            continue
+        if char == '\\' and quote is not None:
+            current.append(char)
+            escaped = True
+            continue
+        if quote is not None:
+            current.append(char)
+            if char == quote:
+                quote = None
+            continue
+        if char in ('"', "'"):
+            quote = char
+            current.append(char)
+        elif char == '(':
+            depth += 1
+            current.append(char)
+        elif char == ')':
+            depth = max(0, depth - 1)
+            current.append(char)
+        elif char == ';' and depth == 0:
+            result.append(''.join(current))
+            current = []
+        else:
+            current.append(char)
+    if current:
+        result.append(''.join(current))
+    return result
+
+
 def parse_inline_styles(style_str: str) -> dict:
     """Parse declarations transactionally, preserving the valid cascade."""
     result = CssDeclarations()
     if not style_str:
         return result
-    for declaration_index, decl in enumerate(style_str.split(';')):
+    for declaration_index, decl in enumerate(_split_css_declarations(style_str)):
         decl = decl.strip()
         if ':' not in decl:
             continue
@@ -1245,6 +1297,17 @@ def parse_inline_styles(style_str: str) -> dict:
                 )
                 _set_declaration(
                     result, prop, value, priority=priority, important=important
+                )
+        elif prop == 'box-shadow':
+            layers = _split_css_layers(val)
+            # `none` is exclusive with the shadow-list grammar. Invalid later
+            # declarations must not replace the earlier valid cascaded value.
+            if not (
+                len(layers) > 1
+                and any(layer.strip().lower() == 'none' for layer in layers)
+            ):
+                _set_declaration(
+                    result, prop, val, priority=priority, important=important
                 )
         elif prop == "font" and is_real_font_profile():
             for longhand, value in parse_font_shorthand(val).items():
@@ -2050,6 +2113,31 @@ class WptHtmlParser(HTMLParser):
                         collect(c)
             collect(self.root)
 
+        # Lower the deterministic scroll assignments used by paint/sticky WPT
+        # fixtures into document state. These handlers contain no DOM mutation
+        # beyond assigning a numeric scrollTop/scrollLeft value.
+        nodes_by_id = {}
+        def collect_ids(node):
+            node_id = node.attrs.get('id', '') if not node.is_text else ''
+            if node_id:
+                nodes_by_id[node_id] = node
+            for child in node.children:
+                collect_ids(child)
+        collect_ids(self.root)
+        assignment = re.compile(
+            r'''document\.getElementById\(\s*(["'])([^"']+)\1\s*\)'''
+            r'''\.scroll(Top|Left)\s*=\s*(-?[\d.]+)'''
+        )
+        for _tag, name, handler in self.event_handlers:
+            if name != 'onload':
+                continue
+            for match in assignment.finditer(handler):
+                node = nodes_by_id.get(match.group(2))
+                if node is None:
+                    continue
+                field = 'scroll_top' if match.group(3) == 'Top' else 'scroll_left'
+                setattr(node, field, float(match.group(4)))
+
 
 def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser:
     """Parse a WPT HTML file and return the parser with DOM tree."""
@@ -2402,6 +2490,812 @@ def _linear_gradient_rust(value: str) -> str | None:
         f'stops: vec![{", ".join(stops)}] '
         '})'
     )
+
+
+_PAINT_ASSETS = {
+    '60x60-green.png': ('60x60-green.png', 'css-backgrounds/support/60x60-green.png', 'image/png', '38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4'),
+    'cat.png': ('cat.png', 'support/cat.png', 'image/png', '18ca1a3f23c106c4b31f0faec34a24cb17d4f2cb31abd1a51df814ba3f58ed7d'),
+    'aqua-yellow-32x32.png': ('aqua-yellow-32x32.png', 'css-backgrounds/support/aqua-yellow-32x32.png', 'image/png', '5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed'),
+    '1x1-green.png': ('1x1-green.png', 'css-backgrounds/support/1x1-green.png', 'image/png', 'a236213916dd30bd771a233aa1d66381eabf335bf8885304b75a4e2e370d68ce'),
+    'green-100.png': ('green-100.png', 'css-backgrounds/resources/green-100.png', 'image/png', '750da204219f837c5b8a25f3587b82b05ca841431be990a1a13a50df483e53a4'),
+    'css3.png': ('css3.png', 'css-backgrounds/support/css3.png', 'image/png', '404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef'),
+    'green.png': ('green.png', 'css-backgrounds/support/green.png', 'image/png', 'a48b88602c40120ef8d508bd56a1731d204cbb7701749651d206ad7374819b00'),
+    'red.png': ('red.png', 'css-backgrounds/support/red.png', 'image/png', '07557d92effc78121f8a48acacfa535d3d4cf368a647124de041b5bba12144ae'),
+    '40px-wide-20px-tall-green-rect.png': ('40px-wide-20px-tall-green-rect.png', 'css-backgrounds/support/40px-wide-20px-tall-green-rect.png', 'image/png', 'e9b1bf6e42430928746a02061391ad742ad258cd1392684066391df30eb95c14'),
+    'swatch-green.png': ('swatch-green.png', 'css-backgrounds/support/swatch-green.png', 'image/png', 'bfdf34690a36ddebb5f08029df544183f3d5a3e9e21dbff0f4d4315f862236c0'),
+    'aqua-yellow-37x37.png': ('aqua-yellow-37x37.png', 'css-backgrounds/support/aqua-yellow-37x37.png', 'image/png', 'd279fe78b42445636c667020249169b35bbf039b57468604dbd0f63978144c60'),
+    '9-colored-areas-40-30-20-10.svg': ('9-colored-areas-40-30-20-10.svg', 'css-backgrounds/support/9-colored-areas-40-30-20-10.svg', 'image/svg+xml', 'bde621c5c23b189c6ac29fbccc168a46ad19f61233d12be22f67626cd15e1714'),
+    'blue-and-red-diamonds-81x81.png': ('blue-and-red-diamonds-81x81.png', 'css-backgrounds/support/blue-and-red-diamonds-81x81.png', 'image/png', 'adcf99b02f2084a28ce5f227d472c2a757393184e472ba7b3ccba8ce11ed617b'),
+    '9grid40-30-20-10-red-old.png': ('9grid40-30-20-10-red-old.png', 'css-backgrounds/support/9grid40-30-20-10-red-old.png', 'image/png', '1f60051612d5f926d6302d69557116ef18518b45dc992d4395c4680e1cf0a134'),
+    '9grid40-30-20-10-red.png': ('9grid40-30-20-10-red.png', 'css-backgrounds/support/9grid40-30-20-10-red.png', 'image/png', 'c43d860aa7387ad2bc7b1a847c6fc3b0d2416d18a8a204b929ab86d4a19479c9'),
+    '9grid40-30-20-10-green.png': ('9grid40-30-20-10-green.png', 'css-backgrounds/support/9grid40-30-20-10-green.png', 'image/png', '886b528f342e8f918f6c5ccc301da05d71149e61ecd2619e1da8c991b1abe595'),
+    'outline-5px-10px-15px-20px-green.png': ('outline-5px-10px-15px-20px-green.png', 'css-backgrounds/support/outline-5px-10px-15px-20px-green.png', 'image/png', 'fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba'),
+    'swatch-red.png': ('swatch-red.png', 'css-backgrounds/support/swatch-red.png', 'image/png', 'e42df70647347f5eedb984a611549d962ee362fb73f2135c9af05875b7681784'),
+    '100x100-red.png': ('100x100-red.png', 'css-position/sticky/support/100x100-red.png', 'image/png', '0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58'),
+}
+
+
+def _embed_paint_asset_urls(template: str) -> str:
+    """Make focused Chrome templates independent of an ambient WPT server."""
+    import base64
+
+    asset_dir = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+        'tools', 'accountability', 'data', 'wpt_assets', 'sp13p',
+    )
+
+    def replace(match: re.Match) -> str:
+        source = match.group(1).strip().strip('"\'')
+        if source.startswith('data:'):
+            return match.group(0)
+        asset = _PAINT_ASSETS.get(source.rsplit('/', 1)[-1])
+        if asset is None:
+            return match.group(0)
+        filename, _, mime, _ = asset
+        with open(os.path.join(asset_dir, filename), 'rb') as asset_file:
+            encoded = base64.b64encode(asset_file.read()).decode('ascii')
+        return f'url("data:{mime};base64,{encoded}")'
+
+    return re.sub(r'(?is)url\(\s*([^)]*?)\s*\)', replace, template)
+
+
+def _extract_css_image(value: str) -> tuple[str, str] | None:
+    match = re.search(
+        r'(?i)(?:repeating-)?(?:linear|radial|conic)-gradient\s*\(|url\s*\(',
+        value,
+    )
+    if not match:
+        return None
+    depth = 0
+    quote = None
+    escaped = False
+    index = value.find('(', match.start())
+    for end in range(index, len(value)):
+        char = value[end]
+        if escaped:
+            escaped = False
+            continue
+        if char == '\\' and quote:
+            escaped = True
+            continue
+        if quote:
+            if char == quote:
+                quote = None
+            continue
+        if char in ('"', "'"):
+            quote = char
+        elif char == '(':
+            depth += 1
+        elif char == ')':
+            depth -= 1
+            if depth == 0:
+                image = value[match.start():end + 1]
+                remainder = (value[:match.start()] + ' ' + value[end + 1:]).strip()
+                return image, remainder
+    return None
+
+
+def _gradient_position_rust(value: str) -> str | None:
+    value = value.strip().lower()
+    if value in ('0', '0px'):
+        return 'GradientStopPosition::Px(0.0)'
+    match = re.fullmatch(r'(-?[\d.]+)%', value)
+    if match:
+        return f'GradientStopPosition::Percent({float(match.group(1))})'
+    match = re.fullmatch(r'(-?[\d.]+)px', value)
+    if match:
+        return f'GradientStopPosition::Px({_zoomed_px(float(match.group(1)))})'
+    match = re.fullmatch(
+        r'calc\(\s*(-?[\d.]+)%\s*([+-])\s*([\d.]+)px\s*\)', value
+    )
+    if match:
+        px = float(match.group(3)) * (-1 if match.group(2) == '-' else 1)
+        return (
+            'GradientStopPosition::Calc { '
+            f'percent: {float(match.group(1))}, px: {_zoomed_px(px)} '
+            '}'
+        )
+    return None
+
+
+def _style_color_rust(value: str) -> str | None:
+    if value.strip().lower() == 'currentcolor':
+        return 'StyleColor::CurrentColor'
+    color = parse_color(value)
+    return f'StyleColor::Resolved({color})' if color else None
+
+
+def _gradient_stops_rust(parts: list[str]) -> list[str] | None:
+    stops = []
+    for part in parts:
+        tokens = _split_respecting_parens(part.strip())
+        if not tokens:
+            return None
+        color = _style_color_rust(tokens[0])
+        if color is None:
+            return None
+        positions = [_gradient_position_rust(token) for token in tokens[1:]]
+        if any(position is None for position in positions):
+            return None
+        if not positions:
+            positions = ['GradientStopPosition::Auto']
+        for position in positions:
+            stops.append(
+                'GradientStop { '
+                f'color: {color}, position: {position} '
+                '}'
+            )
+    return stops if len(stops) >= 2 else None
+
+
+def _gradient_color_space(prelude: str) -> tuple[str, str]:
+    match = re.search(r'(?i)(?:^|\s)in\s+(srgb|hsl|oklch)(?:\s|$)', prelude)
+    if not match:
+        return prelude.strip(), 'GradientColorSpace::Srgb'
+    mapping = {
+        'srgb': 'GradientColorSpace::Srgb',
+        'hsl': 'GradientColorSpace::Hsl',
+        'oklch': 'GradientColorSpace::Oklch',
+    }
+    cleaned = (prelude[:match.start()] + ' ' + prelude[match.end():]).strip()
+    return cleaned, mapping[match.group(1).lower()]
+
+
+def _position_component_rust(token: str, *, end: bool | None = None) -> str | None:
+    token = token.strip().lower()
+    if end is None and token in ('left', 'top'):
+        return 'BackgroundPosition::Percent(0.0)'
+    if end is None and token == 'center':
+        return 'BackgroundPosition::Percent(50.0)'
+    if end is None and token in ('right', 'bottom'):
+        return 'BackgroundPosition::Percent(100.0)'
+    length = parse_length(token)
+    if length is None:
+        return None
+    if end is None and token.endswith('%'):
+        return f'BackgroundPosition::Percent({float(token[:-1])})'
+    if end is None:
+        return f'BackgroundPosition::Length({length})'
+    return f'BackgroundPosition::Edge {{ end: {str(end).lower()}, offset: {length} }}'
+
+
+def _background_position_rust(value: str) -> tuple[str, str] | None:
+    tokens = _split_respecting_parens(value.strip())
+    if not tokens:
+        return None
+    zero = 'BackgroundPosition::Percent(0.0)'
+    center = 'BackgroundPosition::Percent(50.0)'
+
+    # The two-value grammar is axis-based: in `left 75px`, `left` is the
+    # horizontal position and `75px` is the vertical position.  An offset
+    # paired with an edge belongs to the three/four-value grammar instead.
+    if len(tokens) <= 2:
+        lower = [token.lower() for token in tokens]
+        horizontal_keywords = {'left', 'right'}
+        vertical_keywords = {'top', 'bottom'}
+        if len(tokens) == 1:
+            token = lower[0]
+            if token in horizontal_keywords:
+                return _position_component_rust(token), center
+            if token in vertical_keywords:
+                return center, _position_component_rust(token)
+            component = _position_component_rust(tokens[0])
+            return (component, center) if component else None
+
+        first, second = lower
+        if first in horizontal_keywords:
+            x = _position_component_rust(first)
+            y = _position_component_rust(tokens[1])
+        elif first in vertical_keywords:
+            x = _position_component_rust(tokens[1])
+            y = _position_component_rust(first)
+        elif second in vertical_keywords:
+            x = _position_component_rust(tokens[0])
+            y = _position_component_rust(second)
+        elif second in horizontal_keywords:
+            x = _position_component_rust(second)
+            y = _position_component_rust(tokens[0])
+        else:
+            x = _position_component_rust(tokens[0])
+            y = _position_component_rust(tokens[1])
+        return (x, y) if x is not None and y is not None else None
+
+    horizontal = None
+    vertical = None
+    index = 0
+    while index < len(tokens):
+        token = tokens[index].lower()
+        if token in ('left', 'right'):
+            offset = tokens[index + 1] if index + 1 < len(tokens) and tokens[index + 1].lower() not in ('left', 'right', 'top', 'bottom', 'center') else '0'
+            horizontal = _position_component_rust(offset, end=token == 'right')
+            index += 2 if offset != '0' else 1
+        elif token in ('top', 'bottom'):
+            offset = tokens[index + 1] if index + 1 < len(tokens) and tokens[index + 1].lower() not in ('left', 'right', 'top', 'bottom', 'center') else '0'
+            vertical = _position_component_rust(offset, end=token == 'bottom')
+            index += 2 if offset != '0' else 1
+        elif token == 'center':
+            if horizontal is None:
+                horizontal = 'BackgroundPosition::Percent(50.0)'
+            elif vertical is None:
+                vertical = 'BackgroundPosition::Percent(50.0)'
+            index += 1
+        else:
+            component = _position_component_rust(tokens[index])
+            if horizontal is None:
+                horizontal = component
+            elif vertical is None:
+                vertical = component
+            index += 1
+    return horizontal or zero, vertical or zero
+
+
+def _css_image_rust(value: str, resource_var: str) -> tuple[list[str], str] | None:
+    raw = value.strip()
+    function = re.match(
+        r'(?is)^(?P<repeating>repeating-)?(?P<kind>linear|radial|conic)-gradient\((.*)\)$',
+        raw,
+    )
+    if function:
+        repeating = function.group('repeating') is not None
+        kind = function.group('kind').lower()
+        parts = _split_css_layers(function.group(3))
+        if not parts:
+            return None
+        prelude, color_space = _gradient_color_space(parts[0])
+        prelude_tokens = _split_respecting_parens(prelude)
+        has_prelude = _style_color_rust(prelude_tokens[0] if prelude_tokens else '') is None
+        if kind == 'linear':
+            angle = 180.0
+            corner_direction = 'None'
+            direction = prelude.lower()
+            directions = {
+                'to top': 0.0, 'to top right': 45.0, 'to right top': 45.0,
+                'to right': 90.0, 'to bottom right': 135.0, 'to right bottom': 135.0,
+                'to bottom': 180.0, 'to bottom left': 225.0, 'to left bottom': 225.0,
+                'to left': 270.0, 'to top left': 315.0, 'to left top': 315.0,
+            }
+            if direction.endswith('deg'):
+                try:
+                    angle = float(direction[:-3]) % 360.0
+                except ValueError:
+                    return None
+            elif direction in directions:
+                angle = directions[direction]
+                corners = {
+                    'to top right': (1.0, -1.0), 'to right top': (1.0, -1.0),
+                    'to bottom right': (1.0, 1.0), 'to right bottom': (1.0, 1.0),
+                    'to bottom left': (-1.0, 1.0), 'to left bottom': (-1.0, 1.0),
+                    'to top left': (-1.0, -1.0), 'to left top': (-1.0, -1.0),
+                }
+                if direction in corners:
+                    x, y = corners[direction]
+                    corner_direction = f'Some(({x}, {y}))'
+            elif direction:
+                has_prelude = False
+            stop_parts = parts[1:] if has_prelude else parts
+            stops = _gradient_stops_rust(stop_parts)
+            if stops is None:
+                return None
+            return [], (
+                'CssImage::LinearGradient(CssLinearGradient { '
+                f'angle_degrees: {angle}, corner_direction: {corner_direction}, '
+                f'repeating: {str(repeating).lower()}, '
+                f'color_space: {color_space}, stops: vec![{", ".join(stops)}] '
+                '})'
+            )
+        if kind == 'radial':
+            shape = 'RadialGradientShape::Ellipse'
+            size = 'RadialGradientSize::FarthestCorner'
+            center_x = 'BackgroundPosition::Percent(50.0)'
+            center_y = 'BackgroundPosition::Percent(50.0)'
+            if has_prelude:
+                before_at, separator, after_at = prelude.partition(' at ')
+                words = before_at.split()
+                if 'circle' in words:
+                    shape = 'RadialGradientShape::Circle'
+                for keyword, rust in {
+                    'closest-side': 'RadialGradientSize::ClosestSide',
+                    'closest-corner': 'RadialGradientSize::ClosestCorner',
+                    'farthest-side': 'RadialGradientSize::FarthestSide',
+                    'farthest-corner': 'RadialGradientSize::FarthestCorner',
+                }.items():
+                    if keyword in words:
+                        size = rust
+                lengths = [parse_length(word) for word in words if parse_length(word)]
+                if lengths:
+                    second = lengths[1] if len(lengths) > 1 else lengths[0]
+                    size = f'RadialGradientSize::Explicit({lengths[0]}, {second})'
+                if separator:
+                    position = _background_position_rust(after_at)
+                    if position:
+                        center_x, center_y = position
+            stops = _gradient_stops_rust(parts[1:] if has_prelude else parts)
+            if stops is None:
+                return None
+            return [], (
+                'CssImage::RadialGradient(RadialGradient { '
+                f'repeating: {str(repeating).lower()}, color_space: {color_space}, '
+                f'shape: {shape}, size: {size}, center_x: {center_x}, center_y: {center_y}, '
+                f'stops: vec![{", ".join(stops)}] '
+                '})'
+            )
+        from_degrees = 0.0
+        center_x = 'BackgroundPosition::Percent(50.0)'
+        center_y = 'BackgroundPosition::Percent(50.0)'
+        if has_prelude:
+            match = re.search(r'from\s+(-?[\d.]+)deg', prelude)
+            if match:
+                from_degrees = float(match.group(1))
+            if ' at ' in prelude:
+                position = _background_position_rust(prelude.split(' at ', 1)[1])
+                if position:
+                    center_x, center_y = position
+        stops = _gradient_stops_rust(parts[1:] if has_prelude else parts)
+        if stops is None:
+            return None
+        return [], (
+            'CssImage::ConicGradient(ConicGradient { '
+            f'from_degrees: {from_degrees}, center_x: {center_x}, center_y: {center_y}, '
+            f'repeating: {str(repeating).lower()}, color_space: {color_space}, '
+            f'stops: vec![{", ".join(stops)}] '
+            '})'
+        )
+
+    url = re.match(r'(?is)^url\(\s*(.*?)\s*\)$', raw)
+    if not url:
+        return None
+    source = url.group(1).strip()
+    if len(source) >= 2 and source[0] == source[-1] and source[0] in ('"', "'"):
+        source = source[1:-1]
+    if source.startswith('data:'):
+        header, comma, payload = source.partition(',')
+        if not comma:
+            return None
+        mime = header[5:].split(';', 1)[0] or 'text/plain'
+        if ';base64' in header:
+            import base64
+            data = base64.b64decode(payload)
+        else:
+            data = urllib.parse.unquote_to_bytes(payload)
+        sha = hashlib.sha256(data).hexdigest()
+        byte_expr = f'vec![{", ".join(str(byte) for byte in data)}]'
+        source_label = f'data:{mime};sha256={sha}'
+    else:
+        name = source.rsplit('/', 1)[-1]
+        asset = _PAINT_ASSETS.get(name)
+        if asset is None:
+            return None
+        filename, source_label, mime, sha = asset
+        byte_expr = (
+            'include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), '
+            f'"/../../../tools/accountability/data/wpt_assets/sp13p/{filename}"))'
+            '.as_slice().to_vec()'
+        )
+    line = (
+        f'let {resource_var} = doc.register_image_resource('
+        f'{json.dumps(source_label)}, {json.dumps(mime)}, {json.dumps(sha)}, {byte_expr});'
+    )
+    return [line], f'CssImage::Raster({resource_var})'
+
+
+def _split_css_slash(value: str) -> tuple[str, str | None]:
+    depth = 0
+    quote = None
+    for index, char in enumerate(value):
+        if quote:
+            if char == quote and (index == 0 or value[index - 1] != '\\'):
+                quote = None
+        elif char in ('"', "'"):
+            quote = char
+        elif char == '(':
+            depth += 1
+        elif char == ')':
+            depth = max(0, depth - 1)
+        elif char == '/' and depth == 0:
+            return value[:index].strip(), value[index + 1:].strip()
+    return value.strip(), None
+
+
+def _background_repeat_rust(value: str) -> tuple[str, str] | None:
+    parts = value.strip().lower().split()
+    aliases = {
+        'repeat-x': ('repeat', 'no-repeat'),
+        'repeat-y': ('no-repeat', 'repeat'),
+    }
+    if len(parts) == 1 and parts[0] in aliases:
+        parts = list(aliases[parts[0]])
+    elif len(parts) == 1:
+        parts *= 2
+    if len(parts) != 2 or any(
+        part not in ('repeat', 'no-repeat', 'round', 'space') for part in parts
+    ):
+        return None
+    mapping = {
+        'repeat': 'BackgroundRepeat::Repeat',
+        'no-repeat': 'BackgroundRepeat::NoRepeat',
+        'round': 'BackgroundRepeat::Round',
+        'space': 'BackgroundRepeat::Space',
+    }
+    return mapping[parts[0]], mapping[parts[1]]
+
+
+def _background_size_rust(value: str, font_size: float) -> str | None:
+    value = value.strip().lower()
+    if value == 'auto':
+        return 'BackgroundSize::Auto'
+    if value == 'cover':
+        return 'BackgroundSize::Cover'
+    if value == 'contain':
+        return 'BackgroundSize::Contain'
+    parts = _split_respecting_parens(value)
+    if len(parts) == 1:
+        parts.append('auto')
+    if len(parts) != 2:
+        return None
+    lengths = [parse_length(part, font_size) for part in parts]
+    if any(length is None for length in lengths):
+        return None
+    return f'BackgroundSize::Explicit({lengths[0]}, {lengths[1]})'
+
+
+def _background_box_rust(value: str) -> str | None:
+    return {
+        'border-box': 'BackgroundClip::BorderBox',
+        'padding-box': 'BackgroundClip::PaddingBox',
+        'content-box': 'BackgroundClip::ContentBox',
+        'text': 'BackgroundClip::Text',
+    }.get(value.strip().lower())
+
+
+def _new_background_layer(image_raw: str | None) -> dict[str, str | None]:
+    return {
+        'image': image_raw,
+        'repeat_x': 'BackgroundRepeat::Repeat',
+        'repeat_y': 'BackgroundRepeat::Repeat',
+        'position_x': 'BackgroundPosition::Percent(0.0)',
+        'position_y': 'BackgroundPosition::Percent(0.0)',
+        'size': 'BackgroundSize::Auto',
+        'origin': 'BackgroundClip::PaddingBox',
+        'clip': 'BackgroundClip::BorderBox',
+        'attachment': 'BackgroundAttachment::Scroll',
+    }
+
+
+def _parse_background_shorthand_layer(value: str, font_size: float) -> dict[str, str | None]:
+    extracted = _extract_css_image(value)
+    image = extracted[0] if extracted else None
+    remainder = extracted[1] if extracted else value
+    layer = _new_background_layer(image)
+
+    before_slash, after_slash = _split_css_slash(remainder)
+    before_tokens = _split_respecting_parens(before_slash)
+    after_tokens = _split_respecting_parens(after_slash or '')
+
+    repeat_tokens = []
+    boxes = []
+    position_tokens = []
+    for token in before_tokens:
+        lower = token.lower()
+        if lower in ('repeat', 'no-repeat', 'round', 'space', 'repeat-x', 'repeat-y'):
+            repeat_tokens.append(lower)
+        elif lower in ('border-box', 'padding-box', 'content-box', 'text'):
+            boxes.append(lower)
+        elif lower in ('scroll', 'fixed', 'local'):
+            layer['attachment'] = {
+                'scroll': 'BackgroundAttachment::Scroll',
+                'fixed': 'BackgroundAttachment::Fixed',
+                'local': 'BackgroundAttachment::Local',
+            }[lower]
+        elif parse_color(token) is None and lower != 'currentcolor':
+            position_tokens.append(token)
+    if repeat_tokens:
+        repeat = _background_repeat_rust(' '.join(repeat_tokens[:2]))
+        if repeat:
+            layer['repeat_x'], layer['repeat_y'] = repeat
+    if position_tokens:
+        position = _background_position_rust(' '.join(position_tokens))
+        if position:
+            layer['position_x'], layer['position_y'] = position
+    if boxes:
+        layer['origin'] = _background_box_rust(boxes[0])
+        layer['clip'] = _background_box_rust(boxes[1] if len(boxes) > 1 else boxes[0])
+
+    if after_slash:
+        size_tokens = []
+        trailing_tokens = []
+        for token in after_tokens:
+            lower = token.lower()
+            if lower in ('repeat', 'no-repeat', 'round', 'space', 'repeat-x', 'repeat-y',
+                         'scroll', 'fixed', 'local', 'border-box', 'padding-box',
+                         'content-box', 'text'):
+                trailing_tokens.append(token)
+            elif not trailing_tokens:
+                size_tokens.append(token)
+            else:
+                trailing_tokens.append(token)
+        size = _background_size_rust(' '.join(size_tokens), font_size)
+        if size:
+            layer['size'] = size
+        if trailing_tokens:
+            repeat = _background_repeat_rust(' '.join(
+                token for token in trailing_tokens
+                if token.lower() in ('repeat', 'no-repeat', 'round', 'space', 'repeat-x', 'repeat-y')
+            ))
+            if repeat:
+                layer['repeat_x'], layer['repeat_y'] = repeat
+            trailing_boxes = [token for token in trailing_tokens if _background_box_rust(token)]
+            if trailing_boxes:
+                layer['origin'] = _background_box_rust(trailing_boxes[0])
+                layer['clip'] = _background_box_rust(
+                    trailing_boxes[1] if len(trailing_boxes) > 1 else trailing_boxes[0]
+                )
+            for token in trailing_tokens:
+                if token.lower() in ('scroll', 'fixed', 'local'):
+                    layer['attachment'] = {
+                        'scroll': 'BackgroundAttachment::Scroll',
+                        'fixed': 'BackgroundAttachment::Fixed',
+                        'local': 'BackgroundAttachment::Local',
+                    }[token.lower()]
+    return layer
+
+
+def _background_layers_rust(styles: dict, s: str, font_size: float) -> list[str]:
+    layers = []
+    if 'background' in styles:
+        layers = [
+            _parse_background_shorthand_layer(value, font_size)
+            for value in _split_css_layers(styles['background'])
+        ]
+    if 'background-image' in styles:
+        layers = [
+            _new_background_layer(None if value.strip().lower() == 'none' else value.strip())
+            for value in _split_css_layers(styles['background-image'])
+        ]
+    if not layers:
+        return []
+
+    def apply_list(prop: str, apply):
+        if prop not in styles:
+            return
+        values = _split_css_layers(styles[prop])
+        if not values:
+            return
+        for index, layer in enumerate(layers):
+            apply(layer, values[index % len(values)])
+
+    def apply_repeat(layer, value):
+        repeat = _background_repeat_rust(value)
+        if repeat:
+            layer['repeat_x'], layer['repeat_y'] = repeat
+
+    def apply_position(layer, value):
+        position = _background_position_rust(value)
+        if position:
+            layer['position_x'], layer['position_y'] = position
+
+    def apply_size(layer, value):
+        size = _background_size_rust(value, font_size)
+        if size:
+            layer['size'] = size
+
+    def apply_origin(layer, value):
+        box = _background_box_rust(value)
+        if box:
+            layer['origin'] = box
+
+    def apply_clip(layer, value):
+        box = _background_box_rust(value)
+        if box:
+            layer['clip'] = box
+
+    def apply_attachment(layer, value):
+        attachment = {
+            'scroll': 'BackgroundAttachment::Scroll',
+            'fixed': 'BackgroundAttachment::Fixed',
+            'local': 'BackgroundAttachment::Local',
+        }.get(value.strip().lower())
+        if attachment:
+            layer['attachment'] = attachment
+
+    apply_list('background-repeat', apply_repeat)
+    apply_list('background-position', apply_position)
+    apply_list('background-size', apply_size)
+    apply_list('background-origin', apply_origin)
+    apply_list('background-clip', apply_clip)
+    apply_list('background-attachment', apply_attachment)
+
+    node = re.search(r'node_mut\(([^)]+)\)', s)
+    prefix = re.sub(r'\W+', '_', node.group(1) if node else 'style')
+    prereqs = []
+    emitted = []
+    for index, layer in enumerate(layers):
+        if not layer['image']:
+            continue
+        parsed = _css_image_rust(layer['image'], f'{prefix}_background_image_{index}')
+        if parsed is None:
+            continue
+        image_prereqs, image = parsed
+        prereqs.extend(image_prereqs)
+        emitted.append(
+            'BackgroundLayer { '
+            f'image: {image}, repeat_x: {layer["repeat_x"]}, repeat_y: {layer["repeat_y"]}, '
+            f'position_x: {layer["position_x"]}, position_y: {layer["position_y"]}, '
+            f'size: {layer["size"]}, origin: {layer["origin"]}, clip: {layer["clip"]}, '
+            f'attachment: {layer["attachment"]} '
+            '}'
+        )
+    return prereqs + [
+        f'{s}.background_layers = vec![{", ".join(emitted)}];',
+        f'{s}.background_linear_gradient = None;',
+    ]
+
+
+def _split_all_css_slashes(value: str) -> list[str]:
+    result = []
+    current = []
+    depth = 0
+    quote = None
+    for index, char in enumerate(value):
+        if quote:
+            current.append(char)
+            if char == quote and (index == 0 or value[index - 1] != '\\'):
+                quote = None
+        elif char in ('"', "'"):
+            quote = char
+            current.append(char)
+        elif char == '(':
+            depth += 1
+            current.append(char)
+        elif char == ')':
+            depth = max(0, depth - 1)
+            current.append(char)
+        elif char == '/' and depth == 0:
+            result.append(''.join(current).strip())
+            current = []
+        else:
+            current.append(char)
+    result.append(''.join(current).strip())
+    return result
+
+
+def _expand_four(values: list[str]) -> list[str] | None:
+    if len(values) == 1:
+        return values * 4
+    if len(values) == 2:
+        return [values[0], values[1], values[0], values[1]]
+    if len(values) == 3:
+        return [values[0], values[1], values[2], values[1]]
+    if len(values) == 4:
+        return values
+    return None
+
+
+def _border_image_length_rust(value: str, font_size: float) -> str | None:
+    value = value.strip().lower()
+    if value == 'auto':
+        return 'BorderImageLength::Auto'
+    if re.fullmatch(r'[+]?[\d.]+', value):
+        return f'BorderImageLength::Number({float(value)})'
+    length = parse_length(value, font_size)
+    return f'BorderImageLength::Length({length})' if length else None
+
+
+def _border_image_repeat_rust(value: str) -> tuple[str, str] | None:
+    parts = value.strip().lower().split()
+    if len(parts) == 1:
+        parts *= 2
+    if len(parts) != 2 or any(part not in ('stretch', 'repeat', 'round', 'space') for part in parts):
+        return None
+    mapping = {
+        'stretch': 'BorderImageRepeat::Stretch',
+        'repeat': 'BorderImageRepeat::Repeat',
+        'round': 'BorderImageRepeat::Round',
+        'space': 'BorderImageRepeat::Space',
+    }
+    return mapping[parts[0]], mapping[parts[1]]
+
+
+def _border_image_rust(styles: dict, s: str, font_size: float) -> list[str]:
+    source = None
+    slice_values = ['BorderImageLength::Length(Length::percent(100.0))'] * 4
+    fill = False
+    width_values = ['BorderImageLength::Number(1.0)'] * 4
+    outset_values = ['BorderImageLength::Number(0.0)'] * 4
+    repeat_x = repeat_y = 'BorderImageRepeat::Stretch'
+    shorthand_priority = (
+        styles.cascade_priority.get('border-image')
+        if isinstance(styles, CssDeclarations) else None
+    )
+
+    def longhand_wins(prop: str) -> bool:
+        if prop not in styles:
+            return False
+        if shorthand_priority is None or not isinstance(styles, CssDeclarations):
+            return True
+        return styles.cascade_priority.get(prop, shorthand_priority) >= shorthand_priority
+
+    if 'border-image' in styles:
+        extracted = _extract_css_image(styles['border-image'])
+        if extracted:
+            source, remainder = extracted
+            slash_parts = _split_all_css_slashes(remainder)
+            first_tokens = _split_respecting_parens(slash_parts[0])
+            repeat_tokens = [token for token in first_tokens if token.lower() in ('stretch', 'repeat', 'round', 'space')]
+            slice_tokens = [token for token in first_tokens if token.lower() not in ('stretch', 'repeat', 'round', 'space', 'fill')]
+            fill = 'fill' in [token.lower() for token in first_tokens]
+            expanded = _expand_four(slice_tokens)
+            if expanded:
+                parsed = [_border_image_length_rust(token, font_size) for token in expanded]
+                if all(parsed):
+                    slice_values = parsed
+            if len(slash_parts) >= 2 and slash_parts[1]:
+                width_tokens = _split_respecting_parens(slash_parts[1])
+                trailing = [token for token in width_tokens if token.lower() in ('stretch', 'repeat', 'round', 'space')]
+                repeat_tokens.extend(trailing)
+                width_tokens = [token for token in width_tokens if token not in trailing]
+                expanded = _expand_four(width_tokens)
+                if expanded:
+                    parsed = [_border_image_length_rust(token, font_size) for token in expanded]
+                    if all(parsed):
+                        width_values = parsed
+            if len(slash_parts) >= 3 and slash_parts[2]:
+                outset_tokens = _split_respecting_parens(slash_parts[2])
+                trailing = [token for token in outset_tokens if token.lower() in ('stretch', 'repeat', 'round', 'space')]
+                repeat_tokens.extend(trailing)
+                outset_tokens = [token for token in outset_tokens if token not in trailing]
+                expanded = _expand_four(outset_tokens)
+                if expanded:
+                    parsed = [_border_image_length_rust(token, font_size) for token in expanded]
+                    if all(parsed):
+                        outset_values = parsed
+            if repeat_tokens:
+                repeat = _border_image_repeat_rust(' '.join(repeat_tokens[:2]))
+                if repeat:
+                    repeat_x, repeat_y = repeat
+
+    if longhand_wins('border-image-source'):
+        source = styles['border-image-source'].strip()
+    if source is None or source.lower() == 'none':
+        return []
+
+    if longhand_wins('border-image-slice'):
+        tokens = _split_respecting_parens(styles['border-image-slice'])
+        fill = 'fill' in [token.lower() for token in tokens]
+        tokens = [token for token in tokens if token.lower() != 'fill']
+        expanded = _expand_four(tokens)
+        if expanded:
+            parsed = [_border_image_length_rust(token, font_size) for token in expanded]
+            if all(parsed):
+                slice_values = parsed
+    if longhand_wins('border-image-width'):
+        expanded = _expand_four(_split_respecting_parens(styles['border-image-width']))
+        if expanded:
+            parsed = [_border_image_length_rust(token, font_size) for token in expanded]
+            if all(parsed):
+                width_values = parsed
+    if longhand_wins('border-image-outset'):
+        expanded = _expand_four(_split_respecting_parens(styles['border-image-outset']))
+        if expanded:
+            parsed = [_border_image_length_rust(token, font_size) for token in expanded]
+            if all(parsed):
+                outset_values = parsed
+    if longhand_wins('border-image-repeat'):
+        repeat = _border_image_repeat_rust(styles['border-image-repeat'])
+        if repeat:
+            repeat_x, repeat_y = repeat
+
+    node = re.search(r'node_mut\(([^)]+)\)', s)
+    prefix = re.sub(r'\W+', '_', node.group(1) if node else 'style')
+    parsed_source = _css_image_rust(source, f'{prefix}_border_image')
+    if parsed_source is None:
+        return []
+    prereqs, image = parsed_source
+    return prereqs + [
+        f'{s}.border_image = Some(BorderImage {{ source: {image}, '
+        f'slice: [{", ".join(slice_values)}], fill: {str(fill).lower()}, '
+        f'width: [{", ".join(width_values)}], outset: [{", ".join(outset_values)}], '
+        f'repeat_x: {repeat_x}, repeat_y: {repeat_y} }});'
+    ]
 
 
 def _select_background_clip_layer(styles: dict, value: str) -> str:
@@ -2760,7 +3654,7 @@ def _expand_sp17_logical_declaration(
     return None
 
 
-def resolve_sp17_logical_properties(styles: dict) -> OrderedDict:
+def resolve_sp17_logical_properties(styles: dict) -> CssDeclarations:
     """Resolve logical CSS only after this element's writing direction exists.
 
     ComputedStyle currently stores physical box fields. This transaction keeps
@@ -2776,16 +3670,30 @@ def resolve_sp17_logical_properties(styles: dict) -> OrderedDict:
     if direction == 'inherit':
         direction = 'ltr'
     sides = _sp17_logical_sides(writing_mode, direction)
-    result = OrderedDict()
+    result = CssDeclarations()
     for prop, value in _sp17_declarations_in_cascade_order(styles):
+        priority = (
+            styles.cascade_priority.get(prop)
+            if isinstance(styles, CssDeclarations) else None
+        )
+        important = (
+            styles.important.get(prop, False)
+            if isinstance(styles, CssDeclarations) else False
+        )
         expanded = _expand_sp17_logical_declaration(
             prop, value, sides, writing_mode
         )
         if expanded is None:
             _assign_resolved_declaration(result, prop, value)
+            if priority is not None:
+                result.cascade_priority[prop] = priority
+            result.important[prop] = important
             continue
         for physical_prop, physical_value in expanded:
             _assign_resolved_declaration(result, physical_prop, physical_value)
+            if priority is not None:
+                result.cascade_priority[physical_prop] = priority
+            result.important[physical_prop] = important
     return result
 
 
@@ -2898,9 +3806,32 @@ def generate_style_code(
                 continue
             if prop == 'background-clip':
                 val = _select_background_clip_layer(styles, val)
+            if prop in ('background', 'background-color', 'box-shadow') and 'currentcolor' in val.lower():
+                current = styles.get('color', 'black')
+                if parse_color(current) is None:
+                    current = 'black'
+                val = re.sub(r'(?i)currentcolor', current, val)
+            if prop == 'box-shadow' and val.strip().lower() != 'none':
+                current = styles.get('color', 'black')
+                if parse_color(current) is None:
+                    current = 'black'
+                layers = _split_css_layers(val)
+                val = ', '.join(
+                    layer
+                    if any(
+                        parse_color(token) is not None
+                        for token in _split_respecting_parens(layer)
+                    )
+                    else f'{layer} {current}'
+                    for layer in layers
+                )
             code = generate_single_style(prop, val, s, font_size, radius_basis)
             if code:
                 lines.extend(code if isinstance(code, list) else [code])
+
+        if EMIT_PAINT_LAYERS:
+            lines.extend(_background_layers_rust(styles, s, font_size))
+            lines.extend(_border_image_rust(styles, s, font_size))
 
         # CSS display blockification is part of the computed value of floated
         # boxes. Generated builders store computed styles, so materialize it
@@ -2949,6 +3880,11 @@ def generate_single_style(
             'flex': 'Display::Flex',
             'inline-flex': 'Display::InlineFlex',
         }
+        if val in {'flow-root list-item', 'list-item flow-root'}:
+            return [
+                f"{s}.display = Display::ListItem;",
+                f"{s}.list_item_is_flow_root = true;",
+            ]
         if val in mapping:
             return f"{s}.display = {mapping[val]};"
 
@@ -3280,7 +4216,6 @@ def generate_single_style(
             'border-box': 'BackgroundClip::BorderBox',
             'padding-box': 'BackgroundClip::PaddingBox',
             'content-box': 'BackgroundClip::ContentBox',
-            'border-area': 'BackgroundClip::BorderArea',
             'text': 'BackgroundClip::Text',
         }
         if val.strip() in mapping:
@@ -3318,13 +4253,25 @@ def generate_single_style(
                 f"{s}.background_linear_gradient = None;",
             ]
         lines = []
+        shorthand_layers = _split_css_layers(val)
+        if shorthand_layers:
+            color_layer = _parse_background_shorthand_layer(
+                shorthand_layers[-1], font_size
+            )
+            if color_layer.get('clip'):
+                lines.append(f"{s}.background_clip = {color_layer['clip']};")
         gradient = _linear_gradient_rust(val)
         gradient_function = _linear_gradient_function(val)
         if gradient:
             lines.append(f"{s}.background_linear_gradient = {gradient};")
         # Try extracting color from complex shorthand
         # background: <color> url(...) ... or <color> <other>
-        remainder = gradient_function[1] if gradient_function else val
+        extracted_image = _extract_css_image(val)
+        remainder = (
+            extracted_image[1]
+            if extracted_image
+            else (gradient_function[1] if gradient_function else val)
+        )
         parts = remainder.split()
         for part in parts:
             part = part.strip()
@@ -3381,7 +4328,7 @@ def generate_single_style(
 
         shadow_strs = []
         for shadow in shadows_raw:
-            tokens = shadow.split()
+            tokens = _split_respecting_parens(shadow)
             inset = False
             clean_tokens = []
             for t in tokens:
@@ -3391,37 +4338,20 @@ def generate_single_style(
                     clean_tokens.append(t)
             tokens = clean_tokens
 
-            # Reconstitute tokens to handle multi-word colors like rgb(...)
-            # Try to find color from the end first, then from the start
             color_str = None
             numeric_tokens = []
-
-            # Try color from end: take tokens[i:] and check if it's a color
-            found = False
-            for i in range(len(tokens)):
-                test_color_str = ' '.join(tokens[i:])
-                c = parse_color(test_color_str)
-                if c:
-                    color_str = c
-                    numeric_tokens = tokens[:i]
-                    found = True
-                    break
-            if not found:
-                # Try color from start
-                for i in range(len(tokens), 0, -1):
-                    test_color_str = ' '.join(tokens[:i])
-                    c = parse_color(test_color_str)
-                    if c:
-                        color_str = c
-                        numeric_tokens = tokens[i:]
-                        found = True
-                        break
-            if not found:
-                numeric_tokens = tokens
-                color_str = 'Color::from_rgba8(0, 0, 0, 255)'
+            for token in tokens:
+                color = parse_color(token)
+                if color is not None and color_str is None:
+                    color_str = color
+                else:
+                    numeric_tokens.append(token)
+            if color_str is None:
+                color_str = 'Color::BLACK'
 
             # Parse numeric values (offset-x, offset-y, blur, spread)
             vals = []
+            valid_lengths = True
             for t in numeric_tokens:
                 m_px = re.match(r'^(-?[\d.]+)px$', t)
                 if m_px:
@@ -3436,8 +4366,27 @@ def generate_single_style(
                         m_rem = re.match(r'^(-?[\d.]+)rem$', t)
                         if m_rem:
                             vals.append(float(m_rem.group(1)) * 16.0)
+                        elif t.startswith('calc(') and t.endswith(')'):
+                            total = 0.0
+                            inner = t[5:-1].replace('-', '+-')
+                            for term in inner.split('+'):
+                                term = term.strip()
+                                if not term:
+                                    continue
+                                match = re.fullmatch(r'(-?[\d.]+)(px|em|rem|pt)', term)
+                                if not match:
+                                    valid_lengths = False
+                                    break
+                                scale = {
+                                    'px': 1.0, 'em': font_size,
+                                    'rem': 16.0, 'pt': 4.0 / 3.0,
+                                }[match.group(2)]
+                                total += float(match.group(1)) * scale
+                            vals.append(total)
+                        else:
+                            valid_lengths = False
 
-            if len(vals) >= 2:
+            if valid_lengths and 2 <= len(vals) <= 4 and (len(vals) < 3 or vals[2] >= 0.0):
                 ox, oy = vals[0], vals[1]
                 blur = vals[2] if len(vals) > 2 else 0.0
                 spread = vals[3] if len(vals) > 3 else 0.0
@@ -4916,8 +5865,8 @@ def generate_rust_fn(
     # CSS-wide `inherit` can apply to any property; keep explicit parent
     # values for non-inherited properties that WPT coverage exercises.
     EXPLICIT_INHERIT_PROPS = INHERITED_PROPS | {
-        'background', 'background-color', 'background-clip', 'font-family',
-        'list-style-position',
+        'background', 'background-color', 'background-clip', 'box-shadow',
+        'font-family', 'list-style-position',
         'column-count', 'column-width', 'column-height', 'column-gap',
         'column-fill', 'column-span', 'column-wrap',
         'column-rule-width', 'column-rule-style', 'column-rule-color',
@@ -4927,6 +5876,7 @@ def generate_rust_fn(
         'background': 'transparent',
         'background-color': 'transparent',
         'background-clip': 'border-box',
+        'box-shadow': 'none',
         'column-count': 'auto',
         'column-width': 'auto',
         'column-height': 'auto',
@@ -5208,6 +6158,12 @@ def generate_rust_fn(
         else:
             element_tag = "ElementTag::Div"
         lines.append(f"{ws}let {var} = doc.create_node({element_tag});")
+        scroll_left = getattr(node, 'scroll_left', 0.0)
+        scroll_top = getattr(node, 'scroll_top', 0.0)
+        if scroll_left:
+            lines.append(f"{ws}doc.node_mut({var}).scroll_left = {scroll_left};")
+        if scroll_top:
+            lines.append(f"{ws}doc.node_mut({var}).scroll_top = {scroll_top};")
         if RETAIN_TEXT and not is_real_font_profile():
             lines.append(
                 f'{ws}doc.node_mut({var}).style.font_family = '
@@ -5229,7 +6185,8 @@ def generate_rust_fn(
                       'dl', 'dt', 'dd', 'ol', 'ul', 'menu', 'li', 'hr', 'table'}
         supported_display_values = {
             'block', 'inline', 'inline-block', 'none', 'flow-root',
-            'contents', 'list-item', 'flex', 'inline-flex',
+            'contents', 'list-item', 'flow-root list-item',
+            'list-item flow-root', 'flex', 'inline-flex',
         }
         display_value = node.styles.get('display', '').strip()
         if not RETAIN_TEXT and node.tag == 'li' and (
@@ -5278,6 +6235,15 @@ def generate_rust_fn(
             for prop in sorted(INHERITED_PROPS):
                 if prop in inherited and prop not in effective_styles:
                     effective_styles[prop] = inherited[prop]
+            if (
+                node.tag in ('i', 'em')
+                and 'font-style' not in node.styles
+                and 'font' not in node.styles
+            ):
+                # HTML's UA sheet gives semantic emphasis an italic used
+                # style. Generated documents have no UA cascade, so retain
+                # that style in the real-font profile unless author CSS wins.
+                effective_styles['font-style'] = 'italic'
         if (
             RETAIN_TEXT
             and node.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6')
@@ -5715,6 +6681,15 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
         # Find bare tag selectors (e.g.  "p {" or "div {")
         for m in re.finditer(r'(?:^|[},;])\s*([a-zA-Z][a-zA-Z0-9]*)\s*\{', inner):
             css_targeted_tags.add(m.group(1).lower())
+        # Preserve elements targeted by compound selectors too (`.box p`,
+        # `main > div`). Dropping such an empty box changes paint geometry
+        # even when its text node is intentionally stripped.
+        for rule in re.finditer(r'([^{}]+)\{', inner):
+            selector = re.sub(r'/\*.*?\*/', '', rule.group(1), flags=re.DOTALL)
+            for m in re.finditer(
+                r'(?:^|[\s>+~])([a-zA-Z][a-zA-Z0-9-]*)', selector
+            ):
+                css_targeted_tags.add(m.group(1).lower())
 
     class TextStripper(HTMLParser):
         """Remove text nodes and unstyled heading/p tags from HTML, preserving element structure.
@@ -5779,7 +6754,7 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
                 if v is None:
                     attr_str += f' {k}'
                 else:
-                    attr_str += f' {k}="{v}"'
+                    attr_str += f' {k}="{html_module.escape(v, quote=True)}"'
             self.out.write(f'<{tag}{attr_str}>')
             if tag == 'style':
                 self.in_style = True
@@ -5837,6 +6812,8 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     if RETAIN_TEXT and not is_real_font_profile():
         # Deterministic-font override LAST so it wins the cascade.
         template = template + '\n' + TEXT_TEMPLATE_OVERRIDE
+    if EMIT_PAINT_LAYERS:
+        template = _embed_paint_asset_urls(template)
     if root_aware:
         template = '<!--OPENUI_ROOT_AWARE-->\n' + template
     return template

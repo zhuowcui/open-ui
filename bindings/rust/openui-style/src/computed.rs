@@ -45,6 +45,7 @@ pub enum GradientStopPosition {
     Auto,
     Percent(f32),
     Px(f32),
+    Calc { percent: f32, px: f32 },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -63,6 +64,196 @@ pub struct LinearGradient {
     pub stops: Vec<LinearGradientStop>,
 }
 
+/// Stable handle to an encoded image resource owned by the document.
+///
+/// Keeping this handle in computed style avoids leaking Skia types into style
+/// or layout and makes generated documents deterministic and self-contained.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct ImageResourceId(pub u32);
+
+impl ImageResourceId {
+    pub const fn new(value: u32) -> Self {
+        Self(value)
+    }
+
+    pub const fn index(self) -> usize {
+        self.0 as usize
+    }
+}
+
+/// A resolved stop used by the production background-image model.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct GradientStop {
+    pub color: StyleColor,
+    pub position: GradientStopPosition,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GradientColorSpace {
+    Srgb,
+    Hsl,
+    Oklch,
+}
+
+#[derive(Debug, Clone)]
+pub struct CssLinearGradient {
+    pub angle_degrees: f32,
+    /// Normalized keyword direction for `to <corner>`. Corner keywords are
+    /// aspect-ratio dependent and therefore cannot be lowered to an angle at
+    /// computed-value time.
+    pub corner_direction: Option<(f32, f32)>,
+    pub repeating: bool,
+    pub color_space: GradientColorSpace,
+    pub stops: Vec<GradientStop>,
+}
+
+/// One component of a CSS background position.
+#[derive(Debug, Clone, Copy)]
+pub enum BackgroundPosition {
+    /// Percentage of the remaining space (`0%`, `50%`, `100%`).
+    Percent(f32),
+    /// Fixed/calculated offset from the start edge.
+    Length(Length),
+    /// Offset from a named edge. Percentages are relative to the positioning
+    /// area, as required by the four-value background-position syntax.
+    Edge { end: bool, offset: Length },
+}
+
+impl BackgroundPosition {
+    pub const fn start() -> Self {
+        Self::Percent(0.0)
+    }
+
+    pub const fn center() -> Self {
+        Self::Percent(50.0)
+    }
+}
+
+/// Per-axis background tiling mode.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BackgroundRepeat {
+    Repeat,
+    NoRepeat,
+    Round,
+    Space,
+}
+
+/// CSS background-size for one image layer.
+#[derive(Debug, Clone)]
+pub enum BackgroundSize {
+    Auto,
+    Explicit(Length, Length),
+    Cover,
+    Contain,
+}
+
+/// Radial-gradient shape.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RadialGradientShape {
+    Circle,
+    Ellipse,
+}
+
+/// Radial-gradient extent or explicit radii.
+#[derive(Debug, Clone)]
+pub enum RadialGradientSize {
+    ClosestSide,
+    ClosestCorner,
+    FarthestSide,
+    FarthestCorner,
+    Explicit(Length, Length),
+}
+
+#[derive(Debug, Clone)]
+pub struct RadialGradient {
+    pub repeating: bool,
+    pub color_space: GradientColorSpace,
+    pub shape: RadialGradientShape,
+    pub size: RadialGradientSize,
+    pub center_x: BackgroundPosition,
+    pub center_y: BackgroundPosition,
+    pub stops: Vec<GradientStop>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ConicGradient {
+    /// CSS angle: 0deg points up and positive angles turn clockwise.
+    pub from_degrees: f32,
+    pub center_x: BackgroundPosition,
+    pub center_y: BackgroundPosition,
+    pub repeating: bool,
+    pub color_space: GradientColorSpace,
+    pub stops: Vec<GradientStop>,
+}
+
+/// Paintable CSS image independent of the raster backend.
+#[derive(Debug, Clone)]
+pub enum CssImage {
+    Raster(ImageResourceId),
+    LinearGradient(CssLinearGradient),
+    RadialGradient(RadialGradient),
+    ConicGradient(ConicGradient),
+}
+
+/// One comma-separated CSS background layer. Layers remain in author order;
+/// paint traverses them back-to-front.
+#[derive(Debug, Clone)]
+pub struct BackgroundLayer {
+    pub image: CssImage,
+    pub repeat_x: BackgroundRepeat,
+    pub repeat_y: BackgroundRepeat,
+    pub position_x: BackgroundPosition,
+    pub position_y: BackgroundPosition,
+    pub size: BackgroundSize,
+    pub origin: BackgroundClip,
+    pub clip: BackgroundClip,
+    pub attachment: BackgroundAttachment,
+}
+
+impl BackgroundLayer {
+    pub fn new(image: CssImage) -> Self {
+        Self {
+            image,
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::start(),
+            position_y: BackgroundPosition::start(),
+            size: BackgroundSize::Auto,
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        }
+    }
+}
+
+/// Number, length/percentage, or `auto` component used by border-image.
+#[derive(Debug, Clone)]
+pub enum BorderImageLength {
+    Number(f32),
+    Length(Length),
+    Auto,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BorderImageRepeat {
+    Stretch,
+    Repeat,
+    Round,
+    Space,
+}
+
+/// Computed nine-slice border-image metadata.
+#[derive(Debug, Clone)]
+pub struct BorderImage {
+    pub source: CssImage,
+    pub slice: [BorderImageLength; 4],
+    pub fill: bool,
+    pub width: [BorderImageLength; 4],
+    pub outset: [BorderImageLength; 4],
+    pub repeat_x: BorderImageRepeat,
+    pub repeat_y: BorderImageRepeat,
+}
+
 /// The complete resolved style for an element.
 ///
 /// Mirrors Blink's `ComputedStyle`. Only the properties needed for SP9
@@ -74,6 +265,13 @@ pub struct ComputedStyle {
     // ── Display & Positioning (bit-packed in Blink) ──────────────────
     /// CSS `display`. Initial: `inline` (Blink's `EDisplay::kInline`).
     pub display: Display,
+
+    /// Whether a list-item's inner display type is `flow-root`.
+    ///
+    /// `display: flow-root list-item` still generates a list-item principal
+    /// box and marker, but unlike the ordinary `list-item` value its contents
+    /// establish an independent block formatting context.
+    pub list_item_is_flow_root: bool,
 
     /// CSS `list-style-position`. Initial: `outside`.
     pub list_style_position: ListStylePosition,
@@ -238,11 +436,18 @@ pub struct ComputedStyle {
     /// First CSS linear-gradient background-image layer. Initial: `none`.
     pub background_linear_gradient: Option<LinearGradient>,
 
+    /// Complete comma-separated background-image list. Empty keeps the
+    /// historical `background_linear_gradient` compatibility path active.
+    pub background_layers: Vec<BackgroundLayer>,
+
     /// CSS `background-clip`. Initial: `border-box`.
     pub background_clip: BackgroundClip,
 
     /// CSS `background-attachment`. Initial: `scroll`.
     pub background_attachment: BackgroundAttachment,
+
+    /// CSS border-image metadata. Initial: none.
+    pub border_image: Option<BorderImage>,
 
     /// CSS `color` (inherited). Initial: `black` (CanvasText in Blink,
     /// but we use black for simplicity — matches most user agents).
@@ -597,6 +802,7 @@ impl ComputedStyle {
     pub fn initial() -> Self {
         Self {
             display: Display::INITIAL, // inline
+            list_item_is_flow_root: false,
             list_style_position: ListStylePosition::Outside,
             list_style_type: ListStyleType::Disc,
             position: Position::INITIAL, // static
@@ -668,8 +874,10 @@ impl ComputedStyle {
 
             background_color: Color::TRANSPARENT,
             background_linear_gradient: None,
+            background_layers: Vec::new(),
             background_clip: BackgroundClip::BorderBox,
             background_attachment: BackgroundAttachment::Scroll,
+            border_image: None,
             color: Color::BLACK,
             opacity: 1.0,
             box_shadow: Vec::new(),
@@ -878,6 +1086,7 @@ impl ComputedStyle {
         // absolutely positioned, floated — all create new BFC.
         // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
         self.display.is_new_formatting_context()
+            || (self.display == Display::ListItem && self.list_item_is_flow_root)
             || self.position.is_absolutely_positioned()
             || self.float != Float::None
             || self.is_scroll_container()

@@ -57,6 +57,11 @@ pub struct LineBreaker<'a> {
     writing_direction: WritingDirectionMode,
     /// CSS `hyphens` property value for the block container.
     hyphens: Hyphens,
+    /// Whether a float precedes later in-flow text in this formatting context.
+    /// Blink retains native fixed-point truncation for the affected advances
+    /// because the float exclusion geometry is already quantized. A trailing
+    /// float cannot retroactively change earlier text advances.
+    float_precedes_in_flow_text: bool,
     /// Hyphenation engine for `hyphens: auto` (lazily initialized).
     hyphenation: Option<Hyphenation>,
     /// Pre-computed byte-to-char mapping for O(1) lookups.
@@ -92,6 +97,7 @@ impl<'a> LineBreaker<'a> {
             containing_block_width,
             writing_direction: WritingDirectionMode::horizontal_ltr(),
             hyphens: Hyphens::Manual,
+            float_precedes_in_flow_text: false,
             hyphenation: None,
             char_map,
         }
@@ -111,6 +117,10 @@ impl<'a> LineBreaker<'a> {
     /// projected and painted at the inline-layout boundary.
     pub(crate) fn set_writing_direction(&mut self, writing_direction: WritingDirectionMode) {
         self.writing_direction = writing_direction;
+    }
+
+    pub(crate) fn set_float_precedes_in_flow_text(&mut self, value: bool) {
+        self.float_precedes_in_flow_text = value;
     }
 
     /// Configure hyphenation from computed style properties.
@@ -173,6 +183,55 @@ impl<'a> LineBreaker<'a> {
                 InlineItemType::OpenTag => {
                     let style = &self.items_data.styles[item.style_index];
                     let pct_base = self.containing_block_width;
+                    let has_inline_wrap_geometry = style.box_decoration_break
+                        == openui_style::BoxDecorationBreak::Clone
+                        || style.effective_border_left() != 0
+                        || style.effective_border_right() != 0
+                        || resolve_margin_or_padding(&style.margin_left, pct_base)
+                            != LayoutUnit::zero()
+                        || resolve_margin_or_padding(&style.margin_right, pct_base)
+                            != LayoutUnit::zero()
+                        || resolve_margin_or_padding(&style.padding_left, pct_base)
+                            != LayoutUnit::zero()
+                        || resolve_margin_or_padding(&style.padding_right, pct_base)
+                            != LayoutUnit::zero()
+                        || self.has_leading_out_of_flow_placeholder_inside_inline_box(
+                            self.current_item,
+                        );
+                    if line.has_content()
+                        && allows_line_wrap(self.container_white_space)
+                        && has_inline_wrap_geometry
+                    {
+                        let quantization_slack = LayoutUnit::from_raw(
+                            i32::try_from(line.items.len().saturating_add(1)).unwrap_or(i32::MAX),
+                        );
+                        let external_soft_opportunity =
+                            self.has_soft_opportunity_before_inline_box(&line);
+                        let internal_soft_opportunity = self
+                            .has_leading_soft_opportunity_inside_inline_box(self.current_item)
+                            || (external_soft_opportunity
+                                && self.has_leading_out_of_flow_placeholder_inside_inline_box(
+                                    self.current_item,
+                                ));
+                        let needed = if internal_soft_opportunity {
+                            Some(self.inline_box_empty_fragment_width(self.current_item))
+                        } else if external_soft_opportunity {
+                            Some(self.inline_box_min_content_width(self.current_item))
+                        } else {
+                            None
+                        };
+                        if needed.is_some_and(|needed| {
+                            needed > line.remaining_width() + quantization_slack
+                        }) {
+                            // External whitespace tests the full leading
+                            // min-content unit. Internal leading whitespace
+                            // tests only the empty first decoration fragment;
+                            // consume OpenTag when that fragment fits so line
+                            // construction retains it before wrapping.
+                            state = LineState::Done;
+                            continue;
+                        }
+                    }
                     let mbp = if style.direction == openui_style::Direction::Rtl {
                         resolve_margin_or_padding(&style.margin_right, pct_base)
                             + LayoutUnit::from_i32(style.effective_border_right())
@@ -259,6 +318,182 @@ impl<'a> LineBreaker<'a> {
         Some(line)
     }
 
+    fn has_soft_opportunity_before_inline_box(&self, line: &LineInfo) -> bool {
+        if line.items.iter().rev().find_map(|result| {
+            if result.item_type != InlineItemType::Text {
+                return None;
+            }
+            let item = &self.items_data.items[result.item_index];
+            let style = &self.items_data.styles[item.style_index];
+            Some(
+                allows_line_wrap(style.white_space)
+                    && self.items_data.text[result.text_range.clone()]
+                        .chars()
+                        .next_back()
+                        .is_some_and(char::is_whitespace),
+            )
+        }) == Some(true)
+        {
+            return true;
+        }
+
+        false
+    }
+
+    fn has_leading_soft_opportunity_inside_inline_box(&self, open_index: usize) -> bool {
+        let mut depth = 0usize;
+        for candidate in &self.items_data.items[open_index..] {
+            match candidate.item_type {
+                InlineItemType::OpenTag => depth += 1,
+                InlineItemType::CloseTag => {
+                    depth = depth.saturating_sub(1);
+                    if depth == 0 {
+                        break;
+                    }
+                }
+                InlineItemType::Text => {
+                    let style = &self.items_data.styles[candidate.style_index];
+                    return allows_line_wrap(style.white_space)
+                        && self.items_data.text[candidate.text_range.clone()]
+                            .chars()
+                            .next()
+                            .is_some_and(char::is_whitespace);
+                }
+                InlineItemType::AtomicInline => {
+                    let style = &self.items_data.styles[candidate.style_index];
+                    if !style.position.is_absolutely_positioned() {
+                        return false;
+                    }
+                }
+                InlineItemType::Control | InlineItemType::BlockInInline => {}
+            }
+        }
+        false
+    }
+
+    fn has_leading_out_of_flow_placeholder_inside_inline_box(&self, open_index: usize) -> bool {
+        let open = &self.items_data.items[open_index];
+        self.items_data.oof_children.iter().any(|placeholder| {
+            placeholder.inline_containing_block == Some(open.node_id)
+                && placeholder.item_index == open_index + 1
+        })
+    }
+
+    fn inline_box_empty_fragment_width(&self, open_index: usize) -> LayoutUnit {
+        let item = &self.items_data.items[open_index];
+        let style = &self.items_data.styles[item.style_index];
+        let start = if style.direction == openui_style::Direction::Rtl {
+            resolve_margin_or_padding(&style.margin_right, self.containing_block_width)
+                + LayoutUnit::from_i32(style.effective_border_right())
+                + resolve_margin_or_padding(&style.padding_right, self.containing_block_width)
+        } else {
+            resolve_margin_or_padding(&style.margin_left, self.containing_block_width)
+                + LayoutUnit::from_i32(style.effective_border_left())
+                + resolve_margin_or_padding(&style.padding_left, self.containing_block_width)
+        };
+        if style.box_decoration_break != openui_style::BoxDecorationBreak::Clone {
+            return start;
+        }
+        start
+            + if style.direction == openui_style::Direction::Rtl {
+                resolve_margin_or_padding(&style.padding_left, self.containing_block_width)
+                    + LayoutUnit::from_i32(style.effective_border_left())
+                    + resolve_margin_or_padding(&style.margin_left, self.containing_block_width)
+            } else {
+                resolve_margin_or_padding(&style.padding_right, self.containing_block_width)
+                    + LayoutUnit::from_i32(style.effective_border_right())
+                    + resolve_margin_or_padding(&style.margin_right, self.containing_block_width)
+            }
+    }
+
+    fn inline_box_min_content_width(&self, open_index: usize) -> LayoutUnit {
+        let mut depth = 0usize;
+        let mut edges = LayoutUnit::zero();
+        let mut widest_text = LayoutUnit::zero();
+        for (relative_index, candidate) in self.items_data.items[open_index..].iter().enumerate() {
+            let item_index = open_index + relative_index;
+            let style = &self.items_data.styles[candidate.style_index];
+            match candidate.item_type {
+                InlineItemType::OpenTag => {
+                    depth += 1;
+                    edges = edges
+                        + if style.direction == openui_style::Direction::Rtl {
+                            resolve_margin_or_padding(
+                                &style.margin_right,
+                                self.containing_block_width,
+                            ) + LayoutUnit::from_i32(style.effective_border_right())
+                                + resolve_margin_or_padding(
+                                    &style.padding_right,
+                                    self.containing_block_width,
+                                )
+                        } else {
+                            resolve_margin_or_padding(
+                                &style.margin_left,
+                                self.containing_block_width,
+                            ) + LayoutUnit::from_i32(style.effective_border_left())
+                                + resolve_margin_or_padding(
+                                    &style.padding_left,
+                                    self.containing_block_width,
+                                )
+                        };
+                }
+                InlineItemType::CloseTag => {
+                    edges = edges
+                        + if style.direction == openui_style::Direction::Rtl {
+                            resolve_margin_or_padding(
+                                &style.padding_left,
+                                self.containing_block_width,
+                            ) + LayoutUnit::from_i32(style.effective_border_left())
+                                + resolve_margin_or_padding(
+                                    &style.margin_left,
+                                    self.containing_block_width,
+                                )
+                        } else {
+                            resolve_margin_or_padding(
+                                &style.padding_right,
+                                self.containing_block_width,
+                            ) + LayoutUnit::from_i32(style.effective_border_right())
+                                + resolve_margin_or_padding(
+                                    &style.margin_right,
+                                    self.containing_block_width,
+                                )
+                        };
+                    depth = depth.saturating_sub(1);
+                    if depth == 0 {
+                        break;
+                    }
+                }
+                InlineItemType::Text => {
+                    let text = &self.items_data.text[candidate.text_range.clone()];
+                    if allows_line_wrap(style.white_space) {
+                        let mut search_start = 0usize;
+                        for word in text.split_whitespace() {
+                            let offset = text[search_start..].find(word).unwrap_or(0);
+                            let start = candidate.text_range.start + search_start + offset;
+                            let end = start + word.len();
+                            widest_text =
+                                widest_text.max_of(self.measure_text_range(item_index, start, end));
+                            search_start += offset + word.len();
+                        }
+                    } else {
+                        widest_text = widest_text.max_of(self.measure_text_range(
+                            item_index,
+                            candidate.text_range.start,
+                            candidate.text_range.end,
+                        ));
+                    }
+                }
+                InlineItemType::AtomicInline => {
+                    if let Some((min, _)) = candidate.intrinsic_inline_size {
+                        widest_text = widest_text.max_of(LayoutUnit::from_f32(min));
+                    }
+                }
+                InlineItemType::Control | InlineItemType::BlockInInline => {}
+            }
+        }
+        edges + widest_text
+    }
+
     /// Handle a text item — measure, find break opportunities, break if needed.
     fn handle_text(&mut self, item_index: usize, line: &mut LineInfo, state: &mut LineState) {
         let item = &self.items_data.items[item_index];
@@ -306,13 +541,24 @@ impl<'a> LineBreaker<'a> {
             allows_line_wrap(style.white_space) && allows_line_wrap(self.container_white_space);
 
         // Measure the text
+        let truncates_collapsible_boundary = uses_truncated_collapsible_boundary(
+            &self.items_data.items,
+            &self.items_data.styles,
+            item_index,
+            text_slice,
+        );
         let text_width = if let Some(ref sr) = item.shape_result {
             let char_start = self.char_map.get(text_start);
             let char_end = self.char_map.get(text_end);
             let item_char_start = self.char_map.get(item.text_range.start);
             let local_start = char_start - item_char_start;
             let local_end = char_end - item_char_start;
-            LayoutUnit::from_f32(sr.width_for_range(local_start, local_end))
+            let width = sr.width_for_range(local_start, local_end);
+            if truncates_collapsible_boundary || self.float_precedes_in_flow_text {
+                LayoutUnit::from_f32(width)
+            } else {
+                LayoutUnit::from_f32_ceil(width)
+            }
         } else {
             LayoutUnit::zero()
         };
@@ -329,10 +575,15 @@ impl<'a> LineBreaker<'a> {
                     let char_start = self.char_map.get(text_start);
                     let char_end = self.char_map.get(text_end);
                     let item_char_start = self.char_map.get(item.text_range.start);
-                    LayoutUnit::from_f32(sr.width_for_range(
+                    let width = sr.width_for_range(
                         char_start - item_char_start,
                         char_end.saturating_sub(1) - item_char_start,
-                    ))
+                    );
+                    if truncates_collapsible_boundary || self.float_precedes_in_flow_text {
+                        LayoutUnit::from_f32(width)
+                    } else {
+                        LayoutUnit::from_f32_ceil(width)
+                    }
                 })
             } else {
                 text_width
@@ -399,7 +650,7 @@ impl<'a> LineBreaker<'a> {
             let font_desc = style_to_font_description(style);
             let font = Font::new(font_desc);
             let sr = shaper.shape("-", &font, openui_text::TextDirection::Ltr);
-            LayoutUnit::from_f32(sr.width)
+            LayoutUnit::from_f32_ceil(sr.width)
         };
 
         if let Some(ref sr) = item.shape_result {
@@ -429,14 +680,14 @@ impl<'a> LineBreaker<'a> {
                 let break_char = self.char_map.get(measured_break_byte);
                 let local_start = char_start - item_char_start;
                 let local_end = break_char - item_char_start;
-                let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                let width = LayoutUnit::from_f32_ceil(sr.width_for_range(local_start, local_end));
                 // Keep the collapsible trailing space in the line item's
                 // stored advance. `strip_trailing_spaces` removes it after
                 // construction. Storing the already-trimmed fit width here
                 // made that pass subtract the space twice (turning `AA ` into
                 // one A for geometry even though both glyphs were painted).
                 let raw_break_char = self.char_map.get(break_byte);
-                let raw_width = LayoutUnit::from_f32(
+                let raw_width = LayoutUnit::from_f32_ceil(
                     sr.width_for_range(local_start, raw_break_char - item_char_start),
                 );
                 let is_shy = brk < text_slice.len() && text_slice[brk..].starts_with('\u{00AD}');
@@ -446,7 +697,7 @@ impl<'a> LineBreaker<'a> {
                 } else {
                     width
                 };
-                if effective_width <= remaining {
+                if effective_width <= remaining + quantization_slack {
                     best_break = Some(brk);
                     best_width = raw_width;
                     best_is_hyphen = is_shy;
@@ -464,6 +715,11 @@ impl<'a> LineBreaker<'a> {
                 // Can't fit anything — if line is empty, force overflow
                 if !line.has_content() {
                     self.force_text_on_line(item_index, text_start, text_end, text_width, line);
+                    // The forced run may be followed by zero-width inline
+                    // structure or a <br>. Keep consuming so a break belongs
+                    // to this overfull line instead of creating an extra
+                    // empty line of its own.
+                    return;
                 }
                 *state = LineState::Done;
                 return;
@@ -524,10 +780,14 @@ impl<'a> LineBreaker<'a> {
                             self.current_text_offset = break_byte;
                         } else {
                             // No later opportunity exists; force the whole
-                            // unbreakable item to guarantee progress.
+                            // unbreakable item to guarantee progress. Continue
+                            // through following inline tags and a forced break;
+                            // another paintable item will still end the
+                            // already-overfull line normally.
                             self.force_text_on_line(
                                 item_index, text_start, text_end, text_width, line,
                             );
+                            return;
                         }
                         *state = LineState::Done;
                     } else {
@@ -596,7 +856,7 @@ impl<'a> LineBreaker<'a> {
             let font_desc = style_to_font_description(style);
             let font = Font::new(font_desc);
             let sr = shaper.shape("-", &font, openui_text::TextDirection::Ltr);
-            LayoutUnit::from_f32(sr.width)
+            LayoutUnit::from_f32_ceil(sr.width)
         };
 
         if let Some(ref sr) = item.shape_result {
@@ -614,7 +874,7 @@ impl<'a> LineBreaker<'a> {
                 let break_char = self.char_map.get(break_byte);
                 let local_start = char_start - item_char_start;
                 let local_end = break_char - item_char_start;
-                let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                let width = LayoutUnit::from_f32_ceil(sr.width_for_range(local_start, local_end));
 
                 if width + hyphen_advance <= remaining {
                     line.items.push(InlineItemResult {
@@ -707,7 +967,7 @@ impl<'a> LineBreaker<'a> {
                                 let brk_char = self.char_map.get(brk_byte);
                                 let local_start = char_start - item_char_start;
                                 let local_end = brk_char - item_char_start;
-                                let width = LayoutUnit::from_f32(
+                                let width = LayoutUnit::from_f32_ceil(
                                     sr.width_for_range(local_start, local_end),
                                 );
                                 if width <= remaining {
@@ -825,8 +1085,9 @@ impl<'a> LineBreaker<'a> {
                             let brk_char = self.char_map.get(brk_byte);
                             let local_start = char_start - item_char_start;
                             let local_end = brk_char - item_char_start;
-                            let width =
-                                LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                            let width = LayoutUnit::from_f32_ceil(
+                                sr.width_for_range(local_start, local_end),
+                            );
                             if width <= remaining {
                                 best_break = Some(brk);
                                 best_width = width;
@@ -923,7 +1184,7 @@ impl<'a> LineBreaker<'a> {
                 }
                 let local_start = char_start - item_char_start;
                 let local_end = local_break;
-                let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                let width = LayoutUnit::from_f32_ceil(sr.width_for_range(local_start, local_end));
                 if width <= remaining {
                     best_byte = Some(break_byte);
                     best_width = width;
@@ -956,7 +1217,7 @@ impl<'a> LineBreaker<'a> {
                         let local_start = char_start - item_char_start;
                         let local_end = break_char - item_char_start;
                         let width =
-                            LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                            LayoutUnit::from_f32_ceil(sr.width_for_range(local_start, local_end));
                         if width <= remaining {
                             best_byte = Some(break_byte);
                             best_width = width;
@@ -1116,7 +1377,7 @@ impl<'a> LineBreaker<'a> {
             let char_end = self.char_map.get(end);
             let local_start = char_start - item_char_start;
             let local_end = char_end - item_char_start;
-            LayoutUnit::from_f32(sr.width_for_range(local_start, local_end))
+            LayoutUnit::from_f32_ceil(sr.width_for_range(local_start, local_end))
         } else {
             LayoutUnit::zero()
         }
@@ -1137,6 +1398,33 @@ impl<'a> LineBreaker<'a> {
 /// Uses the actual text on the current line (the item_result's text_range)
 /// rather than the full item's collapse metadata, so that split items are
 /// handled correctly.
+fn uses_truncated_collapsible_boundary(
+    items: &[InlineItem],
+    styles: &[ComputedStyle],
+    item_index: usize,
+    text: &str,
+) -> bool {
+    let Some(item) = items.get(item_index) else {
+        return false;
+    };
+    if item.end_collapse_type != CollapseType::Collapsible || !text.ends_with(' ') {
+        return false;
+    }
+    if styles
+        .get(item.style_index)
+        .is_some_and(|style| style.white_space == WhiteSpace::Nowrap)
+    {
+        return false;
+    }
+    let Some(next) = items.get(item_index + 1) else {
+        return false;
+    };
+    next.item_type == InlineItemType::OpenTag
+        && styles
+            .get(next.style_index)
+            .is_some_and(|style| style.white_space == WhiteSpace::Nowrap)
+}
+
 fn strip_trailing_spaces(
     line: &mut LineInfo,
     items: &[InlineItem],
@@ -1361,6 +1649,20 @@ fn find_uax14_breaks(text: &str) -> Vec<usize> {
             }
         }
     }
+    // CSS collapsible ASCII whitespace remains a soft-wrap opportunity even
+    // when UAX #14 would suppress the boundary because the following
+    // character is closing punctuation (for example `word )`). Chromium can
+    // wrap before that punctuation after discarding the intervening space.
+    // Keep these CSS whitespace opportunities alongside the Unicode set.
+    let chars: Vec<(usize, char)> = text.char_indices().collect();
+    for index in 1..chars.len() {
+        let (byte_offset, _) = chars[index];
+        if matches!(chars[index - 1].1, ' ' | '\t') {
+            breaks.push(byte_offset);
+        }
+    }
+    breaks.sort_unstable();
+    breaks.dedup();
     breaks
 }
 

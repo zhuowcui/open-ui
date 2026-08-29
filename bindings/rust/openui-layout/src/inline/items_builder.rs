@@ -26,7 +26,7 @@ use unicode_segmentation::UnicodeSegmentation;
 
 use super::items::{CollapseType, InlineItem, InlineItemType};
 use crate::fragment::{resolve_text_run_orientation, TextRunOrientation};
-use crate::length_resolver::resolve_margin_or_padding;
+use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 
 /// The collected inline items data — output of the builder.
 #[derive(Clone, Debug)]
@@ -957,6 +957,49 @@ impl<'a> InlineItemsBuilder<'a> {
         let deterministic_text_profile = style.font_family.families.iter().any(|family| {
             matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
         });
+        let own_inline_edges = if child_direction.is_horizontal() {
+            style.effective_border_left() as f32
+                + style.effective_border_right() as f32
+                + resolve_margin_or_padding(
+                    &style.padding_left,
+                    openui_geometry::LayoutUnit::zero(),
+                )
+                .to_f32()
+                + resolve_margin_or_padding(
+                    &style.padding_right,
+                    openui_geometry::LayoutUnit::zero(),
+                )
+                .to_f32()
+        } else {
+            style.effective_border_top() as f32
+                + style.effective_border_bottom() as f32
+                + resolve_margin_or_padding(&style.padding_top, openui_geometry::LayoutUnit::zero())
+                    .to_f32()
+                + resolve_margin_or_padding(
+                    &style.padding_bottom,
+                    openui_geometry::LayoutUnit::zero(),
+                )
+                .to_f32()
+        };
+        let logical_inline_size = if child_direction.is_horizontal() {
+            &style.width
+        } else {
+            &style.height
+        };
+        let specified_intrinsic = (!is_orthogonal && logical_inline_size.is_fixed()).then(|| {
+            let specified = resolve_length(
+                logical_inline_size,
+                openui_geometry::LayoutUnit::zero(),
+                openui_geometry::LayoutUnit::zero(),
+                openui_geometry::LayoutUnit::zero(),
+            )
+            .to_f32();
+            if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                (specified - own_inline_edges).max(0.0)
+            } else {
+                specified
+            }
+        });
         let has_consecutive_floats = deterministic_text_profile
             && self
                 .doc
@@ -965,7 +1008,9 @@ impl<'a> InlineItemsBuilder<'a> {
                 .take(2)
                 .count()
                 >= 2;
-        let intrinsic_max = if self.doc.node(node_id).tag == ElementTag::Ruby {
+        let intrinsic_max = if specified_intrinsic.is_some() {
+            specified_intrinsic
+        } else if self.doc.node(node_id).tag == ElementTag::Ruby {
             self.compute_ruby_intrinsic_inline_size(node_id)
         } else if style.display.is_flex() {
             let anonymous_forced_lines = self
@@ -1016,30 +1061,17 @@ impl<'a> InlineItemsBuilder<'a> {
             .to_f32();
             (size > 0.0).then_some(size)
         } else {
-            // Atomic inline shrink-to-fit sizing must include the complete
-            // formatting-context contribution for consecutive floats. The
-            // legacy recursive text accumulator intentionally excludes them
-            // for ordinary IFC measurement, while its line-row model remains
-            // more precise for non-float atomic content.
-            if has_consecutive_floats {
+            // Generated builders use the complete flattened intrinsic stream
+            // for atomic shrink-to-fit sizing. Besides accounting for floats,
+            // this trims collapsible leading/trailing indentation whitespace
+            // around inline children instead of treating it as authored width.
+            if deterministic_text_profile {
                 let sizes = crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(
                     self.doc, node_id,
                 );
                 // InlineItem::intrinsic_inline_size is a content-box measure;
                 // block_layout applies this atomic element's own edges.
-                let own_edges = style.effective_border_left() as f32
-                    + style.effective_border_right() as f32
-                    + resolve_margin_or_padding(
-                        &style.padding_left,
-                        openui_geometry::LayoutUnit::zero(),
-                    )
-                    .to_f32()
-                    + resolve_margin_or_padding(
-                        &style.padding_right,
-                        openui_geometry::LayoutUnit::zero(),
-                    )
-                    .to_f32();
-                let max = (sizes.max.to_f32() - own_edges).max(0.0);
+                let max = (sizes.max.to_f32() - own_inline_edges).max(0.0);
                 if max > 0.0 {
                     Some(max)
                 } else {
@@ -1051,7 +1083,9 @@ impl<'a> InlineItemsBuilder<'a> {
         };
 
         let intrinsic = intrinsic_max.map(|max| {
-            let min = if !deterministic_text_profile {
+            let min = if specified_intrinsic.is_some() {
+                max
+            } else if !deterministic_text_profile {
                 // Builders outside the pinned fallback profile retain the
                 // legacy single intrinsic measure, which was capped directly
                 // by the available size. A zero min-content endpoint makes the
@@ -1278,10 +1312,31 @@ impl<'a> InlineItemsBuilder<'a> {
                         )
                         .to_f32();
                     let child_bp = bp_left + bp_right;
+                    let child_margin = resolve_margin_or_padding(
+                        &child_style.margin_left,
+                        openui_geometry::LayoutUnit::zero(),
+                    )
+                    .to_f32()
+                        + resolve_margin_or_padding(
+                            &child_style.margin_right,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32();
 
-                    // Non-zero border+padding is itself content even if the
-                    // descendant has no text or children.
-                    if child_bp > 0.0 {
+                    // Ordinary inline boxes contribute their margins to the
+                    // enclosing atomic box's intrinsic line. Atomic inline
+                    // descendants carry their margin separately during line
+                    // construction, so folding it into their intrinsic size
+                    // here would count it twice.
+                    let recursive_margin = if child_style.display.is_block_level()
+                        || child_style.display == Display::Inline
+                    {
+                        child_margin
+                    } else {
+                        0.0
+                    };
+
+                    if child_bp > 0.0 || recursive_margin > 0.0 {
                         has_content = true;
                     }
 
@@ -1295,21 +1350,22 @@ impl<'a> InlineItemsBuilder<'a> {
                             == openui_geometry::LengthType::Fixed
                         {
                             has_content = true;
-                            child_style.width.value() + child_bp
+                            child_style.width.value() + child_bp + recursive_margin
                         } else {
                             let (child_width, child_has_content) =
                                 self.compute_intrinsic_inline_size_recursive(child_id);
                             if child_has_content {
                                 has_content = true;
                             }
-                            child_width + child_bp
+                            child_width + child_bp + recursive_margin
                         };
                         max_width = max_width.max(child_total);
                     } else {
                         // Inline-level children flow horizontally → sum widths.
                         if child_style.width.length_type() == openui_geometry::LengthType::Fixed {
                             has_content = true;
-                            current_inline_row += child_style.width.value() + child_bp;
+                            current_inline_row +=
+                                child_style.width.value() + child_bp + recursive_margin;
                         } else {
                             let (child_width, child_has_content) =
                                 self.compute_intrinsic_inline_size_recursive(child_id);
@@ -1318,9 +1374,9 @@ impl<'a> InlineItemsBuilder<'a> {
                             }
                             // Always add border+padding; add child_width only if child has content.
                             let contrib = if child_has_content {
-                                child_width + child_bp
+                                child_width + child_bp + recursive_margin
                             } else {
-                                child_bp
+                                child_bp + recursive_margin
                             };
                             current_inline_row += contrib;
                         }

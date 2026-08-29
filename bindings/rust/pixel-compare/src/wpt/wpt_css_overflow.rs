@@ -1633,6 +1633,7 @@ fn css_overflow_clip_008() -> Document {
 // Source: display-flex-svg-overflow-default-ref.html
 fn css_overflow_display_flex_svg_overflow_default_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.set_legacy_canvas_body(vp);
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -1643,6 +1644,9 @@ fn css_overflow_display_flex_svg_overflow_default_ref() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.background_color = Color::from_rgba8(173, 216, 230, 255);
+    doc.node_mut(vp).style.background_linear_gradient = None;
+    doc.node_mut(vp).style.background_layers = vec![];
+    doc.node_mut(vp).style.background_linear_gradient = None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
@@ -1657,6 +1661,9 @@ fn css_overflow_display_flex_svg_overflow_default_ref() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.background_linear_gradient = None;
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -10942,13 +10949,16 @@ fn css_overflow_overflow_body_propagation_013() -> Document {
 // Source: css-overflow/scrollbar-gutter-with-background-gradient.html
 fn css_overflow_scrollbar_gutter_with_background_gradient() -> Document {
     let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(html).style.margin_top = Length::px(0.0);
     doc.node_mut(html).style.margin_right = Length::px(0.0);
     doc.node_mut(html).style.margin_bottom = Length::px(0.0);
@@ -10958,6 +10968,48 @@ fn css_overflow_scrollbar_gutter_with_background_gradient() -> Document {
     doc.node_mut(html).style.padding_bottom = Length::px(0.0);
     doc.node_mut(html).style.padding_left = Length::px(0.0);
     doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.scrollbar_gutter = ScrollbarGutter::StableBothEdges;
+    doc.node_mut(html).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 90.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::BLUE,
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
+    doc.node_mut(html).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(html).style.background_linear_gradient = None;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -10968,19 +11020,32 @@ fn css_overflow_scrollbar_gutter_with_background_gradient() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     doc
 }
 
 // Source: css-overflow/scrollbar-gutter-with-background-gradient-ref.html
 fn css_overflow_scrollbar_gutter_with_background_gradient_ref() -> Document {
     let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(html).style.margin_top = Length::px(0.0);
     doc.node_mut(html).style.margin_right = Length::px(0.0);
     doc.node_mut(html).style.margin_bottom = Length::px(0.0);
@@ -10990,11 +11055,53 @@ fn css_overflow_scrollbar_gutter_with_background_gradient_ref() -> Document {
     doc.node_mut(html).style.padding_bottom = Length::px(0.0);
     doc.node_mut(html).style.padding_left = Length::px(0.0);
     doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.scrollbar_gutter = ScrollbarGutter::StableBothEdges;
+    doc.node_mut(html).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 90.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::BLUE,
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(html).style.position = Position::Fixed;
     doc.node_mut(html).style.top = Length::px(0.0);
     doc.node_mut(html).style.right = Length::px(0.0);
     doc.node_mut(html).style.bottom = Length::px(0.0);
     doc.node_mut(html).style.left = Length::px(0.0);
+    doc.node_mut(html).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(html).style.background_linear_gradient = None;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -11005,6 +11112,16 @@ fn css_overflow_scrollbar_gutter_with_background_gradient_ref() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     doc
 }
 

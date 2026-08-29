@@ -18,8 +18,11 @@ use openui_style::{BoxSizing, ColumnSpan, ComputedStyle, FontFamily, WhiteSpace,
 use openui_text::Font;
 
 use crate::block::{resolve_border, resolve_margins, resolve_padding};
-use crate::inline::items_builder::{preprocess_text_for_shaping, style_to_font_description};
-use crate::length_resolver::resolve_length;
+use crate::inline::items::InlineItemType;
+use crate::inline::items_builder::{
+    preprocess_text_for_shaping, style_to_font_description, InlineItemsBuilder,
+};
+use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 
 /// Check if a style represents an inline-level element.
 fn is_inline_level(style: &ComputedStyle) -> bool {
@@ -223,6 +226,417 @@ impl Default for IntrinsicSizes {
     }
 }
 
+#[derive(Clone, Copy)]
+struct IntrinsicInlineBox {
+    node_id: NodeId,
+    start_edge: LayoutUnit,
+    end_edge: LayoutUnit,
+    clone_edges: bool,
+    active_on_segment: bool,
+}
+
+fn inline_start_edge(style: &ComputedStyle) -> LayoutUnit {
+    if style.direction == openui_style::Direction::Rtl {
+        resolve_margin_or_padding(&style.margin_right, LayoutUnit::zero())
+            + LayoutUnit::from_i32(style.effective_border_right())
+            + resolve_margin_or_padding(&style.padding_right, LayoutUnit::zero())
+    } else {
+        resolve_margin_or_padding(&style.margin_left, LayoutUnit::zero())
+            + LayoutUnit::from_i32(style.effective_border_left())
+            + resolve_margin_or_padding(&style.padding_left, LayoutUnit::zero())
+    }
+}
+
+fn inline_end_edge(style: &ComputedStyle) -> LayoutUnit {
+    if style.direction == openui_style::Direction::Rtl {
+        resolve_margin_or_padding(&style.padding_left, LayoutUnit::zero())
+            + LayoutUnit::from_i32(style.effective_border_left())
+            + resolve_margin_or_padding(&style.margin_left, LayoutUnit::zero())
+    } else {
+        resolve_margin_or_padding(&style.padding_right, LayoutUnit::zero())
+            + LayoutUnit::from_i32(style.effective_border_right())
+            + resolve_margin_or_padding(&style.margin_right, LayoutUnit::zero())
+    }
+}
+
+fn active_clone_start_edges(stack: &[IntrinsicInlineBox]) -> LayoutUnit {
+    stack
+        .iter()
+        .filter(|entry| entry.active_on_segment && entry.clone_edges)
+        .fold(LayoutUnit::zero(), |sum, entry| sum + entry.start_edge)
+}
+
+fn active_clone_end_edges(stack: &[IntrinsicInlineBox]) -> LayoutUnit {
+    stack
+        .iter()
+        .rev()
+        .filter(|entry| entry.active_on_segment && entry.clone_edges)
+        .fold(LayoutUnit::zero(), |sum, entry| sum + entry.end_edge)
+}
+
+/// Compute min/max-content sizes over the flattened contents of one IFC.
+///
+/// The ordinary recursive accumulator is correct for block children, but an
+/// IFC needs line-break state across DOM boundaries. This compact scanner is
+/// deliberately fed by `InlineItemsBuilder`, which has already performed CSS
+/// white-space processing and emitted explicit open/close decoration items.
+fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> MinMaxSizes {
+    let container_style = &doc.node(node_id).style;
+    let mut data = InlineItemsBuilder::collect(doc, node_id);
+    let base_direction = if container_style.unicode_bidi == openui_style::UnicodeBidi::Plaintext {
+        None
+    } else if container_style.direction == openui_style::Direction::Rtl {
+        Some(openui_text::TextDirection::Rtl)
+    } else {
+        Some(openui_text::TextDirection::Ltr)
+    };
+    data.apply_bidi(base_direction);
+    data.split_shaping_runs();
+    data.shape_text();
+
+    let mut stack: Vec<IntrinsicInlineBox> = Vec::new();
+    let mut pending_open_edges = LayoutUnit::zero();
+    let mut min_segment = LayoutUnit::zero();
+    let mut min_content = LayoutUnit::zero();
+    let mut soft_break_pending = false;
+    let mut soft_break_after_pending_edges = false;
+    let mut last_content_was_text = false;
+
+    let mut max_line = LayoutUnit::zero();
+    let mut max_content = LayoutUnit::zero();
+    let mut pending_collapsible_space = LayoutUnit::zero();
+    let mut pending_min_collapsible_space = LayoutUnit::zero();
+
+    let commit_soft_segment = |min_segment: &mut LayoutUnit,
+                               min_content: &mut LayoutUnit,
+                               pending_open_edges: &mut LayoutUnit,
+                               stack: &mut [IntrinsicInlineBox]| {
+        *min_content = (*min_content).max_of(*min_segment + active_clone_end_edges(stack));
+        *min_segment = active_clone_start_edges(stack) + *pending_open_edges;
+        *pending_open_edges = LayoutUnit::zero();
+        for entry in stack {
+            entry.active_on_segment = true;
+        }
+    };
+
+    let commit_forced_line =
+        |min_segment: &mut LayoutUnit,
+         min_content: &mut LayoutUnit,
+         pending_open_edges: &mut LayoutUnit,
+         stack: &mut [IntrinsicInlineBox],
+         max_line: &mut LayoutUnit,
+         max_content: &mut LayoutUnit,
+         pending_collapsible_space: &mut LayoutUnit| {
+            *min_segment = *min_segment + *pending_open_edges;
+            *pending_open_edges = LayoutUnit::zero();
+            for entry in stack.iter_mut() {
+                entry.active_on_segment = true;
+            }
+            *min_content = (*min_content).max_of(*min_segment + active_clone_end_edges(stack));
+            *min_segment = active_clone_start_edges(stack);
+            *max_content = (*max_content).max_of(*max_line);
+            *max_line = LayoutUnit::zero();
+            *pending_collapsible_space = LayoutUnit::zero();
+        };
+
+    for item in &data.items {
+        let style = &data.styles[item.style_index];
+        match item.item_type {
+            InlineItemType::OpenTag => {
+                // In max-content mode an inline edge proves that preceding
+                // whitespace is interior rather than trailing. In min-content
+                // mode retain the edge separately until the following content
+                // decides which side of a soft break owns it.
+                max_line = max_line + pending_collapsible_space;
+                pending_collapsible_space = LayoutUnit::zero();
+                let start_edge = inline_start_edge(style);
+                max_line = max_line + start_edge;
+                pending_open_edges = pending_open_edges + start_edge;
+                stack.push(IntrinsicInlineBox {
+                    node_id: item.node_id,
+                    start_edge,
+                    end_edge: inline_end_edge(style),
+                    clone_edges: style.box_decoration_break
+                        == openui_style::BoxDecorationBreak::Clone,
+                    active_on_segment: false,
+                });
+            }
+            InlineItemType::CloseTag => {
+                let position = stack
+                    .iter()
+                    .rposition(|entry| entry.node_id == item.node_id);
+                let entry = position.map(|position| stack.remove(position));
+                if let Some(entry) = entry {
+                    if !entry.active_on_segment {
+                        min_segment = min_segment + pending_open_edges;
+                        pending_open_edges = LayoutUnit::zero();
+                    }
+                    min_segment = min_segment + entry.end_edge;
+                    max_line = max_line + entry.end_edge;
+                } else {
+                    let edge = inline_end_edge(style);
+                    min_segment = min_segment + pending_open_edges + edge;
+                    pending_open_edges = LayoutUnit::zero();
+                    max_line = max_line + edge;
+                }
+                last_content_was_text = false;
+            }
+            InlineItemType::Control => {
+                soft_break_after_pending_edges = false;
+                last_content_was_text = false;
+                pending_min_collapsible_space = LayoutUnit::zero();
+                commit_forced_line(
+                    &mut min_segment,
+                    &mut min_content,
+                    &mut pending_open_edges,
+                    &mut stack,
+                    &mut max_line,
+                    &mut max_content,
+                    &mut pending_collapsible_space,
+                );
+            }
+            InlineItemType::AtomicInline => {
+                min_segment = min_segment + pending_min_collapsible_space;
+                pending_min_collapsible_space = LayoutUnit::zero();
+                if soft_break_pending {
+                    commit_soft_segment(
+                        &mut min_segment,
+                        &mut min_content,
+                        &mut pending_open_edges,
+                        &mut stack,
+                    );
+                } else {
+                    min_segment = min_segment + pending_open_edges;
+                    pending_open_edges = LayoutUnit::zero();
+                    for entry in &mut stack {
+                        entry.active_on_segment = true;
+                    }
+                }
+                soft_break_after_pending_edges = false;
+                last_content_was_text = false;
+
+                let margin = resolve_margins(style, LayoutUnit::zero()).inline_sum();
+                let border = resolve_border(style).inline_sum();
+                let padding = resolve_padding(style, LayoutUnit::zero()).inline_sum();
+                let intrinsic = item
+                    .intrinsic_inline_size
+                    .map(|(min, max)| {
+                        (
+                            LayoutUnit::from_f32(min) + border + padding + margin,
+                            LayoutUnit::from_f32(max) + border + padding + margin,
+                        )
+                    })
+                    .unwrap_or((border + padding + margin, border + padding + margin));
+                min_segment = min_segment + intrinsic.0;
+                max_line = max_line + pending_collapsible_space + intrinsic.1;
+                pending_collapsible_space = LayoutUnit::zero();
+                // Atomic inline-level boxes establish a soft wrap
+                // opportunity at their boundary. Adjacent inline-blocks
+                // therefore contribute their combined width to max-content,
+                // but only the widest box to min-content.
+                soft_break_pending =
+                    !matches!(style.white_space, WhiteSpace::Nowrap | WhiteSpace::Pre)
+                        && !matches!(
+                            container_style.white_space,
+                            WhiteSpace::Nowrap | WhiteSpace::Pre
+                        );
+            }
+            InlineItemType::Text => {
+                let Some(shape) = item.shape_result.as_ref() else {
+                    continue;
+                };
+                let text = &data.text[item.text_range.clone()];
+                let wraps = !matches!(style.white_space, WhiteSpace::Nowrap | WhiteSpace::Pre)
+                    && !matches!(
+                        container_style.white_space,
+                        WhiteSpace::Nowrap | WhiteSpace::Pre
+                    );
+                let collapses = matches!(
+                    style.white_space,
+                    WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
+                );
+                let forces_newlines = matches!(
+                    style.white_space,
+                    WhiteSpace::Pre
+                        | WhiteSpace::PreWrap
+                        | WhiteSpace::PreLine
+                        | WhiteSpace::BreakSpaces
+                );
+
+                let mut run_start = 0usize;
+                let mut run_start_char = 0usize;
+                let chars: Vec<(usize, char)> = text.char_indices().collect();
+                for (index, &(byte_index, ch)) in chars.iter().enumerate() {
+                    let char_end = index + 1;
+                    let byte_end = byte_index + ch.len_utf8();
+                    let is_forced = forces_newlines && ch == '\n';
+                    let is_space = ch.is_whitespace() && !is_forced;
+                    let is_break_all_character =
+                        wraps && style.word_break == WordBreak::BreakAll && !is_space && !is_forced;
+                    if !is_space && !is_forced && !is_break_all_character {
+                        continue;
+                    }
+
+                    if byte_index > run_start {
+                        let width =
+                            LayoutUnit::from_f32_ceil(shape.width_for_range(run_start_char, index));
+                        let max_width = LayoutUnit::from_f32_ceil(shape.width_for_range(0, index))
+                            - LayoutUnit::from_f32_ceil(shape.width_for_range(0, run_start_char));
+                        min_segment = min_segment + pending_min_collapsible_space;
+                        pending_min_collapsible_space = LayoutUnit::zero();
+                        if soft_break_pending {
+                            if soft_break_after_pending_edges {
+                                min_segment = min_segment + pending_open_edges;
+                                pending_open_edges = LayoutUnit::zero();
+                                for entry in &mut stack {
+                                    entry.active_on_segment = true;
+                                }
+                            }
+                            commit_soft_segment(
+                                &mut min_segment,
+                                &mut min_content,
+                                &mut pending_open_edges,
+                                &mut stack,
+                            );
+                        } else {
+                            min_segment = min_segment + pending_open_edges;
+                            pending_open_edges = LayoutUnit::zero();
+                            for entry in &mut stack {
+                                entry.active_on_segment = true;
+                            }
+                        }
+                        soft_break_pending = false;
+                        soft_break_after_pending_edges = false;
+                        last_content_was_text = true;
+                        min_segment = min_segment + width;
+                        max_line = max_line + pending_collapsible_space + max_width;
+                        pending_collapsible_space = LayoutUnit::zero();
+                    }
+
+                    if is_forced {
+                        soft_break_pending = false;
+                        soft_break_after_pending_edges = false;
+                        last_content_was_text = false;
+                        commit_forced_line(
+                            &mut min_segment,
+                            &mut min_content,
+                            &mut pending_open_edges,
+                            &mut stack,
+                            &mut max_line,
+                            &mut max_content,
+                            &mut pending_collapsible_space,
+                        );
+                    } else if is_break_all_character {
+                        let width =
+                            LayoutUnit::from_f32_ceil(shape.width_for_range(index, char_end));
+                        let max_width =
+                            LayoutUnit::from_f32_ceil(shape.width_for_range(0, char_end))
+                                - LayoutUnit::from_f32_ceil(shape.width_for_range(0, index));
+                        min_segment = min_segment + pending_min_collapsible_space;
+                        pending_min_collapsible_space = LayoutUnit::zero();
+                        if soft_break_pending {
+                            commit_soft_segment(
+                                &mut min_segment,
+                                &mut min_content,
+                                &mut pending_open_edges,
+                                &mut stack,
+                            );
+                        } else {
+                            min_segment = min_segment + pending_open_edges;
+                            pending_open_edges = LayoutUnit::zero();
+                            for entry in &mut stack {
+                                entry.active_on_segment = true;
+                            }
+                        }
+                        min_segment = min_segment + width;
+                        max_line = max_line + pending_collapsible_space + max_width;
+                        pending_collapsible_space = LayoutUnit::zero();
+                        soft_break_pending = true;
+                        soft_break_after_pending_edges = false;
+                        last_content_was_text = true;
+                    } else {
+                        let width =
+                            LayoutUnit::from_f32_ceil(shape.width_for_range(index, char_end));
+                        let max_width =
+                            LayoutUnit::from_f32_ceil(shape.width_for_range(0, char_end))
+                                - LayoutUnit::from_f32_ceil(shape.width_for_range(0, index));
+                        if collapses {
+                            pending_collapsible_space = max_width;
+                        } else {
+                            max_line = max_line + pending_collapsible_space + max_width;
+                            pending_collapsible_space = LayoutUnit::zero();
+                        }
+                        if wraps {
+                            soft_break_pending = true;
+                            soft_break_after_pending_edges = byte_index == 0
+                                && pending_open_edges > LayoutUnit::zero()
+                                && last_content_was_text;
+                        } else if collapses {
+                            // A collapsible space in nowrap contributes only
+                            // if later content makes it interior. Keep it
+                            // pending so terminal whitespace does not inflate
+                            // the min/max-equivalent intrinsic width.
+                            pending_min_collapsible_space = width;
+                        } else {
+                            min_segment = min_segment + pending_open_edges + width;
+                            pending_open_edges = LayoutUnit::zero();
+                            for entry in &mut stack {
+                                entry.active_on_segment = true;
+                            }
+                        }
+                    }
+                    run_start = byte_end;
+                    run_start_char = char_end;
+                }
+
+                if run_start < text.len() {
+                    let width = LayoutUnit::from_f32_ceil(
+                        shape.width_for_range(run_start_char, shape.num_characters),
+                    );
+                    let max_width =
+                        LayoutUnit::from_f32_ceil(shape.width_for_range(0, shape.num_characters))
+                            - LayoutUnit::from_f32_ceil(shape.width_for_range(0, run_start_char));
+                    min_segment = min_segment + pending_min_collapsible_space;
+                    pending_min_collapsible_space = LayoutUnit::zero();
+                    if soft_break_pending {
+                        if soft_break_after_pending_edges {
+                            min_segment = min_segment + pending_open_edges;
+                            pending_open_edges = LayoutUnit::zero();
+                            for entry in &mut stack {
+                                entry.active_on_segment = true;
+                            }
+                        }
+                        commit_soft_segment(
+                            &mut min_segment,
+                            &mut min_content,
+                            &mut pending_open_edges,
+                            &mut stack,
+                        );
+                    } else {
+                        min_segment = min_segment + pending_open_edges;
+                        pending_open_edges = LayoutUnit::zero();
+                        for entry in &mut stack {
+                            entry.active_on_segment = true;
+                        }
+                    }
+                    soft_break_pending = false;
+                    soft_break_after_pending_edges = false;
+                    last_content_was_text = true;
+                    min_segment = min_segment + width;
+                    max_line = max_line + pending_collapsible_space + max_width;
+                    pending_collapsible_space = LayoutUnit::zero();
+                }
+            }
+            InlineItemType::BlockInInline => {}
+        }
+    }
+
+    min_segment = min_segment + pending_open_edges;
+    min_content = min_content.max_of(min_segment + active_clone_end_edges(&stack));
+    max_content = max_content.max_of(max_line);
+    MinMaxSizes::new(min_content, max_content)
+}
+
 // ── Block container intrinsic sizing ─────────────────────────────────────
 
 /// Compute intrinsic inline sizes for a block container.
@@ -394,6 +808,30 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     let has_block_children = crate::block::has_block_children(doc, node_id);
 
     if has_inline_children && !has_block_children {
+        // Intrinsic inline sizing is a property of the flattened inline
+        // sequence, not of each direct child in isolation. In particular,
+        // adjacent inline boxes do not introduce a soft wrap opportunity:
+        // `<span>one</span><span>two</span>` is one min-content segment.
+        // Conversely, a collapsible space can introduce an opportunity even
+        // when it lives just inside an inline boundary. Use the same flattened
+        // item stream as line layout so decoration edges, forced breaks, and
+        // cross-node whitespace collapsing all participate in the result.
+        let has_decorated_inline_sequence = doc.children(node_id).any(|child_id| {
+            let child_style = &doc.node(child_id).style;
+            child_style.display == openui_style::Display::Inline
+                && (child_style.effective_border_left() != 0
+                    || child_style.effective_border_right() != 0
+                    || child_style.padding_left.value() != 0.0
+                    || child_style.padding_left.calc_offset() != 0.0
+                    || child_style.padding_right.value() != 0.0
+                    || child_style.padding_right.calc_offset() != 0.0)
+        });
+        if has_decorated_inline_sequence {
+            let inline_sizes = compute_inline_sequence_intrinsic_sizes(doc, node_id);
+            min_inline = inline_sizes.min;
+            max_inline = inline_sizes.max;
+        }
+
         let content_inline_min = min_inline;
         let content_inline_max = max_inline;
 
@@ -866,7 +1304,22 @@ fn compute_flex_intrinsic_sizes(
                 LayoutUnit::zero(),
             )
         } else if min_main_prop.is_auto() && !child_style.is_scroll_container() {
-            main_min.clamp_negative_to_zero()
+            if flex_basis.is_fixed() {
+                // The automatic minimum is the content-based minimum, capped
+                // by a specified size suggestion. A definite preferred width
+                // on an empty item must not override `flex-basis: 0` during a
+                // shrink-to-fit flex container's intrinsic sizing.
+                let content_sizes = compute_intrinsic_block_sizes(doc, child_id);
+                let logical_margin = child_margin.to_logical(writing_direction);
+                let content_main = if is_column {
+                    content_sizes.min_content_block_size + logical_margin.block_sum()
+                } else {
+                    content_sizes.min_content_inline_size + logical_margin.inline_sum()
+                };
+                main_min.min_of(content_main).clamp_negative_to_zero()
+            } else {
+                main_min.clamp_negative_to_zero()
+            }
         } else {
             LayoutUnit::zero()
         };
@@ -1554,7 +2007,7 @@ fn compute_text_intrinsic_sizes_impl(
     }
 
     let font = Font::new(style_to_font_description(style));
-    let measure = |run: &str| LayoutUnit::from_f32(font.width(run));
+    let measure = |run: &str| LayoutUnit::from_f32_ceil(font.width(run));
     let forced_lines = processed.split('\n');
     let max_content = forced_lines
         .clone()
@@ -2341,6 +2794,25 @@ mod tests {
             (LayoutUnit::from_i32(80), LayoutUnit::from_i32(80)),
         );
         assert_eq!(size, LayoutUnit::from_i32(80));
+    }
+
+    #[test]
+    fn adjacent_inline_blocks_wrap_for_min_content_but_not_max_content() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), container);
+        for _ in 0..5 {
+            let atomic = doc.create_node(ElementTag::Span);
+            let style = doc.node_mut(atomic).style_mut();
+            style.display = openui_style::Display::InlineBlock;
+            style.width = Length::px(25.0);
+            doc.append_child(container, atomic);
+        }
+
+        assert_eq!(
+            compute_inline_sequence_intrinsic_sizes(&doc, container),
+            MinMaxSizes::new(LayoutUnit::from_i32(25), LayoutUnit::from_i32(125))
+        );
     }
 
     #[test]

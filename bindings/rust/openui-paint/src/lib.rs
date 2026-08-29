@@ -8,6 +8,7 @@
 
 pub mod decoration_painter;
 pub mod emphasis_painter;
+pub mod image_resource;
 mod painter;
 mod render;
 pub mod text_painter;

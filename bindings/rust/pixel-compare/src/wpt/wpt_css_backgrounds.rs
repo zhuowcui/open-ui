@@ -63,6 +63,29 @@ fn css_backgrounds_background_334() -> Document {
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.position = Position::Relative;
     doc.node_mut(n2).style.width = Length::px(100.0);
+    let n2_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/60x60-green.png",
+        "image/png",
+        "38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/60x60-green.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::percent(100.0), Length::auto()),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -104,13 +127,16 @@ fn css_backgrounds_background_attachment_350() -> Document {
 // Source: background-attachment-fixed-inline-scrolled-ref.html
 fn css_backgrounds_background_attachment_fixed_inline_scrolled_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -122,13 +148,27 @@ fn css_backgrounds_background_attachment_fixed_inline_scrolled_ref() -> Document
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.overflow_x = Overflow::Hidden;
     doc.node_mut(vp).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Span);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -139,182 +179,435 @@ fn css_backgrounds_background_attachment_fixed_inline_scrolled_ref() -> Document
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.background_attachment = BackgroundAttachment::Fixed;
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Percent(50.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Percent(50.0),
+            },
+        ],
+    });
     doc.node_mut(n1).style.font_size = 130.0;
     doc.node_mut(n1).style.line_height = LineHeight::Length(100.0);
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Fixed,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Text);
     doc.node_mut(n2).style.font_size = 130.0;
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n2).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n2).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n2).text = Some("\n".to_string());
+    doc.node_mut(n2).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n2);
-    let n3 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n3).style.font_size = 130.0;
+    let n3 = doc.create_node(ElementTag::Break);
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.display = Display::Inline;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.font_size = 130.0;
     doc.node_mut(n3).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n3).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 130.0;
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n4).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n4).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n4).text = Some("\n".to_string());
+    doc.node_mut(n4).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n4);
-    let n5 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n5).style.font_size = 130.0;
+    let n5 = doc.create_node(ElementTag::Break);
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n5).style.display = Display::Inline;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.font_size = 130.0;
     doc.node_mut(n5).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n5).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n5);
     let n6 = doc.create_node(ElementTag::Text);
     doc.node_mut(n6).style.font_size = 130.0;
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n6).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n6).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n6).text = Some("\n".to_string());
+    doc.node_mut(n6).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n6);
-    let n7 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n7).style.font_size = 130.0;
+    let n7 = doc.create_node(ElementTag::Break);
     doc.node_mut(n7).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n7).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n7).style.display = Display::Inline;
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.font_size = 130.0;
     doc.node_mut(n7).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n7).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n7);
     let n8 = doc.create_node(ElementTag::Text);
     doc.node_mut(n8).style.font_size = 130.0;
     doc.node_mut(n8).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n8).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n8).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n8).text = Some("\n".to_string());
+    doc.node_mut(n8).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n8);
-    let n9 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n9).style.font_size = 130.0;
+    let n9 = doc.create_node(ElementTag::Break);
     doc.node_mut(n9).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n9).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n9).style.display = Display::Inline;
+    doc.node_mut(n9).style.margin_top = Length::px(0.0);
+    doc.node_mut(n9).style.margin_right = Length::px(0.0);
+    doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.margin_left = Length::px(0.0);
+    doc.node_mut(n9).style.padding_top = Length::px(0.0);
+    doc.node_mut(n9).style.padding_right = Length::px(0.0);
+    doc.node_mut(n9).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.padding_left = Length::px(0.0);
+    doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).style.font_size = 130.0;
     doc.node_mut(n9).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n9).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n9);
     let n10 = doc.create_node(ElementTag::Text);
     doc.node_mut(n10).style.font_size = 130.0;
     doc.node_mut(n10).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n10).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n10).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n10).text = Some("\n".to_string());
+    doc.node_mut(n10).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n10);
-    let n11 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n11).style.font_size = 130.0;
+    let n11 = doc.create_node(ElementTag::Break);
     doc.node_mut(n11).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n11).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n11).style.display = Display::Inline;
+    doc.node_mut(n11).style.margin_top = Length::px(0.0);
+    doc.node_mut(n11).style.margin_right = Length::px(0.0);
+    doc.node_mut(n11).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n11).style.margin_left = Length::px(0.0);
+    doc.node_mut(n11).style.padding_top = Length::px(0.0);
+    doc.node_mut(n11).style.padding_right = Length::px(0.0);
+    doc.node_mut(n11).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n11).style.padding_left = Length::px(0.0);
+    doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n11).style.font_size = 130.0;
     doc.node_mut(n11).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n11).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n11);
     let n12 = doc.create_node(ElementTag::Text);
     doc.node_mut(n12).style.font_size = 130.0;
     doc.node_mut(n12).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n12).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n12).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n12).text = Some("\n".to_string());
+    doc.node_mut(n12).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n12);
-    let n13 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n13).style.font_size = 130.0;
+    let n13 = doc.create_node(ElementTag::Break);
     doc.node_mut(n13).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n13).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n13).style.display = Display::Inline;
+    doc.node_mut(n13).style.margin_top = Length::px(0.0);
+    doc.node_mut(n13).style.margin_right = Length::px(0.0);
+    doc.node_mut(n13).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n13).style.margin_left = Length::px(0.0);
+    doc.node_mut(n13).style.padding_top = Length::px(0.0);
+    doc.node_mut(n13).style.padding_right = Length::px(0.0);
+    doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n13).style.padding_left = Length::px(0.0);
+    doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n13).style.font_size = 130.0;
     doc.node_mut(n13).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n13).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n13);
     let n14 = doc.create_node(ElementTag::Text);
     doc.node_mut(n14).style.font_size = 130.0;
     doc.node_mut(n14).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n14).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n14).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n14).text = Some("\n".to_string());
+    doc.node_mut(n14).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n14);
-    let n15 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n15).style.font_size = 130.0;
+    let n15 = doc.create_node(ElementTag::Break);
     doc.node_mut(n15).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n15).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n15).style.display = Display::Inline;
+    doc.node_mut(n15).style.margin_top = Length::px(0.0);
+    doc.node_mut(n15).style.margin_right = Length::px(0.0);
+    doc.node_mut(n15).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n15).style.margin_left = Length::px(0.0);
+    doc.node_mut(n15).style.padding_top = Length::px(0.0);
+    doc.node_mut(n15).style.padding_right = Length::px(0.0);
+    doc.node_mut(n15).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n15).style.padding_left = Length::px(0.0);
+    doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n15).style.font_size = 130.0;
     doc.node_mut(n15).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n15).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n15);
     let n16 = doc.create_node(ElementTag::Text);
     doc.node_mut(n16).style.font_size = 130.0;
     doc.node_mut(n16).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n16).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n16).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n16).text = Some("\n".to_string());
+    doc.node_mut(n16).text = Some("\n  \u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}\u{a0}".to_string());
     doc.append_child(n1, n16);
+    let n17 = doc.create_node(ElementTag::Break);
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n17).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n17).style.display = Display::Inline;
+    doc.node_mut(n17).style.margin_top = Length::px(0.0);
+    doc.node_mut(n17).style.margin_right = Length::px(0.0);
+    doc.node_mut(n17).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.margin_left = Length::px(0.0);
+    doc.node_mut(n17).style.padding_top = Length::px(0.0);
+    doc.node_mut(n17).style.padding_right = Length::px(0.0);
+    doc.node_mut(n17).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.padding_left = Length::px(0.0);
+    doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n17).style.font_size = 130.0;
+    doc.node_mut(n17).style.line_height = LineHeight::Length(100.0);
+    doc.append_child(n1, n17);
     doc
 }
 
@@ -387,20 +680,36 @@ fn css_backgrounds_background_attachment_local_hidden() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.border_top_width = 10;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.border_top_color =
-        StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 128));
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        255.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n1).style.border_right_width = 10;
     doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 128));
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        255.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n1).style.border_bottom_width = 10;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.border_bottom_color =
-        StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 128));
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        255.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n1).style.border_left_width = 10;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n1).style.border_left_color =
-        StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 128));
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        255.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.border_top_left_radius = (40.0_f32, 40.0_f32);
@@ -482,11 +791,100 @@ fn css_backgrounds_background_attachment_margin_root_001_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba_f32(0.0 / 255.0, 255.0 / 255.0, 0.0 / 255.0, 0.5),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba_f32(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.top = Length::px(0.0);
     doc.node_mut(n1).style.left = Length::px(0.0);
     doc.node_mut(n1).style.right = Length::px(0.0);
     doc.node_mut(n1).style.bottom = Length::px(0.0);
+    doc.node_mut(n1).style.background_layers = vec![
+        BackgroundLayer {
+            image: CssImage::LinearGradient(CssLinearGradient {
+                angle_degrees: 180.0,
+                corner_direction: None,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            255.0 / 255.0,
+                            0.0 / 255.0,
+                            0.5,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            255.0 / 255.0,
+                            0.5,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Length(Length::px(50.0)),
+            position_y: BackgroundPosition::Length(Length::px(50.0)),
+            size: BackgroundSize::Explicit(Length::px(100.0), Length::px(100.0)),
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+        BackgroundLayer {
+            image: CssImage::LinearGradient(CssLinearGradient {
+                angle_degrees: 180.0,
+                corner_direction: None,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            1.0,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            1.0,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Length(Length::px(0.0)),
+            position_y: BackgroundPosition::Length(Length::px(0.0)),
+            size: BackgroundSize::Explicit(Length::px(100.0), Length::px(100.0)),
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+    ];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -514,11 +912,100 @@ fn css_backgrounds_background_attachment_margin_root_002_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba_f32(0.0 / 255.0, 255.0 / 255.0, 0.0 / 255.0, 0.5),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba_f32(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.top = Length::px(0.0);
     doc.node_mut(n1).style.left = Length::px(0.0);
     doc.node_mut(n1).style.right = Length::px(0.0);
     doc.node_mut(n1).style.bottom = Length::px(0.0);
+    doc.node_mut(n1).style.background_layers = vec![
+        BackgroundLayer {
+            image: CssImage::LinearGradient(CssLinearGradient {
+                angle_degrees: 180.0,
+                corner_direction: None,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            255.0 / 255.0,
+                            0.0 / 255.0,
+                            0.5,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            255.0 / 255.0,
+                            0.5,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Length(Length::px(0.0)),
+            position_y: BackgroundPosition::Length(Length::px(0.0)),
+            size: BackgroundSize::Explicit(Length::px(100.0), Length::px(100.0)),
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+        BackgroundLayer {
+            image: CssImage::LinearGradient(CssLinearGradient {
+                angle_degrees: 180.0,
+                corner_direction: None,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            1.0,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            1.0,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Length(Length::px(0.0)),
+            position_y: BackgroundPosition::Length(Length::px(0.0)),
+            size: BackgroundSize::Explicit(Length::px(100.0), Length::px(100.0)),
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+    ];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -1865,7 +2352,41 @@ fn css_backgrounds_background_clip_padding_box_with_border_radius() -> Document 
 
 // Source: background-clip-root.html
 fn css_backgrounds_background_clip_root() -> Document {
-    let (mut doc, vp) = base_doc();
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(20.0);
+    doc.node_mut(html).style.padding_right = Length::px(20.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(html).style.padding_left = Length::px(20.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.background_color = Color::RED;
+    doc.node_mut(html).style.background_clip = BackgroundClip::ContentBox;
+    let html_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/1x1-green.png",
+        "image/png",
+        "a236213916dd30bd771a233aa1d66381eabf335bf8885304b75a4e2e370d68ce",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/1x1-green.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(html).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(html_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::ContentBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(html).style.background_linear_gradient = None;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -1875,6 +2396,7 @@ fn css_backgrounds_background_clip_root() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
     doc
 }
 
@@ -2095,6 +2617,47 @@ fn css_backgrounds_background_gradient_interpolation_001_notref() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.height = Length::px(50.0);
     doc.node_mut(n1).style.width = Length::px(200.0);
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 90.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Percent(30.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(128, 0, 128, 255),
+                position: GradientStopPosition::Percent(95.0),
+            },
+        ],
+    });
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Percent(30.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255)),
+                    position: GradientStopPosition::Percent(95.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -2109,6 +2672,47 @@ fn css_backgrounds_background_gradient_interpolation_001_notref() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.height = Length::px(50.0);
     doc.node_mut(n2).style.width = Length::px(200.0);
+    doc.node_mut(n2).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 90.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Percent(30.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(128, 0, 128, 255),
+                position: GradientStopPosition::Percent(95.0),
+            },
+        ],
+    });
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Percent(30.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255)),
+                    position: GradientStopPosition::Percent(95.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -2123,6 +2727,47 @@ fn css_backgrounds_background_gradient_interpolation_001_notref() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.height = Length::px(50.0);
     doc.node_mut(n3).style.width = Length::px(200.0);
+    doc.node_mut(n3).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 90.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Percent(30.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(128, 0, 128, 255),
+                position: GradientStopPosition::Percent(95.0),
+            },
+        ],
+    });
+    doc.node_mut(n3).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Percent(30.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255)),
+                    position: GradientStopPosition::Percent(95.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n3).style.background_linear_gradient = None;
     doc.append_child(vp, n3);
     doc
 }
@@ -2150,6 +2795,49 @@ fn css_backgrounds_background_gradient_interpolation_001() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.height = Length::px(50.0);
+    doc.node_mut(n1).style.width = Length::px(200.0);
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 90.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Percent(30.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(128, 0, 128, 255),
+                position: GradientStopPosition::Percent(95.0),
+            },
+        ],
+    });
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Percent(30.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255)),
+                    position: GradientStopPosition::Percent(95.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -2162,6 +2850,35 @@ fn css_backgrounds_background_gradient_interpolation_001() -> Document {
     doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n2).style.padding_left = Length::px(0.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.height = Length::px(50.0);
+    doc.node_mut(n2).style.width = Length::px(200.0);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Hsl,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Percent(30.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255)),
+                    position: GradientStopPosition::Percent(95.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -2176,59 +2893,34 @@ fn css_backgrounds_background_gradient_interpolation_001() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.height = Length::px(50.0);
     doc.node_mut(n3).style.width = Length::px(200.0);
+    doc.node_mut(n3).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Oklch,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Percent(30.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(128, 0, 128, 255)),
+                    position: GradientStopPosition::Percent(95.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n3).style.background_linear_gradient = None;
     doc.append_child(vp, n3);
-    let n4 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n4).style.display = Display::Block;
-    doc.node_mut(n4).style.margin_top = Length::px(0.0);
-    doc.node_mut(n4).style.margin_right = Length::px(0.0);
-    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
-    doc.node_mut(n4).style.margin_left = Length::px(0.0);
-    doc.node_mut(n4).style.padding_top = Length::px(0.0);
-    doc.node_mut(n4).style.padding_right = Length::px(0.0);
-    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
-    doc.node_mut(n4).style.padding_left = Length::px(0.0);
-    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
-    doc.append_child(vp, n4);
-    let n5 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n5).style.display = Display::Block;
-    doc.node_mut(n5).style.margin_top = Length::px(0.0);
-    doc.node_mut(n5).style.margin_right = Length::px(0.0);
-    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
-    doc.node_mut(n5).style.margin_left = Length::px(0.0);
-    doc.node_mut(n5).style.padding_top = Length::px(0.0);
-    doc.node_mut(n5).style.padding_right = Length::px(0.0);
-    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
-    doc.node_mut(n5).style.padding_left = Length::px(0.0);
-    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n5).style.height = Length::px(50.0);
-    doc.node_mut(n5).style.width = Length::px(200.0);
-    doc.append_child(vp, n5);
-    let n6 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n6).style.display = Display::Block;
-    doc.node_mut(n6).style.margin_top = Length::px(0.0);
-    doc.node_mut(n6).style.margin_right = Length::px(0.0);
-    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
-    doc.node_mut(n6).style.margin_left = Length::px(0.0);
-    doc.node_mut(n6).style.padding_top = Length::px(0.0);
-    doc.node_mut(n6).style.padding_right = Length::px(0.0);
-    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
-    doc.node_mut(n6).style.padding_left = Length::px(0.0);
-    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
-    doc.append_child(vp, n6);
-    let n7 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n7).style.display = Display::Block;
-    doc.node_mut(n7).style.margin_top = Length::px(0.0);
-    doc.node_mut(n7).style.margin_right = Length::px(0.0);
-    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
-    doc.node_mut(n7).style.margin_left = Length::px(0.0);
-    doc.node_mut(n7).style.padding_top = Length::px(0.0);
-    doc.node_mut(n7).style.padding_right = Length::px(0.0);
-    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
-    doc.node_mut(n7).style.padding_left = Length::px(0.0);
-    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n7).style.height = Length::px(50.0);
-    doc.node_mut(n7).style.width = Length::px(200.0);
-    doc.append_child(vp, n7);
     doc
 }
 
@@ -2528,7 +3220,7 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.display = Display::ListItem;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -2539,6 +3231,7 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n2).style.padding_left = Length::px(0.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.float = Float::Left;
+    doc.node_mut(n2).style.display = Display::Block;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
@@ -2553,10 +3246,51 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.width = Length::px(19.6875);
     doc.node_mut(n3).style.height = Length::px(17.0);
-    doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n3).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Percent(0.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 100, 0, 255),
+                position: GradientStopPosition::Percent(100.0),
+            },
+        ],
+    });
+    doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 100, 0, 255);
+    doc.node_mut(n3).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 100, 0, 255)),
+                    position: GradientStopPosition::Percent(100.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n3).style.background_linear_gradient = None;
     doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.display = Display::ListItem;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
     doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
@@ -2567,6 +3301,7 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n4).style.float = Float::Left;
+    doc.node_mut(n4).style.display = Display::Block;
     doc.append_child(n1, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
@@ -2581,10 +3316,51 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.width = Length::px(19.6875);
     doc.node_mut(n5).style.height = Length::px(17.0);
-    doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n5).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Percent(0.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 100, 0, 255),
+                position: GradientStopPosition::Percent(100.0),
+            },
+        ],
+    });
+    doc.node_mut(n5).style.background_color = Color::from_rgba8(0, 100, 0, 255);
+    doc.node_mut(n5).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 100, 0, 255)),
+                    position: GradientStopPosition::Percent(100.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n6).style.display = Display::Block;
+    doc.node_mut(n6).style.display = Display::ListItem;
     doc.node_mut(n6).style.margin_top = Length::px(0.0);
     doc.node_mut(n6).style.margin_right = Length::px(0.0);
     doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
@@ -2595,6 +3371,7 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n6).style.padding_left = Length::px(0.0);
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.float = Float::Left;
+    doc.node_mut(n6).style.display = Display::Block;
     doc.append_child(n1, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.margin_top = Length::px(0.0);
@@ -2609,10 +3386,51 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n7).style.display = Display::Block;
     doc.node_mut(n7).style.width = Length::px(19.6875);
     doc.node_mut(n7).style.height = Length::px(17.0);
-    doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n7).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Percent(0.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 100, 0, 255),
+                position: GradientStopPosition::Percent(100.0),
+            },
+        ],
+    });
+    doc.node_mut(n7).style.background_color = Color::from_rgba8(0, 100, 0, 255);
+    doc.node_mut(n7).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 100, 0, 255)),
+                    position: GradientStopPosition::Percent(100.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(n6, n7);
     let n8 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n8).style.display = Display::Block;
+    doc.node_mut(n8).style.display = Display::ListItem;
     doc.node_mut(n8).style.margin_top = Length::px(0.0);
     doc.node_mut(n8).style.margin_right = Length::px(0.0);
     doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
@@ -2623,6 +3441,7 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n8).style.padding_left = Length::px(0.0);
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.float = Float::Left;
+    doc.node_mut(n8).style.display = Display::Block;
     doc.append_child(n1, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -2637,10 +3456,51 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n9).style.display = Display::Block;
     doc.node_mut(n9).style.width = Length::px(19.6875);
     doc.node_mut(n9).style.height = Length::px(17.0);
-    doc.node_mut(n9).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n9).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Percent(0.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 100, 0, 255),
+                position: GradientStopPosition::Percent(100.0),
+            },
+        ],
+    });
+    doc.node_mut(n9).style.background_color = Color::from_rgba8(0, 100, 0, 255);
+    doc.node_mut(n9).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 100, 0, 255)),
+                    position: GradientStopPosition::Percent(100.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n9).style.background_linear_gradient = None;
     doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n10).style.display = Display::Block;
+    doc.node_mut(n10).style.display = Display::ListItem;
     doc.node_mut(n10).style.margin_top = Length::px(0.0);
     doc.node_mut(n10).style.margin_right = Length::px(0.0);
     doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
@@ -2651,6 +3511,7 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n10).style.float = Float::Left;
+    doc.node_mut(n10).style.display = Display::Block;
     doc.append_child(n1, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -2665,10 +3526,51 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n11).style.display = Display::Block;
     doc.node_mut(n11).style.width = Length::px(19.6875);
     doc.node_mut(n11).style.height = Length::px(17.0);
-    doc.node_mut(n11).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n11).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Percent(0.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 100, 0, 255),
+                position: GradientStopPosition::Percent(100.0),
+            },
+        ],
+    });
+    doc.node_mut(n11).style.background_color = Color::from_rgba8(0, 100, 0, 255);
+    doc.node_mut(n11).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 100, 0, 255)),
+                    position: GradientStopPosition::Percent(100.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.append_child(n10, n11);
     let n12 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n12).style.display = Display::Block;
+    doc.node_mut(n12).style.display = Display::ListItem;
     doc.node_mut(n12).style.margin_top = Length::px(0.0);
     doc.node_mut(n12).style.margin_right = Length::px(0.0);
     doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
@@ -2679,6 +3581,7 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n12).style.padding_left = Length::px(0.0);
     doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n12).style.float = Float::Left;
+    doc.node_mut(n12).style.display = Display::Block;
     doc.append_child(n1, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -2693,10 +3596,51 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n13).style.display = Display::Block;
     doc.node_mut(n13).style.width = Length::px(19.6875);
     doc.node_mut(n13).style.height = Length::px(17.0);
-    doc.node_mut(n13).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n13).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Percent(0.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 100, 0, 255),
+                position: GradientStopPosition::Percent(100.0),
+            },
+        ],
+    });
+    doc.node_mut(n13).style.background_color = Color::from_rgba8(0, 100, 0, 255);
+    doc.node_mut(n13).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 100, 0, 255)),
+                    position: GradientStopPosition::Percent(100.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n13).style.background_linear_gradient = None;
     doc.append_child(n12, n13);
     let n14 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n14).style.display = Display::Block;
+    doc.node_mut(n14).style.display = Display::ListItem;
     doc.node_mut(n14).style.margin_top = Length::px(0.0);
     doc.node_mut(n14).style.margin_right = Length::px(0.0);
     doc.node_mut(n14).style.margin_bottom = Length::px(0.0);
@@ -2707,6 +3651,7 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n14).style.padding_left = Length::px(0.0);
     doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n14).style.float = Float::Left;
+    doc.node_mut(n14).style.display = Display::Block;
     doc.append_child(n1, n14);
     let n15 = doc.create_node(ElementTag::Div);
     doc.node_mut(n15).style.margin_top = Length::px(0.0);
@@ -2721,10 +3666,51 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n15).style.display = Display::Block;
     doc.node_mut(n15).style.width = Length::px(19.6875);
     doc.node_mut(n15).style.height = Length::px(17.0);
-    doc.node_mut(n15).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n15).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Percent(0.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 100, 0, 255),
+                position: GradientStopPosition::Percent(100.0),
+            },
+        ],
+    });
+    doc.node_mut(n15).style.background_color = Color::from_rgba8(0, 100, 0, 255);
+    doc.node_mut(n15).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 100, 0, 255)),
+                    position: GradientStopPosition::Percent(100.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n15).style.background_linear_gradient = None;
     doc.append_child(n14, n15);
     let n16 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n16).style.display = Display::Block;
+    doc.node_mut(n16).style.display = Display::ListItem;
     doc.node_mut(n16).style.margin_top = Length::px(0.0);
     doc.node_mut(n16).style.margin_right = Length::px(0.0);
     doc.node_mut(n16).style.margin_bottom = Length::px(0.0);
@@ -2735,6 +3721,7 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n16).style.padding_left = Length::px(0.0);
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n16).style.float = Float::Left;
+    doc.node_mut(n16).style.display = Display::Block;
     doc.append_child(n1, n16);
     let n17 = doc.create_node(ElementTag::Div);
     doc.node_mut(n17).style.margin_top = Length::px(0.0);
@@ -2749,10 +3736,51 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n17).style.display = Display::Block;
     doc.node_mut(n17).style.width = Length::px(19.6875);
     doc.node_mut(n17).style.height = Length::px(17.0);
-    doc.node_mut(n17).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n17).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Percent(0.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 100, 0, 255),
+                position: GradientStopPosition::Percent(100.0),
+            },
+        ],
+    });
+    doc.node_mut(n17).style.background_color = Color::from_rgba8(0, 100, 0, 255);
+    doc.node_mut(n17).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 100, 0, 255)),
+                    position: GradientStopPosition::Percent(100.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n17).style.background_linear_gradient = None;
     doc.append_child(n16, n17);
     let n18 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n18).style.display = Display::Block;
+    doc.node_mut(n18).style.display = Display::ListItem;
     doc.node_mut(n18).style.margin_top = Length::px(0.0);
     doc.node_mut(n18).style.margin_right = Length::px(0.0);
     doc.node_mut(n18).style.margin_bottom = Length::px(0.0);
@@ -2763,6 +3791,7 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n18).style.padding_left = Length::px(0.0);
     doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n18).style.float = Float::Left;
+    doc.node_mut(n18).style.display = Display::Block;
     doc.append_child(n1, n18);
     let n19 = doc.create_node(ElementTag::Div);
     doc.node_mut(n19).style.margin_top = Length::px(0.0);
@@ -2777,10 +3806,51 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n19).style.display = Display::Block;
     doc.node_mut(n19).style.width = Length::px(19.6875);
     doc.node_mut(n19).style.height = Length::px(17.0);
-    doc.node_mut(n19).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n19).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Percent(0.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 100, 0, 255),
+                position: GradientStopPosition::Percent(100.0),
+            },
+        ],
+    });
+    doc.node_mut(n19).style.background_color = Color::from_rgba8(0, 100, 0, 255);
+    doc.node_mut(n19).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 100, 0, 255)),
+                    position: GradientStopPosition::Percent(100.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n19).style.background_linear_gradient = None;
     doc.append_child(n18, n19);
     let n20 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n20).style.display = Display::Block;
+    doc.node_mut(n20).style.display = Display::ListItem;
     doc.node_mut(n20).style.margin_top = Length::px(0.0);
     doc.node_mut(n20).style.margin_right = Length::px(0.0);
     doc.node_mut(n20).style.margin_bottom = Length::px(0.0);
@@ -2791,6 +3861,7 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n20).style.padding_left = Length::px(0.0);
     doc.node_mut(n20).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n20).style.float = Float::Left;
+    doc.node_mut(n20).style.display = Display::Block;
     doc.append_child(n1, n20);
     let n21 = doc.create_node(ElementTag::Div);
     doc.node_mut(n21).style.margin_top = Length::px(0.0);
@@ -2805,7 +3876,48 @@ fn css_backgrounds_background_gradient_subpixel_fills_area() -> Document {
     doc.node_mut(n21).style.display = Display::Block;
     doc.node_mut(n21).style.width = Length::px(19.6875);
     doc.node_mut(n21).style.height = Length::px(17.0);
-    doc.node_mut(n21).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n21).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Percent(0.0),
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 100, 0, 255),
+                position: GradientStopPosition::Percent(100.0),
+            },
+        ],
+    });
+    doc.node_mut(n21).style.background_color = Color::from_rgba8(0, 100, 0, 255);
+    doc.node_mut(n21).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Percent(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 100, 0, 255)),
+                    position: GradientStopPosition::Percent(100.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n21).style.background_linear_gradient = None;
     doc.append_child(n20, n21);
     doc
 }
@@ -2918,6 +4030,29 @@ fn css_backgrounds_background_image_005() -> Document {
     doc.node_mut(n2).style.font_size = 50.0;
     doc.node_mut(n2).style.background_color = Color::RED;
     doc.node_mut(n2).style.display = Display::Block;
+    let n2_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/green.png",
+        "image/png",
+        "a48b88602c40120ef8d508bd56a1731d204cbb7701749651d206ad7374819b00",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/green.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     doc
 }
@@ -2966,6 +4101,53 @@ fn css_backgrounds_background_image_006() -> Document {
     doc.node_mut(n2).style.font_size = 50.0;
     doc.node_mut(n2).style.background_color = Color::RED;
     doc.node_mut(n2).style.display = Display::Block;
+    let n2_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/green.png",
+        "image/png",
+        "a48b88602c40120ef8d508bd56a1731d204cbb7701749651d206ad7374819b00",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/green.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    let n2_background_image_1 = doc.register_image_resource(
+        "css-backgrounds/support/red.png",
+        "image/png",
+        "07557d92effc78121f8a48acacfa535d3d4cf368a647124de041b5bba12144ae",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.background_layers = vec![
+        BackgroundLayer {
+            image: CssImage::Raster(n2_background_image_0),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Percent(0.0),
+            position_y: BackgroundPosition::Percent(0.0),
+            size: BackgroundSize::Auto,
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+        BackgroundLayer {
+            image: CssImage::Raster(n2_background_image_1),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Percent(0.0),
+            position_y: BackgroundPosition::Percent(0.0),
+            size: BackgroundSize::Auto,
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+    ];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     doc
 }
@@ -3003,6 +4185,35 @@ fn css_backgrounds_background_image_centered_ref() -> Document {
     doc.node_mut(n1).style.border_right_width = 10;
     doc.node_mut(n1).style.border_bottom_width = 10;
     doc.node_mut(n1).style.border_left_width = 10;
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::RadialGradient(RadialGradient {
+            repeating: true,
+            color_space: GradientColorSpace::Srgb,
+            shape: RadialGradientShape::Ellipse,
+            size: RadialGradientSize::FarthestCorner,
+            center_x: BackgroundPosition::Percent(50.0),
+            center_y: BackgroundPosition::Percent(50.0),
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Px(20.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Length(Length::px(0.0)),
+        position_y: BackgroundPosition::Length(Length::px(0.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -3102,6 +4313,35 @@ fn css_backgrounds_background_image_centered() -> Document {
     doc.node_mut(n1).style.border_right_width = 10;
     doc.node_mut(n1).style.border_bottom_width = 10;
     doc.node_mut(n1).style.border_left_width = 10;
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::RadialGradient(RadialGradient {
+            repeating: true,
+            color_space: GradientColorSpace::Srgb,
+            shape: RadialGradientShape::Ellipse,
+            size: RadialGradientSize::FarthestCorner,
+            center_x: BackgroundPosition::Percent(50.0),
+            center_y: BackgroundPosition::Percent(50.0),
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Px(20.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(50.0),
+        position_y: BackgroundPosition::Percent(50.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -3113,11 +4353,12 @@ fn css_backgrounds_background_image_cover_zoomed_1() -> Document {
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
     doc.node_mut(vp).style.margin_left = Length::px(0.0);
-    doc.node_mut(vp).style.padding_top = Length::px(20.0);
-    doc.node_mut(vp).style.padding_right = Length::px(20.0);
-    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
-    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.padding_top = Length::px(16.0);
+    doc.node_mut(vp).style.padding_right = Length::px(16.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(16.0);
+    doc.node_mut(vp).style.padding_left = Length::px(16.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 12.8;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
@@ -3130,8 +4371,13 @@ fn css_backgrounds_background_image_cover_zoomed_1() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 0, 0, 255);
-    doc.node_mut(n1).style.width = Length::px(504.0);
-    doc.node_mut(n1).style.height = Length::px(252.0);
+    doc.node_mut(n1).style.background_linear_gradient = None;
+    doc.node_mut(n1).style.width = Length::px(403.2);
+    doc.node_mut(n1).style.height = Length::px(201.6);
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
+    doc.node_mut(n1).style.font_size = 12.8;
+    doc.node_mut(n1).style.font_size = 12.8;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -3144,8 +4390,23 @@ fn css_backgrounds_background_image_cover_zoomed_1() -> Document {
     doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n2).style.padding_left = Length::px(0.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n2).style.width = Length::px(504.0);
-    doc.node_mut(n2).style.height = Length::px(252.0);
+    doc.node_mut(n2).style.width = Length::px(403.2);
+    doc.node_mut(n2).style.height = Length::px(201.6);
+    let n2_background_image_0 = doc.register_image_resource("css-backgrounds/support/40px-wide-20px-tall-green-rect.png", "image/png", "e9b1bf6e42430928746a02061391ad742ad258cd1392684066391df30eb95c14", include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../tools/accountability/data/wpt_assets/sp13p/40px-wide-20px-tall-green-rect.png")).as_slice().to_vec());
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Cover,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
+    doc.node_mut(n2).style.font_size = 12.8;
+    doc.node_mut(n2).style.font_size = 12.8;
     doc.append_child(n1, n2);
     doc
 }
@@ -3188,6 +4449,34 @@ fn css_backgrounds_background_image_gradient_currentcolor_conic_repaint_ref() ->
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.height = Length::px(100.0);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::ConicGradient(ConicGradient {
+            from_degrees: 0.0,
+            center_x: BackgroundPosition::Percent(50.0),
+            center_y: BackgroundPosition::Percent(50.0),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::WHITE),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(n1, n2);
     doc
@@ -3231,6 +4520,47 @@ fn css_backgrounds_background_image_gradient_currentcolor_linear_repaint_ref() -
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.height = Length::px(100.0);
+    doc.node_mut(n2).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::WHITE,
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::WHITE),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(n1, n2);
     doc
@@ -3274,6 +4604,35 @@ fn css_backgrounds_background_image_gradient_currentcolor_radial_repaint_ref() -
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.width = Length::px(100.0);
     doc.node_mut(n2).style.height = Length::px(100.0);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::RadialGradient(RadialGradient {
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            shape: RadialGradientShape::Ellipse,
+            size: RadialGradientSize::FarthestCorner,
+            center_x: BackgroundPosition::Percent(50.0),
+            center_y: BackgroundPosition::Percent(50.0),
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::WHITE),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.color = Color::from_rgba8(0, 128, 0, 255);
     doc.append_child(n1, n2);
     doc
@@ -3305,6 +4664,47 @@ fn css_backgrounds_background_image_gradient_currentcolor_visited_ref() -> Docum
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::WHITE,
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::WHITE),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -3334,6 +4734,33 @@ fn css_backgrounds_background_image_gradient_interpolation_repaint_ref() -> Docu
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Oklch,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -3461,11 +4888,52 @@ fn css_backgrounds_background_margin_root_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(173, 216, 230, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.top = Length::px(0.0);
     doc.node_mut(n1).style.left = Length::px(0.0);
     doc.node_mut(n1).style.right = Length::px(0.0);
     doc.node_mut(n1).style.bottom = Length::px(0.0);
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(173, 216, 230, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Length(Length::px(50.0)),
+        position_y: BackgroundPosition::Length(Length::px(50.0)),
+        size: BackgroundSize::Explicit(Length::px(300.0), Length::px(300.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -3493,11 +4961,52 @@ fn css_backgrounds_background_margin_transformed_root_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(173, 216, 230, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.top = Length::px(0.0);
     doc.node_mut(n1).style.left = Length::px(0.0);
     doc.node_mut(n1).style.right = Length::px(0.0);
     doc.node_mut(n1).style.bottom = Length::px(0.0);
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(173, 216, 230, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Length(Length::px(50.0)),
+        position_y: BackgroundPosition::Length(Length::px(50.0)),
+        size: BackgroundSize::Explicit(Length::px(300.0), Length::px(300.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -3525,11 +5034,52 @@ fn css_backgrounds_background_margin_will_change_root_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(173, 216, 230, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(n1).style.position = Position::Absolute;
     doc.node_mut(n1).style.top = Length::px(0.0);
     doc.node_mut(n1).style.left = Length::px(0.0);
     doc.node_mut(n1).style.right = Length::px(0.0);
     doc.node_mut(n1).style.bottom = Length::px(0.0);
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(173, 216, 230, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Length(Length::px(50.0)),
+        position_y: BackgroundPosition::Length(Length::px(50.0)),
+        size: BackgroundSize::Explicit(Length::px(300.0), Length::px(300.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -4894,7 +6444,40 @@ fn css_backgrounds_background_repeat_round_001() -> Document {
 
 // Source: background-repeat-round-002.html
 fn css_backgrounds_background_repeat_round_002() -> Document {
-    let (mut doc, vp) = base_doc();
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.background_color = Color::RED;
+    let html_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/swatch-green.png",
+        "image/png",
+        "bfdf34690a36ddebb5f08029df544183f3d5a3e9e21dbff0f4d4315f862236c0",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/swatch-green.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(html).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(html_background_image_0),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(html).style.background_linear_gradient = None;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -4904,6 +6487,7 @@ fn css_backgrounds_background_repeat_round_002() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
     doc
 }
 
@@ -4944,6 +6528,29 @@ fn css_backgrounds_background_repeat_round_1_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -4970,6 +6577,33 @@ fn css_backgrounds_background_repeat_round_1_ref() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -5011,6 +6645,29 @@ fn css_backgrounds_background_repeat_round_1a() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5037,6 +6694,33 @@ fn css_backgrounds_background_repeat_round_1a() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -5078,6 +6762,29 @@ fn css_backgrounds_background_repeat_round_1b() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5104,6 +6811,33 @@ fn css_backgrounds_background_repeat_round_1b() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -5145,6 +6879,29 @@ fn css_backgrounds_background_repeat_round_1c() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5171,6 +6928,33 @@ fn css_backgrounds_background_repeat_round_1c() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -5212,6 +6996,29 @@ fn css_backgrounds_background_repeat_round_1d() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5238,6 +7045,33 @@ fn css_backgrounds_background_repeat_round_1d() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -5279,6 +7113,29 @@ fn css_backgrounds_background_repeat_round_1e() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5305,6 +7162,33 @@ fn css_backgrounds_background_repeat_round_1e() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -5346,6 +7230,29 @@ fn css_backgrounds_background_repeat_round_2_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5372,6 +7279,33 @@ fn css_backgrounds_background_repeat_round_2_ref() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -5413,6 +7347,29 @@ fn css_backgrounds_background_repeat_round_2() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5439,6 +7396,33 @@ fn css_backgrounds_background_repeat_round_2() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -5480,6 +7464,29 @@ fn css_backgrounds_background_repeat_round_3_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5518,6 +7525,33 @@ fn css_backgrounds_background_repeat_round_3_ref() -> Document {
     doc.node_mut(n3).style.border_left_width = 1;
     doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n3).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n3).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n3).style.background_linear_gradient = None;
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -5571,6 +7605,29 @@ fn css_backgrounds_background_repeat_round_3() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::auto()),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5597,6 +7654,33 @@ fn css_backgrounds_background_repeat_round_3() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -5638,6 +7722,29 @@ fn css_backgrounds_background_repeat_round_4_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Length(Length::px(5.0)),
+        position_y: BackgroundPosition::Length(Length::px(5.0)),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5664,6 +7771,33 @@ fn css_backgrounds_background_repeat_round_4_ref() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Length(Length::px(5.0)),
+        position_y: BackgroundPosition::Length(Length::px(5.0)),
+        size: BackgroundSize::Explicit(Length::px(36.0), Length::px(36.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -5705,6 +7839,29 @@ fn css_backgrounds_background_repeat_round_4() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Length(Length::px(5.0)),
+        position_y: BackgroundPosition::Length(Length::px(5.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -5731,6 +7888,33 @@ fn css_backgrounds_background_repeat_round_4() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Length(Length::px(5.0)),
+        position_y: BackgroundPosition::Length(Length::px(5.0)),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -5831,6 +8015,29 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.height = Length::px(32.0);
     doc.node_mut(n2).style.width = Length::px(32.0);
+    let n2_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -5845,6 +8052,29 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.height = Length::px(32.0);
     doc.node_mut(n3).style.width = Length::px(32.0);
+    let n3_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n3).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n3_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n3).style.background_linear_gradient = None;
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -5859,6 +8089,29 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n4).style.height = Length::px(32.0);
     doc.node_mut(n4).style.width = Length::px(32.0);
+    let n4_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n4).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n4_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(n1, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -5873,6 +8126,29 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.height = Length::px(32.0);
     doc.node_mut(n5).style.width = Length::px(32.0);
+    let n5_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n5).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n5_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n1, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -5887,6 +8163,29 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.height = Length::px(32.0);
     doc.node_mut(n6).style.width = Length::px(32.0);
+    let n6_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n6).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n6_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n6).style.background_linear_gradient = None;
     doc.append_child(n1, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -5901,6 +8200,29 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n7).style.height = Length::px(32.0);
     doc.node_mut(n7).style.width = Length::px(32.0);
+    let n7_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n7).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n7_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(n1, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -5915,6 +8237,29 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.height = Length::px(32.0);
     doc.node_mut(n8).style.width = Length::px(32.0);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n1, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -5929,6 +8274,29 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n9).style.height = Length::px(32.0);
     doc.node_mut(n9).style.width = Length::px(32.0);
+    let n9_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n9).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n9_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n9).style.background_linear_gradient = None;
     doc.append_child(n1, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -5943,6 +8311,29 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n10).style.height = Length::px(32.0);
     doc.node_mut(n10).style.width = Length::px(32.0);
+    let n10_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n10).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n10_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(n1, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -5988,6 +8379,33 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n12).style.height = Length::px(32.0);
     doc.node_mut(n12).style.width = Length::px(32.0);
+    doc.node_mut(n12).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n12).style.background_linear_gradient = None;
     doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.display = Display::Block;
@@ -6002,6 +8420,33 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n13).style.height = Length::px(32.0);
     doc.node_mut(n13).style.width = Length::px(32.0);
+    doc.node_mut(n13).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n13).style.background_linear_gradient = None;
     doc.append_child(n11, n13);
     let n14 = doc.create_node(ElementTag::Div);
     doc.node_mut(n14).style.display = Display::Block;
@@ -6016,6 +8461,33 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n14).style.height = Length::px(32.0);
     doc.node_mut(n14).style.width = Length::px(32.0);
+    doc.node_mut(n14).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n14).style.background_linear_gradient = None;
     doc.append_child(n11, n14);
     let n15 = doc.create_node(ElementTag::Div);
     doc.node_mut(n15).style.display = Display::Block;
@@ -6030,6 +8502,33 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n15).style.height = Length::px(32.0);
     doc.node_mut(n15).style.width = Length::px(32.0);
+    doc.node_mut(n15).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n15).style.background_linear_gradient = None;
     doc.append_child(n11, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -6044,6 +8543,33 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n16).style.height = Length::px(32.0);
     doc.node_mut(n16).style.width = Length::px(32.0);
+    doc.node_mut(n16).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n16).style.background_linear_gradient = None;
     doc.append_child(n11, n16);
     let n17 = doc.create_node(ElementTag::Div);
     doc.node_mut(n17).style.display = Display::Block;
@@ -6058,6 +8584,33 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n17).style.height = Length::px(32.0);
     doc.node_mut(n17).style.width = Length::px(32.0);
+    doc.node_mut(n17).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n17).style.background_linear_gradient = None;
     doc.append_child(n11, n17);
     let n18 = doc.create_node(ElementTag::Div);
     doc.node_mut(n18).style.display = Display::Block;
@@ -6072,6 +8625,33 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n18).style.height = Length::px(32.0);
     doc.node_mut(n18).style.width = Length::px(32.0);
+    doc.node_mut(n18).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n18).style.background_linear_gradient = None;
     doc.append_child(n11, n18);
     let n19 = doc.create_node(ElementTag::Div);
     doc.node_mut(n19).style.display = Display::Block;
@@ -6086,6 +8666,33 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n19).style.height = Length::px(32.0);
     doc.node_mut(n19).style.width = Length::px(32.0);
+    doc.node_mut(n19).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n19).style.background_linear_gradient = None;
     doc.append_child(n11, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -6100,6 +8707,33 @@ fn css_backgrounds_background_repeat_space_1_ref() -> Document {
     doc.node_mut(n20).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n20).style.height = Length::px(32.0);
     doc.node_mut(n20).style.width = Length::px(32.0);
+    doc.node_mut(n20).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n20).style.background_linear_gradient = None;
     doc.append_child(n11, n20);
     doc
 }
@@ -6354,6 +8988,29 @@ fn css_backgrounds_background_repeat_space_1a() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -6380,6 +9037,33 @@ fn css_backgrounds_background_repeat_space_1a() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -6421,6 +9105,29 @@ fn css_backgrounds_background_repeat_space_1b() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Length(Length::px(15.0)),
+        position_y: BackgroundPosition::Length(Length::px(15.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -6447,6 +9154,33 @@ fn css_backgrounds_background_repeat_space_1b() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Length(Length::px(15.0)),
+        position_y: BackgroundPosition::Length(Length::px(15.0)),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -6488,6 +9222,29 @@ fn css_backgrounds_background_repeat_space_1c() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -6514,6 +9271,33 @@ fn css_backgrounds_background_repeat_space_1c() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -6555,6 +9339,29 @@ fn css_backgrounds_background_repeat_space_2_ref() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Length(Length::px(5.0)),
+        position_y: BackgroundPosition::Length(Length::px(5.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -6581,6 +9388,33 @@ fn css_backgrounds_background_repeat_space_2_ref() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Length(Length::px(5.0)),
+        position_y: BackgroundPosition::Length(Length::px(5.0)),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -6622,6 +9456,29 @@ fn css_backgrounds_background_repeat_space_2() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Length(Length::px(5.0)),
+        position_y: BackgroundPosition::Length(Length::px(5.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -6648,6 +9505,33 @@ fn css_backgrounds_background_repeat_space_2() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Length(Length::px(5.0)),
+        position_y: BackgroundPosition::Length(Length::px(5.0)),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -6706,6 +9590,29 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n2).style.height = Length::px(32.0);
     doc.node_mut(n2).style.width = Length::px(32.0);
     doc.node_mut(n2).style.margin_top = Length::px(40.0);
+    let n2_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -6721,6 +9628,29 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n3).style.height = Length::px(32.0);
     doc.node_mut(n3).style.width = Length::px(32.0);
     doc.node_mut(n3).style.margin_top = Length::px(40.0);
+    let n3_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n3).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n3_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n3).style.background_linear_gradient = None;
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -6736,6 +9666,29 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n4).style.height = Length::px(32.0);
     doc.node_mut(n4).style.width = Length::px(32.0);
     doc.node_mut(n4).style.margin_top = Length::px(40.0);
+    let n4_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n4).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n4_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(n1, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
@@ -6780,6 +9733,29 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n6).style.height = Length::px(32.0);
     doc.node_mut(n6).style.width = Length::px(32.0);
     doc.node_mut(n6).style.margin_left = Length::px(40.0);
+    let n6_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n6).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n6_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n6).style.background_linear_gradient = None;
     doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -6795,6 +9771,29 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n7).style.height = Length::px(32.0);
     doc.node_mut(n7).style.width = Length::px(32.0);
     doc.node_mut(n7).style.margin_left = Length::px(40.0);
+    let n7_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n7).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n7_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(n5, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -6810,6 +9809,29 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n8).style.height = Length::px(32.0);
     doc.node_mut(n8).style.width = Length::px(32.0);
     doc.node_mut(n8).style.margin_left = Length::px(40.0);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n5, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.margin_top = Length::px(0.0);
@@ -6853,6 +9875,33 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n10).style.height = Length::px(32.0);
     doc.node_mut(n10).style.width = Length::px(32.0);
     doc.node_mut(n10).style.margin_top = Length::px(40.0);
+    doc.node_mut(n10).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(n9, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -6868,6 +9917,33 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n11).style.height = Length::px(32.0);
     doc.node_mut(n11).style.width = Length::px(32.0);
     doc.node_mut(n11).style.margin_top = Length::px(40.0);
+    doc.node_mut(n11).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n11).style.background_linear_gradient = None;
     doc.append_child(n9, n11);
     let n12 = doc.create_node(ElementTag::Div);
     doc.node_mut(n12).style.display = Display::Block;
@@ -6883,6 +9959,33 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n12).style.height = Length::px(32.0);
     doc.node_mut(n12).style.width = Length::px(32.0);
     doc.node_mut(n12).style.margin_top = Length::px(40.0);
+    doc.node_mut(n12).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n12).style.background_linear_gradient = None;
     doc.append_child(n9, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.margin_top = Length::px(0.0);
@@ -6927,6 +10030,33 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n14).style.height = Length::px(32.0);
     doc.node_mut(n14).style.width = Length::px(32.0);
     doc.node_mut(n14).style.margin_left = Length::px(40.0);
+    doc.node_mut(n14).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n14).style.background_linear_gradient = None;
     doc.append_child(n13, n14);
     let n15 = doc.create_node(ElementTag::Div);
     doc.node_mut(n15).style.display = Display::Block;
@@ -6942,6 +10072,33 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n15).style.height = Length::px(32.0);
     doc.node_mut(n15).style.width = Length::px(32.0);
     doc.node_mut(n15).style.margin_left = Length::px(40.0);
+    doc.node_mut(n15).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n15).style.background_linear_gradient = None;
     doc.append_child(n13, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -6957,6 +10114,33 @@ fn css_backgrounds_background_repeat_space_3_ref() -> Document {
     doc.node_mut(n16).style.height = Length::px(32.0);
     doc.node_mut(n16).style.width = Length::px(32.0);
     doc.node_mut(n16).style.margin_left = Length::px(40.0);
+    doc.node_mut(n16).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n16).style.background_linear_gradient = None;
     doc.append_child(n13, n16);
     doc
 }
@@ -7012,6 +10196,29 @@ fn css_backgrounds_background_repeat_space_3() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.width = Length::px(106.0);
     doc.node_mut(n2).style.height = Length::px(106.0);
+    let n2_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Length(Length::px(7.0)),
+        position_y: BackgroundPosition::Length(Length::px(40.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -7052,6 +10259,29 @@ fn css_backgrounds_background_repeat_space_3() -> Document {
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n4).style.width = Length::px(106.0);
     doc.node_mut(n4).style.height = Length::px(106.0);
+    let n4_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n4).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n4_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Length(Length::px(40.0)),
+        position_y: BackgroundPosition::Length(Length::px(7.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(n3, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -7092,6 +10322,33 @@ fn css_backgrounds_background_repeat_space_3() -> Document {
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.width = Length::px(106.0);
     doc.node_mut(n6).style.height = Length::px(106.0);
+    doc.node_mut(n6).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Length(Length::px(7.0)),
+        position_y: BackgroundPosition::Length(Length::px(40.0)),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n6).style.background_linear_gradient = None;
     doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -7132,6 +10389,33 @@ fn css_backgrounds_background_repeat_space_3() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.width = Length::px(106.0);
     doc.node_mut(n8).style.height = Length::px(106.0);
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Length(Length::px(40.0)),
+        position_y: BackgroundPosition::Length(Length::px(7.0)),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n7, n8);
     doc
 }
@@ -7190,6 +10474,29 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.height = Length::px(32.0);
     doc.node_mut(n2).style.width = Length::px(32.0);
+    let n2_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -7204,6 +10511,29 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.height = Length::px(32.0);
     doc.node_mut(n3).style.width = Length::px(32.0);
+    let n3_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n3).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n3_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n3).style.background_linear_gradient = None;
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -7218,6 +10548,29 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n4).style.height = Length::px(32.0);
     doc.node_mut(n4).style.width = Length::px(32.0);
+    let n4_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n4).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n4_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(n1, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -7232,6 +10585,29 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.height = Length::px(32.0);
     doc.node_mut(n5).style.width = Length::px(32.0);
+    let n5_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n5).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n5_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n1, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -7246,6 +10622,29 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.height = Length::px(32.0);
     doc.node_mut(n6).style.width = Length::px(32.0);
+    let n6_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n6).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n6_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n6).style.background_linear_gradient = None;
     doc.append_child(n1, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -7260,6 +10659,29 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n7).style.height = Length::px(32.0);
     doc.node_mut(n7).style.width = Length::px(32.0);
+    let n7_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n7).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n7_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(n1, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -7274,6 +10696,29 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.height = Length::px(32.0);
     doc.node_mut(n8).style.width = Length::px(32.0);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n1, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -7288,6 +10733,29 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n9).style.height = Length::px(32.0);
     doc.node_mut(n9).style.width = Length::px(32.0);
+    let n9_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n9).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n9_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n9).style.background_linear_gradient = None;
     doc.append_child(n1, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -7302,6 +10770,29 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n10).style.height = Length::px(32.0);
     doc.node_mut(n10).style.width = Length::px(32.0);
+    let n10_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n10).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n10_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(n1, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -7345,6 +10836,33 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n12).style.height = Length::px(32.0);
     doc.node_mut(n12).style.width = Length::px(32.0);
+    doc.node_mut(n12).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n12).style.background_linear_gradient = None;
     doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.display = Display::Block;
@@ -7359,6 +10877,33 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n13).style.height = Length::px(32.0);
     doc.node_mut(n13).style.width = Length::px(32.0);
+    doc.node_mut(n13).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n13).style.background_linear_gradient = None;
     doc.append_child(n11, n13);
     let n14 = doc.create_node(ElementTag::Div);
     doc.node_mut(n14).style.display = Display::Block;
@@ -7373,6 +10918,33 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n14).style.height = Length::px(32.0);
     doc.node_mut(n14).style.width = Length::px(32.0);
+    doc.node_mut(n14).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n14).style.background_linear_gradient = None;
     doc.append_child(n11, n14);
     let n15 = doc.create_node(ElementTag::Div);
     doc.node_mut(n15).style.display = Display::Block;
@@ -7387,6 +10959,33 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n15).style.height = Length::px(32.0);
     doc.node_mut(n15).style.width = Length::px(32.0);
+    doc.node_mut(n15).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n15).style.background_linear_gradient = None;
     doc.append_child(n11, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -7401,6 +11000,33 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n16).style.height = Length::px(32.0);
     doc.node_mut(n16).style.width = Length::px(32.0);
+    doc.node_mut(n16).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n16).style.background_linear_gradient = None;
     doc.append_child(n11, n16);
     let n17 = doc.create_node(ElementTag::Div);
     doc.node_mut(n17).style.display = Display::Block;
@@ -7415,6 +11041,33 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n17).style.height = Length::px(32.0);
     doc.node_mut(n17).style.width = Length::px(32.0);
+    doc.node_mut(n17).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n17).style.background_linear_gradient = None;
     doc.append_child(n11, n17);
     let n18 = doc.create_node(ElementTag::Div);
     doc.node_mut(n18).style.display = Display::Block;
@@ -7429,6 +11082,33 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n18).style.height = Length::px(32.0);
     doc.node_mut(n18).style.width = Length::px(32.0);
+    doc.node_mut(n18).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n18).style.background_linear_gradient = None;
     doc.append_child(n11, n18);
     let n19 = doc.create_node(ElementTag::Div);
     doc.node_mut(n19).style.display = Display::Block;
@@ -7443,6 +11123,33 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n19).style.height = Length::px(32.0);
     doc.node_mut(n19).style.width = Length::px(32.0);
+    doc.node_mut(n19).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n19).style.background_linear_gradient = None;
     doc.append_child(n11, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -7457,6 +11164,33 @@ fn css_backgrounds_background_repeat_space_4_ref() -> Document {
     doc.node_mut(n20).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n20).style.height = Length::px(32.0);
     doc.node_mut(n20).style.width = Length::px(32.0);
+    doc.node_mut(n20).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n20).style.background_linear_gradient = None;
     doc.append_child(n11, n20);
     doc
 }
@@ -7498,6 +11232,29 @@ fn css_backgrounds_background_repeat_space_4() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -7524,6 +11281,33 @@ fn css_backgrounds_background_repeat_space_4() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -7582,6 +11366,29 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.height = Length::px(32.0);
     doc.node_mut(n2).style.width = Length::px(32.0);
+    let n2_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -7596,6 +11403,29 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.height = Length::px(32.0);
     doc.node_mut(n3).style.width = Length::px(32.0);
+    let n3_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n3).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n3_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n3).style.background_linear_gradient = None;
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -7610,6 +11440,29 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n4).style.height = Length::px(32.0);
     doc.node_mut(n4).style.width = Length::px(32.0);
+    let n4_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n4).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n4_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(n1, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -7624,6 +11477,29 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.height = Length::px(32.0);
     doc.node_mut(n5).style.width = Length::px(32.0);
+    let n5_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n5).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n5_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n1, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -7638,6 +11514,29 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.height = Length::px(32.0);
     doc.node_mut(n6).style.width = Length::px(32.0);
+    let n6_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n6).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n6_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n6).style.background_linear_gradient = None;
     doc.append_child(n1, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -7652,6 +11551,29 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n7).style.height = Length::px(32.0);
     doc.node_mut(n7).style.width = Length::px(32.0);
+    let n7_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n7).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n7_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(n1, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -7666,6 +11588,29 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.height = Length::px(32.0);
     doc.node_mut(n8).style.width = Length::px(32.0);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n1, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -7680,6 +11625,29 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n9).style.height = Length::px(32.0);
     doc.node_mut(n9).style.width = Length::px(32.0);
+    let n9_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n9).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n9_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n9).style.background_linear_gradient = None;
     doc.append_child(n1, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -7694,6 +11662,29 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n10).style.height = Length::px(32.0);
     doc.node_mut(n10).style.width = Length::px(32.0);
+    let n10_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n10).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n10_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(n1, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -7737,6 +11728,33 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n12).style.height = Length::px(32.0);
     doc.node_mut(n12).style.width = Length::px(32.0);
+    doc.node_mut(n12).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n12).style.background_linear_gradient = None;
     doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.display = Display::Block;
@@ -7751,6 +11769,33 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n13).style.height = Length::px(32.0);
     doc.node_mut(n13).style.width = Length::px(32.0);
+    doc.node_mut(n13).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n13).style.background_linear_gradient = None;
     doc.append_child(n11, n13);
     let n14 = doc.create_node(ElementTag::Div);
     doc.node_mut(n14).style.display = Display::Block;
@@ -7765,6 +11810,33 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n14).style.height = Length::px(32.0);
     doc.node_mut(n14).style.width = Length::px(32.0);
+    doc.node_mut(n14).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n14).style.background_linear_gradient = None;
     doc.append_child(n11, n14);
     let n15 = doc.create_node(ElementTag::Div);
     doc.node_mut(n15).style.display = Display::Block;
@@ -7779,6 +11851,33 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n15).style.height = Length::px(32.0);
     doc.node_mut(n15).style.width = Length::px(32.0);
+    doc.node_mut(n15).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n15).style.background_linear_gradient = None;
     doc.append_child(n11, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -7793,6 +11892,33 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n16).style.height = Length::px(32.0);
     doc.node_mut(n16).style.width = Length::px(32.0);
+    doc.node_mut(n16).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n16).style.background_linear_gradient = None;
     doc.append_child(n11, n16);
     let n17 = doc.create_node(ElementTag::Div);
     doc.node_mut(n17).style.display = Display::Block;
@@ -7807,6 +11933,33 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n17).style.height = Length::px(32.0);
     doc.node_mut(n17).style.width = Length::px(32.0);
+    doc.node_mut(n17).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n17).style.background_linear_gradient = None;
     doc.append_child(n11, n17);
     let n18 = doc.create_node(ElementTag::Div);
     doc.node_mut(n18).style.display = Display::Block;
@@ -7821,6 +11974,33 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n18).style.height = Length::px(32.0);
     doc.node_mut(n18).style.width = Length::px(32.0);
+    doc.node_mut(n18).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n18).style.background_linear_gradient = None;
     doc.append_child(n11, n18);
     let n19 = doc.create_node(ElementTag::Div);
     doc.node_mut(n19).style.display = Display::Block;
@@ -7835,6 +12015,33 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n19).style.height = Length::px(32.0);
     doc.node_mut(n19).style.width = Length::px(32.0);
+    doc.node_mut(n19).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n19).style.background_linear_gradient = None;
     doc.append_child(n11, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -7849,6 +12056,33 @@ fn css_backgrounds_background_repeat_space_5_ref() -> Document {
     doc.node_mut(n20).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n20).style.height = Length::px(32.0);
     doc.node_mut(n20).style.width = Length::px(32.0);
+    doc.node_mut(n20).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n20).style.background_linear_gradient = None;
     doc.append_child(n11, n20);
     doc
 }
@@ -7890,6 +12124,29 @@ fn css_backgrounds_background_repeat_space_5() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -7916,6 +12173,33 @@ fn css_backgrounds_background_repeat_space_5() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -7974,6 +12258,29 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.height = Length::px(32.0);
     doc.node_mut(n2).style.width = Length::px(64.0);
+    let n2_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -7988,6 +12295,29 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.height = Length::px(32.0);
     doc.node_mut(n3).style.width = Length::px(64.0);
+    let n3_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n3).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n3_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n3).style.background_linear_gradient = None;
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -8002,6 +12332,29 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n4).style.height = Length::px(32.0);
     doc.node_mut(n4).style.width = Length::px(64.0);
+    let n4_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n4).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n4_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(n1, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -8016,6 +12369,29 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.height = Length::px(32.0);
     doc.node_mut(n5).style.width = Length::px(64.0);
+    let n5_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n5).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n5_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n1, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -8030,6 +12406,29 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.height = Length::px(32.0);
     doc.node_mut(n6).style.width = Length::px(64.0);
+    let n6_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n6).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n6_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n6).style.background_linear_gradient = None;
     doc.append_child(n1, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -8044,6 +12443,29 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n7).style.height = Length::px(32.0);
     doc.node_mut(n7).style.width = Length::px(64.0);
+    let n7_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n7).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n7_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(n1, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -8058,6 +12480,29 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.height = Length::px(32.0);
     doc.node_mut(n8).style.width = Length::px(64.0);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n1, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -8072,6 +12517,29 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n9).style.height = Length::px(32.0);
     doc.node_mut(n9).style.width = Length::px(64.0);
+    let n9_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n9).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n9_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n9).style.background_linear_gradient = None;
     doc.append_child(n1, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -8086,6 +12554,29 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n10).style.height = Length::px(32.0);
     doc.node_mut(n10).style.width = Length::px(64.0);
+    let n10_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n10).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n10_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(n1, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -8129,6 +12620,33 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n12).style.height = Length::px(32.0);
     doc.node_mut(n12).style.width = Length::px(64.0);
+    doc.node_mut(n12).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n12).style.background_linear_gradient = None;
     doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.display = Display::Block;
@@ -8143,6 +12661,33 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n13).style.height = Length::px(32.0);
     doc.node_mut(n13).style.width = Length::px(64.0);
+    doc.node_mut(n13).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n13).style.background_linear_gradient = None;
     doc.append_child(n11, n13);
     let n14 = doc.create_node(ElementTag::Div);
     doc.node_mut(n14).style.display = Display::Block;
@@ -8157,6 +12702,33 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n14).style.height = Length::px(32.0);
     doc.node_mut(n14).style.width = Length::px(64.0);
+    doc.node_mut(n14).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n14).style.background_linear_gradient = None;
     doc.append_child(n11, n14);
     let n15 = doc.create_node(ElementTag::Div);
     doc.node_mut(n15).style.display = Display::Block;
@@ -8171,6 +12743,33 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n15).style.height = Length::px(32.0);
     doc.node_mut(n15).style.width = Length::px(64.0);
+    doc.node_mut(n15).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n15).style.background_linear_gradient = None;
     doc.append_child(n11, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -8185,6 +12784,33 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n16).style.height = Length::px(32.0);
     doc.node_mut(n16).style.width = Length::px(64.0);
+    doc.node_mut(n16).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n16).style.background_linear_gradient = None;
     doc.append_child(n11, n16);
     let n17 = doc.create_node(ElementTag::Div);
     doc.node_mut(n17).style.display = Display::Block;
@@ -8199,6 +12825,33 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n17).style.height = Length::px(32.0);
     doc.node_mut(n17).style.width = Length::px(64.0);
+    doc.node_mut(n17).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n17).style.background_linear_gradient = None;
     doc.append_child(n11, n17);
     let n18 = doc.create_node(ElementTag::Div);
     doc.node_mut(n18).style.display = Display::Block;
@@ -8213,6 +12866,33 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n18).style.height = Length::px(32.0);
     doc.node_mut(n18).style.width = Length::px(64.0);
+    doc.node_mut(n18).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n18).style.background_linear_gradient = None;
     doc.append_child(n11, n18);
     let n19 = doc.create_node(ElementTag::Div);
     doc.node_mut(n19).style.display = Display::Block;
@@ -8227,6 +12907,33 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n19).style.height = Length::px(32.0);
     doc.node_mut(n19).style.width = Length::px(64.0);
+    doc.node_mut(n19).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n19).style.background_linear_gradient = None;
     doc.append_child(n11, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -8241,6 +12948,33 @@ fn css_backgrounds_background_repeat_space_6_ref() -> Document {
     doc.node_mut(n20).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n20).style.height = Length::px(32.0);
     doc.node_mut(n20).style.width = Length::px(64.0);
+    doc.node_mut(n20).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(64.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n20).style.background_linear_gradient = None;
     doc.append_child(n11, n20);
     doc
 }
@@ -8282,6 +13016,29 @@ fn css_backgrounds_background_repeat_space_6() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(60.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -8308,6 +13065,33 @@ fn css_backgrounds_background_repeat_space_6() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(60.0), Length::px(32.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -8366,6 +13150,29 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.height = Length::px(64.0);
     doc.node_mut(n2).style.width = Length::px(32.0);
+    let n2_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -8380,6 +13187,29 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.height = Length::px(64.0);
     doc.node_mut(n3).style.width = Length::px(32.0);
+    let n3_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n3).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n3_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n3).style.background_linear_gradient = None;
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.display = Display::Block;
@@ -8394,6 +13224,29 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n4).style.height = Length::px(64.0);
     doc.node_mut(n4).style.width = Length::px(32.0);
+    let n4_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n4).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n4_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.append_child(n1, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -8408,6 +13261,29 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.height = Length::px(64.0);
     doc.node_mut(n5).style.width = Length::px(32.0);
+    let n5_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n5).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n5_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n5).style.background_linear_gradient = None;
     doc.append_child(n1, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.display = Display::Block;
@@ -8422,6 +13298,29 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.height = Length::px(64.0);
     doc.node_mut(n6).style.width = Length::px(32.0);
+    let n6_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n6).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n6_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n6).style.background_linear_gradient = None;
     doc.append_child(n1, n6);
     let n7 = doc.create_node(ElementTag::Div);
     doc.node_mut(n7).style.display = Display::Block;
@@ -8436,6 +13335,29 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n7).style.height = Length::px(64.0);
     doc.node_mut(n7).style.width = Length::px(32.0);
+    let n7_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n7).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n7_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n7).style.background_linear_gradient = None;
     doc.append_child(n1, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -8450,6 +13372,29 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.height = Length::px(64.0);
     doc.node_mut(n8).style.width = Length::px(32.0);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.append_child(n1, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.display = Display::Block;
@@ -8464,6 +13409,29 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n9).style.height = Length::px(64.0);
     doc.node_mut(n9).style.width = Length::px(32.0);
+    let n9_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n9).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n9_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n9).style.background_linear_gradient = None;
     doc.append_child(n1, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.display = Display::Block;
@@ -8478,6 +13446,29 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n10).style.height = Length::px(64.0);
     doc.node_mut(n10).style.width = Length::px(32.0);
+    let n10_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n10).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n10_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.append_child(n1, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.margin_top = Length::px(0.0);
@@ -8521,6 +13512,33 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n12).style.height = Length::px(64.0);
     doc.node_mut(n12).style.width = Length::px(32.0);
+    doc.node_mut(n12).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n12).style.background_linear_gradient = None;
     doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Div);
     doc.node_mut(n13).style.display = Display::Block;
@@ -8535,6 +13553,33 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n13).style.height = Length::px(64.0);
     doc.node_mut(n13).style.width = Length::px(32.0);
+    doc.node_mut(n13).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n13).style.background_linear_gradient = None;
     doc.append_child(n11, n13);
     let n14 = doc.create_node(ElementTag::Div);
     doc.node_mut(n14).style.display = Display::Block;
@@ -8549,6 +13594,33 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n14).style.height = Length::px(64.0);
     doc.node_mut(n14).style.width = Length::px(32.0);
+    doc.node_mut(n14).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n14).style.background_linear_gradient = None;
     doc.append_child(n11, n14);
     let n15 = doc.create_node(ElementTag::Div);
     doc.node_mut(n15).style.display = Display::Block;
@@ -8563,6 +13635,33 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n15).style.height = Length::px(64.0);
     doc.node_mut(n15).style.width = Length::px(32.0);
+    doc.node_mut(n15).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n15).style.background_linear_gradient = None;
     doc.append_child(n11, n15);
     let n16 = doc.create_node(ElementTag::Div);
     doc.node_mut(n16).style.display = Display::Block;
@@ -8577,6 +13676,33 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n16).style.height = Length::px(64.0);
     doc.node_mut(n16).style.width = Length::px(32.0);
+    doc.node_mut(n16).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n16).style.background_linear_gradient = None;
     doc.append_child(n11, n16);
     let n17 = doc.create_node(ElementTag::Div);
     doc.node_mut(n17).style.display = Display::Block;
@@ -8591,6 +13717,33 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n17).style.height = Length::px(64.0);
     doc.node_mut(n17).style.width = Length::px(32.0);
+    doc.node_mut(n17).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n17).style.background_linear_gradient = None;
     doc.append_child(n11, n17);
     let n18 = doc.create_node(ElementTag::Div);
     doc.node_mut(n18).style.display = Display::Block;
@@ -8605,6 +13758,33 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n18).style.height = Length::px(64.0);
     doc.node_mut(n18).style.width = Length::px(32.0);
+    doc.node_mut(n18).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n18).style.background_linear_gradient = None;
     doc.append_child(n11, n18);
     let n19 = doc.create_node(ElementTag::Div);
     doc.node_mut(n19).style.display = Display::Block;
@@ -8619,6 +13799,33 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n19).style.height = Length::px(64.0);
     doc.node_mut(n19).style.width = Length::px(32.0);
+    doc.node_mut(n19).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n19).style.background_linear_gradient = None;
     doc.append_child(n11, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -8633,6 +13840,33 @@ fn css_backgrounds_background_repeat_space_7_ref() -> Document {
     doc.node_mut(n20).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n20).style.height = Length::px(64.0);
     doc.node_mut(n20).style.width = Length::px(32.0);
+    doc.node_mut(n20).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(64.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n20).style.background_linear_gradient = None;
     doc.append_child(n11, n20);
     doc
 }
@@ -8674,6 +13908,29 @@ fn css_backgrounds_background_repeat_space_7() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(60.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -8700,6 +13957,33 @@ fn css_backgrounds_background_repeat_space_7() -> Document {
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(32.0), Length::px(60.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -8729,14 +14013,61 @@ fn css_backgrounds_background_repeat_space_8_ref() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.border_top_width = 20;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n1).style.border_right_width = 20;
     doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n1).style.border_bottom_width = 20;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n1).style.width = Length::px(106.0);
     doc.node_mut(n1).style.height = Length::px(106.0);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-37x37.png",
+        "image/png",
+        "d279fe78b42445636c667020249169b35bbf039b57468604dbd0f63978144c60",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-37x37.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -8751,14 +14082,65 @@ fn css_backgrounds_background_repeat_space_8_ref() -> Document {
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.border_top_width = 20;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n2).style.border_right_width = 20;
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n2).style.border_bottom_width = 20;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n2).style.border_left_width = 20;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n2).style.width = Length::px(32.0);
     doc.node_mut(n2).style.height = Length::px(32.0);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Length(Length::px(-10.0)),
+        position_y: BackgroundPosition::Length(Length::px(-10.0)),
+        size: BackgroundSize::Explicit(Length::px(50.0), Length::px(50.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -8790,12 +14172,59 @@ fn css_backgrounds_background_repeat_space_8() -> Document {
     doc.node_mut(n1).style.height = Length::px(106.0);
     doc.node_mut(n1).style.border_top_width = 20;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n1).style.border_right_width = 20;
     doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n1).style.border_bottom_width = 20;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n1).style.border_left_width = 20;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -8812,12 +14241,63 @@ fn css_backgrounds_background_repeat_space_8() -> Document {
     doc.node_mut(n2).style.height = Length::px(32.0);
     doc.node_mut(n2).style.border_top_width = 20;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n2).style.border_right_width = 20;
     doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n2).style.border_bottom_width = 20;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
     doc.node_mut(n2).style.border_left_width = 20;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.0 / 255.0,
+        0.5,
+    ));
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 315.0,
+            corner_direction: Some((-1.0, -1.0)),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Length(Length::px(-10.0)),
+        position_y: BackgroundPosition::Length(Length::px(-10.0)),
+        size: BackgroundSize::Explicit(Length::px(50.0), Length::px(50.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     doc
 }
@@ -9037,8 +14517,17 @@ fn css_backgrounds_background_repeat_space_9() -> Document {
 
 // Source: background-rounded-image-clip-001.html
 fn css_backgrounds_background_rounded_image_clip_001() -> Document {
-    let (mut doc, vp) = base_doc();
-    doc.node_mut(doc.root()).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.background_color = Color::from_rgba8(0, 128, 0, 255);
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -9048,6 +14537,7 @@ fn css_backgrounds_background_rounded_image_clip_001() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_size = 16.0;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
@@ -9065,6 +14555,7 @@ fn css_backgrounds_background_rounded_image_clip_001() -> Document {
     doc.node_mut(n1).style.width = Length::px(20.0);
     doc.node_mut(n1).style.height = Length::px(20.0);
     doc.node_mut(n1).style.background_color = Color::BLACK;
+    doc.node_mut(n1).style.font_size = 16.0;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -9080,6 +14571,20 @@ fn css_backgrounds_background_rounded_image_clip_001() -> Document {
     doc.node_mut(n2).style.position = Position::Absolute;
     doc.node_mut(n2).style.width = Length::px(300.0);
     doc.node_mut(n2).style.height = Length::px(200.0);
+    doc.node_mut(n2).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(n2).style.background_clip = BackgroundClip::ContentBox;
     doc.node_mut(n2).style.border_top_left_radius = (90.0_f32, 90.0_f32);
     doc.node_mut(n2).style.border_top_width = 10;
@@ -9094,6 +14599,34 @@ fn css_backgrounds_background_rounded_image_clip_001() -> Document {
     doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::TRANSPARENT);
     doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::TRANSPARENT);
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::ContentBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
+    doc.node_mut(n2).style.font_size = 16.0;
     doc.append_child(vp, n2);
     doc
 }
@@ -10439,6 +15972,20 @@ fn css_backgrounds_background_size_041() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.background_clip = BackgroundClip::BorderBox;
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 165, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::BLUE,
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(n1).style.border_top_width = 40;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_right_width = 40;
@@ -10453,6 +16000,33 @@ fn css_backgrounds_background_size_041() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.height = Length::px(400.0);
     doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(50.0),
+        position_y: BackgroundPosition::Percent(50.0),
+        size: BackgroundSize::Explicit(Length::px(200.0), Length::auto()),
+        origin: BackgroundClip::ContentBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -10481,6 +16055,20 @@ fn css_backgrounds_background_size_042() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.background_clip = BackgroundClip::BorderBox;
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 165, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::BLUE,
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(n1).style.border_top_width = 40;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_right_width = 40;
@@ -10495,6 +16083,33 @@ fn css_backgrounds_background_size_042() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
     doc.node_mut(n1).style.height = Length::px(400.0);
     doc.node_mut(n1).style.width = Length::px(400.0);
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(50.0),
+        position_y: BackgroundPosition::Percent(50.0),
+        size: BackgroundSize::Explicit(Length::percent(50.0), Length::auto()),
+        origin: BackgroundClip::ContentBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -11037,7 +16652,48 @@ fn css_backgrounds_bg_color_with_gradient() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::RED,
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::BLACK,
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::RED),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLACK),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -14465,6 +20121,113 @@ fn css_backgrounds_border_image_021() -> Document {
     doc.node_mut(n2).style.border_top_right_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n2).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n2).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
+    doc.node_mut(n2).style.background_layers = vec![
+        BackgroundLayer {
+            image: CssImage::ConicGradient(ConicGradient {
+                from_degrees: 0.0,
+                center_x: BackgroundPosition::Percent(50.0),
+                center_y: BackgroundPosition::Percent(50.0),
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            255.0 / 255.0,
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            0.5,
+                        )),
+                        position: GradientStopPosition::Px(0.0),
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            255.0 / 255.0,
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            0.5,
+                        )),
+                        position: GradientStopPosition::Px(0.0),
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Percent(0.0),
+            position_y: BackgroundPosition::Percent(0.0),
+            size: BackgroundSize::Auto,
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+        BackgroundLayer {
+            image: CssImage::ConicGradient(ConicGradient {
+                from_degrees: 0.0,
+                center_x: BackgroundPosition::Percent(50.0),
+                center_y: BackgroundPosition::Percent(50.0),
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::RED),
+                        position: GradientStopPosition::Px(0.0),
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::RED),
+                        position: GradientStopPosition::Px(0.0),
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Percent(0.0),
+            position_y: BackgroundPosition::Percent(0.0),
+            size: BackgroundSize::Auto,
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+    ];
+    doc.node_mut(n2).style.background_linear_gradient = None;
+    doc.node_mut(n2).style.border_image = Some(BorderImage {
+        source: CssImage::ConicGradient(ConicGradient {
+            from_degrees: 0.0,
+            center_x: BackgroundPosition::Percent(50.0),
+            center_y: BackgroundPosition::Percent(50.0),
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Px(0.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Px(0.0),
+                },
+            ],
+        }),
+        slice: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        fill: true,
+        width: [
+            BorderImageLength::Length(Length::px(10.0)),
+            BorderImageLength::Length(Length::px(10.0)),
+            BorderImageLength::Length(Length::px(10.0)),
+            BorderImageLength::Length(Length::px(10.0)),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
     doc.append_child(n1, n2);
     doc
 }
@@ -14663,6 +20426,45 @@ fn css_backgrounds_border_image_outset_003_ref() -> Document {
     doc.node_mut(n1).style.padding_top = Length::px(50.0);
     doc.node_mut(n1).style.padding_right = Length::px(10.0);
     doc.node_mut(n1).style.padding_bottom = Length::px(50.0);
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        slice: [
+            BorderImageLength::Length(Length::percent(33.0)),
+            BorderImageLength::Length(Length::percent(33.0)),
+            BorderImageLength::Length(Length::percent(33.0)),
+            BorderImageLength::Length(Length::percent(33.0)),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
     doc.append_child(vp, n1);
     doc
 }
@@ -14705,6 +20507,45 @@ fn css_backgrounds_border_image_outset_003() -> Document {
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.background_color = Color::BLUE;
     doc.node_mut(n1).style.background_clip = BackgroundClip::ContentBox;
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        slice: [
+            BorderImageLength::Length(Length::percent(33.0)),
+            BorderImageLength::Length(Length::percent(33.0)),
+            BorderImageLength::Length(Length::percent(33.0)),
+            BorderImageLength::Length(Length::percent(33.0)),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Length(Length::px(50.0)),
+            BorderImageLength::Length(Length::px(10.0)),
+            BorderImageLength::Length(Length::px(50.0)),
+            BorderImageLength::Length(Length::px(100.0)),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
     doc.append_child(vp, n1);
     doc
 }
@@ -14746,6 +20587,31 @@ fn css_backgrounds_border_image_repeat_005() -> Document {
     doc.node_mut(n1).style.border_left_width = 10;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
+    let n1_border_image = doc.register_image_resource("data:image/svg+xml;sha256=f4a7775439ecc0a90acf534220984193f01b7e68b9c86a048baa1bd67d86e989", "image/svg+xml", "f4a7775439ecc0a90acf534220984193f01b7e68b9c86a048baa1bd67d86e989", vec![60, 115, 118, 103, 32, 120, 109, 108, 110, 115, 61, 39, 104, 116, 116, 112, 58, 47, 47, 119, 119, 119, 46, 119, 51, 46, 111, 114, 103, 47, 50, 48, 48, 48, 47, 115, 118, 103, 39, 32, 119, 105, 100, 116, 104, 61, 39, 49, 48, 48, 39, 32, 104, 101, 105, 103, 104, 116, 61, 39, 49, 48, 48, 39, 62, 60, 114, 101, 99, 116, 32, 119, 105, 100, 116, 104, 61, 39, 49, 48, 48, 39, 32, 104, 101, 105, 103, 104, 116, 61, 39, 49, 48, 48, 39, 32, 102, 105, 108, 108, 61, 39, 103, 114, 101, 101, 110, 39, 47, 62, 60, 47, 115, 118, 103, 62]);
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        fill: true,
+        width: [
+            BorderImageLength::Length(Length::px(0.0)),
+            BorderImageLength::Length(Length::px(0.0)),
+            BorderImageLength::Length(Length::px(0.0)),
+            BorderImageLength::Length(Length::px(0.0)),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Space,
+        repeat_y: BorderImageRepeat::Round,
+    });
     doc.append_child(vp, n1);
     doc
 }
@@ -14783,6 +20649,31 @@ fn css_backgrounds_border_image_repeat_1() -> Document {
     doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    let n1_border_image = doc.register_image_resource("data:image/svg+xml;sha256=d22c1816022ab02ea78546d1f1207423df6ee75b8953283b2c48553f73af055d", "image/svg+xml", "d22c1816022ab02ea78546d1f1207423df6ee75b8953283b2c48553f73af055d", vec![60, 115, 118, 103, 32, 120, 109, 108, 110, 115, 61, 39, 104, 116, 116, 112, 58, 47, 47, 119, 119, 119, 46, 119, 51, 46, 111, 114, 103, 47, 50, 48, 48, 48, 47, 115, 118, 103, 39, 32, 119, 105, 100, 116, 104, 61, 39, 52, 56, 39, 32, 104, 101, 105, 103, 104, 116, 61, 39, 52, 56, 39, 62, 60, 103, 32, 102, 105, 108, 108, 61, 39, 98, 108, 117, 101, 39, 32, 115, 116, 114, 111, 107, 101, 45, 119, 105, 100, 116, 104, 61, 39, 48, 39, 62, 60, 112, 97, 116, 104, 32, 100, 61, 39, 77, 50, 32, 50, 104, 52, 118, 52, 52, 72, 50, 122, 39, 47, 62, 60, 112, 97, 116, 104, 32, 100, 61, 39, 77, 50, 32, 50, 104, 52, 52, 118, 52, 72, 50, 122, 39, 47, 62, 60, 112, 97, 116, 104, 32, 100, 61, 39, 77, 52, 50, 32, 50, 104, 52, 118, 52, 52, 104, 45, 52, 122, 39, 47, 62, 60, 112, 97, 116, 104, 32, 100, 61, 39, 77, 50, 32, 52, 50, 104, 52, 52, 118, 52, 72, 50, 122, 77, 56, 39, 47, 62, 60, 47, 103, 62, 60, 47, 115, 118, 103, 62]);
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Number(16.0),
+            BorderImageLength::Number(16.0),
+            BorderImageLength::Number(16.0),
+            BorderImageLength::Number(16.0),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Repeat,
+        repeat_y: BorderImageRepeat::Repeat,
+    });
     doc.append_child(vp, n1);
     doc
 }
@@ -18285,41 +24176,53 @@ fn css_backgrounds_border_image_width_005() -> Document {
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
     doc.node_mut(n1).style.margin_left = Length::px(0.0);
-    doc.node_mut(n1).style.padding_top = Length::px(0.0);
-    doc.node_mut(n1).style.padding_right = Length::px(0.0);
-    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
-    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(15.0);
+    doc.node_mut(n1).style.padding_right = Length::px(15.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(15.0);
+    doc.node_mut(n1).style.padding_left = Length::px(15.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.margin_bottom = Length::px(41.0);
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::None;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::None;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::None;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::None;
+    doc.node_mut(n1).style.border_top_width = 0;
+    doc.node_mut(n1).style.border_right_width = 0;
+    doc.node_mut(n1).style.border_bottom_width = 0;
+    doc.node_mut(n1).style.border_left_width = 0;
+    doc.node_mut(n1).style.height = Length::px(20.0);
+    doc.node_mut(n1).style.margin_left = Length::px(25.0);
+    doc.node_mut(n1).style.width = Length::px(20.0);
+    let n1_border_image = doc.register_image_resource("css-backgrounds/support/outline-5px-10px-15px-20px-green.png", "image/png", "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba", include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../tools/accountability/data/wpt_assets/sp13p/outline-5px-10px-15px-20px-green.png")).as_slice().to_vec());
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Length(Length::percent(5.0)),
+            BorderImageLength::Length(Length::percent(10.0)),
+            BorderImageLength::Length(Length::percent(15.0)),
+            BorderImageLength::Length(Length::percent(20.0)),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Length(Length::px(50.0)),
+            BorderImageLength::Length(Length::px(50.0)),
+            BorderImageLength::Length(Length::px(50.0)),
+            BorderImageLength::Length(Length::px(50.0)),
+        ],
+        outset: [
+            BorderImageLength::Length(Length::px(25.0)),
+            BorderImageLength::Length(Length::px(25.0)),
+            BorderImageLength::Length(Length::px(25.0)),
+            BorderImageLength::Length(Length::px(25.0)),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
     doc.append_child(vp, n1);
-    let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.display = Display::Block;
-    doc.node_mut(n2).style.margin_top = Length::px(0.0);
-    doc.node_mut(n2).style.margin_right = Length::px(0.0);
-    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-    doc.node_mut(n2).style.margin_left = Length::px(0.0);
-    doc.node_mut(n2).style.padding_top = Length::px(15.0);
-    doc.node_mut(n2).style.padding_right = Length::px(15.0);
-    doc.node_mut(n2).style.padding_bottom = Length::px(15.0);
-    doc.node_mut(n2).style.padding_left = Length::px(15.0);
-    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n2).style.background_color = Color::RED;
-    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(n2).style.border_top_style = BorderStyle::None;
-    doc.node_mut(n2).style.border_right_style = BorderStyle::None;
-    doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
-    doc.node_mut(n2).style.border_left_style = BorderStyle::None;
-    doc.node_mut(n2).style.border_top_width = 0;
-    doc.node_mut(n2).style.border_right_width = 0;
-    doc.node_mut(n2).style.border_bottom_width = 0;
-    doc.node_mut(n2).style.border_left_width = 0;
-    doc.node_mut(n2).style.height = Length::px(20.0);
-    doc.node_mut(n2).style.margin_left = Length::px(25.0);
-    doc.node_mut(n2).style.width = Length::px(20.0);
-    doc.append_child(vp, n2);
     doc
 }
 
@@ -18341,41 +24244,53 @@ fn css_backgrounds_border_image_width_006() -> Document {
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
     doc.node_mut(n1).style.margin_left = Length::px(0.0);
-    doc.node_mut(n1).style.padding_top = Length::px(0.0);
-    doc.node_mut(n1).style.padding_right = Length::px(0.0);
-    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
-    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(25.0);
+    doc.node_mut(n1).style.padding_right = Length::px(25.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(25.0);
+    doc.node_mut(n1).style.padding_left = Length::px(25.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.margin_bottom = Length::px(41.0);
+    doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::None;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::None;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::None;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::None;
+    doc.node_mut(n1).style.border_top_width = 0;
+    doc.node_mut(n1).style.border_right_width = 0;
+    doc.node_mut(n1).style.border_bottom_width = 0;
+    doc.node_mut(n1).style.border_left_width = 0;
+    doc.node_mut(n1).style.height = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(25.0);
+    doc.node_mut(n1).style.width = Length::px(0.0);
+    let n1_border_image = doc.register_image_resource("css-backgrounds/support/outline-5px-10px-15px-20px-green.png", "image/png", "fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba", include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../tools/accountability/data/wpt_assets/sp13p/outline-5px-10px-15px-20px-green.png")).as_slice().to_vec());
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Length(Length::percent(5.0)),
+            BorderImageLength::Length(Length::percent(10.0)),
+            BorderImageLength::Length(Length::percent(15.0)),
+            BorderImageLength::Length(Length::percent(20.0)),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Length(Length::px(50.0)),
+            BorderImageLength::Length(Length::px(50.0)),
+            BorderImageLength::Length(Length::px(50.0)),
+            BorderImageLength::Length(Length::px(50.0)),
+        ],
+        outset: [
+            BorderImageLength::Length(Length::px(25.0)),
+            BorderImageLength::Length(Length::px(25.0)),
+            BorderImageLength::Length(Length::px(25.0)),
+            BorderImageLength::Length(Length::px(25.0)),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
     doc.append_child(vp, n1);
-    let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.display = Display::Block;
-    doc.node_mut(n2).style.margin_top = Length::px(0.0);
-    doc.node_mut(n2).style.margin_right = Length::px(0.0);
-    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
-    doc.node_mut(n2).style.margin_left = Length::px(0.0);
-    doc.node_mut(n2).style.padding_top = Length::px(25.0);
-    doc.node_mut(n2).style.padding_right = Length::px(25.0);
-    doc.node_mut(n2).style.padding_bottom = Length::px(25.0);
-    doc.node_mut(n2).style.padding_left = Length::px(25.0);
-    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n2).style.background_color = Color::RED;
-    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(n2).style.border_top_style = BorderStyle::None;
-    doc.node_mut(n2).style.border_right_style = BorderStyle::None;
-    doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
-    doc.node_mut(n2).style.border_left_style = BorderStyle::None;
-    doc.node_mut(n2).style.border_top_width = 0;
-    doc.node_mut(n2).style.border_right_width = 0;
-    doc.node_mut(n2).style.border_bottom_width = 0;
-    doc.node_mut(n2).style.border_left_width = 0;
-    doc.node_mut(n2).style.height = Length::px(0.0);
-    doc.node_mut(n2).style.margin_left = Length::px(25.0);
-    doc.node_mut(n2).style.width = Length::px(0.0);
-    doc.append_child(vp, n2);
     doc
 }
 
@@ -18637,6 +24552,45 @@ fn css_backgrounds_border_image_width_should_extend_to_padding_ref() -> Document
     doc.node_mut(n1).style.border_right_width = 32;
     doc.node_mut(n1).style.border_bottom_width = 32;
     doc.node_mut(n1).style.border_left_width = 32;
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        slice: [
+            BorderImageLength::Number(32.0),
+            BorderImageLength::Number(32.0),
+            BorderImageLength::Number(32.0),
+            BorderImageLength::Number(32.0),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Repeat,
+        repeat_y: BorderImageRepeat::Repeat,
+    });
     doc.append_child(vp, n1);
     doc
 }
@@ -18671,6 +24625,45 @@ fn css_backgrounds_border_image_width_should_extend_to_padding() -> Document {
     doc.node_mut(n1).style.border_right_style = BorderStyle::None;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::None;
     doc.node_mut(n1).style.border_left_style = BorderStyle::None;
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        slice: [
+            BorderImageLength::Number(32.0),
+            BorderImageLength::Number(32.0),
+            BorderImageLength::Number(32.0),
+            BorderImageLength::Number(32.0),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Length(Length::px(32.0)),
+            BorderImageLength::Length(Length::px(32.0)),
+            BorderImageLength::Length(Length::px(32.0)),
+            BorderImageLength::Length(Length::px(32.0)),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Repeat,
+        repeat_y: BorderImageRepeat::Repeat,
+    });
     doc.append_child(vp, n1);
     doc
 }
@@ -23057,13 +29050,16 @@ fn css_backgrounds_border_radius_011() -> Document {
 // Source: border-radius-012-ref.html
 fn css_backgrounds_border_radius_012_ref() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -23073,13 +29069,27 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -23090,12 +29100,24 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Text);
     doc.node_mut(n2).style.font_size = 16.0;
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -23105,9 +29127,13 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
@@ -23120,14 +29146,27 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.font_size = 40.0;
     doc.node_mut(n3).style.line_height = LineHeight::Length(100.0);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Span);
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
     doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
@@ -23152,6 +29191,15 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(n4).style.border_right_style = BorderStyle::None;
     doc.node_mut(n4).style.border_top_right_radius = (0.0_f32, 0.0_f32);
     doc.node_mut(n4).style.border_bottom_right_radius = (0.0_f32, 0.0_f32);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).style.font_size = 40.0;
     doc.node_mut(n4).style.line_height = LineHeight::Length(100.0);
     doc.append_child(n3, n4);
@@ -23159,9 +29207,13 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -23173,6 +29225,15 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.display = Display::InlineBlock;
     doc.node_mut(n5).style.width = Length::px(20.0);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).style.font_size = 40.0;
     doc.node_mut(n5).style.line_height = LineHeight::Length(100.0);
     doc.append_child(n4, n5);
@@ -23181,29 +29242,56 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
     doc.node_mut(n6).style.line_height = LineHeight::Length(100.0);
     doc.node_mut(n6).text = Some("\n  ".to_string());
     doc.append_child(n3, n6);
-    let n7 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n7).style.font_size = 40.0;
+    let n7 = doc.create_node(ElementTag::Break);
     doc.node_mut(n7).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n7).style.white_space = WhiteSpace::PreLine;
+    doc.node_mut(n7).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n7).style.display = Display::Inline;
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.font_size = 40.0;
     doc.node_mut(n7).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n7).text = Some("\n".to_string());
     doc.append_child(n3, n7);
     let n8 = doc.create_node(ElementTag::Text);
     doc.node_mut(n8).style.font_size = 40.0;
     doc.node_mut(n8).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -23214,9 +29302,13 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(n9).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n9).style.list_style_type = ListStyleType::None;
     doc.node_mut(n9).style.margin_top = Length::px(0.0);
     doc.node_mut(n9).style.margin_right = Length::px(0.0);
     doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
@@ -23241,6 +29333,15 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(n9).style.border_left_style = BorderStyle::None;
     doc.node_mut(n9).style.border_top_left_radius = (0.0_f32, 0.0_f32);
     doc.node_mut(n9).style.border_bottom_left_radius = (0.0_f32, 0.0_f32);
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n9).style.font_size = 40.0;
     doc.node_mut(n9).style.line_height = LineHeight::Length(100.0);
     doc.append_child(n3, n9);
@@ -23248,9 +29349,13 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(n10).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n10).style.list_style_type = ListStyleType::None;
     doc.node_mut(n10).style.margin_top = Length::px(0.0);
     doc.node_mut(n10).style.margin_right = Length::px(0.0);
     doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
@@ -23262,6 +29367,15 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n10).style.display = Display::InlineBlock;
     doc.node_mut(n10).style.width = Length::px(20.0);
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n10).style.font_size = 40.0;
     doc.node_mut(n10).style.line_height = LineHeight::Length(100.0);
     doc.append_child(n9, n10);
@@ -23271,13 +29385,16 @@ fn css_backgrounds_border_radius_012_ref() -> Document {
 // Source: border-radius-012.html
 fn css_backgrounds_border_radius_012() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -23287,13 +29404,27 @@ fn css_backgrounds_border_radius_012() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -23304,12 +29435,24 @@ fn css_backgrounds_border_radius_012() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Text);
     doc.node_mut(n2).style.font_size = 16.0;
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -23319,9 +29462,13 @@ fn css_backgrounds_border_radius_012() -> Document {
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
@@ -23334,14 +29481,27 @@ fn css_backgrounds_border_radius_012() -> Document {
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n3).style.font_size = 40.0;
     doc.node_mut(n3).style.line_height = LineHeight::Length(100.0);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Span);
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
     doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
@@ -23363,6 +29523,15 @@ fn css_backgrounds_border_radius_012() -> Document {
     doc.node_mut(n4).style.border_top_right_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n4).style.border_bottom_right_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n4).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n4).style.font_size = 40.0;
     doc.node_mut(n4).style.line_height = LineHeight::Length(100.0);
     doc.append_child(n3, n4);
@@ -23370,9 +29539,13 @@ fn css_backgrounds_border_radius_012() -> Document {
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -23384,28 +29557,62 @@ fn css_backgrounds_border_radius_012() -> Document {
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.display = Display::InlineBlock;
     doc.node_mut(n5).style.width = Length::px(20.0);
-    doc.node_mut(n5).style.font_size = 40.0;
-    doc.node_mut(n5).style.line_height = LineHeight::Length(100.0);
-    doc.append_child(n4, n5);
-    let n6 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n6).style.font_size = 40.0;
-    doc.node_mut(n6).style.font_family = FontFamilyList {
+    doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n6).style.white_space = WhiteSpace::PreLine;
+    doc.node_mut(n5).style.font_size = 40.0;
+    doc.node_mut(n5).style.line_height = LineHeight::Length(100.0);
+    doc.append_child(n4, n5);
+    let n6 = doc.create_node(ElementTag::Break);
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n6).style.display = Display::Inline;
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.font_size = 40.0;
     doc.node_mut(n6).style.line_height = LineHeight::Length(100.0);
-    doc.node_mut(n6).text = Some("\n".to_string());
     doc.append_child(n4, n6);
     let n7 = doc.create_node(ElementTag::Span);
     doc.node_mut(n7).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n7).style.list_style_type = ListStyleType::None;
     doc.node_mut(n7).style.margin_top = Length::px(0.0);
     doc.node_mut(n7).style.margin_right = Length::px(0.0);
     doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
@@ -23417,6 +29624,15 @@ fn css_backgrounds_border_radius_012() -> Document {
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n7).style.display = Display::InlineBlock;
     doc.node_mut(n7).style.width = Length::px(20.0);
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n7).style.font_size = 40.0;
     doc.node_mut(n7).style.line_height = LineHeight::Length(100.0);
     doc.append_child(n4, n7);
@@ -27245,7 +33461,8 @@ fn css_backgrounds_box_shadow_041() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 128);
+    doc.node_mut(n1).style.background_color =
+        Color::from_rgba_f32(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5);
     doc.node_mut(n1).style.border_top_width = 18;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Double;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -27266,7 +33483,7 @@ fn css_backgrounds_box_shadow_041() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 0.0,
-        color: Color::from_rgba8(255, 165, 0, 128),
+        color: Color::from_rgba_f32(255.0 / 255.0, 165.0 / 255.0, 0.0 / 255.0, 0.5),
         inset: true,
     }];
     doc.append_child(vp, n1);
@@ -27281,7 +33498,8 @@ fn css_backgrounds_box_shadow_041() -> Document {
     doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n2).style.padding_left = Length::px(0.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 0, 255, 128);
+    doc.node_mut(n2).style.background_color =
+        Color::from_rgba_f32(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5);
     doc.node_mut(n2).style.border_top_width = 18;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Double;
     doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -27302,7 +33520,7 @@ fn css_backgrounds_box_shadow_041() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 12.0,
-        color: Color::from_rgba8(255, 165, 0, 128),
+        color: Color::from_rgba_f32(255.0 / 255.0, 165.0 / 255.0, 0.0 / 255.0, 0.5),
         inset: true,
     }];
     doc.append_child(vp, n2);
@@ -27317,7 +33535,8 @@ fn css_backgrounds_box_shadow_041() -> Document {
     doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n3).style.padding_left = Length::px(0.0);
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 0, 255, 128);
+    doc.node_mut(n3).style.background_color =
+        Color::from_rgba_f32(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5);
     doc.node_mut(n3).style.border_top_width = 18;
     doc.node_mut(n3).style.border_top_style = BorderStyle::Double;
     doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -27338,7 +33557,7 @@ fn css_backgrounds_box_shadow_041() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: -6.0,
-        color: Color::from_rgba8(255, 165, 0, 128),
+        color: Color::from_rgba_f32(255.0 / 255.0, 165.0 / 255.0, 0.0 / 255.0, 0.5),
         inset: true,
     }];
     doc.append_child(vp, n3);
@@ -27368,7 +33587,8 @@ fn css_backgrounds_box_shadow_042() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 255, 128);
+    doc.node_mut(n1).style.background_color =
+        Color::from_rgba_f32(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5);
     doc.node_mut(n1).style.border_top_width = 18;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Double;
     doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -27389,7 +33609,7 @@ fn css_backgrounds_box_shadow_042() -> Document {
         offset_y: 12.0,
         blur_radius: 0.0,
         spread_radius: 0.0,
-        color: Color::from_rgba8(255, 165, 0, 128),
+        color: Color::from_rgba_f32(255.0 / 255.0, 165.0 / 255.0, 0.0 / 255.0, 0.5),
         inset: true,
     }];
     doc.append_child(vp, n1);
@@ -27404,7 +33624,8 @@ fn css_backgrounds_box_shadow_042() -> Document {
     doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n2).style.padding_left = Length::px(0.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 0, 255, 128);
+    doc.node_mut(n2).style.background_color =
+        Color::from_rgba_f32(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5);
     doc.node_mut(n2).style.border_top_width = 18;
     doc.node_mut(n2).style.border_top_style = BorderStyle::Double;
     doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -27425,7 +33646,7 @@ fn css_backgrounds_box_shadow_042() -> Document {
         offset_y: 12.0,
         blur_radius: 0.0,
         spread_radius: 12.0,
-        color: Color::from_rgba8(255, 165, 0, 128),
+        color: Color::from_rgba_f32(255.0 / 255.0, 165.0 / 255.0, 0.0 / 255.0, 0.5),
         inset: true,
     }];
     doc.append_child(vp, n2);
@@ -27440,7 +33661,8 @@ fn css_backgrounds_box_shadow_042() -> Document {
     doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n3).style.padding_left = Length::px(0.0);
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(n3).style.background_color = Color::from_rgba8(0, 0, 255, 128);
+    doc.node_mut(n3).style.background_color =
+        Color::from_rgba_f32(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5);
     doc.node_mut(n3).style.border_top_width = 18;
     doc.node_mut(n3).style.border_top_style = BorderStyle::Double;
     doc.node_mut(n3).style.border_top_color = StyleColor::Resolved(Color::BLACK);
@@ -27461,7 +33683,7 @@ fn css_backgrounds_box_shadow_042() -> Document {
         offset_y: 12.0,
         blur_radius: 0.0,
         spread_radius: -6.0,
-        color: Color::from_rgba8(255, 165, 0, 128),
+        color: Color::from_rgba_f32(255.0 / 255.0, 165.0 / 255.0, 0.0 / 255.0, 0.5),
         inset: true,
     }];
     doc.append_child(vp, n3);
@@ -27574,6 +33796,14 @@ fn css_backgrounds_box_shadow_calc() -> Document {
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::BLUE;
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow {
+        offset_x: 26.0,
+        offset_y: 43.0,
+        blur_radius: 60.0,
+        spread_radius: 0.0,
+        color: Color::BLACK,
+        inset: false,
+    }];
     doc.append_child(vp, n1);
     doc
 }
@@ -27671,7 +33901,7 @@ fn css_backgrounds_box_shadow_currentcolor() -> Document {
         offset_y: 5.0,
         blur_radius: 5.0,
         spread_radius: 0.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::TRANSPARENT,
         inset: false,
     }];
     doc.append_child(vp, n1);
@@ -27694,6 +33924,14 @@ fn css_backgrounds_box_shadow_currentcolor() -> Document {
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
     doc.node_mut(n2).style.border_left_width = 1;
     doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.box_shadow = vec![BoxShadow {
+        offset_x: 10.0,
+        offset_y: 5.0,
+        blur_radius: 5.0,
+        spread_radius: 0.0,
+        color: Color::from_rgba8(50, 205, 50, 255),
+        inset: false,
+    }];
     doc.node_mut(n2).style.color = Color::from_rgba8(50, 205, 50, 255);
     doc.append_child(n1, n2);
     doc
@@ -27702,13 +33940,16 @@ fn css_backgrounds_box_shadow_currentcolor() -> Document {
 // Source: box-shadow-inset-without-border-radius.html
 fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -27718,13 +33959,27 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(8.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(8.0);
@@ -27758,14 +34013,27 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
         color: Color::BLACK,
         inset: true,
     }];
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(8.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(8.0);
@@ -27799,14 +34067,27 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
         color: Color::BLACK,
         inset: true,
     }];
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(8.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(8.0);
@@ -27840,14 +34121,27 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
         color: Color::BLACK,
         inset: true,
     }];
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(8.0);
     doc.node_mut(n4).style.margin_bottom = Length::px(8.0);
@@ -27881,23 +34175,55 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
         color: Color::BLACK,
         inset: true,
     }];
-    doc.append_child(vp, n4);
-    let n5 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n5).style.font_size = 16.0;
-    doc.node_mut(n5).style.font_family = FontFamilyList {
+    doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n5).style.white_space = WhiteSpace::PreLine;
-    doc.node_mut(n5).text = Some("\n".to_string());
+    doc.append_child(vp, n4);
+    let n5 = doc.create_node(ElementTag::Break);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n5).style.display = Display::Inline;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n5);
     let n6 = doc.create_node(ElementTag::Text);
     doc.node_mut(n6).style.font_size = 16.0;
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -27907,9 +34233,13 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
     doc.node_mut(n7).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n7).style.list_style_type = ListStyleType::None;
     doc.node_mut(n7).style.margin_top = Length::px(0.0);
     doc.node_mut(n7).style.margin_right = Length::px(8.0);
     doc.node_mut(n7).style.margin_bottom = Length::px(8.0);
@@ -27943,14 +34273,27 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
         color: Color::BLACK,
         inset: true,
     }];
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n8).style.list_style_type = ListStyleType::None;
     doc.node_mut(n8).style.margin_top = Length::px(0.0);
     doc.node_mut(n8).style.margin_right = Length::px(8.0);
     doc.node_mut(n8).style.margin_bottom = Length::px(8.0);
@@ -27984,14 +34327,27 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
         color: Color::BLACK,
         inset: true,
     }];
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n8);
     let n9 = doc.create_node(ElementTag::Div);
     doc.node_mut(n9).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n9).style.list_style_type = ListStyleType::None;
     doc.node_mut(n9).style.margin_top = Length::px(0.0);
     doc.node_mut(n9).style.margin_right = Length::px(8.0);
     doc.node_mut(n9).style.margin_bottom = Length::px(8.0);
@@ -28025,14 +34381,27 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
         color: Color::BLACK,
         inset: true,
     }];
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n9);
     let n10 = doc.create_node(ElementTag::Div);
     doc.node_mut(n10).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n10).style.list_style_type = ListStyleType::None;
     doc.node_mut(n10).style.margin_top = Length::px(0.0);
     doc.node_mut(n10).style.margin_right = Length::px(8.0);
     doc.node_mut(n10).style.margin_bottom = Length::px(8.0);
@@ -28066,6 +34435,15 @@ fn css_backgrounds_box_shadow_inset_without_border_radius() -> Document {
         color: Color::BLACK,
         inset: true,
     }];
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n10);
     doc
 }
@@ -28094,40 +34472,14 @@ fn css_backgrounds_box_shadow_invalid_001() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.background_color = Color::RED;
-    doc.node_mut(n1).style.box_shadow = vec![
-        BoxShadow {
-            offset_x: 0.0,
-            offset_y: -100.0,
-            blur_radius: 0.0,
-            spread_radius: 0.0,
-            color: Color::RED,
-            inset: false,
-        },
-        BoxShadow {
-            offset_x: 100.0,
-            offset_y: 0.0,
-            blur_radius: 0.0,
-            spread_radius: 0.0,
-            color: Color::RED,
-            inset: false,
-        },
-        BoxShadow {
-            offset_x: 0.0,
-            offset_y: 100.0,
-            blur_radius: 0.0,
-            spread_radius: 0.0,
-            color: Color::RED,
-            inset: false,
-        },
-        BoxShadow {
-            offset_x: -100.0,
-            offset_y: 0.0,
-            blur_radius: 0.0,
-            spread_radius: 0.0,
-            color: Color::RED,
-            inset: false,
-        },
-    ];
+    doc.node_mut(n1).style.box_shadow = vec![BoxShadow {
+        offset_x: 100.0,
+        offset_y: 100.0,
+        blur_radius: 0.0,
+        spread_radius: 0.0,
+        color: Color::from_rgba8(0, 128, 0, 255),
+        inset: true,
+    }];
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.append_child(vp, n1);
@@ -28150,7 +34502,7 @@ fn css_backgrounds_box_shadow_multiple_001() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(50.0);
     doc.node_mut(n1).style.margin_right = Length::auto();
-    doc.node_mut(n1).style.margin_bottom = Length::px(110.00000000000001);
+    doc.node_mut(n1).style.margin_bottom = Length::px(110.0);
     doc.node_mut(n1).style.margin_left = Length::px(50.0);
     doc.node_mut(n1).style.padding_top = Length::px(0.0);
     doc.node_mut(n1).style.padding_right = Length::px(0.0);
@@ -28201,7 +34553,7 @@ fn css_backgrounds_box_shadow_multiple_001() -> Document {
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(50.0);
     doc.node_mut(n2).style.margin_right = Length::auto();
-    doc.node_mut(n2).style.margin_bottom = Length::px(110.00000000000001);
+    doc.node_mut(n2).style.margin_bottom = Length::px(110.0);
     doc.node_mut(n2).style.margin_left = Length::px(50.0);
     doc.node_mut(n2).style.padding_top = Length::px(0.0);
     doc.node_mut(n2).style.padding_right = Length::px(0.0);
@@ -28283,7 +34635,7 @@ fn css_backgrounds_box_shadow_multiple_001() -> Document {
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.margin_top = Length::px(50.0);
     doc.node_mut(n3).style.margin_right = Length::auto();
-    doc.node_mut(n3).style.margin_bottom = Length::px(110.00000000000001);
+    doc.node_mut(n3).style.margin_bottom = Length::px(110.0);
     doc.node_mut(n3).style.margin_left = Length::px(50.0);
     doc.node_mut(n3).style.padding_top = Length::px(0.0);
     doc.node_mut(n3).style.padding_right = Length::px(0.0);
@@ -28297,50 +34649,10 @@ fn css_backgrounds_box_shadow_multiple_001() -> Document {
     doc.node_mut(n3).style.box_shadow = vec![
         BoxShadow {
             offset_x: 0.0,
-            offset_y: 0.0,
-            blur_radius: -50.0,
-            spread_radius: 0.0,
-            color: Color::from_rgba8(0, 0, 0, 255),
-            inset: false,
-        },
-        BoxShadow {
-            offset_x: 0.0,
-            offset_y: 0.0,
-            blur_radius: -50.0,
-            spread_radius: 0.0,
-            color: Color::from_rgba8(0, 0, 0, 255),
-            inset: false,
-        },
-        BoxShadow {
-            offset_x: 0.0,
-            offset_y: 50.0,
+            offset_y: -50.0,
             blur_radius: 0.0,
             spread_radius: 0.0,
-            color: Color::from_rgba8(0, 0, 0, 255),
-            inset: false,
-        },
-        BoxShadow {
-            offset_x: 0.0,
-            offset_y: 50.0,
-            blur_radius: 0.0,
-            spread_radius: 0.0,
-            color: Color::from_rgba8(0, 0, 0, 255),
-            inset: false,
-        },
-        BoxShadow {
-            offset_x: 0.0,
-            offset_y: 0.0,
-            blur_radius: 50.0,
-            spread_radius: 0.0,
-            color: Color::from_rgba8(0, 0, 0, 255),
-            inset: false,
-        },
-        BoxShadow {
-            offset_x: 0.0,
-            offset_y: 0.0,
-            blur_radius: 50.0,
-            spread_radius: 0.0,
-            color: Color::from_rgba8(0, 0, 0, 255),
+            color: Color::from_rgba_f32(128.0 / 255.0, 0.0 / 255.0, 128.0 / 255.0, 0.5),
             inset: false,
         },
         BoxShadow {
@@ -28348,15 +34660,55 @@ fn css_backgrounds_box_shadow_multiple_001() -> Document {
             offset_y: -50.0,
             blur_radius: 0.0,
             spread_radius: 0.0,
-            color: Color::from_rgba8(0, 0, 0, 255),
+            color: Color::from_rgba_f32(255.0 / 255.0, 255.0 / 255.0, 0.0 / 255.0, 0.5),
+            inset: false,
+        },
+        BoxShadow {
+            offset_x: 50.0,
+            offset_y: 0.0,
+            blur_radius: 0.0,
+            spread_radius: 0.0,
+            color: Color::from_rgba_f32(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5),
+            inset: false,
+        },
+        BoxShadow {
+            offset_x: 50.0,
+            offset_y: 0.0,
+            blur_radius: 0.0,
+            spread_radius: 0.0,
+            color: Color::from_rgba_f32(255.0 / 255.0, 255.0 / 255.0, 0.0 / 255.0, 0.5),
             inset: false,
         },
         BoxShadow {
             offset_x: 0.0,
-            offset_y: -50.0,
+            offset_y: 50.0,
             blur_radius: 0.0,
             spread_radius: 0.0,
-            color: Color::from_rgba8(0, 0, 0, 255),
+            color: Color::from_rgba_f32(255.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5),
+            inset: false,
+        },
+        BoxShadow {
+            offset_x: 0.0,
+            offset_y: 50.0,
+            blur_radius: 0.0,
+            spread_radius: 0.0,
+            color: Color::from_rgba_f32(255.0 / 255.0, 255.0 / 255.0, 0.0 / 255.0, 0.5),
+            inset: false,
+        },
+        BoxShadow {
+            offset_x: -50.0,
+            offset_y: 0.0,
+            blur_radius: 0.0,
+            spread_radius: 0.0,
+            color: Color::from_rgba_f32(255.0 / 255.0, 165.0 / 255.0, 0.0 / 255.0, 0.5),
+            inset: false,
+        },
+        BoxShadow {
+            offset_x: -50.0,
+            offset_y: 0.0,
+            blur_radius: 0.0,
+            spread_radius: 0.0,
+            color: Color::from_rgba_f32(255.0 / 255.0, 255.0 / 255.0, 0.0 / 255.0, 0.5),
             inset: false,
         },
     ];
@@ -28977,6 +35329,11 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -29033,7 +35390,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 10.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: false,
     }];
     doc.node_mut(n3).style.top = Length::px(30.0);
@@ -29052,6 +35409,11 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.position = Position::Relative;
+    doc.node_mut(n4).style.width = Length::px(100.0);
+    doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.float = Float::Left;
+    doc.node_mut(n4).style.display = Display::Block;
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -29075,7 +35437,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 10.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::TRANSPARENT,
         inset: false,
     }];
     doc.node_mut(n5).style.top = Length::px(30.0);
@@ -29131,6 +35493,11 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.position = Position::Relative;
+    doc.node_mut(n7).style.width = Length::px(100.0);
+    doc.node_mut(n7).style.height = Length::px(100.0);
+    doc.node_mut(n7).style.float = Float::Left;
+    doc.node_mut(n7).style.display = Display::Block;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -29187,7 +35554,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 5.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: false,
     }];
     doc.node_mut(n9).style.top = Length::px(25.0);
@@ -29206,6 +35573,11 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.position = Position::Relative;
+    doc.node_mut(n10).style.width = Length::px(100.0);
+    doc.node_mut(n10).style.height = Length::px(100.0);
+    doc.node_mut(n10).style.float = Float::Left;
+    doc.node_mut(n10).style.display = Display::Block;
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -29229,7 +35601,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 5.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::TRANSPARENT,
         inset: false,
     }];
     doc.node_mut(n11).style.top = Length::px(25.0);
@@ -29285,6 +35657,11 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
     doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n13).style.padding_left = Length::px(0.0);
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n13).style.position = Position::Relative;
+    doc.node_mut(n13).style.width = Length::px(100.0);
+    doc.node_mut(n13).style.height = Length::px(100.0);
+    doc.node_mut(n13).style.float = Float::Left;
+    doc.node_mut(n13).style.display = Display::Block;
     doc.append_child(vp, n13);
     let n14 = doc.create_node(ElementTag::Div);
     doc.node_mut(n14).style.display = Display::Block;
@@ -29341,7 +35718,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: false,
     }];
     doc.node_mut(n15).style.top = Length::px(36.0);
@@ -29360,6 +35737,11 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
     doc.node_mut(n16).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n16).style.padding_left = Length::px(0.0);
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n16).style.position = Position::Relative;
+    doc.node_mut(n16).style.width = Length::px(100.0);
+    doc.node_mut(n16).style.height = Length::px(100.0);
+    doc.node_mut(n16).style.float = Float::Left;
+    doc.node_mut(n16).style.display = Display::Block;
     doc.append_child(vp, n16);
     let n17 = doc.create_node(ElementTag::Div);
     doc.node_mut(n17).style.display = Display::Block;
@@ -29383,7 +35765,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::TRANSPARENT,
         inset: false,
     }];
     doc.node_mut(n17).style.top = Length::px(36.0);
@@ -29439,6 +35821,11 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
     doc.node_mut(n19).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n19).style.padding_left = Length::px(0.0);
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n19).style.position = Position::Relative;
+    doc.node_mut(n19).style.width = Length::px(100.0);
+    doc.node_mut(n19).style.height = Length::px(100.0);
+    doc.node_mut(n19).style.float = Float::Left;
+    doc.node_mut(n19).style.display = Display::Block;
     doc.append_child(vp, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -29495,7 +35882,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 20.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: false,
     }];
     doc.node_mut(n21).style.top = Length::px(40.0);
@@ -29514,6 +35901,11 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
     doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n22).style.padding_left = Length::px(0.0);
     doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n22).style.position = Position::Relative;
+    doc.node_mut(n22).style.width = Length::px(100.0);
+    doc.node_mut(n22).style.height = Length::px(100.0);
+    doc.node_mut(n22).style.float = Float::Left;
+    doc.node_mut(n22).style.display = Display::Block;
     doc.append_child(vp, n22);
     let n23 = doc.create_node(ElementTag::Div);
     doc.node_mut(n23).style.display = Display::Block;
@@ -29537,7 +35929,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 20.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::TRANSPARENT,
         inset: false,
     }];
     doc.node_mut(n23).style.top = Length::px(40.0);
@@ -29593,6 +35985,11 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
     doc.node_mut(n25).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n25).style.padding_left = Length::px(0.0);
     doc.node_mut(n25).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n25).style.position = Position::Relative;
+    doc.node_mut(n25).style.width = Length::px(100.0);
+    doc.node_mut(n25).style.height = Length::px(100.0);
+    doc.node_mut(n25).style.float = Float::Left;
+    doc.node_mut(n25).style.display = Display::Block;
     doc.append_child(vp, n25);
     let n26 = doc.create_node(ElementTag::Div);
     doc.node_mut(n26).style.display = Display::Block;
@@ -29649,7 +36046,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: false,
     }];
     doc.node_mut(n27).style.top = Length::px(36.0);
@@ -29668,6 +36065,11 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
     doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n28).style.padding_left = Length::px(0.0);
     doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n28).style.position = Position::Relative;
+    doc.node_mut(n28).style.width = Length::px(100.0);
+    doc.node_mut(n28).style.height = Length::px(100.0);
+    doc.node_mut(n28).style.float = Float::Left;
+    doc.node_mut(n28).style.display = Display::Block;
     doc.append_child(vp, n28);
     let n29 = doc.create_node(ElementTag::Div);
     doc.node_mut(n29).style.display = Display::Block;
@@ -29691,7 +36093,7 @@ fn css_backgrounds_box_shadow_radius_000_ref() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::TRANSPARENT,
         inset: false,
     }];
     doc.node_mut(n29).style.top = Length::px(36.0);
@@ -29762,6 +36164,11 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -29818,7 +36225,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 10.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: false,
     }];
     doc.node_mut(n3).style.top = Length::px(30.0);
@@ -29837,6 +36244,11 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.position = Position::Relative;
+    doc.node_mut(n4).style.width = Length::px(100.0);
+    doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.float = Float::Left;
+    doc.node_mut(n4).style.display = Display::Block;
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -29860,7 +36272,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 10.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::RED,
         inset: false,
     }];
     doc.node_mut(n5).style.top = Length::px(30.0);
@@ -29916,6 +36328,11 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.position = Position::Relative;
+    doc.node_mut(n7).style.width = Length::px(100.0);
+    doc.node_mut(n7).style.height = Length::px(100.0);
+    doc.node_mut(n7).style.float = Float::Left;
+    doc.node_mut(n7).style.display = Display::Block;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -29972,7 +36389,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 5.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: false,
     }];
     doc.node_mut(n9).style.top = Length::px(25.0);
@@ -29991,6 +36408,11 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.position = Position::Relative;
+    doc.node_mut(n10).style.width = Length::px(100.0);
+    doc.node_mut(n10).style.height = Length::px(100.0);
+    doc.node_mut(n10).style.float = Float::Left;
+    doc.node_mut(n10).style.display = Display::Block;
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -30014,7 +36436,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 5.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::RED,
         inset: false,
     }];
     doc.node_mut(n11).style.top = Length::px(25.0);
@@ -30070,6 +36492,11 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
     doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n13).style.padding_left = Length::px(0.0);
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n13).style.position = Position::Relative;
+    doc.node_mut(n13).style.width = Length::px(100.0);
+    doc.node_mut(n13).style.height = Length::px(100.0);
+    doc.node_mut(n13).style.float = Float::Left;
+    doc.node_mut(n13).style.display = Display::Block;
     doc.append_child(vp, n13);
     let n14 = doc.create_node(ElementTag::Div);
     doc.node_mut(n14).style.display = Display::Block;
@@ -30126,7 +36553,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: false,
     }];
     doc.node_mut(n15).style.top = Length::px(36.0);
@@ -30145,6 +36572,11 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
     doc.node_mut(n16).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n16).style.padding_left = Length::px(0.0);
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n16).style.position = Position::Relative;
+    doc.node_mut(n16).style.width = Length::px(100.0);
+    doc.node_mut(n16).style.height = Length::px(100.0);
+    doc.node_mut(n16).style.float = Float::Left;
+    doc.node_mut(n16).style.display = Display::Block;
     doc.append_child(vp, n16);
     let n17 = doc.create_node(ElementTag::Div);
     doc.node_mut(n17).style.display = Display::Block;
@@ -30168,7 +36600,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::RED,
         inset: false,
     }];
     doc.node_mut(n17).style.top = Length::px(36.0);
@@ -30224,6 +36656,11 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
     doc.node_mut(n19).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n19).style.padding_left = Length::px(0.0);
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n19).style.position = Position::Relative;
+    doc.node_mut(n19).style.width = Length::px(100.0);
+    doc.node_mut(n19).style.height = Length::px(100.0);
+    doc.node_mut(n19).style.float = Float::Left;
+    doc.node_mut(n19).style.display = Display::Block;
     doc.append_child(vp, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -30280,7 +36717,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 20.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: false,
     }];
     doc.node_mut(n21).style.top = Length::px(40.0);
@@ -30299,6 +36736,11 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
     doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n22).style.padding_left = Length::px(0.0);
     doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n22).style.position = Position::Relative;
+    doc.node_mut(n22).style.width = Length::px(100.0);
+    doc.node_mut(n22).style.height = Length::px(100.0);
+    doc.node_mut(n22).style.float = Float::Left;
+    doc.node_mut(n22).style.display = Display::Block;
     doc.append_child(vp, n22);
     let n23 = doc.create_node(ElementTag::Div);
     doc.node_mut(n23).style.display = Display::Block;
@@ -30322,7 +36764,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 20.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::RED,
         inset: false,
     }];
     doc.node_mut(n23).style.top = Length::px(40.0);
@@ -30378,6 +36820,11 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
     doc.node_mut(n25).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n25).style.padding_left = Length::px(0.0);
     doc.node_mut(n25).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n25).style.position = Position::Relative;
+    doc.node_mut(n25).style.width = Length::px(100.0);
+    doc.node_mut(n25).style.height = Length::px(100.0);
+    doc.node_mut(n25).style.float = Float::Left;
+    doc.node_mut(n25).style.display = Display::Block;
     doc.append_child(vp, n25);
     let n26 = doc.create_node(ElementTag::Div);
     doc.node_mut(n26).style.display = Display::Block;
@@ -30434,7 +36881,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: false,
     }];
     doc.node_mut(n27).style.top = Length::px(36.0);
@@ -30453,6 +36900,11 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
     doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n28).style.padding_left = Length::px(0.0);
     doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n28).style.position = Position::Relative;
+    doc.node_mut(n28).style.width = Length::px(100.0);
+    doc.node_mut(n28).style.height = Length::px(100.0);
+    doc.node_mut(n28).style.float = Float::Left;
+    doc.node_mut(n28).style.display = Display::Block;
     doc.append_child(vp, n28);
     let n29 = doc.create_node(ElementTag::Div);
     doc.node_mut(n29).style.display = Display::Block;
@@ -30476,7 +36928,7 @@ fn css_backgrounds_box_shadow_radius_000() -> Document {
         offset_y: 0.0,
         blur_radius: 0.0,
         spread_radius: 16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::RED,
         inset: false,
     }];
     doc.node_mut(n29).style.top = Length::px(36.0);
@@ -30547,6 +36999,11 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -30601,7 +37058,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         offset_y: 20.0,
         blur_radius: 0.0,
         spread_radius: -10.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: true,
     }];
     doc.append_child(n1, n3);
@@ -30616,6 +37073,11 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.position = Position::Relative;
+    doc.node_mut(n4).style.width = Length::px(100.0);
+    doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.float = Float::Left;
+    doc.node_mut(n4).style.display = Display::Block;
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -30640,7 +37102,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         offset_y: 20.0,
         blur_radius: 0.0,
         spread_radius: -10.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::TRANSPARENT,
         inset: true,
     }];
     doc.append_child(n4, n5);
@@ -30687,6 +37149,11 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.position = Position::Relative;
+    doc.node_mut(n7).style.width = Length::px(100.0);
+    doc.node_mut(n7).style.height = Length::px(100.0);
+    doc.node_mut(n7).style.float = Float::Left;
+    doc.node_mut(n7).style.display = Display::Block;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -30741,7 +37208,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         offset_y: 15.0,
         blur_radius: 0.0,
         spread_radius: -5.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: true,
     }];
     doc.append_child(n7, n9);
@@ -30756,6 +37223,11 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.position = Position::Relative;
+    doc.node_mut(n10).style.width = Length::px(100.0);
+    doc.node_mut(n10).style.height = Length::px(100.0);
+    doc.node_mut(n10).style.float = Float::Left;
+    doc.node_mut(n10).style.display = Display::Block;
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -30780,7 +37252,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         offset_y: 15.0,
         blur_radius: 0.0,
         spread_radius: -5.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::TRANSPARENT,
         inset: true,
     }];
     doc.append_child(n10, n11);
@@ -30827,6 +37299,11 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
     doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n13).style.padding_left = Length::px(0.0);
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n13).style.position = Position::Relative;
+    doc.node_mut(n13).style.width = Length::px(100.0);
+    doc.node_mut(n13).style.height = Length::px(100.0);
+    doc.node_mut(n13).style.float = Float::Left;
+    doc.node_mut(n13).style.display = Display::Block;
     doc.append_child(vp, n13);
     let n14 = doc.create_node(ElementTag::Div);
     doc.node_mut(n14).style.display = Display::Block;
@@ -30881,7 +37358,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         offset_y: 26.0,
         blur_radius: 0.0,
         spread_radius: -16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: true,
     }];
     doc.append_child(n13, n15);
@@ -30896,6 +37373,11 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
     doc.node_mut(n16).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n16).style.padding_left = Length::px(0.0);
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n16).style.position = Position::Relative;
+    doc.node_mut(n16).style.width = Length::px(100.0);
+    doc.node_mut(n16).style.height = Length::px(100.0);
+    doc.node_mut(n16).style.float = Float::Left;
+    doc.node_mut(n16).style.display = Display::Block;
     doc.append_child(vp, n16);
     let n17 = doc.create_node(ElementTag::Div);
     doc.node_mut(n17).style.display = Display::Block;
@@ -30920,7 +37402,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         offset_y: 26.0,
         blur_radius: 0.0,
         spread_radius: -16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::TRANSPARENT,
         inset: true,
     }];
     doc.append_child(n16, n17);
@@ -30967,6 +37449,11 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
     doc.node_mut(n19).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n19).style.padding_left = Length::px(0.0);
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n19).style.position = Position::Relative;
+    doc.node_mut(n19).style.width = Length::px(100.0);
+    doc.node_mut(n19).style.height = Length::px(100.0);
+    doc.node_mut(n19).style.float = Float::Left;
+    doc.node_mut(n19).style.display = Display::Block;
     doc.append_child(vp, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -31021,7 +37508,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         offset_y: 30.0,
         blur_radius: 0.0,
         spread_radius: -20.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: true,
     }];
     doc.append_child(n19, n21);
@@ -31036,6 +37523,11 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
     doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n22).style.padding_left = Length::px(0.0);
     doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n22).style.position = Position::Relative;
+    doc.node_mut(n22).style.width = Length::px(100.0);
+    doc.node_mut(n22).style.height = Length::px(100.0);
+    doc.node_mut(n22).style.float = Float::Left;
+    doc.node_mut(n22).style.display = Display::Block;
     doc.append_child(vp, n22);
     let n23 = doc.create_node(ElementTag::Div);
     doc.node_mut(n23).style.display = Display::Block;
@@ -31060,7 +37552,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         offset_y: 30.0,
         blur_radius: 0.0,
         spread_radius: -20.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::TRANSPARENT,
         inset: true,
     }];
     doc.append_child(n22, n23);
@@ -31107,6 +37599,11 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
     doc.node_mut(n25).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n25).style.padding_left = Length::px(0.0);
     doc.node_mut(n25).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n25).style.position = Position::Relative;
+    doc.node_mut(n25).style.width = Length::px(100.0);
+    doc.node_mut(n25).style.height = Length::px(100.0);
+    doc.node_mut(n25).style.float = Float::Left;
+    doc.node_mut(n25).style.display = Display::Block;
     doc.append_child(vp, n25);
     let n26 = doc.create_node(ElementTag::Div);
     doc.node_mut(n26).style.display = Display::Block;
@@ -31161,7 +37658,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         offset_y: 26.0,
         blur_radius: 0.0,
         spread_radius: -16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: true,
     }];
     doc.append_child(n25, n27);
@@ -31176,6 +37673,11 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
     doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n28).style.padding_left = Length::px(0.0);
     doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n28).style.position = Position::Relative;
+    doc.node_mut(n28).style.width = Length::px(100.0);
+    doc.node_mut(n28).style.height = Length::px(100.0);
+    doc.node_mut(n28).style.float = Float::Left;
+    doc.node_mut(n28).style.display = Display::Block;
     doc.append_child(vp, n28);
     let n29 = doc.create_node(ElementTag::Div);
     doc.node_mut(n29).style.display = Display::Block;
@@ -31200,7 +37702,7 @@ fn css_backgrounds_box_shadow_radius_001_ref() -> Document {
         offset_y: 26.0,
         blur_radius: 0.0,
         spread_radius: -16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::TRANSPARENT,
         inset: true,
     }];
     doc.append_child(n28, n29);
@@ -31262,6 +37764,11 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.position = Position::Relative;
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.float = Float::Left;
+    doc.node_mut(n1).style.display = Display::Block;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -31316,7 +37823,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         offset_y: 20.0,
         blur_radius: 0.0,
         spread_radius: -10.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: true,
     }];
     doc.append_child(n1, n3);
@@ -31331,6 +37838,11 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n4).style.padding_left = Length::px(0.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.position = Position::Relative;
+    doc.node_mut(n4).style.width = Length::px(100.0);
+    doc.node_mut(n4).style.height = Length::px(100.0);
+    doc.node_mut(n4).style.float = Float::Left;
+    doc.node_mut(n4).style.display = Display::Block;
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.display = Display::Block;
@@ -31355,7 +37867,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         offset_y: 20.0,
         blur_radius: 0.0,
         spread_radius: -10.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::RED,
         inset: true,
     }];
     doc.append_child(n4, n5);
@@ -31402,6 +37914,11 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.position = Position::Relative;
+    doc.node_mut(n7).style.width = Length::px(100.0);
+    doc.node_mut(n7).style.height = Length::px(100.0);
+    doc.node_mut(n7).style.float = Float::Left;
+    doc.node_mut(n7).style.display = Display::Block;
     doc.append_child(vp, n7);
     let n8 = doc.create_node(ElementTag::Div);
     doc.node_mut(n8).style.display = Display::Block;
@@ -31456,7 +37973,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         offset_y: 15.0,
         blur_radius: 0.0,
         spread_radius: -5.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: true,
     }];
     doc.append_child(n7, n9);
@@ -31471,6 +37988,11 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
     doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n10).style.padding_left = Length::px(0.0);
     doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.position = Position::Relative;
+    doc.node_mut(n10).style.width = Length::px(100.0);
+    doc.node_mut(n10).style.height = Length::px(100.0);
+    doc.node_mut(n10).style.float = Float::Left;
+    doc.node_mut(n10).style.display = Display::Block;
     doc.append_child(vp, n10);
     let n11 = doc.create_node(ElementTag::Div);
     doc.node_mut(n11).style.display = Display::Block;
@@ -31495,7 +38017,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         offset_y: 15.0,
         blur_radius: 0.0,
         spread_radius: -5.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::RED,
         inset: true,
     }];
     doc.append_child(n10, n11);
@@ -31542,6 +38064,11 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
     doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n13).style.padding_left = Length::px(0.0);
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n13).style.position = Position::Relative;
+    doc.node_mut(n13).style.width = Length::px(100.0);
+    doc.node_mut(n13).style.height = Length::px(100.0);
+    doc.node_mut(n13).style.float = Float::Left;
+    doc.node_mut(n13).style.display = Display::Block;
     doc.append_child(vp, n13);
     let n14 = doc.create_node(ElementTag::Div);
     doc.node_mut(n14).style.display = Display::Block;
@@ -31596,7 +38123,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         offset_y: 26.0,
         blur_radius: 0.0,
         spread_radius: -16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: true,
     }];
     doc.append_child(n13, n15);
@@ -31611,6 +38138,11 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
     doc.node_mut(n16).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n16).style.padding_left = Length::px(0.0);
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n16).style.position = Position::Relative;
+    doc.node_mut(n16).style.width = Length::px(100.0);
+    doc.node_mut(n16).style.height = Length::px(100.0);
+    doc.node_mut(n16).style.float = Float::Left;
+    doc.node_mut(n16).style.display = Display::Block;
     doc.append_child(vp, n16);
     let n17 = doc.create_node(ElementTag::Div);
     doc.node_mut(n17).style.display = Display::Block;
@@ -31635,7 +38167,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         offset_y: 26.0,
         blur_radius: 0.0,
         spread_radius: -16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::RED,
         inset: true,
     }];
     doc.append_child(n16, n17);
@@ -31682,6 +38214,11 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
     doc.node_mut(n19).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n19).style.padding_left = Length::px(0.0);
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n19).style.position = Position::Relative;
+    doc.node_mut(n19).style.width = Length::px(100.0);
+    doc.node_mut(n19).style.height = Length::px(100.0);
+    doc.node_mut(n19).style.float = Float::Left;
+    doc.node_mut(n19).style.display = Display::Block;
     doc.append_child(vp, n19);
     let n20 = doc.create_node(ElementTag::Div);
     doc.node_mut(n20).style.display = Display::Block;
@@ -31736,7 +38273,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         offset_y: 30.0,
         blur_radius: 0.0,
         spread_radius: -20.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: true,
     }];
     doc.append_child(n19, n21);
@@ -31751,6 +38288,11 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
     doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n22).style.padding_left = Length::px(0.0);
     doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n22).style.position = Position::Relative;
+    doc.node_mut(n22).style.width = Length::px(100.0);
+    doc.node_mut(n22).style.height = Length::px(100.0);
+    doc.node_mut(n22).style.float = Float::Left;
+    doc.node_mut(n22).style.display = Display::Block;
     doc.append_child(vp, n22);
     let n23 = doc.create_node(ElementTag::Div);
     doc.node_mut(n23).style.display = Display::Block;
@@ -31775,7 +38317,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         offset_y: 30.0,
         blur_radius: 0.0,
         spread_radius: -20.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::RED,
         inset: true,
     }];
     doc.append_child(n22, n23);
@@ -31822,6 +38364,11 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
     doc.node_mut(n25).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n25).style.padding_left = Length::px(0.0);
     doc.node_mut(n25).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n25).style.position = Position::Relative;
+    doc.node_mut(n25).style.width = Length::px(100.0);
+    doc.node_mut(n25).style.height = Length::px(100.0);
+    doc.node_mut(n25).style.float = Float::Left;
+    doc.node_mut(n25).style.display = Display::Block;
     doc.append_child(vp, n25);
     let n26 = doc.create_node(ElementTag::Div);
     doc.node_mut(n26).style.display = Display::Block;
@@ -31876,7 +38423,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         offset_y: 26.0,
         blur_radius: 0.0,
         spread_radius: -16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::from_rgba8(192, 192, 192, 255),
         inset: true,
     }];
     doc.append_child(n25, n27);
@@ -31891,6 +38438,11 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
     doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n28).style.padding_left = Length::px(0.0);
     doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n28).style.position = Position::Relative;
+    doc.node_mut(n28).style.width = Length::px(100.0);
+    doc.node_mut(n28).style.height = Length::px(100.0);
+    doc.node_mut(n28).style.float = Float::Left;
+    doc.node_mut(n28).style.display = Display::Block;
     doc.append_child(vp, n28);
     let n29 = doc.create_node(ElementTag::Div);
     doc.node_mut(n29).style.display = Display::Block;
@@ -31915,7 +38467,7 @@ fn css_backgrounds_box_shadow_radius_001() -> Document {
         offset_y: 26.0,
         blur_radius: 0.0,
         spread_radius: -16.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::RED,
         inset: true,
     }];
     doc.append_child(n28, n29);
@@ -33430,6 +39982,47 @@ fn css_backgrounds_local_attachment_flex_column_reverse_scroll_ref() -> Document
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(n2).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Percent(50.0),
+            },
+            LinearGradientStop {
+                color: Color::BLUE,
+                position: GradientStopPosition::Percent(50.0),
+            },
+        ],
+    });
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -33495,6 +40088,47 @@ fn css_backgrounds_local_attachment_flex_row_reverse_scroll_ref() -> Document {
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(n2).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 90.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Percent(50.0),
+            },
+            LinearGradientStop {
+                color: Color::BLUE,
+                position: GradientStopPosition::Percent(50.0),
+            },
+        ],
+    });
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -33560,6 +40194,47 @@ fn css_backgrounds_local_attachment_rtl_and_flex_row_reverse_scroll_ref() -> Doc
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(n2).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 90.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Percent(50.0),
+            },
+            LinearGradientStop {
+                color: Color::BLUE,
+                position: GradientStopPosition::Percent(50.0),
+            },
+        ],
+    });
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -33625,6 +40300,47 @@ fn css_backgrounds_local_attachment_rtl_scroll_ref() -> Document {
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.overflow_x = Overflow::Hidden;
     doc.node_mut(n2).style.overflow_y = Overflow::Hidden;
+    doc.node_mut(n2).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 90.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Percent(50.0),
+            },
+            LinearGradientStop {
+                color: Color::BLUE,
+                position: GradientStopPosition::Percent(50.0),
+            },
+        ],
+    });
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 90.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -33961,12 +40677,59 @@ fn css_backgrounds_background_clip_clip_border_area_border_on_top_ref() -> Docum
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.border_top_width = 50;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        128.0 / 255.0,
+        0.0 / 255.0,
+        0.75,
+    ));
     doc.node_mut(n1).style.border_right_width = 50;
     doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        128.0 / 255.0,
+        0.0 / 255.0,
+        0.75,
+    ));
     doc.node_mut(n1).style.border_bottom_width = 50;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        128.0 / 255.0,
+        0.0 / 255.0,
+        0.75,
+    ));
     doc.node_mut(n1).style.border_left_width = 50;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        128.0 / 255.0,
+        0.0 / 255.0,
+        0.75,
+    ));
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/resources/green-100.png",
+        "image/png",
+        "750da204219f837c5b8a25f3587b82b05ca841431be990a1a13a50df483e53a4",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/green-100.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -34013,13 +40776,60 @@ fn css_backgrounds_background_clip_clip_border_area_border_on_top() -> Document 
     doc.node_mut(n1).style.height = Length::px(200.0);
     doc.node_mut(n1).style.border_top_width = 50;
     doc.node_mut(n1).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        128.0 / 255.0,
+        0.0 / 255.0,
+        0.75,
+    ));
     doc.node_mut(n1).style.border_right_width = 50;
     doc.node_mut(n1).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        128.0 / 255.0,
+        0.0 / 255.0,
+        0.75,
+    ));
     doc.node_mut(n1).style.border_bottom_width = 50;
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        128.0 / 255.0,
+        0.0 / 255.0,
+        0.75,
+    ));
     doc.node_mut(n1).style.border_left_width = 50;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        0.0 / 255.0,
+        128.0 / 255.0,
+        0.0 / 255.0,
+        0.75,
+    ));
     doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/resources/green-100.png",
+        "image/png",
+        "750da204219f837c5b8a25f3587b82b05ca841431be990a1a13a50df483e53a4",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/green-100.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -34396,6 +41206,29 @@ fn css_backgrounds_background_clip_clip_border_area_multiple_backgrounds_ref() -
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLUE);
     doc.node_mut(n1).style.background_clip = BackgroundClip::BorderBox;
     doc.node_mut(n1).style.background_color = Color::RED;
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/resources/green-100.png",
+        "image/png",
+        "750da204219f837c5b8a25f3587b82b05ca841431be990a1a13a50df483e53a4",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/green-100.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -35583,13 +42416,16 @@ fn css_backgrounds_background_clip_clip_border_box_with_size() -> Document {
 // Source: background-clip_clip-content-box.html
 fn css_backgrounds_background_clip_clip_content_box() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -35599,13 +42435,27 @@ fn css_backgrounds_background_clip_clip_content_box() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(5.0);
     doc.node_mut(n1).style.margin_right = Length::px(5.0);
@@ -35617,35 +42467,72 @@ fn css_backgrounds_background_clip_clip_content_box() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(10.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.font_size = 21.333333333333332;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n2).style.font_size = 21.333333333333332;
+    doc.node_mut(n2).style.font_size = 21.333333333333;
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
     doc.node_mut(n2).text = Some("\nTest Passed If : The background is clipped. The clip area is the content-area(excludes padding-area ) of the DIV.".to_string());
     doc.append_child(n1, n2);
-    let n3 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n3).style.font_size = 21.333333333333332;
+    let n3 = doc.create_node(ElementTag::Break);
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n3).style.white_space = WhiteSpace::PreLine;
-    doc.node_mut(n3).text = Some("\n".to_string());
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.display = Display::Inline;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.font_size = 21.333333333333332;
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.margin_top = Length::px(5.0);
     doc.node_mut(n4).style.margin_right = Length::px(5.0);
@@ -35656,14 +42543,27 @@ fn css_backgrounds_background_clip_clip_content_box() -> Document {
     doc.node_mut(n4).style.padding_bottom = Length::px(5.0);
     doc.node_mut(n4).style.padding_left = Length::px(5.0);
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n4);
     let n5 = doc.create_node(ElementTag::Div);
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
     doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.margin_top = Length::px(10.0);
     doc.node_mut(n5).style.margin_right = Length::px(10.0);
@@ -35676,31 +42576,82 @@ fn css_backgrounds_background_clip_clip_content_box() -> Document {
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.border_top_width = 30;
     doc.node_mut(n5).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n5).style.border_top_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n5).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n5).style.border_right_width = 30;
     doc.node_mut(n5).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n5).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n5).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n5).style.border_bottom_width = 30;
     doc.node_mut(n5).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n5).style.border_bottom_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n5).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n5).style.border_left_width = 30;
     doc.node_mut(n5).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n5).style.border_left_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n5).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n5).style.width = Length::px(320.0);
     doc.node_mut(n5).style.height = Length::px(240.0);
     doc.node_mut(n5).style.font_size = 21.333333333333332;
     doc.node_mut(n5).style.color = Color::from_rgba8(255, 153, 51, 255);
     doc.node_mut(n5).style.background_clip = BackgroundClip::ContentBox;
+    let n5_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/css3.png",
+        "image/png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/css3.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n5).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n5_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::ContentBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n5).style.background_linear_gradient = None;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n6).style.font_size = 21.333333333333332;
+    doc.node_mut(n6).style.font_size = 21.333333333333;
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -35711,9 +42662,13 @@ fn css_backgrounds_background_clip_clip_content_box() -> Document {
     doc.node_mut(n7).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n7).style.list_style_type = ListStyleType::None;
     doc.node_mut(n7).style.display = Display::Block;
     doc.node_mut(n7).style.margin_top = Length::px(10.0);
     doc.node_mut(n7).style.margin_right = Length::px(10.0);
@@ -35726,31 +42681,82 @@ fn css_backgrounds_background_clip_clip_content_box() -> Document {
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n7).style.border_top_width = 30;
     doc.node_mut(n7).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n7).style.border_top_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n7).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n7).style.border_right_width = 30;
     doc.node_mut(n7).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n7).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n7).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n7).style.border_bottom_width = 30;
     doc.node_mut(n7).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n7).style.border_bottom_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n7).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n7).style.border_left_width = 30;
     doc.node_mut(n7).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n7).style.border_left_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n7).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n7).style.width = Length::px(320.0);
     doc.node_mut(n7).style.height = Length::px(240.0);
     doc.node_mut(n7).style.font_size = 21.333333333333332;
     doc.node_mut(n7).style.color = Color::from_rgba8(255, 153, 51, 255);
     doc.node_mut(n7).style.background_clip = BackgroundClip::ContentBox;
+    let n7_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/css3.png",
+        "image/png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/css3.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n7).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n7_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::ContentBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n7).style.background_linear_gradient = None;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n4, n7);
     let n8 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n8).style.font_size = 21.333333333333332;
+    doc.node_mut(n8).style.font_size = 21.333333333333;
     doc.node_mut(n8).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -35763,13 +42769,16 @@ fn css_backgrounds_background_clip_clip_content_box() -> Document {
 // Source: background-clip_clip-content-box_with_position.html
 fn css_backgrounds_background_clip_clip_content_box_with_position() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -35779,13 +42788,27 @@ fn css_backgrounds_background_clip_clip_content_box_with_position() -> Document 
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(5.0);
     doc.node_mut(n1).style.margin_right = Length::px(5.0);
@@ -35797,33 +42820,69 @@ fn css_backgrounds_background_clip_clip_content_box_with_position() -> Document 
     doc.node_mut(n1).style.padding_left = Length::px(10.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.font_size = 21.333333333333332;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n2).style.font_size = 21.333333333333332;
+    doc.node_mut(n2).style.font_size = 21.333333333333;
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
     doc.node_mut(n2).text = Some("\nTest Passed If : The background is clipped. The clip area is the content-area(excludes padding-area ) of the DIV.".to_string());
     doc.append_child(n1, n2);
-    let n3 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n3).style.font_size = 21.333333333333332;
+    let n3 = doc.create_node(ElementTag::Break);
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n3).style.white_space = WhiteSpace::PreLine;
-    doc.node_mut(n3).text = Some("\n".to_string());
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.display = Display::Inline;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.font_size = 21.333333333333332;
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n4).style.font_size = 21.333333333333332;
+    doc.node_mut(n4).style.font_size = 21.333333333333;
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -35833,9 +42892,13 @@ fn css_backgrounds_background_clip_clip_content_box_with_position() -> Document 
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
     doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.margin_top = Length::px(5.0);
     doc.node_mut(n5).style.margin_right = Length::px(5.0);
@@ -35846,14 +42909,27 @@ fn css_backgrounds_background_clip_clip_content_box_with_position() -> Document 
     doc.node_mut(n5).style.padding_bottom = Length::px(5.0);
     doc.node_mut(n5).style.padding_left = Length::px(5.0);
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n6).style.list_style_type = ListStyleType::None;
     doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.margin_top = Length::px(10.0);
     doc.node_mut(n6).style.margin_right = Length::px(10.0);
@@ -35866,31 +42942,82 @@ fn css_backgrounds_background_clip_clip_content_box_with_position() -> Document 
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.border_top_width = 30;
     doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_top_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_right_width = 30;
     doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_bottom_width = 30;
     doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_bottom_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_left_width = 30;
     doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_left_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.width = Length::px(320.0);
     doc.node_mut(n6).style.height = Length::px(240.0);
     doc.node_mut(n6).style.font_size = 21.333333333333332;
     doc.node_mut(n6).style.color = Color::from_rgba8(255, 153, 51, 255);
     doc.node_mut(n6).style.background_clip = BackgroundClip::ContentBox;
+    let n6_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/css3.png",
+        "image/png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/css3.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n6).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n6_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Length(Length::px(-15.0)),
+        position_y: BackgroundPosition::Length(Length::px(-15.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::ContentBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n6).style.background_linear_gradient = None;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n7).style.font_size = 21.333333333333332;
+    doc.node_mut(n7).style.font_size = 21.333333333333;
     doc.node_mut(n7).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -35901,9 +43028,13 @@ fn css_backgrounds_background_clip_clip_content_box_with_position() -> Document 
     doc.node_mut(n8).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n8).style.list_style_type = ListStyleType::None;
     doc.node_mut(n8).style.display = Display::Block;
     doc.node_mut(n8).style.margin_top = Length::px(10.0);
     doc.node_mut(n8).style.margin_right = Length::px(10.0);
@@ -35916,31 +43047,82 @@ fn css_backgrounds_background_clip_clip_content_box_with_position() -> Document 
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.border_top_width = 30;
     doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_top_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_right_width = 30;
     doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_bottom_width = 30;
     doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_bottom_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_left_width = 30;
     doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_left_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.width = Length::px(320.0);
     doc.node_mut(n8).style.height = Length::px(240.0);
     doc.node_mut(n8).style.font_size = 21.333333333333332;
     doc.node_mut(n8).style.color = Color::from_rgba8(255, 153, 51, 255);
     doc.node_mut(n8).style.background_clip = BackgroundClip::ContentBox;
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/css3.png",
+        "image/png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/css3.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Length(Length::px(-15.0)),
+        position_y: BackgroundPosition::Length(Length::px(-15.0)),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::ContentBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n5, n8);
     let n9 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n9).style.font_size = 21.333333333333332;
+    doc.node_mut(n9).style.font_size = 21.333333333333;
     doc.node_mut(n9).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -35953,13 +43135,16 @@ fn css_backgrounds_background_clip_clip_content_box_with_position() -> Document 
 // Source: background-clip_clip-content-box_with_radius.html
 fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -35969,13 +43154,27 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(5.0);
     doc.node_mut(n1).style.margin_right = Length::px(5.0);
@@ -35987,33 +43186,69 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(10.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.font_size = 21.333333333333332;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n2).style.font_size = 21.333333333333332;
+    doc.node_mut(n2).style.font_size = 21.333333333333;
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
     doc.node_mut(n2).text = Some("\nTest Passed If : The background is clipped. The clip area is the content-area(excludes padding-area ) of the DIV.".to_string());
     doc.append_child(n1, n2);
-    let n3 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n3).style.font_size = 21.333333333333332;
+    let n3 = doc.create_node(ElementTag::Break);
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n3).style.white_space = WhiteSpace::PreLine;
-    doc.node_mut(n3).text = Some("\n".to_string());
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.display = Display::Inline;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.font_size = 21.333333333333332;
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n4).style.font_size = 21.333333333333332;
+    doc.node_mut(n4).style.font_size = 21.333333333333;
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -36026,9 +43261,13 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
     doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.margin_top = Length::px(5.0);
     doc.node_mut(n5).style.margin_right = Length::px(5.0);
@@ -36039,14 +43278,27 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
     doc.node_mut(n5).style.padding_bottom = Length::px(5.0);
     doc.node_mut(n5).style.padding_left = Length::px(5.0);
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n6).style.list_style_type = ListStyleType::None;
     doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.margin_top = Length::px(10.0);
     doc.node_mut(n6).style.margin_right = Length::px(10.0);
@@ -36059,20 +43311,36 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.border_top_width = 30;
     doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_top_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_right_width = 30;
     doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_bottom_width = 30;
     doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_bottom_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_left_width = 30;
     doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_left_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.width = Length::px(320.0);
     doc.node_mut(n6).style.height = Length::px(240.0);
     doc.node_mut(n6).style.font_size = 21.333333333333332;
@@ -36082,12 +43350,47 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
     doc.node_mut(n6).style.border_top_right_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n6).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n6).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
+    let n6_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/css3.png",
+        "image/png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/css3.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n6).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n6_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::ContentBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n6).style.background_linear_gradient = None;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n7).style.font_size = 21.333333333333332;
+    doc.node_mut(n7).style.font_size = 21.333333333333;
     doc.node_mut(n7).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -36098,9 +43401,13 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
     doc.node_mut(n8).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n8).style.list_style_type = ListStyleType::None;
     doc.node_mut(n8).style.display = Display::Block;
     doc.node_mut(n8).style.margin_top = Length::px(10.0);
     doc.node_mut(n8).style.margin_right = Length::px(10.0);
@@ -36113,20 +43420,36 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.border_top_width = 30;
     doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_top_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_right_width = 30;
     doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_bottom_width = 30;
     doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_bottom_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_left_width = 30;
     doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_left_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.width = Length::px(320.0);
     doc.node_mut(n8).style.height = Length::px(240.0);
     doc.node_mut(n8).style.font_size = 21.333333333333332;
@@ -36136,12 +43459,47 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
     doc.node_mut(n8).style.border_top_right_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n8).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n8).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/css3.png",
+        "image/png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/css3.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::ContentBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n5, n8);
     let n9 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n9).style.font_size = 21.333333333333332;
+    doc.node_mut(n9).style.font_size = 21.333333333333;
     doc.node_mut(n9).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -36154,13 +43512,16 @@ fn css_backgrounds_background_clip_clip_content_box_with_radius() -> Document {
 // Source: background-clip_clip-content-box_with_size.html
 fn css_backgrounds_background_clip_clip_content_box_with_size() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -36170,13 +43531,27 @@ fn css_backgrounds_background_clip_clip_content_box_with_size() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(5.0);
     doc.node_mut(n1).style.margin_right = Length::px(5.0);
@@ -36188,33 +43563,69 @@ fn css_backgrounds_background_clip_clip_content_box_with_size() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(10.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.font_size = 21.333333333333332;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n2).style.font_size = 21.333333333333332;
+    doc.node_mut(n2).style.font_size = 21.333333333333;
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
     doc.node_mut(n2).text = Some("\nTest Passed If : The background is clipped. The clip area is the content-area(excludes padding-area ) of the DIV.".to_string());
     doc.append_child(n1, n2);
-    let n3 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n3).style.font_size = 21.333333333333332;
+    let n3 = doc.create_node(ElementTag::Break);
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n3).style.white_space = WhiteSpace::PreLine;
-    doc.node_mut(n3).text = Some("\n".to_string());
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.display = Display::Inline;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.font_size = 21.333333333333332;
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n4).style.font_size = 21.333333333333332;
+    doc.node_mut(n4).style.font_size = 21.333333333333;
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -36227,9 +43638,13 @@ fn css_backgrounds_background_clip_clip_content_box_with_size() -> Document {
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
     doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.margin_top = Length::px(5.0);
     doc.node_mut(n5).style.margin_right = Length::px(5.0);
@@ -36240,14 +43655,27 @@ fn css_backgrounds_background_clip_clip_content_box_with_size() -> Document {
     doc.node_mut(n5).style.padding_bottom = Length::px(5.0);
     doc.node_mut(n5).style.padding_left = Length::px(5.0);
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n6).style.list_style_type = ListStyleType::None;
     doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.margin_top = Length::px(10.0);
     doc.node_mut(n6).style.margin_right = Length::px(10.0);
@@ -36260,31 +43688,82 @@ fn css_backgrounds_background_clip_clip_content_box_with_size() -> Document {
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.border_top_width = 30;
     doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_top_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_right_width = 30;
     doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_bottom_width = 30;
     doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_bottom_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_left_width = 30;
     doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_left_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.width = Length::px(320.0);
     doc.node_mut(n6).style.height = Length::px(240.0);
     doc.node_mut(n6).style.font_size = 21.333333333333332;
     doc.node_mut(n6).style.color = Color::from_rgba8(255, 153, 51, 255);
     doc.node_mut(n6).style.background_clip = BackgroundClip::ContentBox;
+    let n6_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/css3.png",
+        "image/png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/css3.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n6).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n6_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::percent(50.0), Length::auto()),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::ContentBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n6).style.background_linear_gradient = None;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n7).style.font_size = 21.333333333333332;
+    doc.node_mut(n7).style.font_size = 21.333333333333;
     doc.node_mut(n7).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -36295,9 +43774,13 @@ fn css_backgrounds_background_clip_clip_content_box_with_size() -> Document {
     doc.node_mut(n8).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n8).style.list_style_type = ListStyleType::None;
     doc.node_mut(n8).style.display = Display::Block;
     doc.node_mut(n8).style.margin_top = Length::px(10.0);
     doc.node_mut(n8).style.margin_right = Length::px(10.0);
@@ -36310,31 +43793,82 @@ fn css_backgrounds_background_clip_clip_content_box_with_size() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.border_top_width = 30;
     doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_top_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_right_width = 30;
     doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_bottom_width = 30;
     doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_bottom_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_left_width = 30;
     doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_left_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.width = Length::px(320.0);
     doc.node_mut(n8).style.height = Length::px(240.0);
     doc.node_mut(n8).style.font_size = 21.333333333333332;
     doc.node_mut(n8).style.color = Color::from_rgba8(255, 153, 51, 255);
     doc.node_mut(n8).style.background_clip = BackgroundClip::ContentBox;
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/css3.png",
+        "image/png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/css3.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::percent(50.0), Length::auto()),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::ContentBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n5, n8);
     let n9 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n9).style.font_size = 21.333333333333332;
+    doc.node_mut(n9).style.font_size = 21.333333333333;
     doc.node_mut(n9).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -36643,13 +44177,16 @@ fn css_backgrounds_background_clip_clip_padding_box_with_position() -> Document 
 // Source: background-clip_clip-padding-box_with_radius.html
 fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -36659,13 +44196,27 @@ fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(5.0);
     doc.node_mut(n1).style.margin_right = Length::px(5.0);
@@ -36677,33 +44228,69 @@ fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
     doc.node_mut(n1).style.padding_left = Length::px(10.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.font_size = 21.333333333333332;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n2).style.font_size = 21.333333333333332;
+    doc.node_mut(n2).style.font_size = 21.333333333333;
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
     doc.node_mut(n2).text = Some("\nTest Passed If : The background is clipped. The clip area is the area covered by border(includes padding-area ).".to_string());
     doc.append_child(n1, n2);
-    let n3 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n3).style.font_size = 21.333333333333332;
+    let n3 = doc.create_node(ElementTag::Break);
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(n3).style.white_space = WhiteSpace::PreLine;
-    doc.node_mut(n3).text = Some("\n".to_string());
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.display = Display::Inline;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.font_size = 21.333333333333332;
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n4).style.font_size = 21.333333333333332;
+    doc.node_mut(n4).style.font_size = 21.333333333333;
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -36716,9 +44303,13 @@ fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
     doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.margin_top = Length::px(5.0);
     doc.node_mut(n5).style.margin_right = Length::px(5.0);
@@ -36729,14 +44320,27 @@ fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
     doc.node_mut(n5).style.padding_bottom = Length::px(5.0);
     doc.node_mut(n5).style.padding_left = Length::px(5.0);
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n5);
     let n6 = doc.create_node(ElementTag::Div);
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n6).style.list_style_type = ListStyleType::None;
     doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.margin_top = Length::px(10.0);
     doc.node_mut(n6).style.margin_right = Length::px(10.0);
@@ -36749,20 +44353,36 @@ fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.border_top_width = 30;
     doc.node_mut(n6).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_top_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_right_width = 30;
     doc.node_mut(n6).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_bottom_width = 30;
     doc.node_mut(n6).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_bottom_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.border_left_width = 30;
     doc.node_mut(n6).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n6).style.border_left_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n6).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n6).style.width = Length::px(320.0);
     doc.node_mut(n6).style.height = Length::px(240.0);
     doc.node_mut(n6).style.font_size = 21.333333333333332;
@@ -36772,12 +44392,47 @@ fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
     doc.node_mut(n6).style.border_top_right_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n6).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n6).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
+    let n6_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/css3.png",
+        "image/png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/css3.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n6).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n6_background_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::PaddingBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n6).style.background_linear_gradient = None;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n7).style.font_size = 21.333333333333332;
+    doc.node_mut(n7).style.font_size = 21.333333333333;
     doc.node_mut(n7).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -36788,9 +44443,13 @@ fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
     doc.node_mut(n8).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n8).style.list_style_type = ListStyleType::None;
     doc.node_mut(n8).style.display = Display::Block;
     doc.node_mut(n8).style.margin_top = Length::px(10.0);
     doc.node_mut(n8).style.margin_right = Length::px(10.0);
@@ -36803,20 +44462,36 @@ fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.border_top_width = 30;
     doc.node_mut(n8).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_top_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_top_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_right_width = 30;
     doc.node_mut(n8).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_right_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_bottom_width = 30;
     doc.node_mut(n8).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_bottom_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.border_left_width = 30;
     doc.node_mut(n8).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(n8).style.border_left_color =
-        StyleColor::Resolved(Color::from_rgba8(60, 150, 255, 102));
+    doc.node_mut(n8).style.border_left_color = StyleColor::Resolved(Color::from_rgba_f32(
+        60.0 / 255.0,
+        150.0 / 255.0,
+        255.0 / 255.0,
+        0.4,
+    ));
     doc.node_mut(n8).style.width = Length::px(320.0);
     doc.node_mut(n8).style.height = Length::px(240.0);
     doc.node_mut(n8).style.font_size = 21.333333333333332;
@@ -36826,12 +44501,47 @@ fn css_backgrounds_background_clip_clip_padding_box_with_radius() -> Document {
     doc.node_mut(n8).style.border_top_right_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n8).style.border_bottom_right_radius = (60.0_f32, 60.0_f32);
     doc.node_mut(n8).style.border_bottom_left_radius = (60.0_f32, 60.0_f32);
+    let n8_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/css3.png",
+        "image/png",
+        "404cf10151727f8165e24ff2c964073511fb857ebbf9e4422f0572c7ddf141ef",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/css3.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n8).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n8_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::PaddingBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n8).style.background_linear_gradient = None;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n5, n8);
     let n9 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n9).style.font_size = 21.333333333333332;
+    doc.node_mut(n9).style.font_size = 21.333333333333;
     doc.node_mut(n9).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -39223,7 +46933,10 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_color_1
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Dashed;
     doc.node_mut(n1).style.border_left_width = 10;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Dashed;
+    doc.node_mut(n1).style.background_clip = BackgroundClip::PaddingBox;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -39274,7 +46987,10 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_color_3
     doc.node_mut(n1).style.border_bottom_style = BorderStyle::Dashed;
     doc.node_mut(n1).style.border_left_width = 10;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Dashed;
+    doc.node_mut(n1).style.background_clip = BackgroundClip::ContentBox;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -39329,7 +47045,10 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_color_4
     doc.node_mut(n1).style.border_top_right_radius = (150.0_f32, 150.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (150.0_f32, 150.0_f32);
     doc.node_mut(n1).style.border_bottom_left_radius = (150.0_f32, 150.0_f32);
+    doc.node_mut(n1).style.background_clip = BackgroundClip::PaddingBox;
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n1).style.background_layers = vec![];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -39399,8 +47118,11 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_color_6
     doc.node_mut(n2).style.padding_left = Length::px(0.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.height = Length::px(500.0);
     doc.node_mut(n2).style.margin_top = Length::px(-15.0);
+    doc.node_mut(n2).style.background_layers = vec![];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -39556,6 +47278,35 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_image_4
     doc.node_mut(n1).style.border_top_right_radius = (150.0_f32, 150.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (150.0_f32, 150.0_f32);
     doc.node_mut(n1).style.border_bottom_left_radius = (150.0_f32, 150.0_f32);
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Edge {
+            end: false,
+            offset: Length::px(0.0),
+        },
+        position_y: BackgroundPosition::Edge {
+            end: false,
+            offset: Length::px(-15.0),
+        },
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::PaddingBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
@@ -39626,6 +47377,29 @@ fn css_backgrounds_background_attachment_local_attachment_local_clipping_image_6
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n2).style.height = Length::px(500.0);
     doc.node_mut(n2).style.margin_top = Length::px(-15.0);
+    let n2_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/aqua-yellow-32x32.png",
+        "image/png",
+        "5652f8bc47b6dbb03a1bd16dfc571a61f8e1e3eebbb746f2559a2838d649a5ed",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/aqua-yellow-32x32.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n2_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
@@ -39991,7 +47765,36 @@ fn css_backgrounds_background_repeat_gradient_repeat_spaced_with_borders() -> Do
     doc.node_mut(n1).style.border_left_width = 35;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
-    doc.node_mut(n1).style.background_color = Color::from_rgba8(51, 102, 204, 255);
+    doc.node_mut(n1).style.background_clip = BackgroundClip::BorderBox;
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::RadialGradient(RadialGradient {
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            shape: RadialGradientShape::Ellipse,
+            size: RadialGradientSize::FarthestCorner,
+            center_x: BackgroundPosition::Percent(50.0),
+            center_y: BackgroundPosition::Percent(50.0),
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::TRANSPARENT),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(51, 102, 204, 255)),
+                    position: GradientStopPosition::Percent(50.0),
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Space,
+        repeat_y: BackgroundRepeat::Space,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(30.0), Length::px(30.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -40250,8 +48053,49 @@ fn css_backgrounds_background_size_background_size_near_zero_gradient() -> Docum
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(0.2), Length::px(0.2)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -48902,6 +56746,53 @@ fn css_backgrounds_background_position_background_position_bottom_right_repeat_r
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 45.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 255, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 45.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 255, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Round,
+        repeat_y: BackgroundRepeat::Round,
+        position_x: BackgroundPosition::Edge {
+            end: true,
+            offset: Length::percent(25.0),
+        },
+        position_y: BackgroundPosition::Edge {
+            end: true,
+            offset: Length::percent(25.0),
+        },
+        size: BackgroundSize::Explicit(Length::px(51.0), Length::px(51.0)),
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
     doc.append_child(vp, n1);
     doc
 }
@@ -49971,18 +57862,27 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_001() -> Document {
     doc.node_mut(n3).style.line_height = LineHeight::Length(40.0);
     doc.node_mut(n3).text = Some("\n    \u{a0}ppp\u{c9}\u{c9}\u{c9}\u{a0}".to_string());
     doc.append_child(n2, n3);
-    let n4 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n4).style.font_size = 16.0;
+    let n4 = doc.create_node(ElementTag::Break);
+    doc.node_mut(n4).style.display = Display::Inline;
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![FontFamily::Named("Ahem".to_string())],
     };
+    doc.node_mut(n4).style.font_size = 16.0;
     doc.node_mut(n4).style.font_weight = FontWeight(400.0);
     doc.node_mut(n4).style.font_style = FontStyleEnum::Normal;
     doc.node_mut(n4).style.font_stretch = FontStretch(100.0);
     doc.node_mut(n4).style.font_variant_caps = FontVariantCaps::Normal;
-    doc.node_mut(n4).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n4).style.line_height = LineHeight::Length(40.0);
-    doc.node_mut(n4).text = Some("\n".to_string());
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.color = Color::from_rgba8(0, 255, 255, 255);
     doc.append_child(n2, n4);
     let n5 = doc.create_node(ElementTag::Text);
     doc.node_mut(n5).style.font_size = 16.0;
@@ -49997,18 +57897,27 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_001() -> Document {
     doc.node_mut(n5).style.line_height = LineHeight::Length(40.0);
     doc.node_mut(n5).text = Some("\n    \u{a0}ppp\u{c9}\u{c9}\u{c9}\u{a0}".to_string());
     doc.append_child(n2, n5);
-    let n6 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n6).style.font_size = 16.0;
+    let n6 = doc.create_node(ElementTag::Break);
+    doc.node_mut(n6).style.display = Display::Inline;
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![FontFamily::Named("Ahem".to_string())],
     };
+    doc.node_mut(n6).style.font_size = 16.0;
     doc.node_mut(n6).style.font_weight = FontWeight(400.0);
     doc.node_mut(n6).style.font_style = FontStyleEnum::Normal;
     doc.node_mut(n6).style.font_stretch = FontStretch(100.0);
     doc.node_mut(n6).style.font_variant_caps = FontVariantCaps::Normal;
-    doc.node_mut(n6).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n6).style.line_height = LineHeight::Length(40.0);
-    doc.node_mut(n6).text = Some("\n".to_string());
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.color = Color::from_rgba8(0, 255, 255, 255);
     doc.append_child(n2, n6);
     let n7 = doc.create_node(ElementTag::Text);
     doc.node_mut(n7).style.font_size = 16.0;
@@ -50441,18 +58350,27 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_002() -> Document {
     doc.node_mut(n3).style.line_height = LineHeight::Length(40.0);
     doc.node_mut(n3).text = Some("\n    \u{a0}ppp\u{c9}\u{c9}\u{c9}\u{a0}".to_string());
     doc.append_child(n2, n3);
-    let n4 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n4).style.font_size = 16.0;
+    let n4 = doc.create_node(ElementTag::Break);
+    doc.node_mut(n4).style.display = Display::Inline;
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![FontFamily::Named("Ahem".to_string())],
     };
+    doc.node_mut(n4).style.font_size = 16.0;
     doc.node_mut(n4).style.font_weight = FontWeight(400.0);
     doc.node_mut(n4).style.font_style = FontStyleEnum::Normal;
     doc.node_mut(n4).style.font_stretch = FontStretch(100.0);
     doc.node_mut(n4).style.font_variant_caps = FontVariantCaps::Normal;
-    doc.node_mut(n4).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n4).style.line_height = LineHeight::Length(40.0);
-    doc.node_mut(n4).text = Some("\n".to_string());
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.color = Color::from_rgba8(0, 255, 255, 255);
     doc.append_child(n2, n4);
     let n5 = doc.create_node(ElementTag::Text);
     doc.node_mut(n5).style.font_size = 16.0;
@@ -50467,18 +58385,27 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_002() -> Document {
     doc.node_mut(n5).style.line_height = LineHeight::Length(40.0);
     doc.node_mut(n5).text = Some("\n    \u{a0}ppp\u{c9}\u{c9}\u{c9}\u{a0}".to_string());
     doc.append_child(n2, n5);
-    let n6 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n6).style.font_size = 16.0;
+    let n6 = doc.create_node(ElementTag::Break);
+    doc.node_mut(n6).style.display = Display::Inline;
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![FontFamily::Named("Ahem".to_string())],
     };
+    doc.node_mut(n6).style.font_size = 16.0;
     doc.node_mut(n6).style.font_weight = FontWeight(400.0);
     doc.node_mut(n6).style.font_style = FontStyleEnum::Normal;
     doc.node_mut(n6).style.font_stretch = FontStretch(100.0);
     doc.node_mut(n6).style.font_variant_caps = FontVariantCaps::Normal;
-    doc.node_mut(n6).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n6).style.line_height = LineHeight::Length(40.0);
-    doc.node_mut(n6).text = Some("\n".to_string());
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.color = Color::from_rgba8(0, 255, 255, 255);
     doc.append_child(n2, n6);
     let n7 = doc.create_node(ElementTag::Text);
     doc.node_mut(n7).style.font_size = 16.0;
@@ -50911,18 +58838,27 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_003() -> Document {
     doc.node_mut(n3).style.line_height = LineHeight::Length(40.0);
     doc.node_mut(n3).text = Some("\n    \u{a0}ppp\u{c9}\u{c9}\u{c9}\u{a0}".to_string());
     doc.append_child(n2, n3);
-    let n4 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n4).style.font_size = 16.0;
+    let n4 = doc.create_node(ElementTag::Break);
+    doc.node_mut(n4).style.display = Display::Inline;
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![FontFamily::Named("Ahem".to_string())],
     };
+    doc.node_mut(n4).style.font_size = 16.0;
     doc.node_mut(n4).style.font_weight = FontWeight(400.0);
     doc.node_mut(n4).style.font_style = FontStyleEnum::Normal;
     doc.node_mut(n4).style.font_stretch = FontStretch(100.0);
     doc.node_mut(n4).style.font_variant_caps = FontVariantCaps::Normal;
-    doc.node_mut(n4).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n4).style.line_height = LineHeight::Length(40.0);
-    doc.node_mut(n4).text = Some("\n".to_string());
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.color = Color::from_rgba8(0, 255, 255, 255);
     doc.append_child(n2, n4);
     let n5 = doc.create_node(ElementTag::Text);
     doc.node_mut(n5).style.font_size = 16.0;
@@ -50937,18 +58873,27 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_003() -> Document {
     doc.node_mut(n5).style.line_height = LineHeight::Length(40.0);
     doc.node_mut(n5).text = Some("\n    \u{a0}ppp\u{c9}\u{c9}\u{c9}\u{a0}".to_string());
     doc.append_child(n2, n5);
-    let n6 = doc.create_node(ElementTag::Text);
-    doc.node_mut(n6).style.font_size = 16.0;
+    let n6 = doc.create_node(ElementTag::Break);
+    doc.node_mut(n6).style.display = Display::Inline;
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![FontFamily::Named("Ahem".to_string())],
     };
+    doc.node_mut(n6).style.font_size = 16.0;
     doc.node_mut(n6).style.font_weight = FontWeight(400.0);
     doc.node_mut(n6).style.font_style = FontStyleEnum::Normal;
     doc.node_mut(n6).style.font_stretch = FontStretch(100.0);
     doc.node_mut(n6).style.font_variant_caps = FontVariantCaps::Normal;
-    doc.node_mut(n6).style.white_space = WhiteSpace::PreLine;
     doc.node_mut(n6).style.line_height = LineHeight::Length(40.0);
-    doc.node_mut(n6).text = Some("\n".to_string());
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.color = Color::from_rgba8(0, 255, 255, 255);
     doc.append_child(n2, n6);
     let n7 = doc.create_node(ElementTag::Text);
     doc.node_mut(n7).style.font_size = 16.0;
@@ -50969,13 +58914,16 @@ fn css_backgrounds_box_shadow_slice_inline_fragmentation_003() -> Document {
 // Source: css-backgrounds/background-attachment-local-scrolling.htm
 fn css_backgrounds_background_attachment_local_scrolling() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -50985,13 +58933,27 @@ fn css_backgrounds_background_attachment_local_scrolling() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -51019,12 +58981,47 @@ fn css_backgrounds_background_attachment_local_scrolling() -> Document {
     doc.node_mut(n1).style.background_attachment = BackgroundAttachment::Local;
     doc.node_mut(n1).style.overflow_x = Overflow::Scroll;
     doc.node_mut(n1).style.overflow_y = Overflow::Scroll;
+    let n1_background_image_0 = doc.register_image_resource(
+        "support/cat.png",
+        "image/png",
+        "18ca1a3f23c106c4b31f0faec34a24cb17d4f2cb31abd1a51df814ba3f58ed7d",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/cat.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Local,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Text);
     doc.node_mut(n2).style.font_size = 16.0;
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -51768,13 +59765,16 @@ fn css_backgrounds_background_repeat_space_content_box() -> Document {
 // Source: css-backgrounds/border-image-image-type-001.htm
 fn css_backgrounds_border_image_image_type_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -51784,13 +59784,27 @@ fn css_backgrounds_border_image_image_type_001() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -51815,6 +59829,50 @@ fn css_backgrounds_border_image_image_type_001() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
+    let n1_border_image = doc.register_image_resource(
+        "css-backgrounds/support/9-colored-areas-40-30-20-10.svg",
+        "image/svg+xml",
+        "bde621c5c23b189c6ac29fbccc168a46ad19f61233d12be22f67626cd15e1714",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/9-colored-areas-40-30-20-10.svg"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Number(40.0),
+            BorderImageLength::Number(30.0),
+            BorderImageLength::Number(20.0),
+            BorderImageLength::Number(10.0),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     doc
 }
@@ -51822,13 +59880,16 @@ fn css_backgrounds_border_image_image_type_001() -> Document {
 // Source: css-backgrounds/border-image-image-type-002.htm
 fn css_backgrounds_border_image_image_type_002() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -51838,13 +59899,27 @@ fn css_backgrounds_border_image_image_type_002() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -51869,6 +59944,50 @@ fn css_backgrounds_border_image_image_type_002() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
+    let n1_border_image = doc.register_image_resource(
+        "css-backgrounds/support/9-colored-areas-40-30-20-10.svg",
+        "image/svg+xml",
+        "bde621c5c23b189c6ac29fbccc168a46ad19f61233d12be22f67626cd15e1714",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/9-colored-areas-40-30-20-10.svg"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Length(Length::percent(40.0)),
+            BorderImageLength::Length(Length::percent(30.0)),
+            BorderImageLength::Length(Length::percent(20.0)),
+            BorderImageLength::Length(Length::percent(10.0)),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     doc
 }
@@ -51876,13 +59995,16 @@ fn css_backgrounds_border_image_image_type_002() -> Document {
 // Source: css-backgrounds/border-image-image-type-003.htm
 fn css_backgrounds_border_image_image_type_003() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -51892,13 +60014,27 @@ fn css_backgrounds_border_image_image_type_003() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(10.0);
     doc.node_mut(n1).style.margin_right = Length::px(10.0);
@@ -51923,6 +60059,54 @@ fn css_backgrounds_border_image_image_type_003() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.width = Length::px(100.0);
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 0.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::BLUE),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 165, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        slice: [
+            BorderImageLength::Number(30.0),
+            BorderImageLength::Number(30.0),
+            BorderImageLength::Number(30.0),
+            BorderImageLength::Number(30.0),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Auto,
+            BorderImageLength::Auto,
+            BorderImageLength::Auto,
+            BorderImageLength::Auto,
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Space,
+        repeat_y: BorderImageRepeat::Space,
+    });
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     doc
 }
@@ -51930,13 +60114,16 @@ fn css_backgrounds_border_image_image_type_003() -> Document {
 // Source: css-backgrounds/border-image-image-type-004.htm
 fn css_backgrounds_border_image_image_type_004() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -51946,13 +60133,27 @@ fn css_backgrounds_border_image_image_type_004() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -51977,6 +60178,50 @@ fn css_backgrounds_border_image_image_type_004() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.node_mut(n1).style.width = Length::px(0.0);
+    let n1_border_image = doc.register_image_resource(
+        "css-backgrounds/support/9-colored-areas-40-30-20-10.svg",
+        "image/svg+xml",
+        "bde621c5c23b189c6ac29fbccc168a46ad19f61233d12be22f67626cd15e1714",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/9-colored-areas-40-30-20-10.svg"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Number(40.0),
+            BorderImageLength::Number(30.0),
+            BorderImageLength::Number(20.0),
+            BorderImageLength::Number(10.0),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     doc
 }
@@ -51984,13 +60229,16 @@ fn css_backgrounds_border_image_image_type_004() -> Document {
 // Source: css-backgrounds/border-image-image-type-005.htm
 fn css_backgrounds_border_image_image_type_005() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -52000,13 +60248,27 @@ fn css_backgrounds_border_image_image_type_005() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -52031,6 +60293,50 @@ fn css_backgrounds_border_image_image_type_005() -> Document {
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
     doc.node_mut(n1).style.height = Length::px(0.0);
     doc.node_mut(n1).style.width = Length::px(0.0);
+    let n1_border_image = doc.register_image_resource(
+        "css-backgrounds/support/9-colored-areas-40-30-20-10.svg",
+        "image/svg+xml",
+        "bde621c5c23b189c6ac29fbccc168a46ad19f61233d12be22f67626cd15e1714",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/9-colored-areas-40-30-20-10.svg"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Length(Length::percent(40.0)),
+            BorderImageLength::Length(Length::percent(30.0)),
+            BorderImageLength::Length(Length::percent(20.0)),
+            BorderImageLength::Length(Length::percent(10.0)),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     doc
 }
@@ -52319,13 +60625,16 @@ fn css_backgrounds_border_image_repeat_004() -> Document {
 // Source: css-backgrounds/border-image-shorthand-001.htm
 fn css_backgrounds_border_image_shorthand_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -52335,19 +60644,192 @@ fn css_backgrounds_border_image_shorthand_001() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(50.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(100.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.border_top_width = 10;
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_right_width = 10;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_bottom_width = 10;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_left_width = 10;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.height = Length::px(150.0);
+    doc.node_mut(n1).style.width = Length::px(150.0);
+    let n1_border_image = doc.register_image_resource(
+        "css-backgrounds/support/blue-and-red-diamonds-81x81.png",
+        "image/png",
+        "adcf99b02f2084a28ce5f227d472c2a757393184e472ba7b3ccba8ce11ed617b",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/blue-and-red-diamonds-81x81.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Number(30.0),
+            BorderImageLength::Number(30.0),
+            BorderImageLength::Number(30.0),
+            BorderImageLength::Number(30.0),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(4.0),
+            BorderImageLength::Number(4.0),
+            BorderImageLength::Number(4.0),
+            BorderImageLength::Number(4.0),
+        ],
+        outset: [
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+        ],
+        repeat_x: BorderImageRepeat::Round,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(50.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(100.0);
+    doc.node_mut(n2).style.margin_left = Length::px(50.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.border_top_width = 10;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.border_right_width = 10;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.border_bottom_width = 10;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.border_left_width = 10;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.height = Length::px(150.0);
+    doc.node_mut(n2).style.width = Length::px(150.0);
+    let n2_border_image = doc.register_image_resource(
+        "css-backgrounds/support/blue-and-red-diamonds-81x81.png",
+        "image/png",
+        "adcf99b02f2084a28ce5f227d472c2a757393184e472ba7b3ccba8ce11ed617b",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/blue-and-red-diamonds-81x81.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n2_border_image),
+        slice: [
+            BorderImageLength::Number(30.0),
+            BorderImageLength::Number(30.0),
+            BorderImageLength::Number(30.0),
+            BorderImageLength::Number(30.0),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(4.0),
+            BorderImageLength::Number(4.0),
+            BorderImageLength::Number(4.0),
+            BorderImageLength::Number(4.0),
+        ],
+        outset: [
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+        ],
+        repeat_x: BorderImageRepeat::Round,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n2);
     doc
 }
 
 // Source: css-backgrounds/border-image-shorthand-002.htm
 fn css_backgrounds_border_image_shorthand_002() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -52357,19 +60839,192 @@ fn css_backgrounds_border_image_shorthand_002() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(50.0);
+    doc.node_mut(n1).style.margin_right = Length::px(50.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_top_width = 20;
+    doc.node_mut(n1).style.border_right_width = 20;
+    doc.node_mut(n1).style.border_bottom_width = 20;
+    doc.node_mut(n1).style.border_left_width = 20;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(100.0);
+    let n1_border_image = doc.register_image_resource(
+        "css-backgrounds/support/9grid40-30-20-10-red-old.png",
+        "image/png",
+        "1f60051612d5f926d6302d69557116ef18518b45dc992d4395c4680e1cf0a134",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/9grid40-30-20-10-red-old.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Length(Length::percent(40.0)),
+            BorderImageLength::Length(Length::percent(15.0)),
+            BorderImageLength::Length(Length::percent(20.0)),
+            BorderImageLength::Length(Length::percent(5.0)),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(50.0);
+    doc.node_mut(n2).style.margin_right = Length::px(50.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n2).style.margin_left = Length::px(50.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_top_width = 20;
+    doc.node_mut(n2).style.border_right_width = 20;
+    doc.node_mut(n2).style.border_bottom_width = 20;
+    doc.node_mut(n2).style.border_left_width = 20;
+    doc.node_mut(n2).style.height = Length::px(100.0);
+    doc.node_mut(n2).style.width = Length::px(100.0);
+    let n2_border_image = doc.register_image_resource(
+        "css-backgrounds/support/9grid40-30-20-10-red-old.png",
+        "image/png",
+        "1f60051612d5f926d6302d69557116ef18518b45dc992d4395c4680e1cf0a134",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/9grid40-30-20-10-red-old.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n2_border_image),
+        slice: [
+            BorderImageLength::Length(Length::percent(40.0)),
+            BorderImageLength::Length(Length::percent(15.0)),
+            BorderImageLength::Length(Length::percent(20.0)),
+            BorderImageLength::Length(Length::percent(5.0)),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n2);
     doc
 }
 
 // Source: css-backgrounds/border-image-shorthand-003.htm
 fn css_backgrounds_border_image_shorthand_003() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -52379,6 +61034,176 @@ fn css_backgrounds_border_image_shorthand_003() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(100.0);
+    doc.node_mut(n1).style.margin_right = Length::px(100.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(100.0);
+    doc.node_mut(n1).style.margin_left = Length::px(100.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_top_width = 20;
+    doc.node_mut(n1).style.border_right_width = 20;
+    doc.node_mut(n1).style.border_bottom_width = 20;
+    doc.node_mut(n1).style.border_left_width = 20;
+    doc.node_mut(n1).style.height = Length::px(5.0);
+    doc.node_mut(n1).style.width = Length::px(5.0);
+    let n1_border_image = doc.register_image_resource(
+        "css-backgrounds/support/9grid40-30-20-10-red-old.png",
+        "image/png",
+        "1f60051612d5f926d6302d69557116ef18518b45dc992d4395c4680e1cf0a134",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/9grid40-30-20-10-red-old.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Length(Length::percent(40.0)),
+            BorderImageLength::Length(Length::percent(15.0)),
+            BorderImageLength::Length(Length::percent(20.0)),
+            BorderImageLength::Length(Length::percent(5.0)),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n2).style.display = Display::Block;
+    doc.node_mut(n2).style.margin_top = Length::px(100.0);
+    doc.node_mut(n2).style.margin_right = Length::px(100.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(100.0);
+    doc.node_mut(n2).style.margin_left = Length::px(100.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Double;
+    doc.node_mut(n2).style.border_top_width = 20;
+    doc.node_mut(n2).style.border_right_width = 20;
+    doc.node_mut(n2).style.border_bottom_width = 20;
+    doc.node_mut(n2).style.border_left_width = 20;
+    doc.node_mut(n2).style.height = Length::px(5.0);
+    doc.node_mut(n2).style.width = Length::px(5.0);
+    let n2_border_image = doc.register_image_resource(
+        "css-backgrounds/support/9grid40-30-20-10-red-old.png",
+        "image/png",
+        "1f60051612d5f926d6302d69557116ef18518b45dc992d4395c4680e1cf0a134",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/9grid40-30-20-10-red-old.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n2).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n2_border_image),
+        slice: [
+            BorderImageLength::Length(Length::percent(40.0)),
+            BorderImageLength::Length(Length::percent(15.0)),
+            BorderImageLength::Length(Length::percent(20.0)),
+            BorderImageLength::Length(Length::percent(5.0)),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+            BorderImageLength::Number(2.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n2);
     doc
 }
 
@@ -52439,13 +61264,16 @@ fn css_backgrounds_border_image_slice_004() -> Document {
 // Source: css-backgrounds/border-image-slice-005.htm
 fn css_backgrounds_border_image_slice_005() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -52455,6 +61283,97 @@ fn css_backgrounds_border_image_slice_005() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(50.0);
+    doc.node_mut(n1).style.margin_right = Length::px(50.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_top_width = 40;
+    doc.node_mut(n1).style.border_right_width = 40;
+    doc.node_mut(n1).style.border_bottom_width = 40;
+    doc.node_mut(n1).style.border_left_width = 40;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(200.0);
+    let n1_border_image = doc.register_image_resource(
+        "css-backgrounds/support/9grid40-30-20-10-red.png",
+        "image/png",
+        "c43d860aa7387ad2bc7b1a847c6fc3b0d2416d18a8a204b929ab86d4a19479c9",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/9grid40-30-20-10-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Length(Length::percent(40.0)),
+            BorderImageLength::Length(Length::percent(30.0)),
+            BorderImageLength::Length(Length::percent(20.0)),
+            BorderImageLength::Length(Length::percent(10.0)),
+        ],
+        fill: false,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n1);
     doc
 }
 
@@ -52515,13 +61434,16 @@ fn css_backgrounds_border_image_slice_006() -> Document {
 // Source: css-backgrounds/border-image-slice-007.htm
 fn css_backgrounds_border_image_slice_007() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -52531,6 +61453,97 @@ fn css_backgrounds_border_image_slice_007() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(50.0);
+    doc.node_mut(n1).style.margin_right = Length::px(50.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(50.0);
+    doc.node_mut(n1).style.margin_left = Length::px(50.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.background_color = Color::from_rgba8(255, 165, 0, 255);
+    doc.node_mut(n1).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.node_mut(n1).style.border_top_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_right_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_bottom_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_left_style = BorderStyle::Double;
+    doc.node_mut(n1).style.border_top_width = 40;
+    doc.node_mut(n1).style.border_right_width = 40;
+    doc.node_mut(n1).style.border_bottom_width = 40;
+    doc.node_mut(n1).style.border_left_width = 40;
+    doc.node_mut(n1).style.height = Length::px(100.0);
+    doc.node_mut(n1).style.width = Length::px(200.0);
+    let n1_border_image = doc.register_image_resource(
+        "css-backgrounds/support/9grid40-30-20-10-green.png",
+        "image/png",
+        "886b528f342e8f918f6c5ccc301da05d71149e61ecd2619e1da8c991b1abe595",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/9grid40-30-20-10-green.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.border_image = Some(BorderImage {
+        source: CssImage::Raster(n1_border_image),
+        slice: [
+            BorderImageLength::Length(Length::percent(40.0)),
+            BorderImageLength::Length(Length::percent(30.0)),
+            BorderImageLength::Length(Length::percent(20.0)),
+            BorderImageLength::Length(Length::percent(10.0)),
+        ],
+        fill: true,
+        width: [
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+            BorderImageLength::Number(1.0),
+        ],
+        outset: [
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+            BorderImageLength::Number(0.0),
+        ],
+        repeat_x: BorderImageRepeat::Stretch,
+        repeat_y: BorderImageRepeat::Stretch,
+    });
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n1);
     doc
 }
 
@@ -52921,13 +61934,16 @@ fn css_backgrounds_border_radius_applies_to_002() -> Document {
 // Source: css-backgrounds/border-radius-applies-to-003.htm
 fn css_backgrounds_border_radius_applies_to_003() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -52937,13 +61953,27 @@ fn css_backgrounds_border_radius_applies_to_003() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -52972,6 +62002,15 @@ fn css_backgrounds_border_radius_applies_to_003() -> Document {
     doc.node_mut(n1).style.display = Display::ListItem;
     doc.node_mut(n1).style.height = Length::px(96.0);
     doc.node_mut(n1).style.width = Length::px(96.0);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     doc
 }
@@ -53237,13 +62276,16 @@ fn css_backgrounds_border_radius_applies_to_017() -> Document {
 // Source: css-backgrounds/border-radius-clip-002.htm
 fn css_backgrounds_border_radius_clip_002() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -53253,13 +62295,27 @@ fn css_backgrounds_border_radius_clip_002() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -53290,14 +62346,50 @@ fn css_backgrounds_border_radius_clip_002() -> Document {
     doc.node_mut(n1).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n1).style.background_color = Color::RED;
     doc.node_mut(n1).style.background_clip = BackgroundClip::ContentBox;
+    let n1_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/swatch-red.png",
+        "image/png",
+        "e42df70647347f5eedb984a611549d962ee362fb73f2135c9af05875b7681784",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/swatch-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n1).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::ContentBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n1).style.background_linear_gradient = None;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(-120.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -53315,14 +62407,27 @@ fn css_backgrounds_border_radius_clip_002() -> Document {
     doc.node_mut(n2).style.border_bottom_right_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n2).style.border_bottom_left_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n2).style.background_color = Color::BLACK;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
@@ -53342,14 +62447,50 @@ fn css_backgrounds_border_radius_clip_002() -> Document {
     doc.node_mut(n3).style.border_bottom_right_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n3).style.border_bottom_left_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n3).style.background_color = Color::RED;
+    let n3_background_image_0 = doc.register_image_resource(
+        "css-backgrounds/support/swatch-red.png",
+        "image/png",
+        "e42df70647347f5eedb984a611549d962ee362fb73f2135c9af05875b7681784",
+        include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/swatch-red.png"
+        ))
+        .as_slice()
+        .to_vec(),
+    );
+    doc.node_mut(n3).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n3_background_image_0),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(n3).style.background_linear_gradient = None;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
@@ -53381,6 +62522,15 @@ fn css_backgrounds_border_radius_clip_002() -> Document {
     doc.node_mut(n4).style.border_bottom_left_radius = (40.0_f32, 40.0_f32);
     doc.node_mut(n4).style.background_color = Color::BLACK;
     doc.node_mut(n4).style.background_clip = BackgroundClip::ContentBox;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n4);
     doc
 }
@@ -53605,13 +62755,16 @@ fn css_backgrounds_border_radius_not_inherited_001() -> Document {
 // Source: css-backgrounds/border-radius-style-001.htm
 fn css_backgrounds_border_radius_style_001() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -53621,13 +62774,27 @@ fn css_backgrounds_border_radius_style_001() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -53659,6 +62826,15 @@ fn css_backgrounds_border_radius_style_001() -> Document {
     doc.node_mut(n1).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
     doc.node_mut(n1).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     doc
 }
@@ -53666,13 +62842,16 @@ fn css_backgrounds_border_radius_style_001() -> Document {
 // Source: css-backgrounds/border-radius-style-002.htm
 fn css_backgrounds_border_radius_style_002() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -53682,13 +62861,27 @@ fn css_backgrounds_border_radius_style_002() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -53717,6 +62910,15 @@ fn css_backgrounds_border_radius_style_002() -> Document {
     doc.node_mut(n1).style.border_top_right_radius = (80.0_f32, 80.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (80.0_f32, 80.0_f32);
     doc.node_mut(n1).style.border_bottom_left_radius = (80.0_f32, 80.0_f32);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     doc
 }
@@ -53724,13 +62926,16 @@ fn css_backgrounds_border_radius_style_002() -> Document {
 // Source: css-backgrounds/border-radius-style-003.htm
 fn css_backgrounds_border_radius_style_003() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -53740,13 +62945,27 @@ fn css_backgrounds_border_radius_style_003() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -53775,6 +62994,15 @@ fn css_backgrounds_border_radius_style_003() -> Document {
     doc.node_mut(n1).style.border_top_right_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n1).style.border_bottom_right_radius = (20.0_f32, 20.0_f32);
     doc.node_mut(n1).style.border_bottom_left_radius = (20.0_f32, 20.0_f32);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     doc
 }
@@ -54449,13 +63677,16 @@ fn css_backgrounds_box_shadow_002() -> Document {
 // Source: css-backgrounds/box-shadow-003.htm
 fn css_backgrounds_box_shadow_003() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -54465,13 +63696,27 @@ fn css_backgrounds_box_shadow_003() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -54492,14 +63737,27 @@ fn css_backgrounds_box_shadow_003() -> Document {
         color: Color::from_rgba8(255, 165, 0, 255),
         inset: false,
     }];
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -54521,14 +63779,27 @@ fn css_backgrounds_box_shadow_003() -> Document {
         color: Color::BLUE,
         inset: false,
     }];
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n2);
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
@@ -54547,17 +63818,30 @@ fn css_backgrounds_box_shadow_003() -> Document {
         offset_y: 10.0,
         blur_radius: 0.0,
         spread_radius: 0.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
+        color: Color::BLACK,
         inset: false,
     }];
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n3);
     let n4 = doc.create_node(ElementTag::Div);
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
@@ -54577,7 +63861,7 @@ fn css_backgrounds_box_shadow_003() -> Document {
             offset_y: 10.0,
             blur_radius: 0.0,
             spread_radius: 0.0,
-            color: Color::from_rgba8(0, 0, 0, 255),
+            color: Color::BLACK,
             inset: false,
         },
         BoxShadow {
@@ -54597,6 +63881,15 @@ fn css_backgrounds_box_shadow_003() -> Document {
             inset: false,
         },
     ];
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n4);
     doc
 }
@@ -54604,13 +63897,16 @@ fn css_backgrounds_box_shadow_003() -> Document {
 // Source: css-backgrounds/box-shadow-004.htm
 fn css_backgrounds_box_shadow_004() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -54620,13 +63916,27 @@ fn css_backgrounds_box_shadow_004() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -54651,14 +63961,15 @@ fn css_backgrounds_box_shadow_004() -> Document {
     doc.node_mut(n1).style.border_left_width = 1;
     doc.node_mut(n1).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(n1).style.box_shadow = vec![BoxShadow {
-        offset_x: 0.0,
-        offset_y: 10.0,
-        blur_radius: -10.0,
-        spread_radius: 0.0,
-        color: Color::RED,
-        inset: false,
-    }];
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     doc
 }
@@ -55167,13 +64478,16 @@ fn css_backgrounds_ttwf_css3background_border_color_shorthand_missing_right() ->
 // Source: css-backgrounds/ttwf-css3background-border-style.htm
 fn css_backgrounds_ttwf_css3background_border_style() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -55183,13 +64497,27 @@ fn css_backgrounds_ttwf_css3background_border_style() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -55203,14 +64531,27 @@ fn css_backgrounds_ttwf_css3background_border_style() -> Document {
     doc.node_mut(n1).style.background_color = Color::WHITE;
     doc.node_mut(n1).style.height = Length::px(160.0);
     doc.node_mut(n1).style.width = Length::px(160.0);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -55241,6 +64582,15 @@ fn css_backgrounds_ttwf_css3background_border_style() -> Document {
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.position = Position::Relative;
     doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n2);
     doc
 }
@@ -55248,13 +64598,16 @@ fn css_backgrounds_ttwf_css3background_border_style() -> Document {
 // Source: css-backgrounds/ttwf-css3background-border-style-double.htm
 fn css_backgrounds_ttwf_css3background_border_style_double() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -55264,13 +64617,27 @@ fn css_backgrounds_ttwf_css3background_border_style_double() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -55284,14 +64651,27 @@ fn css_backgrounds_ttwf_css3background_border_style_double() -> Document {
     doc.node_mut(n1).style.background_color = Color::WHITE;
     doc.node_mut(n1).style.height = Length::px(160.0);
     doc.node_mut(n1).style.width = Length::px(160.0);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -55322,6 +64702,15 @@ fn css_backgrounds_ttwf_css3background_border_style_double() -> Document {
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.position = Position::Relative;
     doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n2);
     doc
 }
@@ -55329,13 +64718,16 @@ fn css_backgrounds_ttwf_css3background_border_style_double() -> Document {
 // Source: css-backgrounds/ttwf-css3background-border-style-shorthand.htm
 fn css_backgrounds_ttwf_css3background_border_style_shorthand() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -55345,13 +64737,27 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -55365,14 +64771,27 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand() -> Document {
     doc.node_mut(n1).style.background_color = Color::WHITE;
     doc.node_mut(n1).style.height = Length::px(160.0);
     doc.node_mut(n1).style.width = Length::px(160.0);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -55403,6 +64822,15 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand() -> Document {
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.position = Position::Relative;
     doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n2);
     doc
 }
@@ -55410,13 +64838,16 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand() -> Document {
 // Source: css-backgrounds/ttwf-css3background-border-style-shorthand-missing-bottom.htm
 fn css_backgrounds_ttwf_css3background_border_style_shorthand_missing_bottom() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -55426,13 +64857,27 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand_missing_bottom() -
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -55446,14 +64891,27 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand_missing_bottom() -
     doc.node_mut(n1).style.background_color = Color::WHITE;
     doc.node_mut(n1).style.height = Length::px(160.0);
     doc.node_mut(n1).style.width = Length::px(160.0);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -55484,6 +64942,15 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand_missing_bottom() -
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.position = Position::Relative;
     doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n2);
     doc
 }
@@ -55491,13 +64958,16 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand_missing_bottom() -
 // Source: css-backgrounds/ttwf-css3background-border-style-shorthand-missing-left.htm
 fn css_backgrounds_ttwf_css3background_border_style_shorthand_missing_left() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -55507,13 +64977,27 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand_missing_left() -> 
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -55527,14 +65011,27 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand_missing_left() -> 
     doc.node_mut(n1).style.background_color = Color::WHITE;
     doc.node_mut(n1).style.height = Length::px(160.0);
     doc.node_mut(n1).style.width = Length::px(160.0);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -55565,6 +65062,15 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand_missing_left() -> 
     doc.node_mut(n2).style.height = Length::px(100.0);
     doc.node_mut(n2).style.position = Position::Relative;
     doc.node_mut(n2).style.width = Length::px(100.0);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n2);
     doc
 }
@@ -55572,13 +65078,16 @@ fn css_backgrounds_ttwf_css3background_border_style_shorthand_missing_left() -> 
 // Source: css-backgrounds/ttwf-css3background-border-style-values.htm
 fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -55588,13 +65097,27 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -55607,14 +65130,27 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.width = Length::percent(100.0);
     doc.node_mut(n1).style.height = Length::percent(100.0);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.margin_top = Length::px(25.0);
     doc.node_mut(n2).style.margin_right = Length::px(25.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(25.0);
@@ -55634,16 +65170,31 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n2).style.border_bottom_width = 5;
     doc.node_mut(n2).style.border_left_width = 5;
     doc.node_mut(n2).style.background_color = Color::BLUE;
+    doc.node_mut(n2).style.background_linear_gradient = None;
     doc.node_mut(n2).style.border_top_style = BorderStyle::None;
     doc.node_mut(n2).style.border_right_style = BorderStyle::None;
     doc.node_mut(n2).style.border_bottom_style = BorderStyle::None;
     doc.node_mut(n2).style.border_left_style = BorderStyle::None;
+    doc.node_mut(n2).style.background_layers = vec![];
+    doc.node_mut(n2).style.background_linear_gradient = None;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Text);
     doc.node_mut(n3).style.font_size = 16.0;
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -55653,9 +65204,13 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
     doc.node_mut(n4).style.margin_top = Length::px(25.0);
     doc.node_mut(n4).style.margin_right = Length::px(25.0);
     doc.node_mut(n4).style.margin_bottom = Length::px(25.0);
@@ -55675,16 +65230,31 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n4).style.border_bottom_width = 5;
     doc.node_mut(n4).style.border_left_width = 5;
     doc.node_mut(n4).style.background_color = Color::BLUE;
+    doc.node_mut(n4).style.background_linear_gradient = None;
     doc.node_mut(n4).style.border_top_style = BorderStyle::Hidden;
     doc.node_mut(n4).style.border_right_style = BorderStyle::Hidden;
     doc.node_mut(n4).style.border_bottom_style = BorderStyle::Hidden;
     doc.node_mut(n4).style.border_left_style = BorderStyle::Hidden;
+    doc.node_mut(n4).style.background_layers = vec![];
+    doc.node_mut(n4).style.background_linear_gradient = None;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n4);
     let n5 = doc.create_node(ElementTag::Text);
     doc.node_mut(n5).style.font_size = 16.0;
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -55694,9 +65264,13 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n6).style.list_style_type = ListStyleType::None;
     doc.node_mut(n6).style.margin_top = Length::px(25.0);
     doc.node_mut(n6).style.margin_right = Length::px(25.0);
     doc.node_mut(n6).style.margin_bottom = Length::px(25.0);
@@ -55716,16 +65290,31 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n6).style.border_bottom_width = 5;
     doc.node_mut(n6).style.border_left_width = 5;
     doc.node_mut(n6).style.background_color = Color::BLUE;
+    doc.node_mut(n6).style.background_linear_gradient = None;
     doc.node_mut(n6).style.border_top_style = BorderStyle::Dotted;
     doc.node_mut(n6).style.border_right_style = BorderStyle::Dotted;
     doc.node_mut(n6).style.border_bottom_style = BorderStyle::Dotted;
     doc.node_mut(n6).style.border_left_style = BorderStyle::Dotted;
+    doc.node_mut(n6).style.background_layers = vec![];
+    doc.node_mut(n6).style.background_linear_gradient = None;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n6);
     let n7 = doc.create_node(ElementTag::Text);
     doc.node_mut(n7).style.font_size = 16.0;
     doc.node_mut(n7).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -55735,9 +65324,13 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n8).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n8).style.list_style_type = ListStyleType::None;
     doc.node_mut(n8).style.margin_top = Length::px(25.0);
     doc.node_mut(n8).style.margin_right = Length::px(25.0);
     doc.node_mut(n8).style.margin_bottom = Length::px(25.0);
@@ -55757,16 +65350,31 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n8).style.border_bottom_width = 5;
     doc.node_mut(n8).style.border_left_width = 5;
     doc.node_mut(n8).style.background_color = Color::BLUE;
+    doc.node_mut(n8).style.background_linear_gradient = None;
     doc.node_mut(n8).style.border_top_style = BorderStyle::Dashed;
     doc.node_mut(n8).style.border_right_style = BorderStyle::Dashed;
     doc.node_mut(n8).style.border_bottom_style = BorderStyle::Dashed;
     doc.node_mut(n8).style.border_left_style = BorderStyle::Dashed;
+    doc.node_mut(n8).style.background_layers = vec![];
+    doc.node_mut(n8).style.background_linear_gradient = None;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n8);
     let n9 = doc.create_node(ElementTag::Text);
     doc.node_mut(n9).style.font_size = 16.0;
     doc.node_mut(n9).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -55776,9 +65384,13 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n10).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n10).style.list_style_type = ListStyleType::None;
     doc.node_mut(n10).style.margin_top = Length::px(25.0);
     doc.node_mut(n10).style.margin_right = Length::px(25.0);
     doc.node_mut(n10).style.margin_bottom = Length::px(25.0);
@@ -55798,16 +65410,31 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n10).style.border_bottom_width = 5;
     doc.node_mut(n10).style.border_left_width = 5;
     doc.node_mut(n10).style.background_color = Color::BLUE;
+    doc.node_mut(n10).style.background_linear_gradient = None;
     doc.node_mut(n10).style.border_top_style = BorderStyle::Solid;
     doc.node_mut(n10).style.border_right_style = BorderStyle::Solid;
     doc.node_mut(n10).style.border_bottom_style = BorderStyle::Solid;
     doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n10).style.background_layers = vec![];
+    doc.node_mut(n10).style.background_linear_gradient = None;
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n10);
     let n11 = doc.create_node(ElementTag::Text);
     doc.node_mut(n11).style.font_size = 16.0;
     doc.node_mut(n11).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -55817,9 +65444,13 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n12).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n12).style.list_style_type = ListStyleType::None;
     doc.node_mut(n12).style.margin_top = Length::px(25.0);
     doc.node_mut(n12).style.margin_right = Length::px(25.0);
     doc.node_mut(n12).style.margin_bottom = Length::px(25.0);
@@ -55839,16 +65470,31 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n12).style.border_bottom_width = 5;
     doc.node_mut(n12).style.border_left_width = 5;
     doc.node_mut(n12).style.background_color = Color::BLUE;
+    doc.node_mut(n12).style.background_linear_gradient = None;
     doc.node_mut(n12).style.border_top_style = BorderStyle::Double;
     doc.node_mut(n12).style.border_right_style = BorderStyle::Double;
     doc.node_mut(n12).style.border_bottom_style = BorderStyle::Double;
     doc.node_mut(n12).style.border_left_style = BorderStyle::Double;
+    doc.node_mut(n12).style.background_layers = vec![];
+    doc.node_mut(n12).style.background_linear_gradient = None;
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n12);
     let n13 = doc.create_node(ElementTag::Text);
     doc.node_mut(n13).style.font_size = 16.0;
     doc.node_mut(n13).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -55858,9 +65504,13 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n14).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n14).style.list_style_type = ListStyleType::None;
     doc.node_mut(n14).style.margin_top = Length::px(25.0);
     doc.node_mut(n14).style.margin_right = Length::px(25.0);
     doc.node_mut(n14).style.margin_bottom = Length::px(25.0);
@@ -55880,16 +65530,31 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n14).style.border_bottom_width = 5;
     doc.node_mut(n14).style.border_left_width = 5;
     doc.node_mut(n14).style.background_color = Color::BLUE;
+    doc.node_mut(n14).style.background_linear_gradient = None;
     doc.node_mut(n14).style.border_top_style = BorderStyle::Groove;
     doc.node_mut(n14).style.border_right_style = BorderStyle::Groove;
     doc.node_mut(n14).style.border_bottom_style = BorderStyle::Groove;
     doc.node_mut(n14).style.border_left_style = BorderStyle::Groove;
+    doc.node_mut(n14).style.background_layers = vec![];
+    doc.node_mut(n14).style.background_linear_gradient = None;
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n14);
     let n15 = doc.create_node(ElementTag::Text);
     doc.node_mut(n15).style.font_size = 16.0;
     doc.node_mut(n15).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -55899,9 +65564,13 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n16).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n16).style.list_style_type = ListStyleType::None;
     doc.node_mut(n16).style.margin_top = Length::px(25.0);
     doc.node_mut(n16).style.margin_right = Length::px(25.0);
     doc.node_mut(n16).style.margin_bottom = Length::px(25.0);
@@ -55921,16 +65590,31 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n16).style.border_bottom_width = 5;
     doc.node_mut(n16).style.border_left_width = 5;
     doc.node_mut(n16).style.background_color = Color::BLUE;
+    doc.node_mut(n16).style.background_linear_gradient = None;
     doc.node_mut(n16).style.border_top_style = BorderStyle::Ridge;
     doc.node_mut(n16).style.border_right_style = BorderStyle::Ridge;
     doc.node_mut(n16).style.border_bottom_style = BorderStyle::Ridge;
     doc.node_mut(n16).style.border_left_style = BorderStyle::Ridge;
+    doc.node_mut(n16).style.background_layers = vec![];
+    doc.node_mut(n16).style.background_linear_gradient = None;
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n16);
     let n17 = doc.create_node(ElementTag::Text);
     doc.node_mut(n17).style.font_size = 16.0;
     doc.node_mut(n17).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -55940,9 +65624,13 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n18).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n18).style.list_style_type = ListStyleType::None;
     doc.node_mut(n18).style.margin_top = Length::px(25.0);
     doc.node_mut(n18).style.margin_right = Length::px(25.0);
     doc.node_mut(n18).style.margin_bottom = Length::px(25.0);
@@ -55962,16 +65650,31 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n18).style.border_bottom_width = 5;
     doc.node_mut(n18).style.border_left_width = 5;
     doc.node_mut(n18).style.background_color = Color::BLUE;
+    doc.node_mut(n18).style.background_linear_gradient = None;
     doc.node_mut(n18).style.border_top_style = BorderStyle::Inset;
     doc.node_mut(n18).style.border_right_style = BorderStyle::Inset;
     doc.node_mut(n18).style.border_bottom_style = BorderStyle::Inset;
     doc.node_mut(n18).style.border_left_style = BorderStyle::Inset;
+    doc.node_mut(n18).style.background_layers = vec![];
+    doc.node_mut(n18).style.background_linear_gradient = None;
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n18);
     let n19 = doc.create_node(ElementTag::Text);
     doc.node_mut(n19).style.font_size = 16.0;
     doc.node_mut(n19).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -55981,9 +65684,13 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n20).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
+    doc.node_mut(n20).style.list_style_type = ListStyleType::None;
     doc.node_mut(n20).style.margin_top = Length::px(25.0);
     doc.node_mut(n20).style.margin_right = Length::px(25.0);
     doc.node_mut(n20).style.margin_bottom = Length::px(25.0);
@@ -56003,16 +65710,31 @@ fn css_backgrounds_ttwf_css3background_border_style_values() -> Document {
     doc.node_mut(n20).style.border_bottom_width = 5;
     doc.node_mut(n20).style.border_left_width = 5;
     doc.node_mut(n20).style.background_color = Color::BLUE;
+    doc.node_mut(n20).style.background_linear_gradient = None;
     doc.node_mut(n20).style.border_top_style = BorderStyle::Outset;
     doc.node_mut(n20).style.border_right_style = BorderStyle::Outset;
     doc.node_mut(n20).style.border_bottom_style = BorderStyle::Outset;
     doc.node_mut(n20).style.border_left_style = BorderStyle::Outset;
+    doc.node_mut(n20).style.background_layers = vec![];
+    doc.node_mut(n20).style.background_linear_gradient = None;
+    doc.node_mut(n20).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n20);
     let n21 = doc.create_node(ElementTag::Text);
     doc.node_mut(n21).style.font_size = 16.0;
     doc.node_mut(n21).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -56154,13 +65876,16 @@ fn css_backgrounds_animations_background_color_transparent_animation_in_body_ref
 // Source: css-backgrounds/background-attachment-margin-root-001.html
 fn css_backgrounds_background_attachment_margin_root_001() -> Document {
     let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(html).style.margin_top = Length::px(50.0);
     doc.node_mut(html).style.margin_right = Length::px(50.0);
     doc.node_mut(html).style.margin_bottom = Length::px(50.0);
@@ -56170,7 +65895,96 @@ fn css_backgrounds_background_attachment_margin_root_001() -> Document {
     doc.node_mut(html).style.padding_bottom = Length::px(0.0);
     doc.node_mut(html).style.padding_left = Length::px(0.0);
     doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba_f32(0.0 / 255.0, 255.0 / 255.0, 0.0 / 255.0, 0.5),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba_f32(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(html).style.height = Length::px(300.0);
+    doc.node_mut(html).style.background_layers = vec![
+        BackgroundLayer {
+            image: CssImage::LinearGradient(CssLinearGradient {
+                angle_degrees: 180.0,
+                corner_direction: None,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            255.0 / 255.0,
+                            0.0 / 255.0,
+                            0.5,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            255.0 / 255.0,
+                            0.5,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Percent(0.0),
+            position_y: BackgroundPosition::Percent(0.0),
+            size: BackgroundSize::Explicit(Length::px(100.0), Length::px(100.0)),
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+        BackgroundLayer {
+            image: CssImage::LinearGradient(CssLinearGradient {
+                angle_degrees: 180.0,
+                corner_direction: None,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            1.0,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            1.0,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Percent(0.0),
+            position_y: BackgroundPosition::Percent(0.0),
+            size: BackgroundSize::Explicit(Length::px(100.0), Length::px(100.0)),
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Fixed,
+        },
+    ];
+    doc.node_mut(html).style.background_linear_gradient = None;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -56181,19 +65995,32 @@ fn css_backgrounds_background_attachment_margin_root_001() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     doc
 }
 
 // Source: css-backgrounds/background-attachment-margin-root-002.html
 fn css_backgrounds_background_attachment_margin_root_002() -> Document {
     let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(html).style.margin_top = Length::px(50.0);
     doc.node_mut(html).style.margin_right = Length::px(50.0);
     doc.node_mut(html).style.margin_bottom = Length::px(50.0);
@@ -56203,7 +66030,96 @@ fn css_backgrounds_background_attachment_margin_root_002() -> Document {
     doc.node_mut(html).style.padding_bottom = Length::px(0.0);
     doc.node_mut(html).style.padding_left = Length::px(0.0);
     doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba_f32(0.0 / 255.0, 255.0 / 255.0, 0.0 / 255.0, 0.5),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba_f32(0.0 / 255.0, 0.0 / 255.0, 255.0 / 255.0, 0.5),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(html).style.height = Length::px(300.0);
+    doc.node_mut(html).style.background_layers = vec![
+        BackgroundLayer {
+            image: CssImage::LinearGradient(CssLinearGradient {
+                angle_degrees: 180.0,
+                corner_direction: None,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            255.0 / 255.0,
+                            0.0 / 255.0,
+                            0.5,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            255.0 / 255.0,
+                            0.5,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Percent(0.0),
+            position_y: BackgroundPosition::Percent(0.0),
+            size: BackgroundSize::Explicit(Length::px(100.0), Length::px(100.0)),
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Fixed,
+        },
+        BackgroundLayer {
+            image: CssImage::LinearGradient(CssLinearGradient {
+                angle_degrees: 180.0,
+                corner_direction: None,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            1.0,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba_f32(
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            0.0 / 255.0,
+                            1.0,
+                        )),
+                        position: GradientStopPosition::Auto,
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::Repeat,
+            repeat_y: BackgroundRepeat::Repeat,
+            position_x: BackgroundPosition::Percent(0.0),
+            position_y: BackgroundPosition::Percent(0.0),
+            size: BackgroundSize::Explicit(Length::px(100.0), Length::px(100.0)),
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+    ];
+    doc.node_mut(html).style.background_linear_gradient = None;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -56214,19 +66130,32 @@ fn css_backgrounds_background_attachment_margin_root_002() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     doc
 }
 
 // Source: css-backgrounds/background-clip/clip-border-area-on-body-not-propagated-to-root.html
 fn css_backgrounds_background_clip_clip_border_area_on_body_not_propagated_to_root() -> Document {
     let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(html).style.margin_top = Length::px(0.0);
     doc.node_mut(html).style.margin_right = Length::px(0.0);
     doc.node_mut(html).style.margin_bottom = Length::px(0.0);
@@ -56262,12 +66191,24 @@ fn css_backgrounds_background_clip_clip_border_area_on_body_not_propagated_to_ro
     doc.node_mut(vp).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(vp).style.border_left_color = StyleColor::Resolved(Color::TRANSPARENT);
     doc.node_mut(vp).style.background_color = Color::from_rgba8(0, 128, 0, 255);
-    doc.node_mut(vp).style.background_clip = BackgroundClip::BorderArea;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Text);
     doc.node_mut(n1).style.font_size = 16.0;
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
@@ -56873,13 +66814,16 @@ fn css_backgrounds_background_image_shared_stylesheet_ref() -> Document {
 // Source: css-backgrounds/background-margin-root.html
 fn css_backgrounds_background_margin_root() -> Document {
     let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(html).style.margin_top = Length::px(50.0);
     doc.node_mut(html).style.margin_right = Length::px(50.0);
     doc.node_mut(html).style.margin_bottom = Length::px(50.0);
@@ -56889,7 +66833,48 @@ fn css_backgrounds_background_margin_root() -> Document {
     doc.node_mut(html).style.padding_bottom = Length::px(0.0);
     doc.node_mut(html).style.padding_left = Length::px(0.0);
     doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(173, 216, 230, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(html).style.height = Length::px(300.0);
+    doc.node_mut(html).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(173, 216, 230, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(html).style.background_linear_gradient = None;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -56900,19 +66885,32 @@ fn css_backgrounds_background_margin_root() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     doc
 }
 
 // Source: css-backgrounds/background-margin-will-change-root.html
 fn css_backgrounds_background_margin_will_change_root() -> Document {
     let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(html).style.margin_top = Length::px(50.0);
     doc.node_mut(html).style.margin_right = Length::px(50.0);
     doc.node_mut(html).style.margin_bottom = Length::px(50.0);
@@ -56922,10 +66920,51 @@ fn css_backgrounds_background_margin_will_change_root() -> Document {
     doc.node_mut(html).style.padding_bottom = Length::px(0.0);
     doc.node_mut(html).style.padding_left = Length::px(0.0);
     doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(173, 216, 230, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(255, 255, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
     doc.node_mut(html).style.height = Length::px(300.0);
     doc.node_mut(html)
         .style
         .establishes_transform_containing_block = true;
+    doc.node_mut(html).style.background_layers = vec![BackgroundLayer {
+        image: CssImage::LinearGradient(CssLinearGradient {
+            angle_degrees: 180.0,
+            corner_direction: None,
+            repeating: false,
+            color_space: GradientColorSpace::Srgb,
+            stops: vec![
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(173, 216, 230, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+                GradientStop {
+                    color: StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255)),
+                    position: GradientStopPosition::Auto,
+                },
+            ],
+        }),
+        repeat_x: BackgroundRepeat::Repeat,
+        repeat_y: BackgroundRepeat::Repeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Auto,
+        origin: BackgroundClip::PaddingBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
+    doc.node_mut(html).style.background_linear_gradient = None;
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -56936,19 +66975,32 @@ fn css_backgrounds_background_margin_will_change_root() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     doc
 }
 
 // Source: css-backgrounds/background-position/background-position-right-in-body.html
 fn css_backgrounds_background_position_background_position_right_in_body() -> Document {
     let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
             FontFamily::Named("DejaVu Sans".to_string()),
         ],
     };
-    doc.node_mut(vp).style.display = Display::Block;
     doc.node_mut(html).style.margin_top = Length::px(8.0);
     doc.node_mut(html).style.margin_right = Length::px(8.0);
     doc.node_mut(html).style.margin_bottom = Length::px(8.0);
@@ -56968,6 +67020,97 @@ fn css_backgrounds_background_position_background_position_right_in_body() -> Do
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.background_linear_gradient = Some(LinearGradient {
+        angle_degrees: 180.0,
+        repeating: false,
+        stops: vec![
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+            LinearGradientStop {
+                color: Color::from_rgba8(0, 128, 0, 255),
+                position: GradientStopPosition::Auto,
+            },
+        ],
+    });
+    doc.node_mut(vp).style.background_layers = vec![
+        BackgroundLayer {
+            image: CssImage::LinearGradient(CssLinearGradient {
+                angle_degrees: 180.0,
+                corner_direction: None,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                        position: GradientStopPosition::Auto,
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255)),
+                        position: GradientStopPosition::Auto,
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::NoRepeat,
+            repeat_y: BackgroundRepeat::NoRepeat,
+            position_x: BackgroundPosition::Edge {
+                end: true,
+                offset: Length::percent(100.0),
+            },
+            position_y: BackgroundPosition::Edge {
+                end: false,
+                offset: Length::percent(0.0),
+            },
+            size: BackgroundSize::Explicit(Length::px(100.0), Length::px(100.0)),
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+        BackgroundLayer {
+            image: CssImage::LinearGradient(CssLinearGradient {
+                angle_degrees: 180.0,
+                corner_direction: None,
+                repeating: false,
+                color_space: GradientColorSpace::Srgb,
+                stops: vec![
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::RED),
+                        position: GradientStopPosition::Auto,
+                    },
+                    GradientStop {
+                        color: StyleColor::Resolved(Color::RED),
+                        position: GradientStopPosition::Auto,
+                    },
+                ],
+            }),
+            repeat_x: BackgroundRepeat::NoRepeat,
+            repeat_y: BackgroundRepeat::NoRepeat,
+            position_x: BackgroundPosition::Edge {
+                end: false,
+                offset: Length::percent(0.0),
+            },
+            position_y: BackgroundPosition::Edge {
+                end: false,
+                offset: Length::percent(0.0),
+            },
+            size: BackgroundSize::Explicit(Length::px(100.0), Length::px(100.0)),
+            origin: BackgroundClip::PaddingBox,
+            clip: BackgroundClip::BorderBox,
+            attachment: BackgroundAttachment::Scroll,
+        },
+    ];
+    doc.node_mut(vp).style.background_linear_gradient = None;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     doc
 }
 
@@ -57097,6 +67240,9 @@ fn css_backgrounds_gradient_wrong_interpolation_crash() -> Document {
     doc.node_mut(html).style.padding_bottom = Length::px(0.0);
     doc.node_mut(html).style.padding_left = Length::px(0.0);
     doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.background_color = Color::BLACK;
+    doc.node_mut(html).style.background_layers = vec![];
+    doc.node_mut(html).style.background_linear_gradient = None;
     doc.node_mut(vp).style.font_family = FontFamilyList {
         families: vec![
             FontFamily::Named("DejaVu Sans".to_string()),
@@ -57114,6 +67260,9 @@ fn css_backgrounds_gradient_wrong_interpolation_crash() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.background_color = Color::BLACK;
+    doc.node_mut(vp).style.background_layers = vec![];
+    doc.node_mut(vp).style.background_linear_gradient = None;
     doc
 }
 

@@ -12,13 +12,14 @@
 use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSize, WritingModeConverter};
 use openui_style::{
-    BoxDecorationBreak, Clear, ComputedStyle, Direction, Display, FontFamily, LineHeight,
+    BoxDecorationBreak, Clear, ComputedStyle, Direction, Display, Float, FontFamily, LineHeight,
     TextAlign, TextAlignLast, TextJustify, VerticalAlign,
 };
 use openui_text::{
     used_line_height, used_line_height_metrics, Font, FontMetrics, ShapeResult, TextShaper,
     UsedLineHeightMetrics,
 };
+use std::collections::HashMap;
 use std::sync::Arc;
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -38,6 +39,39 @@ fn uses_deterministic_text_profile(style: &ComputedStyle) -> bool {
     style.font_family.families.iter().any(|family| {
         matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
     })
+}
+
+fn node_follows_float_with_in_flow_text(
+    doc: &Document,
+    node_id: NodeId,
+    saw_float: &mut bool,
+) -> bool {
+    let node = doc.node(node_id);
+    if node.style.display == Display::None {
+        return false;
+    }
+    if node.style.float != Float::None {
+        *saw_float = true;
+        return false;
+    }
+    if node.style.is_out_of_flow() {
+        return false;
+    }
+    if node.tag == ElementTag::Text {
+        return *saw_float
+            && node
+                .text
+                .as_deref()
+                .is_some_and(|text| text.chars().any(|ch| !ch.is_whitespace()));
+    }
+    doc.children(node_id)
+        .any(|child_id| node_follows_float_with_in_flow_text(doc, child_id, saw_float))
+}
+
+fn floating_descendant_precedes_in_flow_text(doc: &Document, node_id: NodeId) -> bool {
+    let mut saw_float = false;
+    doc.children(node_id)
+        .any(|child_id| node_follows_float_with_in_flow_text(doc, child_id, &mut saw_float))
 }
 
 /// Lay out one HTML ruby container as an atomic inline object.
@@ -179,6 +213,8 @@ struct InlineLineBox {
     border_end: LayoutUnit,
     is_first: bool,
     is_last: bool,
+    has_left_edge: bool,
+    has_right_edge: bool,
     children: Vec<InlineLineChild>,
 }
 
@@ -202,6 +238,8 @@ fn materialize_inline_line_child(
     items_data: &InlineItemsData,
     percentage_base: LayoutUnit,
     baseline: LayoutUnit,
+    line_height: LayoutUnit,
+    parent_metrics: &FontMetrics,
 ) -> Fragment {
     match child {
         InlineLineChild::Fragment(index) => flat_fragments[index]
@@ -210,6 +248,8 @@ fn materialize_inline_line_child(
         InlineLineChild::InlineBox(index) => {
             let record = &boxes[index];
             let style = &items_data.styles[record.style_index];
+            let font = Font::new(style_to_font_description(style));
+            let metrics = font.font_metrics().copied().unwrap_or_default();
             let mut children: Vec<Fragment> = record
                 .children
                 .iter()
@@ -224,39 +264,90 @@ fn materialize_inline_line_child(
                         items_data,
                         percentage_base,
                         baseline,
+                        line_height,
+                        &metrics,
                     ),
                 })
                 .collect();
 
-            let font = Font::new(style_to_font_description(style));
-            let metrics = font.font_metrics().copied().unwrap_or_default();
+            // Inline decoration geometry is device-pixel snapped on the
+            // block axis. Keeping independently fractional ascent/descent
+            // endpoints makes the same 10px line cover twelve rows, while
+            // Blink floors both physical edges before painting the inline
+            // background and border.
             let mut content_top = baseline - LayoutUnit::from_f32_ceil(metrics.ascent);
             let mut content_bottom = baseline + LayoutUnit::from_f32_ceil(metrics.descent);
             for child in &children {
                 content_top = content_top.min_of(child.offset.top);
                 content_bottom = content_bottom.max_of(child.offset.top + child.size.height);
             }
+            content_top = content_top.floor();
+            content_bottom = content_bottom.floor();
 
             let border = BoxStrut::new(
                 LayoutUnit::from_i32(style.effective_border_top()),
-                LayoutUnit::from_i32(style.effective_border_right()),
+                if record.has_right_edge {
+                    LayoutUnit::from_i32(style.effective_border_right())
+                } else {
+                    LayoutUnit::zero()
+                },
                 LayoutUnit::from_i32(style.effective_border_bottom()),
-                LayoutUnit::from_i32(style.effective_border_left()),
+                if record.has_left_edge {
+                    LayoutUnit::from_i32(style.effective_border_left())
+                } else {
+                    LayoutUnit::zero()
+                },
             );
             let padding = BoxStrut::new(
                 resolve_margin_or_padding(&style.padding_top, percentage_base),
-                resolve_margin_or_padding(&style.padding_right, percentage_base),
+                if record.has_right_edge {
+                    resolve_margin_or_padding(&style.padding_right, percentage_base)
+                } else {
+                    LayoutUnit::zero()
+                },
                 resolve_margin_or_padding(&style.padding_bottom, percentage_base),
-                resolve_margin_or_padding(&style.padding_left, percentage_base),
+                if record.has_left_edge {
+                    resolve_margin_or_padding(&style.padding_left, percentage_base)
+                } else {
+                    LayoutUnit::zero()
+                },
             );
             let margin = BoxStrut::new(
                 resolve_margin_or_padding(&style.margin_top, percentage_base),
-                resolve_margin_or_padding(&style.margin_right, percentage_base),
+                if record.has_right_edge {
+                    resolve_margin_or_padding(&style.margin_right, percentage_base)
+                } else {
+                    LayoutUnit::zero()
+                },
                 resolve_margin_or_padding(&style.margin_bottom, percentage_base),
-                resolve_margin_or_padding(&style.margin_left, percentage_base),
+                if record.has_left_edge {
+                    resolve_margin_or_padding(&style.margin_left, percentage_base)
+                } else {
+                    LayoutUnit::zero()
+                },
             );
             let box_top = content_top - padding.top - border.top;
             let box_bottom = content_bottom + padding.bottom + border.bottom;
+            let item_lh =
+                compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
+            let element_line_height =
+                used_line_height(&metrics, &style.line_height, style.font_size);
+            let keyword_shift = compute_baseline_shift(
+                &style.vertical_align,
+                style.font_size,
+                parent_metrics.ascent,
+                parent_metrics.descent,
+                parent_metrics.x_height,
+                item_lh.ascent,
+                item_lh.descent,
+                element_line_height,
+            );
+            let block_shift = match style.vertical_align {
+                VerticalAlign::Top => -box_top.to_f32(),
+                VerticalAlign::Bottom => (line_height - box_bottom).to_f32(),
+                _ => keyword_shift,
+            };
+            let shifted_box_top = box_top + LayoutUnit::from_f32(block_shift);
             for child in &mut children {
                 child.offset.left = child.offset.left - record.border_start;
                 child.offset.top = child.offset.top - box_top;
@@ -268,7 +359,7 @@ fn materialize_inline_line_child(
                     (box_bottom - box_top).clamp_negative_to_zero(),
                 ),
             );
-            fragment.offset = PhysicalOffset::new(record.border_start, box_top);
+            fragment.offset = PhysicalOffset::new(record.border_start, shifted_box_top);
             fragment.border = border;
             fragment.padding = padding;
             fragment.margin = margin;
@@ -400,8 +491,11 @@ fn compute_baseline_shift(
 ) -> f32 {
     match vertical_align {
         VerticalAlign::Baseline => 0.0,
-        VerticalAlign::Sub => font_size / 5.0 + 1.0,
-        VerticalAlign::Super => -(font_size / 3.0 + 1.0),
+        // Blink's Linux used values include a two-pixel keyword offset in
+        // addition to the font-relative component. These keywords are
+        // deliberately UA-defined rather than fixed by CSS Values.
+        VerticalAlign::Sub => font_size / 5.0 + 2.0,
+        VerticalAlign::Super => -(font_size / 3.0 + 2.0),
         VerticalAlign::Middle => (item_ascent - item_descent) / 2.0 - parent_x_height / 2.0,
         VerticalAlign::TextTop => item_ascent - parent_ascent,
         VerticalAlign::TextBottom => parent_descent - item_descent,
@@ -748,6 +842,8 @@ pub fn inline_layout_from_items(
 
     // Create line breaker from the (possibly filtered) items.
     let mut line_breaker = LineBreaker::new(&working_items_data, available_inline_size);
+    line_breaker
+        .set_float_precedes_in_flow_text(floating_descendant_precedes_in_flow_text(doc, node_id));
     line_breaker.set_writing_direction(space.writing_direction);
     line_breaker.set_text_align(style.text_align);
     line_breaker.set_container_white_space(style.white_space);
@@ -1870,6 +1966,11 @@ pub fn inline_layout_for_children(
     items_data.shape_text();
 
     let mut line_breaker = LineBreaker::new(&items_data, available_inline_size);
+    let mut saw_float = false;
+    let float_precedes_text = children
+        .iter()
+        .any(|child_id| node_follows_float_with_in_flow_text(doc, *child_id, &mut saw_float));
+    line_breaker.set_float_precedes_in_flow_text(float_precedes_text);
     line_breaker.set_writing_direction(space.writing_direction);
     line_breaker.set_text_align(style.text_align);
     line_breaker.set_container_white_space(style.white_space);
@@ -2260,13 +2361,13 @@ fn create_line_box(
                 let element_line_height =
                     used_line_height(&metrics, &style.line_height, style.font_size);
 
-                // Use parent inline's metrics if inside a nested inline,
-                // otherwise fall back to block container metrics.
+                let effective_vertical_align = style.vertical_align;
+                let alignment_font_size = style.font_size;
                 let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
 
                 let baseline_shift = compute_baseline_shift(
-                    &style.vertical_align,
-                    style.font_size,
+                    &effective_vertical_align,
+                    alignment_font_size,
                     parent_metrics.ascent,
                     parent_metrics.descent,
                     parent_metrics.x_height,
@@ -2275,7 +2376,7 @@ fn create_line_box(
                     element_line_height,
                 );
 
-                match style.vertical_align {
+                match effective_vertical_align {
                     VerticalAlign::Top => {
                         deferred_items.push(DeferredItem {
                             item_ascent: item_lh.ascent,
@@ -2416,13 +2517,13 @@ fn create_line_box(
                     }
                     VerticalAlign::Sub => {
                         // Lowered by sub_offset below the baseline.
-                        let sub_offset = style.font_size / 5.0 + 1.0;
+                        let sub_offset = style.font_size / 5.0 + 2.0;
                         line_ascent = line_ascent.max((margin_box_height - sub_offset).max(0.0));
                         line_descent = line_descent.max(sub_offset);
                     }
                     VerticalAlign::Super => {
                         // Raised by super_offset above the baseline.
-                        let super_offset = style.font_size / 3.0 + 1.0;
+                        let super_offset = style.font_size / 3.0 + 2.0;
                         line_ascent = line_ascent.max(margin_box_height + super_offset);
                         // Item bottom is at super_offset above baseline → 0 descent.
                         line_descent = line_descent.max(0.0);
@@ -2449,6 +2550,42 @@ fn create_line_box(
                 let font_desc = style_to_font_description(style);
                 let font = Font::new(font_desc);
                 let metrics = font.font_metrics().copied().unwrap_or_default();
+                let item_lh =
+                    compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
+                let element_line_height =
+                    used_line_height(&metrics, &style.line_height, style.font_size);
+                let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
+                let baseline_shift = compute_baseline_shift(
+                    &style.vertical_align,
+                    style.font_size,
+                    parent_metrics.ascent,
+                    parent_metrics.descent,
+                    parent_metrics.x_height,
+                    item_lh.ascent,
+                    item_lh.descent,
+                    element_line_height,
+                );
+                // Font metrics from an inline box only enlarge an established
+                // line. A line made solely of empty, undecorated inline boxes
+                // is zero-height under CSS 2.1 §9.4.2.
+                if line_has_content {
+                    match style.vertical_align {
+                        VerticalAlign::Top => deferred_items.push(DeferredItem {
+                            item_ascent: item_lh.ascent,
+                            item_descent: item_lh.descent,
+                            is_top: true,
+                        }),
+                        VerticalAlign::Bottom => deferred_items.push(DeferredItem {
+                            item_ascent: item_lh.ascent,
+                            item_descent: item_lh.descent,
+                            is_top: false,
+                        }),
+                        _ => {
+                            line_ascent = line_ascent.max(item_lh.ascent - baseline_shift);
+                            line_descent = line_descent.max(item_lh.descent + baseline_shift);
+                        }
+                    }
+                }
                 inline_metrics_stack.push(metrics);
             }
             // CloseTag: pop the parent inline's font metrics.
@@ -2662,6 +2799,8 @@ fn create_line_box(
             border_end: border_start,
             is_first: false,
             is_last: false,
+            has_left_edge: open_box.box_decoration_break == BoxDecorationBreak::Clone,
+            has_right_edge: false,
             children: Vec::new(),
         });
         attach_inline_line_child(
@@ -2699,6 +2838,22 @@ fn create_line_box(
         .map(|&si| (si, false)) // boxes from previous line are NOT first
         .collect();
 
+    // A single logical inline can be split into multiple visual fragments by
+    // bidi reordering on the same line. Its physical left/right decorations
+    // belong only to the first/last visual fragment; repeated synthesized tag
+    // pairs carry the shared middle content without duplicating those edges.
+    let mut close_tag_totals: HashMap<usize, usize> = HashMap::new();
+    for result in &line_info.items {
+        match result.item_type {
+            InlineItemType::CloseTag => {
+                *close_tag_totals.entry(result.item_index).or_default() += 1
+            }
+            _ => {}
+        }
+    }
+    let mut open_tag_seen: HashMap<usize, usize> = HashMap::new();
+    let mut close_tag_seen: HashMap<usize, usize> = HashMap::new();
+
     for (step4_idx, item_result) in line_info.items.iter().enumerate() {
         let item = &items_data.items[item_result.item_index];
         match item_result.item_type {
@@ -2719,12 +2874,13 @@ fn create_line_box(
                 let item_lh =
                     compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
 
-                // Use parent inline's metrics if inside a nested inline.
+                let effective_vertical_align = style.vertical_align;
+                let alignment_font_size = style.font_size;
                 let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
 
                 let baseline_shift = compute_baseline_shift(
-                    &style.vertical_align,
-                    style.font_size,
+                    &effective_vertical_align,
+                    alignment_font_size,
                     parent_metrics.ascent,
                     parent_metrics.descent,
                     parent_metrics.x_height,
@@ -2734,7 +2890,7 @@ fn create_line_box(
                 );
 
                 // Compute vertical offset for top/bottom aligned items.
-                let effective_shift = match style.vertical_align {
+                let effective_shift = match effective_vertical_align {
                     VerticalAlign::Top => {
                         // Align top of item with top of line box.
                         -(line_ascent - item_lh.ascent)
@@ -2896,20 +3052,29 @@ fn create_line_box(
             }
             InlineItemType::OpenTag => {
                 let style = &items_data.styles[item.style_index];
-                inline_offset =
-                    inline_offset + resolve_margin_or_padding(&style.margin_left, percentage_base);
+                let seen = open_tag_seen.entry(item_result.item_index).or_default();
+                let has_left_edge = *seen == 0;
+                *seen += 1;
+                if has_left_edge {
+                    inline_offset = inline_offset
+                        + resolve_margin_or_padding(&style.margin_left, percentage_base);
+                }
                 let border_start = inline_offset;
-                inline_offset = inline_offset
-                    + LayoutUnit::from_i32(style.effective_border_left())
-                    + resolve_margin_or_padding(&style.padding_left, percentage_base);
+                if has_left_edge {
+                    inline_offset = inline_offset
+                        + LayoutUnit::from_i32(style.effective_border_left())
+                        + resolve_margin_or_padding(&style.padding_left, percentage_base);
+                }
                 let index = inline_boxes.len();
                 inline_boxes.push(InlineLineBox {
                     node_id: item.node_id,
                     style_index: item.style_index,
                     border_start,
                     border_end: border_start,
-                    is_first: true,
+                    is_first: has_left_edge,
                     is_last: false,
+                    has_left_edge,
+                    has_right_edge: false,
                     children: Vec::new(),
                 });
                 attach_inline_line_child(
@@ -2930,13 +3095,25 @@ fn create_line_box(
             InlineItemType::CloseTag => {
                 if let Some(index) = inline_box_record_stack.pop() {
                     let style = &items_data.styles[inline_boxes[index].style_index];
-                    inline_offset = inline_offset
-                        + resolve_margin_or_padding(&style.padding_right, percentage_base)
-                        + LayoutUnit::from_i32(style.effective_border_right());
+                    let seen = close_tag_seen.entry(item_result.item_index).or_default();
+                    *seen += 1;
+                    let has_right_edge = *seen
+                        == close_tag_totals
+                            .get(&item_result.item_index)
+                            .copied()
+                            .unwrap_or(1);
+                    if has_right_edge {
+                        inline_offset = inline_offset
+                            + resolve_margin_or_padding(&style.padding_right, percentage_base)
+                            + LayoutUnit::from_i32(style.effective_border_right());
+                    }
                     inline_boxes[index].border_end = inline_offset;
-                    inline_boxes[index].is_last = true;
-                    inline_offset = inline_offset
-                        + resolve_margin_or_padding(&style.margin_right, percentage_base);
+                    inline_boxes[index].is_last = has_right_edge;
+                    inline_boxes[index].has_right_edge = has_right_edge;
+                    if has_right_edge {
+                        inline_offset = inline_offset
+                            + resolve_margin_or_padding(&style.margin_right, percentage_base);
+                    }
                 }
                 inline_metrics_stack.pop();
                 inline_box_stack.pop();
@@ -3044,11 +3221,11 @@ fn create_line_box(
                             - margin_bottom_lu
                     }
                     VerticalAlign::Sub => {
-                        let shift = LayoutUnit::from_f32(style.font_size / 5.0 + 1.0);
+                        let shift = LayoutUnit::from_f32(style.font_size / 5.0 + 2.0);
                         baseline + shift - item_height - margin_bottom_lu
                     }
                     VerticalAlign::Super => {
-                        let shift = LayoutUnit::from_f32(style.font_size / 3.0 + 1.0);
+                        let shift = LayoutUnit::from_f32(style.font_size / 3.0 + 2.0);
                         baseline - shift - item_height - margin_bottom_lu
                     }
                     VerticalAlign::Length(px) => {
@@ -3151,6 +3328,7 @@ fn create_line_box(
                 + resolve_margin_or_padding(&style.padding_right, percentage_base)
                 + LayoutUnit::from_i32(style.effective_border_right());
             inline_boxes[index].border_end = inline_offset;
+            inline_boxes[index].has_right_edge = true;
             inline_offset =
                 inline_offset + resolve_margin_or_padding(&style.margin_right, percentage_base);
         } else {
@@ -3291,6 +3469,8 @@ fn create_line_box(
                 items_data,
                 percentage_base,
                 baseline,
+                line_height,
+                block_metrics,
             )
         })
         .collect();
@@ -3343,8 +3523,115 @@ fn bidi_reorder_line(items: &mut Vec<InlineItemResult>, items_data: &InlineItems
         None => return, // No odd levels → no reordering needed
     };
 
-    // UAX#9 L2: for each level from max down to min odd level,
-    // reverse every maximal contiguous run of items at that level or higher.
+    // Inline element boundary tokens are logical tree markers, not UAX#9
+    // characters. Reversing them together with text prevents visual runs from
+    // crossing element boundaries and can create an invalid tag stack. For a
+    // balanced line, attach each paintable item to its logical inline ancestry,
+    // reorder only those paintable items, then synthesize a balanced boundary
+    // sequence around each contiguous visual fragment.
+    let original = std::mem::take(items);
+    let has_inline_boundaries = original.iter().any(|item| {
+        matches!(
+            item.item_type,
+            InlineItemType::OpenTag | InlineItemType::CloseTag
+        )
+    });
+    let mut open_stack: Vec<usize> = Vec::new();
+    let mut open_results: HashMap<usize, InlineItemResult> = HashMap::new();
+    let mut close_results: HashMap<usize, InlineItemResult> = HashMap::new();
+    let mut visual_items: Vec<(InlineItemResult, Vec<usize>)> = Vec::new();
+    let mut balanced = true;
+
+    if has_inline_boundaries {
+        for result in original.iter().cloned() {
+            match result.item_type {
+                InlineItemType::OpenTag => {
+                    open_results.insert(result.item_index, result.clone());
+                    open_stack.push(result.item_index);
+                }
+                InlineItemType::CloseTag => {
+                    if let Some(open_index) = open_stack.pop() {
+                        close_results.insert(open_index, result);
+                    } else {
+                        balanced = false;
+                        break;
+                    }
+                }
+                _ => visual_items.push((result, open_stack.clone())),
+            }
+        }
+        balanced &= open_stack.is_empty()
+            && open_results.len() == close_results.len()
+            && !visual_items.is_empty();
+    }
+
+    if !has_inline_boundaries || !balanced {
+        *items = original;
+    } else {
+        *items = Vec::new();
+    }
+
+    // UAX#9 L2: for each level from max down to min odd level, reverse every
+    // maximal contiguous run of paintable items at that level or higher.
+    if balanced && has_inline_boundaries {
+        for level in (min_odd..=max_level).rev() {
+            let mut i = 0;
+            while i < visual_items.len() {
+                let item_level = items_data.items[visual_items[i].0.item_index].bidi_level;
+                if item_level >= level {
+                    let start = i;
+                    while i < visual_items.len()
+                        && items_data.items[visual_items[i].0.item_index].bidi_level >= level
+                    {
+                        i += 1;
+                    }
+                    visual_items[start..i].reverse();
+                } else {
+                    i += 1;
+                }
+            }
+        }
+
+        let mut current_ancestry: Vec<usize> = Vec::new();
+        for (result, desired_ancestry) in visual_items {
+            let common = current_ancestry
+                .iter()
+                .zip(&desired_ancestry)
+                .take_while(|(left, right)| left == right)
+                .count();
+            for open_index in current_ancestry[common..].iter().rev() {
+                items.push(
+                    close_results
+                        .get(open_index)
+                        .expect("balanced inline boundary has a close result")
+                        .clone(),
+                );
+            }
+            for open_index in &desired_ancestry[common..] {
+                items.push(
+                    open_results
+                        .get(open_index)
+                        .expect("balanced inline boundary has an open result")
+                        .clone(),
+                );
+            }
+            items.push(result);
+            current_ancestry = desired_ancestry;
+        }
+        for open_index in current_ancestry.iter().rev() {
+            items.push(
+                close_results
+                    .get(open_index)
+                    .expect("balanced inline boundary has a close result")
+                    .clone(),
+            );
+        }
+        return;
+    }
+
+    // Lines with an inline continuation from another line are not locally
+    // balanced. Preserve their boundary tokens and use the legacy item-level
+    // ordering until the continuation ancestry is available to this stage.
     for level in (min_odd..=max_level).rev() {
         let mut i = 0;
         while i < items.len() {
@@ -3694,14 +3981,14 @@ mod tests {
     fn baseline_shift_sub() {
         let shift =
             compute_baseline_shift(&VerticalAlign::Sub, 16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 16.0);
-        assert_eq!(shift, 16.0 / 5.0 + 1.0);
+        assert_eq!(shift, 16.0 / 5.0 + 2.0);
     }
 
     #[test]
     fn baseline_shift_super() {
         let shift =
             compute_baseline_shift(&VerticalAlign::Super, 16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 16.0);
-        assert_eq!(shift, -(16.0 / 3.0 + 1.0));
+        assert_eq!(shift, -(16.0 / 3.0 + 2.0));
     }
 
     #[test]
@@ -3905,6 +4192,28 @@ mod tests {
         doc.append_child(block, child);
 
         assert!(!has_inline_children(&doc, block));
+    }
+
+    #[test]
+    fn empty_undecorated_inline_descendants_do_not_create_line_height() {
+        let mut doc = Document::new();
+        let root = doc.root();
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.append_child(root, block);
+
+        for _ in 0..3 {
+            let span = doc.create_node(ElementTag::Span);
+            doc.node_mut(span).style.display = Display::Inline;
+            doc.node_mut(span).style.font_size = 40.0;
+            doc.append_child(block, span);
+        }
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
+        let fragment = crate::block::block_layout(&doc, root, &space);
+        let block_fragment = &fragment.children[0];
+        assert_eq!(block_fragment.size.height, LayoutUnit::zero());
+        assert_eq!(block_fragment.children[0].size.height, LayoutUnit::zero());
     }
 
     // ── Helper ───────────────────────────────────────────────────────────
@@ -4634,5 +4943,58 @@ mod tests {
         assert!(!continuations.first().unwrap().is_last_for_node);
         assert!(!continuations.last().unwrap().is_first_for_node);
         assert!(continuations.last().unwrap().is_last_for_node);
+    }
+
+    #[test]
+    fn bidi_reordering_splits_and_rebalances_inline_fragments() {
+        let mut doc = Document::new();
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.append_child(doc.root(), block);
+        for content in ["\u{202e}a\u{202d}bc", "d\u{202e}e\u{202d}f"] {
+            let span = doc.create_node(ElementTag::Span);
+            doc.node_mut(span).style.display = Display::Inline;
+            doc.append_child(block, span);
+            let text = doc.create_node(ElementTag::Text);
+            doc.node_mut(text).text = Some(content.to_string());
+            doc.append_child(span, text);
+        }
+
+        let mut data = InlineItemsBuilder::collect(&doc, block);
+        data.apply_bidi(openui_text::TextDirection::Ltr);
+        data.shape_text();
+        let mut breaker = LineBreaker::new(&data, LayoutUnit::from_i32(800));
+        let mut line = breaker.next_line(LayoutUnit::from_i32(800)).unwrap();
+        bidi_reorder_line(&mut line.items, &data);
+        assert_eq!(
+            line.items
+                .iter()
+                .filter(|result| result.item_type == InlineItemType::Text)
+                .map(|result| data.text[result.text_range.clone()].to_string())
+                .collect::<Vec<_>>(),
+            vec!["\u{202e}", "bc", "d\u{202e}", "f", "e\u{202d}", "a\u{202d}"]
+        );
+        let boundary_types: Vec<_> = line
+            .items
+            .iter()
+            .filter(|result| {
+                matches!(
+                    result.item_type,
+                    InlineItemType::OpenTag | InlineItemType::CloseTag
+                )
+            })
+            .map(|result| result.item_type)
+            .collect();
+        assert_eq!(
+            boundary_types,
+            vec![
+                InlineItemType::OpenTag,
+                InlineItemType::CloseTag,
+                InlineItemType::OpenTag,
+                InlineItemType::CloseTag,
+                InlineItemType::OpenTag,
+                InlineItemType::CloseTag,
+            ]
+        );
     }
 }

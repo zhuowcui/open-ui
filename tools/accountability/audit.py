@@ -38,6 +38,9 @@ from shared_detectors import CATEGORY_FOR_DEP
 from generate_sp13r_multicol_closure import (
     LATER_EXACT_PROMOTIONS as SP13R_LATER_EXACT_PROMOTIONS,
 )
+from generate_sp13p_paint_closure import (
+    validate_closed_snapshot as validate_sp13p_paint_closure,
+)
 
 VALID_FAILURE_CATEGORIES = set(CATEGORY_FOR_DEP.values()) | {"sp12_layout_bug", "sp13_fragmentation_architecture", "not_ported"}
 TEXT_PORT_METADATA_CATEGORIES = {"reference_test", "non_visual_test"}
@@ -1172,6 +1175,12 @@ def check_mapping_coverage():
                 f"{len(sp13r_targets)} exact targets, "
                 f"{len(sp13r_residuals)} reason-owned residuals"
             )
+        try:
+            validate_sp13p_paint_closure()
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            issue(f"SP13-P paint closure invariant violation: {exc}")
+        else:
+            ok("SP13-P closure: 3,889 runnable, 3,807 exact, 82 residual")
 
     # Accounting identity: ported + not_ported = total
     if ported + not_ported != total:

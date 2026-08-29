@@ -40,6 +40,7 @@ W2A_TARGETS_JSON = SCRIPT_DIR / "sp17_w2a_targets.json"
 W2A_FOCUSED_JSON = SCRIPT_DIR / "sp17_w2a_focused_ids.json"
 W2B_W4_TARGETS_JSON = SCRIPT_DIR / "sp17_w2b_w4_targets.json"
 W2B_W4_FOCUSED_JSON = SCRIPT_DIR / "sp17_w2b_w4_focused_ids.json"
+SP13P_TARGETS_JSON = PORTED_DIR / "sp13p_paint_targets.json"
 WPT_ROOT = Path(os.environ.get(
     "CHROMIUM_WPT_CSS",
     os.path.expanduser(
@@ -121,6 +122,8 @@ EXPECTED_W2B_W4_FAILURES = 270
 EXPECTED_W2B_W4_UNPORTED = 3784
 EXPECTED_W2B_W4_LIVE_OWNED = 517
 EXPECTED_W2B_W4_RESIDUAL_ADMISSIONS = 2
+EXPECTED_SP13P_LATER_EXACT = 188
+SP13P_TARGETS_SHA256 = "322d86866abdd23d14e435cba71e7f1239d49f7ad1914ac607ac7a5b7a387324"
 W2B_W4_MANIFEST_SHA256 = {
     "sp17_w2b_w4_targets.json": "0085f0df34162f355c1f2a24deae01967cf52f1753049f27a32ec7425e3ce089",
     "sp17_w2b_w4_focused_ids.json": "78efe59229615167e9603c6e40295c3eca0937c2f973f1097cd98a545d2793d3",
@@ -819,14 +822,28 @@ def validate_live_snapshot(
         )
     if set(w2b_w4_focused) != promoted:
         raise ValueError("SP17 W2B-W4 focused proof is not the full promotion set")
+    actual_sp13p_hash = hashlib.sha256(SP13P_TARGETS_JSON.read_bytes()).hexdigest()
+    if actual_sp13p_hash != SP13P_TARGETS_SHA256:
+        raise ValueError("SP17 later SP13-P target manifest byte drift")
+    sp13p_later_exact = set(json.loads(SP13P_TARGETS_JSON.read_text(encoding="utf-8")))
+    if (
+        len(sp13p_later_exact) != EXPECTED_SP13P_LATER_EXACT
+        or sp13p_later_exact & promoted
+    ):
+        raise ValueError("SP17 later SP13-P exact-promotion partition changed")
+    for test_id in sp13p_later_exact:
+        result = summary_by_id.get(test_id, {})
+        if result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
+            raise ValueError(f"SP17 later SP13-P promotion is not exact: {test_id}")
+
     passed = summary.get("passed")
     failed = summary.get("failed")
     errors = summary.get("errors")
     if (
         len(tests) != expected_runnable
         or errors != EXPECTED_ERRORS
-        or passed != EXPECTED_W2B_W4_EXACT
-        or failed != EXPECTED_W2B_W4_FAILURES
+        or passed != EXPECTED_W2B_W4_EXACT + len(sp13p_later_exact)
+        or failed != EXPECTED_W2B_W4_FAILURES - len(sp13p_later_exact)
         or passed + failed + errors != expected_runnable
         or passed < EXPECTED_BASELINE + len(promoted)
     ):
