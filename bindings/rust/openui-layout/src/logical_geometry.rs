@@ -174,13 +174,15 @@ pub fn block_child_constraint_space(
     // viewport-wide strips. Atomic inlines are excluded for the same reason.
     if is_orthogonal
         && child_style.display == openui_style::Display::FlowRoot
+        && !child_style.legacy_webkit_box
         && child_logical.sizes.block_size.is_auto()
     {
         child_space.stretch_block_size = true;
     }
     if is_orthogonal
         && child_style.display.is_block_level()
-        && child_style.display != openui_style::Display::FlowRoot
+        && (child_style.display != openui_style::Display::FlowRoot
+            || child_style.legacy_webkit_box)
         // An orthogonal float normally shrink-wraps an automatic physical
         // width and height. A flex float with a definite logical block-size,
         // however, retains the containing block's definite logical inline

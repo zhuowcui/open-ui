@@ -19,6 +19,10 @@ use crate::exclusions::ExclusionSpace;
 /// and right floats).
 #[derive(Debug, Clone, Copy)]
 pub struct LineAvailability {
+    /// Block offset where this opportunity begins. It can be below the
+    /// requested shelf when an oversized float leaves no inline space.
+    pub block_offset: LayoutUnit,
+
     /// Inline-start offset relative to the content edge of the container.
     /// Non-zero when left floats intrude into the content area.
     pub inline_start: LayoutUnit,
@@ -60,6 +64,7 @@ pub fn compute_line_availability(
         Some(es) if es.has_floats() => es,
         _ => {
             return LineAvailability {
+                block_offset: line_block_offset,
                 inline_start: LayoutUnit::zero(),
                 available_inline_size: container_inline_size,
             };
@@ -76,6 +81,7 @@ pub fn compute_line_availability(
     let available = opportunity.inline_size();
 
     LineAvailability {
+        block_offset: opportunity.rect.block_start_offset(),
         inline_start,
         available_inline_size: available,
     }

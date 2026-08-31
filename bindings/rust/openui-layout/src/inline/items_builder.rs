@@ -93,6 +93,74 @@ pub struct OofPlaceholder {
 }
 
 impl InlineItemsData {
+    /// Apply the originating block's computed `::first-line` style to a clone
+    /// of this item stream. The clone is shaped and broken only for line one;
+    /// subsequent lines continue with the ordinary stream.
+    pub fn apply_first_line_style(&mut self, base: &ComputedStyle, pseudo: &ComputedStyle) {
+        for style in &mut self.styles {
+            let descendant_color = (style.color != base.color).then_some(style.color);
+            apply_highlight_text_style(style, pseudo, false);
+            if let Some(color) = descendant_color {
+                style.color = color;
+            }
+        }
+        for item in &mut self.items {
+            item.shape_result = None;
+        }
+    }
+
+    /// Split text items at the first-letter range and attach the computed
+    /// pseudo style. Extraction operates on the flattened text so leading and
+    /// trailing punctuation may cross nested inline/generated-text nodes.
+    pub fn apply_first_letter_style(&mut self, base: &ComputedStyle, pseudo: &ComputedStyle) {
+        let Some(extraction) = super::first_letter::extract_first_letter(&self.text) else {
+            return;
+        };
+        let start = extraction.first_letter_start;
+        let end = extraction.first_letter_end;
+        let mut rebuilt = Vec::with_capacity(self.items.len() + 2);
+        for item in self.items.drain(..) {
+            if item.item_type != InlineItemType::Text
+                || item.text_range.end <= start
+                || item.text_range.start >= end
+            {
+                rebuilt.push(item);
+                continue;
+            }
+            if item.text_range.start < start {
+                let mut before = item.clone();
+                before.text_range.end = start;
+                before.shape_result = None;
+                before.end_collapse_type = CollapseType::NotCollapsible;
+                before.is_end_collapsible_newline = false;
+                rebuilt.push(before);
+            }
+            let mut highlighted = item.clone();
+            highlighted.text_range = item.text_range.start.max(start)..item.text_range.end.min(end);
+            highlighted.shape_result = None;
+            let mut style = self.styles[item.style_index].clone();
+            let descendant_color = (style.color != base.color).then_some(style.color);
+            apply_highlight_text_style(&mut style, pseudo, true);
+            if let Some(color) = descendant_color {
+                style.color = color;
+            }
+            highlighted.style_index = self.styles.len();
+            self.styles.push(style);
+            if highlighted.text_range.end != item.text_range.end {
+                highlighted.end_collapse_type = CollapseType::NotCollapsible;
+                highlighted.is_end_collapsible_newline = false;
+            }
+            rebuilt.push(highlighted);
+            if item.text_range.end > end {
+                let mut after = item;
+                after.text_range.start = end;
+                after.shape_result = None;
+                rebuilt.push(after);
+            }
+        }
+        self.items = rebuilt;
+    }
+
     /// Shape all text items using HarfBuzz via the text shaper.
     ///
     /// Each text item gets its own `ShapeResult` based on the item's
@@ -435,6 +503,56 @@ impl InlineItemsData {
     }
 }
 
+fn apply_highlight_text_style(
+    target: &mut ComputedStyle,
+    pseudo: &ComputedStyle,
+    first_letter: bool,
+) {
+    target.color = pseudo.color;
+    target.background_color = pseudo.background_color;
+    target.background_layers = pseudo.background_layers.clone();
+    target.font_family = pseudo.font_family.clone();
+    target.font_size = pseudo.font_size;
+    target.font_weight = pseudo.font_weight;
+    target.font_style = pseudo.font_style;
+    target.font_stretch = pseudo.font_stretch;
+    target.font_variant_caps = pseudo.font_variant_caps;
+    target.line_height = pseudo.line_height;
+    target.letter_spacing = pseudo.letter_spacing;
+    target.word_spacing = pseudo.word_spacing;
+    target.text_decoration_line = pseudo.text_decoration_line;
+    target.text_decoration_style = pseudo.text_decoration_style;
+    target.text_decoration_color = pseudo.text_decoration_color;
+    target.text_decoration_thickness = pseudo.text_decoration_thickness;
+    target.text_transform = pseudo.text_transform;
+    target.text_shadow = pseudo.text_shadow.clone();
+    if first_letter {
+        target.is_first_letter_pseudo = true;
+        target.float = pseudo.float;
+        target.vertical_align = pseudo.vertical_align;
+        target.margin_top = pseudo.margin_top.clone();
+        target.margin_right = pseudo.margin_right.clone();
+        target.margin_bottom = pseudo.margin_bottom.clone();
+        target.margin_left = pseudo.margin_left.clone();
+        target.padding_top = pseudo.padding_top.clone();
+        target.padding_right = pseudo.padding_right.clone();
+        target.padding_bottom = pseudo.padding_bottom.clone();
+        target.padding_left = pseudo.padding_left.clone();
+        target.border_top_width = pseudo.border_top_width;
+        target.border_right_width = pseudo.border_right_width;
+        target.border_bottom_width = pseudo.border_bottom_width;
+        target.border_left_width = pseudo.border_left_width;
+        target.border_top_style = pseudo.border_top_style;
+        target.border_right_style = pseudo.border_right_style;
+        target.border_bottom_style = pseudo.border_bottom_style;
+        target.border_left_style = pseudo.border_left_style;
+        target.border_top_color = pseudo.border_top_color;
+        target.border_right_color = pseudo.border_right_color;
+        target.border_bottom_color = pseudo.border_bottom_color;
+        target.border_left_color = pseudo.border_left_color;
+    }
+}
+
 /// Return bidi control characters to insert BEFORE an inline element's content
 /// based on its `unicode-bidi` and `direction` properties.
 ///
@@ -593,13 +711,17 @@ impl<'a> InlineItemsBuilder<'a> {
             .direction
             .writing_direction(block_style.writing_mode);
         builder.collect_children(block_node_id);
-        InlineItemsData {
+        let mut data = InlineItemsData {
             text: builder.text,
             items: builder.items,
             styles: builder.styles,
             oof_children: builder.oof_children,
             block_in_inline: builder.block_in_inline,
+        };
+        if let Some(first_letter) = block_style.first_letter_style.as_deref() {
+            data.apply_first_letter_style(block_style, first_letter);
         }
+        data
     }
 
     /// Collect inline items from a specific set of child node IDs.
@@ -619,13 +741,17 @@ impl<'a> InlineItemsBuilder<'a> {
         for &child_id in children {
             builder.collect_single_child(child_id);
         }
-        InlineItemsData {
+        let mut data = InlineItemsData {
             text: builder.text,
             items: builder.items,
             styles: builder.styles,
             oof_children: builder.oof_children,
             block_in_inline: builder.block_in_inline,
+        };
+        if let Some(first_letter) = block_style.first_letter_style.as_deref() {
+            data.apply_first_letter_style(block_style, first_letter);
         }
+        data
     }
 
     /// Get or insert a style, returning its index.
@@ -677,6 +803,10 @@ impl<'a> InlineItemsBuilder<'a> {
                 let style = node.style.clone();
                 self.append_break(child_id, &style);
             }
+            ElementTag::WordBreak => {
+                let style = node.style.clone();
+                self.append_word_break(child_id, &style);
+            }
             ElementTag::Ruby => {
                 // A ruby container is one atomic inline object. Its base and
                 // annotation establish paired internal formatting contexts;
@@ -688,7 +818,9 @@ impl<'a> InlineItemsBuilder<'a> {
             ElementTag::Span | ElementTag::Style | ElementTag::RubyText => {
                 let display = node.style.display;
                 let style = node.style.clone();
-                if display == Display::InlineBlock
+                if display == Display::Contents {
+                    self.collect_children(child_id);
+                } else if display == Display::InlineBlock
                     || display == Display::InlineFlex
                     || display == Display::InlineGrid
                 {
@@ -726,7 +858,9 @@ impl<'a> InlineItemsBuilder<'a> {
             }
             ElementTag::Div | ElementTag::Html | ElementTag::Body => {
                 let display = node.style.display;
-                if display == Display::Inline {
+                if display == Display::Contents {
+                    self.collect_children(child_id);
+                } else if display == Display::Inline {
                     // display:inline on a div creates a normal inline box, not atomic.
                     let style = node.style.clone();
                     self.enter_inline(child_id, &style);
@@ -1256,6 +1390,12 @@ impl<'a> InlineItemsBuilder<'a> {
                     current_inline_row = 0.0;
                     has_content = true;
                 }
+                ElementTag::WordBreak => {
+                    // A WBR contributes no intrinsic width but permits the
+                    // current row to end at this position.
+                    max_width = max_width.max(current_inline_row);
+                    current_inline_row = 0.0;
+                }
                 ElementTag::Text => {
                     if let Some(ref text) = child.text {
                         if !text.is_empty() {
@@ -1352,8 +1492,13 @@ impl<'a> InlineItemsBuilder<'a> {
                             has_content = true;
                             child_style.width.value() + child_bp + recursive_margin
                         } else {
-                            let (child_width, child_has_content) =
-                                self.compute_intrinsic_inline_size_recursive(child_id);
+                            let (child_width, child_has_content) = if child.tag == ElementTag::Ruby
+                            {
+                                self.compute_ruby_intrinsic_inline_size(child_id)
+                                    .map_or((0.0, false), |width| (width, true))
+                            } else {
+                                self.compute_intrinsic_inline_size_recursive(child_id)
+                            };
                             if child_has_content {
                                 has_content = true;
                             }
@@ -1367,8 +1512,13 @@ impl<'a> InlineItemsBuilder<'a> {
                             current_inline_row +=
                                 child_style.width.value() + child_bp + recursive_margin;
                         } else {
-                            let (child_width, child_has_content) =
-                                self.compute_intrinsic_inline_size_recursive(child_id);
+                            let (child_width, child_has_content) = if child.tag == ElementTag::Ruby
+                            {
+                                self.compute_ruby_intrinsic_inline_size(child_id)
+                                    .map_or((0.0, false), |width| (width, true))
+                            } else {
+                                self.compute_intrinsic_inline_size_recursive(child_id)
+                            };
                             if child_has_content {
                                 has_content = true;
                             }
@@ -1405,6 +1555,25 @@ impl<'a> InlineItemsBuilder<'a> {
             style_index,
             end_collapse_type: CollapseType::NotCollapsible,
             is_end_collapsible_newline: true,
+            bidi_level: 0,
+            intrinsic_inline_size: None,
+        });
+    }
+
+    /// Handle a discretionary line break. U+200B is retained in the item
+    /// stream as a zero-advance control distinguished from BR by its newline
+    /// flag. The line breaker consumes it without producing a box.
+    pub fn append_word_break(&mut self, node_id: NodeId, style: &ComputedStyle) {
+        let style_index = self.intern_style(style);
+        let offset = self.text.len();
+        self.items.push(InlineItem {
+            item_type: InlineItemType::Control,
+            text_range: offset..offset,
+            node_id,
+            shape_result: None,
+            style_index,
+            end_collapse_type: CollapseType::NotCollapsible,
+            is_end_collapsible_newline: false,
             bidi_level: 0,
             intrinsic_inline_size: None,
         });

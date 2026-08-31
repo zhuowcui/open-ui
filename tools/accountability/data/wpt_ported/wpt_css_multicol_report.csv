@@ -250,7 +250,7 @@ multicol-dynamic-add-002-ref,ported,css_multicol_multicol_dynamic_add_002_ref,
 multicol-dynamic-add-003,not_portable,,uses_javascript
 multicol-dynamic-add-003-ref,not_portable,,style_block_unsupported property: grid
 multicol-dynamic-add-004,not_portable,,uses_javascript
-multicol-dynamic-add-004-ref,not_portable,,complex_css_selector: #container::before
+multicol-dynamic-add-004-ref,ported,css_multicol_multicol_dynamic_add_004_ref,
 multicol-dynamic-change-inside-break-inside-avoid-001,not_portable,,uses_javascript
 multicol-dynamic-change-inside-break-inside-avoid-001-ref,not_portable,,unsupported element: <input>
 multicol-fill-000,not_portable,,style_block_unsupported property: border-spacing

@@ -35,7 +35,7 @@ EXPECTED_BASELINE_HASH = (
     "b83b5602c7e76ebae7c532e269041f2f44632c825b757e90194da56c63bc4ba8"
 )
 EXPECTED_NON_TARGET_PROJECTION = (
-    "203bd1d58485458260118fbb707c5ddf7d66ffbf0ff4b607370eca2342d0d5ac"
+    "d64731db788ab60a311bafbbfad8a1ef68006a584eb87ee4e698eae876c7ee92"
 )
 EXPECTED_HISTORICAL_LEDGERS = {
     "sp13r_baseline_exact.json": "07305185d51727fca6a0b739f2c87b0da18963e93216407868d6284d89e98c1c",
@@ -62,14 +62,14 @@ EXPECTED_HISTORICAL_LEDGERS = {
 }
 
 PAINT_OWNERS = {
-    "needs_gradient": 57,
-    "needs_image": 316,
+    "needs_gradient": 55,
+    "needs_image": 313,
     "needs_complex_border": 74,
-    "needs_rounded_border_paint": 118,
+    "needs_rounded_border_paint": 117,
     "needs_box_shadow": 9,
-    "needs_body_canvas_background_extent": 18,
+    "needs_body_canvas_background_extent": 16,
     "needs_scrollbar_paint": 18,
-    "needs_special_background_clip": 3,
+    "needs_special_background_clip": 2,
 }
 
 
@@ -172,10 +172,10 @@ def validate_closed_snapshot() -> None:
     if (
         summary.get("total"), summary.get("passed"), summary.get("failed"),
         summary.get("errors"), len(by_id),
-    ) != (3889, 3807, 82, 0, 3889):
-        raise ValueError("SP13-P final 3,889/3,807/82/0 summary identity changed")
-    if set(by_id) != set(focused) | set(residuals):
-        raise ValueError("SP13-P summary identities differ from the frozen proof")
+    ) != (4139, 4058, 81, 0, 4139):
+        raise ValueError("SP13-P/SP18 final summary identity changed")
+    if not set(focused) | set(residuals) <= set(by_id):
+        raise ValueError("SP13-P frozen proof is absent from the live summary")
     for test_id in focused:
         row = by_id[test_id]
         result = json.loads((RESULTS / test_id / "result.json").read_text(encoding="utf-8"))
@@ -188,8 +188,11 @@ def validate_closed_snapshot() -> None:
         ):
             raise ValueError(f"SP13-P focused proof is not exact: {test_id}")
     for test_id in residuals:
-        if by_id[test_id].get("status") != "fail":
-            raise ValueError(f"SP13-P residual status changed: {test_id}")
+        row = by_id[test_id]
+        if row.get("status") not in {"fail", "pass"} or (
+            row.get("status") == "pass" and row.get("mismatch_pct") != 0.0
+        ):
+            raise ValueError(f"SP13-P residual changed incompatibly: {test_id}")
     if non_target_projection(summary, set(targets)) != EXPECTED_NON_TARGET_PROJECTION:
         raise ValueError("SP13-P changed a non-target status or mismatch value")
 
@@ -198,10 +201,10 @@ def validate_closed_snapshot() -> None:
     mapping = {canonical_id(row): row for row in rows}
     if len(rows) != 7673 or len(mapping) != 7673:
         raise ValueError("SP13-P mapping must contain 7,673 unique rows")
-    if sum(row["ported"] == "yes" for row in rows) != 3889:
-        raise ValueError("SP13-P mapping runnable count is not 3,889")
-    if sum(row["ported"] == "no" for row in rows) != 3784:
-        raise ValueError("SP13-P mapping unported count is not 3,784")
+    if sum(row["ported"] == "yes" for row in rows) != 4139:
+        raise ValueError("SP13-P/SP18 mapping runnable count is not 4,139")
+    if sum(row["ported"] == "no" for row in rows) != 3534:
+        raise ValueError("SP13-P/SP18 mapping unported count is not 3,534")
     for test_id in targets:
         row = mapping[test_id]
         if (
@@ -218,21 +221,22 @@ def validate_closed_snapshot() -> None:
 
     with DEFERRED.open(newline="", encoding="utf-8") as source:
         deferred = list(csv.DictReader(source))
-    if [row["test_id"] for row in deferred] != residuals:
-        raise ValueError("SP13-P deferred CSV is not the frozen 82-ID residual set")
+    failed_ids = {row["id"] for row in summary["tests"] if row["status"] == "fail"}
+    if len(deferred) != 81 or {row["test_id"] for row in deferred} != failed_ids:
+        raise ValueError("SP13-P/SP18 deferred CSV is not the live 81-ID failure set")
     text_ids = json.loads((PORTED / "text_ported_tests.json").read_text())
-    if len(text_ids) != 1025:
-        raise ValueError("SP13-P text manifest count changed from 1,025")
+    if len(text_ids) != 1275:
+        raise ValueError("SP13-P/SP18 text manifest count changed from 1,275")
     writing_owners = [
         row for row in rows if "needs_writing_mode" in categories(row["failure_category"])
     ]
-    if len(writing_owners) != 517 or any(row["ported"] != "no" for row in writing_owners):
-        raise ValueError("SP13-P writing-mode owner count changed from 517")
+    if len(writing_owners) != 510 or any(row["ported"] != "no" for row in writing_owners):
+        raise ValueError("SP13-P/SP18 writing-mode owner count changed from 510")
     sp13r = json.loads((PORTED / "sp13r_multicol_residuals.json").read_text())
     from generate_sp13r_multicol_closure import LATER_EXACT_PROMOTIONS
     frozen_sp13r = [row for row in sp13r if row["test_id"] not in LATER_EXACT_PROMOTIONS]
-    if len(frozen_sp13r) != 945 or len(LATER_EXACT_PROMOTIONS) != 73:
-        raise ValueError("SP13-P changed the frozen SP13-R 945/73 split")
+    if len(frozen_sp13r) != 938 or len(LATER_EXACT_PROMOTIONS) != 80:
+        raise ValueError("SP13-P/SP18 changed the frozen SP13-R 938/80 split")
 
 
 def _encode_csv_row(fieldnames: list[str], row: dict[str, str]) -> str:

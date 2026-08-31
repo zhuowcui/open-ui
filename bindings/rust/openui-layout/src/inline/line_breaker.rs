@@ -84,6 +84,40 @@ pub struct LineBreakerCheckpoint {
 }
 
 impl<'a> LineBreaker<'a> {
+    /// Whether the unconsumed item stream can produce visible in-flow ink or
+    /// an atomic box. Structural inline boundaries, breaks, and collapsible
+    /// whitespace alone do not require a clamp marker.
+    pub fn has_remaining_visible_content(&self) -> bool {
+        self.items_data.items[self.current_item..]
+            .iter()
+            .any(|item| match item.item_type {
+                InlineItemType::Text => {
+                    let start = if item.text_range.contains(&self.current_text_offset) {
+                        self.current_text_offset
+                    } else {
+                        item.text_range.start
+                    };
+                    self.items_data.text[start..item.text_range.end]
+                        .chars()
+                        .any(|character| !character.is_whitespace())
+                }
+                InlineItemType::AtomicInline | InlineItemType::BlockInInline => true,
+                InlineItemType::OpenTag | InlineItemType::CloseTag | InlineItemType::Control => {
+                    false
+                }
+            })
+    }
+
+    /// Legacy WebKit clamping paints its marker for a discarded forced-break
+    /// continuation even when that continuation contains no glyphs.
+    pub fn has_remaining_forced_break(&self) -> bool {
+        self.items_data.items[self.current_item..]
+            .iter()
+            .any(|item| {
+                item.item_type == InlineItemType::Control && item.is_end_collapsible_newline
+            })
+    }
+
     /// Create a new line breaker for the given inline items.
     pub fn new(items_data: &'a InlineItemsData, containing_block_width: LayoutUnit) -> Self {
         let char_map = ByteToCharMap::new(&items_data.text);
@@ -157,6 +191,23 @@ impl<'a> LineBreaker<'a> {
         self.current_item = cp.current_item;
         self.current_text_offset = cp.current_text_offset;
         self.is_finished = cp.is_finished;
+    }
+
+    /// Continue this breaker immediately after a line produced from an
+    /// equivalent item stream (used by the separately shaped first line).
+    pub(crate) fn seek_after_line(&mut self, line: &LineInfo) {
+        let Some(last) = line.items.last() else {
+            return;
+        };
+        let item = &self.items_data.items[last.item_index];
+        if last.item_type == InlineItemType::Text && last.text_range.end < item.text_range.end {
+            self.current_item = last.item_index;
+            self.current_text_offset = last.text_range.end;
+        } else {
+            self.current_item = last.item_index + 1;
+            self.current_text_offset = 0;
+        }
+        self.is_finished = self.current_item >= self.items_data.items.len();
     }
 
     /// Get the next line. Returns `None` when all items are consumed.
@@ -276,6 +327,20 @@ impl<'a> LineBreaker<'a> {
                     self.current_item += 1;
                 }
                 InlineItemType::Control => {
+                    if !item.is_end_collapsible_newline {
+                        // WBR is a discretionary opportunity even in `pre`,
+                        // where ordinary Unicode soft wrapping is disabled.
+                        // Break here only when the following unbroken text
+                        // segment cannot fit in the remainder of this line.
+                        self.current_item += 1;
+                        self.current_text_offset = 0;
+                        if line.has_content()
+                            && self.unbroken_width_after_soft_control() > line.remaining_width()
+                        {
+                            state = LineState::Done;
+                        }
+                        continue;
+                    }
                     // Forced break (<br> or newline in pre mode)
                     line.items.push(InlineItemResult {
                         item_index: self.current_item,
@@ -316,6 +381,63 @@ impl<'a> LineBreaker<'a> {
         }
 
         Some(line)
+    }
+
+    /// Measure the text up to the next forced newline/control after a WBR.
+    /// Inline boundaries contribute their physical edge geometry; this is the
+    /// same fit question a discretionary break answers before normal item
+    /// processing resumes.
+    fn unbroken_width_after_soft_control(&self) -> LayoutUnit {
+        let mut width = LayoutUnit::zero();
+        for (index, item) in self.items_data.items[self.current_item..]
+            .iter()
+            .enumerate()
+        {
+            let item_index = self.current_item + index;
+            let style = &self.items_data.styles[item.style_index];
+            match item.item_type {
+                InlineItemType::Text => {
+                    let text = &self.items_data.text[item.text_range.clone()];
+                    let end = text
+                        .find('\n')
+                        .map_or(item.text_range.end, |offset| item.text_range.start + offset);
+                    width = width + self.measure_text_range(item_index, item.text_range.start, end);
+                    if end != item.text_range.end {
+                        break;
+                    }
+                }
+                InlineItemType::OpenTag => {
+                    width = width
+                        + resolve_margin_or_padding(
+                            if style.direction == openui_style::Direction::Rtl {
+                                &style.padding_right
+                            } else {
+                                &style.padding_left
+                            },
+                            self.containing_block_width,
+                        );
+                }
+                InlineItemType::CloseTag => {
+                    width = width
+                        + resolve_margin_or_padding(
+                            if style.direction == openui_style::Direction::Rtl {
+                                &style.padding_left
+                            } else {
+                                &style.padding_right
+                            },
+                            self.containing_block_width,
+                        );
+                }
+                InlineItemType::AtomicInline => {
+                    width = width
+                        + item
+                            .intrinsic_inline_size
+                            .map_or(LayoutUnit::zero(), |(_, max)| LayoutUnit::from_f32(max));
+                }
+                InlineItemType::Control | InlineItemType::BlockInInline => break,
+            }
+        }
+        width
     }
 
     fn has_soft_opportunity_before_inline_box(&self, line: &LineInfo) -> bool {
@@ -1441,6 +1563,7 @@ fn strip_trailing_spaces(
             }
             if item_result.item_type != InlineItemType::CloseTag
                 && item_result.item_type != InlineItemType::OpenTag
+                && item_result.item_type != InlineItemType::Control
             {
                 break;
             }

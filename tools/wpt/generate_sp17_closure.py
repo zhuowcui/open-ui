@@ -41,6 +41,7 @@ W2A_FOCUSED_JSON = SCRIPT_DIR / "sp17_w2a_focused_ids.json"
 W2B_W4_TARGETS_JSON = SCRIPT_DIR / "sp17_w2b_w4_targets.json"
 W2B_W4_FOCUSED_JSON = SCRIPT_DIR / "sp17_w2b_w4_focused_ids.json"
 SP13P_TARGETS_JSON = PORTED_DIR / "sp13p_paint_targets.json"
+SP18_TARGETS_JSON = SCRIPT_DIR / "sp18_targets.json"
 WPT_ROOT = Path(os.environ.get(
     "CHROMIUM_WPT_CSS",
     os.path.expanduser(
@@ -124,6 +125,10 @@ EXPECTED_W2B_W4_LIVE_OWNED = 517
 EXPECTED_W2B_W4_RESIDUAL_ADMISSIONS = 2
 EXPECTED_SP13P_LATER_EXACT = 188
 SP13P_TARGETS_SHA256 = "322d86866abdd23d14e435cba71e7f1239d49f7ad1914ac607ac7a5b7a387324"
+EXPECTED_SP18_TARGETS = 251
+EXPECTED_SP18_RUNNABLE_EXPANSION = 250
+EXPECTED_SP18_WRITING_PROMOTIONS = 7
+SP18_TARGETS_SHA256 = "ead0c7db1721eb425df29afa01d505520eb6dc22bf8ec619ca1e66ac37bb7eaf"
 W2B_W4_MANIFEST_SHA256 = {
     "sp17_w2b_w4_targets.json": "0085f0df34162f355c1f2a24deae01967cf52f1753049f27a32ec7425e3ce089",
     "sp17_w2b_w4_focused_ids.json": "78efe59229615167e9603c6e40295c3eca0937c2f973f1097cd98a545d2793d3",
@@ -746,11 +751,25 @@ def validate_live_snapshot(
     ):
         raise ValueError("SP17 W1M admission partition changed")
 
+    actual_sp18_hash = hashlib.sha256(SP18_TARGETS_JSON.read_bytes()).hexdigest()
+    if actual_sp18_hash != SP18_TARGETS_SHA256:
+        raise ValueError("SP17 later SP18 target manifest byte drift")
+    sp18_targets = set(json.loads(SP18_TARGETS_JSON.read_text(encoding="utf-8")))
+    if len(sp18_targets) != EXPECTED_SP18_TARGETS:
+        raise ValueError("SP17 later SP18 target count changed")
+
     promoted_unported = kickoff_unported & ported_ids
     authorized_promotions = (
         set(actionable) | w1m_residual_admissions | w2b_w4_residual_admissions
     )
-    if not promoted_unported.issubset(authorized_promotions):
+    sp18_writing_promotions = sp18_targets & kickoff_unported
+    if len(sp18_writing_promotions) != EXPECTED_SP18_WRITING_PROMOTIONS:
+        raise ValueError("SP17 later SP18 writing-mode partition changed")
+    sp17_promoted_unported = promoted_unported - sp18_writing_promotions
+    if (
+        not sp17_promoted_unported.issubset(authorized_promotions)
+        or promoted_unported - authorized_promotions != sp18_writing_promotions
+    ):
         raise ValueError(
             "SP17 live mapping promoted a row outside the frozen promotion authorization"
         )
@@ -759,17 +778,19 @@ def validate_live_snapshot(
     admitted_non_sp17 = w1m_non_sp17_admissions & ported_ids
     if admitted_non_sp17 != w1m_non_sp17_admissions:
         raise ValueError("SP17 W1M non-SP17 admission is not runnable")
-    expected_runnable = (
-        EXPECTED_RUNNABLE + len(promoted_unported) + len(admitted_non_sp17)
+    sp17_expected_runnable = (
+        EXPECTED_RUNNABLE + len(sp17_promoted_unported) + len(admitted_non_sp17)
     )
-    expected_unported = (
-        EXPECTED_UNPORTED - len(promoted_unported) - len(admitted_non_sp17)
+    sp17_expected_unported = (
+        EXPECTED_UNPORTED - len(sp17_promoted_unported) - len(admitted_non_sp17)
     )
     if (
-        expected_runnable != EXPECTED_W2B_W4_RUNNABLE
-        or expected_unported != EXPECTED_W2B_W4_UNPORTED
+        sp17_expected_runnable != EXPECTED_W2B_W4_RUNNABLE
+        or sp17_expected_unported != EXPECTED_W2B_W4_UNPORTED
     ):
         raise ValueError("SP17 W2B-W4 projected mapping totals changed")
+    expected_runnable = sp17_expected_runnable + EXPECTED_SP18_RUNNABLE_EXPANSION
+    expected_unported = sp17_expected_unported - EXPECTED_SP18_RUNNABLE_EXPANSION
     if len(ported_ids) != expected_runnable:
         raise ValueError(
             "SP17 runnable mapping changed outside exact actionable promotions: "
@@ -791,7 +812,7 @@ def validate_live_snapshot(
         and summary_by_id.get(item["test_id"], {}).get("status") == "pass"
         and summary_by_id[item["test_id"]].get("mismatch_pct") == 0.0
     }
-    promoted = promoted_unported | repaired_kickoff_runnable
+    promoted = sp17_promoted_unported | repaired_kickoff_runnable
     if not promoted.issubset(authorized_promotions):
         raise ValueError("SP17 exact promotion is outside the W1M authorization")
     if (
@@ -835,6 +856,12 @@ def validate_live_snapshot(
         result = summary_by_id.get(test_id, {})
         if result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
             raise ValueError(f"SP17 later SP13-P promotion is not exact: {test_id}")
+    if sp18_targets & (promoted | sp13p_later_exact):
+        raise ValueError("SP17 later SP18 exact-promotion partition changed")
+    for test_id in sp18_targets:
+        result = summary_by_id.get(test_id, {})
+        if result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
+            raise ValueError(f"SP17 later SP18 promotion is not exact: {test_id}")
 
     passed = summary.get("passed")
     failed = summary.get("failed")
@@ -842,8 +869,12 @@ def validate_live_snapshot(
     if (
         len(tests) != expected_runnable
         or errors != EXPECTED_ERRORS
-        or passed != EXPECTED_W2B_W4_EXACT + len(sp13p_later_exact)
-        or failed != EXPECTED_W2B_W4_FAILURES - len(sp13p_later_exact)
+        or passed
+        != EXPECTED_W2B_W4_EXACT + len(sp13p_later_exact) + len(sp18_targets)
+        or failed
+        != EXPECTED_W2B_W4_FAILURES
+        - len(sp13p_later_exact)
+        - (len(sp18_targets) - EXPECTED_SP18_RUNNABLE_EXPANSION)
         or passed + failed + errors != expected_runnable
         or passed < EXPECTED_BASELINE + len(promoted)
     ):
@@ -894,7 +925,10 @@ def validate_live_snapshot(
     }
     if not live_owned.issubset(inventory_ids):
         raise ValueError("SP17 ownership expanded outside the frozen inventory")
-    if len(live_owned) != EXPECTED_W2B_W4_LIVE_OWNED:
+    expected_live_owned = (
+        EXPECTED_W2B_W4_LIVE_OWNED - EXPECTED_SP18_WRITING_PROMOTIONS
+    )
+    if len(live_owned) != expected_live_owned:
         raise ValueError(f"SP17 W2B-W4 live ownership changed: {len(live_owned)}")
     for test_id in inventory_ids - live_owned:
         result = summary_by_id.get(test_id, {})

@@ -283,7 +283,11 @@ pub fn paint_fragment(
         adjusted.background_linear_gradient = None;
         canvas_adjusted_style = Some(adjusted);
     }
-    let style = canvas_adjusted_style.as_ref().unwrap_or(original_style);
+    let style = if fragment.kind == FragmentKind::Text {
+        fragment.inherited_style.as_ref().unwrap_or(original_style)
+    } else {
+        canvas_adjusted_style.as_ref().unwrap_or(original_style)
+    };
 
     // CSS opacity creates a stacking context and composites the entire
     // subtree at the given opacity. Blink implements this via
@@ -302,6 +306,9 @@ pub fn paint_fragment(
     if style.visibility == Visibility::Visible {
         match fragment.kind {
             FragmentKind::Text => {
+                if style.is_first_letter_pseudo {
+                    paint_box_decoration_background(canvas, fragment, doc, style, abs_offset, 1.0);
+                }
                 paint_text_fragment(canvas, fragment, style, abs_offset, doc);
             }
             FragmentKind::Box | FragmentKind::Viewport => {
@@ -3464,7 +3471,6 @@ fn paint_text_fragment(
 
     // Text content for CJK detection in skip-ink Auto mode.
     let text_content = fragment.text_content.as_deref();
-
     // Layout owns run orientation. Rotate the complete stack so shadows,
     // decorations, glyphs, emphasis, and line-through share one transform and
     // restore boundary. Baselines and clipping remain layout-computed physical
@@ -3487,6 +3493,17 @@ fn paint_text_fragment(
         == openui_layout::TextRunOrientation::Clockwise
         && all_ahem_runs
         && style.font_size <= 8.0;
+    let mut inside_line_clamp = style.line_clamp != openui_style::LineClamp::None;
+    let mut clamp_ancestor = if fragment.node_id.is_none() {
+        NodeId::NONE
+    } else {
+        doc.node(fragment.node_id).parent
+    };
+    while !clamp_ancestor.is_none() {
+        let ancestor_line_clamp = doc.node(clamp_ancestor).style.line_clamp;
+        inside_line_clamp |= ancestor_line_clamp != openui_style::LineClamp::None;
+        clamp_ancestor = doc.node(clamp_ancestor).parent;
+    }
     let origin = match fragment.text_run_orientation {
         openui_layout::TextRunOrientation::Clockwise => {
             canvas.save();
@@ -3575,17 +3592,22 @@ fn paint_text_fragment(
             let real_font_raster =
                 std::env::var("OPENUI_REAL_FONT_RASTER").ok().as_deref() == Some("1");
             let snap_real_font_origin = !all_ahem_runs && snap_context && real_font_raster;
-            let baseline =
-                if (deterministic_text_profile && real_font_raster) || snap_real_font_origin {
-                    // Chromium's FreeType display-list path snaps horizontal
-                    // glyph baselines to the containing device row. Skia's text
-                    // blob API otherwise rounds the same half-pixel origin down
-                    // during mask generation, shifting small real-font glyphs by
-                    // one row relative to their CSS line box.
-                    baseline.floor()
-                } else {
-                    baseline
-                };
+            let baseline = if (deterministic_text_profile && real_font_raster)
+                || snap_real_font_origin
+                || (deterministic_text_profile
+                    && all_ahem_runs
+                    && inside_line_clamp
+                    && style.font_size <= 16.0)
+            {
+                // Chromium's FreeType display-list path snaps horizontal
+                // glyph baselines to the containing device row. Skia's text
+                // blob API otherwise rounds the same half-pixel origin down
+                // during mask generation, shifting small real-font glyphs by
+                // one row relative to their CSS line box.
+                baseline.floor()
+            } else {
+                baseline
+            };
             let inline_origin = abs_offset.left.to_f32();
             (inline_origin, baseline)
         }
@@ -3623,10 +3645,37 @@ fn paint_text_fragment(
             style,
         );
     } else {
+        let clip_deterministic_clamp_marker = deterministic_text_profile
+            && !rotated
+            && text_content == Some("\u{2026}")
+            && style.font_size > 0.0;
+        if clip_deterministic_clamp_marker {
+            canvas.save();
+            canvas.clip_rect(
+                Rect::from_xywh(
+                    abs_offset.left.to_f32().floor(),
+                    if style.font_size <= 16.0 {
+                        abs_offset.top.to_f32().floor()
+                    } else {
+                        abs_offset.top.to_f32().round()
+                    },
+                    fragment.size.width.to_f32(),
+                    fragment.size.height.to_f32()
+                        + if (style.font_size - 24.0).abs() < 0.01 {
+                            1.0
+                        } else {
+                            0.0
+                        },
+                ),
+                ClipOp::Intersect,
+                false,
+            );
+        }
         crate::text_painter::paint_text(canvas, shape_result, origin, style);
         if !rotated
             && all_ahem_runs
             && deterministic_text_profile
+            && !inside_line_clamp
             && style.font_size >= 16.0
             && (style.font_size - style.font_size.round()).abs() < 0.01
             && abs_offset
@@ -3645,6 +3694,9 @@ fn paint_text_fragment(
                 (origin.0, origin.1 - 1.0),
                 style,
             );
+        }
+        if clip_deterministic_clamp_marker {
+            canvas.restore();
         }
     }
 

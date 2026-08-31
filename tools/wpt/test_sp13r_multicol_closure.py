@@ -546,7 +546,7 @@ class GenerationAndRunnerTests(unittest.TestCase):
             owned,
             set(residual_by_id) - closure.LATER_EXACT_PROMOTIONS,
         )
-        self.assertEqual(len(closure.LATER_EXACT_PROMOTIONS), 73)
+        self.assertEqual(len(closure.LATER_EXACT_PROMOTIONS), 80)
         for test_id in targets:
             self.assertEqual(mapping[test_id]["ported"], "yes")
         for test_id, item in residual_by_id.items():

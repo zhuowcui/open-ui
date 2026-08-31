@@ -4,7 +4,12 @@
 //! how Blink stores nodes — a flat arena with pointer-like indices for
 //! parent, first_child, last_child, next_sibling, prev_sibling.
 
-use openui_style::{ComputedStyle, Display, ImageResourceId, Overflow};
+use std::collections::{BTreeMap, HashMap};
+
+use openui_style::{
+    ComputedStyle, CounterStyle, Display, GeneratedContentItem, ImageResourceId, Overflow,
+    QuotePair,
+};
 
 /// Encoded raster or static-SVG bytes owned by a document.
 ///
@@ -50,6 +55,8 @@ pub enum ElementTag {
     Text,
     /// A semantic forced line break (`<br>`).
     Break,
+    /// A semantic soft line-break opportunity (`<wbr>`).
+    WordBreak,
     /// An HTML ruby container. Ruby base and annotation content form one
     /// atomic inline-level formatting object.
     Ruby,
@@ -71,10 +78,25 @@ impl Default for ElementTag {
     }
 }
 
+/// Generated pseudo-element identity stored on an ordinary arena node.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum PseudoElementKind {
+    Before,
+    After,
+}
+
 /// Data stored for each node in the tree.
 pub struct NodeData {
     pub tag: ElementTag,
     pub style: ComputedStyle,
+
+    /// Identity and originating element for generated boxes. Pseudo boxes
+    /// otherwise participate in layout and paint exactly like authored nodes.
+    pub pseudo_kind: Option<PseudoElementKind>,
+    pub pseudo_origin: NodeId,
+
+    /// HTML attributes used by generated `attr()` values.
+    pub attributes: BTreeMap<String, String>,
 
     /// Current scroll position in CSS pixels. Layout uses it for sticky
     /// constraints and paint translates scrollable descendants by it.
@@ -100,6 +122,9 @@ impl NodeData {
         Self {
             tag,
             style: ComputedStyle::initial(),
+            pseudo_kind: None,
+            pseudo_origin: NodeId::NONE,
+            attributes: BTreeMap::new(),
             scroll_left: 0.0,
             scroll_top: 0.0,
             parent: NodeId::NONE,
@@ -200,6 +225,133 @@ impl Document {
             self.nodes[child.index()].prev_sibling = last;
         }
         self.nodes[parent.index()].last_child = child;
+    }
+
+    /// Insert `child` before the current first child of `parent`.
+    pub fn prepend_child(&mut self, parent: NodeId, child: NodeId) {
+        assert!(self.nodes[child.index()].parent.is_none());
+        assert_ne!(parent, child);
+        let first = self.nodes[parent.index()].first_child;
+        self.nodes[child.index()].parent = parent;
+        self.nodes[child.index()].prev_sibling = NodeId::NONE;
+        self.nodes[child.index()].next_sibling = first;
+        if first.is_none() {
+            self.nodes[parent.index()].last_child = child;
+        } else {
+            self.nodes[first.index()].prev_sibling = child;
+        }
+        self.nodes[parent.index()].first_child = child;
+    }
+
+    /// Create and attach an ordinary arena node for `::before` or `::after`.
+    /// CSS tree order is guaranteed even when both pseudo boxes are present.
+    pub fn insert_pseudo_element(&mut self, origin: NodeId, kind: PseudoElementKind) -> NodeId {
+        let pseudo = self.create_node(ElementTag::Span);
+        self.nodes[pseudo.index()].pseudo_kind = Some(kind);
+        self.nodes[pseudo.index()].pseudo_origin = origin;
+        match kind {
+            PseudoElementKind::Before => self.prepend_child(origin, pseudo),
+            PseudoElementKind::After => self.append_child(origin, pseudo),
+        }
+        pseudo
+    }
+
+    pub fn set_attribute(
+        &mut self,
+        node: NodeId,
+        name: impl Into<String>,
+        value: impl Into<String>,
+    ) {
+        self.nodes[node.index()]
+            .attributes
+            .insert(name.into().to_ascii_lowercase(), value.into());
+    }
+
+    pub fn attribute(&self, node: NodeId, name: &str) -> Option<&str> {
+        self.nodes[node.index()]
+            .attributes
+            .get(&name.to_ascii_lowercase())
+            .map(String::as_str)
+    }
+
+    /// Resolve counters, quotes and `attr()` and materialize generated text as
+    /// normal Text children. Call after the generated pseudo styles are set.
+    pub fn materialize_generated_content(&mut self) {
+        let mut counters: HashMap<String, Vec<i32>> = HashMap::new();
+        let mut quote_depth = 0usize;
+        self.materialize_subtree(self.root, &mut counters, &mut quote_depth);
+    }
+
+    fn materialize_subtree(
+        &mut self,
+        node: NodeId,
+        counters: &mut HashMap<String, Vec<i32>>,
+        quote_depth: &mut usize,
+    ) {
+        let style = self.nodes[node.index()].style.clone();
+        let mut reset_names = Vec::new();
+        for operation in &style.counter_reset {
+            counters
+                .entry(operation.name.clone())
+                .or_default()
+                .push(operation.value);
+            reset_names.push(operation.name.clone());
+        }
+        for operation in &style.counter_set {
+            let values = counters
+                .entry(operation.name.clone())
+                .or_insert_with(|| vec![0]);
+            if let Some(value) = values.last_mut() {
+                *value = operation.value;
+            }
+        }
+        for operation in &style.counter_increment {
+            let values = counters
+                .entry(operation.name.clone())
+                .or_insert_with(|| vec![0]);
+            if let Some(value) = values.last_mut() {
+                *value += operation.value;
+            }
+        }
+
+        if self.nodes[node.index()].pseudo_kind.is_some() {
+            if let Some(items) = style.content.as_deref() {
+                let origin = self.nodes[node.index()].pseudo_origin;
+                let generated = resolve_generated_items(
+                    items,
+                    origin,
+                    &self.nodes,
+                    counters,
+                    quote_depth,
+                    &style.quotes,
+                );
+                if !generated.is_empty() {
+                    let text = self.create_node(ElementTag::Text);
+                    // Generated text participates as an ordinary text child
+                    // of the pseudo box. It inherits text properties, but it
+                    // must not copy the pseudo box's display, sizing, margin,
+                    // float, or positioning declarations (notably when the
+                    // pseudo itself is a flex container).
+                    self.nodes[text.index()].style = ComputedStyle::for_pseudo(&style);
+                    self.nodes[text.index()].text = Some(generated);
+                    self.append_child(node, text);
+                }
+            }
+        }
+
+        // Snapshot because generated text can extend the arena while walking.
+        let children: Vec<_> = self.children(node).collect();
+        for child in children {
+            self.materialize_subtree(child, counters, quote_depth);
+        }
+        for name in reset_names.into_iter().rev() {
+            if let Some(values) = counters.get_mut(&name) {
+                values.pop();
+                if values.is_empty() {
+                    counters.remove(&name);
+                }
+            }
+        }
     }
 
     /// Access a node immutably.
@@ -369,6 +521,156 @@ impl Default for Document {
     }
 }
 
+fn resolve_generated_items(
+    items: &[GeneratedContentItem],
+    origin: NodeId,
+    nodes: &[NodeData],
+    counters: &HashMap<String, Vec<i32>>,
+    quote_depth: &mut usize,
+    authored_quotes: &[QuotePair],
+) -> String {
+    let default_quotes = [
+        QuotePair {
+            open: "\u{201c}".to_string(),
+            close: "\u{201d}".to_string(),
+        },
+        QuotePair {
+            open: "\u{2018}".to_string(),
+            close: "\u{2019}".to_string(),
+        },
+    ];
+    let quotes = if authored_quotes.is_empty() {
+        &default_quotes[..]
+    } else {
+        authored_quotes
+    };
+    let quote_at = |depth: usize| &quotes[depth.min(quotes.len() - 1)];
+    let mut output = String::new();
+    for item in items {
+        match item {
+            GeneratedContentItem::String(value) => output.push_str(value),
+            GeneratedContentItem::Attribute(name) => {
+                if !origin.is_none() {
+                    if let Some(value) = nodes[origin.index()]
+                        .attributes
+                        .get(&name.to_ascii_lowercase())
+                    {
+                        output.push_str(value);
+                    }
+                }
+            }
+            GeneratedContentItem::Counter { name, style } => {
+                let value = counters
+                    .get(name)
+                    .and_then(|values| values.last())
+                    .copied()
+                    .unwrap_or(0);
+                output.push_str(&format_counter(value, *style));
+            }
+            GeneratedContentItem::Counters {
+                name,
+                separator,
+                style,
+            } => {
+                if let Some(values) = counters.get(name) {
+                    let mut first = true;
+                    for value in values {
+                        if !first {
+                            output.push_str(separator);
+                        }
+                        first = false;
+                        output.push_str(&format_counter(*value, *style));
+                    }
+                } else {
+                    output.push('0');
+                }
+            }
+            GeneratedContentItem::OpenQuote => {
+                output.push_str(&quote_at(*quote_depth).open);
+                *quote_depth += 1;
+            }
+            GeneratedContentItem::CloseQuote => {
+                *quote_depth = quote_depth.saturating_sub(1);
+                output.push_str(&quote_at(*quote_depth).close);
+            }
+            GeneratedContentItem::NoOpenQuote => *quote_depth += 1,
+            GeneratedContentItem::NoCloseQuote => {
+                *quote_depth = quote_depth.saturating_sub(1);
+            }
+        }
+    }
+    output
+}
+
+fn format_counter(value: i32, style: CounterStyle) -> String {
+    match style {
+        CounterStyle::Decimal => value.to_string(),
+        CounterStyle::DecimalLeadingZero => {
+            if (-9..=9).contains(&value) {
+                if value < 0 {
+                    format!("-0{}", value.unsigned_abs())
+                } else {
+                    format!("0{value}")
+                }
+            } else {
+                value.to_string()
+            }
+        }
+        CounterStyle::LowerAlpha => format_alpha(value, false),
+        CounterStyle::UpperAlpha => format_alpha(value, true),
+        CounterStyle::LowerRoman => format_roman(value, false),
+        CounterStyle::UpperRoman => format_roman(value, true),
+    }
+}
+
+fn format_alpha(mut value: i32, upper: bool) -> String {
+    if value <= 0 {
+        return value.to_string();
+    }
+    let mut bytes = Vec::new();
+    while value > 0 {
+        value -= 1;
+        bytes.push((if upper { b'A' } else { b'a' }) + (value % 26) as u8);
+        value /= 26;
+    }
+    bytes.reverse();
+    String::from_utf8(bytes).expect("ASCII alphabetic counter")
+}
+
+fn format_roman(value: i32, upper: bool) -> String {
+    if !(1..=3999).contains(&value) {
+        return value.to_string();
+    }
+    const ROMAN: &[(i32, &str)] = &[
+        (1000, "M"),
+        (900, "CM"),
+        (500, "D"),
+        (400, "CD"),
+        (100, "C"),
+        (90, "XC"),
+        (50, "L"),
+        (40, "XL"),
+        (10, "X"),
+        (9, "IX"),
+        (5, "V"),
+        (4, "IV"),
+        (1, "I"),
+    ];
+    let mut remaining = value;
+    let mut output = String::new();
+    for &(unit, token) in ROMAN {
+        while remaining >= unit {
+            remaining -= unit;
+            output.push_str(token);
+        }
+    }
+    if upper {
+        output
+    } else {
+        output.to_ascii_lowercase()
+    }
+}
+
 /// Iterator over children of a node.
 pub struct ChildIter<'a> {
     doc: &'a Document,
@@ -440,6 +742,61 @@ mod tests {
         assert_eq!(doc.node(b).prev_sibling, a);
         assert_eq!(doc.node(b).next_sibling, c);
         assert_eq!(doc.node(c).prev_sibling, b);
+    }
+
+    #[test]
+    fn pseudo_nodes_use_css_tree_order_and_materialize_attr_text() {
+        let mut doc = Document::new();
+        let origin = doc.create_node(ElementTag::Div);
+        let authored = doc.create_node(ElementTag::Text);
+        doc.node_mut(authored).text = Some("body".into());
+        doc.append_child(doc.root(), origin);
+        doc.append_child(origin, authored);
+        doc.set_attribute(origin, "data-label", "value");
+
+        let after = doc.insert_pseudo_element(origin, PseudoElementKind::After);
+        doc.node_mut(after).style.content = Some(vec![GeneratedContentItem::String("A".into())]);
+        let before = doc.insert_pseudo_element(origin, PseudoElementKind::Before);
+        doc.node_mut(before).style.content = Some(vec![
+            GeneratedContentItem::Attribute("data-label".into()),
+            GeneratedContentItem::String(":".into()),
+        ]);
+        doc.materialize_generated_content();
+
+        let children: Vec<_> = doc.children(origin).collect();
+        assert_eq!(children, vec![before, authored, after]);
+        assert_eq!(doc.node(before).pseudo_origin, origin);
+        let before_text = doc.children(before).next().unwrap();
+        let after_text = doc.children(after).next().unwrap();
+        assert_eq!(doc.node(before_text).text.as_deref(), Some("value:"));
+        assert_eq!(doc.node(after_text).text.as_deref(), Some("A"));
+    }
+
+    #[test]
+    fn generated_counters_scope_format_and_quotes() {
+        let mut doc = Document::new();
+        let origin = doc.create_node(ElementTag::Div);
+        doc.node_mut(origin).style.counter_reset = vec![openui_style::CounterOperation {
+            name: "section".into(),
+            value: 3,
+        }];
+        doc.append_child(doc.root(), origin);
+        let before = doc.insert_pseudo_element(origin, PseudoElementKind::Before);
+        doc.node_mut(before).style.counter_increment = vec![openui_style::CounterOperation {
+            name: "section".into(),
+            value: 1,
+        }];
+        doc.node_mut(before).style.content = Some(vec![
+            GeneratedContentItem::OpenQuote,
+            GeneratedContentItem::Counter {
+                name: "section".into(),
+                style: CounterStyle::UpperRoman,
+            },
+            GeneratedContentItem::CloseQuote,
+        ]);
+        doc.materialize_generated_content();
+        let text = doc.children(before).next().unwrap();
+        assert_eq!(doc.node(text).text.as_deref(), Some("“IV”"));
     }
 
     #[test]

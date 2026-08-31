@@ -1,0 +1,3003 @@
+[
+  {
+    "test_id": "wpt/css2_floats/crashtests_float-dynamic-change-6",
+    "chromium_test_path": "CSS2/floats/crashtests/float-dynamic-change-6.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css2_floats/remove-float-in-first-line",
+    "chromium_test_path": "CSS2/floats/remove-float-in-first-line.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/animations_background-color-animation-pseudo-element",
+    "chromium_test_path": "css-backgrounds/animations/background-color-animation-pseudo-element.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-image-cors-no-reload",
+    "chromium_test_path": "css-backgrounds/background-image-cors-no-reload.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_image",
+      "needs_javascript",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-image-first-letter",
+    "chromium_test_path": "css-backgrounds/background-image-first-letter.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_image",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/background-image-first-line",
+    "chromium_test_path": "css-backgrounds/background-image-first-line.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_image",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_backgrounds/first-letter-space-not-selected",
+    "chromium_test_path": "css-backgrounds/first-letter-space-not-selected.html",
+    "rejection_reason": "text_non_ascii",
+    "rejection_owner": "needs_writing_mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-dynamic-before-after-001",
+    "chromium_test_path": "css-display/display-contents-dynamic-before-after-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-dynamic-before-after-first-letter-001",
+    "chromium_test_path": "css-display/display-contents-dynamic-before-after-first-letter-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001",
+    "chromium_test_path": "css-display/display-contents-dynamic-generated-content-fieldset-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-dynamic-pseudo-insertion-001",
+    "chromium_test_path": "css-display/display-contents-dynamic-pseudo-insertion-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-fieldset-002",
+    "chromium_test_path": "css-display/display-contents-fieldset-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-fieldset-002-ref",
+    "chromium_test_path": "css-display/display-contents-fieldset-002-ref.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-pseudo-click-target",
+    "chromium_test_path": "css-display/display-contents-pseudo-click-target.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-contents-shadow-dom-1",
+    "chromium_test_path": "css-display/display-contents-shadow-dom-1.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_body_canvas_background_extent",
+      "needs_empty_block_margin_collapse",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-first-letter-001",
+    "chromium_test_path": "css-display/display-first-letter-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-first-line-001",
+    "chromium_test_path": "css-display/display-first-line-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-first-line-002",
+    "chromium_test_path": "css-display/display-first-line-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-inline-dynamic-001",
+    "chromium_test_path": "css-display/display-inline-dynamic-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-inline-dynamic-001-ref",
+    "chromium_test_path": "css-display/display-inline-dynamic-001-ref.html",
+    "mismatch_pct": 0.063907,
+    "rejection_reason": "verified_pixel_mismatch: first-line font raster",
+    "rejection_owner": "needs_first_line",
+    "owner_categories": [
+      "needs_first_line",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/display-math-on-pseudo-elements-001",
+    "chromium_test_path": "css-display/display-math-on-pseudo-elements-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_display/empty-text-baseline-002",
+    "chromium_test_path": "css-display/empty-text-baseline-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-container-max-content-001",
+    "chromium_test_path": "css-flexbox/flex-container-max-content-001.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "rejection_owner": "needs_grid",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_empty_block_margin_collapse",
+      "needs_grid"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-container-max-content-001-ref",
+    "chromium_test_path": "css-flexbox/flex-container-max-content-001-ref.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "rejection_owner": "needs_grid",
+    "owner_categories": [
+      "needs_grid",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-container-min-content-001",
+    "chromium_test_path": "css-flexbox/flex-container-min-content-001.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "rejection_owner": "needs_grid",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_empty_block_margin_collapse",
+      "needs_grid"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flex-container-min-content-001-ref",
+    "chromium_test_path": "css-flexbox/flex-container-min-content-001-ref.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "rejection_owner": "needs_grid",
+    "owner_categories": [
+      "needs_grid",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-001-ref",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-001-ref.html",
+    "rejection_reason": "unsupported element: <canvas>",
+    "rejection_owner": "needs_canvas_svg",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-001a",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-001a.html",
+    "rejection_reason": "unsupported element: <canvas>",
+    "rejection_owner": "needs_canvas_svg",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-001b",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-001b.html",
+    "rejection_reason": "unsupported element: <canvas>",
+    "rejection_owner": "needs_canvas_svg",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-002-ref",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-002-ref.html",
+    "rejection_reason": "unsupported element: <canvas>",
+    "rejection_owner": "needs_canvas_svg",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-002a",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-002a.html",
+    "rejection_reason": "unsupported element: <canvas>",
+    "rejection_owner": "needs_canvas_svg",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-flex-basis-content-002b",
+    "chromium_test_path": "css-flexbox/flexbox-flex-basis-content-002b.html",
+    "rejection_reason": "unsupported element: <canvas>",
+    "rejection_owner": "needs_canvas_svg",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox-with-pseudo-elements-003",
+    "chromium_test_path": "css-flexbox/flexbox-with-pseudo-elements-003.html",
+    "rejection_reason": "unsupported display: table-row",
+    "rejection_owner": "needs_table_layout",
+    "owner_categories": [
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/flexbox_first-letter",
+    "chromium_test_path": "css-flexbox/flexbox_first-letter.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/hittest-before-pseudo",
+    "chromium_test_path": "css-flexbox/hittest-before-pseudo.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/inline-flex-editing-crash",
+    "chromium_test_path": "css-flexbox/inline-flex-editing-crash.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/inline-flex-editing-with-updating-text-crash",
+    "chromium_test_path": "css-flexbox/inline-flex-editing-with-updating-text-crash.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/inline-flexbox-vertical-rl-image-flexitem-crash-print",
+    "chromium_test_path": "css-flexbox/inline-flexbox-vertical-rl-image-flexitem-crash-print.html",
+    "mismatch_pct": 0.032484,
+    "rejection_reason": "verified_pixel_mismatch: replaced image resource",
+    "rejection_owner": "needs_image",
+    "owner_categories": [
+      "needs_image"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/negative-overflow-002",
+    "chromium_test_path": "css-flexbox/negative-overflow-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/negative-overflow-003",
+    "chromium_test_path": "css-flexbox/negative-overflow-003.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/column-pseudo-background-color",
+    "chromium_test_path": "css-multicol/column-pseudo-background-color.html",
+    "rejection_reason": "complex_css_selector: @supports not selector(::column)",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/crashtests_first-letter-column-span-fieldset",
+    "chromium_test_path": "css-multicol/crashtests/first-letter-column-span-fieldset.html",
+    "rejection_reason": "complex_css_selector: *:valid",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_form_controls",
+      "non_visual_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-dynamic-add-003",
+    "chromium_test_path": "css-multicol/multicol-dynamic-add-003.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_grid",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-dynamic-add-003-ref",
+    "chromium_test_path": "css-multicol/multicol-dynamic-add-003-ref.html",
+    "rejection_reason": "style_block_unsupported property: grid",
+    "rejection_owner": "needs_grid",
+    "owner_categories": [
+      "needs_grid",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-dynamic-add-004",
+    "chromium_test_path": "css-multicol/multicol-dynamic-add-004.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/multicol-list-item-002",
+    "chromium_test_path": "css-multicol/multicol-list-item-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/parsing_column-pseudo-invalid",
+    "chromium_test_path": "css-multicol/parsing/column-pseudo-invalid.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "non_visual_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_multicol/parsing_column-pseudo-valid",
+    "chromium_test_path": "css-multicol/parsing/column-pseudo-valid.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "non_visual_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/chrome-480554290-crash",
+    "chromium_test_path": "css-overflow/chrome-480554290-crash.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/ellipsis-with-image-crash",
+    "chromium_test_path": "css-overflow/ellipsis-with-image-crash.html",
+    "rejection_reason": "unsupported element: <img>",
+    "rejection_owner": "needs_image",
+    "owner_categories": [
+      "needs_image",
+      "needs_inline_block"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-010",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-010.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "rejection_owner": "needs_grid",
+    "owner_categories": [
+      "needs_grid"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-026",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-026.html",
+    "rejection_reason": "text_non_ascii",
+    "rejection_owner": "needs_writing_mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-027",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-027.html",
+    "rejection_reason": "text_non_ascii",
+    "rejection_owner": "needs_writing_mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-030",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-030.html",
+    "rejection_reason": "text_non_ascii",
+    "rejection_owner": "needs_writing_mode",
+    "owner_categories": [
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-repaint-001",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-repaint-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-repaint-002",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-repaint-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-repaint-003",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-repaint-003.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_positioned_inline_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_block-ellipsis-repaint-004",
+    "chromium_test_path": "css-overflow/line-clamp/block-ellipsis-repaint-004.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-008",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-008.html",
+    "rejection_reason": "unsupported element: <table>",
+    "rejection_owner": "needs_table_layout",
+    "owner_categories": [
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-009",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-009.html",
+    "rejection_reason": "unsupported element: <table>",
+    "rejection_owner": "needs_table_layout",
+    "owner_categories": [
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-017",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-017.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-align",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-018",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-018.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-align",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-021",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-021.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-026",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-026.html",
+    "mismatch_pct": 0.088535,
+    "rejection_reason": "verified_pixel_mismatch: ruby annotation layout",
+    "rejection_owner": "needs_ruby",
+    "owner_categories": [
+      "needs_ruby"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-029",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-029.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-align",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-032",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-032.html",
+    "rejection_reason": "style_block_unsupported property: grid-template-columns",
+    "rejection_owner": "needs_grid",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_grid",
+      "needs_inline_block",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-033",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-033.html",
+    "rejection_reason": "unsupported element: <img>",
+    "rejection_owner": "needs_image",
+    "owner_categories": [
+      "needs_image",
+      "needs_inline_block"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-038",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-038.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-046",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-046.html",
+    "rejection_reason": "style_block_unsupported property: contain",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_containment"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-auto-047",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-auto-047.html",
+    "rejection_reason": "style_block_unsupported property: contain",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_containment"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-content-height-with-dynamic-change",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-content-height-with-dynamic-change.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-abspos-019",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-abspos-019.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-005",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-005.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-006",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-006.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-007",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-007.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-008",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-008.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-009",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-009.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-010",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-010.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-011",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-011.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-012",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-012.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-013",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-013.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-014",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-014.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-015",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-015.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-016",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-016.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-fixed-pos-017",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-fixed-pos-017.html",
+    "rejection_reason": "style_block_unsupported property: transform",
+    "rejection_owner": "needs_visual_effects",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-with-floats-010.tentative",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-with-floats-010.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-013",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-013.html",
+    "rejection_reason": "unsupported element: <table>",
+    "rejection_owner": "needs_table_layout",
+    "owner_categories": [
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-017",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-017.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-018",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-018.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-019",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-019.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-020",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-020.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-021",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-021.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-022",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-022.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-023",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-023.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-026",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-026.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-027",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-027.html",
+    "rejection_reason": "unsupported element: <fieldset>",
+    "rejection_owner": "needs_form_controls",
+    "owner_categories": [
+      "needs_form_controls"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-045",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-045.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-align",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-046",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-046.html",
+    "rejection_reason": "style_block_vendor/unsupported prefix: -webkit-box-align",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-048",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-048.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-bug-1926732-crash",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-bug-1926732-crash.html",
+    "rejection_reason": "unsupported element: <details>",
+    "rejection_owner": "needs_form_controls",
+    "owner_categories": [
+      "needs_form_controls"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_webkit-line-clamp-dynamic-001",
+    "chromium_test_path": "css-overflow/line-clamp/webkit-line-clamp-dynamic-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/overflow-ellipsis-dynamic-001",
+    "chromium_test_path": "css-overflow/overflow-ellipsis-dynamic-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/parsing_webkit-box-computed",
+    "chromium_test_path": "css-overflow/parsing/webkit-box-computed.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_chrome-421199213-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/chrome-421199213-crash.html",
+    "rejection_reason": "complex_css_selector: #item::scroll-marker",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-001",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-001.html",
+    "rejection_reason": "complex_css_selector: #container::scroll-marker-group",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_containment",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-002",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-003",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-003.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-004",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-004.html",
+    "rejection_reason": "complex_css_selector: #container::scroll-marker-group",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_containment",
+      "needs_form_controls",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-005",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-005.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_form_controls",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-006",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-006.html",
+    "rejection_reason": "complex_css_selector: #container::scroll-marker-group",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_containment",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-007",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-007.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-008",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-008.html",
+    "rejection_reason": "complex_css_selector: .scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-010",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-010.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-011",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-011.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-012",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-012.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-013",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-013.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-014",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-014.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-015-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-015-crash.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-counters",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-counters.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-dynamic-style-update",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-dynamic-style-update.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-focus-001",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-focus-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_table_layout",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-focus-002",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-focus-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-focus-003",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-focus-003.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-focus-004",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-focus-004.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-group-style-remove",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-group-style-remove.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "needs_rounded_border_paint",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_column-scroll-marker-reattach-target-current",
+    "chromium_test_path": "css-overflow/scroll-markers/column-scroll-marker-reattach-target-current.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_nested-scroll-markers-under-content-visibility-auto",
+    "chromium_test_path": "css-overflow/scroll-markers/nested-scroll-markers-under-content-visibility-auto.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_containment",
+      "needs_inline_block",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_nested-scroll-markers-under-content-visibility-auto-ref",
+    "chromium_test_path": "css-overflow/scroll-markers/nested-scroll-markers-under-content-visibility-auto-ref.html",
+    "rejection_reason": "style_block_unsupported property: contain",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_containment",
+      "needs_inline_block",
+      "needs_rounded_border_paint",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_resources_root-scroll-marker-activation-iframe",
+    "chromium_test_path": "css-overflow/scroll-markers/resources/root-scroll-marker-activation-iframe.html",
+    "rejection_reason": "complex_css_selector: .item::scroll-marker",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_root-element-layout-parent-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/root-element-layout-parent-crash.html",
+    "rejection_reason": "complex_css_selector: html::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "non_visual_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_root-scroll-button",
+    "chromium_test_path": "css-overflow/scroll-markers/root-scroll-button.html",
+    "rejection_reason": "complex_css_selector: :root::scroll-button(block-end)",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_root-scroll-button-activation",
+    "chromium_test_path": "css-overflow/scroll-markers/root-scroll-button-activation.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_root-scroll-marker",
+    "chromium_test_path": "css-overflow/scroll-markers/root-scroll-marker.html",
+    "rejection_reason": "complex_css_selector: :root::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_root-scroll-marker-activation-and-scroll-tracking",
+    "chromium_test_path": "css-overflow/scroll-markers/root-scroll-marker-activation-and-scroll-tracking.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-activation-content-hit-test",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-activation-content-hit-test.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-activation-without-scroller",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-activation-without-scroller.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-and-scroll-marker-not-in-event-path",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-and-scroll-marker-not-in-event-path.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-disabled-no-focus",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-disabled-no-focus.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-display-none",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-display-none.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-disposed-event-target",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-disposed-event-target.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-elementFromPoint",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-elementFromPoint.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-event-target",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-event-target.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-focus-active-element",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-focus-active-element.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-hover",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-hover.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-hover-remove",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-hover-remove.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-on-object",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-on-object.html",
+    "rejection_reason": "complex_css_selector: #target::scroll-button(block-end)",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "non_visual_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-on-object-ref",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-on-object-ref.html",
+    "rejection_reason": "complex_css_selector: #target::scroll-button(block-end)",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-button-universal-before",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-button-universal-before.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-001",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-001.html",
+    "rejection_reason": "complex_css_selector: div::scroll-button(block-end)",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-002",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-003",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-003.html",
+    "rejection_reason": "complex_css_selector: div::scroll-button(block-end)",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-004",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-004.html",
+    "rejection_reason": "complex_css_selector: div::scroll-button(*)",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-activation",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-activation.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-activation-with-columns",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-activation-with-columns.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-appearance",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-appearance.html",
+    "rejection_reason": "complex_css_selector: div::scroll-button(block-start)",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-container-query-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-container-query-crash.html",
+    "rejection_reason": "style_block_unsupported property: container-type",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_containment"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-disabled",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-disabled.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-disabled-rtl",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-disabled-rtl.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-disabled-snapping",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-disabled-snapping.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-disabled-vertical-ltr",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-disabled-vertical-ltr.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-dynamic-create-remove",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-dynamic-create-remove.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-enabled",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-enabled.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-rtl",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-enabled-rtl.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_rounded_border_paint",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-enabled-vertical-ltr",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-enabled-vertical-ltr.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_rounded_border_paint",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-layout-parent",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-layout-parent.html",
+    "rejection_reason": "complex_css_selector: #sc::scroll-button(left)",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-scroll-distance",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-scroll-distance.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-buttons-selection",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-buttons-selection.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-001",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-001.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-002",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-002.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-003",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-003.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-004",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-004.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-005",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-005.html",
+    "rejection_reason": "complex_css_selector: .container::scroll-marker-group",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_containment"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-006",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-006.html",
+    "rejection_reason": "complex_css_selector: .container::scroll-marker-group",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_containment"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-007",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-007.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_containment"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-008",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-008.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_containment"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-009",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-009.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_containment"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-010",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-010.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-011",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-011.html",
+    "rejection_reason": "complex_css_selector: .scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-012",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-012.html",
+    "rejection_reason": "complex_css_selector: .scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-013",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-013.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-014-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-014-crash.html",
+    "rejection_reason": "complex_css_selector: .carousel::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-15",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-15.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-activation-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-activation-crash.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-activation-default-direction-position",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-activation-default-direction-position.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-activation-focus-behaviour-links-mode.tentative",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-activation-focus-behaviour-links-mode.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-activation-focus-behaviour-tabs-mode.tentative",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-activation-focus-behaviour-tabs-mode.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-activation-retains-focus",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-activation-retains-focus.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-activation-scroll",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-activation-scroll.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-activation-specified-direction-position",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-activation-specified-direction-position.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-active-unreached-target",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-active-unreached-target.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-controls-scroll-tracking-001",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-controls-scroll-tracking-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-controls-scroll-tracking-002",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-controls-scroll-tracking-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-controls-scroll-tracking-003",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-controls-scroll-tracking-003.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-counters",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-counters.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-disposed-event-target",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-disposed-event-target.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-double-activation",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-double-activation.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-dynamic",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-dynamic.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-dynamic-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-dynamic-crash.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-elementFromPoint",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-elementFromPoint.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-event-target",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-event-target.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_abspos_flex_static_position",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-focus-scroll-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-focus-scroll-crash.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-focus-visible",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-focus-visible.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-focus-within",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-focus-within.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-003",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-003.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-005",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-005.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-011.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_form_controls"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-011-ref",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-011-ref.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_form_controls",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-012",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-012.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-013",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-013.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_form_controls",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-013-ref",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-013-ref.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_form_controls",
+      "reference_test",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-014",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-014.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-015",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-015.html",
+    "rejection_reason": "complex_css_selector: #scroller>*::scroll-marker",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-016",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-016.html",
+    "rejection_reason": "complex_css_selector: #sc::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-017",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-017.html",
+    "rejection_reason": "complex_css_selector: #sc::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-018",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-018.html",
+    "rejection_reason": "complex_css_selector: #sc::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-019",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-019.html",
+    "rejection_reason": "complex_css_selector: #sc::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-020",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-020.html",
+    "rejection_reason": "complex_css_selector: #sc::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-add-dynamic-001",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-add-dynamic-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-add-dynamic-002",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-add-dynamic-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-add-dynamic-003",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-add-dynamic-003.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-add-dynamic-004",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-add-dynamic-004.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-keeps-active-in-view",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-keeps-active-in-view.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-keeps-active-in-view-ref",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-keeps-active-in-view-ref.html",
+    "rejection_reason": "style_block_unsupported property: grid-auto-flow",
+    "rejection_owner": "needs_grid",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_writing_mode",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-snap-aligns-to-active-ref",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-snap-aligns-to-active-ref.html",
+    "rejection_reason": "style_block_unsupported property: grid-auto-flow",
+    "rejection_owner": "needs_grid",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-snap-aligns-to-active.tentative",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-snap-aligns-to-active.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_grid",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-group-style-remove",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-group-style-remove.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-hover",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-hover.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-hover-logical",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-hover-logical.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-hover-remove",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-hover-remove.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-in-display-none-column-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-in-display-none-column-crash.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-inert-001",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-inert-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-inert-002",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-inert-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-multiple-activation",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-multiple-activation.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-navigation-cycles",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-navigation-cycles.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-next-focus",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-next-focus.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-scroll-container",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-scroll-container.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-selection-in-2d",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-selection-in-2d.html",
+    "rejection_reason": "complex_css_selector: .scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_grid",
+      "needs_inline_block",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-selection-in-padded-scroller",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-selection-in-padded-scroller.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_grid",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-selection-picks-closest",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-selection-picks-closest.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_grid",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-target-before-after",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-target-before-after.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-with-content-visibility-hidden-ancestor-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-with-content-visibility-hidden-ancestor-crash.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_containment",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-marker-with-content-visibility-hidden-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-marker-with-content-visibility-hidden-crash.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_containment",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-markers-added-after-content-visibility-auto",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-markers-added-after-content-visibility-auto.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_containment",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-markers-added-before-content-visibility-auto",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-markers-added-before-content-visibility-auto.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_containment",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-markers-container-query-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-markers-container-query-crash.html",
+    "rejection_reason": "style_block_unsupported property: container-type",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_containment"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-markers-focus-active-element",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-markers-focus-active-element.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-markers-focus-on-scrolling",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-markers-focus-on-scrolling.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-markers-inside-canvas-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-markers-inside-canvas-crash.html",
+    "rejection_reason": "complex_css_selector: #item::scroll-marker",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_canvas_svg"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-markers-inside-select-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-markers-inside-select-crash.html",
+    "rejection_reason": "complex_css_selector: #scroller div::scroll-marker",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_form_controls"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-markers-resize-crash",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-markers-resize-crash.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-markers-under-content-visibility-auto",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-markers-under-content-visibility-auto.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_containment",
+      "needs_inline_block",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-markers-under-content-visibility-auto-ref",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-markers-under-content-visibility-auto-ref.html",
+    "rejection_reason": "complex_css_selector: #scroller::scroll-marker-group",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_containment",
+      "needs_inline_block",
+      "needs_rounded_border_paint",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-markers-updated-by-programmatic-scroll",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-markers-updated-by-programmatic-scroll.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_scroll-target-group-003",
+    "chromium_test_path": "css-overflow/scroll-markers/scroll-target-group-003.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_target-current-scroll-marker-update",
+    "chromium_test_path": "css-overflow/scroll-markers/target-current-scroll-marker-update.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-001",
+    "chromium_test_path": "css-overflow/scroll-markers/targeted-column-scroll-marker-selection-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_grid",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-001-ref",
+    "chromium_test_path": "css-overflow/scroll-markers/targeted-column-scroll-marker-selection-001-ref.html",
+    "rejection_reason": "complex_css_selector: & > :nth-child(3)::scroll-marker",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_grid",
+      "needs_inline_block",
+      "needs_rounded_border_paint",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-002",
+    "chromium_test_path": "css-overflow/scroll-markers/targeted-column-scroll-marker-selection-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_grid",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-002-ref",
+    "chromium_test_path": "css-overflow/scroll-markers/targeted-column-scroll-marker-selection-002-ref.html",
+    "rejection_reason": "complex_css_selector: & > :nth-child(5)::scroll-marker",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_grid",
+      "needs_inline_block",
+      "needs_rounded_border_paint",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-003",
+    "chromium_test_path": "css-overflow/scroll-markers/targeted-column-scroll-marker-selection-003.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_grid",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-003-ref",
+    "chromium_test_path": "css-overflow/scroll-markers/targeted-column-scroll-marker-selection-003-ref.html",
+    "rejection_reason": "complex_css_selector: & > :nth-child(1)::scroll-marker",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_grid",
+      "needs_inline_block",
+      "needs_rounded_border_paint",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-004",
+    "chromium_test_path": "css-overflow/scroll-markers/targeted-column-scroll-marker-selection-004.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_grid",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_targeted-column-scroll-marker-selection-004-ref",
+    "chromium_test_path": "css-overflow/scroll-markers/targeted-column-scroll-marker-selection-004-ref.html",
+    "rejection_reason": "complex_css_selector: & > :nth-child(1)::scroll-marker",
+    "rejection_owner": "needs_advanced_selectors",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_grid",
+      "needs_inline_block",
+      "needs_rounded_border_paint",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_targeted-scroll-marker-selection-with-transition.tentative",
+    "chromium_test_path": "css-overflow/scroll-markers/targeted-scroll-marker-selection-with-transition.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_advanced_selectors",
+      "needs_grid",
+      "needs_javascript",
+      "needs_rounded_border_paint",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scroll-markers_targeted-scroll-marker-selection.tentative",
+    "chromium_test_path": "css-overflow/scroll-markers/targeted-scroll-marker-selection.tentative.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_empty_block_margin_collapse",
+      "needs_grid",
+      "needs_javascript",
+      "needs_rounded_border_paint"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/scrollable-overflow-transform-011",
+    "chromium_test_path": "css-overflow/scrollable-overflow-transform-011.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_visual_effects"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-ellipsis-003",
+    "chromium_test_path": "css-overflow/text-overflow-ellipsis-003.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-ellipsis-editable-div-with-caret",
+    "chromium_test_path": "css-overflow/text-overflow-ellipsis-editable-div-with-caret.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-ellipsis-editing-input",
+    "chromium_test_path": "css-overflow/text-overflow-ellipsis-editing-input.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-ellipsis-textarea-with-caret",
+    "chromium_test_path": "css-overflow/text-overflow-ellipsis-textarea-with-caret.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_form_controls",
+      "needs_javascript",
+      "non_visual_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-rtl-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-rtl-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-vertical-lr-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-vertical-lr-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-vertical-lr-rtl-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-vertical-lr-rtl-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-vertical-rl-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-vertical-rl-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/text-overflow-scroll-vertical-rl-rtl-001",
+    "chromium_test_path": "css-overflow/text-overflow-scroll-vertical-rl-rtl-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/position-absolute-chrome-bug-002",
+    "chromium_test_path": "css-position/position-absolute-chrome-bug-002.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript",
+      "needs_table_layout"
+    ]
+  },
+  {
+    "test_id": "wpt/css_position/position-absolute-crash-chrome-001",
+    "chromium_test_path": "css-position/position-absolute-crash-chrome-001.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/animation_height-composition",
+    "chromium_test_path": "css-sizing/animation/height-composition.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/animation_width-composition",
+    "chromium_test_path": "css-sizing/animation/width-composition.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_auto-007",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/auto-007.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_containment",
+      "needs_form_controls",
+      "needs_grid",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_auto-008",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/auto-008.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_containment",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_auto-009",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/auto-009.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_containment",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_auto-010",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/auto-010.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_containment",
+      "needs_javascript",
+      "sp13_multicol"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_auto-011",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/auto-011.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_containment",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_auto-012",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/auto-012.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_containment",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_auto-013",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/auto-013.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_containment",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-028",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/contain-intrinsic-size-028.html",
+    "rejection_reason": "style_block_unsupported property: contain",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_containment",
+      "needs_form_controls",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-029",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/contain-intrinsic-size-029.html",
+    "rejection_reason": "style_block_unsupported property: contain",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_containment",
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-030",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/contain-intrinsic-size-030.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_containment",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_scrollbar_gutter"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-033",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/contain-intrinsic-size-033.html",
+    "rejection_reason": "uses_javascript",
+    "rejection_owner": "needs_javascript",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_containment",
+      "needs_form_controls",
+      "needs_javascript"
+    ]
+  },
+  {
+    "test_id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-logical-003",
+    "chromium_test_path": "css-sizing/contain-intrinsic-size/contain-intrinsic-size-logical-003.html",
+    "rejection_reason": "style_block_unsupported property: contain",
+    "rejection_owner": "needs_containment",
+    "owner_categories": [
+      "needs_canvas_svg",
+      "needs_containment",
+      "needs_form_controls",
+      "needs_inline_block",
+      "needs_javascript",
+      "needs_writing_mode"
+    ]
+  }
+]

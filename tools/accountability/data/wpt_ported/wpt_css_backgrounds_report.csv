@@ -234,7 +234,7 @@ background-clip_clip-text-on-body-not-propagated-to-root,ported,css_backgrounds_
 background-clip_clip-text-on-body-not-propagated-to-root-ref,ported,css_backgrounds_background_clip_clip_text_on_body_not_propagated_to_root_ref,
 background-clip_clip-text-on-body-propagated-to-root,ported,css_backgrounds_background_clip_clip_text_on_body_propagated_to_root,
 background-clip_clip-text-on-root,ported,css_backgrounds_background_clip_clip_text_on_root,
-background-clip_clip-text-out-of-flow-child,not_portable,,style_block_unsupported property: content
+background-clip_clip-text-out-of-flow-child,ported,css_backgrounds_background_clip_clip_text_out_of_flow_child,
 background-clip_clip-text-out-of-flow-child-ref,ported,css_backgrounds_background_clip_clip_text_out_of_flow_child_ref,
 background-clip_clip-text-text-decorations,ported,css_backgrounds_background_clip_clip_text_text_decorations,
 background-clip_clip-text-text-decorations-ref,ported,css_backgrounds_background_clip_clip_text_text_decorations_ref,
@@ -267,7 +267,7 @@ background-image-003,not_portable,,no_layout_content
 background-image-004,not_portable,,no_layout_content
 background-image-005,ported,css_backgrounds_background_image_005,
 background-image-006,ported,css_backgrounds_background_image_006,
-background-image-007,not_portable,,complex_css_selector: div::first-letter
+background-image-007,ported,css_backgrounds_background_image_007,
 background-image-centered,ported,css_backgrounds_background_image_centered,
 background-image-centered-ref,ported,css_backgrounds_background_image_centered_ref,
 background-image-centered-with-border-radius,ported,css_backgrounds_background_image_centered_with_border_radius,
@@ -409,8 +409,8 @@ background-size-028,ported,css_backgrounds_background_size_028,
 background-size-029,ported,css_backgrounds_background_size_029,
 background-size-030,ported,css_backgrounds_background_size_030,
 background-size-031,ported,css_backgrounds_background_size_031,
-background-size-032,not_portable,,complex_css_selector: div::first-letter
-background-size-033,not_portable,,complex_css_selector: div::first-line
+background-size-032,ported,css_backgrounds_background_size_032,
+background-size-033,ported,css_backgrounds_background_size_033,
 background-size-034,ported,css_backgrounds_background_size_034,
 background-size-041,ported,css_backgrounds_background_size_041,
 background-size-042,ported,css_backgrounds_background_size_042,
@@ -902,7 +902,7 @@ inset-box-shadow-scroll-ref,ported,css_backgrounds_inset_box_shadow_scroll_ref,
 inset-box-shadow-stacking-context-scroll,ported,css_backgrounds_inset_box_shadow_stacking_context_scroll,
 justfortest,ported,css_backgrounds_justfortest,
 linear-gradient-calc-crash,ported,css_backgrounds_linear_gradient_calc_crash,
-linear-gradient-currentcolor-first-line,not_portable,,complex_css_selector: div::first-line
+linear-gradient-currentcolor-first-line,ported,css_backgrounds_linear_gradient_currentcolor_first_line,
 linear-gradient-currentcolor-first-line-ref,ported,css_backgrounds_linear_gradient_currentcolor_first_line_ref,
 local-attachment-content-box-scroll,not_portable,,uses_javascript
 local-attachment-content-box-scroll-ref,ported,css_backgrounds_local_attachment_content_box_scroll_ref,

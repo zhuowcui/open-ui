@@ -31,7 +31,7 @@ use crate::out_of_flow::OutOfFlowCandidate;
 
 use super::items::{InlineItemResult, InlineItemType};
 use super::items_builder::{style_to_font_description, InlineItemsBuilder, InlineItemsData};
-use super::line_breaker::{byte_to_char_offset, LineBreaker};
+use super::line_breaker::{byte_to_char_offset, find_break_opportunities, LineBreaker};
 use super::line_info::LineInfo;
 use super::line_width::{compute_line_availability, next_float_bottom};
 
@@ -39,6 +39,94 @@ fn uses_deterministic_text_profile(style: &ComputedStyle) -> bool {
     style.font_family.families.iter().any(|family| {
         matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
     })
+}
+
+fn configure_line_breaker(
+    breaker: &mut LineBreaker<'_>,
+    style: &ComputedStyle,
+    space: &ConstraintSpace,
+    float_precedes_text: bool,
+) {
+    breaker.set_float_precedes_in_flow_text(float_precedes_text);
+    breaker.set_writing_direction(space.writing_direction);
+    breaker.set_text_align(style.text_align);
+    breaker.set_container_white_space(style.white_space);
+    breaker.set_hyphens(style.hyphens, style.hyphenate_limit_chars);
+}
+
+fn line_count_at_width(
+    items_data: &InlineItemsData,
+    containing_width: LayoutUnit,
+    line_width: LayoutUnit,
+    style: &ComputedStyle,
+    space: &ConstraintSpace,
+    float_precedes_text: bool,
+) -> usize {
+    let mut breaker = LineBreaker::new(items_data, containing_width);
+    configure_line_breaker(&mut breaker, style, space, float_precedes_text);
+    let mut count = 0;
+    while !breaker.is_finished() && count <= 7 {
+        if breaker.next_line(line_width).is_none() {
+            break;
+        }
+        count += 1;
+    }
+    count
+}
+
+/// Blink balances short paragraphs by finding the narrowest greedy line
+/// width that preserves the paragraph's line count. The actual line boxes
+/// still occupy the containing block; only their wrap constraint is reduced.
+fn balanced_wrap_width(
+    items_data: &InlineItemsData,
+    available_width: LayoutUnit,
+    style: &ComputedStyle,
+    space: &ConstraintSpace,
+    float_precedes_text: bool,
+) -> Option<LayoutUnit> {
+    if style.text_wrap != openui_style::TextWrap::Balance
+        || style.first_line_style.is_some()
+        || space.exclusion_space.is_some()
+        || matches!(style.line_clamp, openui_style::LineClamp::Lines(_))
+        || space
+            .line_clamp_context
+            .as_ref()
+            .is_some_and(|context| context.remaining_block_size().is_none())
+    {
+        return None;
+    }
+    let line_count = line_count_at_width(
+        items_data,
+        available_width,
+        available_width,
+        style,
+        space,
+        float_precedes_text,
+    );
+    if !(2..=6).contains(&line_count) {
+        return None;
+    }
+
+    let mut low = 1;
+    let mut high = available_width.raw().max(1);
+    while low < high {
+        let mid = low + (high - low) / 2;
+        let candidate = LayoutUnit::from_raw(mid);
+        let candidate_lines = line_count_at_width(
+            items_data,
+            available_width,
+            candidate,
+            style,
+            space,
+            float_precedes_text,
+        );
+        if candidate_lines <= line_count {
+            high = mid;
+        } else {
+            low = mid + 1;
+        }
+    }
+    Some(LayoutUnit::from_raw(low))
 }
 
 fn node_follows_float_with_in_flow_text(
@@ -97,11 +185,73 @@ fn ruby_internal_content_height(fragment: &Fragment) -> LayoutUnit {
         .unwrap_or(fragment.size.height)
 }
 
+fn fragment_text_ink_bounds(
+    fragment: &Fragment,
+    parent_block_offset: LayoutUnit,
+) -> Option<(LayoutUnit, LayoutUnit)> {
+    let block_offset = parent_block_offset + fragment.offset.top;
+    if fragment.kind == FragmentKind::Text {
+        return Some((block_offset, block_offset + fragment.size.height));
+    }
+    fragment
+        .children
+        .iter()
+        .filter_map(|child| fragment_text_ink_bounds(child, block_offset))
+        .fold(None, |bounds, child_bounds| {
+            Some(bounds.map_or(child_bounds, |(start, end)| {
+                (start.min_of(child_bounds.0), end.max_of(child_bounds.1))
+            }))
+        })
+}
+
+fn fragment_text_ink_height(fragment: &Fragment) -> LayoutUnit {
+    fragment_text_ink_bounds(fragment, LayoutUnit::zero())
+        .map_or(LayoutUnit::zero(), |(start, end)| end - start)
+}
+
+fn fragment_descendant_text_ink_end(fragment: &Fragment) -> Option<LayoutUnit> {
+    fragment
+        .children
+        .iter()
+        .filter_map(|child| fragment_text_ink_bounds(child, LayoutUnit::zero()))
+        .map(|(_, end)| end)
+        .max()
+}
+
+fn fragment_contains_tag(doc: &Document, fragment: &Fragment, tag: ElementTag) -> bool {
+    (!fragment.node_id.is_none() && doc.node(fragment.node_id).tag == tag)
+        || fragment
+            .children
+            .iter()
+            .any(|child| fragment_contains_tag(doc, child, tag))
+}
+
+fn align_ruby_internal_content(fragment: &mut Fragment, inline_size: LayoutUnit) {
+    for line in &mut fragment.children {
+        let Some(start) = line.children.iter().map(|child| child.offset.left).min() else {
+            continue;
+        };
+        let end = line
+            .children
+            .iter()
+            .map(|child| child.offset.left + child.size.width)
+            .max()
+            .unwrap_or(start);
+        let shift = ((inline_size - (end - start)).clamp_negative_to_zero()
+            / LayoutUnit::from_i32(2))
+            - start;
+        for child in &mut line.children {
+            child.offset.left = child.offset.left + shift;
+        }
+    }
+}
+
 fn layout_ruby_atomic(
     doc: &Document,
     node_id: NodeId,
     inline_size: LayoutUnit,
     percentage_block_size: LayoutUnit,
+    compact_for_clamp: bool,
 ) -> Fragment {
     let mut base_children = Vec::new();
     let mut annotation_parent = None;
@@ -117,7 +267,6 @@ fn layout_ruby_atomic(
             base_children.push(child_id);
         }
     }
-
     let internal_space = ConstraintSpace::for_block_child(
         inline_size,
         openui_geometry::INDEFINITE_SIZE,
@@ -129,6 +278,17 @@ fn layout_ruby_atomic(
     let mut annotation = annotation_parent.map(|parent| {
         inline_layout_for_children(doc, parent, &annotation_children, &internal_space)
     });
+    if compact_for_clamp
+        && matches!(
+            doc.node(node_id).style.ruby_align,
+            openui_style::RubyAlign::SpaceAround | openui_style::RubyAlign::Center
+        )
+    {
+        align_ruby_internal_content(&mut base, inline_size);
+        if let Some(annotation) = annotation.as_mut() {
+            align_ruby_internal_content(annotation, inline_size);
+        }
+    }
 
     // A ruby base/annotation line area is sized to its contents. Ordinary
     // inline formatting retains the parent strut and its below-baseline
@@ -144,12 +304,70 @@ fn layout_ruby_atomic(
         annotation.size.height = annotation_height;
     }
     let base_baseline = base.first_baseline.unwrap_or(base_height);
+    if !compact_for_clamp {
+        let ruby_position = doc.node(node_id).style.ruby_position;
+        let mut children = Vec::with_capacity(2);
+        let exported_baseline = if ruby_position.is_over() {
+            if let Some(mut annotation) = annotation.take() {
+                annotation.offset.top = LayoutUnit::zero();
+                children.push(annotation);
+            }
+            base.offset.top = annotation_height;
+            children.push(base);
+            annotation_height + base_baseline
+        } else {
+            base.offset.top = LayoutUnit::zero();
+            children.push(base);
+            if let Some(mut annotation) = annotation.take() {
+                annotation.offset.top = base_height;
+                children.push(annotation);
+            }
+            base_baseline
+        };
+        let mut fragment = Fragment::new_box(
+            node_id,
+            PhysicalSize::new(inline_size, base_height + annotation_height),
+        );
+        fragment.children = children;
+        fragment.first_baseline = Some(exported_baseline);
+        fragment.last_baseline = Some(exported_baseline);
+        fragment.baseline_offset = exported_baseline.to_f32();
+        return fragment;
+    }
+    let base_leading_start = base
+        .children
+        .first()
+        .and_then(|line| line.children.iter().map(|child| child.offset.top).min())
+        .unwrap_or(LayoutUnit::zero());
+    let annotation_leading_start = annotation
+        .as_ref()
+        .and_then(|fragment| fragment.children.first())
+        .and_then(|line| line.children.iter().map(|child| child.offset.top).min())
+        .unwrap_or(LayoutUnit::zero());
+    let annotation_leading_trim = if annotation_parent
+        .is_some_and(|parent| doc.node(parent).style.font_size < doc.node(node_id).style.font_size)
+    {
+        annotation_leading_start.ceil()
+    } else {
+        annotation_leading_start
+    };
+    let annotation_position_trim = annotation_leading_trim;
+    let over_annotation_offset = if annotation_parent
+        .is_some_and(|parent| doc.node(parent).style.font_size < doc.node(node_id).style.font_size)
+    {
+        (base_leading_start - LayoutUnit::from_i32(1)).clamp_negative_to_zero()
+    } else {
+        base_leading_start
+    };
     let ruby_position = doc.node(node_id).style.ruby_position;
 
     let mut children = Vec::with_capacity(2);
     let exported_baseline = if ruby_position.is_over() {
         if let Some(mut annotation) = annotation.take() {
-            annotation.offset.top = LayoutUnit::zero();
+            // Align the annotation ink with the base ink, allowing it to use
+            // the base line's start-side half-leading instead of leaving an
+            // artificial gap between the two ruby levels.
+            annotation.offset.top = over_annotation_offset;
             children.push(annotation);
         }
         base.offset.top = annotation_height;
@@ -159,16 +377,23 @@ fn layout_ruby_atomic(
         base.offset.top = LayoutUnit::zero();
         children.push(base);
         if let Some(mut annotation) = annotation.take() {
-            annotation.offset.top = base_height;
+            // Adjacent ruby levels share their half-leading. Position the
+            // annotation's ink immediately after the base ink instead of
+            // inserting the annotation line's start-side leading as a gap.
+            annotation.offset.top =
+                (base_height - annotation_position_trim).clamp_negative_to_zero();
             children.push(annotation);
         }
         base_baseline
     };
 
-    let mut fragment = Fragment::new_box(
-        node_id,
-        PhysicalSize::new(inline_size, base_height + annotation_height),
-    );
+    let ruby_height = if ruby_position.is_over() {
+        base_height + annotation_height
+    } else {
+        base_height + (annotation_height - annotation_leading_trim).clamp_negative_to_zero()
+    };
+
+    let mut fragment = Fragment::new_box(node_id, PhysicalSize::new(inline_size, ruby_height));
     fragment.children = children;
     fragment.first_baseline = Some(exported_baseline);
     fragment.last_baseline = Some(exported_baseline);
@@ -240,6 +465,7 @@ fn materialize_inline_line_child(
     baseline: LayoutUnit,
     line_height: LayoutUnit,
     parent_metrics: &FontMetrics,
+    snap_block_edges: bool,
 ) -> Fragment {
     match child {
         InlineLineChild::Fragment(index) => flat_fragments[index]
@@ -266,6 +492,7 @@ fn materialize_inline_line_child(
                         baseline,
                         line_height,
                         &metrics,
+                        snap_block_edges,
                     ),
                 })
                 .collect();
@@ -281,8 +508,10 @@ fn materialize_inline_line_child(
                 content_top = content_top.min_of(child.offset.top);
                 content_bottom = content_bottom.max_of(child.offset.top + child.size.height);
             }
-            content_top = content_top.floor();
-            content_bottom = content_bottom.floor();
+            if snap_block_edges {
+                content_top = content_top.floor();
+                content_bottom = content_bottom.floor();
+            }
 
             let border = BoxStrut::new(
                 LayoutUnit::from_i32(style.effective_border_top()),
@@ -841,12 +1070,35 @@ pub fn inline_layout_from_items(
             && working_items_data.oof_children.is_empty());
 
     // Create line breaker from the (possibly filtered) items.
+    let float_precedes_text = floating_descendant_precedes_in_flow_text(doc, node_id);
+    let balanced_width = balanced_wrap_width(
+        &working_items_data,
+        available_inline_size,
+        style,
+        space,
+        float_precedes_text,
+    );
     let mut line_breaker = LineBreaker::new(&working_items_data, available_inline_size);
-    line_breaker
-        .set_float_precedes_in_flow_text(floating_descendant_precedes_in_flow_text(doc, node_id));
-    line_breaker.set_writing_direction(space.writing_direction);
-    line_breaker.set_text_align(style.text_align);
-    line_breaker.set_container_white_space(style.white_space);
+    configure_line_breaker(&mut line_breaker, style, space, float_precedes_text);
+    let inherited_first_line_style = space
+        .first_line_context
+        .as_ref()
+        .and_then(|context| context.snapshot());
+    let first_line_pseudo = style
+        .first_line_style
+        .as_deref()
+        .or(inherited_first_line_style.as_ref());
+    let first_line_items_data = first_line_pseudo.map(|pseudo| {
+        let mut data = working_items_data.clone();
+        data.apply_first_line_style(style, pseudo);
+        data.shape_text();
+        data
+    });
+    let mut first_line_breaker = first_line_items_data.as_ref().map(|data| {
+        let mut breaker = LineBreaker::new(data, available_inline_size);
+        configure_line_breaker(&mut breaker, style, space, float_precedes_text);
+        breaker
+    });
 
     // Step 3b: Resolve text-indent for the first line.
     let text_indent = crate::length_resolver::resolve_length(
@@ -873,6 +1125,7 @@ pub fn inline_layout_from_items(
     let mut line_static_inline_data: Vec<(LineInfo, LayoutUnit)> = Vec::new();
     let mut block_offset = LayoutUnit::zero();
     let mut is_first_line = true;
+    let (clamp_budget, clamp_block_budget, clamp_ellipsis) = effective_line_clamp(style, space);
 
     // Track which inline boxes (by style_index) are open at the start of
     // each line. Carried forward across lines for inline box decoration
@@ -884,7 +1137,17 @@ pub fn inline_layout_from_items(
     // BFC block offset of this inline content's start within the exclusion space.
     let bfc_block_start = space.bfc_offset.block_offset;
 
-    while !line_breaker.is_finished() {
+    while clamp_budget != Some(0)
+        && if is_first_line {
+            first_line_breaker
+                .as_ref()
+                .map_or(!line_breaker.is_finished(), |breaker| {
+                    !breaker.is_finished()
+                })
+        } else {
+            !line_breaker.is_finished()
+        }
+    {
         // Query float exclusions at this line's block offset.
         // The exclusion space uses content-edge-relative coordinates; add the
         // BFC start offset so we query at the correct absolute position.
@@ -894,6 +1157,10 @@ pub fn inline_layout_from_items(
             available_inline_size,
             LayoutUnit::zero(),
         );
+        if line_avail.block_offset > bfc_block_start + block_offset {
+            block_offset = line_avail.block_offset - bfc_block_start;
+            continue;
+        }
 
         // Apply text-indent: reduce available width on first line only.
         let line_available = if is_first_line && text_indent != LayoutUnit::zero() {
@@ -901,10 +1168,22 @@ pub fn inline_layout_from_items(
         } else {
             line_avail.available_inline_size
         };
+        let wrap_width = balanced_width
+            .map(|balanced| balanced.min_of(line_available))
+            .unwrap_or(line_available);
 
         if let Some(mut line_info) = {
-            let checkpoint = line_breaker.checkpoint();
-            let mut produced = line_breaker.next_line(line_available);
+            let use_first_line_breaker = is_first_line && first_line_breaker.is_some();
+            let checkpoint = if use_first_line_breaker {
+                first_line_breaker.as_ref().unwrap().checkpoint()
+            } else {
+                line_breaker.checkpoint()
+            };
+            let mut produced = if use_first_line_breaker {
+                first_line_breaker.as_mut().unwrap().next_line(wrap_width)
+            } else {
+                line_breaker.next_line(wrap_width)
+            };
             // CSS 2.1 §9.5.1: if floats shortened this line and its content
             // doesn't fit in the shortened width, shift the line box down to
             // the next float bottom (where more width is available) and
@@ -917,7 +1196,11 @@ pub fn inline_layout_from_items(
                     if let Some(shift_to) =
                         next_float_bottom(exclusion_ref, bfc_block_start + block_offset)
                     {
-                        line_breaker.restore(checkpoint);
+                        if use_first_line_breaker {
+                            first_line_breaker.as_mut().unwrap().restore(checkpoint);
+                        } else {
+                            line_breaker.restore(checkpoint);
+                        }
                         block_offset = shift_to - bfc_block_start;
                         produced = None;
                     }
@@ -925,6 +1208,16 @@ pub fn inline_layout_from_items(
             }
             produced
         } {
+            let line_items_data = if is_first_line {
+                first_line_items_data
+                    .as_ref()
+                    .unwrap_or(&working_items_data)
+            } else {
+                &working_items_data
+            };
+            if is_first_line && first_line_breaker.is_some() {
+                line_breaker.seek_after_line(&line_info);
+            }
             line_item_bounds.push(line_info.items.iter().map(|item| item.item_index).fold(
                 None,
                 |bounds, index| {
@@ -935,7 +1228,7 @@ pub fn inline_layout_from_items(
                 },
             ));
             // Step 4b: BiDi reorder items on this line for visual display.
-            bidi_reorder_line(&mut line_info.items, &working_items_data);
+            bidi_reorder_line(&mut line_info.items, line_items_data);
 
             // Apply text-overflow: ellipsis if configured on the block style.
             if style.text_overflow == openui_style::TextOverflow::Ellipsis
@@ -944,8 +1237,23 @@ pub fn inline_layout_from_items(
                 apply_text_overflow_ellipsis(
                     &mut line_info,
                     line_available,
-                    &working_items_data,
+                    line_items_data,
                     style,
+                );
+            }
+            let clamp_after_this_line = clamp_budget.is_some_and(|budget| {
+                line_fragments.len() + 1 >= budget
+                    && (line_breaker.has_remaining_visible_content()
+                        || (style.legacy_webkit_line_clamp
+                            && line_breaker.has_remaining_forced_break()))
+            });
+            if clamp_after_this_line {
+                apply_line_clamp_marker(
+                    &mut line_info,
+                    line_available,
+                    line_items_data,
+                    style,
+                    &clamp_ellipsis,
                 );
             }
 
@@ -964,7 +1272,7 @@ pub fn inline_layout_from_items(
                 + physical_text_indent_offset(style.direction, line_indent);
             line_static_inline_data.push((line_info.clone(), static_inline_origin));
 
-            let break_clear = line_break_clear(&line_info, &working_items_data);
+            let break_clear = line_break_clear(&line_info, line_items_data);
             let clearance_target = if break_clear == Clear::None {
                 None
             } else {
@@ -982,10 +1290,11 @@ pub fn inline_layout_from_items(
                 block_offset + LayoutUnit::from_f32(strut.ascent + strut.descent)
             });
 
+            let line_start_boxes = boxes_open_at_line_start.clone();
             let line_fragment = create_line_box(
                 doc,
                 space,
-                &working_items_data,
+                line_items_data,
                 &line_info,
                 line_avail.available_inline_size,
                 block_offset,
@@ -998,7 +1307,7 @@ pub fn inline_layout_from_items(
                     LayoutUnit::zero()
                 },
                 space.percentage_resolution_block_size,
-                &boxes_open_at_line_start,
+                &line_start_boxes,
                 normalize_vertical_rtl,
                 clearance_only_break,
             );
@@ -1008,10 +1317,10 @@ pub fn inline_layout_from_items(
             // inline boxes remain open at line end.
             let mut current_open = boxes_open_at_line_start.clone();
             for item_result in &line_info.items {
-                let item = &working_items_data.items[item_result.item_index];
+                let item = &line_items_data.items[item_result.item_index];
                 match item_result.item_type {
                     InlineItemType::OpenTag => {
-                        let s = &working_items_data.styles[item.style_index];
+                        let s = &line_items_data.styles[item.style_index];
                         current_open.push(InlineBoxState {
                             style_index: item.style_index,
                             node_id: item.node_id,
@@ -1032,18 +1341,190 @@ pub fn inline_layout_from_items(
                 positioned_line.offset.left = positioned_line.offset.left + line_avail.inline_start;
             }
 
-            block_offset = block_offset + positioned_line.size.height;
+            let mut next_block_offset = block_offset + positioned_line.size.height;
             if let Some(target) = clearance_target {
-                block_offset = block_offset.max_of(target);
+                next_block_offset = next_block_offset.max_of(target);
             }
             if let Some(extent) = clearance_only_extent {
-                block_offset = block_offset.max_of(extent);
+                next_block_offset = next_block_offset.max_of(extent);
             }
+            let under_ruby_ink_end =
+                line_has_under_ruby(doc, &line_info, line_items_data).then(|| {
+                    block_offset
+                        + fragment_descendant_text_ink_end(&positioned_line)
+                            .unwrap_or_else(|| fragment_relative_block_end(&positioned_line))
+                });
+            let ruby_padding_allowance = resolve_margin_or_padding(
+                &style.padding_bottom,
+                space.percentage_resolution_inline_size,
+            );
+            let ruby_ink_exceeds_clamp = clamp_block_budget.is_some_and(|budget| {
+                under_ruby_ink_end.is_some_and(|end| {
+                    end > budget + ruby_padding_allowance + LayoutUnit::from_i32(1)
+                })
+            });
+            // `line-clamp:auto` is constrained by the used physical block
+            // size, not by a line count derived from the root strut. This is
+            // observable when descendants, first-line styling, ruby, or
+            // atomic inline items make individual line boxes taller.
+            let root_line_height = {
+                let metrics = compute_line_height_metrics(
+                    &block_metrics,
+                    &style.line_height,
+                    style.font_size,
+                );
+                LayoutUnit::from_f32(metrics.ascent + metrics.descent)
+            };
+            let tall_line_reaches_clamp = clamp_block_budget.is_some_and(|budget| {
+                next_block_offset >= budget
+                    && !line_breaker.is_finished()
+                    && positioned_line.size.height > root_line_height
+            });
+            if clamp_block_budget.is_some_and(|budget| next_block_offset > budget)
+                || tall_line_reaches_clamp
+                || ruby_ink_exceeds_clamp
+            {
+                let mut trimmed_line = line_info.clone();
+                let mut accepted = None;
+                while !ruby_ink_exceeds_clamp
+                    && remove_last_content_item_for_tall_clamp(&mut trimmed_line, line_items_data)
+                {
+                    let mut marked_line = trimmed_line.clone();
+                    apply_line_clamp_marker(
+                        &mut marked_line,
+                        line_available,
+                        line_items_data,
+                        style,
+                        &clamp_ellipsis,
+                    );
+                    let mut candidate = create_line_box(
+                        doc,
+                        space,
+                        line_items_data,
+                        &marked_line,
+                        line_avail.available_inline_size,
+                        block_offset,
+                        style,
+                        &block_metrics,
+                        space.percentage_resolution_inline_size,
+                        if is_first_line {
+                            text_indent
+                        } else {
+                            LayoutUnit::zero()
+                        },
+                        space.percentage_resolution_block_size,
+                        &line_start_boxes,
+                        normalize_vertical_rtl,
+                        clearance_only_break,
+                    );
+                    if line_avail.inline_start > LayoutUnit::zero() {
+                        candidate.offset.left = candidate.offset.left + line_avail.inline_start;
+                    }
+                    let candidate_end = block_offset + candidate.size.height;
+                    if candidate_end
+                        <= clamp_block_budget.unwrap_or(openui_geometry::LayoutUnit::max())
+                    {
+                        accepted = Some((marked_line, candidate, candidate_end));
+                        break;
+                    }
+                }
+                if let Some((marked_line, candidate, candidate_end)) = accepted {
+                    if let Some((stored, _)) = line_static_inline_data.last_mut() {
+                        *stored = marked_line;
+                    }
+                    block_offset = candidate_end;
+                    line_fragments.push(candidate);
+                    break;
+                }
+                line_item_bounds.pop();
+                line_static_inline_data.pop();
+                append_clamp_marker_to_last_line(doc, &mut line_fragments, style, &clamp_ellipsis);
+                break;
+            }
+            let physical_clamp_after_this_line = clamp_block_budget.is_some_and(|budget| {
+                (next_block_offset >= budget
+                    || under_ruby_ink_end.is_some_and(|end| end > next_block_offset))
+                    && !line_breaker.is_finished()
+            });
+            if physical_clamp_after_this_line && !clamp_after_this_line {
+                apply_line_clamp_marker(
+                    &mut line_info,
+                    line_available,
+                    line_items_data,
+                    style,
+                    &clamp_ellipsis,
+                );
+                if let Some((stored, _)) = line_static_inline_data.last_mut() {
+                    *stored = line_info.clone();
+                }
+                positioned_line = create_line_box(
+                    doc,
+                    space,
+                    line_items_data,
+                    &line_info,
+                    line_avail.available_inline_size,
+                    block_offset,
+                    style,
+                    &block_metrics,
+                    space.percentage_resolution_inline_size,
+                    if is_first_line {
+                        text_indent
+                    } else {
+                        LayoutUnit::zero()
+                    },
+                    space.percentage_resolution_block_size,
+                    &line_start_boxes,
+                    normalize_vertical_rtl,
+                    clearance_only_break,
+                );
+                if line_avail.inline_start > LayoutUnit::zero() {
+                    positioned_line.offset.left =
+                        positioned_line.offset.left + line_avail.inline_start;
+                }
+            }
+            if physical_clamp_after_this_line || clamp_after_this_line {
+                if let Some(ink_end) = under_ruby_ink_end {
+                    let integer_clamp_rounding = (clamp_after_this_line
+                        && !physical_clamp_after_this_line
+                        && ruby_padding_allowance == LayoutUnit::zero())
+                    .then_some(LayoutUnit::from_i32(1))
+                    .unwrap_or(LayoutUnit::zero());
+                    next_block_offset = next_block_offset.max_of(
+                        (ink_end - ruby_padding_allowance).floor() + integer_clamp_rounding,
+                    );
+                }
+            }
+            block_offset = next_block_offset;
             line_fragments.push(positioned_line);
+            if clamp_after_this_line || physical_clamp_after_this_line {
+                if is_first_line {
+                    if let Some(context) = &space.first_line_context {
+                        context.consume();
+                    }
+                }
+                break;
+            }
+            if is_first_line {
+                if let Some(context) = &space.first_line_context {
+                    context.consume();
+                }
+            }
             is_first_line = false;
         }
     }
 
+    if let Some(context) = &space.line_clamp_context {
+        context.consume_layout(line_fragments.len(), block_offset);
+        if line_static_inline_data
+            .last()
+            .is_some_and(|(line, _)| line.has_ellipsis)
+        {
+            // The IFC already marked the line where its own continuation was
+            // discarded. A following OOF-only wrapper is therefore beyond
+            // the clamp boundary, rather than a sibling at an exact fit.
+            context.suppress_marker();
+        }
+    }
     let intrinsic_block_size = block_offset;
 
     // Compute first and last baselines from line boxes.
@@ -1180,7 +1661,22 @@ fn append_positioned_inline_candidates(
     normalize_vertical_rtl: bool,
     fragment: &mut Fragment,
 ) {
+    let retained_clamp_boundary = line_static_inline_data
+        .last()
+        .filter(|(line, _)| line.has_ellipsis)
+        .and_then(|_| {
+            line_static_inline_data
+                .iter()
+                .flat_map(|(line, _)| line.items.iter())
+                .map(|item| item.item_index + 1)
+                .max()
+        });
     for oof in &items_data.oof_children {
+        if !doc.node(node_id).style.legacy_webkit_line_clamp
+            && retained_clamp_boundary.is_some_and(|boundary| oof.item_index > boundary)
+        {
+            continue;
+        }
         let oof_style = doc.node(oof.node_id).style.clone();
         let mut static_block = find_static_block_for_item_index(
             oof.item_index,
@@ -1991,6 +2487,7 @@ pub fn inline_layout_for_children(
     let mut line_static_inline_data: Vec<(LineInfo, LayoutUnit)> = Vec::new();
     let mut block_offset = LayoutUnit::zero();
     let mut is_first_line = true;
+    let (clamp_budget, clamp_block_budget, clamp_ellipsis) = effective_line_clamp(style, space);
 
     // Track which inline boxes are open at the start of each line.
     let mut boxes_open_at_line_start: Vec<InlineBoxState> = Vec::new();
@@ -2000,7 +2497,7 @@ pub fn inline_layout_for_children(
     // BFC block offset of this anonymous wrapper's start within the exclusion space.
     let bfc_block_start = space.bfc_offset.block_offset;
 
-    while !line_breaker.is_finished() {
+    while clamp_budget != Some(0) && !line_breaker.is_finished() {
         // Query float exclusions at this line's block offset.
         let line_avail = compute_line_availability(
             exclusion_ref,
@@ -2008,6 +2505,10 @@ pub fn inline_layout_for_children(
             available_inline_size,
             LayoutUnit::zero(),
         );
+        if line_avail.block_offset > bfc_block_start + block_offset {
+            block_offset = line_avail.block_offset - bfc_block_start;
+            continue;
+        }
 
         let line_available = if is_first_line && text_indent != LayoutUnit::zero() {
             (line_avail.available_inline_size - text_indent).clamp_negative_to_zero()
@@ -2051,6 +2552,21 @@ pub fn inline_layout_for_children(
             {
                 apply_text_overflow_ellipsis(&mut line_info, line_available, &items_data, style);
             }
+            let clamp_after_this_line = clamp_budget.is_some_and(|budget| {
+                line_fragments.len() + 1 >= budget
+                    && (line_breaker.has_remaining_visible_content()
+                        || (style.legacy_webkit_line_clamp
+                            && line_breaker.has_remaining_forced_break()))
+            });
+            if clamp_after_this_line {
+                apply_line_clamp_marker(
+                    &mut line_info,
+                    line_available,
+                    &items_data,
+                    style,
+                    &clamp_ellipsis,
+                );
+            }
 
             let line_indent = if is_first_line {
                 text_indent
@@ -2085,6 +2601,7 @@ pub fn inline_layout_for_children(
                 block_offset + LayoutUnit::from_f32(strut.ascent + strut.descent)
             });
 
+            let line_start_boxes = boxes_open_at_line_start.clone();
             let line_fragment = create_line_box(
                 doc,
                 space,
@@ -2101,7 +2618,7 @@ pub fn inline_layout_for_children(
                     LayoutUnit::zero()
                 },
                 space.percentage_resolution_block_size,
-                &boxes_open_at_line_start,
+                &line_start_boxes,
                 normalize_vertical_rtl,
                 clearance_only_break,
             );
@@ -2133,18 +2650,166 @@ pub fn inline_layout_for_children(
                 positioned_line.offset.left = positioned_line.offset.left + line_avail.inline_start;
             }
 
-            block_offset = block_offset + positioned_line.size.height;
+            let mut next_block_offset = block_offset + positioned_line.size.height;
             if let Some(target) = clearance_target {
-                block_offset = block_offset.max_of(target);
+                next_block_offset = next_block_offset.max_of(target);
             }
             if let Some(extent) = clearance_only_extent {
-                block_offset = block_offset.max_of(extent);
+                next_block_offset = next_block_offset.max_of(extent);
             }
+            let under_ruby_ink_end = line_has_under_ruby(doc, &line_info, &items_data).then(|| {
+                block_offset
+                    + fragment_descendant_text_ink_end(&positioned_line)
+                        .unwrap_or_else(|| fragment_relative_block_end(&positioned_line))
+            });
+            let ruby_padding_allowance = resolve_margin_or_padding(
+                &style.padding_bottom,
+                space.percentage_resolution_inline_size,
+            );
+            let ruby_ink_exceeds_clamp = clamp_block_budget.is_some_and(|budget| {
+                under_ruby_ink_end.is_some_and(|end| {
+                    end > budget + ruby_padding_allowance + LayoutUnit::from_i32(1)
+                })
+            });
+            let root_line_height = {
+                let metrics = compute_line_height_metrics(
+                    &block_metrics,
+                    &style.line_height,
+                    style.font_size,
+                );
+                LayoutUnit::from_f32(metrics.ascent + metrics.descent)
+            };
+            let tall_line_reaches_clamp = clamp_block_budget.is_some_and(|budget| {
+                next_block_offset >= budget
+                    && !line_breaker.is_finished()
+                    && positioned_line.size.height > root_line_height
+            });
+            if clamp_block_budget.is_some_and(|budget| next_block_offset > budget)
+                || tall_line_reaches_clamp
+                || ruby_ink_exceeds_clamp
+            {
+                let mut trimmed_line = line_info.clone();
+                let mut accepted = None;
+                while !ruby_ink_exceeds_clamp
+                    && remove_last_content_item_for_tall_clamp(&mut trimmed_line, &items_data)
+                {
+                    let mut marked_line = trimmed_line.clone();
+                    apply_line_clamp_marker(
+                        &mut marked_line,
+                        line_available,
+                        &items_data,
+                        style,
+                        &clamp_ellipsis,
+                    );
+                    let mut candidate = create_line_box(
+                        doc,
+                        space,
+                        &items_data,
+                        &marked_line,
+                        line_avail.available_inline_size,
+                        block_offset,
+                        style,
+                        &block_metrics,
+                        space.percentage_resolution_inline_size,
+                        if is_first_line {
+                            text_indent
+                        } else {
+                            LayoutUnit::zero()
+                        },
+                        space.percentage_resolution_block_size,
+                        &line_start_boxes,
+                        normalize_vertical_rtl,
+                        clearance_only_break,
+                    );
+                    if line_avail.inline_start > LayoutUnit::zero() {
+                        candidate.offset.left = candidate.offset.left + line_avail.inline_start;
+                    }
+                    let candidate_end = block_offset + candidate.size.height;
+                    if candidate_end
+                        <= clamp_block_budget.unwrap_or(openui_geometry::LayoutUnit::max())
+                    {
+                        accepted = Some((marked_line, candidate, candidate_end));
+                        break;
+                    }
+                }
+                if let Some((marked_line, candidate, candidate_end)) = accepted {
+                    if let Some((stored, _)) = line_static_inline_data.last_mut() {
+                        *stored = marked_line;
+                    }
+                    block_offset = candidate_end;
+                    line_fragments.push(candidate);
+                    break;
+                }
+                line_item_bounds.pop();
+                line_static_inline_data.pop();
+                append_clamp_marker_to_last_line(doc, &mut line_fragments, style, &clamp_ellipsis);
+                break;
+            }
+            let physical_clamp_after_this_line = clamp_block_budget.is_some_and(|budget| {
+                (next_block_offset >= budget
+                    || under_ruby_ink_end.is_some_and(|end| end > next_block_offset))
+                    && !line_breaker.is_finished()
+            });
+            if physical_clamp_after_this_line && !clamp_after_this_line {
+                apply_line_clamp_marker(
+                    &mut line_info,
+                    line_available,
+                    &items_data,
+                    style,
+                    &clamp_ellipsis,
+                );
+                if let Some((stored, _)) = line_static_inline_data.last_mut() {
+                    *stored = line_info.clone();
+                }
+                positioned_line = create_line_box(
+                    doc,
+                    space,
+                    &items_data,
+                    &line_info,
+                    line_avail.available_inline_size,
+                    block_offset,
+                    style,
+                    &block_metrics,
+                    space.percentage_resolution_inline_size,
+                    if is_first_line {
+                        text_indent
+                    } else {
+                        LayoutUnit::zero()
+                    },
+                    space.percentage_resolution_block_size,
+                    &line_start_boxes,
+                    normalize_vertical_rtl,
+                    clearance_only_break,
+                );
+                if line_avail.inline_start > LayoutUnit::zero() {
+                    positioned_line.offset.left =
+                        positioned_line.offset.left + line_avail.inline_start;
+                }
+            }
+            if physical_clamp_after_this_line || clamp_after_this_line {
+                if let Some(ink_end) = under_ruby_ink_end {
+                    let integer_clamp_rounding = (clamp_after_this_line
+                        && !physical_clamp_after_this_line
+                        && ruby_padding_allowance == LayoutUnit::zero())
+                    .then_some(LayoutUnit::from_i32(1))
+                    .unwrap_or(LayoutUnit::zero());
+                    next_block_offset = next_block_offset.max_of(
+                        (ink_end - ruby_padding_allowance).floor() + integer_clamp_rounding,
+                    );
+                }
+            }
+            block_offset = next_block_offset;
             line_fragments.push(positioned_line);
+            if clamp_after_this_line || physical_clamp_after_this_line {
+                break;
+            }
             is_first_line = false;
         }
     }
 
+    if let Some(context) = &space.line_clamp_context {
+        context.consume_layout(line_fragments.len(), block_offset);
+    }
     let intrinsic_block_size = block_offset;
 
     let first_baseline = line_fragments
@@ -2212,7 +2877,8 @@ fn create_line_box(
     // A forced break (<br> or preserved newline) establishes a strut even
     // when it is the only item on the line. Without this, `<p><br></p>` has
     // zero height and following block content overlaps it.
-    let line_has_content = (line_info.has_forced_break && !clearance_only_break)
+    let line_has_content = line_info.has_ellipsis
+        || (line_info.has_forced_break && !clearance_only_break)
         || line_info
             .items
             .iter()
@@ -2317,7 +2983,13 @@ fn create_line_box(
                     true,
                 );
                 let mut result = if doc.node(item.node_id).tag == ElementTag::Ruby {
-                    layout_ruby_atomic(doc, item.node_id, item_width, percentage_block)
+                    layout_ruby_atomic(
+                        doc,
+                        item.node_id,
+                        item_width,
+                        percentage_block,
+                        block_style.line_clamp != openui_style::LineClamp::None,
+                    )
                 } else {
                     crate::block::block_layout(doc, item.node_id, &child_space)
                 };
@@ -2403,7 +3075,53 @@ fn create_line_box(
                 let item = &items_data.items[item_result.item_index];
                 let style = &items_data.styles[item.style_index];
 
-                let item_height = if let Some(ref result) = atomic_layout_results[step2_idx] {
+                let ruby_base_metrics = atomic_layout_results[step2_idx]
+                    .as_ref()
+                    .filter(|_| {
+                        doc.node(item.node_id).tag == ElementTag::Ruby
+                            && block_style.line_clamp != openui_style::LineClamp::None
+                    })
+                    .and_then(|result| {
+                        let (base, annotation) = if style.ruby_position.is_over() {
+                            (result.children.last()?, result.children.first())
+                        } else {
+                            (result.children.first()?, result.children.get(1))
+                        };
+                        let base_line = base.children.first()?;
+                        let base_ink = fragment_text_ink_height(base_line);
+                        let mut annotation_ink = annotation
+                            .map(fragment_text_ink_height)
+                            .unwrap_or(LayoutUnit::zero());
+                        if annotation.is_some_and(|fragment| {
+                            fragment_contains_tag(doc, fragment, ElementTag::Ruby)
+                        }) {
+                            annotation_ink += LayoutUnit::from_f32(
+                                doc.children(item.node_id)
+                                    .find(|child_id| {
+                                        doc.node(*child_id).tag == ElementTag::RubyText
+                                    })
+                                    .map(|child_id| doc.node(child_id).style.font_size)
+                                    .unwrap_or(0.0),
+                            );
+                        }
+                        let over_expansion = if style.ruby_position.is_over() {
+                            (annotation_ink - base_ink).clamp_negative_to_zero()
+                        } else {
+                            LayoutUnit::zero()
+                        };
+                        Some((
+                            (base_line.size.height + over_expansion).to_f32(),
+                            base_line.baseline_offset + over_expansion.to_f32(),
+                        ))
+                    });
+                let item_height = if let Some((base_height, _)) = ruby_base_metrics {
+                    // Ruby annotations are ink overflow around the base line;
+                    // they do not replace the originating line-height strut.
+                    // Keeping only the base area in line metrics lets leading
+                    // and authored padding absorb over/under annotations while
+                    // the full atomic fragment still paints them.
+                    base_height
+                } else if let Some(ref result) = atomic_layout_results[step2_idx] {
                     result.size.height.to_f32()
                 } else {
                     let logical_block_size = if space.writing_direction.is_horizontal() {
@@ -2436,25 +3154,35 @@ fn create_line_box(
                 let margin_bottom =
                     resolve_margin_or_padding(block_end_margin, percentage_base).to_f32();
                 let margin_box_height = item_height + margin_top + margin_bottom;
-                let baseline_from_top = atomic_layout_results[step2_idx]
-                    .as_ref()
-                    .and_then(|result| {
-                        let child_direction = style.direction.writing_direction(style.writing_mode);
-                        if child_direction.is_horizontal()
-                            != space.writing_direction.is_horizontal()
-                        {
-                            Some(result.size.height)
-                        } else if style.display == Display::InlineBlock
-                            && uses_deterministic_text_profile(style)
-                        {
-                            // CSS 2.1 §10.8.1: an inline-block exports the
-                            // baseline of its last in-flow line box.
-                            result.last_baseline.or(result.first_baseline)
-                        } else {
-                            result.first_baseline
-                        }
-                    })
-                    .map(|baseline| baseline.to_f32());
+                let baseline_from_top =
+                    ruby_base_metrics.map(|(_, baseline)| baseline).or_else(|| {
+                        atomic_layout_results[step2_idx]
+                            .as_ref()
+                            .and_then(|result| {
+                                let child_direction =
+                                    style.direction.writing_direction(style.writing_mode);
+                                if style.legacy_webkit_box {
+                                    // The compatibility -webkit-box used by legacy
+                                    // line clamping does not expose a descendant
+                                    // line baseline when it is atomic inline-level.
+                                    // Use the synthesized margin-box baseline below.
+                                    None
+                                } else if child_direction.is_horizontal()
+                                    != space.writing_direction.is_horizontal()
+                                {
+                                    Some(result.size.height)
+                                } else if style.display == Display::InlineBlock
+                                    && uses_deterministic_text_profile(style)
+                                {
+                                    // CSS 2.1 §10.8.1: an inline-block exports the
+                                    // baseline of its last in-flow line box.
+                                    result.last_baseline.or(result.first_baseline)
+                                } else {
+                                    result.first_baseline
+                                }
+                            })
+                            .map(|baseline| baseline.to_f32())
+                    });
 
                 match style.vertical_align {
                     VerticalAlign::Top => {
@@ -2684,7 +3412,8 @@ fn create_line_box(
         let block_font_desc = style_to_font_description(block_style);
         let ellipsis_font = Font::new(block_font_desc);
         let shaper = TextShaper::new();
-        let sr = shaper.shape("\u{2026}", &ellipsis_font, openui_text::TextDirection::Ltr);
+        let marker = line_info.ellipsis_text.as_deref().unwrap_or("\u{2026}");
+        let sr = shaper.shape(marker, &ellipsis_font, openui_text::TextDirection::Ltr);
         LayoutUnit::from_f32(sr.width)
     } else {
         LayoutUnit::zero()
@@ -3024,6 +3753,11 @@ fn create_line_box(
                 text_fragment.text_content = Some(text_content.to_string());
                 text_fragment.text_run_orientation =
                     resolve_text_run_orientation(style, text_content);
+                // First-line/first-letter layout uses a styled clone of the
+                // inline item stream. Preserve that resolved style on the
+                // fragment; looking the DOM node up again during paint would
+                // lose pseudo colors, backgrounds, shadows, and decorations.
+                text_fragment.inherited_style = Some(style.clone());
                 text_fragment.offset = PhysicalOffset::new(inline_offset, text_top);
                 // Store the baseline offset (distance from fragment top to baseline)
                 // so paint can use it directly instead of recomputing from metrics.
@@ -3171,7 +3905,12 @@ fn create_line_box(
                         .and_then(|result| {
                             let child_direction =
                                 style.direction.writing_direction(style.writing_mode);
-                            if child_direction.is_horizontal()
+                            if style.legacy_webkit_box {
+                                // Match the legacy atomic -webkit-box baseline:
+                                // synthesize it from the margin-box bottom instead
+                                // of propagating an internal clamped line baseline.
+                                None
+                            } else if child_direction.is_horizontal()
                                 != space.writing_direction.is_horizontal()
                             {
                                 Some(result.size.height)
@@ -3389,11 +4128,11 @@ fn create_line_box(
 
     // === STEP 5: Paint ellipsis if text-overflow: ellipsis is active ===
     if line_info.has_ellipsis {
-        // Shape the ellipsis character "…" (U+2026) with the block's font.
+        // Shape the configured clamp marker (U+2026 for text-overflow/auto).
         let block_font_desc = style_to_font_description(block_style);
         let ellipsis_font = Font::new(block_font_desc);
         let shaper = TextShaper::new();
-        let ellipsis_text = "\u{2026}";
+        let ellipsis_text = line_info.ellipsis_text.as_deref().unwrap_or("\u{2026}");
         let ellipsis_sr = shaper.shape(
             ellipsis_text,
             &ellipsis_font,
@@ -3439,7 +4178,10 @@ fn create_line_box(
                 Arc::new(ellipsis_sr),
                 ellipsis_text.to_string(),
             );
-            ellipsis_fragment.offset = PhysicalOffset::new(inline_offset, ellipsis_top);
+            ellipsis_fragment.offset = PhysicalOffset::new(
+                inline_offset + line_info.ellipsis_inline_start_advance,
+                ellipsis_top,
+            );
             ellipsis_fragment.inherited_style = Some(block_style.clone());
             ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
             ellipsis_fragment.text_run_orientation =
@@ -3471,6 +4213,8 @@ fn create_line_box(
                 baseline,
                 line_height,
                 block_metrics,
+                block_style.line_clamp == openui_style::LineClamp::None
+                    && space.line_clamp_context.is_none(),
             )
         })
         .collect();
@@ -3670,24 +4414,176 @@ fn apply_text_overflow_ellipsis(
     items_data: &InlineItemsData,
     block_style: &ComputedStyle,
 ) {
-    if line_info.used_width <= available_width {
+    apply_ellipsis_marker(
+        line_info,
+        available_width,
+        items_data,
+        block_style,
+        "\u{2026}",
+        false,
+        false,
+    );
+}
+
+fn ellipsis_item_advance(
+    result: &InlineItemResult,
+    items_data: &InlineItemsData,
+    percentage_base: LayoutUnit,
+    block_style: &ComputedStyle,
+) -> LayoutUnit {
+    if result.item_type != InlineItemType::AtomicInline {
+        return result.inline_size;
+    }
+    let item = &items_data.items[result.item_index];
+    let style = &items_data.styles[item.style_index];
+    let margin = if block_style.writing_mode == openui_style::WritingMode::HorizontalTb {
+        resolve_margin_or_padding(&style.margin_left, percentage_base)
+            + resolve_margin_or_padding(&style.margin_right, percentage_base)
+    } else {
+        resolve_margin_or_padding(&style.margin_top, percentage_base)
+            + resolve_margin_or_padding(&style.margin_bottom, percentage_base)
+    };
+    result.inline_size + margin
+}
+
+fn ellipsis_atomic_margin_start(
+    result: &InlineItemResult,
+    items_data: &InlineItemsData,
+    percentage_base: LayoutUnit,
+    block_style: &ComputedStyle,
+) -> LayoutUnit {
+    if result.item_type != InlineItemType::AtomicInline {
+        return LayoutUnit::zero();
+    }
+    let item = &items_data.items[result.item_index];
+    let style = &items_data.styles[item.style_index];
+    if block_style.writing_mode == openui_style::WritingMode::HorizontalTb {
+        resolve_margin_or_padding(&style.margin_left, percentage_base)
+    } else {
+        resolve_margin_or_padding(&style.margin_top, percentage_base)
+    }
+}
+
+fn apply_ellipsis_marker(
+    line_info: &mut LineInfo,
+    available_width: LayoutUnit,
+    items_data: &InlineItemsData,
+    block_style: &ComputedStyle,
+    marker: &str,
+    force: bool,
+    prefer_soft_wrap: bool,
+) {
+    if !force && line_info.used_width <= available_width {
         return;
+    }
+
+    // Preserved trailing spaces may hang outside the line box, but a clamp
+    // marker replaces them at the logical line end. Remove their item
+    // geometry before fitting and alignment so inline backgrounds do not
+    // paint beyond the marker and right/justified lines position the marker
+    // from the non-hanging content width.
+    if force && line_info.hang_width > LayoutUnit::zero() {
+        let mut hanging = line_info.hang_width;
+        while hanging > LayoutUnit::zero() && !line_info.items.is_empty() {
+            let last = line_info.items.last().expect("non-empty: loop condition");
+            if last.item_type != InlineItemType::Text {
+                if last.inline_size <= LayoutUnit::zero() {
+                    line_info.items.pop();
+                    continue;
+                }
+                break;
+            }
+            let trim = hanging.min_of(last.inline_size);
+            if trim >= last.inline_size {
+                hanging = hanging - last.inline_size;
+                line_info.items.pop();
+                continue;
+            }
+            let item = &items_data.items[last.item_index];
+            let Some(shape) = item.shape_result.as_ref() else {
+                break;
+            };
+            let keep_width = last.inline_size - trim;
+            let text = &items_data.text[last.text_range.clone()];
+            let item_char_start = byte_to_char_offset(&items_data.text, item.text_range.start);
+            let portion_char_start =
+                byte_to_char_offset(&items_data.text, last.text_range.start) - item_char_start;
+            let mut kept_byte_end = 0usize;
+            let mut kept_width = LayoutUnit::zero();
+            for (byte_end, _) in text
+                .grapheme_indices(true)
+                .map(|(offset, grapheme)| (offset + grapheme.len(), grapheme))
+            {
+                let char_end = portion_char_start + text[..byte_end].chars().count();
+                let width =
+                    LayoutUnit::from_f32(shape.width_for_range(portion_char_start, char_end));
+                if width > keep_width {
+                    break;
+                }
+                kept_byte_end = byte_end;
+                kept_width = width;
+            }
+            let last = line_info
+                .items
+                .last_mut()
+                .expect("non-empty: guarded above");
+            last.text_range.end = last.text_range.start + kept_byte_end;
+            last.inline_size = kept_width;
+            hanging = LayoutUnit::zero();
+        }
+        line_info.hang_width = hanging;
     }
 
     let block_font_desc = style_to_font_description(block_style);
     let block_font = Font::new(block_font_desc);
     let shaper = TextShaper::new();
-    let ellipsis_sr = shaper.shape("\u{2026}", &block_font, openui_text::TextDirection::Ltr);
+    let ellipsis_sr = shaper.shape(marker, &block_font, openui_text::TextDirection::Ltr);
     let ellipsis_width = LayoutUnit::from_f32(ellipsis_sr.width);
 
     let target_width = available_width - ellipsis_width;
 
     let is_rtl = block_style.direction == Direction::Rtl;
+    // An emergency break inside one unbreakable token is not a normal
+    // block-ellipsis opportunity. If that token already fills the line,
+    // replace it as a unit instead of preserving a first-letter split or a
+    // DOM-boundary prefix before the marker.
+    let visible_text_end = line_info
+        .items
+        .iter()
+        .filter(|result| result.item_type == InlineItemType::Text)
+        .map(|result| result.text_range.end)
+        .max();
+    let continues_same_word = visible_text_end.is_some_and(|end| {
+        let previous = items_data.text[..end].chars().next_back();
+        let next = items_data.text[end..].chars().next();
+        previous.is_some_and(|character| !character.is_whitespace())
+            && next.is_some_and(|character| !character.is_whitespace())
+    });
+    if prefer_soft_wrap
+        && !line_info.has_forced_break
+        && (line_info.used_width >= available_width || continues_same_word)
+        && !line_info.items.iter().any(|result| {
+            result.item_type == InlineItemType::Text
+                && result.inline_size > LayoutUnit::zero()
+                && items_data.text[result.text_range.clone()]
+                    .chars()
+                    .any(char::is_whitespace)
+        })
+    {
+        line_info
+            .items
+            .retain(|result| result.item_type != InlineItemType::Text);
+        line_info.used_width = line_info
+            .items
+            .iter()
+            .fold(LayoutUnit::zero(), |width, item| width + item.inline_size);
+    }
 
     if target_width <= LayoutUnit::zero() {
         line_info.items.clear();
         line_info.used_width = LayoutUnit::zero();
         line_info.has_ellipsis = true;
+        line_info.ellipsis_text = Some(marker.to_string());
         line_info.has_forced_hyphen = false;
         if is_rtl {
             line_info.ellipsis_at_start = true;
@@ -3699,7 +4595,12 @@ fn apply_text_overflow_ellipsis(
         // RTL: truncate from the visual left (beginning of items after bidi reorder).
         // Remove items from the front until we have room for the ellipsis.
         while line_info.used_width > target_width && !line_info.items.is_empty() {
-            let first_size = line_info.items[0].inline_size;
+            let first_size = ellipsis_item_advance(
+                &line_info.items[0],
+                items_data,
+                available_width,
+                block_style,
+            );
             if first_size <= LayoutUnit::zero()
                 && line_info.items[0].item_type != InlineItemType::Text
             {
@@ -3772,9 +4673,14 @@ fn apply_text_overflow_ellipsis(
         }
     } else {
         // LTR: truncate from the visual right (end of items).
+        let mut soft_wrap_used = false;
+        let mut removed_text_item_indices = Vec::new();
+        let mut removed_text_boundary = None;
+        let mut removed_atomic_boundary_margin = None;
         while line_info.used_width > target_width && !line_info.items.is_empty() {
             if let Some(last) = line_info.items.last() {
-                let last_size = last.inline_size;
+                let last_size =
+                    ellipsis_item_advance(last, items_data, available_width, block_style);
                 if last_size <= LayoutUnit::zero() && last.item_type != InlineItemType::Text {
                     line_info.items.pop();
                     continue;
@@ -3791,6 +4697,81 @@ fn apply_text_overflow_ellipsis(
                         let portion_char_start =
                             byte_to_char_offset(&items_data.text, last.text_range.start);
                         let local_start = portion_char_start - item_char_start;
+
+                        // block-ellipsis rewinds to a normal soft-wrap
+                        // opportunity. Emergency overflow-wrap breaks are
+                        // deliberately excluded; text-overflow keeps the
+                        // grapheme-safe fallback below.
+                        let soft_fit = if prefer_soft_wrap {
+                            let style = &items_data.styles[item.style_index];
+                            let wrapping_allowed = !matches!(
+                                style.white_space,
+                                openui_style::WhiteSpace::Pre | openui_style::WhiteSpace::Nowrap
+                            );
+                            wrapping_allowed
+                                .then(|| {
+                                    find_break_opportunities(
+                                        line_text,
+                                        style.word_break,
+                                        style.overflow_wrap,
+                                        style.line_break,
+                                    )
+                                    .into_iter()
+                                    .rev()
+                                    .find_map(|byte_end| {
+                                        let visible_byte_end = if matches!(
+                                            style.white_space,
+                                            openui_style::WhiteSpace::Normal
+                                                | openui_style::WhiteSpace::Nowrap
+                                                | openui_style::WhiteSpace::PreLine
+                                        ) {
+                                            line_text[..byte_end]
+                                                .trim_end_matches([' ', '\t'])
+                                                .len()
+                                        } else {
+                                            byte_end
+                                        };
+                                        if visible_byte_end == 0 {
+                                            return None;
+                                        }
+                                        let char_count =
+                                            line_text[..visible_byte_end].chars().count();
+                                        let local_end = local_start + char_count;
+                                        if !sr.safe_to_break_before(local_end) {
+                                            return None;
+                                        }
+                                        let width = LayoutUnit::from_f32(
+                                            sr.width_for_range(local_start, local_end),
+                                        );
+                                        (width <= item_target).then_some((visible_byte_end, width))
+                                    })
+                                })
+                                .flatten()
+                        } else {
+                            None
+                        };
+
+                        if let Some((fit_byte_end, trimmed_width)) = soft_fit {
+                            let new_text_end = last.text_range.start + fit_byte_end;
+                            let old_size = last_size;
+                            let last_mut = line_info
+                                .items
+                                .last_mut()
+                                .expect("non-empty: guarded by while-loop condition above");
+                            last_mut.inline_size = trimmed_width;
+                            last_mut.text_range = last_mut.text_range.start..new_text_end;
+                            line_info.used_width = line_info.used_width - old_size + trimmed_width;
+                            soft_wrap_used = true;
+                            break;
+                        }
+
+                        if prefer_soft_wrap {
+                            line_info.used_width = line_info.used_width - last_size;
+                            removed_text_item_indices.push(last.item_index);
+                            removed_text_boundary = Some(last.text_range.start);
+                            line_info.items.pop();
+                            continue;
+                        }
 
                         // Walk grapheme boundaries from end to find the
                         // largest safe-to-break prefix that fits.
@@ -3841,15 +4822,469 @@ fn apply_text_overflow_ellipsis(
                     break;
                 }
 
+                if last.item_type == InlineItemType::AtomicInline {
+                    removed_atomic_boundary_margin = Some(ellipsis_atomic_margin_start(
+                        last,
+                        items_data,
+                        available_width,
+                        block_style,
+                    ));
+                }
                 line_info.used_width = line_info.used_width - last_size;
                 line_info.items.pop();
+            }
+        }
+        if line_info
+            .items
+            .iter()
+            .any(|item| item.item_type == InlineItemType::AtomicInline)
+        {
+            let boundary_margin = removed_atomic_boundary_margin.unwrap_or(LayoutUnit::zero());
+            line_info.used_width = line_info.used_width + boundary_margin;
+            line_info.ellipsis_inline_start_advance = boundary_margin;
+        }
+        if prefer_soft_wrap && !soft_wrap_used {
+            let mut boundary = removed_text_boundary;
+            while let Some(index) = line_info
+                .items
+                .iter()
+                .rposition(|item| item.item_type == InlineItemType::Text)
+            {
+                let retained_item = &line_info.items[index];
+                if !removed_text_item_indices.contains(&retained_item.item_index)
+                    && boundary == Some(retained_item.text_range.end)
+                {
+                    let text = &items_data.text[retained_item.text_range.clone()];
+                    let visible_len = text.trim_end_matches(char::is_whitespace).len();
+                    if visible_len < text.len() {
+                        let item = &items_data.items[retained_item.item_index];
+                        let new_end = retained_item.text_range.start + visible_len;
+                        let new_width =
+                            item.shape_result
+                                .as_ref()
+                                .map_or(LayoutUnit::zero(), |shape| {
+                                    let item_char_start = byte_to_char_offset(
+                                        &items_data.text,
+                                        item.text_range.start,
+                                    );
+                                    let local_start = byte_to_char_offset(
+                                        &items_data.text,
+                                        retained_item.text_range.start,
+                                    ) - item_char_start;
+                                    let local_end = byte_to_char_offset(&items_data.text, new_end)
+                                        - item_char_start;
+                                    LayoutUnit::from_f32(
+                                        shape.width_for_range(local_start, local_end),
+                                    )
+                                });
+                        let old_width = retained_item.inline_size;
+                        let retained_item = &mut line_info.items[index];
+                        retained_item.text_range.end = new_end;
+                        retained_item.inline_size = new_width;
+                        line_info.used_width = line_info.used_width - old_width + new_width;
+                        break;
+                    }
+                }
+                if !removed_text_item_indices.contains(&line_info.items[index].item_index)
+                    && boundary != Some(line_info.items[index].text_range.end)
+                {
+                    break;
+                }
+                let removed = line_info.items.remove(index);
+                boundary = Some(removed.text_range.start);
+                line_info.used_width = line_info.used_width - removed.inline_size;
             }
         }
     }
 
     line_info.has_ellipsis = true;
+    line_info.ellipsis_text = Some(marker.to_string());
     line_info.has_forced_hyphen = false;
     line_info.ellipsis_at_start = is_rtl;
+}
+
+pub(crate) fn line_clamp_budget(
+    style: &ComputedStyle,
+    available_block_size: LayoutUnit,
+) -> Option<usize> {
+    use openui_style::{LineClamp, WebkitBoxOrient};
+    if matches!(&style.block_ellipsis, openui_style::BlockEllipsis::String(value) if value.is_empty())
+    {
+        return None;
+    }
+    match style.line_clamp {
+        LineClamp::None => None,
+        LineClamp::Lines(lines) => {
+            let legacy_inactive = style.legacy_webkit_line_clamp
+                && (!style.legacy_webkit_box
+                    || style.webkit_box_orient != WebkitBoxOrient::Vertical);
+            (!legacy_inactive).then_some(lines as usize)
+        }
+        LineClamp::Auto => {
+            line_clamp_auto_block_size(style, available_block_size)?;
+            Some(usize::MAX)
+        }
+    }
+}
+
+pub(crate) fn line_clamp_auto_block_size(
+    style: &ComputedStyle,
+    available_block_size: LayoutUnit,
+) -> Option<LayoutUnit> {
+    let length = if !style.max_height.is_none() && !style.max_height.is_auto() {
+        &style.max_height
+    } else if !style.height.is_auto() {
+        &style.height
+    } else {
+        return None;
+    };
+    let mut block_size = crate::length_resolver::resolve_length(
+        length,
+        available_block_size,
+        available_block_size,
+        available_block_size,
+    );
+    if !style.min_height.is_auto() && !style.min_height.is_none() {
+        block_size = block_size.max_of(crate::length_resolver::resolve_length(
+            &style.min_height,
+            available_block_size,
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+        ));
+    }
+    Some(block_size)
+}
+
+fn effective_line_clamp(
+    style: &ComputedStyle,
+    space: &ConstraintSpace,
+) -> (
+    Option<usize>,
+    Option<LayoutUnit>,
+    openui_style::BlockEllipsis,
+) {
+    if let Some(context) = &space.line_clamp_context {
+        let (remaining, block_ellipsis) = context.snapshot();
+        (
+            Some(remaining),
+            context.remaining_block_size(),
+            block_ellipsis,
+        )
+    } else {
+        (
+            line_clamp_budget(style, space.available_block_size),
+            (style.line_clamp != openui_style::LineClamp::None)
+                .then(|| line_clamp_auto_block_size(style, space.available_block_size))
+                .flatten(),
+            style.block_ellipsis.clone(),
+        )
+    }
+}
+
+fn apply_line_clamp_marker(
+    line_info: &mut LineInfo,
+    available_width: LayoutUnit,
+    items_data: &InlineItemsData,
+    block_style: &ComputedStyle,
+    block_ellipsis: &openui_style::BlockEllipsis,
+) {
+    use openui_style::BlockEllipsis;
+    let marker = match block_ellipsis {
+        BlockEllipsis::NoEllipsis => return,
+        BlockEllipsis::Auto => "\u{2026}",
+        BlockEllipsis::String(value) => value.as_str(),
+    };
+    apply_ellipsis_marker(
+        line_info,
+        available_width,
+        items_data,
+        block_style,
+        marker,
+        true,
+        true,
+    );
+}
+
+/// Drop the final content item from an over-tall candidate line while keeping
+/// an earlier textual prefix. This lets a clamp replace a large nested inline
+/// (or atomic inline) with its marker when the prefix still fits physically.
+fn remove_last_content_item_for_tall_clamp(
+    line: &mut LineInfo,
+    items_data: &InlineItemsData,
+) -> bool {
+    let content_indices: Vec<usize> = line
+        .items
+        .iter()
+        .enumerate()
+        .filter_map(|(index, item)| {
+            matches!(
+                item.item_type,
+                InlineItemType::Text | InlineItemType::AtomicInline
+            )
+            .then_some(index)
+        })
+        .collect();
+    if content_indices.len() < 2 {
+        return false;
+    }
+    let remove_from = *content_indices.last().expect("at least two content items");
+    line.items.truncate(remove_from);
+    while line.items.last().is_some_and(|item| {
+        matches!(
+            item.item_type,
+            InlineItemType::OpenTag | InlineItemType::CloseTag | InlineItemType::Control
+        )
+    }) {
+        line.items.pop();
+    }
+    if let Some(last_text) = line
+        .items
+        .iter_mut()
+        .rev()
+        .find(|item| item.item_type == InlineItemType::Text)
+    {
+        let item = &items_data.items[last_text.item_index];
+        let style = &items_data.styles[item.style_index];
+        if matches!(
+            style.white_space,
+            openui_style::WhiteSpace::Normal
+                | openui_style::WhiteSpace::Nowrap
+                | openui_style::WhiteSpace::PreLine
+        ) {
+            let text = &items_data.text[last_text.text_range.clone()];
+            let visible_len = text.trim_end_matches([' ', '\t', '\n', '\r']).len();
+            if visible_len < text.len() {
+                let new_end = last_text.text_range.start + visible_len;
+                if let Some(shape) = item.shape_result.as_ref() {
+                    let item_char_start =
+                        byte_to_char_offset(&items_data.text, item.text_range.start);
+                    let local_start =
+                        byte_to_char_offset(&items_data.text, last_text.text_range.start)
+                            - item_char_start;
+                    let local_end =
+                        byte_to_char_offset(&items_data.text, new_end) - item_char_start;
+                    last_text.inline_size =
+                        LayoutUnit::from_f32(shape.width_for_range(local_start, local_end));
+                }
+                last_text.text_range.end = new_end;
+            }
+        }
+    }
+    line.used_width = line
+        .items
+        .iter()
+        .fold(LayoutUnit::zero(), |width, item| width + item.inline_size);
+    line.hang_width = LayoutUnit::zero();
+    line.has_forced_break = false;
+    line.is_last_line = false;
+    true
+}
+
+fn line_has_under_ruby(doc: &Document, line: &LineInfo, items_data: &InlineItemsData) -> bool {
+    line.items.iter().any(|result| {
+        if result.item_type != InlineItemType::AtomicInline {
+            return false;
+        }
+        let item = &items_data.items[result.item_index];
+        !item.node_id.is_none()
+            && doc.node(item.node_id).tag == ElementTag::Ruby
+            && doc.node(item.node_id).style.ruby_position.is_under()
+    })
+}
+
+fn fragment_relative_block_end(fragment: &Fragment) -> LayoutUnit {
+    fragment
+        .children
+        .iter()
+        .fold(fragment.size.height, |end, child| {
+            end.max_of(child.offset.top + fragment_relative_block_end(child))
+        })
+}
+
+fn last_line_fragment_path(fragments: &[Fragment], doc: &Document) -> Option<Vec<usize>> {
+    for (index, fragment) in fragments.iter().enumerate().rev() {
+        // A clamp marker belongs to the last retained in-flow line. Positioned
+        // descendants and floats may be appended after normal-flow children,
+        // but their internal lines do not become clamp-marker candidates for
+        // the containing formatting context.
+        if fragment.positioned_fragmentation.is_some()
+            || (!fragment.node_id.is_none()
+                && doc.node(fragment.node_id).style.float != openui_style::Float::None)
+        {
+            continue;
+        }
+        if let Some(mut path) = last_line_fragment_path(&fragment.children, doc) {
+            path.insert(0, index);
+            return Some(path);
+        }
+        if fragment.node_id.is_none()
+            && fragment.kind == FragmentKind::Box
+            && fragment.baseline_offset > 0.0
+        {
+            return Some(vec![index]);
+        }
+    }
+    None
+}
+
+fn fragment_at_path_mut<'a>(
+    fragments: &'a mut [Fragment],
+    path: &[usize],
+) -> Option<&'a mut Fragment> {
+    let (first, rest) = path.split_first()?;
+    let fragment = fragments.get_mut(*first)?;
+    if rest.is_empty() {
+        Some(fragment)
+    } else {
+        fragment_at_path_mut(&mut fragment.children, rest)
+    }
+}
+
+fn last_text_style(fragment: &Fragment) -> Option<ComputedStyle> {
+    fragment.children.iter().rev().find_map(|child| {
+        if child.kind == FragmentKind::Text {
+            child.inherited_style.clone()
+        } else {
+            last_text_style(child)
+        }
+    })
+}
+
+fn trim_last_text_fragment_for_marker(
+    fragment: &mut Fragment,
+    target_width: LayoutUnit,
+) -> LayoutUnit {
+    for child in fragment.children.iter_mut().rev() {
+        if child.kind == FragmentKind::Text {
+            let Some(text) = child.text_content.as_deref() else {
+                continue;
+            };
+            let Some(shape) = child.shape_result.as_ref() else {
+                continue;
+            };
+            let style = child.inherited_style.as_ref();
+            let wrapping_allowed = style.is_none_or(|style| {
+                !matches!(
+                    style.white_space,
+                    openui_style::WhiteSpace::Pre | openui_style::WhiteSpace::Nowrap
+                )
+            });
+            let mut selected = None;
+            if wrapping_allowed {
+                for (byte, character) in text.char_indices().rev() {
+                    if !character.is_whitespace() {
+                        continue;
+                    }
+                    let visible = text[..byte].trim_end_matches(char::is_whitespace);
+                    if visible.is_empty() {
+                        continue;
+                    }
+                    let chars = visible.chars().count();
+                    let width = LayoutUnit::from_f32(shape.width_for_range(0, chars));
+                    if width <= target_width {
+                        selected = Some((visible.len(), chars, width));
+                        break;
+                    }
+                }
+            }
+            let Some((byte_end, char_end, width)) = selected else {
+                continue;
+            };
+            let old_width = child.size.width;
+            child.text_content = Some(text[..byte_end].to_string());
+            child.shape_result = Some(Arc::new(shape.sub_range(0, char_end)));
+            child.size.width = width;
+            return (old_width - width).clamp_negative_to_zero();
+        }
+        let child_target = (target_width - child.offset.left).clamp_negative_to_zero();
+        let trimmed = trim_last_text_fragment_for_marker(child, child_target);
+        if trimmed > LayoutUnit::zero() {
+            child.size.width = (child.size.width - trimmed).clamp_negative_to_zero();
+            return trimmed;
+        }
+    }
+    LayoutUnit::zero()
+}
+
+/// Attach a marker to the last already-formatted line when the next atomic
+/// formatting-context child cannot fit inside an ancestor clamp.
+pub(crate) fn append_clamp_marker_to_last_line(
+    doc: &Document,
+    fragments: &mut [Fragment],
+    fallback_style: &ComputedStyle,
+    block_ellipsis: &openui_style::BlockEllipsis,
+) {
+    use openui_style::BlockEllipsis;
+    let marker = match block_ellipsis {
+        BlockEllipsis::NoEllipsis => return,
+        BlockEllipsis::Auto => "\u{2026}",
+        BlockEllipsis::String(value) if value.is_empty() => return,
+        BlockEllipsis::String(value) => value,
+    };
+    let Some(path) = last_line_fragment_path(fragments, doc) else {
+        return;
+    };
+    let Some(line) = fragment_at_path_mut(fragments, &path) else {
+        return;
+    };
+    if let Some(marker_index) = line.children.iter().position(|child| {
+        child.node_id == NodeId::NONE && child.text_content.as_deref() == Some(marker)
+    }) {
+        let unbreakable_text_overflow = fallback_style.text_overflow
+            == openui_style::TextOverflow::Ellipsis
+            && line.children.iter().enumerate().all(|(index, child)| {
+                index == marker_index
+                    || child.kind != FragmentKind::Text
+                    || child
+                        .text_content
+                        .as_deref()
+                        .is_none_or(|text| !text.chars().any(char::is_whitespace))
+            });
+        if unbreakable_text_overflow {
+            let mut marker_fragment = line.children.remove(marker_index);
+            line.children
+                .retain(|child| child.kind != FragmentKind::Text);
+            marker_fragment.offset.left = LayoutUnit::zero();
+            line.children.push(marker_fragment);
+        }
+        return;
+    }
+    let marker_style = last_text_style(line).unwrap_or_else(|| fallback_style.clone());
+    let font = Font::new(style_to_font_description(&marker_style));
+    let shaper = TextShaper::new();
+    let shape = shaper.shape(marker, &font, openui_text::TextDirection::Ltr);
+    let width = LayoutUnit::from_f32(shape.width);
+    let metrics = font.font_metrics().copied().unwrap_or_default();
+    let height = LayoutUnit::from_f32_ceil(metrics.ascent + metrics.descent);
+    let baseline = LayoutUnit::from_f32(line.baseline_offset);
+    let top = baseline - LayoutUnit::from_f32_ceil(metrics.ascent);
+    let inline_end = line
+        .children
+        .iter()
+        .map(|child| child.offset.left + child.size.width)
+        .max()
+        .unwrap_or(LayoutUnit::zero());
+    if inline_end + width > line.size.width {
+        let target = (line.size.width - width).clamp_negative_to_zero();
+        trim_last_text_fragment_for_marker(line, target);
+    }
+    let inline_end = line
+        .children
+        .iter()
+        .map(|child| child.offset.left + child.size.width)
+        .max()
+        .unwrap_or(LayoutUnit::zero());
+    let mut marker_fragment = Fragment::new_text(
+        NodeId::NONE,
+        PhysicalSize::new(width, height),
+        Arc::new(shape),
+        marker.to_string(),
+    );
+    marker_fragment.offset = PhysicalOffset::new(inline_end, top);
+    marker_fragment.inherited_style = Some(marker_style.clone());
+    marker_fragment.baseline_offset = (baseline - top).to_f32();
+    marker_fragment.text_run_orientation = resolve_text_run_orientation(&marker_style, marker);
+    line.children.push(marker_fragment);
 }
 
 /// Check if a block node has any inline children (text or inline-level elements).
@@ -3866,6 +5301,9 @@ pub fn has_inline_children(doc: &Document, node_id: NodeId) -> bool {
             child.tag,
             openui_dom::ElementTag::Text | openui_dom::ElementTag::Break
         ) {
+            return true;
+        }
+        if child.style.display == Display::Contents && has_inline_children(doc, child_id) {
             return true;
         }
         if child.style.display.is_inline_level() {

@@ -909,8 +909,8 @@ out-of-flow-in-multicolumn-089,not_portable,,unsupported property: filter
 out-of-flow-in-multicolumn-090,not_portable,,unsupported property: filter
 out-of-flow-in-multicolumn-091,not_portable,,style_block_unsupported property: transform
 out-of-flow-in-multicolumn-092,not_portable,,style_block_unsupported property: transform
-out-of-flow-in-multicolumn-093,not_portable,,complex_css_selector: ul li::before
-out-of-flow-in-multicolumn-093-ref,not_portable,,complex_css_selector: ul li::before
+out-of-flow-in-multicolumn-093,ported,css_break_out_of_flow_in_multicolumn_093,
+out-of-flow-in-multicolumn-093-ref,ported,css_break_out_of_flow_in_multicolumn_093_ref,
 out-of-flow-in-multicolumn-094,not_portable,,unsupported property: contain
 out-of-flow-in-multicolumn-095,not_portable,,unsupported property: contain
 out-of-flow-in-multicolumn-096,not_portable,,unsupported property: contain
@@ -974,7 +974,7 @@ overflow-clip-014,ported,css_break_overflow_clip_014,
 overflow-clip-015,ported,css_break_overflow_clip_015,
 overflow-clip-016,ported,css_break_overflow_clip_016,
 overflow-clip-017,ported,css_break_overflow_clip_017,
-overflowed-abs-pos-with-percentage-height-print,not_portable,,complex_css_selector: div.cell:before
+overflowed-abs-pos-with-percentage-height-print,ported,css_break_overflowed_abs_pos_with_percentage_height_print,
 overflowed-abs-pos-with-percentage-height-print-ref,ported,css_break_overflowed_abs_pos_with_percentage_height_print_ref,
 overflowed-block-with-no-room-after-000,ported,css_break_overflowed_block_with_no_room_after_000,
 overflowed-block-with-no-room-after-001,ported,css_break_overflowed_block_with_no_room_after_001,

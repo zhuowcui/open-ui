@@ -12,10 +12,11 @@ mod font_types;
 pub use color::{Color, StyleColor};
 pub use computed::{
     AspectRatio, BackgroundLayer, BackgroundPosition, BackgroundRepeat, BackgroundSize,
-    BorderImage, BorderImageLength, BorderImageRepeat, BoxShadow, ComputedStyle, ConicGradient,
-    CssImage, CssLinearGradient, GradientColorSpace, GradientStop, GradientStopPosition,
-    ImageResourceId, LinearGradient, LinearGradientStop, RadialGradient, RadialGradientShape,
-    RadialGradientSize,
+    BlockEllipsis, BorderImage, BorderImageLength, BorderImageRepeat, BoxShadow, ComputedStyle,
+    ConicGradient, CounterOperation, CounterStyle, CssImage, CssLinearGradient,
+    GeneratedContentItem, GradientColorSpace, GradientStop, GradientStopPosition, ImageResourceId,
+    LineClamp, LinearGradient, LinearGradientStop, QuotePair, RadialGradient, RadialGradientShape,
+    RadialGradientSize, WebkitBoxOrient,
 };
 pub use enums::*;
 pub use font_types::*;

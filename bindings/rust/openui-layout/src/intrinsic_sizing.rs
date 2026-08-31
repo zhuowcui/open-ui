@@ -979,6 +979,19 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
 ///   - min/max-content block: max of item cross sizes
 ///
 /// For column flex (is_column = true): swap axes.
+fn append_intrinsic_flex_children(doc: &Document, parent: NodeId, output: &mut Vec<NodeId>) {
+    for child_id in doc.children(parent) {
+        let child = doc.node(child_id);
+        if child.style.display == openui_style::Display::Contents
+            && !child.style.position.is_absolutely_positioned()
+        {
+            append_intrinsic_flex_children(doc, child_id, output);
+        } else {
+            output.push(child_id);
+        }
+    }
+}
+
 fn compute_flex_intrinsic_sizes(
     doc: &Document,
     node_id: NodeId,
@@ -1094,14 +1107,43 @@ fn compute_flex_intrinsic_sizes(
         }
     };
 
-    let mut ordered_children: Vec<(usize, NodeId, i32)> = doc
-        .children(node_id)
+    let mut flattened_children = Vec::new();
+    append_intrinsic_flex_children(doc, node_id, &mut flattened_children);
+    let mut ordered_children: Vec<(usize, NodeId, i32)> = flattened_children
+        .into_iter()
         .enumerate()
         .map(|(index, child_id)| (index, child_id, doc.node(child_id).style.order))
         .collect();
     ordered_children.sort_by_key(|&(index, _, order)| (order, index));
 
+    // Contiguous text exposed through `display:contents` forms one anonymous
+    // flex item. Keep that same grouping during shrink-to-fit sizing as final
+    // flex layout, otherwise an inline column container is measured from only
+    // one generated character and wraps the run vertically.
+    let mut grouped_children: Vec<Vec<NodeId>> = Vec::new();
     for (_, child_id, _) in ordered_children {
+        let is_text = matches!(
+            doc.node(child_id).tag,
+            openui_dom::ElementTag::Text | openui_dom::ElementTag::Break
+        );
+        if is_text
+            && grouped_children.last().is_some_and(|group| {
+                group.iter().all(|id| {
+                    matches!(
+                        doc.node(*id).tag,
+                        openui_dom::ElementTag::Text | openui_dom::ElementTag::Break
+                    )
+                })
+            })
+        {
+            grouped_children.last_mut().unwrap().push(child_id);
+        } else {
+            grouped_children.push(vec![child_id]);
+        }
+    }
+
+    for child_group in grouped_children {
+        let child_id = child_group[0];
         let child_style = &doc.node(child_id).style;
 
         if child_style.display == openui_style::Display::None
@@ -1120,6 +1162,19 @@ fn compute_flex_intrinsic_sizes(
         // strip the legacy physical edge additions, restore each child's
         // logical decorations, then project them to the container axes.
         let mut child_sizes = compute_child_intrinsic_contribution(doc, child_id);
+        for additional_id in child_group.iter().skip(1) {
+            let additional = compute_child_intrinsic_contribution(doc, *additional_id);
+            child_sizes.min_content_inline_size =
+                child_sizes.min_content_inline_size + additional.min_content_inline_size;
+            child_sizes.max_content_inline_size =
+                child_sizes.max_content_inline_size + additional.max_content_inline_size;
+            child_sizes.min_content_block_size = child_sizes
+                .min_content_block_size
+                .max_of(additional.min_content_block_size);
+            child_sizes.max_content_block_size = child_sizes
+                .max_content_block_size
+                .max_of(additional.max_content_block_size);
+        }
         if !writing_direction.is_horizontal() {
             let old_inline_edges =
                 child_border.inline_sum() + child_padding.inline_sum() + child_margin.inline_sum();

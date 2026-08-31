@@ -579,12 +579,12 @@ class LedgerTests(unittest.TestCase):
         text_manifest = json.loads(
             (closure.PORTED_DIR / "text_ported_tests.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(len(text_manifest), 1025)
+        self.assertEqual(len(text_manifest), 1275)
         self.assertTrue(set(targets) <= set(text_manifest))
 
     def test_frozen_ledgers_and_sp13r_later_promotion_allowlist_are_deterministic(self):
         closure.validate_historical_ledgers()
-        self.assertEqual(len(sp13r_closure.LATER_EXACT_PROMOTIONS), 73)
+        self.assertEqual(len(sp13r_closure.LATER_EXACT_PROMOTIONS), 80)
         targets = set(closure.load_w2b_w4_manifests()[0])
         residuals = {
             item["test_id"] for item in sp13r_closure.load_ledgers()[2]

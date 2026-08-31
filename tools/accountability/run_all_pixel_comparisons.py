@@ -38,6 +38,13 @@ REAL_FONT_LIST = os.path.join(
 FREETYPE_TEXT_LIST = os.path.join(
     SCRIPT_DIR, "data", "wpt_ported", "sp17_freetype_text_tests.json"
 )
+SP18_TARGET_LIST = os.path.join(
+    PROJECT_ROOT, "tools", "wpt", "sp18_targets.json"
+)
+SP18_BLINK_FEATURES = (
+    "CSSLineClamp,CSSLineClampLineBreakingEllipsis,"
+    "CSSLineClampLinesAndHeight,CSSListCounterAccounting"
+)
 
 # Chrome binary detection
 CHROME_DIRS = [
@@ -416,7 +423,7 @@ def chrome_environment(chrome_dir, use_ahem_noaa=False, use_real_font=False):
 
 def render_chrome(
     html_file, output_png, chrome_bin, chrome_dir, use_ahem_noaa=False,
-    use_real_font=False, use_freetype_backend=False,
+    use_real_font=False, use_freetype_backend=False, use_sp18_features=False,
 ):
     """Render HTML with Chrome headless.
 
@@ -434,6 +441,11 @@ def render_chrome(
         "--force-device-scale-factor=1", "--window-size=800,687",
         f"--screenshot={raw_png}", f"file://{html_file}"
     ]
+    if use_sp18_features:
+        # Modern line-clamp is runtime-guarded in pinned Chromium 147. Scope
+        # the WPT feature surface to the frozen SP18 cohort just like the
+        # existing manifest-scoped font and raster profiles.
+        cmd.insert(5, f"--enable-blink-features={SP18_BLINK_FEATURES}")
     if use_real_font or use_freetype_backend:
         # Chromium 147 otherwise constructs Linux faces through Fontations
         # while openui-text's Skia FontMgr uses FreeType. Keep the renderer
@@ -648,6 +660,21 @@ def main():
                 file=sys.stderr,
             )
             sys.exit(1)
+    sp18_feature_tests = set()
+    if os.path.isfile(SP18_TARGET_LIST):
+        with open(SP18_TARGET_LIST) as f:
+            sp18_feature_data = json.load(f)
+        if (
+            not isinstance(sp18_feature_data, list)
+            or any(not isinstance(t, str) or not t for t in sp18_feature_data)
+            or sp18_feature_data != sorted(set(sp18_feature_data))
+        ):
+            print(
+                f"ERROR: invalid SP18 target manifest: {SP18_TARGET_LIST}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        sp18_feature_tests = set(sp18_feature_data)
     # Get all test IDs
     result = subprocess.run([PIXEL_COMPARE, "list"], capture_output=True, text=True)
     all_tests = result.stdout.strip().split("\n")
@@ -750,6 +777,7 @@ def main():
             ),
             use_real_font=test_id in real_font_tests,
             use_freetype_backend=test_id in freetype_text_tests,
+            use_sp18_features=test_id in sp18_feature_tests,
         ):
             print(f"  ERROR  {test_id} — chrome render failed")
             errors += 1

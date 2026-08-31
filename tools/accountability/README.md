@@ -45,21 +45,24 @@ Current verified snapshot:
 | Metric | Value |
 |---|---:|
 | Chromium SP12-scope inventory rows | 7673 |
-| Ported/runnable WPT tests | 3566 |
-| Runnable passes | 3267 |
-| Runnable failures | 299 |
+| Ported/runnable WPT tests | 4139 |
+| Runnable passes | 4058 |
+| Runnable failures | 81 |
 | Runnable render/diff errors | 0 |
-| Unported but explicitly categorized rows | 4107 |
+| Unported but explicitly categorized rows | 3534 |
 | Generic `not_ported` bucket rows | 0 |
 | `sp12_layout_bug` rows | 0 |
 | `needs_text` rows | 0 |
 | `needs_font_metrics` rows | 0 |
-| Runnable `sp13_multicol` rows | 0 |
-| Unported `sp13_multicol` residuals | 1018 |
+| Frozen SP18 generated-text syntax rows | 552 |
+| Verified SP18 runnable targets | 251 |
+| Verified SP18 residual misses | 3 |
+| Owned SP18 residual rows | 292 |
 
-This is the verified SP13-R snapshot: all 2823 frozen exact baseline IDs and all
-351 runnable multicol targets pass at 0.0% mismatch. The 1018 unported multicol
-rows remain reason-owned in the residual ledger.
+This is the verified SP18 snapshot: all 3807 frozen exact baseline IDs and 251
+generated-text targets pass at 0.0% mismatch. Three measured misses were
+returned to explicit image, ruby, and first-line owners. The complete 4139-test
+run preserves the frozen 81 runnable failures and has zero render/diff errors.
 
 ## Data Files
 

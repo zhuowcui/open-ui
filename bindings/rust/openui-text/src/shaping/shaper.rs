@@ -1916,6 +1916,7 @@ mod tests {
         let shaper = TextShaper::new();
         for (text, expected_family) in [
             ("A", "Ahem"),
+            ("\u{2026}", "Ahem"),
             ("\u{4e01}", "Droid Sans Fallback"),
             ("\u{915}\u{93f}", "Noto Sans Devanagari"),
             ("\u{1f600}", "Noto Color Emoji"),

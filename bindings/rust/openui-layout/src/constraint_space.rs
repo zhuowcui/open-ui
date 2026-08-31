@@ -8,9 +8,167 @@
 //! fragmentation fields, and SP17 with an authoritative writing direction.
 
 use openui_geometry::{BfcOffset, LayoutUnit, WritingDirectionMode};
-use std::sync::Arc;
+use openui_style::{BlockEllipsis, ComputedStyle};
+use std::sync::{Arc, Mutex};
 
 use crate::exclusions::ExclusionSpace;
+
+/// Shared remaining-line budget for one line-clamp formatting context.
+///
+/// Same-BFC descendant blocks receive the same state, while a child that
+/// establishes an independent formatting context deliberately drops it.
+#[derive(Debug, Clone)]
+pub struct LineClampContext {
+    state: Arc<Mutex<LineClampState>>,
+}
+
+/// Shared originating `::first-line` style while block descendants search
+/// for the first formatted line box.
+#[derive(Debug, Clone)]
+pub struct FirstLineContext {
+    style: Arc<ComputedStyle>,
+    consumed: Arc<Mutex<bool>>,
+}
+
+impl FirstLineContext {
+    pub fn new(style: ComputedStyle) -> Self {
+        Self {
+            style: Arc::new(style),
+            consumed: Arc::new(Mutex::new(false)),
+        }
+    }
+
+    pub fn snapshot(&self) -> Option<ComputedStyle> {
+        (!*self.consumed.lock().expect("first-line state poisoned")).then(|| (*self.style).clone())
+    }
+
+    pub fn consume(&self) {
+        *self.consumed.lock().expect("first-line state poisoned") = true;
+    }
+}
+
+#[derive(Debug)]
+struct LineClampState {
+    remaining: usize,
+    remaining_block_size: Option<LayoutUnit>,
+    block_ellipsis: BlockEllipsis,
+    marker_required_when_exhausted: bool,
+}
+
+impl LineClampContext {
+    pub fn new(remaining: usize, block_ellipsis: BlockEllipsis) -> Self {
+        Self {
+            state: Arc::new(Mutex::new(LineClampState {
+                remaining,
+                remaining_block_size: None,
+                block_ellipsis,
+                marker_required_when_exhausted: false,
+            })),
+        }
+    }
+
+    pub fn new_auto(
+        remaining: usize,
+        remaining_block_size: LayoutUnit,
+        block_ellipsis: BlockEllipsis,
+    ) -> Self {
+        Self {
+            state: Arc::new(Mutex::new(LineClampState {
+                remaining,
+                remaining_block_size: Some(remaining_block_size),
+                block_ellipsis,
+                marker_required_when_exhausted: false,
+            })),
+        }
+    }
+
+    pub fn snapshot(&self) -> (usize, BlockEllipsis) {
+        let state = self.state.lock().expect("line-clamp state poisoned");
+        (state.remaining, state.block_ellipsis.clone())
+    }
+
+    pub fn consume(&self, lines: usize) {
+        let mut state = self.state.lock().expect("line-clamp state poisoned");
+        state.remaining = state.remaining.saturating_sub(lines);
+    }
+
+    pub fn consume_layout(&self, lines: usize, block_size: LayoutUnit) {
+        let mut state = self.state.lock().expect("line-clamp state poisoned");
+        state.remaining = state.remaining.saturating_sub(lines);
+        if let Some(remaining) = &mut state.remaining_block_size {
+            *remaining = (*remaining - block_size).clamp_negative_to_zero();
+        }
+        // Integer clamps count descendant lines across block boundaries, so a
+        // later sibling requires a marker on the line that exactly consumed
+        // the budget. Physical `auto` clamps instead let the child IFC decide
+        // whether its own continuation was discarded.
+        state.marker_required_when_exhausted = state
+            .remaining_block_size
+            .is_none_or(|remaining| remaining <= LayoutUnit::zero());
+    }
+
+    /// Consume a monolithic formatting-context child. If that child exactly
+    /// fills the clamp there is no ellipsis on its last internal line; an
+    /// ellipsis is only attached when a later same-BFC line is discarded.
+    pub fn consume_atomic_layout(&self, lines: usize, block_size: LayoutUnit) {
+        let mut state = self.state.lock().expect("line-clamp state poisoned");
+        state.remaining = state.remaining.saturating_sub(lines);
+        if let Some(remaining) = &mut state.remaining_block_size {
+            *remaining = (*remaining - block_size).clamp_negative_to_zero();
+        }
+        state.marker_required_when_exhausted = false;
+    }
+
+    pub fn remaining_block_size(&self) -> Option<LayoutUnit> {
+        self.state
+            .lock()
+            .expect("line-clamp state poisoned")
+            .remaining_block_size
+    }
+
+    pub fn consume_block_size(&self, block_size: LayoutUnit) {
+        let mut state = self.state.lock().expect("line-clamp state poisoned");
+        if let Some(remaining) = &mut state.remaining_block_size {
+            *remaining = (*remaining - block_size).clamp_negative_to_zero();
+        }
+        if block_size > LayoutUnit::zero() {
+            state.marker_required_when_exhausted = true;
+        }
+    }
+
+    pub fn exhaust(&self) {
+        let mut state = self.state.lock().expect("line-clamp state poisoned");
+        state.remaining = 0;
+        if let Some(remaining) = &mut state.remaining_block_size {
+            *remaining = LayoutUnit::zero();
+        }
+        state.marker_required_when_exhausted = false;
+    }
+
+    pub fn marker_required_when_exhausted(&self) -> bool {
+        self.state
+            .lock()
+            .expect("line-clamp state poisoned")
+            .marker_required_when_exhausted
+    }
+
+    /// Prevent a later sibling from retroactively adding a marker when an
+    /// intervening zero-size/collapse-through box is the clamp boundary.
+    pub fn suppress_marker(&self) {
+        self.state
+            .lock()
+            .expect("line-clamp state poisoned")
+            .marker_required_when_exhausted = false;
+    }
+
+    pub fn is_exhausted(&self) -> bool {
+        let state = self.state.lock().expect("line-clamp state poisoned");
+        state.remaining == 0
+            || state
+                .remaining_block_size
+                .is_some_and(|remaining| remaining <= LayoutUnit::zero())
+    }
+}
 
 /// Layout input constraints passed from parent to child.
 ///
@@ -93,6 +251,12 @@ pub struct ConstraintSpace {
 
     /// Whether the parent needs a last baseline from this child.
     pub needs_last_baseline: bool,
+
+    /// Active same-BFC line-clamp state inherited from an ancestor block.
+    pub line_clamp_context: Option<LineClampContext>,
+
+    /// Originating first-line style inherited through block descendants.
+    pub first_line_context: Option<FirstLineContext>,
 }
 
 impl ConstraintSpace {
@@ -136,6 +300,8 @@ impl ConstraintSpace {
             is_resuming: false,
             needs_first_baseline: false,
             needs_last_baseline: false,
+            line_clamp_context: None,
+            first_line_context: None,
         }
     }
 
@@ -187,6 +353,8 @@ impl ConstraintSpace {
             is_resuming: false,
             needs_first_baseline: false,
             needs_last_baseline: false,
+            line_clamp_context: None,
+            first_line_context: None,
         }
     }
 
@@ -215,14 +383,19 @@ impl ConstraintSpace {
             parent.writing_direction,
             child_writing_direction,
         );
-        Self::for_block_child_with_writing_direction(
+        let mut child = Self::for_block_child_with_writing_direction(
             available_inline_size,
             available_block_size,
             percentage_inline,
             percentage_block,
             is_new_fc,
             child_writing_direction,
-        )
+        );
+        if !is_new_fc {
+            child.line_clamp_context = parent.line_clamp_context.clone();
+        }
+        child.first_line_context = parent.first_line_context.clone();
+        child
     }
 
     /// Create a constraint space for a flex child with externally determined sizes.
@@ -270,6 +443,8 @@ impl ConstraintSpace {
             is_resuming: false,
             needs_first_baseline: false,
             needs_last_baseline: false,
+            line_clamp_context: None,
+            first_line_context: None,
         }
     }
 

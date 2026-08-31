@@ -39,6 +39,79 @@ pub struct BoxShadow {
     pub inset: bool,
 }
 
+/// One item in the computed value of CSS `content`.
+///
+/// Replaced generated content (`url()`, gradients, and other CSS images) is
+/// deliberately not represented here; it remains owned by the image path.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum GeneratedContentItem {
+    String(String),
+    Attribute(String),
+    Counter {
+        name: String,
+        style: CounterStyle,
+    },
+    Counters {
+        name: String,
+        separator: String,
+        style: CounterStyle,
+    },
+    OpenQuote,
+    CloseQuote,
+    NoOpenQuote,
+    NoCloseQuote,
+}
+
+/// CSS2 counter styles used by generated-content tests.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CounterStyle {
+    Decimal,
+    DecimalLeadingZero,
+    LowerAlpha,
+    UpperAlpha,
+    LowerRoman,
+    UpperRoman,
+}
+
+/// One named operation in `counter-reset`, `counter-set`, or
+/// `counter-increment`.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CounterOperation {
+    pub name: String,
+    pub value: i32,
+}
+
+/// One nesting-level pair in the inherited CSS `quotes` property.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct QuotePair {
+    pub open: String,
+    pub close: String,
+}
+
+/// Computed modern/compatibility line clamp limit.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LineClamp {
+    None,
+    Auto,
+    Lines(u32),
+}
+
+/// The marker appended at a line-clamp point.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum BlockEllipsis {
+    Auto,
+    NoEllipsis,
+    String(String),
+}
+
+/// Legacy WebKit box orientation. It is consumed only to activate the
+/// `-webkit-line-clamp` compatibility layout, not as old-flexbox support.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WebkitBoxOrient {
+    Horizontal,
+    Vertical,
+}
+
 /// A resolved color stop in a CSS linear gradient.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum GradientStopPosition {
@@ -640,6 +713,25 @@ pub struct ComputedStyle {
     /// CSS `text-overflow`. Initial: `clip`.
     pub text_overflow: TextOverflow,
 
+    // ── Generated content and counters ──────────────────────────────
+    /// Computed CSS `content`; `None` represents `normal`/`none`.
+    pub content: Option<Vec<GeneratedContentItem>>,
+    pub counter_reset: Vec<CounterOperation>,
+    pub counter_set: Vec<CounterOperation>,
+    pub counter_increment: Vec<CounterOperation>,
+    /// Inherited quote pairs. Empty means the locale-independent CSS default.
+    pub quotes: Vec<QuotePair>,
+
+    // ── Line clamping ───────────────────────────────────────────────
+    pub line_clamp: LineClamp,
+    pub block_ellipsis: BlockEllipsis,
+    pub webkit_box_orient: WebkitBoxOrient,
+    /// Whether the authored display was `-webkit-box`/`-webkit-inline-box`.
+    pub legacy_webkit_box: bool,
+    /// Whether `line_clamp` came from the legacy `-webkit-line-clamp`
+    /// property. It only activates on a vertical legacy WebKit box.
+    pub legacy_webkit_line_clamp: bool,
+
     // ── Vertical Alignment ───────────────────────────────────────────
     /// CSS `vertical-align`. Initial: `baseline`.
     pub vertical_align: VerticalAlign,
@@ -785,6 +877,13 @@ pub struct ComputedStyle {
     /// style for text-related properties (font, color, text-decoration, etc.).
     /// Blink: `HighlightPseudoStyle(kPseudoIdFirstLine)` in style_adjuster.cc.
     pub first_line_style: Option<Box<ComputedStyle>>,
+
+    /// Alternate style for the `::first-letter` pseudo-element.
+    pub first_letter_style: Option<Box<ComputedStyle>>,
+
+    /// Internal computed-style marker carried by the extracted first-letter
+    /// text fragment so paint can draw its pseudo box decorations.
+    pub is_first_letter_pseudo: bool,
 
     // ── Text Wrap (CSS Text Level 4) ─────────────────────────────────
     /// CSS `text-wrap`. Initial: `wrap`. Inherited.
@@ -951,6 +1050,16 @@ impl ComputedStyle {
             // Text transform
             text_transform: TextTransform::INITIAL, // none
             text_overflow: TextOverflow::INITIAL,   // clip
+            content: None,
+            counter_reset: Vec::new(),
+            counter_set: Vec::new(),
+            counter_increment: Vec::new(),
+            quotes: Vec::new(),
+            line_clamp: LineClamp::None,
+            block_ellipsis: BlockEllipsis::Auto,
+            webkit_box_orient: WebkitBoxOrient::Horizontal,
+            legacy_webkit_box: false,
+            legacy_webkit_line_clamp: false,
 
             // Vertical alignment
             vertical_align: VerticalAlign::Baseline,
@@ -1013,7 +1122,9 @@ impl ComputedStyle {
             aspect_ratio: None, // auto (no specified ratio)
 
             // First-line pseudo
-            first_line_style: None, // no ::first-line
+            first_line_style: None,   // no ::first-line
+            first_letter_style: None, // no ::first-letter
+            is_first_letter_pseudo: false,
 
             // Text wrap
             text_wrap: TextWrap::INITIAL, // wrap
@@ -1021,6 +1132,68 @@ impl ComputedStyle {
             // Initial letter
             initial_letter: None, // normal (no drop-cap)
         }
+    }
+
+    /// Initial pseudo-element style with the inherited properties copied from
+    /// its originating element. Generated builders have no runtime cascade,
+    /// so they use this boundary before applying pseudo declarations.
+    pub fn for_pseudo(origin: &Self) -> Self {
+        let mut style = Self::initial();
+        style.color = origin.color;
+        style.visibility = origin.visibility;
+        style.direction = origin.direction;
+        style.font_family = origin.font_family.clone();
+        style.font_size = origin.font_size;
+        style.font_weight = origin.font_weight;
+        style.font_style = origin.font_style;
+        style.font_stretch = origin.font_stretch;
+        style.font_variant_caps = origin.font_variant_caps;
+        style.font_variant_ligatures = origin.font_variant_ligatures;
+        style.font_variant_numeric = origin.font_variant_numeric;
+        style.font_variant_east_asian = origin.font_variant_east_asian;
+        style.font_variant_position = origin.font_variant_position;
+        style.font_variant_alternates = origin.font_variant_alternates;
+        style.font_optical_sizing = origin.font_optical_sizing;
+        style.font_synthesis_weight = origin.font_synthesis_weight;
+        style.font_synthesis_style = origin.font_synthesis_style;
+        style.font_feature_settings = origin.font_feature_settings.clone();
+        style.font_variation_settings = origin.font_variation_settings.clone();
+        style.line_height = origin.line_height;
+        style.letter_spacing = origin.letter_spacing;
+        style.word_spacing = origin.word_spacing;
+        style.text_align = origin.text_align;
+        style.white_space = origin.white_space;
+        style.text_align_last = origin.text_align_last;
+        style.text_justify = origin.text_justify;
+        style.word_break = origin.word_break;
+        style.overflow_wrap = origin.overflow_wrap;
+        style.line_break = origin.line_break;
+        style.hyphens = origin.hyphens;
+        style.hyphenate_limit_chars = origin.hyphenate_limit_chars;
+        style.text_transform = origin.text_transform;
+        style.text_underline_position = origin.text_underline_position;
+        style.text_decoration_skip_ink = origin.text_decoration_skip_ink;
+        style.unicode_bidi = origin.unicode_bidi;
+        style.writing_mode = origin.writing_mode;
+        style.text_orientation = origin.text_orientation;
+        style.text_rendering = origin.text_rendering;
+        style.font_smoothing = origin.font_smoothing;
+        style.text_shadow = origin.text_shadow.clone();
+        style.quotes = origin.quotes.clone();
+        style.text_emphasis_mark = origin.text_emphasis_mark;
+        style.text_emphasis_fill = origin.text_emphasis_fill;
+        style.text_emphasis_position = origin.text_emphasis_position;
+        style.text_emphasis_color = origin.text_emphasis_color;
+        style.text_combine_upright = origin.text_combine_upright;
+        style.ruby_position = origin.ruby_position;
+        style.ruby_align = origin.ruby_align;
+        style.tab_size = origin.tab_size;
+        style.font_palette = origin.font_palette.clone();
+        style.locale = origin.locale.clone();
+        style.orphans = origin.orphans;
+        style.widows = origin.widows;
+        style.text_wrap = origin.text_wrap;
+        style
     }
 
     // ── Convenience: effective border width (0 if style is none/hidden) ──

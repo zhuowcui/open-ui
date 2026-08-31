@@ -1,0 +1,33 @@
+[
+  {
+    "test_id": "wpt/css_display/display-inline-dynamic-001-ref",
+    "chromium_test_path": "css-display/display-inline-dynamic-001-ref.html",
+    "mismatch_pct": 0.063907,
+    "rejection_reason": "verified_pixel_mismatch: first-line font raster",
+    "rejection_owner": "needs_first_line",
+    "owner_categories": [
+      "needs_first_line",
+      "reference_test"
+    ]
+  },
+  {
+    "test_id": "wpt/css_flexbox/inline-flexbox-vertical-rl-image-flexitem-crash-print",
+    "chromium_test_path": "css-flexbox/inline-flexbox-vertical-rl-image-flexitem-crash-print.html",
+    "mismatch_pct": 0.032484,
+    "rejection_reason": "verified_pixel_mismatch: replaced image resource",
+    "rejection_owner": "needs_image",
+    "owner_categories": [
+      "needs_image"
+    ]
+  },
+  {
+    "test_id": "wpt/css_overflow/line-clamp_line-clamp-026",
+    "chromium_test_path": "css-overflow/line-clamp/line-clamp-026.html",
+    "mismatch_pct": 0.088535,
+    "rejection_reason": "verified_pixel_mismatch: ruby annotation layout",
+    "rejection_owner": "needs_ruby",
+    "owner_categories": [
+      "needs_ruby"
+    ]
+  }
+]

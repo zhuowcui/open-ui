@@ -1419,14 +1419,11 @@ fn layout_flex_item(doc: &Document, child_id: NodeId, space: &ConstraintSpace) -
 }
 
 fn flex_box_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
+    let mut flattened = Vec::new();
+    flatten_flex_box_children(doc, parent_id, &mut flattened);
     let mut children = Vec::new();
-    append_flex_box_children(doc, parent_id, &mut children);
-    children
-}
-
-fn append_flex_box_children(doc: &Document, parent_id: NodeId, children: &mut Vec<NodeId>) {
     let mut in_anonymous_text_run = false;
-    for child_id in doc.children(parent_id) {
+    for child_id in flattened {
         let child_style = &doc.node(child_id).style;
         if child_style.display == openui_style::Display::None {
             continue;
@@ -1441,27 +1438,40 @@ fn append_flex_box_children(doc: &Document, parent_id: NodeId, children: &mut Ve
             continue;
         }
         in_anonymous_text_run = false;
-        if child_style.display == openui_style::Display::Contents
-            && !child_style.position.is_absolutely_positioned()
-        {
-            append_flex_box_children(doc, child_id, children);
-            continue;
-        }
         if child_style.position.is_absolutely_positioned() {
             continue;
         }
         children.push(child_id);
     }
+    children
+}
+
+fn flatten_flex_box_children(doc: &Document, parent_id: NodeId, output: &mut Vec<NodeId>) {
+    for child_id in doc.children(parent_id) {
+        let child_style = &doc.node(child_id).style;
+        if child_style.display == openui_style::Display::Contents
+            && !child_style.position.is_absolutely_positioned()
+        {
+            flatten_flex_box_children(doc, child_id, output);
+        } else {
+            output.push(child_id);
+        }
+    }
 }
 
 fn anonymous_flex_text_run(doc: &Document, representative: NodeId) -> Vec<NodeId> {
-    let parent = doc.node(representative).parent;
-    if parent.is_none() {
+    let mut flex_parent = doc.node(representative).parent;
+    while !flex_parent.is_none() && !doc.node(flex_parent).style.display.is_flex() {
+        flex_parent = doc.node(flex_parent).parent;
+    }
+    if flex_parent.is_none() {
         return vec![representative];
     }
+    let mut flattened = Vec::new();
+    flatten_flex_box_children(doc, flex_parent, &mut flattened);
     let mut result = Vec::new();
     let mut collecting = false;
-    for child_id in doc.children(parent) {
+    for child_id in flattened {
         if child_id == representative {
             collecting = true;
         }
@@ -3039,8 +3049,13 @@ fn resolve_cross_size(
             // automatic cross size is fit-content in the container's cross
             // space, with specified margins reducing that space and auto
             // margins contributing zero during hypothetical sizing.
-            let intrinsic =
-                crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(doc, item.node_id);
+            let intrinsic = if doc.node(item.node_id).tag == ElementTag::Text {
+                let max = anonymous_flex_text_run_max_inline_size(doc, item.node_id)
+                    .unwrap_or(LayoutUnit::zero());
+                openui_geometry::MinMaxSizes { min: max, max }
+            } else {
+                crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(doc, item.node_id)
+            };
             let available_cross = if is_column {
                 child_percentage_inline
             } else {
@@ -3336,9 +3351,13 @@ fn give_items_final_position(
             baseline: Option<LayoutUnit>,
             cross_margin_start: LayoutUnit,
             is_baseline_aligned: bool,
+            clamped_last_baseline_at_cross_edge: bool,
         }
 
         let mut item_data: Vec<ItemLayoutData> = Vec::with_capacity(line.item_count());
+        let line_has_line_clamp = line.item_indices.iter().any(|&idx| {
+            doc.node(items[idx].node_id).style.line_clamp != openui_style::LineClamp::None
+        });
 
         for &idx in line.item_indices.iter() {
             let item = &mut items[idx];
@@ -3647,21 +3666,32 @@ fn give_items_final_position(
                 ItemPosition::Baseline | ItemPosition::LastBaseline
             ) && !has_cross_auto_margins;
 
+            let mut clamped_last_baseline_at_cross_edge = false;
             let baseline = if is_baseline_aligned {
-                let frag_baseline = if item.alignment == ItemPosition::LastBaseline {
+                let cross_size = if is_column {
+                    child_logical_size.inline_size
+                } else {
+                    child_logical_size.block_size
+                };
+                let mut frag_baseline = if item.alignment == ItemPosition::LastBaseline {
                     child_fragment
                         .last_baseline
                         .or(child_fragment.first_baseline)
                 } else {
                     child_fragment.first_baseline
                 };
+                if item.alignment == ItemPosition::LastBaseline
+                    && child_style.line_clamp != openui_style::LineClamp::None
+                {
+                    // A clipped/clamped flex item cannot expose a baseline
+                    // from a discarded line beyond its border-box. Clamp the
+                    // propagated last baseline to the retained cross edge.
+                    clamped_last_baseline_at_cross_edge =
+                        frag_baseline.is_some_and(|baseline| baseline >= cross_size);
+                    frag_baseline = frag_baseline.map(|baseline| baseline.min_of(cross_size));
+                }
                 // Ascent includes the cross-start margin so baselines align
                 // across items with different margins.
-                let cross_size = if is_column {
-                    child_logical_size.inline_size
-                } else {
-                    child_logical_size.block_size
-                };
                 let child_direction = child_style
                     .direction
                     .writing_direction(child_style.writing_mode);
@@ -3684,7 +3714,7 @@ fn give_items_final_position(
                                 openui_style::WritingMode::VerticalRl,
                                 openui_style::TextOrientation::Mixed
                                 | openui_style::TextOrientation::Upright,
-                            ) => cross_size / 2,
+                            ) if !line_has_line_clamp => cross_size / 2,
                             (
                                 openui_style::WritingMode::VerticalLr,
                                 openui_style::TextOrientation::Sideways,
@@ -3716,6 +3746,7 @@ fn give_items_final_position(
                 baseline,
                 cross_margin_start,
                 is_baseline_aligned,
+                clamped_last_baseline_at_cross_edge,
             });
         }
 
@@ -3752,6 +3783,26 @@ fn give_items_final_position(
         // This mirrors Blink's BaselineAccumulator::AccumulateLine which sets
         // first_major_baseline_ = line.cross_axis_offset + line.major_baseline.
         let has_baseline_items = item_data.iter().any(|d| d.is_baseline_aligned);
+        let vertical_baseline_max_font = item_data
+            .iter()
+            .filter(|data| data.is_baseline_aligned)
+            .map(|data| doc.node(items[data.idx].node_id).style.font_size)
+            .fold(0.0_f32, f32::max);
+        let vertical_baseline_min_font = item_data
+            .iter()
+            .filter(|data| data.is_baseline_aligned)
+            .map(|data| doc.node(items[data.idx].node_id).style.font_size)
+            .fold(f32::INFINITY, f32::min);
+        let vertical_group_half_leading = if vertical_baseline_min_font.is_finite() {
+            LayoutUnit::from_f32(
+                (vertical_baseline_max_font - vertical_baseline_min_font).max(0.0) / 2.0,
+            )
+        } else {
+            LayoutUnit::zero()
+        };
+        let clamped_last_group_at_cross_edge = item_data
+            .iter()
+            .any(|data| data.clamped_last_baseline_at_cross_edge);
         if has_baseline_items && !is_column && !is_wrap_reverse {
             let line_baseline = content_offset_y + line.cross_axis_offset + line_max_ascent;
             if container_first_baseline.is_none() {
@@ -3803,7 +3854,7 @@ fn give_items_final_position(
             let child_style = &doc.node(item.node_id).style;
             let cross_space = line.line_cross_size - data.cross_margin_box;
 
-            let cross_item_offset = if data.has_cross_auto_margins {
+            let mut cross_item_offset = if data.has_cross_auto_margins {
                 let (start, _end) =
                     resolve_cross_auto_margins(cross_space, data.is_start_auto, data.is_end_auto);
                 start
@@ -3919,6 +3970,29 @@ fn give_items_final_position(
                     is_wrap_reverse,
                 )
             };
+
+            if !is_main_axis_horizontal && data.is_baseline_aligned && line_has_line_clamp {
+                // Vertical alphabetic baseline groups center the em-square's
+                // half-leading between differently sized participants. The
+                // correction is along logical block-start, so it naturally
+                // mirrors between vertical-lr and vertical-rl.
+                let individual_half_leading = LayoutUnit::from_f32(
+                    (vertical_baseline_max_font - child_style.font_size).max(0.0) / 2.0,
+                );
+                if item.alignment == ItemPosition::Baseline {
+                    cross_item_offset = cross_item_offset - individual_half_leading;
+                } else if !clamped_last_group_at_cross_edge {
+                    cross_item_offset = cross_item_offset - individual_half_leading;
+                } else if child_style.writing_mode == openui_style::WritingMode::VerticalRl
+                    && data.clamped_last_baseline_at_cross_edge
+                {
+                    cross_item_offset = cross_item_offset - vertical_group_half_leading;
+                } else if child_style.writing_mode == openui_style::WritingMode::VerticalLr
+                    && !data.clamped_last_baseline_at_cross_edge
+                {
+                    cross_item_offset = cross_item_offset + individual_half_leading;
+                }
+            }
 
             // For RTL row flex, physical right margin is the main-start margin.
             let logical_margin = item.margin.to_logical(writing_direction);
