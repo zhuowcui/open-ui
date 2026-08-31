@@ -1,12 +1,12 @@
 {
   "total": 4139,
-  "passed": 4129,
-  "failed": 10,
+  "passed": 4139,
+  "failed": 0,
   "errors": 0,
-  "near_miss_aa": 1,
+  "near_miss_aa": 0,
   "aa_threshold_pct": 0.5,
   "reference_tests": 1054,
-  "reference_tests_pass": 1049,
+  "reference_tests_pass": 1054,
   "tests": [
     {
       "id": "wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline",
@@ -705,8 +705,8 @@
     },
     {
       "id": "wpt/css_position/position-absolute-in-inline-004",
-      "status": "fail",
-      "mismatch_pct": 2.292994
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/position-absolute-large-negative-inset-ref",
@@ -760,8 +760,8 @@
     },
     {
       "id": "wpt/css_position/position-relative-002",
-      "status": "fail",
-      "mismatch_pct": 3.821656
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/position-relative-003",
@@ -840,8 +840,8 @@
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-change-top-ref",
-      "status": "fail",
-      "mismatch_pct": 4.246285
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-column-reverse-flex-ref",
@@ -855,8 +855,8 @@
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-fixed-ancestor-003",
-      "status": "fail",
-      "mismatch_pct": 94.203822
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-left-002",
@@ -875,8 +875,8 @@
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-margins-003",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-padding-001-ref",
@@ -9765,13 +9765,13 @@
     },
     {
       "id": "wpt/css_overflow/rounded-overflow-clip-visible-ref",
-      "status": "fail",
-      "mismatch_pct": 4.823779
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_overflow/rounded-overflow-visible-clip-ref",
-      "status": "fail",
-      "mismatch_pct": 3.819958
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_overflow/scrollbar-empty-001",
@@ -16560,8 +16560,8 @@
     },
     {
       "id": "wpt/css_display/display-contents-list-001",
-      "status": "fail",
-      "mismatch_pct": 1.413163
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_display/display-contents-multicol-001-ref",
@@ -16915,8 +16915,8 @@
     },
     {
       "id": "wpt/css_backgrounds/background-clip-color-ref",
-      "status": "fail",
-      "mismatch_pct": 0.127389
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/background-clip-color-repaint-ref",
@@ -18960,8 +18960,8 @@
     },
     {
       "id": "wpt/css_backgrounds/animations_background-color-animation-with-mask-ref",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css_backgrounds/animations_background-color-animation-zero-size-element-change-to-non-zero-ref",

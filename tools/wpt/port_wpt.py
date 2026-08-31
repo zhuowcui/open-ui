@@ -132,6 +132,9 @@ SUPPORTED_PROPERTIES = {
     'background', 'background-color', 'background-image', 'background-repeat',
     'background-size', 'background-position', 'background-origin',
     'background-clip', 'background-attachment', 'color', 'opacity', 'visibility',
+    'mask-image', 'mask-repeat', 'mask-size', 'mask-position',
+    '-webkit-mask-image', '-webkit-mask-repeat', '-webkit-mask-size',
+    '-webkit-mask-position',
     'zoom',
     # Flex
     'flex', 'flex-direction', 'flex-wrap', 'flex-flow',
@@ -2637,6 +2640,11 @@ _PAINT_ASSETS = {
     'outline-5px-10px-15px-20px-green.png': ('outline-5px-10px-15px-20px-green.png', 'css-backgrounds/support/outline-5px-10px-15px-20px-green.png', 'image/png', 'fea0d9ccac4281eb5836bcd1a0339d3d2ee5187ea8b8286dbc7090e926b6f4ba'),
     'swatch-red.png': ('swatch-red.png', 'css-backgrounds/support/swatch-red.png', 'image/png', 'e42df70647347f5eedb984a611549d962ee362fb73f2135c9af05875b7681784'),
     '100x100-red.png': ('100x100-red.png', 'css-position/sticky/support/100x100-red.png', 'image/png', '0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58'),
+    'stripes-100.png': (None, 'css-backgrounds/resources/stripes-100.png', 'image/png', 'cd8087c9a2e4825f5d6e4807bb739584a21ea1a8f4ed4cb76cecfbdcf797b903'),
+}
+
+_INLINE_PAINT_ASSETS = {
+    'stripes-100.png': 'iVBORw0KGgoAAAANSUhEUgAAAGQAAABkAQMAAABKLAcXAAAACXBIWXMAAAsTAAALEwEAmpwYAAAABlBMVEUAAABfyc6kY1PyAAAAAnRSTlMA/iyWEiMAAAAcSURBVDhPY2Cw/8D8H0YwjPJGeaO8Ud4oj8Y8APNILMPXB0e9AAAAAElFTkSuQmCC',
 }
 
 
@@ -2657,8 +2665,11 @@ def _embed_paint_asset_urls(template: str) -> str:
         if asset is None:
             return match.group(0)
         filename, _, mime, _ = asset
-        with open(os.path.join(asset_dir, filename), 'rb') as asset_file:
-            encoded = base64.b64encode(asset_file.read()).decode('ascii')
+        if filename is None:
+            encoded = _INLINE_PAINT_ASSETS[source.rsplit('/', 1)[-1]]
+        else:
+            with open(os.path.join(asset_dir, filename), 'rb') as asset_file:
+                encoded = base64.b64encode(asset_file.read()).decode('ascii')
         return f'url("data:{mime};base64,{encoded}")'
 
     return re.sub(r'(?is)url\(\s*([^)]*?)\s*\)', replace, template)
@@ -3008,11 +3019,16 @@ def _css_image_rust(value: str, resource_var: str) -> tuple[list[str], str] | No
         if asset is None:
             return None
         filename, source_label, mime, sha = asset
-        byte_expr = (
-            'include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), '
-            f'"/../../../tools/accountability/data/wpt_assets/sp13p/{filename}"))'
-            '.as_slice().to_vec()'
-        )
+        if filename is None:
+            import base64
+            data = base64.b64decode(_INLINE_PAINT_ASSETS[name])
+            byte_expr = f'vec![{", ".join(str(byte) for byte in data)}]'
+        else:
+            byte_expr = (
+                'include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), '
+                f'"/../../../tools/accountability/data/wpt_assets/sp13p/{filename}"))'
+                '.as_slice().to_vec()'
+            )
     line = (
         f'let {resource_var} = doc.register_image_resource('
         f'{json.dumps(source_label)}, {json.dumps(mime)}, {json.dumps(sha)}, {byte_expr});'
@@ -3270,6 +3286,69 @@ def _background_layers_rust(styles: dict, s: str, font_size: float) -> list[str]
         f'{s}.background_layers = vec![{", ".join(emitted)}];',
         f'{s}.background_linear_gradient = None;',
     ]
+
+
+def _mask_layers_rust(styles: dict, s: str, font_size: float) -> list[str]:
+    image_value = styles.get('mask-image', styles.get('-webkit-mask-image'))
+    if not image_value:
+        return []
+    layers = [
+        _new_background_layer(None if value.strip().lower() == 'none' else value.strip())
+        for value in _split_css_layers(image_value)
+    ]
+    for layer in layers:
+        # CSS Masking uses the border box as its default positioning area.
+        layer['origin'] = 'BackgroundClip::BorderBox'
+        layer['clip'] = 'BackgroundClip::BorderBox'
+
+    def apply_list(standard: str, prefixed: str, apply):
+        value = styles.get(standard, styles.get(prefixed))
+        if not value:
+            return
+        values = _split_css_layers(value)
+        for index, layer in enumerate(layers):
+            apply(layer, values[index % len(values)])
+
+    def apply_repeat(layer, value):
+        repeat = _background_repeat_rust(value)
+        if repeat:
+            layer['repeat_x'], layer['repeat_y'] = repeat
+
+    def apply_size(layer, value):
+        size = _background_size_rust(value, font_size)
+        if size:
+            layer['size'] = size
+
+    def apply_position(layer, value):
+        position = _background_position_rust(value)
+        if position:
+            layer['position_x'], layer['position_y'] = position
+
+    apply_list('mask-repeat', '-webkit-mask-repeat', apply_repeat)
+    apply_list('mask-size', '-webkit-mask-size', apply_size)
+    apply_list('mask-position', '-webkit-mask-position', apply_position)
+
+    node = re.search(r'node_mut\(([^)]+)\)', s)
+    prefix = re.sub(r'\W+', '_', node.group(1) if node else 'style')
+    prereqs = []
+    emitted = []
+    for index, layer in enumerate(layers):
+        if not layer['image']:
+            continue
+        parsed = _css_image_rust(layer['image'], f'{prefix}_mask_image_{index}')
+        if parsed is None:
+            continue
+        image_prereqs, image = parsed
+        prereqs.extend(image_prereqs)
+        emitted.append(
+            'BackgroundLayer { '
+            f'image: {image}, repeat_x: {layer["repeat_x"]}, repeat_y: {layer["repeat_y"]}, '
+            f'position_x: {layer["position_x"]}, position_y: {layer["position_y"]}, '
+            f'size: {layer["size"]}, origin: {layer["origin"]}, clip: {layer["clip"]}, '
+            'attachment: BackgroundAttachment::Scroll '
+            '}'
+        )
+    return prereqs + [f'{s}.mask_layers = vec![{", ".join(emitted)}];']
 
 
 def _split_all_css_slashes(value: str) -> list[str]:
@@ -3985,6 +4064,7 @@ def generate_style_code(
 
         if EMIT_PAINT_LAYERS:
             lines.extend(_background_layers_rust(styles, s, font_size))
+            lines.extend(_mask_layers_rust(styles, s, font_size))
             lines.extend(_border_image_rust(styles, s, font_size))
 
         # CSS display blockification is part of the computed value of floated
@@ -6257,6 +6337,34 @@ def _is_inline_level(node) -> bool:
     return node.tag in _INLINE_LEVEL_TAGS
 
 
+def _has_inline_boundary(node, *, trailing: bool) -> bool:
+    """Whether an unboxed sibling exposes an inline box at one boundary.
+
+    ``display:contents`` itself has no box, so inter-element whitespace next
+    to it is governed by its first/last generated descendant.  Treating the
+    unboxed element as block-level drops real word separators between adjacent
+    inline descendants (while blindly treating it as inline would retain
+    whitespace next to a nested block).
+    """
+    if node is None:
+        return False
+    if getattr(node, 'is_text', False):
+        text = getattr(node, 'text_content', '') or ''
+        return bool(text) and not _is_css_whitespace_only(text)
+    if (node.styles or {}).get('display', '').strip() != 'contents':
+        return _is_inline_level(node)
+
+    children = reversed(node.children) if trailing else iter(node.children)
+    for child in children:
+        if (
+            getattr(child, 'is_text', False)
+            and _is_css_whitespace_only(getattr(child, 'text_content', '') or '')
+        ):
+            continue
+        return _has_inline_boundary(child, trailing=trailing)
+    return False
+
+
 def _filter_ws_only_text_nodes(node, inherited_white_space='normal'):
     """Drop whitespace-only text nodes except between two inline-level siblings.
 
@@ -6285,7 +6393,10 @@ def _filter_ws_only_text_nodes(node, inherited_white_space='normal'):
                 continue
             prev_node = kept[-1] if kept else None
             next_node = children[i + 1] if i + 1 < len(children) else None
-            if not (_is_inline_level(prev_node) and _is_inline_level(next_node)):
+            if not (
+                _has_inline_boundary(prev_node, trailing=True)
+                and _has_inline_boundary(next_node, trailing=False)
+            ):
                 continue
         kept.append(c)
     node.children = kept

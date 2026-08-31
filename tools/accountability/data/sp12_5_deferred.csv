@@ -1,11 +1,1 @@
 test_id,sp_area,dependency,owning_sp,mismatch_pct,priority,notes
-wpt/css_backgrounds/animations_background-color-animation-with-mask-ref,SP12,"reference_test,visual_effects","Future,N/A",2.123142,low,
-wpt/css_backgrounds/background-clip-color-ref,SP12,"reference_test,empty_block_margin_collapse","N/A,SP12",0.127389,low,
-wpt/css_display/display-contents-list-001,SP12,mixed_inline_block_layout,Future,1.413163,low,
-wpt/css_overflow/rounded-overflow-clip-visible-ref,SP12,"reference_test,inline_block","N/A,SP11",4.823779,low,
-wpt/css_overflow/rounded-overflow-visible-clip-ref,SP12,"reference_test,inline_block","N/A,SP11",3.819958,low,
-wpt/css_position/position-absolute-in-inline-004,SP12,positioned_inline_layout,SP13,2.292994,low,
-wpt/css_position/position-relative-002,SP12,positioned_inline_layout,SP13,3.821656,low,
-wpt/css_position/sticky_position-sticky-change-top-ref,SP12,"reference_test,sticky_position","Future,N/A",4.246285,low,
-wpt/css_position/sticky_position-sticky-fixed-ancestor-003,SP12,sticky_position,Future,94.203822,low,
-wpt/css_position/sticky_position-sticky-margins-003,SP12,sticky_position,Future,2.123142,low,

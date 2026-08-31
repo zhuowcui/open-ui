@@ -513,6 +513,10 @@ pub struct ComputedStyle {
     /// historical `background_linear_gradient` compatibility path active.
     pub background_layers: Vec<BackgroundLayer>,
 
+    /// CSS mask image layers. The image alpha is composited with the entire
+    /// element subtree after ordinary background/content painting.
+    pub mask_layers: Vec<BackgroundLayer>,
+
     /// CSS `background-clip`. Initial: `border-box`.
     pub background_clip: BackgroundClip,
 
@@ -974,6 +978,7 @@ impl ComputedStyle {
             background_color: Color::TRANSPARENT,
             background_linear_gradient: None,
             background_layers: Vec::new(),
+            mask_layers: Vec::new(),
             background_clip: BackgroundClip::BorderBox,
             background_attachment: BackgroundAttachment::Scroll,
             border_image: None,

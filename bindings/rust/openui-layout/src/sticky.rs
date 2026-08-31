@@ -221,7 +221,16 @@ fn compute_axis_offset(
     let max_positive = (cb_end - element_extent) - normal_pos;
     let max_negative = normal_pos - cb_start;
 
-    clamp_lu(raw_offset, -max_negative, max_positive)
+    if raw_offset > zero {
+        // A containing-block end edge may limit positive sticky movement, but
+        // it never pulls an already out-of-bounds normal position backward.
+        min_lu(raw_offset, max_lu(max_positive, zero))
+    } else if raw_offset < zero {
+        // Likewise, a start edge only limits requested negative movement.
+        max_lu(raw_offset, min_lu(-max_negative, zero))
+    } else {
+        zero
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -283,13 +292,6 @@ fn max_lu(a: LayoutUnit, b: LayoutUnit) -> LayoutUnit {
     } else {
         b
     }
-}
-
-#[inline]
-fn clamp_lu(val: LayoutUnit, lo: LayoutUnit, hi: LayoutUnit) -> LayoutUnit {
-    // If lo > hi (element larger than CB), prefer lo (start edge wins).
-    let effective_hi = max_lu(lo, hi);
-    max_lu(lo, min_lu(val, effective_hi))
 }
 
 // ---------------------------------------------------------------------------
@@ -384,5 +386,33 @@ mod tests {
             lu(950),
         );
         assert_eq!(off, lu(0));
+    }
+
+    #[test]
+    fn zero_sticky_movement_does_not_reposition_outside_containing_block() {
+        let before_start = compute_axis_offset(
+            lu(-100),
+            lu(0),
+            lu(0),
+            lu(100),
+            None,
+            Some(lu(0)),
+            lu(100),
+            lu(0),
+            lu(100),
+        );
+        let after_end = compute_axis_offset(
+            lu(0),
+            lu(0),
+            lu(0),
+            lu(100),
+            None,
+            Some(lu(0)),
+            lu(100),
+            lu(-100),
+            lu(100),
+        );
+        assert_eq!(before_start, lu(0));
+        assert_eq!(after_end, lu(0));
     }
 }

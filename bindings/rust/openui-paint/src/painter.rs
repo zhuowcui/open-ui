@@ -27,7 +27,7 @@ use openui_style::{
     RadialGradientSize, StyleColor, Visibility,
 };
 use openui_text::font::FontMetrics;
-use skia_safe::canvas::SrcRectConstraint;
+use skia_safe::canvas::{SaveLayerRec, SrcRectConstraint};
 use skia_safe::rrect::Corner as RRectCorner;
 use skia_safe::{
     gradient_shader, surfaces, BlendMode, Canvas, ClipOp, Color4f, ColorSpace, FilterMode, Matrix,
@@ -297,6 +297,12 @@ pub fn paint_fragment(
         canvas_adjusted_style.as_ref().unwrap_or(original_style)
     };
 
+    let needs_mask_layer = !style.mask_layers.is_empty()
+        && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
+    if needs_mask_layer {
+        canvas.save_layer_alpha_f(None, 1.0);
+    }
+
     // CSS opacity creates a stacking context and composites the entire
     // subtree at the given opacity. Blink implements this via
     // PaintLayerPainter::PaintLayerWithAdjustedRoot() using saveLayerAlphaf().
@@ -378,6 +384,37 @@ pub fn paint_fragment(
 
     if style.visibility == Visibility::Visible && should_outline && paint_outline_after_children {
         paint_outline(canvas, fragment, style, abs_offset);
+    }
+
+    if needs_mask_layer {
+        // CSS masks apply to the element's complete stacking context. Paint
+        // the mask into a temporary layer and composite its alpha with DstIn,
+        // then restore the masked element layer into its parent.
+        let mut mask_blend = Paint::default();
+        mask_blend.set_blend_mode(BlendMode::DstIn);
+        let mask_record = SaveLayerRec::default().paint(&mask_blend);
+        canvas.save_layer(&mask_record);
+        let mut mask_style = style.clone();
+        mask_style.background_layers = style.mask_layers.clone();
+        mask_style.background_linear_gradient = None;
+        mask_style.background_color = Color::TRANSPARENT;
+        let mask_rect = Rect::from_xywh(
+            abs_offset.left.to_f32(),
+            abs_offset.top.to_f32(),
+            fragment.size.width.to_f32(),
+            fragment.size.height.to_f32(),
+        );
+        paint_background_layers(
+            canvas,
+            doc,
+            Some(fragment),
+            &mask_style,
+            mask_rect,
+            1.0,
+            None,
+        );
+        canvas.restore();
+        canvas.restore();
     }
 
     if needs_layer {
@@ -8716,6 +8753,89 @@ mod tests {
         let outside = &pixels[..4];
         assert_eq!(center, &[0, 128, 0, 255]);
         assert_eq!(outside, &[255, 255, 255, 255]);
+    }
+
+    #[test]
+    fn raster_mask_composites_the_complete_box_layer() {
+        let mut doc = Document::new();
+        let node = doc.create_node(openui_dom::ElementTag::Div);
+        doc.append_child(doc.root(), node);
+        doc.node_mut(node).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        let bytes = include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../../tools/accountability/data/wpt_assets/sp13p/blue-and-red-diamonds-81x81.png"
+        ));
+        let image = doc.register_image_resource(
+            "css-backgrounds/support/blue-and-red-diamonds-81x81.png",
+            "image/png",
+            "adcf99b02f2084a28ce5f227d472c2a757393184e472ba7b3ccba8ce11ed617b",
+            bytes.to_vec(),
+        );
+        doc.node_mut(node)
+            .style
+            .mask_layers
+            .push(BackgroundLayer::new(CssImage::Raster(image)));
+
+        let fragment = Fragment::new_box(
+            node,
+            PhysicalSize::new(LayoutUnit::from_i32(81), LayoutUnit::from_i32(81)),
+        );
+        let mut surface = surfaces::raster_n32_premul((81, 81)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        let save_count = surface.canvas().save_count();
+        paint_fragment(surface.canvas(), &fragment, &doc, PhysicalOffset::zero());
+        assert_eq!(surface.canvas().save_count(), save_count);
+
+        let pixels = surface_bytes(&mut surface);
+        assert!(pixels
+            .chunks_exact(4)
+            .any(|pixel| pixel == [0, 128, 0, 255]));
+        assert!(pixels
+            .chunks_exact(4)
+            .any(|pixel| pixel == [255, 255, 255, 255]));
+    }
+
+    #[test]
+    fn rounded_overflow_clip_leaves_visible_axis_unbounded() {
+        let mut doc = Document::new();
+        let parent = doc.create_node(openui_dom::ElementTag::Div);
+        let parent_style = doc.node_mut(parent).style_mut();
+        parent_style.overflow_x = Overflow::Clip;
+        parent_style.overflow_y = Overflow::Visible;
+        parent_style.border_top_left_radius = (8.0, 8.0);
+        parent_style.border_top_right_radius = (8.0, 8.0);
+        parent_style.border_bottom_right_radius = (8.0, 8.0);
+        parent_style.border_bottom_left_radius = (8.0, 8.0);
+        doc.append_child(doc.root(), parent);
+        let child = doc.create_node(openui_dom::ElementTag::Div);
+        doc.node_mut(child).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        doc.append_child(parent, child);
+
+        let mut parent_fragment = Fragment::new_box(
+            parent,
+            PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20)),
+        );
+        parent_fragment.offset =
+            PhysicalOffset::new(LayoutUnit::from_i32(5), LayoutUnit::from_i32(5));
+        parent_fragment.children.push(Fragment::new_box(
+            child,
+            PhysicalSize::new(LayoutUnit::from_i32(30), LayoutUnit::from_i32(35)),
+        ));
+        let mut surface = surfaces::raster_n32_premul((45, 45)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        let save_count = surface.canvas().save_count();
+        paint_fragment(
+            surface.canvas(),
+            &parent_fragment,
+            &doc,
+            PhysicalOffset::zero(),
+        );
+        assert_eq!(surface.canvas().save_count(), save_count);
+
+        let pixels = surface_bytes(&mut surface);
+        let pixel = |x: usize, y: usize| &pixels[(y * 45 + x) * 4..][..4];
+        assert_eq!(pixel(15, 30), [0, 128, 0, 255]);
+        assert_eq!(pixel(30, 15), [255, 255, 255, 255]);
     }
 
     #[test]

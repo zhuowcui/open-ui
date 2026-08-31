@@ -885,8 +885,9 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         || is_viewport)
         && !space.is_initial_block_size_indefinite
     {
-        // Definite block size from external constraint — use it directly.
-        // Content-box: subtract border+padding.
+        // A definite external constraint supplies the percentage basis. This
+        // takes precedence over the authored height for flex/grid stretched
+        // items, whose used size is the containing block for descendants.
         (space.available_block_size - border_padding_block).clamp_negative_to_zero()
     } else if !style.height.is_auto() && !space.is_initial_block_size_indefinite {
         // A percentage height against an indefinite basis is itself indefinite.
@@ -1873,6 +1874,24 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                             && nested_style.float == Float::None
                             && nested_style.display.is_block_level())
                 });
+            if transparent_inline_wrapper && inline_subtree_has_in_flow_block(doc, child_id) {
+                // Mixed-flow reconstruction must split a transparent inline
+                // around nested in-flow blocks even when the parent already
+                // has direct block children. Otherwise the inline formatter
+                // skips the nested block item and joins the before/after text
+                // into one anonymous line.
+                let mut portions = Vec::new();
+                collect_block_in_inline_portions(doc, child_id, &mut portions);
+                for portion in portions {
+                    match portion {
+                        BlockInInlinePortion::InlineRun { children, .. } => {
+                            children_ids.extend(children)
+                        }
+                        BlockInInlinePortion::Block(block_id) => children_ids.push(block_id),
+                    }
+                }
+                continue;
+            }
             if transparent_inline_wrapper && all_in_flow_block_children {
                 // CSS block-in-inline reconstruction splits an otherwise
                 // empty transparent inline around its in-flow block boxes.
@@ -2126,6 +2145,17 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     i += 1;
                 }
                 let inline_run = &children_ids[run_start..i];
+
+                // An empty transparent inline contributes no line box between
+                // adjacent block boxes.  Its open/close inline items are only
+                // structural; formatting them as an anonymous line inserts a
+                // spurious line-height into mixed block/inline flow.
+                if !inline_run
+                    .iter()
+                    .any(|child| inline_node_generates_line_box(doc, *child))
+                {
+                    continue;
+                }
 
                 // Anonymous inline wrapper is non-self-collapsing (has content),
                 // so it breaks the margin collapsing chain per CSS 2.1 §8.3.1.
@@ -3369,7 +3399,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     {
         let actual_content_height =
             (resolved_block_size - border_padding_block).clamp_negative_to_zero();
-        let old_basis = space.available_block_size;
+        let old_basis = child_percentage_block_size;
         let height_is_explicit = has_non_auto_height || is_viewport;
 
         // Target: explicit height -> actual content height; auto -> INDEFINITE (pct=0)
@@ -3556,13 +3586,16 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // not merely left at their normal-flow position.  At this point the
     // scrollport and every descendant containing block have final physical
     // geometry, so the offset can be applied without disturbing sibling flow.
-    if matches!(
-        physical_style.overflow_x,
-        Overflow::Hidden | Overflow::Scroll | Overflow::Auto
-    ) || matches!(
-        physical_style.overflow_y,
-        Overflow::Hidden | Overflow::Scroll | Overflow::Auto
-    ) {
+    if is_viewport
+        || matches!(
+            physical_style.overflow_x,
+            Overflow::Hidden | Overflow::Scroll | Overflow::Auto
+        )
+        || matches!(
+            physical_style.overflow_y,
+            Overflow::Hidden | Overflow::Scroll | Overflow::Auto
+        )
+    {
         apply_sticky_descendants_in_scrollport(doc, &mut fragment);
     }
 
@@ -3685,21 +3718,6 @@ pub(crate) fn apply_sticky_descendants_in_scrollport(
             LayoutUnit::from_f32(node.scroll_top),
         )
     };
-    fn contains_flex_fragment(doc: &Document, fragment: &Fragment) -> bool {
-        (!fragment.node_id.is_none() && doc.node(fragment.node_id).style.display.is_flex())
-            || fragment
-                .children
-                .iter()
-                .any(|child| contains_flex_fragment(doc, child))
-    }
-    if scroll_offset == PhysicalOffset::zero() && !contains_flex_fragment(doc, scroll_container) {
-        // The compatibility layout path only resolves sticky constraints for
-        // an actively scrolled block scrollport. A flex formatting context in
-        // the scrollport still runs at its initial position because auto
-        // margins and reverse flow can place a sticky item's normal position
-        // away from the physical start edge.
-        return;
-    }
     let viewport_offset = PhysicalOffset::new(
         scroll_container.border.left + scroll_container.padding.left,
         scroll_container.border.top + scroll_container.padding.top,
@@ -3753,6 +3771,20 @@ pub(crate) fn apply_sticky_descendants_in_scrollport(
                 fragment.offset.top = fragment.offset.top + delta.top;
                 visual.left = visual.left + delta.left;
                 visual.top = visual.top + delta.top;
+            }
+
+            // Sticky positioning belongs to the nearest scroll container.
+            // Descendants of this nested scrollport were resolved when its
+            // own block layout completed; an ancestor scrollport (especially
+            // the viewport) must not apply their constraints a second time.
+            if matches!(
+                style.overflow_x,
+                Overflow::Hidden | Overflow::Scroll | Overflow::Auto
+            ) || matches!(
+                style.overflow_y,
+                Overflow::Hidden | Overflow::Scroll | Overflow::Auto
+            ) {
+                return;
             }
         }
 
@@ -4035,7 +4067,7 @@ fn handle_float(
         &mut fragment,
         child_style,
         child_available_inline,
-        space.available_block_size,
+        child_percentage_block_size,
     );
 
     fragment.margin = child_margin;
@@ -4245,6 +4277,38 @@ fn node_has_visible_in_flow_content(doc: &Document, node_id: NodeId) -> bool {
             .is_some_and(|text| text.chars().any(|character| !character.is_whitespace()));
     }
     subtree_has_visible_in_flow_content(doc, node_id)
+}
+
+fn inline_node_generates_line_box(doc: &Document, node_id: NodeId) -> bool {
+    let node = doc.node(node_id);
+    if node.style.display == Display::None || node.style.is_out_of_flow() {
+        return false;
+    }
+    if matches!(
+        node.style.display,
+        Display::InlineBlock | Display::InlineFlex | Display::InlineGrid
+    ) || node.tag == ElementTag::Ruby
+        || !node.style.width.is_auto()
+        || !node.style.height.is_auto()
+    {
+        return true;
+    }
+    match node.tag {
+        ElementTag::Text => node.text.as_deref().is_some_and(|text| {
+            if text.chars().any(|character| !character.is_whitespace()) {
+                return true;
+            }
+            match node.style.white_space {
+                WhiteSpace::Pre | WhiteSpace::PreWrap | WhiteSpace::BreakSpaces => !text.is_empty(),
+                WhiteSpace::PreLine => text.contains(['\n', '\r']),
+                WhiteSpace::Normal | WhiteSpace::Nowrap => false,
+            }
+        }),
+        ElementTag::Break | ElementTag::WordBreak => true,
+        _ => doc
+            .children(node_id)
+            .any(|child| inline_node_generates_line_box(doc, child)),
+    }
 }
 
 fn subtree_contains_only_out_of_flow_content(doc: &Document, node_id: NodeId) -> bool {
@@ -4825,7 +4889,7 @@ fn layout_block_child(
         &mut child_fragment,
         child_style,
         child_available_inline,
-        space.available_block_size,
+        child_percentage_block_size,
     );
 
     child_fragment.margin = BoxStrut::new(
@@ -22847,6 +22911,88 @@ mod tests {
         assert_eq!(child_frag.size.height.to_i32(), 100);
     }
 
+    #[test]
+    fn relative_percentage_inset_uses_explicit_parent_height() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let parent = doc.create_node(ElementTag::Div);
+        doc.node_mut(parent).style.display = Display::Block;
+        doc.node_mut(parent).style.height = Length::px(100.0);
+        doc.append_child(vp, parent);
+
+        let child = doc.create_node(ElementTag::Div);
+        doc.node_mut(child).style.display = Display::Block;
+        doc.node_mut(child).style.position = Position::Relative;
+        doc.node_mut(child).style.top = Length::percent(50.0);
+        doc.node_mut(child).style.height = Length::px(10.0);
+        doc.append_child(parent, child);
+
+        let fragment = block_layout(
+            &doc,
+            vp,
+            &ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600)),
+        );
+        let child_fragment = fragment_for_node(&fragment, child).expect("relative child");
+        assert_eq!(child_fragment.offset.top, LayoutUnit::from_i32(50));
+    }
+
+    #[test]
+    fn viewport_applies_sticky_top_constraint_at_zero_scroll() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let sticky = doc.create_node(ElementTag::Div);
+        doc.node_mut(sticky).style.position = Position::Sticky;
+        doc.node_mut(sticky).style.top = Length::px(10.0);
+        doc.append_child(vp, sticky);
+
+        let mut viewport_fragment = Fragment::new_box(
+            vp,
+            PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(100)),
+        );
+        viewport_fragment.children.push(Fragment::new_box(
+            sticky,
+            PhysicalSize::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(20)),
+        ));
+        apply_sticky_descendants_in_scrollport(&doc, &mut viewport_fragment);
+
+        assert_eq!(
+            viewport_fragment.children[0].offset.top,
+            LayoutUnit::from_i32(10)
+        );
+    }
+
+    #[test]
+    fn viewport_does_not_reapply_nested_scrollport_sticky_constraints() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let scroller = doc.create_node(ElementTag::Div);
+        doc.node_mut(scroller).style.display = Display::Block;
+        doc.node_mut(scroller).style.width = Length::px(100.0);
+        doc.node_mut(scroller).style.height = Length::px(100.0);
+        doc.node_mut(scroller).style.overflow_y = Overflow::Hidden;
+        doc.append_child(vp, scroller);
+        let spacer = doc.create_node(ElementTag::Div);
+        doc.node_mut(spacer).style.display = Display::Block;
+        doc.node_mut(spacer).style.height = Length::px(80.0);
+        doc.append_child(scroller, spacer);
+        let sticky = doc.create_node(ElementTag::Div);
+        doc.node_mut(sticky).style.display = Display::Block;
+        doc.node_mut(sticky).style.position = Position::Sticky;
+        doc.node_mut(sticky).style.top = Length::percent(50.0);
+        doc.node_mut(sticky).style.height = Length::px(10.0);
+        doc.append_child(scroller, sticky);
+
+        let fragment = block_layout(
+            &doc,
+            vp,
+            &ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600)),
+        );
+        assert_eq!(
+            fragment_for_node(&fragment, sticky).unwrap().offset.top,
+            LayoutUnit::from_i32(80)
+        );
+    }
+
     // ── Issue 1: Double border+padding subtraction ───────────────────
 
     #[test]
@@ -22943,6 +23089,80 @@ mod tests {
             has_30px_child,
             "Block child with height 30px should be present in fragment tree"
         );
+    }
+
+    #[test]
+    fn mixed_content_splits_transparent_inline_around_nested_block() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        let leading_block = doc.create_node(ElementTag::Div);
+        doc.node_mut(leading_block).style.display = Display::Block;
+        doc.node_mut(leading_block).style.height = Length::px(10.0);
+        doc.append_child(container, leading_block);
+
+        let inline = doc.create_node(ElementTag::Span);
+        doc.node_mut(inline).style.display = Display::Inline;
+        doc.append_child(container, inline);
+        let before = doc.create_node(ElementTag::Text);
+        doc.node_mut(before).text = Some("A".into());
+        doc.append_child(inline, before);
+        let nested_block = doc.create_node(ElementTag::Div);
+        doc.node_mut(nested_block).style.display = Display::Block;
+        doc.node_mut(nested_block).style.height = Length::px(20.0);
+        doc.append_child(inline, nested_block);
+        let after = doc.create_node(ElementTag::Text);
+        doc.node_mut(after).text = Some("B".into());
+        doc.append_child(inline, after);
+
+        let fragment = block_layout(
+            &doc,
+            vp,
+            &ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(200)),
+        );
+        assert_eq!(
+            fragment_for_node(&fragment, nested_block)
+                .expect("nested block-in-inline fragment")
+                .size
+                .height,
+            LayoutUnit::from_i32(20)
+        );
+    }
+
+    #[test]
+    fn empty_structural_inline_does_not_insert_mixed_flow_line() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.append_child(vp, container);
+
+        for index in 0..3 {
+            let child = doc.create_node(if index == 1 {
+                ElementTag::Span
+            } else {
+                ElementTag::Div
+            });
+            if index == 1 {
+                doc.node_mut(child).style.display = Display::Inline;
+            } else {
+                doc.node_mut(child).style.display = Display::Block;
+                doc.node_mut(child).style.height = Length::px(10.0);
+            }
+            doc.append_child(container, child);
+        }
+
+        let fragment = block_layout(
+            &doc,
+            vp,
+            &ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(200)),
+        );
+        let container_fragment = fragment_for_node(&fragment, container).unwrap();
+        assert_eq!(container_fragment.size.height, LayoutUnit::from_i32(20));
+        assert_eq!(container_fragment.children.len(), 2);
     }
 
     // ── Issue 4: Span with display:inline-block is atomic inline ─────

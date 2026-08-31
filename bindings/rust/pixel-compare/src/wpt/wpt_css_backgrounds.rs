@@ -46728,7 +46728,33 @@ fn css_backgrounds_animations_background_color_animation_with_mask_ref() -> Docu
     doc.node_mut(n1).style.width = Length::px(100.0);
     doc.node_mut(n1).style.height = Length::px(100.0);
     doc.node_mut(n1).style.background_color = Color::from_rgba8(0, 0, 150, 255);
+    let n1_mask_image_0 = doc.register_image_resource(
+        "css-backgrounds/resources/stripes-100.png",
+        "image/png",
+        "cd8087c9a2e4825f5d6e4807bb739584a21ea1a8f4ed4cb76cecfbdcf797b903",
+        vec![
+            137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 100, 0, 0, 0,
+            100, 1, 3, 0, 0, 0, 74, 44, 7, 23, 0, 0, 0, 9, 112, 72, 89, 115, 0, 0, 11, 19, 0, 0,
+            11, 19, 1, 0, 154, 156, 24, 0, 0, 0, 6, 80, 76, 84, 69, 0, 0, 0, 95, 201, 206, 164, 99,
+            83, 242, 0, 0, 0, 2, 116, 82, 78, 83, 0, 254, 44, 150, 18, 35, 0, 0, 0, 28, 73, 68, 65,
+            84, 56, 79, 99, 96, 176, 255, 192, 252, 31, 70, 48, 140, 242, 70, 121, 163, 188, 81,
+            222, 40, 143, 198, 60, 0, 243, 72, 44, 195, 215, 7, 71, 189, 0, 0, 0, 0, 73, 69, 78,
+            68, 174, 66, 96, 130,
+        ],
+    );
+    doc.node_mut(n1).style.mask_layers = vec![BackgroundLayer {
+        image: CssImage::Raster(n1_mask_image_0),
+        repeat_x: BackgroundRepeat::NoRepeat,
+        repeat_y: BackgroundRepeat::NoRepeat,
+        position_x: BackgroundPosition::Percent(0.0),
+        position_y: BackgroundPosition::Percent(0.0),
+        size: BackgroundSize::Explicit(Length::px(100.0), Length::px(100.0)),
+        origin: BackgroundClip::BorderBox,
+        clip: BackgroundClip::BorderBox,
+        attachment: BackgroundAttachment::Scroll,
+    }];
     doc.append_child(vp, n1);
+    doc.set_attribute(n1, "class", "container");
     doc
 }
 

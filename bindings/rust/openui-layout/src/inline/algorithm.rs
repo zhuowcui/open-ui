@@ -13,7 +13,7 @@ use openui_dom::{Document, ElementTag, NodeId};
 use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSize, WritingModeConverter};
 use openui_style::{
     BoxDecorationBreak, Clear, ComputedStyle, Direction, Display, Float, FontFamily, LineHeight,
-    TextAlign, TextAlignLast, TextJustify, VerticalAlign,
+    TextAlign, TextAlignLast, TextJustify, VerticalAlign, WhiteSpace,
 };
 use openui_text::{
     used_line_height, used_line_height_metrics, Font, FontMetrics, ShapeResult, TextShaper,
@@ -2179,6 +2179,7 @@ pub fn inline_layout_from_items(
                 space.writing_direction,
                 border_box_size.width,
                 normalize_vertical_rtl,
+                positioned_inline_starts_with_out_of_flow(doc, cb_node_id),
             )
             .map(|(offset, size)| {
                 let (offset, size) = normalize_fragmented_inline_containing_block(
@@ -2268,6 +2269,7 @@ fn append_positioned_inline_candidates(
                 space.writing_direction,
                 border_box_size.width,
                 normalize_vertical_rtl,
+                positioned_inline_starts_with_out_of_flow(doc, cb_node_id),
             )
             .map(|(offset, size)| {
                 let (offset, size) = normalize_fragmented_inline_containing_block(
@@ -2340,6 +2342,32 @@ fn append_positioned_inline_candidates(
 
 /// Resolve the containing block formed by a positioned inline's first and
 /// last line fragments (CSS 2.1 §10.1).
+fn positioned_inline_starts_with_out_of_flow(doc: &Document, target: NodeId) -> bool {
+    for child_id in doc.children(target) {
+        let child = doc.node(child_id);
+        if child.style.display == Display::None {
+            continue;
+        }
+        if child.style.position.is_absolutely_positioned() {
+            return true;
+        }
+        if child.tag == ElementTag::Text
+            && child
+                .text
+                .as_deref()
+                .is_some_and(|text| text.trim_matches(char::is_whitespace).is_empty())
+            && matches!(
+                child.style.white_space,
+                WhiteSpace::Normal | WhiteSpace::Nowrap
+            )
+        {
+            continue;
+        }
+        return false;
+    }
+    false
+}
+
 fn inline_containing_block_geometry(
     target: NodeId,
     roots: &[Fragment],
@@ -2347,6 +2375,7 @@ fn inline_containing_block_geometry(
     writing_direction: openui_geometry::WritingDirectionMode,
     container_inline_size: LayoutUnit,
     normalize_vertical_rtl: bool,
+    preserve_empty_first: bool,
 ) -> Option<(PhysicalOffset, PhysicalSize)> {
     fn collect(
         target: NodeId,
@@ -2390,15 +2419,17 @@ fn inline_containing_block_geometry(
     for root in roots {
         collect(target, root, PhysicalOffset::zero(), &mut fragments);
     }
-    // Empty inline continuations can be emitted at a line boundary when the
-    // first in-flow child does not fit after preceding text. Prefer the
-    // first/last continuation carrying inline extent, while retaining the
-    // zero-width geometry for genuinely empty positioned inlines.
+    // CSS 2.1 forms a positioned inline's containing block from the padding
+    // edges of its first and last generated boxes.  An empty first box at a
+    // normal line boundary is still the authoritative start edge. During
+    // block fragmentation, however, the IFC also emits empty continuation
+    // shells at fragmentainer boundaries; those do not replace the first or
+    // last in-flow box used by positioned descendants.
     let nonempty: Vec<_> = fragments
         .iter()
         .filter(|(_, size, has_content)| size.width > LayoutUnit::zero() || *has_content)
         .collect();
-    let endpoints = if nonempty.is_empty() {
+    let endpoints = if preserve_empty_first || nonempty.is_empty() {
         fragments.first().zip(fragments.last())
     } else {
         nonempty.first().copied().zip(nonempty.last().copied())
@@ -2564,6 +2595,7 @@ fn collect_atomic_inline_oof_candidates(
                 space.writing_direction,
                 block_size.width,
                 needs_logical_positioned_inline_geometry(doc, block_node_id, space),
+                positioned_inline_starts_with_out_of_flow(doc, cb_node_id),
             ) {
                 let (offset, size) = normalize_fragmented_inline_containing_block(
                     doc,
@@ -5940,7 +5972,7 @@ pub fn has_inline_children(doc: &Document, node_id: NodeId) -> bool {
 mod tests {
     use super::*;
     use openui_dom::ElementTag;
-    use openui_style::{Color, Display, WhiteSpace};
+    use openui_style::{Color, Direction, Display, Position, WhiteSpace, WritingMode};
 
     /// Helper to build a FontMetrics with specific ascent, descent, and line_gap.
     fn test_metrics(ascent: f32, descent: f32, line_gap: f32) -> FontMetrics {
@@ -5996,6 +6028,105 @@ mod tests {
             following_position.line_height
         );
         assert_eq!(following_position.preceding_inline_size, LayoutUnit::zero());
+    }
+
+    #[test]
+    fn positioned_inline_containing_block_keeps_empty_first_fragment() {
+        let mut doc = Document::new();
+        let target = doc.create_node(ElementTag::Span);
+        let mut first = Fragment::new_box(
+            target,
+            PhysicalSize::new(LayoutUnit::zero(), LayoutUnit::from_i32(16)),
+        );
+        first.is_inline_box_fragment = true;
+        first.offset = PhysicalOffset::new(LayoutUnit::from_i32(40), LayoutUnit::zero());
+        let mut last = Fragment::new_box(
+            target,
+            PhysicalSize::new(LayoutUnit::from_i32(10), LayoutUnit::from_i32(16)),
+        );
+        last.is_inline_box_fragment = true;
+        last.offset = PhysicalOffset::new(LayoutUnit::from_i32(5), LayoutUnit::from_i32(16));
+
+        let (offset, size) = inline_containing_block_geometry(
+            target,
+            &[first, last],
+            Direction::Ltr,
+            Direction::Ltr.writing_direction(WritingMode::HorizontalTb),
+            LayoutUnit::from_i32(100),
+            false,
+            true,
+        )
+        .expect("positioned inline geometry");
+
+        assert_eq!(offset.left, LayoutUnit::from_i32(40));
+        assert_eq!(offset.top, LayoutUnit::zero());
+        assert_eq!(size.width, LayoutUnit::zero());
+        assert_eq!(size.height, LayoutUnit::from_i32(32));
+    }
+
+    #[test]
+    fn fragmented_positioned_inline_ignores_empty_continuation_shell() {
+        let mut doc = Document::new();
+        let target = doc.create_node(ElementTag::Span);
+        let mut continuation = Fragment::new_box(
+            target,
+            PhysicalSize::new(LayoutUnit::zero(), LayoutUnit::from_i32(16)),
+        );
+        continuation.is_inline_box_fragment = true;
+        continuation.offset = PhysicalOffset::new(LayoutUnit::from_i32(40), LayoutUnit::zero());
+        let mut content = Fragment::new_box(
+            target,
+            PhysicalSize::new(LayoutUnit::from_i32(10), LayoutUnit::from_i32(16)),
+        );
+        content.is_inline_box_fragment = true;
+        content.offset = PhysicalOffset::new(LayoutUnit::from_i32(5), LayoutUnit::from_i32(16));
+        let mut text = Fragment::new_box(
+            target,
+            PhysicalSize::new(LayoutUnit::from_i32(10), LayoutUnit::from_i32(16)),
+        );
+        text.kind = FragmentKind::Text;
+        content.children.push(text);
+
+        let (offset, size) = inline_containing_block_geometry(
+            target,
+            &[continuation, content],
+            Direction::Ltr,
+            Direction::Ltr.writing_direction(WritingMode::HorizontalTb),
+            LayoutUnit::from_i32(100),
+            false,
+            false,
+        )
+        .expect("fragmented positioned inline geometry");
+
+        assert_eq!(offset.left, LayoutUnit::from_i32(5));
+        assert_eq!(offset.top, LayoutUnit::from_i32(16));
+        assert_eq!(size.width, LayoutUnit::from_i32(10));
+        assert_eq!(size.height, LayoutUnit::from_i32(16));
+    }
+
+    #[test]
+    fn leading_out_of_flow_distinguishes_generated_box_from_continuation() {
+        let mut doc = Document::new();
+        let leading_oof = doc.create_node(ElementTag::Span);
+        let abs = doc.create_node(ElementTag::Div);
+        doc.node_mut(abs).style.position = Position::Absolute;
+        doc.append_child(leading_oof, abs);
+        let following_text = doc.create_node(ElementTag::Text);
+        doc.node_mut(following_text).text = Some("content".to_string());
+        doc.append_child(leading_oof, following_text);
+        assert!(positioned_inline_starts_with_out_of_flow(&doc, leading_oof));
+
+        let leading_text = doc.create_node(ElementTag::Span);
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("content".to_string());
+        doc.append_child(leading_text, text);
+        let later_abs = doc.create_node(ElementTag::Div);
+        doc.node_mut(later_abs).style.position = Position::Absolute;
+        doc.append_child(leading_text, later_abs);
+        assert!(!positioned_inline_starts_with_out_of_flow(
+            &doc,
+            leading_text
+        ));
     }
 
     #[test]
