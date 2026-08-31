@@ -7291,8 +7291,16 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
         body = re.sub(r'<html[^>]*>|</html>', '', body, flags=re.IGNORECASE)
         # Remove <head> but preserve <style> blocks (already extracted above)
         body = re.sub(r'<head[^>]*>.*?</head>', '', body, flags=re.DOTALL | re.IGNORECASE)
-        body = re.sub(r'<link[^>]*>', '', body, flags=re.IGNORECASE)
-        body = re.sub(r'<meta[^>]*>', '', body, flags=re.IGNORECASE)
+        # Attribute values may legally contain literal angle brackets. A
+        # simple `[^>]*` stops at the first one inside a quoted assertion and
+        # leaks the remainder of metadata into the visible test body.
+        quoted_attributes = r'(?:[^>"\']+|"[^"]*"|\'[^\']*\')*'
+        body = re.sub(
+            rf'<link\b{quoted_attributes}>', '', body, flags=re.IGNORECASE
+        )
+        body = re.sub(
+            rf'<meta\b{quoted_attributes}>', '', body, flags=re.IGNORECASE
+        )
         body = re.sub(r'<title[^>]*>.*?</title>', '', body, flags=re.DOTALL | re.IGNORECASE)
         body = re.sub(r'<script[^>]*>.*?</script>', '', body, flags=re.DOTALL | re.IGNORECASE)
         # Remove style blocks from body (they're already in style_prefix)

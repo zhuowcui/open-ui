@@ -1,22 +1,22 @@
 {
   "total": 4139,
-  "passed": 4058,
-  "failed": 81,
+  "passed": 4091,
+  "failed": 48,
   "errors": 0,
-  "near_miss_aa": 18,
+  "near_miss_aa": 14,
   "aa_threshold_pct": 0.5,
   "reference_tests": 1054,
-  "reference_tests_pass": 1027,
+  "reference_tests_pass": 1033,
   "tests": [
     {
       "id": "wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline",
-      "status": "fail",
-      "mismatch_pct": 5.095541
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-in-inline-anonymous-block-with-overflow-hidden",
-      "status": "fail",
-      "mismatch_pct": 1.061571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-in-nested-multicol-001",
@@ -35,8 +35,8 @@
     },
     {
       "id": "wpt/css2_floats/float-nowrap-1-notref",
-      "status": "fail",
-      "mismatch_pct": 0.752229
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-1",
@@ -45,23 +45,23 @@
     },
     {
       "id": "wpt/css2_floats/float-nowrap-2",
-      "status": "fail",
-      "mismatch_pct": 0.438004
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-3-ref",
-      "status": "fail",
-      "mismatch_pct": 0.972399
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-3",
-      "status": "fail",
-      "mismatch_pct": 1.128238
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-4-ref",
-      "status": "fail",
-      "mismatch_pct": 0.971125
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-4-ref2",
@@ -70,8 +70,8 @@
     },
     {
       "id": "wpt/css2_floats/float-nowrap-4",
-      "status": "fail",
-      "mismatch_pct": 1.128238
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-5-ref",
@@ -90,33 +90,33 @@
     },
     {
       "id": "wpt/css2_floats/float-nowrap-7",
-      "status": "fail",
-      "mismatch_pct": 0.523142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-8",
-      "status": "fail",
-      "mismatch_pct": 0.977282
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-9",
-      "status": "fail",
-      "mismatch_pct": 1.074098
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-hyphen-rewind-1-ref",
-      "status": "fail",
-      "mismatch_pct": 2.56879
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-hyphen-rewind-1-ref2",
-      "status": "fail",
-      "mismatch_pct": 1.906369
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-nowrap-hyphen-rewind-1",
-      "status": "fail",
-      "mismatch_pct": 2.23758
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/float-root-ref",
@@ -150,13 +150,13 @@
     },
     {
       "id": "wpt/css2_floats/floats-line-wrap-shifted-001-ref",
-      "status": "fail",
-      "mismatch_pct": 0.089172
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-line-wrap-shifted-001",
-      "status": "fail",
-      "mismatch_pct": 0.161359
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-001",
@@ -170,8 +170,8 @@
     },
     {
       "id": "wpt/css2_floats/floats-placement-003",
-      "status": "fail",
-      "mismatch_pct": 0.042463
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-004",
@@ -185,13 +185,13 @@
     },
     {
       "id": "wpt/css2_floats/floats-placement-005",
-      "status": "fail",
-      "mismatch_pct": 1.273885
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-006",
-      "status": "fail",
-      "mismatch_pct": 2.123142
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-007",
@@ -200,8 +200,8 @@
     },
     {
       "id": "wpt/css2_floats/floats-placement-008",
-      "status": "fail",
-      "mismatch_pct": 1.146497
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-001-ref",
@@ -215,13 +215,13 @@
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-001b",
-      "status": "fail",
-      "mismatch_pct": 7.138004
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-001c",
-      "status": "fail",
-      "mismatch_pct": 7.138004
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-placement-vertical-003-ref",
@@ -485,33 +485,33 @@
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-inline-001l",
-      "status": "fail",
-      "mismatch_pct": 1.061571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-inline-001r",
-      "status": "fail",
-      "mismatch_pct": 1.061571
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-inline-002l",
-      "status": "fail",
-      "mismatch_pct": 4.934183
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-inline-002r",
-      "status": "fail",
-      "mismatch_pct": 4.934183
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-inline-003l",
-      "status": "fail",
-      "mismatch_pct": 2.651805
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-wrap-top-below-inline-003r",
-      "status": "fail",
-      "mismatch_pct": 2.651805
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-zero-height-wrap-001-ref",
@@ -520,18 +520,18 @@
     },
     {
       "id": "wpt/css2_floats/floats-zero-height-wrap-001",
-      "status": "fail",
-      "mismatch_pct": 0.764331
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/floats-zero-height-wrap-002",
-      "status": "fail",
-      "mismatch_pct": 0.764331
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/intrinsic-size-float-and-line",
-      "status": "fail",
-      "mismatch_pct": 10.615711
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/line-pushed-by-floats-crash",
@@ -580,8 +580,8 @@
     },
     {
       "id": "wpt/css2_floats/new-fc-relayout",
-      "status": "fail",
-      "mismatch_pct": 1.45966
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/new-fc-separates-from-float-2",
@@ -595,8 +595,8 @@
     },
     {
       "id": "wpt/css2_floats/new-fc-separates-from-float-4",
-      "status": "fail",
-      "mismatch_pct": 16.806794
+      "status": "pass",
+      "mismatch_pct": 0.0
     },
     {
       "id": "wpt/css2_floats/new-fc-separates-from-float",

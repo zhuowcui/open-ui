@@ -16,14 +16,20 @@ ROOT = HERE.parent.parent
 DATA = ROOT / "tools" / "accountability" / "data"
 PORTED = DATA / "wpt_ported"
 RESULTS = DATA / "pixel_comparison" / "results"
-MAPPING = DATA / "wpt_mapping.csv"
+SP19_KICKOFF_MAPPING = PORTED / "sp19_kickoff_mapping.csv"
+SP19_KICKOFF_SUMMARY = PORTED / "sp19_sp18_summary.json"
+MAPPING = (
+    SP19_KICKOFF_MAPPING
+    if SP19_KICKOFF_MAPPING.is_file()
+    else DATA / "wpt_mapping.csv"
+)
 DEFERRED = DATA / "sp12_5_deferred.csv"
 TARGETS = PORTED / "sp13p_paint_targets.json"
 FOCUSED = PORTED / "sp13p_paint_focused.json"
 RESIDUALS = PORTED / "sp13p_paint_residuals.json"
 ASSET_MANIFEST = DATA / "wpt_assets" / "sp13p_manifest.json"
 ASSET_DIR = DATA / "wpt_assets" / "sp13p"
-SUMMARY = RESULTS / "summary.json"
+SUMMARY = SP19_KICKOFF_SUMMARY if SP19_KICKOFF_SUMMARY.is_file() else RESULTS / "summary.json"
 
 EXPECTED_HASHES = {
     TARGETS: "322d86866abdd23d14e435cba71e7f1239d49f7ad1914ac607ac7a5b7a387324",
@@ -219,10 +225,18 @@ def validate_closed_snapshot() -> None:
         if len(owned) != expected or any(row["ported"] != "no" for row in owned):
             raise ValueError(f"SP13-P remaining {owner} inventory changed")
 
-    with DEFERRED.open(newline="", encoding="utf-8") as source:
-        deferred = list(csv.DictReader(source))
     failed_ids = {row["id"] for row in summary["tests"] if row["status"] == "fail"}
-    if len(deferred) != 81 or {row["test_id"] for row in deferred} != failed_ids:
+    if SP19_KICKOFF_SUMMARY.is_file():
+        deferred_ids = {
+            row["test_id"]
+            for row in json.loads(
+                (PORTED / "sp19_initial_mismatches.json").read_text(encoding="utf-8")
+            )
+        }
+    else:
+        with DEFERRED.open(newline="", encoding="utf-8") as source:
+            deferred_ids = {row["test_id"] for row in csv.DictReader(source)}
+    if len(deferred_ids) != 81 or deferred_ids != failed_ids:
         raise ValueError("SP13-P/SP18 deferred CSV is not the live 81-ID failure set")
     text_ids = json.loads((PORTED / "text_ported_tests.json").read_text())
     if len(text_ids) != 1275:

@@ -21,8 +21,18 @@ PROJECT_ROOT = SCRIPT_DIR.parent.parent
 DATA_DIR = PROJECT_ROOT / "tools" / "accountability" / "data"
 PORTED_DIR = DATA_DIR / "wpt_ported"
 RESULTS_DIR = DATA_DIR / "pixel_comparison" / "results"
-MAPPING_CSV = DATA_DIR / "wpt_mapping.csv"
-SUMMARY_JSON = RESULTS_DIR / "summary.json"
+SP19_KICKOFF_MAPPING = PORTED_DIR / "sp19_kickoff_mapping.csv"
+SP19_KICKOFF_SUMMARY = PORTED_DIR / "sp19_sp18_summary.json"
+MAPPING_CSV = (
+    SP19_KICKOFF_MAPPING
+    if SP19_KICKOFF_MAPPING.is_file()
+    else DATA_DIR / "wpt_mapping.csv"
+)
+SUMMARY_JSON = (
+    SP19_KICKOFF_SUMMARY
+    if SP19_KICKOFF_SUMMARY.is_file()
+    else RESULTS_DIR / "summary.json"
+)
 
 BASELINE_JSON = PORTED_DIR / "sp17_baseline_exact.json"
 INVENTORY_JSON = PORTED_DIR / "sp17_writing_mode_inventory.json"

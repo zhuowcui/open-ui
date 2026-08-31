@@ -118,6 +118,18 @@ impl ExclusionSpace {
         }
     }
 
+    /// Highest block-start reached by any previously placed float.
+    /// CSS 2.1 forbids a later float's outer top from being above it, even
+    /// when the floats occupy opposite inline sides and do not overlap.
+    pub fn last_float_block_start(&self) -> LayoutUnit {
+        self.left_floats
+            .iter()
+            .chain(&self.right_floats)
+            .map(|float| float.rect.block_start_offset())
+            .max()
+            .unwrap_or_default()
+    }
+
     /// Find the first layout opportunity at or below `offset` that has at
     /// least `min_inline_size` of inline space within `available_inline_size`.
     ///

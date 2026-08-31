@@ -1112,13 +1112,78 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         // Handle float and OOF children first (leading floats), then lay out
         // inline content with float-aware per-line available width.
         let mut exclusion_space_inline = initial_exclusion_space(space);
+        let (mut items_data, float_placeholders) =
+            crate::inline::items_builder::InlineItemsBuilder::collect_with_floats(doc, node_id);
+        let float_source_positions = crate::inline::algorithm::inline_float_source_positions(
+            doc,
+            node_id,
+            &items_data,
+            &float_placeholders,
+            child_available_inline,
+            space,
+        );
+        // The flattened inline source positions do not include the block-axis
+        // space consumed by block-in-inline interruptions. Measure those
+        // interruptions up front so a later descendant float keeps its source
+        // order position after the intervening block, rather than being placed
+        // at the start of the containing block.
+        let block_in_inline_source_advances = if items_data.block_in_inline.is_empty() {
+            Vec::new()
+        } else {
+            let mut interruptions = items_data.block_in_inline.clone();
+            interruptions.sort_by_key(|interruption| interruption.item_index);
+            let first_interruption_collapses = content_edge == LayoutUnit::zero()
+                && !space.is_new_formatting_context
+                && interruptions.first().is_some_and(|first| {
+                    !items_data.items[..first.item_index].iter().any(|item| {
+                        matches!(
+                            item.item_type,
+                            crate::inline::items::InlineItemType::Text
+                                | crate::inline::items::InlineItemType::AtomicInline
+                        )
+                    })
+                });
+            interruptions
+                .iter()
+                .enumerate()
+                .map(|(index, interruption)| {
+                    let child_style = &doc.node(interruption.node_id).style;
+                    let child_space = crate::logical_geometry::block_child_constraint_space(
+                        space,
+                        child_style,
+                        child_available_inline,
+                        space.available_block_size,
+                        child_available_inline,
+                        child_percentage_block_size,
+                        false,
+                    );
+                    let child_fragment = block_layout(doc, interruption.node_id, &child_space);
+                    let margin_top =
+                        resolve_margin_or_padding(&child_style.margin_top, child_available_inline);
+                    let margin_bottom = resolve_margin_or_padding(
+                        &child_style.margin_bottom,
+                        child_available_inline,
+                    );
+                    let local_margin_top = if index == 0 && first_interruption_collapses {
+                        LayoutUnit::zero()
+                    } else {
+                        margin_top
+                    };
+                    (
+                        interruption.item_index,
+                        local_margin_top + child_fragment.size.height + margin_bottom,
+                    )
+                })
+                .collect()
+        };
         let retained_float_line_budget = match style.line_clamp {
             openui_style::LineClamp::Lines(lines) => Some(lines as usize),
             _ => None,
         };
-        let mut float_insertion_line = 1usize;
+        let float_insertion_line = 1usize;
 
-        for child_id in doc.children(node_id) {
+        for placeholder in &float_placeholders {
+            let child_id = placeholder.node_id;
             let child_style = &doc.node(child_id).style;
             if child_style.display == Display::None {
                 continue;
@@ -1128,13 +1193,51 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 // insertion boundary. Do not synthesize a duplicate here.
                 continue;
             }
-            // CSS 2.1 §9.5: Float children are positioned as leading floats
-            // before inline content begins. Their exclusion areas affect
-            // per-line available width via the exclusion space.
             if child_style.float != Float::None {
                 if retained_float_line_budget.is_some_and(|budget| float_insertion_line > budget) {
                     continue;
                 }
+                let source = float_source_positions.get(&child_id).copied().unwrap_or(
+                    crate::inline::algorithm::InlineFloatSourcePosition {
+                        block_offset: LayoutUnit::zero(),
+                        preceding_inline_size: LayoutUnit::zero(),
+                        line_height: LayoutUnit::zero(),
+                    },
+                );
+                let margin = resolve_margins_in_parent_axes(
+                    child_style,
+                    child_available_inline,
+                    space.writing_direction,
+                );
+                let inline_length =
+                    inline_size_in_parent_axes(child_style, space.writing_direction);
+                let estimated_border_box = if inline_length.is_auto() {
+                    crate::out_of_flow::compute_shrink_to_fit_width(
+                        doc,
+                        child_id,
+                        child_available_inline,
+                    )
+                } else {
+                    resolve_length(
+                        inline_length,
+                        child_available_inline,
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                    )
+                };
+                let estimated_margin_box =
+                    (margin.left + estimated_border_box + margin.right).clamp_negative_to_zero();
+                let source_block = if source.preceding_inline_size > LayoutUnit::zero()
+                    && source.preceding_inline_size + estimated_margin_box > child_available_inline
+                {
+                    source.block_offset + source.line_height
+                } else {
+                    source.block_offset
+                } + block_in_inline_source_advances
+                    .iter()
+                    .filter(|(item_index, _)| *item_index < placeholder.item_index)
+                    .fold(LayoutUnit::zero(), |sum, (_, advance)| sum + *advance);
+                let float_block_offset = block_offset + source_block;
                 handle_float(
                     doc,
                     child_id,
@@ -1144,7 +1247,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     &border,
                     &padding,
                     content_edge,
-                    &block_offset,
+                    &float_block_offset,
                     &mut exclusion_space_inline,
                     &mut child_fragments,
                     &mut oof_candidates,
@@ -1153,34 +1256,10 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     captures_fixed_pos_descendants,
                     &mut max_float_bottom,
                 );
-            } else {
-                float_insertion_line += subtree_preserved_break_count(doc, child_id);
             }
-        }
-        for child_id in nested_orthogonal_inline_floats(doc, node_id, space.writing_direction) {
-            handle_float(
-                doc,
-                child_id,
-                space,
-                child_available_inline,
-                child_percentage_block_size,
-                &border,
-                &padding,
-                content_edge,
-                &block_offset,
-                &mut exclusion_space_inline,
-                &mut child_fragments,
-                &mut oof_candidates,
-                &mut bubbled_oof_candidates,
-                establishes_cb_for_abspos,
-                captures_fixed_pos_descendants,
-                &mut max_float_bottom,
-            );
         }
 
         // Pre-collect inline items to detect block-in-inline (CSS 2.2 §9.2.1.1).
-        let mut items_data =
-            crate::inline::items_builder::InlineItemsBuilder::collect(doc, node_id);
 
         if !items_data.block_in_inline.is_empty() {
             // ── Block-in-inline: split IFC around block-level elements ──
@@ -1227,7 +1306,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             let mut is_first_segment = true;
             let mut interrupted_block_advances = Vec::new();
             let mut formatted_zero_atomic_after_clamp = false;
-            for bi_info in &block_in_inline_sorted {
+            for (block_index, bi_info) in block_in_inline_sorted.iter().enumerate() {
                 let block_child_is_zero_atomic = {
                     let block_style = &doc.node(bi_info.node_id).style;
                     block_style.height.is_fixed() && block_style.height.value() == 0.0
@@ -1349,7 +1428,27 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     child_available_inline,
                 );
 
-                current_block_offset = current_block_offset + bm_top;
+                let top_margin_collapses_through_parent = block_index == 0
+                    && current_block_offset == content_edge
+                    && content_edge == LayoutUnit::zero()
+                    && !space.is_new_formatting_context
+                    && !items_data.items[..bi_info.item_index].iter().any(|item| {
+                        matches!(
+                            item.item_type,
+                            crate::inline::items::InlineItemType::Text
+                                | crate::inline::items::InlineItemType::AtomicInline
+                        )
+                    });
+                let local_bm_top = if top_margin_collapses_through_parent {
+                    let mut collapsed = saved_start_strut.unwrap_or_default();
+                    collapsed.append_normal(bm_top);
+                    saved_start_strut = Some(collapsed);
+                    LayoutUnit::zero()
+                } else {
+                    bm_top
+                };
+
+                current_block_offset = current_block_offset + local_bm_top;
                 let mut positioned_block = block_child_frag;
                 let inline_relative_offset = inline_ancestor_relative_offset(
                     doc,
@@ -1375,7 +1474,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     current_block_offset + positioned_block.size.height + bm_bottom;
                 interrupted_block_advances.push((
                     bi_info.item_index,
-                    bm_top + positioned_block.size.height + bm_bottom,
+                    local_bm_top + positioned_block.size.height + bm_bottom,
                 ));
                 child_fragments.push(positioned_block);
 
@@ -1948,6 +2047,52 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     margin_strut = MarginStrut::new();
                 }
 
+                // Floats nested below an inline wrapper still belong to this
+                // block formatting context. Mixed-flow reconstruction used to
+                // retain the empty inline continuation but discard the nested
+                // float because only top-level mixed children were examined.
+                // Place each nested float at its source line before laying out
+                // the anonymous run so its exclusion also affects that run.
+                let (inline_run_items, inline_run_floats) =
+                    crate::inline::items_builder::InlineItemsBuilder::collect_for_children_with_floats(
+                        doc,
+                        node_id,
+                        inline_run,
+                    );
+                let inline_run_float_positions =
+                    crate::inline::algorithm::inline_float_source_positions(
+                        doc,
+                        node_id,
+                        &inline_run_items,
+                        &inline_run_floats,
+                        child_available_inline,
+                        space,
+                    );
+                for placeholder in &inline_run_floats {
+                    let source_block = inline_run_float_positions
+                        .get(&placeholder.node_id)
+                        .map(|source| source.block_offset)
+                        .unwrap_or_default();
+                    handle_float(
+                        doc,
+                        placeholder.node_id,
+                        space,
+                        child_available_inline,
+                        child_percentage_block_size,
+                        &border,
+                        &padding,
+                        content_edge,
+                        &(block_offset + source_block),
+                        &mut exclusion_space_mixed,
+                        &mut child_fragments,
+                        &mut oof_candidates,
+                        &mut bubbled_oof_candidates,
+                        establishes_cb_for_abspos,
+                        captures_fixed_pos_descendants,
+                        &mut max_float_bottom,
+                    );
+                }
+
                 // Lay out this anonymous inline wrapper.
                 // Pass the exclusion space so inline layout can do per-line
                 // float avoidance (CSS 2.1 §9.5.1).
@@ -2165,14 +2310,55 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         space.writing_direction,
                     );
                     let child_top_margin = child_margin.top;
-                    let mut temp_strut = margin_strut;
-                    temp_strut.append_normal(child_top_margin);
-                    let resolved_offset = block_offset + temp_strut.sum();
-                    let content_block_offset = resolved_offset - content_edge;
                     let min_inline_size = if uses_margin_reduced_inherited_exclusions(space) {
                         LayoutUnit::zero()
                     } else {
-                        new_fc_min_inline_size(child_style, child_available_inline)
+                        new_fc_min_inline_size(doc, child_id, child_available_inline)
+                    };
+
+                    // The mixed inline/block path needs the same two-estimate
+                    // margin separation as the pure block path below. Test the
+                    // adjoining position before applying the child's margin:
+                    // when the BFC cannot fit beside a propagated descendant
+                    // float, its margin starts a new group and must not drag
+                    // preceding self-collapsing wrappers (and their floats) to
+                    // the child's eventual block position.
+                    let separated_start = if (!start_margin_resolved
+                        || !pending_self_collapsing.is_empty())
+                        && !space.is_new_formatting_context
+                        && content_edge == LayoutUnit::zero()
+                    {
+                        let adjoining = exclusion_space_mixed.find_layout_opportunity(
+                            &BfcOffset::new(LayoutUnit::zero(), LayoutUnit::zero()),
+                            child_available_inline,
+                            min_inline_size,
+                        );
+                        (adjoining.rect.block_start_offset() > LayoutUnit::zero())
+                            .then_some(adjoining.rect.block_start_offset())
+                    } else {
+                        None
+                    };
+
+                    let content_block_offset = if let Some(separated_start) = separated_start {
+                        if saved_start_strut.is_none() {
+                            saved_start_strut = Some(margin_strut);
+                        }
+                        margin_strut = MarginStrut::new();
+                        start_margin_resolved = true;
+                        for &idx in &pending_self_collapsing {
+                            child_fragments[idx].offset.top = block_offset;
+                        }
+                        pending_self_collapsing.clear();
+                        // layout_block_child adds the top margin, so retain the
+                        // border edge at the selected opportunity by backing it
+                        // out here.
+                        block_offset = content_edge + separated_start - child_top_margin;
+                        separated_start
+                    } else {
+                        let mut temp_strut = margin_strut;
+                        temp_strut.append_normal(child_top_margin);
+                        let resolved_offset = block_offset + temp_strut.sum();
+                        resolved_offset - content_edge
                     };
 
                     // Use height-aware opportunity search for explicit-height BFCs.
@@ -2568,7 +2754,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 let min_inline_size = if uses_margin_reduced_inherited_exclusions(space) {
                     LayoutUnit::zero()
                 } else {
-                    new_fc_min_inline_size(child_style, child_available_inline)
+                    new_fc_min_inline_size(doc, child_id, child_available_inline)
                 };
 
                 // Chromium two-estimate mechanism (HandleNewFormattingContext):
@@ -2795,14 +2981,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     let min_inline_size = if inherited_margin_reduced {
                         LayoutUnit::zero()
                     } else {
-                        new_fc_min_inline_size(child_style, child_available_inline)
+                        new_fc_min_inline_size(doc, child_id, child_available_inline)
                     };
-                    let verified_min_inline_size = if overlaps_float {
-                        min_inline_size.max_of(last_frag.size.width)
-                    } else {
-                        min_inline_size
-                    };
-
                     let verified_opp = if child_style.height.is_auto()
                         && child_style.aspect_ratio.is_some()
                         && (child_style.width.is_auto() || child_style.width.is_stretch())
@@ -2823,7 +3003,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         exclusion_space.find_opportunity_for_bfc(
                             &BfcOffset::new(LayoutUnit::zero(), frag_block_offset),
                             child_available_inline,
-                            verified_min_inline_size,
+                            min_inline_size,
                             total_block,
                         )
                     };
@@ -3511,58 +3691,10 @@ pub(crate) fn apply_sticky_descendants_in_scrollport(
 
 // ── Helper: detect block-level children ──────────────────────────────
 
-/// Collect nested floats that cross the owning inline formatting context's
-/// writing-mode axis. A normal nested float remains on the established block
-/// reconstruction path; an orthogonal float must be hoisted to the nearest
-/// containing BFC so its percentage inline measure can be resolved there.
-fn nested_orthogonal_inline_floats(
-    doc: &Document,
-    node_id: NodeId,
-    parent_direction: WritingDirectionMode,
-) -> Vec<NodeId> {
-    fn collect(
-        doc: &Document,
-        node_id: NodeId,
-        parent_direction: WritingDirectionMode,
-        depth: usize,
-        out: &mut Vec<NodeId>,
-    ) {
-        for child_id in doc.children(node_id) {
-            let child = doc.node(child_id);
-            if child.style.display == Display::None
-                || child.style.position.is_absolutely_positioned()
-            {
-                continue;
-            }
-            if child.style.float != Float::None {
-                let child_direction = child
-                    .style
-                    .direction
-                    .writing_direction(child.style.writing_mode);
-                if depth > 0 && child_direction.is_horizontal() != parent_direction.is_horizontal()
-                {
-                    out.push(child_id);
-                }
-                continue;
-            }
-            if child.style.display == Display::Inline {
-                collect(doc, child_id, parent_direction, depth + 1, out);
-            }
-        }
-    }
-
-    let mut floats = Vec::new();
-    collect(doc, node_id, parent_direction, 0, &mut floats);
-    floats
-}
-
 /// Check if a node has any block-level children (CSS 2.2 §9.2.1.1).
 /// Floated children are treated as block-level for content classification.
 pub fn has_block_children(doc: &Document, node_id: NodeId) -> bool {
     let parent_style = &doc.node(node_id).style;
-    let parent_direction = parent_style
-        .direction
-        .writing_direction(parent_style.writing_mode);
     let parent_is_multicol =
         parent_style.column_count.is_some() || parent_style.column_width.is_some();
     let has_inline_sibling = crate::inline::algorithm::has_inline_children(doc, node_id);
@@ -3573,18 +3705,12 @@ pub fn has_block_children(doc: &Document, node_id: NodeId) -> bool {
         }
         // Floated elements trigger block-level content classification.
         if child.style.float != Float::None {
-            // Floats belong to the owning inline formatting context. Preserve
-            // the established block reconstruction generally, while keeping
-            // floated flex boxes and RTL mixed inline/float runs together so
-            // source order, clear, and physical float sides share one IFC.
-            let child_uses_deterministic_text_profile = child.style.font_family.families.iter().any(
-                |family| {
-                    matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
-                },
-            );
-            if (child.style.display.is_flex() && child_uses_deterministic_text_profile)
-                || (parent_direction.is_rtl() && has_inline_sibling && !parent_is_multicol)
-            {
+            // A float and inline siblings share one IFC.  Treating the float
+            // as an intervening block split loses the line-break checkpoint:
+            // a nowrap run can no longer be rewound below the newly placed
+            // float.  Multicol retains its reconstruction path because its
+            // fragmentainer owns float placement independently.
+            if has_inline_sibling && !parent_is_multicol {
                 continue;
             }
             return true;
@@ -4751,7 +4877,12 @@ pub fn establishes_new_fc(style: &ComputedStyle) -> bool {
 ///
 /// For auto-width: positive margins + border + padding (content can shrink to 0).
 /// For explicit width: border-box width.
-fn new_fc_min_inline_size(style: &ComputedStyle, containing_inline: LayoutUnit) -> LayoutUnit {
+fn new_fc_min_inline_size(
+    doc: &Document,
+    node_id: NodeId,
+    containing_inline: LayoutUnit,
+) -> LayoutUnit {
+    let style = &doc.node(node_id).style;
     let bp_left = LayoutUnit::from_i32(style.effective_border_left())
         + resolve_margin_or_padding(&style.padding_left, containing_inline);
     let bp_right = LayoutUnit::from_i32(style.effective_border_right())
@@ -4770,19 +4901,23 @@ fn new_fc_min_inline_size(style: &ComputedStyle, containing_inline: LayoutUnit) 
         || style.min_width.is_stretch()
         || style.max_width.is_stretch()
     {
-        // Auto/stretch width can shrink content to zero; border/padding and
-        // positive margins still need opportunity space. With a single negative
-        // side margin, require enough opportunity for that protruding side; the
-        // final width is still resolved from the selected opportunity.
+        // An auto-sized BFC may be re-laid out in a narrower opportunity, but
+        // not below its min-content border-box size. This is what permits the
+        // CSS 2.1 two-estimate algorithm to try the first shelf, measure the
+        // resulting block size, and then narrow the child across later float
+        // shelves instead of unnecessarily pushing it below every float.
+        let intrinsic_min = crate::intrinsic_sizing::compute_intrinsic_block_sizes(doc, node_id)
+            .min_content_inline_size;
         let single_negative_margin =
             (margin_left < LayoutUnit::zero()) != (margin_right < LayoutUnit::zero());
         if single_negative_margin {
-            bp + positive_margins.max_of(
-                (-margin_left.min_of(LayoutUnit::zero()))
-                    .max_of(-margin_right.min_of(LayoutUnit::zero())),
-            )
+            intrinsic_min
+                + positive_margins.max_of(
+                    (-margin_left.min_of(LayoutUnit::zero()))
+                        .max_of(-margin_right.min_of(LayoutUnit::zero())),
+                )
         } else {
-            bp + positive_margins
+            intrinsic_min + positive_margins
         }
     } else {
         // Explicit width: resolve and compute border-box width
@@ -21723,6 +21858,16 @@ mod tests {
     use openui_geometry::Length;
     use openui_style::*;
 
+    fn fragment_for_node(fragment: &Fragment, node_id: NodeId) -> Option<&Fragment> {
+        if fragment.node_id == node_id {
+            return Some(fragment);
+        }
+        fragment
+            .children
+            .iter()
+            .find_map(|child| fragment_for_node(child, node_id))
+    }
+
     #[test]
     fn single_div_fills_width() {
         let mut doc = Document::new();
@@ -22663,5 +22808,153 @@ mod tests {
             "10% padding-left should resolve against containing block (800px) = 80px, got {}",
             resolved_padding,
         );
+    }
+
+    #[test]
+    fn block_in_inline_margin_collapses_and_later_float_keeps_source_position() {
+        let mut doc = Document::new();
+        let outer = doc.create_node(ElementTag::Div);
+        doc.node_mut(outer).style.display = Display::Block;
+        doc.node_mut(outer).style.width = Length::px(200.0);
+        doc.node_mut(outer).style.height = Length::px(200.0);
+        doc.node_mut(outer).style.margin_top = Length::px(-100.0);
+        doc.append_child(doc.root(), outer);
+
+        let inline = doc.create_node(ElementTag::Span);
+        doc.node_mut(inline).style.display = Display::Inline;
+        doc.append_child(outer, inline);
+
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.node_mut(block).style.width = Length::px(200.0);
+        doc.node_mut(block).style.height = Length::px(100.0);
+        doc.node_mut(block).style.margin_top = Length::px(100.0);
+        doc.append_child(inline, block);
+
+        let float = doc.create_node(ElementTag::Div);
+        doc.node_mut(float).style.display = Display::Block;
+        doc.node_mut(float).style.float = Float::Left;
+        doc.node_mut(float).style.width = Length::px(200.0);
+        doc.node_mut(float).style.height = Length::px(100.0);
+        doc.append_child(inline, float);
+
+        let outer_fragment = block_layout(
+            &doc,
+            outer,
+            &ConstraintSpace::for_block_child(
+                LayoutUnit::from_i32(200),
+                LayoutUnit::from_i32(600),
+                LayoutUnit::from_i32(200),
+                LayoutUnit::from_i32(600),
+                false,
+            ),
+        );
+        let block_fragment = outer_fragment
+            .children
+            .iter()
+            .find(|fragment| fragment.node_id == block)
+            .expect("interrupted block fragment");
+        let float_fragment = outer_fragment
+            .children
+            .iter()
+            .find(|fragment| fragment.node_id == float)
+            .expect("descendant float fragment");
+
+        assert_eq!(block_fragment.offset.top, LayoutUnit::zero());
+        assert_eq!(float_fragment.offset.top, LayoutUnit::from_i32(100));
+    }
+
+    #[test]
+    fn auto_bfc_relayouts_into_narrowest_full_height_float_shelf() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Block;
+        doc.node_mut(container).style.width = Length::px(100.0);
+        doc.node_mut(container).style.line_height = LineHeight::Length(0.0);
+        doc.append_child(doc.root(), container);
+
+        for (width, height) in [(50.0, 50.0), (75.0, 50.0)] {
+            let float = doc.create_node(ElementTag::Div);
+            doc.node_mut(float).style.display = Display::Block;
+            doc.node_mut(float).style.float = Float::Right;
+            doc.node_mut(float).style.width = Length::px(width);
+            doc.node_mut(float).style.height = Length::px(height);
+            doc.append_child(container, float);
+        }
+
+        let bfc = doc.create_node(ElementTag::Div);
+        doc.node_mut(bfc).style.display = Display::Block;
+        doc.node_mut(bfc).style.line_height = LineHeight::Length(0.0);
+        doc.node_mut(bfc).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(bfc).style.overflow_y = Overflow::Hidden;
+        doc.append_child(container, bfc);
+        for height in [75.0, 25.0] {
+            let atomic = doc.create_node(ElementTag::Span);
+            doc.node_mut(atomic).style.display = Display::InlineBlock;
+            doc.node_mut(atomic).style.width = Length::px(25.0);
+            doc.node_mut(atomic).style.height = Length::px(height);
+            doc.append_child(bfc, atomic);
+        }
+
+        let fragment = block_layout(
+            &doc,
+            doc.root(),
+            &ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600)),
+        );
+        let bfc_fragment = fragment_for_node(&fragment, bfc).expect("BFC fragment");
+        assert_eq!(bfc_fragment.offset.top, LayoutUnit::zero());
+        assert_eq!(bfc_fragment.size.width, LayoutUnit::from_i32(25));
+        assert_eq!(bfc_fragment.size.height, LayoutUnit::from_i32(100));
+    }
+
+    #[test]
+    fn bfc_margin_separates_from_float_through_phantom_inline() {
+        let mut doc = Document::new();
+        let outer = doc.create_node(ElementTag::Div);
+        doc.node_mut(outer).style.display = Display::Block;
+        doc.node_mut(outer).style.width = Length::px(200.0);
+        doc.node_mut(outer).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(outer).style.overflow_y = Overflow::Hidden;
+        doc.append_child(doc.root(), outer);
+
+        let inner = doc.create_node(ElementTag::Div);
+        doc.node_mut(inner).style.display = Display::Block;
+        doc.append_child(outer, inner);
+        let wrapper = doc.create_node(ElementTag::Div);
+        doc.node_mut(wrapper).style.display = Display::Block;
+        doc.append_child(inner, wrapper);
+        let float = doc.create_node(ElementTag::Div);
+        doc.node_mut(float).style.display = Display::Block;
+        doc.node_mut(float).style.float = Float::Left;
+        doc.node_mut(float).style.width = Length::px(200.0);
+        doc.node_mut(float).style.height = Length::px(200.0);
+        doc.append_child(wrapper, float);
+
+        let inline = doc.create_node(ElementTag::Span);
+        doc.node_mut(inline).style.display = Display::Inline;
+        doc.append_child(inner, inline);
+        let whitespace = doc.create_node(ElementTag::Text);
+        doc.node_mut(whitespace).text = Some(" ".to_string());
+        doc.append_child(inline, whitespace);
+
+        let bfc = doc.create_node(ElementTag::Div);
+        doc.node_mut(bfc).style.display = Display::Block;
+        doc.node_mut(bfc).style.width = Length::px(200.0);
+        doc.node_mut(bfc).style.height = Length::px(1.0);
+        doc.node_mut(bfc).style.margin_top = Length::px(200.0);
+        doc.node_mut(bfc).style.overflow_x = Overflow::Hidden;
+        doc.node_mut(bfc).style.overflow_y = Overflow::Hidden;
+        doc.append_child(inner, bfc);
+
+        let fragment = block_layout(
+            &doc,
+            doc.root(),
+            &ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600)),
+        );
+        let wrapper_fragment =
+            fragment_for_node(&fragment, wrapper).expect("self-collapsing wrapper fragment");
+        let bfc_fragment = fragment_for_node(&fragment, bfc).expect("separated BFC fragment");
+        assert_eq!(wrapper_fragment.offset.top, LayoutUnit::zero());
+        assert_eq!(bfc_fragment.offset.top, LayoutUnit::from_i32(200));
     }
 }

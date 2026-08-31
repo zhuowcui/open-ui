@@ -674,6 +674,11 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     // For inline-only containers: max-content is the SUM of inline children
     // (they all sit on one line in max-content mode).
     let mut inline_children_max_sum = LayoutUnit::zero();
+    // Keep the inline contribution separate from block-level children. Floats
+    // and the widest unbroken inline line can coexist on the same row, so a
+    // shrink-to-fit container must reserve their combined width. Block-level
+    // children, on the other hand, continue to contribute through a maximum.
+    let mut widest_inline_line = LayoutUnit::zero();
     let mut float_max_inline_sum = LayoutUnit::zero();
     // Track min-content and max-content block sizes separately.
     // CSS Sizing 3 §5: min-content uses each child's min-content contribution,
@@ -767,6 +772,7 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
                     !text.is_empty() && text.chars().all(|ch| matches!(ch, '\n' | '\r'))
                 });
             if child_node.tag == ElementTag::Break || is_preserved_newline_control {
+                widest_inline_line = widest_inline_line.max_of(inline_children_max_sum);
                 non_float_max_inline = non_float_max_inline.max_of(inline_children_max_sum);
                 inline_children_max_sum = LayoutUnit::zero();
             } else {
@@ -785,11 +791,12 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     }
 
     // Inline children on one line contribute their sum as max-content.
+    widest_inline_line = widest_inline_line.max_of(inline_children_max_sum);
     non_float_max_inline = non_float_max_inline.max_of(inline_children_max_sum);
 
-    // Max-content inline: container must be wide enough for all floats
-    // side-by-side OR the widest non-float child, whichever is larger.
-    let mut max_inline = non_float_max_inline.max_of(float_max_inline_sum);
+    // Max-content inline: floats and an unbroken inline line may share a row,
+    // while block-level children occupy their own rows.
+    let mut max_inline = non_float_max_inline.max_of(float_max_inline_sum + widest_inline_line);
 
     // BFC roots include float bottom margin edge in auto height (§10.6.7).
     if is_bfc {
@@ -2868,6 +2875,31 @@ mod tests {
             compute_inline_sequence_intrinsic_sizes(&doc, container),
             MinMaxSizes::new(LayoutUnit::from_i32(25), LayoutUnit::from_i32(125))
         );
+    }
+
+    #[test]
+    fn max_content_combines_float_and_unbroken_inline_line() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), container);
+
+        let float = doc.create_node(ElementTag::Div);
+        let float_style = doc.node_mut(float).style_mut();
+        float_style.float = openui_style::Float::Right;
+        float_style.width = Length::px(100.0);
+        float_style.height = Length::px(200.0);
+        doc.append_child(container, float);
+
+        let atomic = doc.create_node(ElementTag::Span);
+        let atomic_style = doc.node_mut(atomic).style_mut();
+        atomic_style.display = openui_style::Display::InlineBlock;
+        atomic_style.width = Length::px(100.0);
+        atomic_style.height = Length::px(200.0);
+        doc.append_child(container, atomic);
+
+        let sizes = compute_intrinsic_block_sizes(&doc, container);
+        assert_eq!(sizes.min_content_inline_size, LayoutUnit::from_i32(100));
+        assert_eq!(sizes.max_content_inline_size, LayoutUnit::from_i32(200));
     }
 
     #[test]

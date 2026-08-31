@@ -1921,7 +1921,10 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.hyphens = Hyphens::Auto;
     doc.append_child(vp, n1);
+    doc.set_attribute(n1, "id", "container");
+    doc.set_attribute(n1, "lang", "en-US");
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.font_family = FontFamilyList {
@@ -1952,7 +1955,9 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
     doc.node_mut(n2).style.width =
         Length::px(n2_font_relative.resolve(23.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n2).style.hyphens = Hyphens::Auto;
     doc.append_child(n1, n2);
+    doc.set_attribute(n2, "style", "width: 23ch");
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.font_family = FontFamilyList {
@@ -1984,12 +1989,14 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n3).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 20.0;
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n4).style.hyphens = Hyphens::Auto;
     doc.node_mut(n4).text = Some("\n      pppp\n      comprehension".to_string());
     doc.append_child(n3, n4);
     let n5 = doc.create_node(ElementTag::Span);
@@ -2007,13 +2014,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n5).style.padding_left = Length::px(0.0);
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n5).style.hyphens = Hyphens::Auto;
     doc.append_child(n3, n5);
+    doc.set_attribute(n5, "class", "wrapper");
     let n6 = doc.create_node(ElementTag::Text);
     doc.node_mut(n6).style.font_size = 20.0;
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n6).style.hyphens = Hyphens::Auto;
     doc.node_mut(n6).text = Some(" ppp".to_string());
     doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Text);
@@ -2021,6 +2031,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n7).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n7).style.hyphens = Hyphens::Auto;
     doc.node_mut(n7).text = Some("\n      pppp\n      ".to_string());
     doc.append_child(n3, n7);
     let n8 = doc.create_node(ElementTag::Span);
@@ -2039,12 +2050,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n8).style.float = Float::Right;
     doc.node_mut(n8).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n8).style.hyphens = Hyphens::Auto;
+    doc.node_mut(n8).style.display = Display::Block;
     doc.append_child(n3, n8);
+    doc.set_attribute(n8, "class", "float");
     let n9 = doc.create_node(ElementTag::Text);
     doc.node_mut(n9).style.font_size = 20.0;
     doc.node_mut(n9).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n9).style.hyphens = Hyphens::Auto;
     doc.node_mut(n9).text = Some("float".to_string());
     doc.append_child(n8, n9);
     let n10 = doc.create_node(ElementTag::Div);
@@ -2078,12 +2093,14 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n10).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n10);
     let n11 = doc.create_node(ElementTag::Text);
     doc.node_mut(n11).style.font_size = 20.0;
     doc.node_mut(n11).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n11).style.hyphens = Hyphens::Auto;
     doc.node_mut(n11).text = Some("\n      pppp\n      comprehension".to_string());
     doc.append_child(n10, n11);
     let n12 = doc.create_node(ElementTag::Span);
@@ -2101,13 +2118,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n12).style.padding_left = Length::px(0.0);
     doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n12).style.hyphens = Hyphens::Auto;
     doc.append_child(n10, n12);
+    doc.set_attribute(n12, "class", "wrapper");
     let n13 = doc.create_node(ElementTag::Text);
     doc.node_mut(n13).style.font_size = 20.0;
     doc.node_mut(n13).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n13).style.hyphens = Hyphens::Auto;
     doc.node_mut(n13).text = Some("[ppp".to_string());
     doc.append_child(n12, n13);
     let n14 = doc.create_node(ElementTag::Text);
@@ -2115,6 +2135,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n14).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n14).style.hyphens = Hyphens::Auto;
     doc.node_mut(n14).text = Some("\n      pppp\n      ".to_string());
     doc.append_child(n10, n14);
     let n15 = doc.create_node(ElementTag::Span);
@@ -2133,12 +2154,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n15).style.float = Float::Right;
     doc.node_mut(n15).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n15).style.hyphens = Hyphens::Auto;
+    doc.node_mut(n15).style.display = Display::Block;
     doc.append_child(n10, n15);
+    doc.set_attribute(n15, "class", "float");
     let n16 = doc.create_node(ElementTag::Text);
     doc.node_mut(n16).style.font_size = 20.0;
     doc.node_mut(n16).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n16).style.hyphens = Hyphens::Auto;
     doc.node_mut(n16).text = Some("float".to_string());
     doc.append_child(n15, n16);
     let n17 = doc.create_node(ElementTag::Div);
@@ -2172,12 +2197,14 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n17).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n17);
     let n18 = doc.create_node(ElementTag::Text);
     doc.node_mut(n18).style.font_size = 20.0;
     doc.node_mut(n18).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n18).style.hyphens = Hyphens::Auto;
     doc.node_mut(n18).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
     doc.append_child(n17, n18);
     let n19 = doc.create_node(ElementTag::Span);
@@ -2195,13 +2222,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n19).style.padding_left = Length::px(0.0);
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n19).style.hyphens = Hyphens::Auto;
     doc.append_child(n17, n19);
+    doc.set_attribute(n19, "class", "wrapper");
     let n20 = doc.create_node(ElementTag::Text);
     doc.node_mut(n20).style.font_size = 20.0;
     doc.node_mut(n20).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n20).style.hyphens = Hyphens::Auto;
     doc.node_mut(n20).text = Some(" ppp".to_string());
     doc.append_child(n19, n20);
     let n21 = doc.create_node(ElementTag::Text);
@@ -2209,6 +2239,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n21).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n21).style.hyphens = Hyphens::Auto;
     doc.node_mut(n21).text = Some("\n      pppp\n      ".to_string());
     doc.append_child(n17, n21);
     let n22 = doc.create_node(ElementTag::Span);
@@ -2227,12 +2258,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n22).style.float = Float::Right;
     doc.node_mut(n22).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n22).style.hyphens = Hyphens::Auto;
+    doc.node_mut(n22).style.display = Display::Block;
     doc.append_child(n17, n22);
+    doc.set_attribute(n22, "class", "float");
     let n23 = doc.create_node(ElementTag::Text);
     doc.node_mut(n23).style.font_size = 20.0;
     doc.node_mut(n23).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n23).style.hyphens = Hyphens::Auto;
     doc.node_mut(n23).text = Some("float".to_string());
     doc.append_child(n22, n23);
     let n24 = doc.create_node(ElementTag::Div);
@@ -2266,12 +2301,14 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n24).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n24).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n24);
     let n25 = doc.create_node(ElementTag::Text);
     doc.node_mut(n25).style.font_size = 20.0;
     doc.node_mut(n25).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n25).style.hyphens = Hyphens::Auto;
     doc.node_mut(n25).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
     doc.append_child(n24, n25);
     let n26 = doc.create_node(ElementTag::Span);
@@ -2289,13 +2326,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n26).style.padding_left = Length::px(0.0);
     doc.node_mut(n26).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n26).style.hyphens = Hyphens::Auto;
     doc.append_child(n24, n26);
+    doc.set_attribute(n26, "class", "wrapper");
     let n27 = doc.create_node(ElementTag::Text);
     doc.node_mut(n27).style.font_size = 20.0;
     doc.node_mut(n27).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n27).style.hyphens = Hyphens::Auto;
     doc.node_mut(n27).text = Some("[ppp".to_string());
     doc.append_child(n26, n27);
     let n28 = doc.create_node(ElementTag::Text);
@@ -2303,6 +2343,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n28).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n28).style.hyphens = Hyphens::Auto;
     doc.node_mut(n28).text = Some("\n      pppp\n      ".to_string());
     doc.append_child(n24, n28);
     let n29 = doc.create_node(ElementTag::Span);
@@ -2321,12 +2362,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
     doc.node_mut(n29).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n29).style.float = Float::Right;
     doc.node_mut(n29).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n29).style.hyphens = Hyphens::Auto;
+    doc.node_mut(n29).style.display = Display::Block;
     doc.append_child(n24, n29);
+    doc.set_attribute(n29, "class", "float");
     let n30 = doc.create_node(ElementTag::Text);
     doc.node_mut(n30).style.font_size = 20.0;
     doc.node_mut(n30).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n30).style.hyphens = Hyphens::Auto;
     doc.node_mut(n30).text = Some("float".to_string());
     doc.append_child(n29, n30);
     doc
@@ -2360,7 +2405,10 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.hyphens = Hyphens::Auto;
     doc.append_child(vp, n1);
+    doc.set_attribute(n1, "id", "container");
+    doc.set_attribute(n1, "lang", "en-US");
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.font_family = FontFamilyList {
@@ -2391,7 +2439,9 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
     doc.node_mut(n2).style.width =
         Length::px(n2_font_relative.resolve(23.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n2).style.hyphens = Hyphens::Auto;
     doc.append_child(n1, n2);
+    doc.set_attribute(n2, "style", "width: 23ch");
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.font_family = FontFamilyList {
@@ -2423,6 +2473,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n3).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Span);
     doc.node_mut(n4).style.font_family = FontFamilyList {
@@ -2440,12 +2491,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n4).style.float = Float::Right;
     doc.node_mut(n4).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n4).style.hyphens = Hyphens::Auto;
+    doc.node_mut(n4).style.display = Display::Block;
     doc.append_child(n3, n4);
+    doc.set_attribute(n4, "class", "float");
     let n5 = doc.create_node(ElementTag::Text);
     doc.node_mut(n5).style.font_size = 20.0;
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n5).style.hyphens = Hyphens::Auto;
     doc.node_mut(n5).text = Some("float".to_string());
     doc.append_child(n4, n5);
     let n6 = doc.create_node(ElementTag::Text);
@@ -2453,6 +2508,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n6).style.hyphens = Hyphens::Auto;
     doc.node_mut(n6).text = Some("\n      pppp\n      comprehension".to_string());
     doc.append_child(n3, n6);
     let n7 = doc.create_node(ElementTag::Span);
@@ -2470,13 +2526,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n7).style.hyphens = Hyphens::Auto;
     doc.append_child(n3, n7);
+    doc.set_attribute(n7, "class", "wrapper");
     let n8 = doc.create_node(ElementTag::Text);
     doc.node_mut(n8).style.font_size = 20.0;
     doc.node_mut(n8).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n8).style.hyphens = Hyphens::Auto;
     doc.node_mut(n8).text = Some(" ppp".to_string());
     doc.append_child(n7, n8);
     let n9 = doc.create_node(ElementTag::Text);
@@ -2484,6 +2543,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n9).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n9).style.hyphens = Hyphens::Auto;
     doc.node_mut(n9).text = Some("\n      pppp\n    ".to_string());
     doc.append_child(n3, n9);
     let n10 = doc.create_node(ElementTag::Div);
@@ -2517,6 +2577,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n10).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n10);
     let n11 = doc.create_node(ElementTag::Span);
     doc.node_mut(n11).style.font_family = FontFamilyList {
@@ -2534,12 +2595,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n11).style.float = Float::Right;
     doc.node_mut(n11).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n11).style.hyphens = Hyphens::Auto;
+    doc.node_mut(n11).style.display = Display::Block;
     doc.append_child(n10, n11);
+    doc.set_attribute(n11, "class", "float");
     let n12 = doc.create_node(ElementTag::Text);
     doc.node_mut(n12).style.font_size = 20.0;
     doc.node_mut(n12).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n12).style.hyphens = Hyphens::Auto;
     doc.node_mut(n12).text = Some("float".to_string());
     doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Text);
@@ -2547,6 +2612,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n13).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n13).style.hyphens = Hyphens::Auto;
     doc.node_mut(n13).text = Some("\n      pppp\n      comprehension".to_string());
     doc.append_child(n10, n13);
     let n14 = doc.create_node(ElementTag::Span);
@@ -2564,13 +2630,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n14).style.padding_left = Length::px(0.0);
     doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n14).style.hyphens = Hyphens::Auto;
     doc.append_child(n10, n14);
+    doc.set_attribute(n14, "class", "wrapper");
     let n15 = doc.create_node(ElementTag::Text);
     doc.node_mut(n15).style.font_size = 20.0;
     doc.node_mut(n15).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n15).style.hyphens = Hyphens::Auto;
     doc.node_mut(n15).text = Some("[ppp".to_string());
     doc.append_child(n14, n15);
     let n16 = doc.create_node(ElementTag::Text);
@@ -2578,6 +2647,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n16).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n16).style.hyphens = Hyphens::Auto;
     doc.node_mut(n16).text = Some("\n      pppp\n    ".to_string());
     doc.append_child(n10, n16);
     let n17 = doc.create_node(ElementTag::Div);
@@ -2611,6 +2681,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n17).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n17);
     let n18 = doc.create_node(ElementTag::Span);
     doc.node_mut(n18).style.font_family = FontFamilyList {
@@ -2628,12 +2699,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n18).style.float = Float::Right;
     doc.node_mut(n18).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n18).style.hyphens = Hyphens::Auto;
+    doc.node_mut(n18).style.display = Display::Block;
     doc.append_child(n17, n18);
+    doc.set_attribute(n18, "class", "float");
     let n19 = doc.create_node(ElementTag::Text);
     doc.node_mut(n19).style.font_size = 20.0;
     doc.node_mut(n19).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n19).style.hyphens = Hyphens::Auto;
     doc.node_mut(n19).text = Some("float".to_string());
     doc.append_child(n18, n19);
     let n20 = doc.create_node(ElementTag::Text);
@@ -2641,6 +2716,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n20).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n20).style.hyphens = Hyphens::Auto;
     doc.node_mut(n20).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
     doc.append_child(n17, n20);
     let n21 = doc.create_node(ElementTag::Span);
@@ -2658,13 +2734,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n21).style.padding_left = Length::px(0.0);
     doc.node_mut(n21).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n21).style.hyphens = Hyphens::Auto;
     doc.append_child(n17, n21);
+    doc.set_attribute(n21, "class", "wrapper");
     let n22 = doc.create_node(ElementTag::Text);
     doc.node_mut(n22).style.font_size = 20.0;
     doc.node_mut(n22).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n22).style.hyphens = Hyphens::Auto;
     doc.node_mut(n22).text = Some(" ppp".to_string());
     doc.append_child(n21, n22);
     let n23 = doc.create_node(ElementTag::Text);
@@ -2672,6 +2751,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n23).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n23).style.hyphens = Hyphens::Auto;
     doc.node_mut(n23).text = Some("\n      pppp\n    ".to_string());
     doc.append_child(n17, n23);
     let n24 = doc.create_node(ElementTag::Div);
@@ -2705,6 +2785,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n24).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n24).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n24);
     let n25 = doc.create_node(ElementTag::Span);
     doc.node_mut(n25).style.font_family = FontFamilyList {
@@ -2722,12 +2803,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n25).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n25).style.float = Float::Right;
     doc.node_mut(n25).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n25).style.hyphens = Hyphens::Auto;
+    doc.node_mut(n25).style.display = Display::Block;
     doc.append_child(n24, n25);
+    doc.set_attribute(n25, "class", "float");
     let n26 = doc.create_node(ElementTag::Text);
     doc.node_mut(n26).style.font_size = 20.0;
     doc.node_mut(n26).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n26).style.hyphens = Hyphens::Auto;
     doc.node_mut(n26).text = Some("float".to_string());
     doc.append_child(n25, n26);
     let n27 = doc.create_node(ElementTag::Text);
@@ -2735,6 +2820,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n27).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n27).style.hyphens = Hyphens::Auto;
     doc.node_mut(n27).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
     doc.append_child(n24, n27);
     let n28 = doc.create_node(ElementTag::Span);
@@ -2752,13 +2838,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n28).style.padding_left = Length::px(0.0);
     doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n28).style.hyphens = Hyphens::Auto;
     doc.append_child(n24, n28);
+    doc.set_attribute(n28, "class", "wrapper");
     let n29 = doc.create_node(ElementTag::Text);
     doc.node_mut(n29).style.font_size = 20.0;
     doc.node_mut(n29).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n29).style.hyphens = Hyphens::Auto;
     doc.node_mut(n29).text = Some("[ppp".to_string());
     doc.append_child(n28, n29);
     let n30 = doc.create_node(ElementTag::Text);
@@ -2766,6 +2855,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
     doc.node_mut(n30).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n30).style.hyphens = Hyphens::Auto;
     doc.node_mut(n30).text = Some("\n      pppp\n    ".to_string());
     doc.append_child(n24, n30);
     doc
@@ -2799,7 +2889,10 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n1).style.padding_left = Length::px(0.0);
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.hyphens = Hyphens::Auto;
     doc.append_child(vp, n1);
+    doc.set_attribute(n1, "id", "container");
+    doc.set_attribute(n1, "lang", "en-US");
     let n2 = doc.create_node(ElementTag::Div);
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.font_family = FontFamilyList {
@@ -2830,7 +2923,9 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
     doc.node_mut(n2).style.width =
         Length::px(n2_font_relative.resolve(23.0, openui_text::FontRelativeUnit::Ch));
+    doc.node_mut(n2).style.hyphens = Hyphens::Auto;
     doc.append_child(n1, n2);
+    doc.set_attribute(n2, "style", "width: 23ch");
     let n3 = doc.create_node(ElementTag::Div);
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.font_family = FontFamilyList {
@@ -2862,12 +2957,14 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n3).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n3).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n3).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Text);
     doc.node_mut(n4).style.font_size = 20.0;
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n4).style.hyphens = Hyphens::Auto;
     doc.node_mut(n4).text = Some("\n      pppp\n      comprehension".to_string());
     doc.append_child(n3, n4);
     let n5 = doc.create_node(ElementTag::Span);
@@ -2885,13 +2982,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n5).style.padding_left = Length::px(0.0);
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n5).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n5).style.hyphens = Hyphens::Auto;
     doc.append_child(n3, n5);
+    doc.set_attribute(n5, "class", "wrapper");
     let n6 = doc.create_node(ElementTag::Text);
     doc.node_mut(n6).style.font_size = 20.0;
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n6).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n6).style.hyphens = Hyphens::Auto;
     doc.node_mut(n6).text = Some(" ppp".to_string());
     doc.append_child(n5, n6);
     let n7 = doc.create_node(ElementTag::Span);
@@ -2910,14 +3010,18 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n7).style.float = Float::Right;
     doc.node_mut(n7).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n7).style.hyphens = Hyphens::Auto;
     doc.node_mut(n7).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n7).style.display = Display::Block;
     doc.append_child(n5, n7);
+    doc.set_attribute(n7, "class", "float");
     let n8 = doc.create_node(ElementTag::Text);
     doc.node_mut(n8).style.font_size = 20.0;
     doc.node_mut(n8).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n8).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n8).style.hyphens = Hyphens::Auto;
     doc.node_mut(n8).text = Some("float".to_string());
     doc.append_child(n7, n8);
     let n9 = doc.create_node(ElementTag::Text);
@@ -2925,6 +3029,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n9).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n9).style.hyphens = Hyphens::Auto;
     doc.node_mut(n9).text = Some("\n      pppp\n    ".to_string());
     doc.append_child(n3, n9);
     let n10 = doc.create_node(ElementTag::Div);
@@ -2958,12 +3063,14 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n10).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n10).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n10).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n10);
     let n11 = doc.create_node(ElementTag::Text);
     doc.node_mut(n11).style.font_size = 20.0;
     doc.node_mut(n11).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n11).style.hyphens = Hyphens::Auto;
     doc.node_mut(n11).text = Some("\n      pppp\n      comprehension".to_string());
     doc.append_child(n10, n11);
     let n12 = doc.create_node(ElementTag::Span);
@@ -2981,13 +3088,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n12).style.padding_left = Length::px(0.0);
     doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n12).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n12).style.hyphens = Hyphens::Auto;
     doc.append_child(n10, n12);
+    doc.set_attribute(n12, "class", "wrapper");
     let n13 = doc.create_node(ElementTag::Text);
     doc.node_mut(n13).style.font_size = 20.0;
     doc.node_mut(n13).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n13).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n13).style.hyphens = Hyphens::Auto;
     doc.node_mut(n13).text = Some("[ppp".to_string());
     doc.append_child(n12, n13);
     let n14 = doc.create_node(ElementTag::Span);
@@ -3006,14 +3116,18 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n14).style.float = Float::Right;
     doc.node_mut(n14).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n14).style.hyphens = Hyphens::Auto;
     doc.node_mut(n14).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n14).style.display = Display::Block;
     doc.append_child(n12, n14);
+    doc.set_attribute(n14, "class", "float");
     let n15 = doc.create_node(ElementTag::Text);
     doc.node_mut(n15).style.font_size = 20.0;
     doc.node_mut(n15).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n15).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n15).style.hyphens = Hyphens::Auto;
     doc.node_mut(n15).text = Some("float".to_string());
     doc.append_child(n14, n15);
     let n16 = doc.create_node(ElementTag::Text);
@@ -3021,6 +3135,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n16).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n16).style.hyphens = Hyphens::Auto;
     doc.node_mut(n16).text = Some("\n      pppp\n    ".to_string());
     doc.append_child(n10, n16);
     let n17 = doc.create_node(ElementTag::Div);
@@ -3054,12 +3169,14 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n17).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n17).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n17).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n17);
     let n18 = doc.create_node(ElementTag::Text);
     doc.node_mut(n18).style.font_size = 20.0;
     doc.node_mut(n18).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n18).style.hyphens = Hyphens::Auto;
     doc.node_mut(n18).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
     doc.append_child(n17, n18);
     let n19 = doc.create_node(ElementTag::Span);
@@ -3077,13 +3194,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n19).style.padding_left = Length::px(0.0);
     doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n19).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n19).style.hyphens = Hyphens::Auto;
     doc.append_child(n17, n19);
+    doc.set_attribute(n19, "class", "wrapper");
     let n20 = doc.create_node(ElementTag::Text);
     doc.node_mut(n20).style.font_size = 20.0;
     doc.node_mut(n20).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n20).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n20).style.hyphens = Hyphens::Auto;
     doc.node_mut(n20).text = Some(" ppp".to_string());
     doc.append_child(n19, n20);
     let n21 = doc.create_node(ElementTag::Span);
@@ -3102,14 +3222,18 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n21).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n21).style.float = Float::Right;
     doc.node_mut(n21).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n21).style.hyphens = Hyphens::Auto;
     doc.node_mut(n21).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n21).style.display = Display::Block;
     doc.append_child(n19, n21);
+    doc.set_attribute(n21, "class", "float");
     let n22 = doc.create_node(ElementTag::Text);
     doc.node_mut(n22).style.font_size = 20.0;
     doc.node_mut(n22).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n22).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n22).style.hyphens = Hyphens::Auto;
     doc.node_mut(n22).text = Some("float".to_string());
     doc.append_child(n21, n22);
     let n23 = doc.create_node(ElementTag::Text);
@@ -3117,6 +3241,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n23).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n23).style.hyphens = Hyphens::Auto;
     doc.node_mut(n23).text = Some("\n      pppp\n    ".to_string());
     doc.append_child(n17, n23);
     let n24 = doc.create_node(ElementTag::Div);
@@ -3150,12 +3275,14 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n24).style.border_left_style = BorderStyle::Solid;
     doc.node_mut(n24).style.border_left_color =
         StyleColor::Resolved(Color::from_rgba8(128, 128, 128, 255));
+    doc.node_mut(n24).style.hyphens = Hyphens::Auto;
     doc.append_child(n2, n24);
     let n25 = doc.create_node(ElementTag::Text);
     doc.node_mut(n25).style.font_size = 20.0;
     doc.node_mut(n25).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n25).style.hyphens = Hyphens::Auto;
     doc.node_mut(n25).text = Some("\n      pppp\n      pppp pppp XXX".to_string());
     doc.append_child(n24, n25);
     let n26 = doc.create_node(ElementTag::Span);
@@ -3173,13 +3300,16 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n26).style.padding_left = Length::px(0.0);
     doc.node_mut(n26).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n26).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n26).style.hyphens = Hyphens::Auto;
     doc.append_child(n24, n26);
+    doc.set_attribute(n26, "class", "wrapper");
     let n27 = doc.create_node(ElementTag::Text);
     doc.node_mut(n27).style.font_size = 20.0;
     doc.node_mut(n27).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n27).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n27).style.hyphens = Hyphens::Auto;
     doc.node_mut(n27).text = Some("[ppp".to_string());
     doc.append_child(n26, n27);
     let n28 = doc.create_node(ElementTag::Span);
@@ -3198,14 +3328,18 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n28).style.float = Float::Right;
     doc.node_mut(n28).style.margin_right = Length::px(-100.0);
+    doc.node_mut(n28).style.hyphens = Hyphens::Auto;
     doc.node_mut(n28).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n28).style.display = Display::Block;
     doc.append_child(n26, n28);
+    doc.set_attribute(n28, "class", "float");
     let n29 = doc.create_node(ElementTag::Text);
     doc.node_mut(n29).style.font_size = 20.0;
     doc.node_mut(n29).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n29).style.white_space = WhiteSpace::Pre;
+    doc.node_mut(n29).style.hyphens = Hyphens::Auto;
     doc.node_mut(n29).text = Some("float".to_string());
     doc.append_child(n28, n29);
     let n30 = doc.create_node(ElementTag::Text);
@@ -3213,6 +3347,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
     doc.node_mut(n30).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
+    doc.node_mut(n30).style.hyphens = Hyphens::Auto;
     doc.node_mut(n30).text = Some("\n      pppp\n    ".to_string());
     doc.append_child(n24, n30);
     doc
@@ -5181,8 +5316,16 @@ fn css2_floats_floats_placement_vertical_001a() -> Document {
 // Source: floats-placement-vertical-001b.html
 fn css2_floats_floats_placement_vertical_001b() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList::single("Ahem");
     doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -5193,8 +5336,27 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.width = Length::px(400.0);
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -5207,9 +5369,27 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.overflow_x = Overflow::Auto;
     doc.node_mut(n1).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n2).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -5219,14 +5399,40 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n2).style.padding_left = Length::px(0.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Text);
     doc.node_mut(n3).style.font_size = 16.0;
-    doc.node_mut(n3).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n3).text = Some("Hello".to_string());
     doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n4).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
     doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
@@ -5240,14 +5446,43 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n4).style.width = Length::px(50.0);
     doc.node_mut(n4).style.height = Length::px(50.0);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n2, n4);
+    doc.set_attribute(n4, "class", "left");
     let n5 = doc.create_node(ElementTag::Text);
     doc.node_mut(n5).style.font_size = 16.0;
-    doc.node_mut(n5).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).text = Some("Kitty\n".to_string());
     doc.append_child(n1, n5);
     let n6 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n6).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.list_style_type = ListStyleType::None;
     doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.margin_top = Length::px(0.0);
     doc.node_mut(n6).style.margin_right = Length::px(0.0);
@@ -5260,9 +5495,27 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.overflow_x = Overflow::Auto;
     doc.node_mut(n6).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n6);
     let n7 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n7).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.list_style_type = ListStyleType::None;
     doc.node_mut(n7).style.margin_top = Length::px(0.0);
     doc.node_mut(n7).style.margin_right = Length::px(0.0);
     doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
@@ -5272,14 +5525,40 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n7).style.padding_left = Length::px(0.0);
     doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n6, n7);
     let n8 = doc.create_node(ElementTag::Text);
     doc.node_mut(n8).style.font_size = 16.0;
-    doc.node_mut(n8).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n8).text = Some("Hello".to_string());
     doc.append_child(n7, n8);
     let n9 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n9).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).style.list_style_type = ListStyleType::None;
     doc.node_mut(n9).style.margin_top = Length::px(0.0);
     doc.node_mut(n9).style.margin_right = Length::px(0.0);
     doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
@@ -5293,15 +5572,46 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n9).style.width = Length::px(50.0);
     doc.node_mut(n9).style.height = Length::px(50.0);
     doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n9).style.background_linear_gradient = None;
+    doc.node_mut(n9).style.display = Display::Block;
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n7, n9);
+    doc.set_attribute(n9, "class", "right");
     let n10 = doc.create_node(ElementTag::Text);
     doc.node_mut(n10).style.font_size = 16.0;
-    doc.node_mut(n10).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n10).text = Some("Kitty\n".to_string());
     doc.append_child(n6, n10);
     let n11 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n11).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n11).style.list_style_type = ListStyleType::None;
     doc.node_mut(n11).style.display = Display::Block;
+    doc.node_mut(n11).style.direction = Direction::Rtl;
+    doc.node_mut(n11).style.unicode_bidi = UnicodeBidi::Isolate;
     doc.node_mut(n11).style.margin_top = Length::px(0.0);
     doc.node_mut(n11).style.margin_right = Length::px(0.0);
     doc.node_mut(n11).style.margin_bottom = Length::px(0.0);
@@ -5313,9 +5623,28 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n11).style.overflow_x = Overflow::Auto;
     doc.node_mut(n11).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n11);
+    doc.set_attribute(n11, "dir", "rtl");
     let n12 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n12).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n12).style.list_style_type = ListStyleType::None;
     doc.node_mut(n12).style.margin_top = Length::px(0.0);
     doc.node_mut(n12).style.margin_right = Length::px(0.0);
     doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
@@ -5325,14 +5654,42 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n12).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n12).style.padding_left = Length::px(0.0);
     doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n12).style.direction = Direction::Rtl;
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Text);
     doc.node_mut(n13).style.font_size = 16.0;
-    doc.node_mut(n13).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n13).style.direction = Direction::Rtl;
     doc.node_mut(n13).text = Some("Hello".to_string());
     doc.append_child(n12, n13);
     let n14 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n14).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n14).style.list_style_type = ListStyleType::None;
     doc.node_mut(n14).style.margin_top = Length::px(0.0);
     doc.node_mut(n14).style.margin_right = Length::px(0.0);
     doc.node_mut(n14).style.margin_bottom = Length::px(0.0);
@@ -5346,15 +5703,48 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n14).style.width = Length::px(50.0);
     doc.node_mut(n14).style.height = Length::px(50.0);
     doc.node_mut(n14).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n14).style.background_linear_gradient = None;
+    doc.node_mut(n14).style.direction = Direction::Rtl;
+    doc.node_mut(n14).style.display = Display::Block;
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n12, n14);
+    doc.set_attribute(n14, "class", "left");
     let n15 = doc.create_node(ElementTag::Text);
     doc.node_mut(n15).style.font_size = 16.0;
-    doc.node_mut(n15).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n15).style.direction = Direction::Rtl;
     doc.node_mut(n15).text = Some("Kitty\n".to_string());
     doc.append_child(n11, n15);
     let n16 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n16).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n16).style.list_style_type = ListStyleType::None;
     doc.node_mut(n16).style.display = Display::Block;
+    doc.node_mut(n16).style.direction = Direction::Rtl;
+    doc.node_mut(n16).style.unicode_bidi = UnicodeBidi::Isolate;
     doc.node_mut(n16).style.margin_top = Length::px(0.0);
     doc.node_mut(n16).style.margin_right = Length::px(0.0);
     doc.node_mut(n16).style.margin_bottom = Length::px(0.0);
@@ -5366,9 +5756,28 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n16).style.overflow_x = Overflow::Auto;
     doc.node_mut(n16).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n16);
+    doc.set_attribute(n16, "dir", "rtl");
     let n17 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n17).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n17).style.list_style_type = ListStyleType::None;
     doc.node_mut(n17).style.margin_top = Length::px(0.0);
     doc.node_mut(n17).style.margin_right = Length::px(0.0);
     doc.node_mut(n17).style.margin_bottom = Length::px(0.0);
@@ -5378,14 +5787,42 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n17).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n17).style.padding_left = Length::px(0.0);
     doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n17).style.direction = Direction::Rtl;
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n16, n17);
     let n18 = doc.create_node(ElementTag::Text);
     doc.node_mut(n18).style.font_size = 16.0;
-    doc.node_mut(n18).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n18).style.direction = Direction::Rtl;
     doc.node_mut(n18).text = Some("Hello".to_string());
     doc.append_child(n17, n18);
     let n19 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n19).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n19).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n19).style.list_style_type = ListStyleType::None;
     doc.node_mut(n19).style.margin_top = Length::px(0.0);
     doc.node_mut(n19).style.margin_right = Length::px(0.0);
     doc.node_mut(n19).style.margin_bottom = Length::px(0.0);
@@ -5399,14 +5836,45 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n19).style.width = Length::px(50.0);
     doc.node_mut(n19).style.height = Length::px(50.0);
     doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n19).style.background_linear_gradient = None;
+    doc.node_mut(n19).style.direction = Direction::Rtl;
+    doc.node_mut(n19).style.display = Display::Block;
+    doc.node_mut(n19).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n17, n19);
+    doc.set_attribute(n19, "class", "right");
     let n20 = doc.create_node(ElementTag::Text);
     doc.node_mut(n20).style.font_size = 16.0;
-    doc.node_mut(n20).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n20).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n20).style.direction = Direction::Rtl;
     doc.node_mut(n20).text = Some("Kitty\n".to_string());
     doc.append_child(n16, n20);
     let n21 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n21).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n21).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n21).style.list_style_type = ListStyleType::None;
     doc.node_mut(n21).style.display = Display::Block;
     doc.node_mut(n21).style.margin_top = Length::px(0.0);
     doc.node_mut(n21).style.margin_right = Length::px(0.0);
@@ -5420,9 +5888,28 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n21).style.overflow_x = Overflow::Auto;
     doc.node_mut(n21).style.overflow_y = Overflow::Auto;
     doc.node_mut(n21).style.text_align = TextAlign::Right;
+    doc.node_mut(n21).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n21);
+    doc.set_attribute(n21, "style", "text-align:right;");
     let n22 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n22).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n22).style.list_style_type = ListStyleType::None;
     doc.node_mut(n22).style.margin_top = Length::px(0.0);
     doc.node_mut(n22).style.margin_right = Length::px(0.0);
     doc.node_mut(n22).style.margin_bottom = Length::px(0.0);
@@ -5432,15 +5919,41 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n22).style.padding_left = Length::px(0.0);
     doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n22).style.text_align = TextAlign::Right;
     doc.append_child(n21, n22);
     let n23 = doc.create_node(ElementTag::Text);
     doc.node_mut(n23).style.font_size = 16.0;
-    doc.node_mut(n23).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n23).text = Some("Hello".to_string());
     doc.append_child(n22, n23);
     let n24 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n24).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n24).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n24).style.list_style_type = ListStyleType::None;
     doc.node_mut(n24).style.margin_top = Length::px(0.0);
     doc.node_mut(n24).style.margin_right = Length::px(0.0);
     doc.node_mut(n24).style.margin_bottom = Length::px(0.0);
@@ -5454,15 +5967,44 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n24).style.width = Length::px(50.0);
     doc.node_mut(n24).style.height = Length::px(50.0);
     doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n24).style.background_linear_gradient = None;
+    doc.node_mut(n24).style.display = Display::Block;
+    doc.node_mut(n24).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n24).style.text_align = TextAlign::Right;
     doc.append_child(n22, n24);
+    doc.set_attribute(n24, "class", "left");
     let n25 = doc.create_node(ElementTag::Text);
     doc.node_mut(n25).style.font_size = 16.0;
-    doc.node_mut(n25).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n25).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n25).text = Some("Kitty\n".to_string());
     doc.append_child(n21, n25);
     let n26 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n26).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n26).style.list_style_type = ListStyleType::None;
     doc.node_mut(n26).style.display = Display::Block;
     doc.node_mut(n26).style.margin_top = Length::px(0.0);
     doc.node_mut(n26).style.margin_right = Length::px(0.0);
@@ -5476,9 +6018,28 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n26).style.overflow_x = Overflow::Auto;
     doc.node_mut(n26).style.overflow_y = Overflow::Auto;
     doc.node_mut(n26).style.text_align = TextAlign::Right;
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n26);
+    doc.set_attribute(n26, "style", "text-align:right;");
     let n27 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n27).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n27).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n27).style.list_style_type = ListStyleType::None;
     doc.node_mut(n27).style.margin_top = Length::px(0.0);
     doc.node_mut(n27).style.margin_right = Length::px(0.0);
     doc.node_mut(n27).style.margin_bottom = Length::px(0.0);
@@ -5488,15 +6049,41 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n27).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n27).style.padding_left = Length::px(0.0);
     doc.node_mut(n27).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n27).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n27).style.text_align = TextAlign::Right;
     doc.append_child(n26, n27);
     let n28 = doc.create_node(ElementTag::Text);
     doc.node_mut(n28).style.font_size = 16.0;
-    doc.node_mut(n28).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n28).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n28).text = Some("Hello".to_string());
     doc.append_child(n27, n28);
     let n29 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n29).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n29).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n29).style.list_style_type = ListStyleType::None;
     doc.node_mut(n29).style.margin_top = Length::px(0.0);
     doc.node_mut(n29).style.margin_right = Length::px(0.0);
     doc.node_mut(n29).style.margin_bottom = Length::px(0.0);
@@ -5510,11 +6097,31 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
     doc.node_mut(n29).style.width = Length::px(50.0);
     doc.node_mut(n29).style.height = Length::px(50.0);
     doc.node_mut(n29).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n29).style.background_linear_gradient = None;
+    doc.node_mut(n29).style.display = Display::Block;
+    doc.node_mut(n29).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n29).style.text_align = TextAlign::Right;
     doc.append_child(n27, n29);
+    doc.set_attribute(n29, "class", "right");
     let n30 = doc.create_node(ElementTag::Text);
     doc.node_mut(n30).style.font_size = 16.0;
-    doc.node_mut(n30).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n30).text = Some("Kitty\n\n\n".to_string());
     doc.append_child(n26, n30);
     doc
@@ -5523,8 +6130,16 @@ fn css2_floats_floats_placement_vertical_001b() -> Document {
 // Source: floats-placement-vertical-001c.html
 fn css2_floats_floats_placement_vertical_001c() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList::single("Ahem");
     doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -5535,8 +6150,27 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(vp).style.width = Length::px(400.0);
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -5549,14 +6183,40 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n1).style.overflow_x = Overflow::Auto;
     doc.node_mut(n1).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
     let n2 = doc.create_node(ElementTag::Text);
     doc.node_mut(n2).style.font_size = 16.0;
-    doc.node_mut(n2).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n2).text = Some("Hello".to_string());
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n3).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -5566,9 +6226,27 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n3).style.padding_left = Length::px(0.0);
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n3);
     let n4 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n4).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
     doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
@@ -5582,14 +6260,43 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n4).style.width = Length::px(50.0);
     doc.node_mut(n4).style.height = Length::px(50.0);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n3, n4);
+    doc.set_attribute(n4, "class", "left");
     let n5 = doc.create_node(ElementTag::Text);
     doc.node_mut(n5).style.font_size = 16.0;
-    doc.node_mut(n5).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n5).text = Some("Kitty".to_string());
     doc.append_child(n3, n5);
     let n6 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n6).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.list_style_type = ListStyleType::None;
     doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.margin_top = Length::px(0.0);
     doc.node_mut(n6).style.margin_right = Length::px(0.0);
@@ -5602,14 +6309,40 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n6).style.overflow_x = Overflow::Auto;
     doc.node_mut(n6).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n6);
     let n7 = doc.create_node(ElementTag::Text);
     doc.node_mut(n7).style.font_size = 16.0;
-    doc.node_mut(n7).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n7).text = Some("Hello".to_string());
     doc.append_child(n6, n7);
     let n8 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n8).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n8).style.list_style_type = ListStyleType::None;
     doc.node_mut(n8).style.margin_top = Length::px(0.0);
     doc.node_mut(n8).style.margin_right = Length::px(0.0);
     doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
@@ -5619,9 +6352,27 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n8).style.padding_left = Length::px(0.0);
     doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n6, n8);
     let n9 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n9).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).style.list_style_type = ListStyleType::None;
     doc.node_mut(n9).style.margin_top = Length::px(0.0);
     doc.node_mut(n9).style.margin_right = Length::px(0.0);
     doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
@@ -5635,15 +6386,46 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n9).style.width = Length::px(50.0);
     doc.node_mut(n9).style.height = Length::px(50.0);
     doc.node_mut(n9).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n9).style.background_linear_gradient = None;
+    doc.node_mut(n9).style.display = Display::Block;
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n8, n9);
+    doc.set_attribute(n9, "class", "right");
     let n10 = doc.create_node(ElementTag::Text);
     doc.node_mut(n10).style.font_size = 16.0;
-    doc.node_mut(n10).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n10).text = Some("Kitty".to_string());
     doc.append_child(n8, n10);
     let n11 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n11).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n11).style.list_style_type = ListStyleType::None;
     doc.node_mut(n11).style.display = Display::Block;
+    doc.node_mut(n11).style.direction = Direction::Rtl;
+    doc.node_mut(n11).style.unicode_bidi = UnicodeBidi::Isolate;
     doc.node_mut(n11).style.margin_top = Length::px(0.0);
     doc.node_mut(n11).style.margin_right = Length::px(0.0);
     doc.node_mut(n11).style.margin_bottom = Length::px(0.0);
@@ -5655,14 +6437,42 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n11).style.overflow_x = Overflow::Auto;
     doc.node_mut(n11).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n11);
+    doc.set_attribute(n11, "dir", "rtl");
     let n12 = doc.create_node(ElementTag::Text);
     doc.node_mut(n12).style.font_size = 16.0;
-    doc.node_mut(n12).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n12).style.direction = Direction::Rtl;
     doc.node_mut(n12).text = Some("Hello".to_string());
     doc.append_child(n11, n12);
     let n13 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n13).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n13).style.list_style_type = ListStyleType::None;
     doc.node_mut(n13).style.margin_top = Length::px(0.0);
     doc.node_mut(n13).style.margin_right = Length::px(0.0);
     doc.node_mut(n13).style.margin_bottom = Length::px(0.0);
@@ -5672,9 +6482,28 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n13).style.padding_left = Length::px(0.0);
     doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n13).style.direction = Direction::Rtl;
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n11, n13);
     let n14 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n14).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n14).style.list_style_type = ListStyleType::None;
     doc.node_mut(n14).style.margin_top = Length::px(0.0);
     doc.node_mut(n14).style.margin_right = Length::px(0.0);
     doc.node_mut(n14).style.margin_bottom = Length::px(0.0);
@@ -5688,15 +6517,48 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n14).style.width = Length::px(50.0);
     doc.node_mut(n14).style.height = Length::px(50.0);
     doc.node_mut(n14).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n14).style.background_linear_gradient = None;
+    doc.node_mut(n14).style.direction = Direction::Rtl;
+    doc.node_mut(n14).style.display = Display::Block;
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n13, n14);
+    doc.set_attribute(n14, "class", "left");
     let n15 = doc.create_node(ElementTag::Text);
     doc.node_mut(n15).style.font_size = 16.0;
-    doc.node_mut(n15).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n15).style.direction = Direction::Rtl;
     doc.node_mut(n15).text = Some("Kitty".to_string());
     doc.append_child(n13, n15);
     let n16 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n16).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n16).style.list_style_type = ListStyleType::None;
     doc.node_mut(n16).style.display = Display::Block;
+    doc.node_mut(n16).style.direction = Direction::Rtl;
+    doc.node_mut(n16).style.unicode_bidi = UnicodeBidi::Isolate;
     doc.node_mut(n16).style.margin_top = Length::px(0.0);
     doc.node_mut(n16).style.margin_right = Length::px(0.0);
     doc.node_mut(n16).style.margin_bottom = Length::px(0.0);
@@ -5708,14 +6570,42 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
     doc.node_mut(n16).style.overflow_x = Overflow::Auto;
     doc.node_mut(n16).style.overflow_y = Overflow::Auto;
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n16);
+    doc.set_attribute(n16, "dir", "rtl");
     let n17 = doc.create_node(ElementTag::Text);
     doc.node_mut(n17).style.font_size = 16.0;
-    doc.node_mut(n17).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n17).style.direction = Direction::Rtl;
     doc.node_mut(n17).text = Some("Hello".to_string());
     doc.append_child(n16, n17);
     let n18 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n18).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n18).style.list_style_type = ListStyleType::None;
     doc.node_mut(n18).style.margin_top = Length::px(0.0);
     doc.node_mut(n18).style.margin_right = Length::px(0.0);
     doc.node_mut(n18).style.margin_bottom = Length::px(0.0);
@@ -5725,9 +6615,28 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n18).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n18).style.padding_left = Length::px(0.0);
     doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n18).style.direction = Direction::Rtl;
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n16, n18);
     let n19 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n19).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n19).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n19).style.list_style_type = ListStyleType::None;
     doc.node_mut(n19).style.margin_top = Length::px(0.0);
     doc.node_mut(n19).style.margin_right = Length::px(0.0);
     doc.node_mut(n19).style.margin_bottom = Length::px(0.0);
@@ -5741,14 +6650,45 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n19).style.width = Length::px(50.0);
     doc.node_mut(n19).style.height = Length::px(50.0);
     doc.node_mut(n19).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n19).style.background_linear_gradient = None;
+    doc.node_mut(n19).style.direction = Direction::Rtl;
+    doc.node_mut(n19).style.display = Display::Block;
+    doc.node_mut(n19).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n18, n19);
+    doc.set_attribute(n19, "class", "right");
     let n20 = doc.create_node(ElementTag::Text);
     doc.node_mut(n20).style.font_size = 16.0;
-    doc.node_mut(n20).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n20).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n20).style.direction = Direction::Rtl;
     doc.node_mut(n20).text = Some("Kitty".to_string());
     doc.append_child(n18, n20);
     let n21 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n21).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n21).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n21).style.list_style_type = ListStyleType::None;
     doc.node_mut(n21).style.display = Display::Block;
     doc.node_mut(n21).style.margin_top = Length::px(0.0);
     doc.node_mut(n21).style.margin_right = Length::px(0.0);
@@ -5762,14 +6702,41 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n21).style.overflow_x = Overflow::Auto;
     doc.node_mut(n21).style.overflow_y = Overflow::Auto;
     doc.node_mut(n21).style.text_align = TextAlign::Right;
+    doc.node_mut(n21).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n21);
+    doc.set_attribute(n21, "style", "text-align:right;");
     let n22 = doc.create_node(ElementTag::Text);
     doc.node_mut(n22).style.font_size = 16.0;
-    doc.node_mut(n22).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n22).text = Some("Hello".to_string());
     doc.append_child(n21, n22);
     let n23 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n23).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n23).style.list_style_type = ListStyleType::None;
     doc.node_mut(n23).style.margin_top = Length::px(0.0);
     doc.node_mut(n23).style.margin_right = Length::px(0.0);
     doc.node_mut(n23).style.margin_bottom = Length::px(0.0);
@@ -5779,10 +6746,28 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n23).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n23).style.padding_left = Length::px(0.0);
     doc.node_mut(n23).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n23).style.text_align = TextAlign::Right;
     doc.append_child(n21, n23);
     let n24 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n24).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n24).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n24).style.list_style_type = ListStyleType::None;
     doc.node_mut(n24).style.margin_top = Length::px(0.0);
     doc.node_mut(n24).style.margin_right = Length::px(0.0);
     doc.node_mut(n24).style.margin_bottom = Length::px(0.0);
@@ -5796,15 +6781,44 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n24).style.width = Length::px(50.0);
     doc.node_mut(n24).style.height = Length::px(50.0);
     doc.node_mut(n24).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n24).style.background_linear_gradient = None;
+    doc.node_mut(n24).style.display = Display::Block;
+    doc.node_mut(n24).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n24).style.text_align = TextAlign::Right;
     doc.append_child(n23, n24);
+    doc.set_attribute(n24, "class", "left");
     let n25 = doc.create_node(ElementTag::Text);
     doc.node_mut(n25).style.font_size = 16.0;
-    doc.node_mut(n25).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n25).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n25).text = Some("Kitty".to_string());
     doc.append_child(n23, n25);
     let n26 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n26).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n26).style.list_style_type = ListStyleType::None;
     doc.node_mut(n26).style.display = Display::Block;
     doc.node_mut(n26).style.margin_top = Length::px(0.0);
     doc.node_mut(n26).style.margin_right = Length::px(0.0);
@@ -5818,14 +6832,41 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n26).style.overflow_x = Overflow::Auto;
     doc.node_mut(n26).style.overflow_y = Overflow::Auto;
     doc.node_mut(n26).style.text_align = TextAlign::Right;
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n26);
+    doc.set_attribute(n26, "style", "text-align:right;");
     let n27 = doc.create_node(ElementTag::Text);
     doc.node_mut(n27).style.font_size = 16.0;
-    doc.node_mut(n27).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n27).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n27).text = Some("Hello".to_string());
     doc.append_child(n26, n27);
     let n28 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n28).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n28).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n28).style.list_style_type = ListStyleType::None;
     doc.node_mut(n28).style.margin_top = Length::px(0.0);
     doc.node_mut(n28).style.margin_right = Length::px(0.0);
     doc.node_mut(n28).style.margin_bottom = Length::px(0.0);
@@ -5835,10 +6876,28 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n28).style.padding_left = Length::px(0.0);
     doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n28).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n28).style.text_align = TextAlign::Right;
     doc.append_child(n26, n28);
     let n29 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n29).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n29).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n29).style.list_style_type = ListStyleType::None;
     doc.node_mut(n29).style.margin_top = Length::px(0.0);
     doc.node_mut(n29).style.margin_right = Length::px(0.0);
     doc.node_mut(n29).style.margin_bottom = Length::px(0.0);
@@ -5852,11 +6911,31 @@ fn css2_floats_floats_placement_vertical_001c() -> Document {
     doc.node_mut(n29).style.width = Length::px(50.0);
     doc.node_mut(n29).style.height = Length::px(50.0);
     doc.node_mut(n29).style.background_color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n29).style.background_linear_gradient = None;
+    doc.node_mut(n29).style.display = Display::Block;
+    doc.node_mut(n29).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n29).style.text_align = TextAlign::Right;
     doc.append_child(n28, n29);
+    doc.set_attribute(n29, "class", "right");
     let n30 = doc.create_node(ElementTag::Text);
     doc.node_mut(n30).style.font_size = 16.0;
-    doc.node_mut(n30).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(n30).text = Some("Kitty".to_string());
     doc.append_child(n28, n30);
     doc
@@ -13047,8 +14126,16 @@ fn css2_floats_new_fc_separates_from_float_3() -> Document {
 // Source: new-fc-separates-from-float-4.html
 fn css2_floats_new_fc_separates_from_float_4() -> Document {
     let (mut doc, vp) = base_doc();
-    doc.node_mut(vp).style.font_family = FontFamilyList::single("Ahem");
     doc.node_mut(vp).style.display = Display::Block;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
@@ -13058,8 +14145,27 @@ fn css2_floats_new_fc_separates_from_float_4() -> Document {
     doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
     doc.node_mut(vp).style.padding_left = Length::px(20.0);
     doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
     let n1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n1).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
@@ -13074,9 +14180,29 @@ fn css2_floats_new_fc_separates_from_float_4() -> Document {
     doc.node_mut(n1).style.overflow_y = Overflow::Hidden;
     doc.node_mut(n1).style.width = Length::px(200.0);
     doc.node_mut(n1).style.background_color = Color::RED;
+    doc.node_mut(n1).style.background_linear_gradient = None;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(vp, n1);
+    doc.set_attribute(n1, "style", "overflow:hidden; width:200px; background:red;");
     let n2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n2).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
     doc.node_mut(n2).style.display = Display::Block;
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
@@ -13087,9 +14213,27 @@ fn css2_floats_new_fc_separates_from_float_4() -> Document {
     doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n2).style.padding_left = Length::px(0.0);
     doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n1, n2);
     let n3 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n3).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
@@ -13100,9 +14244,27 @@ fn css2_floats_new_fc_separates_from_float_4() -> Document {
     doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n3).style.padding_left = Length::px(0.0);
     doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n2, n3);
     let n4 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n4).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
     doc.node_mut(n4).style.display = Display::Block;
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
@@ -13117,9 +14279,34 @@ fn css2_floats_new_fc_separates_from_float_4() -> Document {
     doc.node_mut(n4).style.width = Length::px(200.0);
     doc.node_mut(n4).style.height = Length::px(200.0);
     doc.node_mut(n4).style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n4).style.background_linear_gradient = None;
+    doc.node_mut(n4).style.display = Display::Block;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n3, n4);
+    doc.set_attribute(
+        n4,
+        "style",
+        "float:left; width:200px; height:200px; background:green;",
+    );
     let n5 = doc.create_node(ElementTag::Span);
-    doc.node_mut(n5).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -13129,9 +14316,27 @@ fn css2_floats_new_fc_separates_from_float_4() -> Document {
     doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
     doc.node_mut(n5).style.padding_left = Length::px(0.0);
     doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n2, n5);
     let n6 = doc.create_node(ElementTag::Div);
-    doc.node_mut(n6).style.font_family = FontFamilyList::single("Ahem");
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.list_style_type = ListStyleType::None;
     doc.node_mut(n6).style.display = Display::Block;
     doc.node_mut(n6).style.margin_top = Length::px(0.0);
     doc.node_mut(n6).style.margin_right = Length::px(0.0);
@@ -13148,7 +14353,22 @@ fn css2_floats_new_fc_separates_from_float_4() -> Document {
     doc.node_mut(n6).style.width = Length::px(200.0);
     doc.node_mut(n6).style.height = Length::px(1.0);
     doc.node_mut(n6).style.background_color = Color::WHITE;
+    doc.node_mut(n6).style.background_linear_gradient = None;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
     doc.append_child(n2, n6);
+    doc.set_attribute(
+        n6,
+        "style",
+        "margin-top:200px; overflow:hidden; width:200px; height:1px; background:white;",
+    );
     doc
 }
 

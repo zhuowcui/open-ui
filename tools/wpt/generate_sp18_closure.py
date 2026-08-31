@@ -23,8 +23,14 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 DATA = ROOT / "tools" / "accountability" / "data"
 PORTED = DATA / "wpt_ported"
-MAPPING = DATA / "wpt_mapping.csv"
-SUMMARY = DATA / "pixel_comparison" / "results" / "summary.json"
+SP19_KICKOFF_MAPPING = PORTED / "sp19_kickoff_mapping.csv"
+SP19_KICKOFF_SUMMARY = PORTED / "sp19_sp18_summary.json"
+MAPPING = SP19_KICKOFF_MAPPING if SP19_KICKOFF_MAPPING.is_file() else DATA / "wpt_mapping.csv"
+SUMMARY = (
+    SP19_KICKOFF_SUMMARY
+    if SP19_KICKOFF_SUMMARY.is_file()
+    else DATA / "pixel_comparison" / "results" / "summary.json"
+)
 WPT_ROOT = Path(os.environ.get(
     "CHROMIUM_WPT_CSS",
     os.path.expanduser(

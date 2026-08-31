@@ -57,11 +57,11 @@ pub struct LineBreaker<'a> {
     writing_direction: WritingDirectionMode,
     /// CSS `hyphens` property value for the block container.
     hyphens: Hyphens,
-    /// Whether a float precedes later in-flow text in this formatting context.
-    /// Blink retains native fixed-point truncation for the affected advances
-    /// because the float exclusion geometry is already quantized. A trailing
-    /// float cannot retroactively change earlier text advances.
-    float_precedes_in_flow_text: bool,
+    /// Text offset of the first float in this formatting context. Blink
+    /// retains native fixed-point truncation for advances after that source
+    /// boundary because float exclusion geometry is already quantized. Text
+    /// before a trailing float keeps its ordinary ceil quantization.
+    first_float_text_offset: Option<usize>,
     /// Hyphenation engine for `hyphens: auto` (lazily initialized).
     hyphenation: Option<Hyphenation>,
     /// Pre-computed byte-to-char mapping for O(1) lookups.
@@ -131,7 +131,7 @@ impl<'a> LineBreaker<'a> {
             containing_block_width,
             writing_direction: WritingDirectionMode::horizontal_ltr(),
             hyphens: Hyphens::Manual,
-            float_precedes_in_flow_text: false,
+            first_float_text_offset: None,
             hyphenation: None,
             char_map,
         }
@@ -154,7 +154,11 @@ impl<'a> LineBreaker<'a> {
     }
 
     pub(crate) fn set_float_precedes_in_flow_text(&mut self, value: bool) {
-        self.float_precedes_in_flow_text = value;
+        self.first_float_text_offset = value.then_some(0);
+    }
+
+    pub(crate) fn set_first_float_text_offset(&mut self, offset: Option<usize>) {
+        self.first_float_text_offset = offset;
     }
 
     /// Configure hyphenation from computed style properties.
@@ -251,7 +255,7 @@ impl<'a> LineBreaker<'a> {
                         );
                     if line.has_content()
                         && allows_line_wrap(self.container_white_space)
-                        && has_inline_wrap_geometry
+                        && (has_inline_wrap_geometry || !allows_line_wrap(style.white_space))
                     {
                         let quantization_slack = LayoutUnit::from_raw(
                             i32::try_from(line.items.len().saturating_add(1)).unwrap_or(i32::MAX),
@@ -669,6 +673,10 @@ impl<'a> LineBreaker<'a> {
             item_index,
             text_slice,
         );
+        // Only a leading float participates in the fixed-point exclusion
+        // quantization profile. A float encountered after any text must not
+        // change the advances of either the preceding run or later siblings.
+        let float_precedes_current_text = self.first_float_text_offset == Some(0);
         let text_width = if let Some(ref sr) = item.shape_result {
             let char_start = self.char_map.get(text_start);
             let char_end = self.char_map.get(text_end);
@@ -676,7 +684,7 @@ impl<'a> LineBreaker<'a> {
             let local_start = char_start - item_char_start;
             let local_end = char_end - item_char_start;
             let width = sr.width_for_range(local_start, local_end);
-            if truncates_collapsible_boundary || self.float_precedes_in_flow_text {
+            if truncates_collapsible_boundary || float_precedes_current_text {
                 LayoutUnit::from_f32(width)
             } else {
                 LayoutUnit::from_f32_ceil(width)
@@ -701,7 +709,7 @@ impl<'a> LineBreaker<'a> {
                         char_start - item_char_start,
                         char_end.saturating_sub(1) - item_char_start,
                     );
-                    if truncates_collapsible_boundary || self.float_precedes_in_flow_text {
+                    if truncates_collapsible_boundary || float_precedes_current_text {
                         LayoutUnit::from_f32(width)
                     } else {
                         LayoutUnit::from_f32_ceil(width)
@@ -747,6 +755,34 @@ impl<'a> LineBreaker<'a> {
             style.overflow_wrap,
             style.line_break,
         );
+        let mut automatic_hyphen_breaks = Vec::new();
+        if self.hyphens == Hyphens::Auto {
+            if let Some(hyphenation) = &self.hyphenation {
+                for (word_start, word) in text_slice.unicode_word_indices() {
+                    if !hyphenation.should_hyphenate(word) {
+                        continue;
+                    }
+                    let word_end = word_start + word.len();
+                    if word_end == text_slice.trim_end().len()
+                        && self.has_attached_nonbreaking_suffix(item_index)
+                    {
+                        // A following pre/nowrap run without leading
+                        // whitespace extends this word's unbreakable unit
+                        // across the inline boundary. Rewind to the prior
+                        // opportunity instead of inventing a hyphen inside
+                        // only the first half of that unit.
+                        continue;
+                    }
+                    for point in hyphenation.hyphen_byte_locations(word) {
+                        let offset = word_start + point;
+                        automatic_hyphen_breaks.push(offset);
+                        if !break_opps.contains(&offset) {
+                            break_opps.push(offset);
+                        }
+                    }
+                }
+            }
+        }
 
         // Add soft hyphen break opportunities if hyphens != none.
         // Soft hyphens (U+00AD) are valid break points in manual and auto modes.
@@ -763,7 +799,8 @@ impl<'a> LineBreaker<'a> {
 
         let mut best_break: Option<usize> = None;
         let mut best_width = LayoutUnit::zero();
-        let mut best_is_hyphen = false;
+        let mut best_inserts_hyphen = false;
+        let mut best_skips_soft_hyphen = false;
         let mut first_overflow_break: Option<(usize, LayoutUnit)> = None;
 
         // Shape the actual hyphen to get exact advance width.
@@ -813,8 +850,9 @@ impl<'a> LineBreaker<'a> {
                     sr.width_for_range(local_start, raw_break_char - item_char_start),
                 );
                 let is_shy = brk < text_slice.len() && text_slice[brk..].starts_with('\u{00AD}');
+                let is_auto_hyphen = automatic_hyphen_breaks.contains(&brk);
                 // Soft-hyphen breaks insert a visible hyphen glyph — account for its width.
-                let effective_width = if is_shy {
+                let effective_width = if is_shy || is_auto_hyphen {
                     width + hyphen_advance
                 } else {
                     width
@@ -822,7 +860,8 @@ impl<'a> LineBreaker<'a> {
                 if effective_width <= remaining + quantization_slack {
                     best_break = Some(brk);
                     best_width = raw_width;
-                    best_is_hyphen = is_shy;
+                    best_inserts_hyphen = is_shy || is_auto_hyphen;
+                    best_skips_soft_hyphen = is_shy;
                 } else {
                     if brk > 0 && !is_shy && first_overflow_break.is_none() {
                         first_overflow_break = Some((brk, raw_width));
@@ -857,10 +896,15 @@ impl<'a> LineBreaker<'a> {
                 item_type: InlineItemType::Text,
             });
             line.used_width = line.used_width + best_width;
-            if best_is_hyphen {
-                // Skip past the soft hyphen character for the next line
-                let shy_len = '\u{00AD}'.len_utf8();
-                self.current_text_offset = break_byte + shy_len;
+            if best_inserts_hyphen {
+                self.current_text_offset = if best_skips_soft_hyphen {
+                    // A discretionary soft-hyphen character is not part of
+                    // the resumed text. Automatic dictionary hyphenation has
+                    // no source character to skip.
+                    break_byte + '\u{00AD}'.len_utf8()
+                } else {
+                    break_byte
+                };
                 line.has_forced_hyphen = true;
             } else {
                 self.current_text_offset = break_byte;
@@ -919,6 +963,24 @@ impl<'a> LineBreaker<'a> {
                 }
             }
         }
+    }
+
+    fn has_attached_nonbreaking_suffix(&self, item_index: usize) -> bool {
+        for candidate in &self.items_data.items[item_index + 1..] {
+            match candidate.item_type {
+                InlineItemType::OpenTag | InlineItemType::CloseTag => continue,
+                InlineItemType::Text => {
+                    let style = &self.items_data.styles[candidate.style_index];
+                    let text = &self.items_data.text[candidate.text_range.clone()];
+                    return !allows_line_wrap(style.white_space)
+                        && text.chars().next().is_some_and(|ch| !ch.is_whitespace());
+                }
+                InlineItemType::AtomicInline
+                | InlineItemType::Control
+                | InlineItemType::BlockInInline => return false,
+            }
+        }
+        false
     }
 
     /// Try to break a word at a hyphenation point using the Knuth-Liang algorithm.

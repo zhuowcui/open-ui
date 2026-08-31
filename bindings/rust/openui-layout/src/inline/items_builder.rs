@@ -92,6 +92,16 @@ pub struct OofPlaceholder {
     pub inline_containing_block: Option<NodeId>,
 }
 
+/// Source-order position of a float encountered while flattening an IFC.
+#[derive(Clone, Debug)]
+pub struct FloatPlaceholder {
+    pub node_id: NodeId,
+    pub item_index: usize,
+    pub text_offset: usize,
+    pub inline_ancestor: Option<NodeId>,
+    pub inline_ancestor_text_offset: usize,
+}
+
 impl InlineItemsData {
     /// Apply the originating block's computed `::first-line` style to a clone
     /// of this item stream. The clone is shaped and broken only for line one;
@@ -679,6 +689,13 @@ pub struct InlineItemsBuilder<'a> {
     last_space_collapsible: bool,
     /// OOF children encountered during inline item collection.
     oof_children: Vec<OofPlaceholder>,
+    /// Floats are laid out by the owning BFC, but retain their insertion
+    /// boundary so placement can use the current line rather than pretending
+    /// every descendant float preceded all text.
+    float_children: Vec<FloatPlaceholder>,
+    /// Inline boxes currently open during the DOM walk. Float source
+    /// positions use this stack even when the ancestor is not positioned.
+    inline_stack: Vec<(NodeId, usize)>,
     /// Positioned inline ancestors currently open during the DOM walk.
     positioned_inline_stack: Vec<NodeId>,
     /// Block-in-inline interruptions found during collection.
@@ -695,6 +712,8 @@ impl<'a> InlineItemsBuilder<'a> {
             styles: Vec::new(),
             last_space_collapsible: false,
             oof_children: Vec::new(),
+            float_children: Vec::new(),
+            inline_stack: Vec::new(),
             positioned_inline_stack: Vec::new(),
             block_in_inline: Vec::new(),
         }
@@ -705,6 +724,14 @@ impl<'a> InlineItemsBuilder<'a> {
     /// This is the main entry point. It walks all children of `block_node_id`
     /// and produces a flat `InlineItemsData`.
     pub fn collect(doc: &Document, block_node_id: NodeId) -> InlineItemsData {
+        Self::collect_with_floats(doc, block_node_id).0
+    }
+
+    /// Collect inline items and the source-order float insertion boundaries.
+    pub(crate) fn collect_with_floats(
+        doc: &Document,
+        block_node_id: NodeId,
+    ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
         let mut builder = InlineItemsBuilder::new(doc);
         let block_style = &doc.node(block_node_id).style;
         builder.inline_writing_direction = block_style
@@ -718,10 +745,11 @@ impl<'a> InlineItemsBuilder<'a> {
             oof_children: builder.oof_children,
             block_in_inline: builder.block_in_inline,
         };
+        let floats = builder.float_children;
         if let Some(first_letter) = block_style.first_letter_style.as_deref() {
             data.apply_first_letter_style(block_style, first_letter);
         }
-        data
+        (data, floats)
     }
 
     /// Collect inline items from a specific set of child node IDs.
@@ -733,6 +761,18 @@ impl<'a> InlineItemsBuilder<'a> {
         block_node_id: NodeId,
         children: &[NodeId],
     ) -> InlineItemsData {
+        Self::collect_for_children_with_floats(doc, block_node_id, children).0
+    }
+
+    /// Collect a mixed-flow anonymous inline run together with floats nested
+    /// below its inline wrappers. The owning block formatting context places
+    /// those floats, while the returned items retain the interrupted inline
+    /// ancestry used to position the remaining line content.
+    pub(crate) fn collect_for_children_with_floats(
+        doc: &Document,
+        block_node_id: NodeId,
+        children: &[NodeId],
+    ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
         let mut builder = InlineItemsBuilder::new(doc);
         let block_style = &doc.node(block_node_id).style;
         builder.inline_writing_direction = block_style
@@ -751,7 +791,7 @@ impl<'a> InlineItemsBuilder<'a> {
         if let Some(first_letter) = block_style.first_letter_style.as_deref() {
             data.apply_first_letter_style(block_style, first_letter);
         }
-        data
+        (data, builder.float_children)
     }
 
     /// Get or insert a style, returning its index.
@@ -787,6 +827,19 @@ impl<'a> InlineItemsBuilder<'a> {
                     node_id: child_id,
                     item_index: self.items.len(),
                     inline_containing_block: self.positioned_inline_stack.last().copied(),
+                });
+            } else if node.style.float != Float::None {
+                let (inline_ancestor, inline_ancestor_text_offset) = self
+                    .inline_stack
+                    .last()
+                    .copied()
+                    .map_or((None, 0), |(node_id, offset)| (Some(node_id), offset));
+                self.float_children.push(FloatPlaceholder {
+                    node_id: child_id,
+                    item_index: self.items.len(),
+                    text_offset: self.text.len(),
+                    inline_ancestor,
+                    inline_ancestor_text_offset,
                 });
             }
             return;
@@ -1046,6 +1099,7 @@ impl<'a> InlineItemsBuilder<'a> {
             bidi_level: 0,
             intrinsic_inline_size: None,
         });
+        self.inline_stack.push((node_id, offset));
         if style.position.is_positioned() {
             self.positioned_inline_stack.push(node_id);
         }
@@ -1057,6 +1111,8 @@ impl<'a> InlineItemsBuilder<'a> {
             let popped = self.positioned_inline_stack.pop();
             debug_assert_eq!(popped, Some(node_id));
         }
+        let popped = self.inline_stack.pop();
+        debug_assert_eq!(popped.map(|entry| entry.0), Some(node_id));
         let style_index = self.intern_style(style);
         let offset = self.text.len();
         self.items.push(InlineItem {
