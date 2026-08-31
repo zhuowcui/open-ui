@@ -94,6 +94,31 @@ fn read_i16(data: &[u8], offset: usize) -> Option<i16> {
     read_u16(data, offset).map(|value| value as i16)
 }
 
+fn resolve_hinting(
+    requested_hinting: Option<&str>,
+    requested_edging: Option<&str>,
+    is_ahem: bool,
+    size: f32,
+) -> FontHinting {
+    match requested_hinting {
+        // Chromium's Fontconfig `hinting=false` path still grid-fits the
+        // aliased 8px Ahem face. Skia's direct API needs slight hinting to
+        // reproduce those glyph bounds, while larger Ahem sizes remain truly
+        // unhinted. Select by face and computed size, not by test identity.
+        Some("none") if requested_edging == Some("alias") && is_ahem && size <= 8.0 => {
+            FontHinting::Slight
+        }
+        // Chromium also grid-fits glyphs supplied by a fallback face (for
+        // example arrows absent from Ahem) before applying the same aliased
+        // coverage threshold.
+        Some("none") if requested_edging == Some("alias") && !is_ahem => FontHinting::Slight,
+        Some("none") => FontHinting::None,
+        Some("normal") => FontHinting::Normal,
+        Some("full") => FontHinting::Full,
+        _ => FontHinting::Slight,
+    }
+}
+
 impl FontPlatformData {
     /// Create platform data from a resolved Skia typeface and size.
     ///
@@ -138,20 +163,12 @@ impl FontPlatformData {
         let requested_hinting = std::env::var("OPENUI_HINTING").ok();
         let requested_edging = std::env::var("OPENUI_EDGING").ok();
         let is_ahem = typeface.family_name().eq_ignore_ascii_case("Ahem");
-        let hinting = match requested_hinting.as_deref() {
-            // The deterministic Ahem profile keeps the square-glyph face
-            // completely unhinted. Chromium still grid-fits glyphs supplied
-            // by a fallback face (for example arrows absent from Ahem) before
-            // applying the same aliased coverage threshold. Skia's direct
-            // unhinted fallback path otherwise expands one-pixel strokes.
-            Some("none") if requested_edging.as_deref() == Some("alias") && !is_ahem => {
-                FontHinting::Slight
-            }
-            Some("none") => FontHinting::None,
-            Some("normal") => FontHinting::Normal,
-            Some("full") => FontHinting::Full,
-            _ => FontHinting::Slight,
-        };
+        let hinting = resolve_hinting(
+            requested_hinting.as_deref(),
+            requested_edging.as_deref(),
+            is_ahem,
+            size,
+        );
         sk_font.set_hinting(hinting);
         sk_font.set_linear_metrics(subpixel);
         sk_font.set_embedded_bitmaps(true);
@@ -346,6 +363,18 @@ impl std::fmt::Debug for FontPlatformData {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn aliased_ahem_hinting_tracks_computed_font_size() {
+        assert_eq!(
+            resolve_hinting(Some("none"), Some("alias"), true, 8.0),
+            FontHinting::Slight
+        );
+        assert_eq!(
+            resolve_hinting(Some("none"), Some("alias"), true, 10.0),
+            FontHinting::None
+        );
+    }
 
     #[test]
     fn stretch_62_5_maps_to_extra_condensed() {

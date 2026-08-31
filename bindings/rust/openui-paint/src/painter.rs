@@ -1622,16 +1622,27 @@ fn paint_flex_negative_stacking_children(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
+    let mut entries = Vec::new();
+    let mut order = 0usize;
     for child in &fragment.children {
-        paint_negative_stacking_descendants(canvas, child, doc, offset);
+        collect_flex_negative_stacking_descendants(child, doc, offset, &mut order, &mut entries);
+    }
+    // Negative flex-item stacking contexts paint behind the container's
+    // decoration, ordered first by stack level and then by order-modified
+    // document order. Walking fragments directly only provided the latter
+    // and inverted peers such as z-index:-2 followed by z-index:-1.
+    entries.sort_by_key(|&(z, order, _, _)| (z, order));
+    for (_, _, child, parent_offset) in entries {
+        paint_fragment(canvas, child, doc, parent_offset);
     }
 }
 
-fn paint_negative_stacking_descendants(
-    canvas: &Canvas,
-    fragment: &Fragment,
+fn collect_flex_negative_stacking_descendants<'a>(
+    fragment: &'a Fragment,
     doc: &Document,
     parent_offset: PhysicalOffset,
+    order: &mut usize,
+    entries: &mut Vec<(i32, usize, &'a Fragment, PhysicalOffset)>,
 ) {
     use openui_style::Position;
 
@@ -1644,7 +1655,8 @@ fn paint_negative_stacking_descendants(
         let parent_id = doc.node(fragment.node_id).parent;
         let is_flex_item = !parent_id.is_none() && doc.node(parent_id).style.display.is_flex();
         if (is_positioned || is_flex_item) && style.z_index.is_some_and(|z| z < 0) {
-            paint_fragment(canvas, fragment, doc, parent_offset);
+            entries.push((style.z_index.unwrap_or(0), *order, fragment, parent_offset));
+            *order += 1;
             return;
         }
     }
@@ -1654,7 +1666,7 @@ fn paint_negative_stacking_descendants(
         parent_offset.top + fragment.offset.top,
     );
     for child in &fragment.children {
-        paint_negative_stacking_descendants(canvas, child, doc, fragment_offset);
+        collect_flex_negative_stacking_descendants(child, doc, fragment_offset, order, entries);
     }
 }
 
@@ -8179,6 +8191,48 @@ mod tests {
             .bytes()
             .expect("pixel bytes")
             .to_vec()
+    }
+
+    #[test]
+    fn negative_flex_stacking_contexts_sort_by_stack_level_before_order() {
+        let mut doc = Document::new();
+        let container = doc.create_node(openui_dom::ElementTag::Div);
+        doc.node_mut(container).style.display = Display::Flex;
+        doc.append_child(doc.root(), container);
+
+        let minus_one = doc.create_node(openui_dom::ElementTag::Div);
+        doc.node_mut(minus_one).style.z_index = Some(-1);
+        doc.append_child(container, minus_one);
+        let minus_two = doc.create_node(openui_dom::ElementTag::Div);
+        doc.node_mut(minus_two).style.z_index = Some(-2);
+        doc.append_child(container, minus_two);
+
+        // Fragment order is the flex order-modified document order. Stack
+        // level still takes precedence when negative stacking contexts paint.
+        let fragments = [
+            Fragment::new_box(minus_one, PhysicalSize::zero()),
+            Fragment::new_box(minus_two, PhysicalSize::zero()),
+        ];
+        let mut order = 0;
+        let mut entries = Vec::new();
+        for fragment in &fragments {
+            collect_flex_negative_stacking_descendants(
+                fragment,
+                &doc,
+                PhysicalOffset::zero(),
+                &mut order,
+                &mut entries,
+            );
+        }
+        entries.sort_by_key(|&(z, order, _, _)| (z, order));
+
+        assert_eq!(
+            entries
+                .iter()
+                .map(|(z, _, fragment, _)| (*z, fragment.node_id))
+                .collect::<Vec<_>>(),
+            vec![(-2, minus_two), (-1, minus_one)]
+        );
     }
 
     #[test]

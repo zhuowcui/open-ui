@@ -84,6 +84,56 @@ pub struct LineBreakerCheckpoint {
 }
 
 impl<'a> LineBreaker<'a> {
+    /// Return the fixed-point excess of adjacent shaping items from the text
+    /// node immediately before an inline close boundary. The correction is
+    /// assigned to that structural boundary so glyph origins and masks retain
+    /// their independently quantized positions.
+    fn trailing_shaping_run_rounding_excess(&self, line: &LineInfo) -> LayoutUnit {
+        let Some(last) = line
+            .items
+            .last()
+            .filter(|result| result.item_type == InlineItemType::Text)
+        else {
+            return LayoutUnit::zero();
+        };
+        let node_id = self.items_data.items[last.item_index].node_id;
+        let mut exact_width = 0.0f32;
+        let mut allocated_width = LayoutUnit::zero();
+        let mut run_count = 0usize;
+
+        for result in line.items.iter().rev() {
+            if result.item_type != InlineItemType::Text {
+                break;
+            }
+            let item = &self.items_data.items[result.item_index];
+            if item.node_id != node_id
+                || self.items_data.text[result.text_range.clone()]
+                    .chars()
+                    .any(char::is_whitespace)
+            {
+                break;
+            }
+            let Some(shape_result) = item.shape_result.as_ref() else {
+                break;
+            };
+            let item_char_start = self.char_map.get(item.text_range.start);
+            let result_char_start = self.char_map.get(result.text_range.start);
+            let result_char_end = self.char_map.get(result.text_range.end);
+            exact_width += shape_result.width_for_range(
+                result_char_start - item_char_start,
+                result_char_end - item_char_start,
+            );
+            allocated_width = allocated_width + result.inline_size;
+            run_count += 1;
+        }
+
+        if run_count > 1 {
+            cumulative_rounding_excess(exact_width, allocated_width)
+        } else {
+            LayoutUnit::zero()
+        }
+    }
+
     /// Whether the unconsumed item stream can produce visible in-flow ink or
     /// an atomic box. Structural inline boundaries, breaks, and collapsible
     /// whitespace alone do not require a clamp marker.
@@ -318,6 +368,10 @@ impl<'a> LineBreaker<'a> {
                         resolve_margin_or_padding(&style.padding_right, pct_base)
                             + LayoutUnit::from_i32(style.effective_border_right())
                             + resolve_margin_or_padding(&style.margin_right, pct_base)
+                    } - if self.next_text_starts_with_non_whitespace(self.current_item) {
+                        self.trailing_shaping_run_rounding_excess(&line)
+                    } else {
+                        LayoutUnit::zero()
                     };
                     line.items.push(InlineItemResult {
                         item_index: self.current_item,
@@ -974,6 +1028,24 @@ impl<'a> LineBreaker<'a> {
                     let text = &self.items_data.text[candidate.text_range.clone()];
                     return !allows_line_wrap(style.white_space)
                         && text.chars().next().is_some_and(|ch| !ch.is_whitespace());
+                }
+                InlineItemType::AtomicInline
+                | InlineItemType::Control
+                | InlineItemType::BlockInInline => return false,
+            }
+        }
+        false
+    }
+
+    fn next_text_starts_with_non_whitespace(&self, item_index: usize) -> bool {
+        for candidate in &self.items_data.items[item_index + 1..] {
+            match candidate.item_type {
+                InlineItemType::OpenTag | InlineItemType::CloseTag => continue,
+                InlineItemType::Text => {
+                    return self.items_data.text[candidate.text_range.clone()]
+                        .chars()
+                        .next()
+                        .is_some_and(|character| !character.is_whitespace());
                 }
                 InlineItemType::AtomicInline
                 | InlineItemType::Control
@@ -1866,6 +1938,14 @@ fn find_space_breaks(text: &str) -> Vec<usize> {
     breaks
 }
 
+fn cumulative_rounding_excess(
+    cumulative_exact_width: f32,
+    cumulative_allocated: LayoutUnit,
+) -> LayoutUnit {
+    (cumulative_allocated - LayoutUnit::from_f32_ceil(cumulative_exact_width))
+        .clamp_negative_to_zero()
+}
+
 /// Check if a break opportunity at `byte_pos` is a CJK-specific break
 /// (i.e., both the character before and after the break are CJK).
 ///
@@ -2418,6 +2498,24 @@ mod tests {
         assert_eq!(byte_to_char_offset(text, 2), 2); // 'f'
         assert_eq!(byte_to_char_offset(text, 3), 3); // 'é' start
         assert_eq!(byte_to_char_offset(text, 5), 4); // end
+    }
+
+    #[test]
+    fn inline_close_absorbs_bidi_shaping_run_rounding_excess() {
+        let two_glyphs = 12.041_016;
+        let one_glyph = 6.020_508;
+        let allocated =
+            LayoutUnit::from_f32_ceil(two_glyphs) + LayoutUnit::from_f32_ceil(one_glyph);
+        assert_eq!(
+            cumulative_rounding_excess(two_glyphs + one_glyph, allocated).raw(),
+            1
+        );
+
+        let allocated = LayoutUnit::from_f32_ceil(one_glyph) * 3;
+        assert_eq!(
+            cumulative_rounding_excess(one_glyph * 3.0, allocated).raw(),
+            2
+        );
     }
 
     #[test]

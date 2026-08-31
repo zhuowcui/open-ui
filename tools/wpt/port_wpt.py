@@ -7232,6 +7232,13 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     with open(html_path, 'r', encoding='utf-8-sig', errors='replace') as f:
         content = f.read()
 
+    # Structural tag-like text inside HTML comments is inert. Keep the
+    # original source for stylesheet extraction, but use comment-free markup
+    # when locating html/body/link tags and extracting the rendered body.
+    # Otherwise a comment mentioning `<body>` can be mistaken for the real
+    # opening tag and leak the remainder of the comment into the screenshot.
+    markup_content = re.sub(r'<!--.*?-->', '', content, flags=re.DOTALL)
+
     html_dir = os.path.dirname(os.path.abspath(html_path))
 
     # Extract <style> blocks from anywhere in the document (head or body)
@@ -7245,14 +7252,14 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     # ``[^>]*`` stops inside the quoted value and leaves the remainder as
     # visible body text in the comparison template.
     body_tag = r'<body\b((?:[^>"\']+|"[^"]*"|\'[^\']*\')*)>'
-    body_open = re.search(body_tag, content, re.IGNORECASE)
+    body_open = re.search(body_tag, markup_content, re.IGNORECASE)
     if body_open:
         style_attr = re.search(r'\bstyle=["\']([^"\']*)["\']', body_open.group(1), re.IGNORECASE)
         if style_attr:
             style_blocks.append(f"<style>body {{{style_attr.group(1)}}}</style>")
 
     if root_aware:
-        html_open = re.search(r'<html\b([^>]*)>', content, re.IGNORECASE)
+        html_open = re.search(r'<html\b([^>]*)>', markup_content, re.IGNORECASE)
         if html_open:
             style_attr = re.search(
                 r'\bstyle=["\']([^"\']*)["\']', html_open.group(1), re.IGNORECASE
@@ -7261,7 +7268,9 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
                 style_blocks.append(f"<style>html {{{style_attr.group(1)}}}</style>")
 
     # Inline external stylesheets referenced by <link rel="stylesheet">
-    for m in re.finditer(r'<link[^>]*rel=["\']?stylesheet["\']?[^>]*>', content, re.IGNORECASE):
+    for m in re.finditer(
+        r'<link[^>]*rel=["\']?stylesheet["\']?[^>]*>', markup_content, re.IGNORECASE
+    ):
         href_match = re.search(r'href=["\']([^"\']+)["\']', m.group(0))
         if href_match:
             href = href_match.group(1)
@@ -7278,14 +7287,14 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     # Extract body content
     body_match = re.search(
         body_tag + r'(.*?)</body>',
-        content,
+        markup_content,
         re.DOTALL | re.IGNORECASE,
     )
     if body_match:
         body = body_match.group(2)
     else:
         # No explicit body — use content after meta/link tags
-        body = content
+        body = markup_content
         # Remove DOCTYPE, html, head, meta, link, title, script tags (NOT style)
         body = re.sub(r'<!DOCTYPE[^>]*>', '', body, flags=re.IGNORECASE)
         body = re.sub(r'<html[^>]*>|</html>', '', body, flags=re.IGNORECASE)

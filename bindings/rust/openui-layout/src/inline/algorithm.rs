@@ -24,7 +24,7 @@ use std::sync::Arc;
 use unicode_segmentation::UnicodeSegmentation;
 
 use crate::constraint_space::ConstraintSpace;
-use crate::exclusions::ClearType;
+use crate::exclusions::{ClearType, ExclusionSpace};
 use crate::fragment::{resolve_text_run_orientation, Fragment, FragmentKind};
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 use crate::out_of_flow::OutOfFlowCandidate;
@@ -333,8 +333,81 @@ pub(crate) fn inline_float_source_positions(
     }
     let mut result = HashMap::new();
     for placeholder in floats {
+        // A float immediately after <br> starts at the following line's
+        // block position. The line breaker keeps the forced-break control on
+        // the preceding line and does not materialize an empty successor, so
+        // recover that insertion boundary explicitly from the control item.
+        let forced_break_line = data
+            .items
+            .iter()
+            .enumerate()
+            .find(|(_, item)| {
+                item.item_type == InlineItemType::Control
+                    && doc.node(item.node_id).tag == ElementTag::Break
+                    && item.is_end_collapsible_newline
+                    && item.text_range.end == placeholder.text_offset
+            })
+            // A clearing <br> already moves subsequent floats below the
+            // exclusion space. Adding a synthetic successor-line offset as
+            // well would double-count the break's block progression.
+            .filter(|(_, item)| doc.node(item.node_id).style.clear == Clear::None)
+            .and_then(|(_, break_item)| {
+                // Forced-break controls are consumed by LineBreaker and may
+                // not appear in LineInfo::items. Locate the last materialized
+                // line whose content ends at or before the control boundary.
+                lines
+                    .iter()
+                    .rev()
+                    .find(|(_, line)| {
+                        line.items
+                            .iter()
+                            .any(|result| result.text_range.end <= break_item.text_range.start)
+                    })
+                    .or_else(|| lines.first())
+            })
+            .or_else(|| {
+                // Older static ports represent `<br>` as a preserved newline
+                // on a text item. It establishes the same successor-line
+                // source boundary as a structural Break control.
+                let has_preserved_text_break = data.items.iter().any(|item| {
+                    item.item_type == InlineItemType::Text
+                        && item.is_end_collapsible_newline
+                        && item.text_range.end == placeholder.text_offset
+                        && matches!(
+                            data.styles[item.style_index].white_space,
+                            openui_style::WhiteSpace::Pre
+                                | openui_style::WhiteSpace::PreWrap
+                                | openui_style::WhiteSpace::PreLine
+                                | openui_style::WhiteSpace::BreakSpaces
+                        )
+                });
+                has_preserved_text_break.then(|| {
+                    lines
+                        .iter()
+                        .rev()
+                        .find(|(_, line)| {
+                            line.items.iter().any(|result| {
+                                result.has_forced_break
+                                    && result.text_range.end <= placeholder.text_offset
+                            })
+                        })
+                        .or_else(|| lines.first())
+                })?
+            });
         let has_text_inside_inline = placeholder.inline_ancestor.is_none()
             || placeholder.text_offset > placeholder.inline_ancestor_text_offset;
+        let boundary_preserves_newlines = data.items.iter().rev().any(|item| {
+            item.item_type == InlineItemType::Text
+                && item.text_range.start < placeholder.text_offset
+                && placeholder.text_offset <= item.text_range.end
+                && matches!(
+                    data.styles[item.style_index].white_space,
+                    openui_style::WhiteSpace::Pre
+                        | openui_style::WhiteSpace::PreWrap
+                        | openui_style::WhiteSpace::PreLine
+                        | openui_style::WhiteSpace::BreakSpaces
+                )
+        });
         let source_line = if placeholder.text_offset == 0 && placeholder.inline_ancestor.is_none() {
             lines.first()
         } else if has_text_inside_inline {
@@ -342,10 +415,16 @@ pub(crate) fn inline_float_source_positions(
                 .iter()
                 .find(|(_, line)| {
                     line.items.iter().any(|item| {
-                        let source_item = &data.items[item.item_index];
+                        let source_range = &data.items[item.item_index].text_range;
+                        let line_range = &item.text_range;
+                        let range = if boundary_preserves_newlines {
+                            line_range
+                        } else {
+                            source_range
+                        };
                         item.item_type == InlineItemType::Text
-                            && source_item.text_range.start < placeholder.text_offset
-                            && placeholder.text_offset <= source_item.text_range.end
+                            && range.start < placeholder.text_offset
+                            && placeholder.text_offset <= range.end
                     })
                 })
                 // A float immediately after a forced break has no preceding
@@ -355,9 +434,15 @@ pub(crate) fn inline_float_source_positions(
                 .or_else(|| {
                     lines.iter().find(|(_, line)| {
                         line.items.iter().any(|item| {
-                            let source_item = &data.items[item.item_index];
+                            let source_range = &data.items[item.item_index].text_range;
+                            let line_range = &item.text_range;
+                            let range = if boundary_preserves_newlines {
+                                line_range
+                            } else {
+                                source_range
+                            };
                             item.item_type == InlineItemType::Text
-                                && source_item.text_range.start >= placeholder.text_offset
+                                && range.start >= placeholder.text_offset
                         })
                     })
                 })
@@ -371,30 +456,41 @@ pub(crate) fn inline_float_source_positions(
                 })
             })
         };
-        let position = source_line.map_or(last_line, |(source_block, line)| {
-            let preceding_inline_size = line
-                .items
-                .iter()
-                .filter(|result| {
-                    let item = &data.items[result.item_index];
-                    match result.item_type {
-                        InlineItemType::Text => result.text_range.end <= placeholder.text_offset,
-                        InlineItemType::OpenTag | InlineItemType::CloseTag => {
-                            item.text_range.start <= placeholder.text_offset
-                        }
-                        InlineItemType::AtomicInline => {
-                            item.text_range.end <= placeholder.text_offset
-                        }
-                        InlineItemType::Control | InlineItemType::BlockInInline => false,
+        let position = forced_break_line.map_or_else(
+            || {
+                source_line.map_or(last_line, |(source_block, line)| {
+                    let preceding_inline_size = line
+                        .items
+                        .iter()
+                        .filter(|result| {
+                            let item = &data.items[result.item_index];
+                            match result.item_type {
+                                InlineItemType::Text => {
+                                    result.text_range.end <= placeholder.text_offset
+                                }
+                                InlineItemType::OpenTag | InlineItemType::CloseTag => {
+                                    item.text_range.start <= placeholder.text_offset
+                                }
+                                InlineItemType::AtomicInline => {
+                                    item.text_range.end <= placeholder.text_offset
+                                }
+                                InlineItemType::Control | InlineItemType::BlockInInline => false,
+                            }
+                        })
+                        .fold(LayoutUnit::zero(), |sum, item| sum + item.inline_size);
+                    InlineFloatSourcePosition {
+                        block_offset: *source_block,
+                        preceding_inline_size,
+                        line_height,
                     }
                 })
-                .fold(LayoutUnit::zero(), |sum, item| sum + item.inline_size);
-            InlineFloatSourcePosition {
-                block_offset: *source_block,
-                preceding_inline_size,
+            },
+            |(source_block, _)| InlineFloatSourcePosition {
+                block_offset: *source_block + line_height,
+                preceding_inline_size: LayoutUnit::zero(),
                 line_height,
-            }
-        });
+            },
+        );
         result.insert(placeholder.node_id, position);
     }
     result
@@ -694,6 +790,25 @@ fn attach_inline_line_child(
     }
 }
 
+fn inline_decoration_content_bounds(
+    baseline: LayoutUnit,
+    metrics: &FontMetrics,
+    snap_block_edges: bool,
+) -> (LayoutUnit, LayoutUnit) {
+    // CSS 2.2 §10.6.1: the content area of a non-replaced inline box is
+    // established by that box's font, independently of descendant ink. Blink
+    // uses its rounded fixed ascent/descent for these decoration bounds. Glyph
+    // ink and nested inline boxes may overflow them, but must not enlarge the
+    // box's background or vertical border/padding area.
+    let mut content_top = baseline - LayoutUnit::from_f32(metrics.int_ascent());
+    let mut content_bottom = baseline + LayoutUnit::from_f32(metrics.int_descent());
+    if snap_block_edges {
+        content_top = content_top.floor();
+        content_bottom = content_bottom.floor();
+    }
+    (content_top, content_bottom)
+}
+
 fn materialize_inline_line_child(
     child: InlineLineChild,
     boxes: &[InlineLineBox],
@@ -735,21 +850,8 @@ fn materialize_inline_line_child(
                 })
                 .collect();
 
-            // Inline decoration geometry is device-pixel snapped on the
-            // block axis. Keeping independently fractional ascent/descent
-            // endpoints makes the same 10px line cover twelve rows, while
-            // Blink floors both physical edges before painting the inline
-            // background and border.
-            let mut content_top = baseline - LayoutUnit::from_f32_ceil(metrics.ascent);
-            let mut content_bottom = baseline + LayoutUnit::from_f32_ceil(metrics.descent);
-            for child in &children {
-                content_top = content_top.min_of(child.offset.top);
-                content_bottom = content_bottom.max_of(child.offset.top + child.size.height);
-            }
-            if snap_block_edges {
-                content_top = content_top.floor();
-                content_bottom = content_bottom.floor();
-            }
+            let (content_top, content_bottom) =
+                inline_decoration_content_bounds(baseline, &metrics, snap_block_edges);
 
             let border = BoxStrut::new(
                 LayoutUnit::from_i32(style.effective_border_top()),
@@ -860,6 +962,17 @@ fn line_break_clear(line: &LineInfo, items: &InlineItemsData) -> Clear {
         };
     }
     result
+}
+
+fn line_break_follows_float_at_same_boundary(line: &LineInfo, floats: &[FloatPlaceholder]) -> bool {
+    line.items
+        .iter()
+        .filter(|item| item.item_type == InlineItemType::Control)
+        .any(|item| {
+            floats
+                .iter()
+                .any(|float| float.item_index == item.item_index)
+        })
 }
 
 fn clear_type(clear: Clear) -> ClearType {
@@ -1558,8 +1671,16 @@ pub fn inline_layout_from_items(
                     exclusions.clearance_offset(clear_type(break_clear)) - bfc_block_start
                 })
             };
-            let clearance_only_break = clearance_target.is_some_and(|target| target > block_offset);
-            let clearance_only_extent = clearance_only_break.then(|| {
+            let clearance_advances = clearance_target.is_some_and(|target| target > block_offset);
+            let clearance_at_float_boundary = clearance_target
+                .is_some_and(|target| target == block_offset)
+                && line_break_follows_float_at_same_boundary(
+                    &line_info,
+                    &inline_float_placeholders,
+                );
+            let clearance_only_break = exclusion_ref.is_some_and(ExclusionSpace::has_floats)
+                && (clearance_advances || clearance_at_float_boundary);
+            let clearance_only_extent = (clearance_only_break && clearance_advances).then(|| {
                 let strut = compute_line_height_metrics(
                     &block_metrics,
                     &style.line_height,
@@ -2786,7 +2907,8 @@ pub fn inline_layout_for_children(
     let available_inline_size = space.available_inline_size.clamp_negative_to_zero();
 
     // Collect inline items only from the specified children.
-    let mut items_data = InlineItemsBuilder::collect_for_children(doc, node_id, children);
+    let (mut items_data, inline_float_placeholders) =
+        InlineItemsBuilder::collect_for_children_with_floats(doc, node_id, children);
     let normalize_vertical_rtl = normalize_positioned_vertical_rtl
         || (!space.writing_direction.is_horizontal()
             && space.writing_direction.is_rtl()
@@ -2933,8 +3055,16 @@ pub fn inline_layout_for_children(
                     exclusions.clearance_offset(clear_type(break_clear)) - bfc_block_start
                 })
             };
-            let clearance_only_break = clearance_target.is_some_and(|target| target > block_offset);
-            let clearance_only_extent = clearance_only_break.then(|| {
+            let clearance_advances = clearance_target.is_some_and(|target| target > block_offset);
+            let clearance_at_float_boundary = clearance_target
+                .is_some_and(|target| target == block_offset)
+                && line_break_follows_float_at_same_boundary(
+                    &line_info,
+                    &inline_float_placeholders,
+                );
+            let clearance_only_break = exclusion_ref.is_some_and(ExclusionSpace::has_floats)
+                && (clearance_advances || clearance_at_float_boundary);
+            let clearance_only_extent = (clearance_only_break && clearance_advances).then(|| {
                 let strut = compute_line_height_metrics(
                     &block_metrics,
                     &style.line_height,
@@ -3196,6 +3326,18 @@ pub fn inline_layout_for_children(
 /// 4. Position each item within the line box
 ///
 /// Blink: `InlineLayoutAlgorithm::CreateLine()`.
+fn snap_line_baseline(
+    line_ascent: f32,
+    line_height: &LineHeight,
+    is_horizontal_writing_direction: bool,
+) -> LayoutUnit {
+    if *line_height == LineHeight::Normal || !is_horizontal_writing_direction {
+        LayoutUnit::from_f32_ceil(line_ascent)
+    } else {
+        LayoutUnit::from_f32(line_ascent).floor()
+    }
+}
+
 fn create_line_box(
     doc: &Document,
     space: &ConstraintSpace,
@@ -3724,12 +3866,15 @@ fn create_line_box(
     }
 
     let line_height = LayoutUnit::from_f32_ceil(line_ascent + line_descent);
-    // Blink snaps the ascent side of half-leading toward the line's block
-    // start and assigns the remainder to descent. This is observable when an
-    // explicit line-height is smaller than the face box (for example 10px
-    // DejaVu text): retaining the half-pixel ascent shifts every glyph down a
-    // device row even though the line box itself has the correct height.
-    let baseline = LayoutUnit::from_f32(line_ascent).floor();
+    // Blink snaps negative half-leading from an explicit line-height toward
+    // the line's block start. A normal line-height retains the font metric's
+    // device-pixel ceiling; flooring that case moves tiny Ahem glyphs one row
+    // above their line box after fragmentation.
+    let baseline = snap_line_baseline(
+        line_ascent,
+        &block_style.line_height,
+        space.writing_direction.is_horizontal(),
+    );
 
     // Pre-shape hyphen to include its width in alignment calculations.
     let hyphen_shape_data = if line_info.has_forced_hyphen && !line_info.has_ellipsis {
@@ -4183,12 +4328,32 @@ fn create_line_box(
                             .get(&item_result.item_index)
                             .copied()
                             .unwrap_or(1);
+                    let logical_end_advance = if style.direction == openui_style::Direction::Rtl {
+                        resolve_margin_or_padding(&style.padding_left, percentage_base)
+                            + LayoutUnit::from_i32(style.effective_border_left())
+                            + resolve_margin_or_padding(&style.margin_left, percentage_base)
+                    } else {
+                        resolve_margin_or_padding(&style.padding_right, percentage_base)
+                            + LayoutUnit::from_i32(style.effective_border_right())
+                            + resolve_margin_or_padding(&style.margin_right, percentage_base)
+                    };
+                    let shaping_run_rounding_excess =
+                        (logical_end_advance - item_result.inline_size).clamp_negative_to_zero();
                     if has_right_edge {
                         inline_offset = inline_offset
                             + resolve_margin_or_padding(&style.padding_right, percentage_base)
                             + LayoutUnit::from_i32(style.effective_border_right());
                     }
-                    inline_boxes[index].border_end = inline_offset;
+                    // Keep following glyph origins on their independently
+                    // quantized advances, but size this decoration fragment
+                    // from the cumulatively quantized text extent encoded by
+                    // the line breaker on the structural close item.
+                    inline_boxes[index].border_end = inline_offset
+                        - if has_right_edge {
+                            shaping_run_rounding_excess
+                        } else {
+                            LayoutUnit::zero()
+                        };
                     inline_boxes[index].is_last = has_right_edge;
                     inline_boxes[index].has_right_edge = has_right_edge;
                     if has_right_edge {
@@ -5668,7 +5833,7 @@ pub fn has_inline_children(doc: &Document, node_id: NodeId) -> bool {
 mod tests {
     use super::*;
     use openui_dom::ElementTag;
-    use openui_style::{Color, Display};
+    use openui_style::{Color, Display, WhiteSpace};
 
     /// Helper to build a FontMetrics with specific ascent, descent, and line_gap.
     fn test_metrics(ascent: f32, descent: f32, line_gap: f32) -> FontMetrics {
@@ -5679,6 +5844,154 @@ mod tests {
             line_spacing: ascent + descent + line_gap,
             ..FontMetrics::zero()
         }
+    }
+
+    #[test]
+    fn float_after_forced_break_uses_the_following_line_source_position() {
+        let mut doc = Document::new();
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.node_mut(block).style.font_size = 5.0;
+        doc.append_child(doc.root(), block);
+
+        let leading = doc.create_node(ElementTag::Div);
+        doc.node_mut(leading).style.float = Float::Left;
+        doc.node_mut(leading).style.width = openui_geometry::Length::px(100.0);
+        doc.node_mut(leading).style.height = openui_geometry::Length::px(100.0);
+        doc.append_child(block, leading);
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("H".into());
+        doc.append_child(block, text);
+        let forced_break = doc.create_node(ElementTag::Break);
+        doc.append_child(block, forced_break);
+        let following = doc.create_node(ElementTag::Div);
+        doc.node_mut(following).style.float = Float::Left;
+        doc.node_mut(following).style.width = openui_geometry::Length::px(100.0);
+        doc.node_mut(following).style.height = openui_geometry::Length::px(100.0);
+        doc.append_child(block, following);
+
+        let (items, floats) = InlineItemsBuilder::collect_with_floats(&doc, block);
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(200));
+        let positions = inline_float_source_positions(
+            &doc,
+            block,
+            &items,
+            &floats,
+            LayoutUnit::from_i32(200),
+            &space,
+        );
+        let leading_position = positions[&leading];
+        let following_position = positions[&following];
+        assert_eq!(leading_position.block_offset, LayoutUnit::zero());
+        assert!(following_position.line_height > LayoutUnit::zero());
+        assert_eq!(
+            following_position.block_offset,
+            following_position.line_height
+        );
+        assert_eq!(following_position.preceding_inline_size, LayoutUnit::zero());
+    }
+
+    #[test]
+    fn float_after_ported_preserved_newline_uses_the_following_line_source_position() {
+        let mut doc = Document::new();
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.node_mut(block).style.font_size = 5.0;
+        doc.append_child(doc.root(), block);
+
+        let leading = doc.create_node(ElementTag::Div);
+        doc.node_mut(leading).style.float = Float::Left;
+        doc.node_mut(leading).style.width = openui_geometry::Length::px(100.0);
+        doc.node_mut(leading).style.height = openui_geometry::Length::px(100.0);
+        doc.append_child(block, leading);
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).style.white_space = WhiteSpace::PreLine;
+        doc.node_mut(text).text = Some("H\n".into());
+        doc.append_child(block, text);
+        let following = doc.create_node(ElementTag::Div);
+        doc.node_mut(following).style.float = Float::Left;
+        doc.node_mut(following).style.width = openui_geometry::Length::px(100.0);
+        doc.node_mut(following).style.height = openui_geometry::Length::px(100.0);
+        doc.append_child(block, following);
+
+        let (items, floats) = InlineItemsBuilder::collect_with_floats(&doc, block);
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(200));
+        let positions = inline_float_source_positions(
+            &doc,
+            block,
+            &items,
+            &floats,
+            LayoutUnit::from_i32(200),
+            &space,
+        );
+        let following_position = positions[&following];
+        assert!(following_position.line_height > LayoutUnit::zero());
+        assert_eq!(
+            following_position.block_offset,
+            following_position.line_height
+        );
+        assert_eq!(following_position.preceding_inline_size, LayoutUnit::zero());
+    }
+
+    #[test]
+    fn float_after_clearing_break_defers_block_progression_to_clearance() {
+        let mut doc = Document::new();
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.node_mut(block).style.font_size = 16.0;
+        doc.append_child(doc.root(), block);
+
+        let leading = doc.create_node(ElementTag::Div);
+        doc.node_mut(leading).style.float = Float::Left;
+        doc.node_mut(leading).style.width = openui_geometry::Length::px(16.0);
+        doc.node_mut(leading).style.height = openui_geometry::Length::px(10.0);
+        doc.append_child(block, leading);
+        let forced_break = doc.create_node(ElementTag::Break);
+        doc.node_mut(forced_break).style.clear = Clear::Both;
+        doc.append_child(block, forced_break);
+        let following = doc.create_node(ElementTag::Div);
+        doc.node_mut(following).style.float = Float::Left;
+        doc.node_mut(following).style.width = openui_geometry::Length::px(16.0);
+        doc.node_mut(following).style.height = openui_geometry::Length::px(10.0);
+        doc.append_child(block, following);
+
+        let (items, floats) = InlineItemsBuilder::collect_with_floats(&doc, block);
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(200));
+        let positions = inline_float_source_positions(
+            &doc,
+            block,
+            &items,
+            &floats,
+            LayoutUnit::from_i32(200),
+            &space,
+        );
+        assert_eq!(positions[&following].block_offset, LayoutUnit::zero());
+    }
+
+    #[test]
+    fn baseline_snapping_distinguishes_normal_and_explicit_line_height() {
+        let ascent = 0.8125;
+        assert_eq!(
+            snap_line_baseline(ascent, &LineHeight::Normal, true),
+            LayoutUnit::from_f32_ceil(ascent)
+        );
+        assert_eq!(
+            snap_line_baseline(ascent, &LineHeight::Number(1.0), true),
+            LayoutUnit::zero()
+        );
+        assert_eq!(
+            snap_line_baseline(ascent, &LineHeight::Number(1.0), false),
+            LayoutUnit::from_f32_ceil(ascent)
+        );
+    }
+
+    #[test]
+    fn inline_decoration_uses_rounded_font_content_bounds() {
+        let metrics = test_metrics(9.296_875, 2.343_75, 0.0);
+        let (top, bottom) =
+            inline_decoration_content_bounds(LayoutUnit::from_i32(8), &metrics, true);
+        assert_eq!(top, LayoutUnit::from_i32(-1));
+        assert_eq!(bottom, LayoutUnit::from_i32(10));
     }
 
     #[test]

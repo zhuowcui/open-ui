@@ -53,7 +53,9 @@ pub fn paint_text(
 ) {
     // Build a Skia TextBlob from the shaped glyph runs.
     // Blink: TextPainter::Paint → DrawBlob → canvas->drawTextBlob()
-    if let Some(text_blob) = shape_result.to_text_blob() {
+    let lcd_origin =
+        (std::env::var("OPENUI_REAL_FONT_RASTER").ok().as_deref() == Some("1")).then_some(origin.0);
+    if let Some(text_blob) = shape_result.to_text_blob_with_lcd_origin(lcd_origin) {
         // Cull against the glyphs' logical ink bounds before Skia applies its
         // LCD coverage filter.  Skia's filter taps extend one device pixel
         // beyond those bounds; if a run begins exactly at a hard overflow

@@ -137,7 +137,7 @@ pub fn position_float(
     float: &UnpositionedFloat,
     exclusion_space: &ExclusionSpace,
 ) -> (PositionedFloat, ExclusionArea) {
-    let margin_inline_size = compute_margin_box_inline_size(float);
+    let signed_margin_inline_size = float.margins.left + float.inline_size + float.margins.right;
     let exclusion_type = if float.is_left {
         ExclusionType::Left
     } else {
@@ -147,7 +147,7 @@ pub fn position_float(
     // Find a layout opportunity wide enough for the float's placement rules.
     let placement_min_inline_size = float
         .placement_min_inline_size
-        .unwrap_or(margin_inline_size);
+        .unwrap_or(signed_margin_inline_size);
     let ordered_origin = BfcOffset::new(
         float.origin_bfc_offset.line_offset,
         float
@@ -155,10 +155,11 @@ pub fn position_float(
             .block_offset
             .max_of(exclusion_space.last_float_block_start()),
     );
-    let opportunity = exclusion_space.find_layout_opportunity(
+    let opportunity = exclusion_space.find_layout_opportunity_for_float(
         &ordered_origin,
         float.available_size,
         placement_min_inline_size,
+        float.is_left,
     );
 
     // Resolve the float's border-box position within the opportunity.
@@ -332,6 +333,29 @@ mod tests {
             BoxStrut::new(lu(0), lu(-100), lu(0), lu(0)),
         );
         assert_eq!(compute_margin_box_inline_size(&f), LayoutUnit::zero());
+    }
+
+    #[test]
+    fn signed_negative_margin_box_still_participates_in_float_placement() {
+        let mut space = ExclusionSpace::new();
+        space.add(ExclusionArea {
+            rect: BfcRect::new(
+                BfcOffset::new(lu(0), lu(0)),
+                BfcOffset::new(lu(150), lu(100)),
+            ),
+            exclusion_type: ExclusionType::Left,
+        });
+        let float = make_float_with_margins(
+            50,
+            100,
+            true,
+            100,
+            BoxStrut::new(lu(0), lu(0), lu(0), lu(-150)),
+        );
+
+        let (positioned, exclusion) = position_float(&float, &space);
+        assert_eq!(positioned.bfc_offset, BfcOffset::new(lu(0), lu(0)));
+        assert_eq!(exclusion.rect.inline_size(), LayoutUnit::zero());
     }
 
     #[test]

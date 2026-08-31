@@ -20,7 +20,7 @@ use openui_text::Font;
 use crate::block::{resolve_border, resolve_margins, resolve_padding};
 use crate::inline::items::InlineItemType;
 use crate::inline::items_builder::{
-    preprocess_text_for_shaping, style_to_font_description, InlineItemsBuilder,
+    preprocess_text_for_shaping, style_to_font_description, InlineItemsBuilder, InlineItemsData,
 };
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 
@@ -274,6 +274,59 @@ fn active_clone_end_edges(stack: &[IntrinsicInlineBox]) -> LayoutUnit {
         .fold(LayoutUnit::zero(), |sum, entry| sum + entry.end_edge)
 }
 
+fn intrinsic_close_rounding_excess(data: &InlineItemsData, close_item_index: usize) -> LayoutUnit {
+    let next_starts_non_whitespace = data.items[close_item_index + 1..]
+        .iter()
+        .find_map(|candidate| match candidate.item_type {
+            InlineItemType::OpenTag | InlineItemType::CloseTag => None,
+            InlineItemType::Text => Some(
+                data.text[candidate.text_range.clone()]
+                    .chars()
+                    .next()
+                    .is_some_and(|character| !character.is_whitespace()),
+            ),
+            InlineItemType::AtomicInline
+            | InlineItemType::Control
+            | InlineItemType::BlockInInline => Some(false),
+        })
+        .unwrap_or(false);
+    if !next_starts_non_whitespace || close_item_index == 0 {
+        return LayoutUnit::zero();
+    }
+
+    let Some(last_item) = data.items[..close_item_index]
+        .last()
+        .filter(|item| item.item_type == InlineItemType::Text)
+    else {
+        return LayoutUnit::zero();
+    };
+    let node_id = last_item.node_id;
+    let mut exact_width = 0.0f32;
+    let mut allocated_width = LayoutUnit::zero();
+    let mut run_count = 0usize;
+    for item in data.items[..close_item_index].iter().rev() {
+        if item.item_type != InlineItemType::Text
+            || item.node_id != node_id
+            || data.text[item.text_range.clone()]
+                .chars()
+                .any(char::is_whitespace)
+        {
+            break;
+        }
+        let Some(shape_result) = item.shape_result.as_ref() else {
+            break;
+        };
+        exact_width += shape_result.width;
+        allocated_width = allocated_width + LayoutUnit::from_f32_ceil(shape_result.width);
+        run_count += 1;
+    }
+    if run_count > 1 {
+        (allocated_width - LayoutUnit::from_f32_ceil(exact_width)).clamp_negative_to_zero()
+    } else {
+        LayoutUnit::zero()
+    }
+}
+
 /// Compute min/max-content sizes over the flattened contents of one IFC.
 ///
 /// The ordinary recursive accumulator is correct for block children, but an
@@ -339,7 +392,7 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
             *pending_collapsible_space = LayoutUnit::zero();
         };
 
-    for item in &data.items {
+    for (item_index, item) in data.items.iter().enumerate() {
         let style = &data.styles[item.style_index];
         match item.item_type {
             InlineItemType::OpenTag => {
@@ -362,6 +415,8 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                 });
             }
             InlineItemType::CloseTag => {
+                let shaping_run_rounding_excess =
+                    intrinsic_close_rounding_excess(&data, item_index);
                 let position = stack
                     .iter()
                     .rposition(|entry| entry.node_id == item.node_id);
@@ -379,6 +434,8 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                     pending_open_edges = LayoutUnit::zero();
                     max_line = max_line + edge;
                 }
+                min_segment = min_segment - shaping_run_rounding_excess;
+                max_line = max_line - shaping_run_rounding_excess;
                 last_content_was_text = false;
             }
             InlineItemType::Control => {
@@ -966,6 +1023,16 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     }
 
     // Add container border + padding.
+    // CSS Sizing 3 §4: an inline-axis min-content contribution cannot
+    // exceed the corresponding max-content contribution. Negative margins
+    // and other post-processing above may otherwise invert the endpoints.
+    if IntrinsicAxisMapping::for_style(style)
+        .writing_direction
+        .is_horizontal()
+    {
+        max_inline = max_inline.max_of(min_inline);
+    }
+
     IntrinsicSizes {
         min_content_inline_size: min_inline + bp_inline,
         max_content_inline_size: max_inline + bp_inline,
@@ -1597,8 +1664,8 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
             // Auto/intrinsic width (possibly AR-derived): use post-override values.
             (min_inline, max_inline)
         };
-    let min_inline = apply_min_max_inline(child_style, min_inline, intrinsic_for_keywords);
-    let max_inline = apply_min_max_inline(child_style, max_inline, intrinsic_for_keywords);
+    let min_inline = apply_min_max_inline(child_style, min_inline, intrinsic_for_keywords, false);
+    let max_inline = apply_min_max_inline(child_style, max_inline, intrinsic_for_keywords, true);
 
     // CSS Sizing 4 §5.1: For elements with AR and min-width:auto, the
     // automatic minimum in the ratio-dependent axis is the content-based
@@ -2009,8 +2076,12 @@ fn compute_child_intrinsic_contribution_with_block_size(
                     LayoutUnit::from_f32(content_h.to_f32() * ar.ratio.0 / ar.ratio.1)
                         + child_bp_inline
                 };
-                let clamped =
-                    apply_min_max_inline(child_style, transferred, (transferred, transferred));
+                let clamped = apply_min_max_inline(
+                    child_style,
+                    transferred,
+                    (transferred, transferred),
+                    false,
+                );
                 return MinMaxSizes::new(clamped + margin_inline, clamped + margin_inline);
             }
         }
@@ -2019,8 +2090,9 @@ fn compute_child_intrinsic_contribution_with_block_size(
             let child_content_block = (block_bb - child_bp_block).clamp_negative_to_zero();
             let nested =
                 compute_intrinsic_inline_sizes_with_block_size(doc, child_id, child_content_block);
-            let min = apply_min_max_inline(child_style, nested.min, (nested.min, nested.max));
-            let max = apply_min_max_inline(child_style, nested.max, (nested.min, nested.max));
+            let min =
+                apply_min_max_inline(child_style, nested.min, (nested.min, nested.max), false);
+            let max = apply_min_max_inline(child_style, nested.max, (nested.min, nested.max), true);
             return MinMaxSizes::new(min + margin_inline, max + margin_inline);
         }
     }
@@ -2043,6 +2115,10 @@ fn compute_text_intrinsic_sizes(text: &str, style: &ComputedStyle) -> MinMaxSize
     compute_text_intrinsic_sizes_impl(text, style, false)
 }
 
+fn is_css_collapsible_whitespace(ch: char) -> bool {
+    matches!(ch, ' ' | '\t' | '\n' | '\r' | '\u{000C}')
+}
+
 fn compute_text_intrinsic_sizes_impl(
     text: &str,
     style: &ComputedStyle,
@@ -2060,7 +2136,7 @@ fn compute_text_intrinsic_sizes_impl(
             style.white_space,
             WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
         ) {
-        processed.trim_matches(char::is_whitespace)
+        processed.trim_matches(is_css_collapsible_whitespace)
     } else {
         processed.as_str()
     };
@@ -2102,7 +2178,8 @@ fn compute_text_intrinsic_sizes_impl(
                 ) {
                     continue;
                 }
-                let segment = line[segment_start..segment_end].trim_matches(char::is_whitespace);
+                let segment =
+                    line[segment_start..segment_end].trim_matches(is_css_collapsible_whitespace);
                 if !segment.is_empty() {
                     line_widest = line_widest.max_of(measure(segment));
                 }
@@ -2115,7 +2192,8 @@ fn compute_text_intrinsic_sizes_impl(
         })
     } else if permits_soft_wrap {
         forced_lines
-            .flat_map(|line| line.split_whitespace())
+            .flat_map(|line| line.split(is_css_collapsible_whitespace))
+            .filter(|segment| !segment.is_empty())
             .map(measure)
             .fold(LayoutUnit::zero(), |acc, width| acc.max_of(width))
     } else {
@@ -2527,6 +2605,7 @@ fn apply_min_max_inline(
     style: &ComputedStyle,
     size: LayoutUnit,
     base_intrinsic: (LayoutUnit, LayoutUnit), // (min-content, max-content) in border-box
+    is_max_content_contribution: bool,
 ) -> LayoutUnit {
     let zero = LayoutUnit::zero();
 
@@ -2552,7 +2631,11 @@ fn apply_min_max_inline(
         match style.min_width.length_type() {
             LengthType::MinContent => base_intrinsic.0,
             LengthType::MaxContent => base_intrinsic.1,
-            _ => base_intrinsic.0, // fit-content → min-content for min sizing
+            // A fit-content minimum contributes the corresponding intrinsic
+            // endpoint. In particular, a definite preferred width must not
+            // collapse its max-content contribution to min-content.
+            _ if is_max_content_contribution => base_intrinsic.1,
+            _ => base_intrinsic.0,
         }
     } else {
         resolve_intrinsic_constraint(
@@ -2810,6 +2893,7 @@ mod tests {
             &style,
             LayoutUnit::from_i32(60),
             (LayoutUnit::from_i32(60), LayoutUnit::from_i32(60)),
+            false,
         );
         assert_eq!(size, LayoutUnit::from_i32(160));
     }
@@ -2847,6 +2931,52 @@ mod tests {
     }
 
     #[test]
+    fn non_breaking_space_is_not_trimmed_as_css_whitespace() {
+        let mut style = ComputedStyle::default();
+        style.font_family.families = vec![FontFamily::Named("Droid Sans Fallback".into())];
+        let sizes = compute_text_intrinsic_sizes("\u{00a0}", &style);
+        assert!(sizes.min > LayoutUnit::zero());
+        assert_eq!(sizes.min, sizes.max);
+    }
+
+    #[test]
+    fn fit_content_minimum_preserves_both_intrinsic_endpoints() {
+        let mut style = ComputedStyle::default();
+        style.width = Length::px(10.0);
+        style.min_width = Length::fit_content();
+        let endpoints = (LayoutUnit::from_i32(50), LayoutUnit::from_i32(100));
+        assert_eq!(
+            apply_min_max_inline(&style, LayoutUnit::from_i32(10), endpoints, false),
+            endpoints.0,
+        );
+        assert_eq!(
+            apply_min_max_inline(&style, LayoutUnit::from_i32(10), endpoints, true),
+            endpoints.1,
+        );
+    }
+
+    #[test]
+    fn negative_inline_margin_cannot_invert_intrinsic_endpoints() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), container);
+
+        let fixed = doc.create_node(ElementTag::Span);
+        doc.node_mut(fixed).style.display = openui_style::Display::InlineBlock;
+        doc.node_mut(fixed).style.width = Length::px(100.0);
+        doc.append_child(container, fixed);
+
+        let negative = doc.create_node(ElementTag::Span);
+        doc.node_mut(negative).style.display = openui_style::Display::InlineBlock;
+        doc.node_mut(negative).style.margin_right = Length::px(-50.0);
+        doc.append_child(container, negative);
+
+        let sizes = compute_intrinsic_block_sizes(&doc, container);
+        assert_eq!(sizes.min_content_inline_size, LayoutUnit::from_i32(100));
+        assert_eq!(sizes.max_content_inline_size, LayoutUnit::from_i32(100));
+    }
+
+    #[test]
     fn intrinsic_calc_max_width_with_percentage_is_unconstrained() {
         let mut style = ComputedStyle::default();
         style.max_width = Length::calc_percent_px(0.0, 40.0);
@@ -2854,6 +2984,7 @@ mod tests {
             &style,
             LayoutUnit::from_i32(80),
             (LayoutUnit::from_i32(80), LayoutUnit::from_i32(80)),
+            false,
         );
         assert_eq!(size, LayoutUnit::from_i32(80));
     }

@@ -2892,6 +2892,16 @@ fn compute_line_cross_sizes(
 
     for line in lines.iter_mut() {
         let mut max_cross_size = LayoutUnit::zero();
+        let mut max_baseline_ascent = LayoutUnit::zero();
+        let mut max_baseline_descent = LayoutUnit::zero();
+        let mut has_baseline_group = false;
+        // Legacy line-clamped boxes already expose their retained baseline
+        // through the final-placement path below. Re-laying one out during
+        // hypothetical cross sizing can observe an unclamped continuation and
+        // spuriously enlarge the whole baseline-sharing group.
+        let line_has_line_clamp = line.item_indices.iter().any(|&idx| {
+            doc.node(items[idx].node_id).style.line_clamp != openui_style::LineClamp::None
+        });
 
         for &idx in &line.item_indices {
             let item = &items[idx];
@@ -2968,8 +2978,74 @@ fn compute_line_cross_sizes(
             let cross_margin_box = clamped_cross_bb + item.cross_axis_margin_extent();
 
             max_cross_size = max_cross_size.max_of(cross_margin_box);
+
+            // CSS Flexbox §9.4: a baseline-sharing group's contribution
+            // is the greatest distance above its shared baseline plus the
+            // greatest distance below it. Merely taking the largest margin
+            // box loses, for example, a trailing margin on a shorter item.
+            let child_logical = crate::ResolvedLogicalBox::from_style(child_style);
+            let has_cross_auto_margins = if is_column {
+                child_logical.margins.inline_start.is_auto()
+                    || child_logical.margins.inline_end.is_auto()
+            } else {
+                child_logical.margins.block_start.is_auto()
+                    || child_logical.margins.block_end.is_auto()
+            };
+            let is_baseline_aligned = matches!(
+                item.alignment,
+                ItemPosition::Baseline | ItemPosition::LastBaseline
+            ) && !has_cross_auto_margins;
+
+            if is_baseline_aligned
+                && !is_column
+                && space.writing_direction.is_horizontal()
+                && !line_has_line_clamp
+            {
+                let child_direction = child_style
+                    .direction
+                    .writing_direction(child_style.writing_mode);
+                let axis_mapping =
+                    FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal);
+                let mut child_space = axis_mapping.child_space(
+                    item.flexed_border_box_size(),
+                    clamped_cross_bb,
+                    child_percentage_inline,
+                    child_percentage_block,
+                );
+                axis_mapping.set_main_fixed(&mut child_space);
+                let cross_size_is_auto = if is_main_axis_horizontal {
+                    child_style.height.is_auto() || child_style.height.is_stretch()
+                } else {
+                    child_style.width.is_auto() || child_style.width.is_stretch()
+                };
+                if !cross_size_is_auto {
+                    axis_mapping.set_cross_fixed(&mut child_space);
+                }
+                let child_fragment = layout_flex_item(doc, item.node_id, &child_space);
+                let synthesized = clamped_cross_bb;
+                let cross_baseline =
+                    if child_direction.is_horizontal() != space.writing_direction.is_horizontal() {
+                        synthesized
+                    } else if item.alignment == ItemPosition::LastBaseline {
+                        child_fragment
+                            .last_baseline
+                            .or(child_fragment.first_baseline)
+                            .unwrap_or(synthesized)
+                    } else {
+                        child_fragment.first_baseline.unwrap_or(synthesized)
+                    };
+                let logical_margin = item.margin.to_logical(space.writing_direction);
+                let ascent = logical_margin.block_start + cross_baseline;
+                let descent = cross_margin_box - ascent;
+                max_baseline_ascent = max_baseline_ascent.max_of(ascent);
+                max_baseline_descent = max_baseline_descent.max_of(descent);
+                has_baseline_group = true;
+            }
         }
 
+        if has_baseline_group {
+            max_cross_size = max_cross_size.max_of(max_baseline_ascent + max_baseline_descent);
+        }
         line.line_cross_size = max_cross_size;
     }
 
@@ -3393,11 +3469,19 @@ fn give_items_final_position(
                 );
 
                 if is_column {
-                    logical_margin.block_start = start_margin;
-                    logical_margin.block_end = end_margin;
+                    if is_start_auto {
+                        logical_margin.block_start = start_margin;
+                    }
+                    if is_end_auto {
+                        logical_margin.block_end = end_margin;
+                    }
                 } else {
-                    logical_margin.inline_start = start_margin;
-                    logical_margin.inline_end = end_margin;
+                    if is_start_auto {
+                        logical_margin.inline_start = start_margin;
+                    }
+                    if is_end_auto {
+                        logical_margin.inline_end = end_margin;
+                    }
                 }
                 item.margin = logical_margin.to_physical(writing_direction);
             }
@@ -4117,7 +4201,7 @@ fn finalize_flex_fragment(
 }
 
 fn flex_baseline_from_child(
-    doc: &Document,
+    _doc: &Document,
     fragment: &Fragment,
     style: &openui_style::ComputedStyle,
     is_column: bool,
@@ -4147,8 +4231,6 @@ fn flex_baseline_from_child(
                 }
             })
     } else {
-        let child_is_nested_flex =
-            !child.node_id.is_none() && doc.node(child.node_id).style.display.is_flex();
         child_baseline
             .map(|baseline| child.offset.top + baseline)
             .or_else(|| {
@@ -4161,7 +4243,7 @@ fn flex_baseline_from_child(
                     && (matches!(
                         style.align_items.position,
                         ItemPosition::Baseline | ItemPosition::LastBaseline
-                    ) || (child.children.is_empty() && !child_is_nested_flex)))
+                    ) || child.children.is_empty()))
                     || style.flex_wrap.is_wrap())
                 .then_some(child.offset.top + child.height())
             })
@@ -4437,7 +4519,7 @@ mod tests {
     use openui_geometry::{LayoutUnit, Length};
     use openui_style::{
         ComputedStyle, ContentPosition, Direction, Display, FlexDirection, FlexWrap, ItemAlignment,
-        ItemPosition, OverflowAlignment, WritingMode,
+        ItemPosition, LineClamp, OverflowAlignment, WritingMode,
     };
 
     fn make_flex_container(doc: &mut Document, width: i32, height: i32) -> NodeId {
@@ -4488,6 +4570,98 @@ mod tests {
             flex_baseline_from_child(&doc, &fragment, &style, false, false),
             Some(LayoutUnit::from_i32(22)),
         );
+    }
+
+    #[test]
+    fn nested_empty_flex_item_still_supplies_container_baseline() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        {
+            let style = doc.node_mut(container).style_mut();
+            style.display = Display::InlineFlex;
+            style.width = Length::px(100.0);
+            style.border_top_width = 1;
+            style.border_bottom_width = 1;
+            style.border_top_style = openui_style::BorderStyle::Solid;
+            style.border_bottom_style = openui_style::BorderStyle::Solid;
+        }
+        doc.append_child(doc.root(), container);
+
+        let nested = doc.create_node(ElementTag::Div);
+        doc.node_mut(nested).style.display = Display::Flex;
+        doc.append_child(container, nested);
+        let sibling = doc.create_node(ElementTag::Div);
+        doc.append_child(container, sibling);
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
+        let fragment = flex_layout(&doc, container, &space);
+        assert_eq!(fragment.first_baseline, Some(LayoutUnit::from_i32(1)));
+    }
+
+    #[test]
+    fn baseline_line_cross_size_combines_ascent_and_trailing_margin() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        {
+            let style = doc.node_mut(container).style_mut();
+            style.display = Display::Flex;
+            style.width = Length::px(100.0);
+            style.flex_wrap = FlexWrap::Wrap;
+            style.align_items = ItemAlignment::new(ItemPosition::Baseline);
+        }
+        doc.append_child(doc.root(), container);
+
+        let tall = add_flex_child(&mut doc, container, 50, 12);
+        doc.node_mut(tall).style.min_width = Length::zero();
+        let trailing = add_flex_child(&mut doc, container, 50, 2);
+        doc.node_mut(trailing).style.min_width = Length::zero();
+        doc.node_mut(trailing).style.margin_bottom = Length::px(8.0);
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
+        let fragment = flex_layout(&doc, container, &space);
+        assert_eq!(fragment.height(), LayoutUnit::from_i32(20));
+    }
+
+    #[test]
+    fn baseline_line_cross_size_preserves_legacy_line_clamp_measurement() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        {
+            let style = doc.node_mut(container).style_mut();
+            style.display = Display::Flex;
+            style.width = Length::px(100.0);
+            style.flex_wrap = FlexWrap::Wrap;
+            style.align_items = ItemAlignment::new(ItemPosition::Baseline);
+        }
+        doc.append_child(doc.root(), container);
+
+        let tall = add_flex_child(&mut doc, container, 50, 12);
+        doc.node_mut(tall).style.min_width = Length::zero();
+        let clamped = add_flex_child(&mut doc, container, 50, 2);
+        doc.node_mut(clamped).style.min_width = Length::zero();
+        doc.node_mut(clamped).style.margin_bottom = Length::px(8.0);
+        doc.node_mut(clamped).style.line_clamp = LineClamp::Lines(3);
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
+        let fragment = flex_layout(&doc, container, &space);
+        assert_eq!(fragment.height(), LayoutUnit::from_i32(12));
+    }
+
+    #[test]
+    fn main_axis_auto_margin_preserves_fixed_opposite_margin() {
+        let mut doc = Document::new();
+        let container = make_flex_container(&mut doc, 200, 20);
+        let first = add_flex_child(&mut doc, container, 30, 10);
+        doc.node_mut(first).style.min_width = Length::zero();
+        doc.node_mut(first).style.margin_left = Length::auto();
+        doc.node_mut(first).style.margin_right = Length::px(20.0);
+        let second = add_flex_child(&mut doc, container, 30, 10);
+        doc.node_mut(second).style.min_width = Length::zero();
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
+        let fragment = flex_layout(&doc, container, &space);
+        assert_eq!(fragment.children[0].offset.left, LayoutUnit::from_i32(120));
+        assert_eq!(fragment.children[1].offset.left, LayoutUnit::from_i32(170));
     }
 
     #[test]
@@ -4822,6 +4996,43 @@ mod tests {
             fragment.children[3].offset,
             PhysicalOffset::new(LayoutUnit::from_i32(20), LayoutUnit::from_i32(15))
         );
+    }
+
+    #[test]
+    fn vertical_row_baseline_synthesis_does_not_expand_cross_size() {
+        let mut doc = Document::new();
+        let container = make_flex_container(&mut doc, 100, 100);
+        {
+            let style = doc.node_mut(container).style_mut();
+            style.writing_mode = WritingMode::VerticalLr;
+            style.align_items = ItemAlignment::new(ItemPosition::Baseline);
+        }
+        let first = add_flex_child(&mut doc, container, 100, 50);
+        let second = add_flex_child(&mut doc, container, 100, 50);
+        doc.node_mut(second).style.line_height = openui_style::LineHeight::Length(0.0);
+        let atomic = doc.create_node(openui_dom::ElementTag::Span);
+        doc.node_mut(atomic).style.display = Display::InlineBlock;
+        doc.node_mut(atomic).style.width = Length::px(10.0);
+        doc.node_mut(atomic).style.height = Length::px(10.0);
+        doc.append_child(second, atomic);
+
+        let direction = doc
+            .node(container)
+            .style
+            .direction
+            .writing_direction(WritingMode::VerticalLr);
+        let space = ConstraintSpace::for_root_with_writing_direction(
+            LayoutUnit::from_i32(100),
+            LayoutUnit::from_i32(100),
+            direction,
+        );
+        let fragment = flex_layout(&doc, container, &space);
+
+        assert_eq!(fragment.children[0].node_id, first);
+        assert_eq!(fragment.children[1].node_id, second);
+        assert_eq!(fragment.children[0].offset.left, LayoutUnit::zero());
+        assert_eq!(fragment.children[1].offset.left, LayoutUnit::zero());
+        assert_eq!(fragment.size.width, LayoutUnit::from_i32(100));
     }
 
     #[test]

@@ -220,6 +220,72 @@ impl ExclusionSpace {
         }
     }
 
+    /// Find a float placement shelf when its signed margin-box inline size
+    /// is negative. CSS float fitting compares the signed outer width, so a
+    /// sufficiently negative margin may fit even after opposing edges cross.
+    /// BfcRect cannot represent that inverted interval; expose the selected
+    /// physical side as a zero-width opportunity while preserving the shelf.
+    pub fn find_layout_opportunity_for_float(
+        &self,
+        offset: &BfcOffset,
+        available_inline_size: LayoutUnit,
+        min_inline_size: LayoutUnit,
+        is_left: bool,
+    ) -> LayoutOpportunity {
+        if min_inline_size >= LayoutUnit::zero() || !self.has_floats() {
+            return self.find_layout_opportunity(
+                offset,
+                available_inline_size,
+                min_inline_size.max_of(LayoutUnit::zero()),
+            );
+        }
+
+        let mut block_offset = offset.block_offset;
+        let mut shelf_edges = vec![block_offset];
+        for float in self.left_floats.iter().chain(&self.right_floats) {
+            let start = float.rect.block_start_offset();
+            let end = float.rect.block_end_offset();
+            if end > block_offset {
+                if start > block_offset {
+                    shelf_edges.push(start);
+                }
+                shelf_edges.push(end);
+            }
+        }
+        shelf_edges.sort_unstable();
+        shelf_edges.dedup();
+
+        for shelf_start in shelf_edges {
+            if shelf_start < block_offset {
+                continue;
+            }
+            let (left_edge, right_edge) =
+                self.compute_edges_at(shelf_start, offset.line_offset, available_inline_size);
+            if right_edge - left_edge >= min_inline_size {
+                let (line_start, line_end) = if right_edge >= left_edge {
+                    (left_edge, right_edge)
+                } else if is_left {
+                    (left_edge, left_edge)
+                } else {
+                    (right_edge, right_edge)
+                };
+                return LayoutOpportunity {
+                    rect: BfcRect::new(
+                        BfcOffset::new(line_start, shelf_start),
+                        BfcOffset::new(line_end, self.next_float_start_after(shelf_start)),
+                    ),
+                };
+            }
+            block_offset = shelf_start;
+        }
+
+        self.find_layout_opportunity(
+            &BfcOffset::new(offset.line_offset, block_offset),
+            available_inline_size,
+            LayoutUnit::zero(),
+        )
+    }
+
     /// Find a layout opportunity where a BFC of the given block size fits
     /// without overlapping any float margin boxes across its full height.
     ///

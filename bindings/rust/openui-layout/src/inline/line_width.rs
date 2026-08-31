@@ -128,7 +128,7 @@ pub fn compute_line_availability_for_block_size(
     for exclusion in es.all_exclusions() {
         let float_start = exclusion.rect.block_start_offset();
         if exclusion.rect.block_size() != LayoutUnit::zero()
-            || float_start < opportunity_start
+            || float_start <= opportunity_start
             || float_start >= opportunity_end
         {
             continue;
@@ -313,6 +313,24 @@ mod tests {
         assert_eq!(result.block_offset, lu(20));
         assert_eq!(result.inline_start, lu(100));
         assert_eq!(result.available_inline_size, lu(400));
+    }
+
+    #[test]
+    fn full_height_line_ignores_zero_height_float_at_its_start() {
+        let mut es = ExclusionSpace::new();
+        es.add(ExclusionArea {
+            rect: BfcRect::new(
+                BfcOffset::new(lu(0), lu(20)),
+                BfcOffset::new(lu(100), lu(20)),
+            ),
+            exclusion_type: ExclusionType::Left,
+        });
+
+        let result =
+            compute_line_availability_for_block_size(Some(&es), lu(20), lu(500), lu(300), lu(20));
+        assert_eq!(result.block_offset, lu(20));
+        assert_eq!(result.inline_start, LayoutUnit::zero());
+        assert_eq!(result.available_inline_size, lu(500));
     }
 
     #[test]

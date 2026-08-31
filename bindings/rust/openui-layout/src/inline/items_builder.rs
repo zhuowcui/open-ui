@@ -1190,6 +1190,23 @@ impl<'a> InlineItemsBuilder<'a> {
                 specified
             }
         });
+        // An empty atomic inline can still have a definite intrinsic inline
+        // contribution transferred through aspect-ratio. The line breaker
+        // stores content-box measures, while apply_size_override_inline
+        // returns the element's CSS-sized border box.
+        let aspect_ratio_intrinsic = (!is_orthogonal
+            && child_direction.is_horizontal()
+            && (style.width.is_auto() || style.width.is_content_or_intrinsic())
+            && style.height.is_fixed()
+            && style.aspect_ratio.is_some())
+        .then(|| {
+            let border_box = crate::intrinsic_sizing::apply_size_override_inline(
+                style,
+                openui_geometry::LayoutUnit::zero(),
+            )
+            .to_f32();
+            (border_box - own_inline_edges).max(0.0)
+        });
         let has_consecutive_floats = deterministic_text_profile
             && self
                 .doc
@@ -1200,6 +1217,8 @@ impl<'a> InlineItemsBuilder<'a> {
                 >= 2;
         let intrinsic_max = if specified_intrinsic.is_some() {
             specified_intrinsic
+        } else if aspect_ratio_intrinsic.is_some() {
+            aspect_ratio_intrinsic
         } else if self.doc.node(node_id).tag == ElementTag::Ruby {
             self.compute_ruby_intrinsic_inline_size(node_id)
         } else if style.display.is_flex() {

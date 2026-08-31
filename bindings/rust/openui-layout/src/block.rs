@@ -717,8 +717,9 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             let tentative_h =
                 LayoutUnit::from_f32(content_w.to_f32() * ar.ratio.1 / ar.ratio.0) + bp_b;
 
-            // Apply min/max-height
-            let min_h = if style.min_height.is_auto() {
+            // Apply min/max-height. tentative_h is a border-box size, while
+            // authored constraints use the element's box-sizing coordinate.
+            let min_h_raw = if style.min_height.is_auto() {
                 LayoutUnit::zero()
             } else {
                 resolve_length(
@@ -728,25 +729,39 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     LayoutUnit::zero(),
                 )
             };
-            let max_h = resolve_length(
+            let max_h_raw = resolve_length(
                 &style.max_height,
                 space.percentage_resolution_block_size,
                 LayoutUnit::max(),
                 LayoutUnit::max(),
             );
+            let min_h = if min_h_raw > LayoutUnit::zero() {
+                if style.box_sizing == BoxSizing::ContentBox {
+                    min_h_raw + border_padding_block
+                } else {
+                    min_h_raw.max_of(border_padding_block)
+                }
+            } else {
+                LayoutUnit::zero()
+            };
+            let max_h = if max_h_raw == LayoutUnit::max() {
+                max_h_raw
+            } else if style.box_sizing == BoxSizing::ContentBox {
+                max_h_raw + border_padding_block
+            } else {
+                max_h_raw.max_of(border_padding_block)
+            };
 
             if max_h < LayoutUnit::max() || min_h > LayoutUnit::zero() {
                 let clamped_h = tentative_h.max_of(min_h).min_of(max_h);
                 if clamped_h != tentative_h {
                     // Re-derive inline size from clamped block size
-                    let new_content_h = (clamped_h - bp_b).clamp_negative_to_zero();
-                    let new_w =
-                        LayoutUnit::from_f32(new_content_h.to_f32() * ar.ratio.0 / ar.ratio.1)
-                            + bp_i;
+                    let ratio_h = (clamped_h - bp_b).clamp_negative_to_zero();
+                    let ratio_w = LayoutUnit::from_f32(ratio_h.to_f32() * ar.ratio.0 / ar.ratio.1);
                     let new_content = if style.box_sizing == BoxSizing::BorderBox {
-                        (new_w - border_padding_inline).clamp_negative_to_zero()
+                        ratio_w + bp_i
                     } else {
-                        new_w
+                        ratio_w
                     };
                     // Apply min/max-width to the feedback result
                     let min_w_val = resolve_length(
@@ -1127,7 +1142,9 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         // interruptions up front so a later descendant float keeps its source
         // order position after the intervening block, rather than being placed
         // at the start of the containing block.
-        let block_in_inline_source_advances = if items_data.block_in_inline.is_empty() {
+        let block_in_inline_source_advances = if items_data.block_in_inline.is_empty()
+            || float_placeholders.is_empty()
+        {
             Vec::new()
         } else {
             let mut interruptions = items_data.block_in_inline.clone();
@@ -1148,7 +1165,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 .enumerate()
                 .map(|(index, interruption)| {
                     let child_style = &doc.node(interruption.node_id).style;
-                    let child_space = crate::logical_geometry::block_child_constraint_space(
+                    let mut child_space = crate::logical_geometry::block_child_constraint_space(
                         space,
                         child_style,
                         child_available_inline,
@@ -1157,6 +1174,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         child_percentage_block_size,
                         false,
                     );
+                    // This is a geometry-only prepass used to locate a later
+                    // descendant float. It must not consume the shared clamp
+                    // budget before the real block-in-inline pass formats the
+                    // retained content.
+                    child_space.line_clamp_context = None;
                     let child_fragment = block_layout(doc, interruption.node_id, &child_space);
                     let margin_top =
                         resolve_margin_or_padding(&child_style.margin_top, child_available_inline);
@@ -1180,7 +1202,11 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             openui_style::LineClamp::Lines(lines) => Some(lines as usize),
             _ => None,
         };
-        let float_insertion_line = 1usize;
+        let retained_float_block_budget =
+            crate::inline::algorithm::line_clamp_auto_block_size(style, space.available_block_size);
+        let mut previous_float_item_index = 0usize;
+        let mut cleared_float_shelf = None;
+        let mut discarded_auto_float_line_extent = LayoutUnit::zero();
 
         for placeholder in &float_placeholders {
             let child_id = placeholder.node_id;
@@ -1194,9 +1220,35 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 continue;
             }
             if child_style.float != Float::None {
-                if retained_float_line_budget.is_some_and(|budget| float_insertion_line > budget) {
-                    continue;
+                let mut crossed_clearance = None;
+                let mut crossed_clearing_breaks = 0usize;
+                // `clear` applies to a forced break's line box. Floats are
+                // hoisted out of the IFC for placement, so carry any clearing
+                // controls crossed in source order into their BFC origin.
+                // Keep the resulting floor for consecutive floats after the
+                // same break so they form one new shelf.
+                for item in &items_data.items[previous_float_item_index..placeholder.item_index] {
+                    if item.item_type == crate::inline::items::InlineItemType::Control {
+                        let clear = doc.node(item.node_id).style.clear;
+                        if clear != Clear::None {
+                            crossed_clearance = Some(
+                                exclusion_space_inline
+                                    .clearance_offset(clear_type_from_style(clear)),
+                            );
+                            crossed_clearing_breaks += 1;
+                        } else {
+                            cleared_float_shelf = None;
+                        }
+                    } else if matches!(
+                        item.item_type,
+                        crate::inline::items::InlineItemType::Text
+                            | crate::inline::items::InlineItemType::AtomicInline
+                            | crate::inline::items::InlineItemType::BlockInInline
+                    ) {
+                        cleared_float_shelf = None;
+                    }
                 }
+                previous_float_item_index = placeholder.item_index;
                 let source = float_source_positions.get(&child_id).copied().unwrap_or(
                     crate::inline::algorithm::InlineFloatSourcePosition {
                         block_offset: LayoutUnit::zero(),
@@ -1204,6 +1256,23 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         line_height: LayoutUnit::zero(),
                     },
                 );
+                let source_line_number = if source.line_height > LayoutUnit::zero() {
+                    (source.block_offset.raw().max(0) / source.line_height.raw().max(1)) as usize
+                        + 1
+                } else {
+                    1
+                };
+                if retained_float_line_budget.is_some_and(|budget| source_line_number > budget) {
+                    continue;
+                }
+                if let Some(clearance) = crossed_clearance {
+                    // A clearing BR establishes at least one line strut. Tall
+                    // float shelves usually supply the larger advance; short
+                    // shelves still move by the inherited line height.
+                    let line_floor = cleared_float_shelf.unwrap_or_default()
+                        + source.line_height * crossed_clearing_breaks as i32;
+                    cleared_float_shelf = Some(clearance.max_of(line_floor));
+                }
                 let margin = resolve_margins_in_parent_axes(
                     child_style,
                     child_available_inline,
@@ -1227,7 +1296,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 };
                 let estimated_margin_box =
                     (margin.left + estimated_border_box + margin.right).clamp_negative_to_zero();
-                let source_block = if source.preceding_inline_size > LayoutUnit::zero()
+                let computed_source_block = if source.preceding_inline_size > LayoutUnit::zero()
                     && source.preceding_inline_size + estimated_margin_box > child_available_inline
                 {
                     source.block_offset + source.line_height
@@ -1237,6 +1306,22 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     .iter()
                     .filter(|(item_index, _)| *item_index < placeholder.item_index)
                     .fold(LayoutUnit::zero(), |sum, (_, advance)| sum + *advance);
+                // An auto-clamped float whose outer width pushes its following
+                // text beyond the physical clamp edge has no retained line to
+                // participate in. Discard it with that continuation. A float
+                // one line earlier remains in-flow and is still painted.
+                if retained_float_block_budget
+                    .is_some_and(|budget| computed_source_block + source.line_height >= budget)
+                {
+                    if let Some(context) = &space.line_clamp_context {
+                        context.consume_atomic_layout(0, source.line_height);
+                    } else {
+                        discarded_auto_float_line_extent =
+                            discarded_auto_float_line_extent.max_of(source.line_height);
+                    }
+                    continue;
+                }
+                let source_block = cleared_float_shelf.unwrap_or(computed_source_block);
                 let float_block_offset = block_offset + source_block;
                 handle_float(
                     doc,
@@ -1673,6 +1758,19 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 space.writing_direction,
             );
             inline_space.line_clamp_context = space.line_clamp_context.clone();
+            if inline_space.line_clamp_context.is_none()
+                && discarded_auto_float_line_extent > LayoutUnit::zero()
+            {
+                if let Some(block_budget) = retained_float_block_budget {
+                    inline_space.line_clamp_context =
+                        Some(crate::constraint_space::LineClampContext::new_auto(
+                            usize::MAX,
+                            (block_budget - discarded_auto_float_line_extent)
+                                .clamp_negative_to_zero(),
+                            style.block_ellipsis.clone(),
+                        ));
+                }
+            }
             inline_space.first_line_context = space.first_line_context.clone();
             if exclusion_space_inline.has_floats() {
                 inline_space.exclusion_space = Some(std::sync::Arc::new(exclusion_space_inline));
@@ -1941,11 +2039,13 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
 
             // Handle floated children.
             if child_style.float != Float::None {
-                // CSS 2.1: Floats force BFC offset resolution. Any pending
-                // margin strut must be resolved before positioning the float.
-                if !start_margin_resolved {
+                // CSS 2.1: the current normal-flow position includes a
+                // preceding in-flow sibling's collapsed trailing margin.
+                if !margin_strut.is_empty() {
                     block_offset += margin_strut.sum();
                     margin_strut = MarginStrut::new();
+                }
+                if !start_margin_resolved {
                     start_margin_resolved = true;
                     float_resolved_bfc = true;
                 }
@@ -5407,35 +5507,40 @@ fn resolve_inline_size(
                 let h_to_w = ratio.0 / ratio.1;
                 let bp_block = border_padding_block;
                 let bp_inline = border_padding;
+                let ar_uses_border_box = !ar.auto_flag && style.box_sizing == BoxSizing::BorderBox;
 
-                let transferred_min = if !style.min_height.is_auto()
-                    && !style.min_height.is_content_or_intrinsic()
-                {
-                    let min_h_raw = resolve_length(
-                        &style.min_height,
-                        space.percentage_resolution_block_size,
-                        LayoutUnit::zero(),
-                        LayoutUnit::zero(),
-                    );
-                    if min_h_raw > LayoutUnit::zero() {
-                        let content_min_h = if style.box_sizing == BoxSizing::BorderBox {
-                            (min_h_raw - bp_block).clamp_negative_to_zero()
+                let transferred_min =
+                    if !style.min_height.is_auto() && !style.min_height.is_content_or_intrinsic() {
+                        let min_h_raw = resolve_length(
+                            &style.min_height,
+                            space.percentage_resolution_block_size,
+                            LayoutUnit::zero(),
+                            LayoutUnit::zero(),
+                        );
+                        if min_h_raw > LayoutUnit::zero() {
+                            let transferred = if ar_uses_border_box {
+                                LayoutUnit::from_f32(min_h_raw.to_f32() * h_to_w)
+                            } else {
+                                let content_min_h = if style.box_sizing == BoxSizing::BorderBox {
+                                    (min_h_raw - bp_block).clamp_negative_to_zero()
+                                } else {
+                                    min_h_raw
+                                };
+                                let transferred_w =
+                                    LayoutUnit::from_f32(content_min_h.to_f32() * h_to_w);
+                                if style.box_sizing == BoxSizing::BorderBox {
+                                    transferred_w + bp_inline
+                                } else {
+                                    transferred_w
+                                }
+                            };
+                            min.max_of(transferred)
                         } else {
-                            min_h_raw
-                        };
-                        let transferred_w = LayoutUnit::from_f32(content_min_h.to_f32() * h_to_w);
-                        let transferred = if style.box_sizing == BoxSizing::BorderBox {
-                            transferred_w + bp_inline
-                        } else {
-                            transferred_w
-                        };
-                        min.max_of(transferred)
+                            min
+                        }
                     } else {
                         min
-                    }
-                } else {
-                    min
-                };
+                    };
 
                 let transferred_max = if max == LayoutUnit::max() {
                     let max_h_raw = resolve_length(
@@ -5445,16 +5550,21 @@ fn resolve_inline_size(
                         LayoutUnit::max(),
                     );
                     if max_h_raw != LayoutUnit::max() {
-                        let content_max_h = if style.box_sizing == BoxSizing::BorderBox {
-                            (max_h_raw - bp_block).clamp_negative_to_zero()
+                        let transferred = if ar_uses_border_box {
+                            LayoutUnit::from_f32(max_h_raw.to_f32() * h_to_w)
                         } else {
-                            max_h_raw
-                        };
-                        let transferred_w = LayoutUnit::from_f32(content_max_h.to_f32() * h_to_w);
-                        let transferred = if style.box_sizing == BoxSizing::BorderBox {
-                            transferred_w + bp_inline
-                        } else {
-                            transferred_w
+                            let content_max_h = if style.box_sizing == BoxSizing::BorderBox {
+                                (max_h_raw - bp_block).clamp_negative_to_zero()
+                            } else {
+                                max_h_raw
+                            };
+                            let transferred_w =
+                                LayoutUnit::from_f32(content_max_h.to_f32() * h_to_w);
+                            if style.box_sizing == BoxSizing::BorderBox {
+                                transferred_w + bp_inline
+                            } else {
+                                transferred_w
+                            }
                         };
                         max.min_of(transferred)
                     } else {
@@ -21939,6 +22049,85 @@ mod tests {
     }
 
     #[test]
+    fn clearing_break_starts_following_floats_on_a_new_shelf() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let parent = doc.create_node(ElementTag::Div);
+        doc.node_mut(parent).style.display = Display::Block;
+        doc.node_mut(parent).style.width = Length::px(200.0);
+        doc.append_child(vp, parent);
+
+        let mut floats = Vec::new();
+        for index in 0..4 {
+            if index == 2 {
+                let br = doc.create_node(ElementTag::Break);
+                doc.node_mut(br).style.clear = Clear::Both;
+                doc.append_child(parent, br);
+            }
+            let float = doc.create_node(ElementTag::Div);
+            doc.node_mut(float).style.float = Float::Left;
+            doc.node_mut(float).style.width = Length::px(50.0);
+            doc.node_mut(float).style.height = Length::px(20.0);
+            doc.append_child(parent, float);
+            floats.push(float);
+        }
+        let trailing_break = doc.create_node(ElementTag::Break);
+        doc.node_mut(trailing_break).style.clear = Clear::Both;
+        doc.append_child(parent, trailing_break);
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(200));
+        let fragment = block_layout(&doc, vp, &space);
+        assert_eq!(
+            fragment_for_node(&fragment, floats[0]).unwrap().offset.top,
+            LayoutUnit::zero()
+        );
+        assert_eq!(
+            fragment_for_node(&fragment, floats[1]).unwrap().offset.top,
+            LayoutUnit::zero()
+        );
+        assert_eq!(
+            fragment_for_node(&fragment, floats[2]).unwrap().offset.top,
+            LayoutUnit::from_i32(20)
+        );
+        assert_eq!(
+            fragment_for_node(&fragment, floats[3]).unwrap().offset.top,
+            LayoutUnit::from_i32(20)
+        );
+        assert_eq!(
+            fragment_for_node(&fragment, parent).unwrap().size.height,
+            LayoutUnit::from_i32(40)
+        );
+    }
+
+    #[test]
+    fn consecutive_clearing_break_without_intervening_float_keeps_line_strut() {
+        let mut doc = Document::new();
+        let vp = doc.root();
+        let parent = doc.create_node(ElementTag::Div);
+        doc.node_mut(parent).style.display = Display::Block;
+        doc.node_mut(parent).style.width = Length::px(200.0);
+        doc.append_child(vp, parent);
+
+        let float = doc.create_node(ElementTag::Div);
+        doc.node_mut(float).style.float = Float::Left;
+        doc.node_mut(float).style.width = Length::px(50.0);
+        doc.node_mut(float).style.height = Length::px(20.0);
+        doc.append_child(parent, float);
+        for _ in 0..2 {
+            let br = doc.create_node(ElementTag::Break);
+            doc.node_mut(br).style.clear = Clear::Both;
+            doc.append_child(parent, br);
+        }
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(200));
+        let fragment = block_layout(&doc, vp, &space);
+        assert_eq!(
+            fragment_for_node(&fragment, parent).unwrap().size.height,
+            LayoutUnit::from_i32(39)
+        );
+    }
+
+    #[test]
     fn margin_creates_spacing() {
         let mut doc = Document::new();
         let vp = doc.root();
@@ -22723,15 +22912,20 @@ mod tests {
         let vp = doc.root();
 
         let parent = doc.create_node(ElementTag::Div);
+        doc.node_mut(parent).style.display = Display::Block;
         doc.append_child(vp, parent);
 
         let child = doc.create_node(ElementTag::Div);
+        doc.node_mut(child).style.display = Display::Block;
         doc.node_mut(child).style.height = Length::percent(100.0);
         doc.node_mut(child).style.border_top_width = 1;
+        doc.node_mut(child).style.border_top_style = BorderStyle::Solid;
         doc.node_mut(child).style.border_bottom_width = 1;
+        doc.node_mut(child).style.border_bottom_style = BorderStyle::Solid;
         doc.append_child(parent, child);
 
         let content = doc.create_node(ElementTag::Div);
+        doc.node_mut(content).style.display = Display::Block;
         doc.node_mut(content).style.height = Length::px(16.0);
         doc.append_child(child, content);
 

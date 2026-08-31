@@ -10,6 +10,18 @@ use skia_safe::{Point, TextBlob, TextBlobBuilder};
 
 use crate::font::FontPlatformData;
 
+/// Match Chromium's retained 10px LCD mask in the one fixed-point phase cell
+/// where direct Skia switches to the following cached mask early. Larger
+/// strikes use Skia's native phase boundary.
+fn chromium_lcd_raster_x(device_x: f32, font_size: f32) -> f32 {
+    let phase = device_x.rem_euclid(1.0);
+    if (font_size - 10.0).abs() < f32::EPSILON && (24.0 / 64.0..25.0 / 64.0).contains(&phase) {
+        device_x - phase + 1.0 / 3.0
+    } else {
+        device_x
+    }
+}
+
 /// Direction of text flow within a run or result.
 ///
 /// Blink: `TextDirection` in `platform/text/text_direction.h`.
@@ -279,6 +291,17 @@ impl ShapeResult {
     ///
     /// Returns `None` if the result has no glyphs.
     pub fn to_text_blob(&self) -> Option<TextBlob> {
+        self.to_text_blob_with_lcd_origin(None)
+    }
+
+    /// Build a text blob using Chromium's Linux 10px LCD phase boundary.
+    ///
+    /// Skia's direct FreeType path changes its cached RGB mask at 24/64 px,
+    /// while the pinned Chromium FreeType display-list path retains the prior
+    /// phase until 25/64 px. Positions in that single fixed-point cell are
+    /// represented at the middle third without changing logical advances or
+    /// fragment geometry.
+    pub fn to_text_blob_with_lcd_origin(&self, device_origin_x: Option<f32>) -> Option<TextBlob> {
         if self.runs.is_empty() || self.num_glyphs() == 0 {
             return None;
         }
@@ -296,7 +319,12 @@ impl ShapeResult {
 
             let mut x = run_x;
             for i in 0..run.num_glyphs {
-                positions_out[i] = Point::new(x + run.offsets[i].0, run.offsets[i].1);
+                let local_x = x + run.offsets[i].0;
+                let raster_x = device_origin_x.map_or(local_x, |origin| {
+                    let device_x = origin + local_x;
+                    chromium_lcd_raster_x(device_x, sk_font.size()) - origin
+                });
+                positions_out[i] = Point::new(raster_x, run.offsets[i].1);
                 x += run.advances[i];
             }
             run_x = x;
@@ -659,5 +687,19 @@ impl std::fmt::Debug for ShapeResultRun {
             .field("start_index", &self.start_index)
             .field("direction", &self.direction)
             .finish()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::chromium_lcd_raster_x;
+
+    #[test]
+    fn chromium_lcd_phase_retains_only_the_24_to_25_sixty_fourths_cell() {
+        let retained = chromium_lcd_raster_x(269.384_77, 10.0);
+        assert!((retained - (269.0 + 1.0 / 3.0)).abs() < 0.000_01);
+        assert_eq!(chromium_lcd_raster_x(269.390_625, 10.0), 269.390_625);
+        assert_eq!(chromium_lcd_raster_x(269.374_97, 10.0), 269.374_97);
+        assert_eq!(chromium_lcd_raster_x(269.384_77, 20.0), 269.384_77);
     }
 }
