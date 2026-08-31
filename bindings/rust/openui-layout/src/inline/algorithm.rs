@@ -456,7 +456,7 @@ pub(crate) fn inline_float_source_positions(
                 })
             })
         };
-        let position = forced_break_line.map_or_else(
+        let mut position = forced_break_line.map_or_else(
             || {
                 source_line.map_or(last_line, |(source_block, line)| {
                     let preceding_inline_size = line
@@ -491,6 +491,47 @@ pub(crate) fn inline_float_source_positions(
                 line_height,
             },
         );
+        // A shaped text item may span several preserved newline boundaries.
+        // The source-position probe's line association can then resolve the
+        // float against the first split result for that item. Source order
+        // still gives us a strict lower bound: every preserved newline before
+        // the placeholder advances by one line strut. Keep any larger offset
+        // found by actual wrapping, but never place the float above that
+        // forced-break floor.
+        let preserved_break_count = data
+            .items
+            .iter()
+            .filter(|item| item.item_type == InlineItemType::Text)
+            .filter(|item| {
+                matches!(
+                    data.styles[item.style_index].white_space,
+                    openui_style::WhiteSpace::Pre
+                        | openui_style::WhiteSpace::PreWrap
+                        | openui_style::WhiteSpace::PreLine
+                        | openui_style::WhiteSpace::BreakSpaces
+                )
+            })
+            .map(|item| {
+                let start = item.text_range.start.min(placeholder.text_offset);
+                let end = item.text_range.end.min(placeholder.text_offset);
+                data.text[start..end]
+                    .bytes()
+                    .filter(|byte| *byte == b'\n')
+                    .count()
+            })
+            .sum::<usize>();
+        let forced_break_floor = line_height * preserved_break_count as i32;
+        if forced_break_floor > position.block_offset {
+            position.block_offset = forced_break_floor;
+            if data
+                .text
+                .as_bytes()
+                .get(placeholder.text_offset.saturating_sub(1))
+                == Some(&b'\n')
+            {
+                position.preceding_inline_size = LayoutUnit::zero();
+            }
+        }
         result.insert(placeholder.node_id, position);
     }
     result
@@ -944,6 +985,64 @@ fn materialize_inline_line_child(
             );
             fragment
         }
+    }
+}
+
+/// Move an inline-end decoration off a trailing, content-empty continuation.
+///
+/// A terminal `<br>` can leave the element's close tag on a final empty line.
+/// The line box remains (the break still contributes block advance), but the
+/// inline-end border/padding belongs to the preceding content-bearing
+/// continuation. Painting it on the zero-width tail puts the border at the
+/// inline-start edge on the following line.
+fn coalesce_trailing_empty_inline_end(line_fragments: &mut [Fragment]) {
+    fn take_empty_ends(fragment: &mut Fragment, ends: &mut Vec<Fragment>) {
+        let mut retained = Vec::with_capacity(fragment.children.len());
+        for mut child in std::mem::take(&mut fragment.children) {
+            take_empty_ends(&mut child, ends);
+            if child.is_inline_box_fragment
+                && !child.is_first_for_node
+                && child.is_last_for_node
+                && child.children.is_empty()
+            {
+                ends.push(child);
+            } else {
+                retained.push(child);
+            }
+        }
+        fragment.children = retained;
+    }
+
+    fn last_inline_for_node_mut(fragment: &mut Fragment, node_id: NodeId) -> Option<&mut Fragment> {
+        if fragment.is_inline_box_fragment && fragment.node_id == node_id {
+            return Some(fragment);
+        }
+        fragment
+            .children
+            .iter_mut()
+            .rev()
+            .find_map(|child| last_inline_for_node_mut(child, node_id))
+    }
+
+    if line_fragments.len() < 2 {
+        return;
+    }
+    let (preceding, final_line) = line_fragments.split_at_mut(line_fragments.len() - 1);
+    let mut empty_ends = Vec::new();
+    take_empty_ends(&mut final_line[0], &mut empty_ends);
+    for terminal in empty_ends {
+        let Some(previous) = preceding
+            .iter_mut()
+            .rev()
+            .find_map(|line| last_inline_for_node_mut(line, terminal.node_id))
+        else {
+            continue;
+        };
+        previous.size.width = previous.size.width + terminal.size.width;
+        previous.border.right = terminal.border.right;
+        previous.padding.right = terminal.padding.right;
+        previous.margin.right = terminal.margin.right;
+        previous.is_last_for_node = true;
     }
 }
 
@@ -1989,6 +2088,10 @@ pub fn inline_layout_from_items(
         }
     }
     let intrinsic_block_size = block_offset;
+
+    if space.writing_direction.is_horizontal() {
+        coalesce_trailing_empty_inline_end(&mut line_fragments);
+    }
 
     // Compute first and last baselines from line boxes.
     // CSS Inline 3 §3: The first baseline of a block container with inline
@@ -3283,6 +3386,10 @@ pub fn inline_layout_for_children(
         context.consume_layout(line_fragments.len(), block_offset);
     }
     let intrinsic_block_size = block_offset;
+
+    if space.writing_direction.is_horizontal() {
+        coalesce_trailing_empty_inline_end(&mut line_fragments);
+    }
 
     let first_baseline = line_fragments
         .first()
@@ -5930,6 +6037,46 @@ mod tests {
             following_position.block_offset,
             following_position.line_height
         );
+        assert_eq!(following_position.preceding_inline_size, LayoutUnit::zero());
+    }
+
+    #[test]
+    fn float_after_multiple_preserved_newlines_uses_the_final_source_line() {
+        let mut doc = Document::new();
+        let block = doc.create_node(ElementTag::Div);
+        let block_style = doc.node_mut(block).style_mut();
+        block_style.display = Display::Block;
+        block_style.font_size = 16.0;
+        block_style.line_height = openui_style::LineHeight::Length(32.0);
+        block_style.white_space = WhiteSpace::PreWrap;
+        doc.append_child(doc.root(), block);
+
+        let text = doc.create_node(ElementTag::Text);
+        let text_style = doc.node_mut(text).style_mut();
+        text_style.font_size = 16.0;
+        text_style.line_height = openui_style::LineHeight::Length(32.0);
+        text_style.white_space = WhiteSpace::PreWrap;
+        doc.node_mut(text).text = Some("Line 1\nLine 2\nLine 3\nLine 4\n".into());
+        doc.append_child(block, text);
+
+        let following = doc.create_node(ElementTag::Div);
+        doc.node_mut(following).style.float = Float::Left;
+        doc.node_mut(following).style.width = openui_geometry::Length::px(300.0);
+        doc.append_child(block, following);
+
+        let (items, floats) = InlineItemsBuilder::collect_with_floats(&doc, block);
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(160));
+        let positions = inline_float_source_positions(
+            &doc,
+            block,
+            &items,
+            &floats,
+            LayoutUnit::from_i32(200),
+            &space,
+        );
+        let following_position = positions[&following];
+        assert_eq!(following_position.line_height, LayoutUnit::from_i32(32));
+        assert_eq!(following_position.block_offset, LayoutUnit::from_i32(128));
         assert_eq!(following_position.preceding_inline_size, LayoutUnit::zero());
     }
 

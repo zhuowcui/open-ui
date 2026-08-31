@@ -579,7 +579,7 @@ class LedgerTests(unittest.TestCase):
         text_manifest = json.loads(
             (closure.PORTED_DIR / "text_ported_tests.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(len(text_manifest), 1289)
+        self.assertEqual(len(text_manifest), 1292)
         self.assertTrue(set(targets) <= set(text_manifest))
 
     def test_frozen_ledgers_and_sp13r_later_promotion_allowlist_are_deterministic(self):

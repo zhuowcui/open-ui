@@ -248,6 +248,14 @@ pub fn paint_fragment(
                 false,
             );
             paint_children_with_stacking_order(canvas, &fragment.children, doc, abs_offset, false);
+            paint_fragmented_descendant_outlines(
+                canvas,
+                &fragment.children,
+                doc,
+                abs_offset,
+                column_physical_rect(fragment, abs_offset),
+                fragment_block_axis_is_x(fragment),
+            );
             canvas.restore();
         } else {
             paint_children_with_stacking_order(canvas, &fragment.children, doc, abs_offset, false);
@@ -1158,6 +1166,7 @@ fn prepaint_in_flow_block_decorations(
         }
         let style = &doc.node(fragment.node_id).style;
         if !style.display.is_block_level()
+            || style.float != openui_style::Float::None
             || !uses_deterministic_text_profile(style)
             || style.visibility != Visibility::Visible
             || style.opacity < 1.0
@@ -1688,6 +1697,77 @@ fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle, doc: &Documen
             && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport))
 }
 
+fn descendant_outline_outset(fragment: &Fragment, doc: &Document) -> f32 {
+    fragment.children.iter().fold(0.0_f32, |outset, child| {
+        let own = if child.node_id.is_none() {
+            0.0
+        } else {
+            let style = &doc.node(child.node_id).style;
+            (style.effective_outline_width() + style.outline_offset).max(0) as f32
+        };
+        outset.max(own).max(descendant_outline_outset(child, doc))
+    })
+}
+
+fn paint_fragmented_descendant_outlines(
+    canvas: &Canvas,
+    children: &[Fragment],
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+    slice: Rect,
+    block_axis_is_x: bool,
+) {
+    for child in children {
+        let child_offset = PhysicalOffset::new(
+            parent_offset.left + child.offset.left,
+            parent_offset.top + child.offset.top,
+        );
+        if !child.node_id.is_none() && child.kind == FragmentKind::Box {
+            let style = &doc.node(child.node_id).style;
+            let (start, end, slice_start, slice_end) = if block_axis_is_x {
+                (
+                    child_offset.left.to_f32(),
+                    (child_offset.left + child.size.width).to_f32(),
+                    slice.left,
+                    slice.right,
+                )
+            } else {
+                (
+                    child_offset.top.to_f32(),
+                    (child_offset.top + child.size.height).to_f32(),
+                    slice.top,
+                    slice.bottom,
+                )
+            };
+            let visible_start = start.max(slice_start);
+            let visible_end = end.min(slice_end);
+            if style.has_outline()
+                && visible_end > visible_start
+                && (start < slice_start || end > slice_end)
+            {
+                let mut visible = child.clone();
+                let mut visible_offset = child_offset;
+                if block_axis_is_x {
+                    visible_offset.left = LayoutUnit::from_f32(visible_start);
+                    visible.size.width = LayoutUnit::from_f32(visible_end - visible_start);
+                } else {
+                    visible_offset.top = LayoutUnit::from_f32(visible_start);
+                    visible.size.height = LayoutUnit::from_f32(visible_end - visible_start);
+                }
+                paint_outline(canvas, &visible, style, visible_offset);
+            }
+        }
+        paint_fragmented_descendant_outlines(
+            canvas,
+            &child.children,
+            doc,
+            child_offset,
+            slice,
+            block_axis_is_x,
+        );
+    }
+}
+
 fn can_flatten_box_opacity(fragment: &Fragment, style: &ComputedStyle) -> bool {
     // A background-only leaf box can fold opacity into its fill paint without
     // changing CSS compositing; this avoids an extra saveLayer AA quantization.
@@ -2160,6 +2240,26 @@ fn paint_with_overflow_clip(
             (clip_x, clip_y, clip_w, clip_h)
         };
 
+    // A layout-owned fragmentation clip is not authored overflow clipping.
+    // Descendant outlines remain ink overflow at every fragmentainer edge,
+    // so admit their outset while keeping ordinary continuation content under
+    // the same expanded edge (the outline paints over that narrow strip).
+    let fragmented_outline_clip = (fragment.has_overflow_clip
+        && fragment.block_axis_clip_only
+        && style.overflow_x == Overflow::Visible
+        && style.overflow_y == Overflow::Visible)
+        .then(|| Rect::from_xywh(clip_x, clip_y, clip_w, clip_h));
+    let (clip_x, clip_y, clip_w, clip_h) = if fragmented_outline_clip.is_some() {
+        let outset = descendant_outline_outset(fragment, doc);
+        if fragment_block_axis_is_x(fragment) {
+            (clip_x - outset, clip_y, clip_w + outset * 2.0, clip_h)
+        } else {
+            (clip_x, clip_y - outset, clip_w, clip_h + outset * 2.0)
+        }
+    } else {
+        (clip_x, clip_y, clip_w, clip_h)
+    };
+
     let (clip_x, clip_y, clip_w, clip_h) =
         if fragment.block_axis_clip_only && !style.has_border_radius() {
             if fragment_block_axis_is_x(fragment) {
@@ -2215,6 +2315,16 @@ fn paint_with_overflow_clip(
     // Paint children inside the clip (with stacking order).
     let is_sc = is_fragment_stacking_context(fragment, doc);
     paint_children_with_stacking_order(canvas, &fragment.children, doc, offset, is_sc);
+    if let Some(slice) = fragmented_outline_clip {
+        paint_fragmented_descendant_outlines(
+            canvas,
+            &fragment.children,
+            doc,
+            offset,
+            slice,
+            fragment_block_axis_is_x(fragment),
+        );
+    }
 
     if let Some((left, tangent_y)) = fragmented_top_left_tangent {
         // Chromium's fragmented rounded clip retains two low-coverage samples
@@ -3689,6 +3799,10 @@ fn paint_text_fragment(
             && deterministic_text_profile
             && !inside_line_clamp
             && style.font_size >= 16.0
+            // At 24px and above the unhinted aliased Ahem mask already
+            // includes the complete block-start row. Replaying it would add
+            // a spurious twenty-fifth row above the glyph.
+            && style.font_size < 24.0
             && (style.font_size - style.font_size.round()).abs() < 0.01
             && abs_offset
                 .top

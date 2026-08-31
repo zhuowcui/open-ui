@@ -3,7 +3,7 @@
 use openui_dom::{Document, ElementTag};
 use openui_geometry::Length;
 use openui_paint::render_to_surface;
-use openui_style::{Color, ColumnFill, Display};
+use openui_style::{BorderStyle, Color, ColumnFill, Display, StyleColor};
 use skia_safe::{image::CachingHint, AlphaType, ColorType, ImageInfo, Surface};
 
 fn pixel(surface: &mut Surface, x: i32, y: i32) -> (u8, u8, u8) {
@@ -70,5 +70,57 @@ fn opacity_stacking_context_in_a_column_paints_after_later_in_flow_content() {
             channel.abs_diff(expected) <= 2,
             "unexpected blend: {actual:?}"
         );
+    }
+}
+
+#[test]
+fn fragmented_flex_item_outline_repeats_at_each_column_edge() {
+    let mut doc = Document::new();
+    doc.node_mut(doc.root()).style.display = Display::Block;
+    doc.node_mut(doc.root()).style.background_color = Color::WHITE;
+
+    let multicol = doc.create_node(ElementTag::Div);
+    {
+        let style = &mut doc.node_mut(multicol).style;
+        style.display = Display::Block;
+        style.width = Length::px(100.0);
+        style.height = Length::px(40.0);
+        style.column_count = Some(2);
+        style.column_gap = Some(Length::px(0.0));
+        style.column_fill = ColumnFill::Auto;
+        style.border_top_style = BorderStyle::Solid;
+        style.border_right_style = BorderStyle::Solid;
+        style.border_bottom_style = BorderStyle::Solid;
+        style.border_left_style = BorderStyle::Solid;
+        style.border_top_width = 3;
+        style.border_right_width = 3;
+        style.border_bottom_width = 3;
+        style.border_left_width = 3;
+        let pink = StyleColor::Resolved(Color::from_rgba8(255, 192, 203, 255));
+        style.border_top_color = pink.clone();
+        style.border_right_color = pink.clone();
+        style.border_bottom_color = pink.clone();
+        style.border_left_color = pink;
+    }
+    doc.append_child(doc.root(), multicol);
+
+    let flex = doc.create_node(ElementTag::Div);
+    doc.node_mut(flex).style.display = Display::Flex;
+    doc.append_child(multicol, flex);
+
+    let item = doc.create_node(ElementTag::Div);
+    {
+        let style = &mut doc.node_mut(item).style;
+        style.width = Length::px(30.0);
+        style.height = Length::px(80.0);
+        style.outline_style = BorderStyle::Solid;
+        style.outline_width = 2;
+        style.outline_color = StyleColor::Resolved(Color::from_rgba8(0, 0, 255, 255));
+    }
+    doc.append_child(flex, item);
+
+    let mut surface = render_to_surface(&doc, 120, 60).expect("fragmented outline paint");
+    for (x, y) in [(10, 1), (60, 1), (10, 43), (60, 43)] {
+        assert_eq!(pixel(&mut surface, x, y), (0, 0, 255), "at ({x}, {y})");
     }
 }

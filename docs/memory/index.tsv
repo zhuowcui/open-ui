@@ -53,3 +53,4 @@
 0052	active	sp19 accountability layout table grid containment handoff	SP19 W0 freezes the 904-ID layout-systems closure	2026-08-30	entries/0052-sp19-w0-freezes-the-904-id-layout-systems-closur.md
 0053	active	sp19 float inline intrinsic-sizing margin-collapse accountability handoff	SP19 W1A closes the float and inline repair partition	2026-08-31	entries/0053-sp19-w1a-float-inline-repair-closure.md
 0054	active	sp19 flex sizing baseline intrinsic-size aspect-ratio paint-order accountability handoff	SP19 W1B closes the flex and sizing repair partition	2026-08-31	entries/0054-sp19-w1b-closes-the-flex-and-sizing-repair-parti.md
+0055	active	sp19 fragmentation multicol inline-continuation floats margins outlines accountability handoff	SP19 W1C closes the fragmentation repair partition	2026-08-31	entries/0055-sp19-w1c-closes-the-fragmentation-repair-partition.md

@@ -3900,11 +3900,21 @@ def generate_style_code(
                         if m:
                             font_size = float(m.group(1)) * 4.0 / 3.0
                         else:
-                            m = re.match(r'^(-?[\d.]+)%$', fs_val)
+                            m = re.match(r'^(-?[\d.]+)(pc|in|cm|mm)$', fs_val)
                             if m:
-                                font_size = float(m.group(1)) / 100.0 * inherited_font_size
-                            elif fs_val == '0':
-                                font_size = 0.0
+                                factors = {
+                                    'pc': 16.0,
+                                    'in': 96.0,
+                                    'cm': 96.0 / 2.54,
+                                    'mm': 96.0 / 25.4,
+                                }
+                                font_size = float(m.group(1)) * factors[m.group(2)]
+                            else:
+                                m = re.match(r'^(-?[\d.]+)%$', fs_val)
+                                if m:
+                                    font_size = float(m.group(1)) / 100.0 * inherited_font_size
+                                elif fs_val == '0':
+                                    font_size = 0.0
 
     global _ACTIVE_CSS_ZOOM, _ACTIVE_FONT_RELATIVE_RESOLVER, _ACTIVE_LINE_HEIGHT_PX
     previous_zoom = _ACTIVE_CSS_ZOOM
@@ -5658,6 +5668,15 @@ def generate_single_style(
         m = re.match(r'^(-?[\d.]+)pt$', v)
         if m:
             return f"{s}.font_size = {float(m.group(1)) * 4.0 / 3.0};"
+        m = re.match(r'^(-?[\d.]+)(pc|in|cm|mm)$', v)
+        if m:
+            factors = {
+                'pc': 16.0,
+                'in': 96.0,
+                'cm': 96.0 / 2.54,
+                'mm': 96.0 / 25.4,
+            }
+            return f"{s}.font_size = {float(m.group(1)) * factors[m.group(2)]};"
 
     # ── aspect-ratio ──
     if prop == 'aspect-ratio':

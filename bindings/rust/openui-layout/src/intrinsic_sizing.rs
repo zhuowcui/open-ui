@@ -735,8 +735,8 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     // and the widest unbroken inline line can coexist on the same row, so a
     // shrink-to-fit container must reserve their combined width. Block-level
     // children, on the other hand, continue to contribute through a maximum.
-    let mut widest_inline_line = LayoutUnit::zero();
     let mut float_max_inline_sum = LayoutUnit::zero();
+    let mut widest_float_inline_line = LayoutUnit::zero();
     // Track min-content and max-content block sizes separately.
     // CSS Sizing 3 §5: min-content uses each child's min-content contribution,
     // max-content uses each child's max-content contribution.
@@ -829,9 +829,16 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
                     !text.is_empty() && text.chars().all(|ch| matches!(ch, '\n' | '\r'))
                 });
             if child_node.tag == ElementTag::Break || is_preserved_newline_control {
-                widest_inline_line = widest_inline_line.max_of(inline_children_max_sum);
+                widest_float_inline_line =
+                    widest_float_inline_line.max_of(float_max_inline_sum + inline_children_max_sum);
                 non_float_max_inline = non_float_max_inline.max_of(inline_children_max_sum);
                 inline_children_max_sum = LayoutUnit::zero();
+                // A forced inline break commits the current intrinsic float
+                // row. Floats encountered after it form a later placement
+                // segment; summing both segments makes a shrink-to-fit flex
+                // item fill the available width even though each segment is
+                // independently only as wide as its largest float row.
+                float_max_inline_sum = LayoutUnit::zero();
             } else {
                 inline_children_max_sum =
                     inline_children_max_sum + child_sizes.max_content_inline_size;
@@ -848,12 +855,13 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     }
 
     // Inline children on one line contribute their sum as max-content.
-    widest_inline_line = widest_inline_line.max_of(inline_children_max_sum);
+    widest_float_inline_line =
+        widest_float_inline_line.max_of(float_max_inline_sum + inline_children_max_sum);
     non_float_max_inline = non_float_max_inline.max_of(inline_children_max_sum);
 
     // Max-content inline: floats and an unbroken inline line may share a row,
     // while block-level children occupy their own rows.
-    let mut max_inline = non_float_max_inline.max_of(float_max_inline_sum + widest_inline_line);
+    let mut max_inline = non_float_max_inline.max_of(widest_float_inline_line);
 
     // BFC roots include float bottom margin edge in auto height (§10.6.7).
     if is_bfc {
@@ -3031,6 +3039,32 @@ mod tests {
         let sizes = compute_intrinsic_block_sizes(&doc, container);
         assert_eq!(sizes.min_content_inline_size, LayoutUnit::from_i32(100));
         assert_eq!(sizes.max_content_inline_size, LayoutUnit::from_i32(200));
+    }
+
+    #[test]
+    fn forced_break_separates_float_intrinsic_rows() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), container);
+
+        let first = doc.create_node(ElementTag::Div);
+        let first_style = doc.node_mut(first).style_mut();
+        first_style.float = openui_style::Float::Left;
+        first_style.width = Length::px(100.0);
+        doc.append_child(container, first);
+
+        let br = doc.create_node(ElementTag::Break);
+        doc.append_child(container, br);
+
+        let second = doc.create_node(ElementTag::Div);
+        let second_style = doc.node_mut(second).style_mut();
+        second_style.float = openui_style::Float::Left;
+        second_style.width = Length::px(60.0);
+        doc.append_child(container, second);
+
+        let sizes = compute_intrinsic_block_sizes(&doc, container);
+        assert_eq!(sizes.min_content_inline_size, LayoutUnit::from_i32(100));
+        assert_eq!(sizes.max_content_inline_size, LayoutUnit::from_i32(100));
     }
 
     #[test]
