@@ -543,17 +543,33 @@ def select_tests(all_tests, args):
         ids_file = args[index + 1]
         del args[index:index + 2]
 
+    partition = None
+    if "--partition" in args:
+        index = args.index("--partition")
+        if index + 1 >= len(args):
+            raise ValueError("--partition requires a key")
+        partition = args[index + 1]
+        del args[index:index + 2]
+
     unknown = [arg for arg in args if arg.startswith("--")]
     if unknown:
         raise ValueError(f"unknown option: {unknown[0]}")
     if ids_file and args:
         raise ValueError("--ids-file cannot be combined with a prefix")
+    if partition and not ids_file:
+        raise ValueError("--partition requires --ids-file")
     if len(args) > 1:
         raise ValueError("expected at most one prefix")
 
     if ids_file:
         with open(ids_file, encoding="utf-8") as f:
             selected_data = json.load(f)
+        if partition is not None:
+            if not isinstance(selected_data, dict) or partition not in selected_data:
+                raise ValueError(
+                    f"exact-ID manifest has no partition {partition!r}: {ids_file}"
+                )
+            selected_data = selected_data[partition]
         if (
             not isinstance(selected_data, list)
             or any(not isinstance(test_id, str) or not test_id for test_id in selected_data)
@@ -577,6 +593,19 @@ def select_tests(all_tests, args):
             f"prefix '{prefix}'"
         )
     return all_tests, resume_mode, None
+
+
+def extract_summary_file(args):
+    """Remove and resolve an optional summary destination from command arguments."""
+    args = list(args)
+    summary_file = os.path.join(RESULTS_DIR, "summary.json")
+    if "--summary-file" in args:
+        index = args.index("--summary-file")
+        if index + 1 >= len(args):
+            raise ValueError("--summary-file requires a JSON path")
+        summary_file = os.path.abspath(args[index + 1])
+        del args[index:index + 2]
+    return args, summary_file
 
 
 def main():
@@ -682,7 +711,8 @@ def main():
     print(f"Total tests: {len(all_tests)}")
 
     try:
-        all_tests, resume_mode, selection = select_tests(all_tests, sys.argv[1:])
+        selection_args, summary_file = extract_summary_file(sys.argv[1:])
+        all_tests, resume_mode, selection = select_tests(all_tests, selection_args)
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(2)
@@ -833,7 +863,9 @@ def main():
     ref_pass = sum(1 for tid, st, _ in results_summary if ("-ref" in tid or "-notref" in tid) and st == "pass")
 
     # Write summary JSON
-    summary_file = os.path.join(RESULTS_DIR, "summary.json")
+    summary_parent = os.path.dirname(summary_file)
+    if summary_parent:
+        os.makedirs(summary_parent, exist_ok=True)
     with open(summary_file, "w") as f:
         json.dump({
             "total": total,

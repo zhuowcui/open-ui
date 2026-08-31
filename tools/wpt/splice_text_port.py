@@ -19,6 +19,7 @@ import io
 import json
 import os
 import re
+import resource
 import stat
 import subprocess
 import sys
@@ -93,10 +94,14 @@ def load_mapping_rows() -> dict[str, dict[str, str]]:
     return rows
 
 
-def load_ids_file(path: str) -> list[str]:
+def load_ids_file(path: str, partition: str | None = None) -> list[str]:
     """Load a strict, unique JSON ID list used by transactional batches."""
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
+    if partition is not None:
+        if not isinstance(data, dict) or partition not in data:
+            raise ValueError(f"missing IDs partition {partition!r}: {path}")
+        data = data[partition]
     if (
         not isinstance(data, list)
         or any(not isinstance(test_id, str) or not test_id for test_id in data)
@@ -146,6 +151,8 @@ _DISTINCT_ROOT_BOX_PROPERTIES = {
     "background", "background-color", "background-image", "background-repeat",
     "background-position", "background-size", "background-origin",
     "background-clip", "background-attachment",
+    "contain", "content-visibility", "contain-intrinsic-size",
+    "contain-intrinsic-width", "contain-intrinsic-height", "container-type",
 }
 
 
@@ -160,9 +167,19 @@ def requires_distinct_root_box(parser: port_wpt.WptHtmlParser) -> bool:
     """
     rules = parser.external_css_rules + parser.css_rules
     for selector, styles in rules:
-        if not port_wpt.match_selector(selector, "html", [], "", [], 1, 1, []):
+        matches_html = port_wpt.match_selector(
+            selector, "html", [], "", [], 1, 1, []
+        )
+        matches_body = port_wpt.match_selector(
+            selector, "body", [], "", [("html", [], "")], 1, 1, []
+        )
+        if not matches_html and not matches_body:
             continue
         for prop in styles:
+            if matches_body and prop in {
+                "contain", "content-visibility", "container-type",
+            }:
+                return True
             if (
                 prop in _DISTINCT_ROOT_BOX_PROPERTIES
                 or prop.startswith(("border-", "margin-", "padding-"))
@@ -371,6 +388,18 @@ def _promote_report_rows(
         writer.writerow(row)
         return output.getvalue()
 
+    def line_occurrences(haystack: str, needle: str) -> list[int]:
+        """Find complete CSV records, not basename substrings of other rows."""
+        result = []
+        start = 0
+        while True:
+            index = haystack.find(needle, start)
+            if index < 0:
+                return result
+            if index == 0 or haystack[index - 1] == "\n":
+                result.append(index)
+            start = index + 1
+
     for row in rows:
         name = row["filename"]
         replacement = by_name.get(name)
@@ -387,7 +416,11 @@ def _promote_report_rows(
                 encoded_row(row, "\r\n"),
                 encoded_row(row, "\n"),
             )
-            matches = [value for value in old_variants if updated.count(value) == 1]
+            matches = [
+                (value, offsets[0])
+                for value in old_variants
+                if len(offsets := line_occurrences(updated, value)) == 1
+            ]
             if len(matches) != 1:
                 raise ValueError(
                     f"cannot isolate porter report row for {replacement.test_id}"
@@ -396,8 +429,11 @@ def _promote_report_rows(
             # newly introduced CR as trailing whitespace. All untouched report
             # bytes, including historical CRLF records and quoted newlines,
             # remain byte-identical.
-            updated = updated.replace(
-                matches[0], encoded_row(replacement_row, "\n"), 1
+            old_value, offset = matches[0]
+            updated = (
+                updated[:offset]
+                + encoded_row(replacement_row, "\n")
+                + updated[offset + len(old_value):]
             )
         seen.add(name)
     missing = sorted(set(by_name) - seen)
@@ -697,12 +733,27 @@ def _rustfmt_source(source: str, path: str) -> str:
     in-memory module keeps generation, verification, and committed artifacts
     on the same canonical representation.
     """
+    rustfmt_env = os.environ.copy()
+    # Large generated WPT modules contain thousands of builder functions;
+    # rustfmt's recursive syntax visitor needs a larger stack than its small
+    # worker-thread default when an entire area is updated transactionally.
+    rustfmt_env["RUST_MIN_STACK"] = str(512 * 1024 * 1024)
+
+    def raise_main_stack_limit() -> None:
+        _soft, hard = resource.getrlimit(resource.RLIMIT_STACK)
+        desired = 512 * 1024 * 1024
+        if hard != resource.RLIM_INFINITY:
+            desired = min(desired, hard)
+        resource.setrlimit(resource.RLIMIT_STACK, (desired, hard))
+
     completed = subprocess.run(
         ["rustfmt", "--edition", "2021"],
         input=source,
         text=True,
         capture_output=True,
         cwd=os.path.join(PROJECT_ROOT, "bindings", "rust"),
+        env=rustfmt_env,
+        preexec_fn=raise_main_stack_limit,
         check=False,
     )
     if completed.returncode != 0:
@@ -739,6 +790,7 @@ def main() -> int:
     args = sys.argv[1:]
     dry_run = False
     ids_path = None
+    partition = None
     profile = port_wpt.PorterProfile.DETERMINISTIC_AHEM
     paint_layers = False
     positional = []
@@ -755,6 +807,12 @@ def main() -> int:
                 print("ERROR: --ids-file requires exactly one path", file=sys.stderr)
                 return 2
             ids_path = args[index]
+        elif arg == "--partition":
+            index += 1
+            if index >= len(args) or partition is not None:
+                print("ERROR: --partition requires exactly one key", file=sys.stderr)
+                return 2
+            partition = args[index]
         elif arg == "--profile":
             index += 1
             if index >= len(args):
@@ -780,9 +838,12 @@ def main() -> int:
     if ids_path and positional:
         print("ERROR: do not combine --ids-file with positional IDs", file=sys.stderr)
         return 2
+    if partition is not None and ids_path is None:
+        print("ERROR: --partition requires --ids-file", file=sys.stderr)
+        return 2
 
     try:
-        test_ids = load_ids_file(ids_path) if ids_path else positional
+        test_ids = load_ids_file(ids_path, partition) if ids_path else positional
         if not test_ids:
             raise ValueError("no test IDs supplied")
         mapping = load_mapping_rows()

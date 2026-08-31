@@ -261,6 +261,17 @@ def build_residual_dispositions(
 ) -> list[dict]:
     by_id = {canonical_id(row): row for row in rows}
     verified = {item["test_id"]: item for item in load_verified_misses()}
+    # Later sprints intentionally teach the shared porter about frozen SP18
+    # residual owners. Once that happens, preserve SP18's audited disposition
+    # bytes instead of making the historical validator depend on an obsolete
+    # rejection. Current-sprint inventory validators own new portability.
+    frozen_dispositions = (
+        {
+            item["test_id"]: item
+            for item in json.loads(RESIDUAL_DISPOSITIONS.read_text(encoding="utf-8"))
+        }
+        if RESIDUAL_DISPOSITIONS.is_file() else {}
+    )
     if not set(verified).issubset(residual_ids):
         raise ValueError("SP18 verified misses escaped the residual projection")
     result = []
@@ -272,6 +283,9 @@ def build_residual_dispositions(
         for test_id in residual_ids:
             if test_id in verified:
                 result.append(dict(verified[test_id]))
+                continue
+            if test_id in frozen_dispositions:
+                result.append(dict(frozen_dispositions[test_id]))
                 continue
             row = by_id[test_id]
             chromium_path = row["chromium_test_path"].strip()

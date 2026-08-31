@@ -7,8 +7,8 @@
 use std::collections::{BTreeMap, HashMap};
 
 use openui_style::{
-    ComputedStyle, CounterStyle, Display, GeneratedContentItem, ImageResourceId, Overflow,
-    QuotePair,
+    ComputedStyle, ContainerCondition, CounterStyle, Display, GeneratedContentItem,
+    ImageResourceId, Overflow, QuotePair, ScrollMarkerGroup,
 };
 
 /// Encoded raster or static-SVG bytes owned by a document.
@@ -22,6 +22,76 @@ pub struct EncodedImageResource {
     pub mime_type: String,
     pub sha256: String,
     pub bytes: Vec<u8>,
+}
+
+/// Deterministic replaced-resource role. Bytes remain in the document image
+/// registry; this metadata supplies intrinsic dimensions and element behavior.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ReplacedResourceKind {
+    Image(ImageResourceId),
+    StaticSvg(ImageResourceId),
+    TransparentCanvas,
+    MediaPoster(ImageResourceId),
+    PackagedDocument(ImageResourceId),
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct ReplacedContent {
+    pub resource: ReplacedResourceKind,
+    pub intrinsic_width: Option<f32>,
+    pub intrinsic_height: Option<f32>,
+    pub intrinsic_ratio: Option<(f32, f32)>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FormControlRole {
+    Button,
+    TextInput,
+    Range,
+    Meter,
+    Fieldset,
+    Legend,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ScrollButtonDirection {
+    Up,
+    Right,
+    Down,
+    Left,
+    BlockStart,
+    BlockEnd,
+    InlineStart,
+    InlineEnd,
+}
+
+/// Properties a static container-query result may replace after phase one.
+/// The matched style is a complete typed value; this list limits copying to
+/// declarations actually present in the query rule.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ContainerQueryProperty {
+    Display,
+    Width,
+    Height,
+    MinWidth,
+    MinHeight,
+    MaxWidth,
+    MaxHeight,
+    Margin,
+    Padding,
+    Background,
+    Color,
+    Columns,
+    GridTemplateColumns,
+    GridTemplateRows,
+}
+
+#[derive(Debug, Clone)]
+pub struct ContainerQueryRule {
+    pub container_name: Option<String>,
+    pub condition: ContainerCondition,
+    pub matched_style: ComputedStyle,
+    pub properties: Vec<ContainerQueryProperty>,
 }
 
 /// Opaque handle into the node arena.
@@ -62,6 +132,28 @@ pub enum ElementTag {
     Ruby,
     /// HTML ruby annotation content (`<rt>`).
     RubyText,
+    Table,
+    TableCaption,
+    TableColumnGroup,
+    TableColumn,
+    TableHead,
+    TableBody,
+    TableFoot,
+    TableRow,
+    TableCell,
+    TableHeaderCell,
+    Image,
+    Canvas,
+    Svg,
+    IFrame,
+    Object,
+    Audio,
+    Video,
+    Input,
+    Button,
+    Meter,
+    Fieldset,
+    Legend,
     /// The document element (`<html>`).
     Html,
     /// The document body (`<body>`).
@@ -83,6 +175,12 @@ impl Default for ElementTag {
 pub enum PseudoElementKind {
     Before,
     After,
+    Marker,
+    ScrollMarker,
+    ScrollMarkerGroup,
+    ScrollButton(ScrollButtonDirection),
+    Column,
+    ColumnScrollMarker,
 }
 
 /// Data stored for each node in the tree.
@@ -102,6 +200,19 @@ pub struct NodeData {
     /// constraints and paint translates scrollable descendants by it.
     pub scroll_left: f32,
     pub scroll_top: f32,
+
+    /// HTML table span metadata. Values are normalized to at least one by the
+    /// porter; row span zero remains representable for HTML's "to row-group
+    /// end" behavior.
+    pub table_col_span: u32,
+    pub table_row_span: u32,
+
+    /// Optional deterministic intrinsic/replaced element state.
+    pub replaced: Option<ReplacedContent>,
+    pub form_control: Option<FormControlRole>,
+
+    /// Static size-container queries evaluated after the first layout phase.
+    pub container_query_rules: Vec<ContainerQueryRule>,
 
     // Tree pointers (arena indices)
     pub parent: NodeId,
@@ -127,6 +238,11 @@ impl NodeData {
             attributes: BTreeMap::new(),
             scroll_left: 0.0,
             scroll_top: 0.0,
+            table_col_span: 1,
+            table_row_span: 1,
+            replaced: None,
+            form_control: None,
+            container_query_rules: Vec::new(),
             parent: NodeId::NONE,
             first_child: NodeId::NONE,
             last_child: NodeId::NONE,
@@ -250,8 +366,21 @@ impl Document {
         self.nodes[pseudo.index()].pseudo_kind = Some(kind);
         self.nodes[pseudo.index()].pseudo_origin = origin;
         match kind {
-            PseudoElementKind::Before => self.prepend_child(origin, pseudo),
-            PseudoElementKind::After => self.append_child(origin, pseudo),
+            PseudoElementKind::Before | PseudoElementKind::Marker => {
+                self.prepend_child(origin, pseudo)
+            }
+            PseudoElementKind::ScrollMarkerGroup
+                if self.nodes[origin.index()].style.scroll_marker_group
+                    == ScrollMarkerGroup::Before =>
+            {
+                self.prepend_child(origin, pseudo)
+            }
+            PseudoElementKind::After
+            | PseudoElementKind::ScrollMarker
+            | PseudoElementKind::ScrollButton(_)
+            | PseudoElementKind::Column
+            | PseudoElementKind::ColumnScrollMarker
+            | PseudoElementKind::ScrollMarkerGroup => self.append_child(origin, pseudo),
         }
         pseudo
     }

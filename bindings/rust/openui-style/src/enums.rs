@@ -28,12 +28,22 @@ pub enum Display {
     InlineGrid = 7,
     /// `display: flow-root` — block-level, establishes new BFC.
     FlowRoot = 8,
-    /// `display: table` — table layout (future).
+    /// `display: table` — block-level table wrapper.
     Table = 9,
     /// `display: list-item` — block with marker box.
     ListItem = 10,
     /// `display: contents` — no box generated, children treated as parent's children.
     Contents = 11,
+    /// `display: inline-table` — inline-level table wrapper.
+    InlineTable = 12,
+    TableRowGroup = 13,
+    TableHeaderGroup = 14,
+    TableFooterGroup = 15,
+    TableRow = 16,
+    TableCell = 17,
+    TableColumnGroup = 18,
+    TableColumn = 19,
+    TableCaption = 20,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -67,7 +77,11 @@ impl Display {
     pub fn is_inline_level(self) -> bool {
         matches!(
             self,
-            Self::Inline | Self::InlineBlock | Self::InlineFlex | Self::InlineGrid
+            Self::Inline
+                | Self::InlineBlock
+                | Self::InlineFlex
+                | Self::InlineGrid
+                | Self::InlineTable
         )
     }
 
@@ -83,6 +97,26 @@ impl Display {
         matches!(self, Self::Grid | Self::InlineGrid)
     }
 
+    #[inline]
+    pub fn is_table_wrapper(self) -> bool {
+        matches!(self, Self::Table | Self::InlineTable)
+    }
+
+    #[inline]
+    pub fn is_table_internal(self) -> bool {
+        matches!(
+            self,
+            Self::TableRowGroup
+                | Self::TableHeaderGroup
+                | Self::TableFooterGroup
+                | Self::TableRow
+                | Self::TableCell
+                | Self::TableColumnGroup
+                | Self::TableColumn
+                | Self::TableCaption
+        )
+    }
+
     /// True if this creates a new formatting context (BFC, FFC, or GFC).
     #[inline]
     pub fn is_new_formatting_context(self) -> bool {
@@ -95,6 +129,7 @@ impl Display {
                 | Self::InlineBlock
                 | Self::FlowRoot
                 | Self::Table
+                | Self::InlineTable
         )
     }
 }

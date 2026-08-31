@@ -10,4 +10,8 @@
 
 mod tree;
 
-pub use tree::{Document, ElementTag, EncodedImageResource, NodeData, NodeId, PseudoElementKind};
+pub use tree::{
+    ContainerQueryProperty, ContainerQueryRule, Document, ElementTag, EncodedImageResource,
+    FormControlRole, NodeData, NodeId, PseudoElementKind, ReplacedContent, ReplacedResourceKind,
+    ScrollButtonDirection,
+};

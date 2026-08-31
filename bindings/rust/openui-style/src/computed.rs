@@ -11,6 +11,7 @@ use openui_geometry::Length;
 use crate::color::{Color, StyleColor};
 use crate::enums::*;
 use crate::font_types::*;
+use crate::layout_systems::*;
 
 /// CSS `aspect-ratio` property — stores the ratio and optional auto flag.
 ///
@@ -583,6 +584,54 @@ pub struct ComputedStyle {
     /// CSS `order`. Initial: `0`. Item property.
     pub order: i32,
 
+    // ── Tables ───────────────────────────────────────────────────────
+    /// CSS `table-layout`. Initial: `auto`.
+    pub table_layout: TableLayout,
+    /// CSS `border-collapse`. Initial: `separate`.
+    pub border_collapse: BorderCollapse,
+    /// CSS `border-spacing`, in inline/block table axes.
+    pub border_spacing: (Length, Length),
+    /// CSS `caption-side`. Initial: `top`.
+    pub caption_side: CaptionSide,
+    /// CSS `empty-cells`. Initial: `show`.
+    pub empty_cells: EmptyCells,
+
+    // ── Grid ─────────────────────────────────────────────────────────
+    pub grid_template_columns: GridTrackList,
+    pub grid_template_rows: GridTrackList,
+    pub grid_auto_columns: Vec<GridTrackSize>,
+    pub grid_auto_rows: Vec<GridTrackSize>,
+    pub grid_auto_flow: GridAutoFlow,
+    pub grid_column: GridPlacement,
+    pub grid_row: GridPlacement,
+    pub grid_template_areas: GridTemplateAreas,
+    /// Grid's `justify-items`; flex does not consume this property.
+    pub justify_items: ItemAlignment,
+    /// Grid's `justify-self`; flex does not consume this property.
+    pub justify_self: ItemAlignment,
+    /// CSS `margin-trim` edge set.
+    pub margin_trim: MarginTrim,
+
+    // ── Containment and static container queries ─────────────────────
+    pub contain: Containment,
+    pub content_visibility: ContentVisibility,
+    pub contain_intrinsic_width: ContainIntrinsicLength,
+    pub contain_intrinsic_height: ContainIntrinsicLength,
+    pub container_type: ContainerType,
+    pub container_names: Vec<String>,
+    pub scroll_marker_group: ScrollMarkerGroup,
+    pub scroll_target_group: ScrollTargetGroup,
+
+    // ── Replaced content and deterministic effects ───────────────────
+    pub object_fit: ObjectFit,
+    pub object_position: ObjectPosition,
+    pub transform: Transform2D,
+    pub transform_origin: (Length, Length),
+    pub shape_outside: ShapeOutside,
+    pub shape_margin: Length,
+    pub shape_image_threshold: f32,
+    pub animation_snapshot: Option<AnimationSnapshot>,
+
     // ── Text & Font properties ───────────────────────────────────────
     /// CSS `text-align`. Initial: `start`. Inherited.
     pub text_align: TextAlign,
@@ -1003,6 +1052,46 @@ impl ComputedStyle {
             align_self: ItemAlignment::INITIAL_SELF, // auto (→ inherits align-items)
             order: 0,
 
+            // Tables
+            table_layout: TableLayout::Auto,
+            border_collapse: BorderCollapse::Separate,
+            border_spacing: (Length::px(2.0), Length::px(2.0)),
+            caption_side: CaptionSide::Top,
+            empty_cells: EmptyCells::Show,
+
+            // Grid
+            grid_template_columns: GridTrackList::None,
+            grid_template_rows: GridTrackList::None,
+            grid_auto_columns: vec![GridTrackSize::auto()],
+            grid_auto_rows: vec![GridTrackSize::auto()],
+            grid_auto_flow: GridAutoFlow::default(),
+            grid_column: GridPlacement::default(),
+            grid_row: GridPlacement::default(),
+            grid_template_areas: GridTemplateAreas::default(),
+            justify_items: ItemAlignment::INITIAL_ITEMS,
+            justify_self: ItemAlignment::INITIAL_SELF,
+            margin_trim: MarginTrim::NONE,
+
+            // Containment and static container queries
+            contain: Containment::NONE,
+            content_visibility: ContentVisibility::Visible,
+            contain_intrinsic_width: ContainIntrinsicLength::NONE,
+            contain_intrinsic_height: ContainIntrinsicLength::NONE,
+            container_type: ContainerType::Normal,
+            container_names: Vec::new(),
+            scroll_marker_group: ScrollMarkerGroup::None,
+            scroll_target_group: ScrollTargetGroup::None,
+
+            // Replaced content and deterministic effects
+            object_fit: ObjectFit::Fill,
+            object_position: ObjectPosition::default(),
+            transform: Transform2D::IDENTITY,
+            transform_origin: (Length::percent(50.0), Length::percent(50.0)),
+            shape_outside: ShapeOutside::None,
+            shape_margin: Length::zero(),
+            shape_image_threshold: 0.0,
+            animation_snapshot: None,
+
             // Text & Font — inherited text properties
             text_align: TextAlign::INITIAL,   // start
             white_space: WhiteSpace::INITIAL, // normal
@@ -1265,6 +1354,8 @@ impl ComputedStyle {
         // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
         self.display.is_new_formatting_context()
             || (self.display == Display::ListItem && self.list_item_is_flow_root)
+            || self.contain.contains(Containment::LAYOUT)
+            || self.contain.contains(Containment::PAINT)
             || self.position.is_absolutely_positioned()
             || self.float != Float::None
             || self.is_scroll_container()
@@ -1368,6 +1459,19 @@ mod tests {
         assert!(s.flex_basis.is_auto());
         assert_eq!(s.align_self, ItemAlignment::INITIAL_SELF);
         assert_eq!(s.order, 0);
+
+        // Table, Grid and containment
+        assert_eq!(s.table_layout, TableLayout::Auto);
+        assert_eq!(s.border_collapse, BorderCollapse::Separate);
+        assert!(matches!(s.grid_template_columns, GridTrackList::None));
+        assert!(matches!(s.grid_template_rows, GridTrackList::None));
+        assert_eq!(s.contain, Containment::NONE);
+        assert_eq!(s.content_visibility, ContentVisibility::Visible);
+        assert_eq!(s.container_type, ContainerType::Normal);
+        assert_eq!(s.scroll_marker_group, ScrollMarkerGroup::None);
+        assert_eq!(s.scroll_target_group, ScrollTargetGroup::None);
+        assert_eq!(s.object_fit, ObjectFit::Fill);
+        assert_eq!(s.transform, Transform2D::IDENTITY);
     }
 
     #[test]

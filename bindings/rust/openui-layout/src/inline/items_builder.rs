@@ -909,7 +909,31 @@ impl<'a> InlineItemsBuilder<'a> {
                     self.exit_inline(child_id, &style);
                 }
             }
-            ElementTag::Div | ElementTag::Html | ElementTag::Body => {
+            ElementTag::Div
+            | ElementTag::Html
+            | ElementTag::Body
+            | ElementTag::Table
+            | ElementTag::TableCaption
+            | ElementTag::TableColumnGroup
+            | ElementTag::TableColumn
+            | ElementTag::TableHead
+            | ElementTag::TableBody
+            | ElementTag::TableFoot
+            | ElementTag::TableRow
+            | ElementTag::TableCell
+            | ElementTag::TableHeaderCell
+            | ElementTag::Image
+            | ElementTag::Canvas
+            | ElementTag::Svg
+            | ElementTag::IFrame
+            | ElementTag::Object
+            | ElementTag::Audio
+            | ElementTag::Video
+            | ElementTag::Input
+            | ElementTag::Button
+            | ElementTag::Meter
+            | ElementTag::Fieldset
+            | ElementTag::Legend => {
                 let display = node.style.display;
                 if display == Display::Contents {
                     self.collect_children(child_id);

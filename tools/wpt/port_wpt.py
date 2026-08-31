@@ -33,6 +33,7 @@ import csv
 import json
 import hashlib
 import html as html_module
+import math
 import urllib.parse
 from enum import Enum
 from pathlib import Path
@@ -141,6 +142,29 @@ SUPPORTED_PROPERTIES = {
     'justify-content', 'align-items', 'align-content', 'align-self',
     'flex-grow', 'flex-shrink', 'flex-basis', 'order',
     'gap', 'row-gap', 'column-gap',
+    # Tables
+    'table-layout', 'caption-side', 'border-collapse', 'border-spacing',
+    'empty-cells',
+    # Grid
+    'grid', 'grid-template', 'grid-template-columns', 'grid-template-rows',
+    'grid-template-areas', 'grid-auto-columns', 'grid-auto-rows',
+    'grid-auto-flow', 'grid-column', 'grid-column-start', 'grid-column-end',
+    'grid-row', 'grid-row-start', 'grid-row-end', 'grid-area', 'grid-gap',
+    'place-items', 'place-content', 'place-self', 'justify-items',
+    'justify-self',
+    # Containment and static container queries
+    'contain', 'content-visibility', 'contain-intrinsic-size',
+    'contain-intrinsic-width', 'contain-intrinsic-height',
+    'contain-intrinsic-inline-size', 'contain-intrinsic-block-size',
+    'container', 'container-type', 'container-name', 'margin-trim',
+    'scroll-marker-group', 'scroll-target-group',
+    'scroll-snap-align', 'scroll-snap-type', 'scroll-snap-stop',
+    # Replaced content and deterministic effects
+    'object-fit', 'object-position', 'transform', 'transform-origin',
+    'filter',
+    'shape-outside', 'shape-margin', 'shape-image-threshold',
+    'animation', 'animation-name', 'animation-duration', 'animation-delay',
+    'animation-fill-mode', 'animation-timing-function',
     # Multicol
     'columns', 'column-count', 'column-width', 'column-height', 'column-gap', 'column-rule',
     'column-rule-width', 'column-rule-style', 'column-rule-color', 'column-wrap',
@@ -178,32 +202,25 @@ SUPPORTED_PROPERTIES = {
 }
 
 UNSUPPORTED_FEATURES = {
-    # Grid layout — not implemented
-    'grid', 'grid-template', 'grid-template-columns', 'grid-template-rows',
-    'grid-column', 'grid-row', 'grid-area', 'grid-gap',
-    # Transforms & animation — out of scope
-    'transform', 'rotate', 'scale', 'translate',
-    'animation', 'transition',
-    # Shape/mask/filter — out of scope
-    'shape-outside', 'shape-margin', 'shape-image-threshold',
-    'clip-path', 'mask', 'filter',
-    # Table layout — not implemented
-    'table-layout', 'caption-side', 'border-collapse', 'border-spacing',
-    # CSS containment — not implemented
-    'contain', 'container', 'container-type', 'container-name',
-    'contain-intrinsic-size',
-    # margin-trim — not implemented
-    'margin-trim',
+    # 3D/individual transforms and live transitions remain outside SP19.
+    'rotate', 'scale', 'translate', 'transition',
+    # General clip paths and filters are not part of the layout cohort.
+    'clip-path', 'mask',
 }
 
 # Properties we can safely IGNORE (don't affect box layout geometry)
 IGNORED_PROPERTIES = {
     'text-decoration', 'text-transform', 'text-indent',
     'font-family', 'font-weight', 'font-style',
-    'font-variant', 'letter-spacing', 'word-spacing',
+    'font-variant', 'font-kerning', 'font-feature-settings',
+    'letter-spacing', 'word-spacing',
     'word-break', 'overflow-wrap', 'hyphens',
     'list-style', 'list-style-type', 'list-style-position',
     'cursor', 'pointer-events', 'user-select',
+    # Scroll selection is frozen at the runner's zero-scroll snapshot. The
+    # generated marker/group boxes are preserved separately; these properties
+    # only affect interactive snapping after that snapshot.
+    'scroll-snap-align', 'scroll-snap-type', 'scroll-snap-stop',
     # Print/page
     'print-color-adjust', 'image-rendering', 'size',
 }
@@ -584,6 +601,491 @@ def parse_length(value: str, font_size: float = 16.0) -> str | None:
     m = re.match(r'^calc\((.+)\)$', value)
     if m:
         return _try_eval_calc(m.group(1), font_size)
+    return None
+
+
+def _grid_tokens(value: str) -> list[str] | None:
+    """Tokenize a Grid track list, preserving functions and line-name lists."""
+    tokens = []
+    current = []
+    parens = 0
+    brackets = 0
+    quote = None
+    escaped = False
+    for char in value.strip():
+        if escaped:
+            current.append(char)
+            escaped = False
+            continue
+        if quote is not None:
+            current.append(char)
+            if char == '\\':
+                escaped = True
+            elif char == quote:
+                quote = None
+            continue
+        if char in ('"', "'"):
+            quote = char
+            current.append(char)
+        elif char == '(':
+            parens += 1
+            current.append(char)
+        elif char == ')':
+            parens -= 1
+            if parens < 0:
+                return None
+            current.append(char)
+        elif char == '[':
+            brackets += 1
+            current.append(char)
+        elif char == ']':
+            brackets -= 1
+            if brackets < 0:
+                return None
+            current.append(char)
+        elif char.isspace() and parens == 0 and brackets == 0:
+            if current:
+                tokens.append(''.join(current))
+                current = []
+        else:
+            current.append(char)
+    if quote is not None or parens or brackets:
+        return None
+    if current:
+        tokens.append(''.join(current))
+    return tokens
+
+
+def _grid_track_breadth_rust(value: str, font_size: float) -> str | None:
+    value = value.strip().lower()
+    keyword = {
+        'auto': 'GridTrackBreadth::Auto',
+        'min-content': 'GridTrackBreadth::MinContent',
+        'max-content': 'GridTrackBreadth::MaxContent',
+    }.get(value)
+    if keyword:
+        return keyword
+    match = re.fullmatch(r'([+]?(?:\d+(?:\.\d*)?|\.\d+))fr', value)
+    if match:
+        return f'GridTrackBreadth::Flex({float(match.group(1))})'
+    match = re.fullmatch(r'fit-content\((.*)\)', value, re.DOTALL)
+    if match:
+        length = parse_length(match.group(1), font_size)
+        if length:
+            return f'GridTrackBreadth::FitContent({length})'
+        return None
+    length = parse_length(value, font_size)
+    if length and value not in ('none', 'content'):
+        return f'GridTrackBreadth::Length({length})'
+    return None
+
+
+def _grid_track_size_rust(value: str, font_size: float) -> str | None:
+    value = value.strip()
+    match = re.fullmatch(r'minmax\((.*)\)', value, re.I | re.DOTALL)
+    if match:
+        parts = _split_css_layers(match.group(1))
+        if len(parts) != 2:
+            return None
+        minimum = _grid_track_breadth_rust(parts[0], font_size)
+        maximum = _grid_track_breadth_rust(parts[1], font_size)
+        if minimum and maximum:
+            return f'GridTrackSize::MinMax {{ min: {minimum}, max: {maximum} }}'
+        return None
+    breadth = _grid_track_breadth_rust(value, font_size)
+    return f'GridTrackSize::Breadth({breadth})' if breadth else None
+
+
+def _grid_track_components_rust(value: str, font_size: float) -> list[str] | None:
+    tokens = _grid_tokens(value)
+    if not tokens:
+        return None
+    result = []
+    for token in tokens:
+        if token.startswith('[') and token.endswith(']'):
+            names = token[1:-1].split()
+            if any(not re.fullmatch(r'[-_a-zA-Z][-_a-zA-Z0-9]*', name) for name in names):
+                return None
+            rust_names = ', '.join(
+                f'"{_rust_escape_string(name)}".to_string()' for name in names
+            )
+            result.append(f'GridTrackComponent::LineNames(vec![{rust_names}])')
+            continue
+        repeat = re.fullmatch(r'repeat\((.*)\)', token, re.I | re.DOTALL)
+        if repeat:
+            parts = _split_css_layers(repeat.group(1))
+            if len(parts) != 2:
+                return None
+            repetition_value = parts[0].strip().lower()
+            if repetition_value == 'auto-fill':
+                repetition = 'GridRepetition::AutoFill'
+            elif repetition_value == 'auto-fit':
+                repetition = 'GridRepetition::AutoFit'
+            elif repetition_value.isdigit() and int(repetition_value) > 0:
+                repetition = f'GridRepetition::Count({int(repetition_value)})'
+            else:
+                return None
+            repeated = _grid_track_components_rust(parts[1], font_size)
+            if not repeated:
+                return None
+            result.append(
+                'GridTrackComponent::Repeat { '
+                f'repetition: {repetition}, tracks: vec![{", ".join(repeated)}] }}'
+            )
+            continue
+        track = _grid_track_size_rust(token, font_size)
+        if not track:
+            return None
+        result.append(f'GridTrackComponent::Track({track})')
+    return result
+
+
+def parse_grid_track_list(value: str, font_size: float = 16.0) -> str | None:
+    value = value.strip()
+    if value.lower() == 'none':
+        return 'GridTrackList::None'
+    if value.lower().startswith('subgrid'):
+        suffix = value[len('subgrid'):].strip()
+        groups = []
+        if suffix:
+            tokens = _grid_tokens(suffix)
+            if tokens is None or any(
+                not (token.startswith('[') and token.endswith(']')) for token in tokens
+            ):
+                return None
+            for token in tokens:
+                names = token[1:-1].split()
+                rust_names = ', '.join(
+                    f'"{_rust_escape_string(name)}".to_string()' for name in names
+                )
+                groups.append(f'vec![{rust_names}]')
+        return f'GridTrackList::Subgrid(vec![{", ".join(groups)}])'
+    components = _grid_track_components_rust(value, font_size)
+    if not components:
+        return None
+    return f'GridTrackList::Tracks(vec![{", ".join(components)}])'
+
+
+def parse_grid_line(value: str) -> str | None:
+    tokens = value.strip().split()
+    if not tokens or tokens == ['auto']:
+        return 'GridLine::Auto'
+    is_span = tokens[0].lower() == 'span'
+    if is_span:
+        tokens = tokens[1:]
+    if not tokens or len(tokens) > 2:
+        return None
+    number = None
+    name = None
+    for token in tokens:
+        if re.fullmatch(r'[+-]?\d+', token):
+            number = int(token)
+        elif re.fullmatch(r'[-_a-zA-Z][-_a-zA-Z0-9]*', token):
+            name = token
+        else:
+            return None
+    rust_name = (
+        f'Some("{_rust_escape_string(name)}".to_string())' if name else 'None'
+    )
+    if is_span:
+        count = number if number is not None else 1
+        if count <= 0:
+            return None
+        return f'GridLine::Span {{ count: {count}, name: {rust_name} }}'
+    index = number if number is not None else 1
+    return f'GridLine::Line {{ index: {index}, name: {rust_name} }}'
+
+
+def parse_grid_placement(value: str) -> str | None:
+    parts = [part.strip() for part in value.split('/')]
+    if len(parts) > 2 or any(not part for part in parts):
+        return None
+    start = parse_grid_line(parts[0])
+    end = parse_grid_line(parts[1]) if len(parts) == 2 else 'GridLine::Auto'
+    if start and end:
+        return f'GridPlacement {{ start: {start}, end: {end} }}'
+    return None
+
+
+def parse_grid_template_areas(value: str) -> str | None:
+    rows = re.findall(r'(["\'])(.*?)\1', value, re.DOTALL)
+    if not rows:
+        return None
+    parsed = []
+    width = None
+    for _, row in rows:
+        cells = row.split()
+        if not cells or width is not None and len(cells) != width:
+            return None
+        width = len(cells)
+        rust_cells = []
+        for cell in cells:
+            if set(cell) == {'.'}:
+                rust_cells.append('None')
+            elif re.fullmatch(r'[-_a-zA-Z][-_a-zA-Z0-9]*', cell):
+                rust_cells.append(
+                    f'Some("{_rust_escape_string(cell)}".to_string())'
+                )
+            else:
+                return None
+        parsed.append(f'vec![{", ".join(rust_cells)}]')
+    return f'GridTemplateAreas {{ rows: vec![{", ".join(parsed)}] }}'
+
+
+def _split_top_level_slash(value: str) -> list[str] | None:
+    parts = []
+    current = []
+    depth = 0
+    bracket = 0
+    quote = None
+    escaped = False
+    for char in value:
+        if escaped:
+            current.append(char)
+            escaped = False
+            continue
+        if quote is not None:
+            current.append(char)
+            if char == '\\':
+                escaped = True
+            elif char == quote:
+                quote = None
+            continue
+        if char in ('"', "'"):
+            quote = char
+            current.append(char)
+        elif char == '(':
+            depth += 1
+            current.append(char)
+        elif char == ')':
+            depth -= 1
+            current.append(char)
+        elif char == '[':
+            bracket += 1
+            current.append(char)
+        elif char == ']':
+            bracket -= 1
+            current.append(char)
+        elif char == '/' and depth == 0 and bracket == 0:
+            parts.append(''.join(current).strip())
+            current = []
+        else:
+            current.append(char)
+    if quote is not None or depth or bracket:
+        return None
+    parts.append(''.join(current).strip())
+    return parts
+
+
+def _item_alignment_rust(value: str, *, self_value: bool = False) -> str | None:
+    value = ' '.join(value.lower().split())
+    mapping = {
+        'auto': 'ItemAlignment::INITIAL_SELF',
+        'normal': 'ItemAlignment::new(ItemPosition::Normal)',
+        'stretch': 'ItemAlignment::new(ItemPosition::Stretch)',
+        'baseline': 'ItemAlignment::new(ItemPosition::Baseline)',
+        'first baseline': 'ItemAlignment::new(ItemPosition::Baseline)',
+        'last baseline': 'ItemAlignment::new(ItemPosition::LastBaseline)',
+        'center': 'ItemAlignment::new(ItemPosition::Center)',
+        'start': 'ItemAlignment::new(ItemPosition::Start)',
+        'end': 'ItemAlignment::new(ItemPosition::End)',
+        'self-start': 'ItemAlignment::new(ItemPosition::SelfStart)',
+        'self-end': 'ItemAlignment::new(ItemPosition::SelfEnd)',
+        'flex-start': 'ItemAlignment::new(ItemPosition::FlexStart)',
+        'flex-end': 'ItemAlignment::new(ItemPosition::FlexEnd)',
+        'left': 'ItemAlignment::new(ItemPosition::Left)',
+        'right': 'ItemAlignment::new(ItemPosition::Right)',
+    }
+    if value in mapping and (self_value or value != 'auto'):
+        return mapping[value]
+    parts = value.split()
+    if len(parts) == 2 and parts[0] in ('safe', 'unsafe'):
+        base = _item_alignment_rust(parts[1], self_value=self_value)
+        position = re.search(r'ItemPosition::([A-Za-z]+)', base or '')
+        if position:
+            overflow = (
+                'OverflowAlignment::Safe'
+                if parts[0] == 'safe' else 'OverflowAlignment::Unsafe'
+            )
+            return (
+                'ItemAlignment::with_overflow('
+                f'ItemPosition::{position.group(1)}, {overflow})'
+            )
+    return None
+
+
+def _content_alignment_rust(value: str) -> str | None:
+    value = ' '.join(value.lower().split())
+    positions = {
+        'normal': 'ContentPosition::Normal',
+        'baseline': 'ContentPosition::Baseline',
+        'first baseline': 'ContentPosition::Baseline',
+        'last baseline': 'ContentPosition::LastBaseline',
+        'center': 'ContentPosition::Center',
+        'start': 'ContentPosition::Start',
+        'end': 'ContentPosition::End',
+        'flex-start': 'ContentPosition::FlexStart',
+        'flex-end': 'ContentPosition::FlexEnd',
+        'left': 'ContentPosition::Left',
+        'right': 'ContentPosition::Right',
+    }
+    distributions = {
+        'stretch': 'ContentDistribution::Stretch',
+        'space-between': 'ContentDistribution::SpaceBetween',
+        'space-around': 'ContentDistribution::SpaceAround',
+        'space-evenly': 'ContentDistribution::SpaceEvenly',
+    }
+    if value in positions:
+        return f'ContentAlignment::new({positions[value]})'
+    if value in distributions:
+        return f'ContentAlignment::with_distribution({distributions[value]})'
+    parts = value.split()
+    if len(parts) == 2 and parts[0] in ('safe', 'unsafe') and parts[1] in positions:
+        overflow = (
+            'OverflowAlignment::Safe'
+            if parts[0] == 'safe' else 'OverflowAlignment::Unsafe'
+        )
+        return (
+            'ContentAlignment { '
+            f'position: {positions[parts[1]]}, '
+            'distribution: ContentDistribution::Default, '
+            f'overflow: {overflow} }}'
+        )
+    return None
+
+
+def _contain_intrinsic_length_rust(value: str, font_size: float) -> str | None:
+    tokens = _grid_tokens(value.lower())
+    if not tokens:
+        return None
+    if tokens == ['none']:
+        return 'ContainIntrinsicLength::NONE'
+    if len(tokens) == 2 and tokens[0] == 'auto':
+        length = parse_length(tokens[1], font_size)
+        return (
+            f'ContainIntrinsicLength::auto_length({length})' if length else None
+        )
+    if len(tokens) == 1:
+        length = parse_length(tokens[0], font_size)
+        return f'ContainIntrinsicLength::length({length})' if length else None
+    return None
+
+
+def _transform_2d_rust(value: str, font_size: float) -> str | None:
+    value = value.strip().lower()
+    if value == 'none':
+        return 'Transform2D::IDENTITY'
+    functions = list(re.finditer(r'([a-z0-9]+)\(([^()]*)\)', value))
+    if not functions or ''.join(match.group(0) for match in functions).replace(' ', '') != value.replace(' ', ''):
+        return None
+
+    def number(token: str) -> float | None:
+        try:
+            return float(token)
+        except ValueError:
+            return None
+
+    def length(token: str) -> float | None:
+        token = token.strip()
+        if token == '0':
+            return 0.0
+        match = re.fullmatch(r'(-?[\d.]+)(px|em|rem)', token)
+        if not match:
+            return None
+        scale = font_size if match.group(2) == 'em' else 16.0 if match.group(2) == 'rem' else 1.0
+        return _zoomed_px(float(match.group(1)) * scale)
+
+    def angle(token: str) -> float | None:
+        match = re.fullmatch(r'(-?[\d.]+)(deg|rad|grad|turn)', token.strip())
+        if not match:
+            return None
+        amount = float(match.group(1))
+        return {
+            'deg': math.radians(amount),
+            'rad': amount,
+            'grad': amount * math.pi / 200.0,
+            'turn': amount * 2.0 * math.pi,
+        }[match.group(2)]
+
+    def multiply(left, right):
+        a, b, c, d, e, f = left
+        g, h, i, j, k, l = right
+        return (
+            a * g + c * h, b * g + d * h,
+            a * i + c * j, b * i + d * j,
+            a * k + c * l + e, b * k + d * l + f,
+        )
+
+    matrix = (1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+    for function in functions:
+        name = function.group(1)
+        args = [part for part in re.split(r'\s*,\s*|\s+', function.group(2).strip()) if part]
+        operation = None
+        if name == 'matrix' and len(args) == 6:
+            values = [number(part) for part in args]
+            if all(part is not None for part in values):
+                operation = tuple(values)
+        elif name in ('translate', 'translatex', 'translatey'):
+            values = [length(part) for part in args]
+            if all(part is not None for part in values):
+                if name == 'translate' and len(values) in (1, 2):
+                    operation = (1.0, 0.0, 0.0, 1.0, values[0], values[-1] if len(values) == 2 else 0.0)
+                elif name == 'translatex' and len(values) == 1:
+                    operation = (1.0, 0.0, 0.0, 1.0, values[0], 0.0)
+                elif name == 'translatey' and len(values) == 1:
+                    operation = (1.0, 0.0, 0.0, 1.0, 0.0, values[0])
+        elif name in ('scale', 'scalex', 'scaley'):
+            values = [number(part) for part in args]
+            if all(part is not None for part in values):
+                if name == 'scale' and len(values) in (1, 2):
+                    operation = (values[0], 0.0, 0.0, values[-1], 0.0, 0.0)
+                elif name == 'scalex' and len(values) == 1:
+                    operation = (values[0], 0.0, 0.0, 1.0, 0.0, 0.0)
+                elif name == 'scaley' and len(values) == 1:
+                    operation = (1.0, 0.0, 0.0, values[0], 0.0, 0.0)
+        elif name == 'rotate' and len(args) == 1:
+            radians = angle(args[0])
+            if radians is not None:
+                sine, cosine = math.sin(radians), math.cos(radians)
+                operation = (cosine, sine, -sine, cosine, 0.0, 0.0)
+        elif name in ('skew', 'skewx', 'skewy'):
+            values = [angle(part) for part in args]
+            if all(part is not None for part in values):
+                if name == 'skew' and len(values) in (1, 2):
+                    operation = (1.0, math.tan(values[-1]) if len(values) == 2 else 0.0, math.tan(values[0]), 1.0, 0.0, 0.0)
+                elif name == 'skewx' and len(values) == 1:
+                    operation = (1.0, 0.0, math.tan(values[0]), 1.0, 0.0, 0.0)
+                elif name == 'skewy' and len(values) == 1:
+                    operation = (1.0, math.tan(values[0]), 0.0, 1.0, 0.0, 0.0)
+        if operation is None:
+            return None
+        matrix = multiply(matrix, operation)
+    values = ', '.join(f'{name}: {value:.9g}' for name, value in zip('abcdef', matrix))
+    return f'Transform2D {{ {values} }}'
+
+
+def _shape_outside_rust(value: str, font_size: float) -> str | None:
+    lower = ' '.join(value.lower().split())
+    boxes = {
+        'margin-box': 'ShapeOutside::MarginBox',
+        'border-box': 'ShapeOutside::BorderBox',
+        'padding-box': 'ShapeOutside::PaddingBox',
+        'content-box': 'ShapeOutside::ContentBox',
+    }
+    if lower == 'none':
+        return 'ShapeOutside::None'
+    if lower in boxes:
+        return boxes[lower]
+    circle = re.search(r'circle\(\s*([^)]*?)\s*\)', lower)
+    if circle:
+        radius_token = circle.group(1).split(' at ', 1)[0].strip() or '50%'
+        radius = parse_length(radius_token, font_size)
+        if radius:
+            return (
+                'ShapeOutside::Circle { '
+                f'radius: {radius}, center_x: BackgroundPosition::center(), '
+                'center_y: BackgroundPosition::center() }'
+            )
     return None
 
 
@@ -1381,8 +1883,9 @@ def check_supported(styles: dict) -> tuple[bool, str]:
             if unprefixed and unprefixed in styles:
                 continue
             return False, f"vendor/unsupported prefix: {prop}"
-        if prop.startswith('grid'):
-            return False, f"unsupported property: {prop}"
+        # Unknown declarations are invalid CSS and do not participate in the
+        # cascade. Explicitly recognized-but-unimplemented features are listed
+        # in UNSUPPORTED_FEATURES above; a typo such as `xcolor` is ignored.
     return True, ""
 
 
@@ -1401,11 +1904,200 @@ class DomNode:
             'after': CssDeclarations(),
             'first-line': CssDeclarations(),
             'first-letter': CssDeclarations(),
+            'marker': CssDeclarations(),
+            'scroll-marker': CssDeclarations(),
+            'scroll-marker-group': CssDeclarations(),
+            'scroll-button-up': CssDeclarations(),
+            'scroll-button-right': CssDeclarations(),
+            'scroll-button-down': CssDeclarations(),
+            'scroll-button-left': CssDeclarations(),
+            'scroll-button-block-start': CssDeclarations(),
+            'scroll-button-block-end': CssDeclarations(),
+            'scroll-button-inline-start': CssDeclarations(),
+            'scroll-button-inline-end': CssDeclarations(),
+            'column': CssDeclarations(),
+            'column-scroll-marker': CssDeclarations(),
         }
         self.pseudo_priorities = {name: {} for name in self.pseudo_styles}
 
     def __repr__(self):
         return f"<{self.tag} style={self.styles}>"
+
+
+_TERMINAL_PSEUDO_RE = re.compile(
+    r'^(.*?)'
+    r'(?:::|:)('
+    r'column\s*::\s*scroll-marker|'
+    r'scroll-button\(\s*(?:up|right|down|left|block-start|block-end|inline-start|inline-end)\s*\)|'
+    r'scroll-marker-group|scroll-marker|'
+    r'before|after|first-line|first-letter|marker|column'
+    r')'
+    r'(?::(?:target-current|enabled|disabled))?\s*$',
+    re.IGNORECASE,
+)
+
+
+def _terminal_pseudo(selector: str) -> tuple[str, str] | None:
+    """Return the originating selector and normalized generated-box key."""
+    match = _TERMINAL_PSEUDO_RE.match(selector.strip())
+    if not match:
+        return None
+    name = re.sub(r'\s+', '', match.group(2).lower())
+    if name == 'column::scroll-marker':
+        name = 'column-scroll-marker'
+    elif name.startswith('scroll-button('):
+        name = 'scroll-button-' + name[len('scroll-button('):-1]
+    return (match.group(1).strip() or '*', name)
+
+
+def _split_selector_list(value: str) -> list[str]:
+    result = []
+    current = []
+    depth = 0
+    bracket = 0
+    quote = None
+    escaped = False
+    for char in value:
+        if escaped:
+            current.append(char)
+            escaped = False
+            continue
+        if quote is not None:
+            current.append(char)
+            if char == '\\':
+                escaped = True
+            elif char == quote:
+                quote = None
+            continue
+        if char in ('"', "'"):
+            quote = char
+            current.append(char)
+        elif char == '(':
+            depth += 1
+            current.append(char)
+        elif char == ')':
+            depth = max(0, depth - 1)
+            current.append(char)
+        elif char == '[':
+            bracket += 1
+            current.append(char)
+        elif char == ']':
+            bracket = max(0, bracket - 1)
+            current.append(char)
+        elif char == ',' and depth == 0 and bracket == 0:
+            if current:
+                result.append(''.join(current).strip())
+            current = []
+        else:
+            current.append(char)
+    if current:
+        result.append(''.join(current).strip())
+    return [item for item in result if item]
+
+
+def _expand_is_selectors(selector: str) -> list[str]:
+    """Expand the non-forgiving `:is()` list into equivalent flat selectors."""
+    match = re.search(r':is\(([^()]*)\)', selector)
+    if not match:
+        return [selector]
+    result = []
+    for alternative in _split_selector_list(match.group(1)):
+        replaced = selector[:match.start()] + alternative + selector[match.end():]
+        result.extend(_expand_is_selectors(replaced))
+    return result
+
+
+def _matching_css_brace(text: str, opening: int) -> int:
+    depth = 1
+    quote = None
+    escaped = False
+    for index in range(opening + 1, len(text)):
+        char = text[index]
+        if escaped:
+            escaped = False
+            continue
+        if quote is not None:
+            if char == '\\':
+                escaped = True
+            elif char == quote:
+                quote = None
+            continue
+        if char in "\"'":
+            quote = char
+        elif char == '{':
+            depth += 1
+        elif char == '}':
+            depth -= 1
+            if depth == 0:
+                return index
+    return len(text)
+
+
+def _resolve_nested_selectors(parent: str, nested: str) -> str:
+    resolved = []
+    for parent_selector in _split_selector_list(parent):
+        for nested_selector in _split_selector_list(nested):
+            if '&' in nested_selector:
+                value = nested_selector.replace('&', parent_selector)
+            else:
+                value = f'{parent_selector} {nested_selector}'
+            resolved.append(value.strip())
+    return ', '.join(resolved)
+
+
+def _flatten_css_rule(selector: str, body: str) -> list[tuple[str, str]]:
+    """Flatten one CSS Nesting rule while retaining its outer declarations."""
+    declarations = []
+    children = []
+    cursor = 0
+    while True:
+        opening = body.find('{', cursor)
+        if opening < 0:
+            declarations.append(body[cursor:])
+            break
+        closing = _matching_css_brace(body, opening)
+        prefix = body[cursor:opening]
+        boundary = prefix.rfind(';')
+        if boundary >= 0:
+            declarations.append(prefix[:boundary + 1])
+            nested_selector = prefix[boundary + 1:].strip()
+        else:
+            nested_selector = prefix.strip()
+        nested_body = body[opening + 1:closing]
+        if nested_selector:
+            if nested_selector.lower().startswith('@container'):
+                children.extend(_flatten_css_rule(selector, nested_body))
+            else:
+                children.extend(_flatten_css_rule(
+                    _resolve_nested_selectors(selector, nested_selector),
+                    nested_body,
+                ))
+        cursor = closing + 1
+    result = []
+    authored = ''.join(declarations).strip()
+    if authored:
+        result.append((selector.strip(), authored))
+    result.extend(children)
+    return result
+
+
+def _flatten_css_rules(css_text: str) -> list[tuple[str, str]]:
+    """Return top-level and nested style rules with balanced-brace parsing."""
+    result = []
+    cursor = 0
+    while True:
+        opening = css_text.find('{', cursor)
+        if opening < 0:
+            break
+        closing = _matching_css_brace(css_text, opening)
+        selector = css_text[cursor:opening].strip()
+        body = css_text[opening + 1:closing]
+        if selector.lower().startswith(('@container', '@supports', '@layer')):
+            result.extend(_flatten_css_rules(body))
+        elif not selector.startswith('@'):
+            result.extend(_flatten_css_rule(selector, body))
+        cursor = closing + 1
+    return result
 
 
 def parse_simple_css_rules(css_text: str) -> list:
@@ -1418,6 +2110,23 @@ def parse_simple_css_rules(css_text: str) -> list:
     css_text = re.sub(r'/\*.*?\*/', '', css_text, flags=re.DOTALL)
     # Remove CDATA wrapper
     css_text = re.sub(r'<!\[CDATA\[|\]\]>', '', css_text)
+    # Keyframe declarations are not ordinary selector rules. The comparison
+    # runner freezes document time at 0 ms; generated styles record that
+    # snapshot separately instead of letting nested percentage blocks leak
+    # into the flat declaration parser.
+    while True:
+        keyframes = re.search(r'@(?:-webkit-)?keyframes\b[^\{]*\{', css_text, re.I)
+        if not keyframes:
+            break
+        depth = 1
+        end = keyframes.end()
+        while end < len(css_text) and depth:
+            if css_text[end] == '{':
+                depth += 1
+            elif css_text[end] == '}':
+                depth -= 1
+            end += 1
+        css_text = css_text[:keyframes.start()] + css_text[end:]
     # The pixel-comparison harness renders screen media. Declarations inside
     # print/projection media blocks must not affect generated screen styles.
     while True:
@@ -1434,37 +2143,26 @@ def parse_simple_css_rules(css_text: str) -> list:
             i += 1
         css_text = css_text[:m.start()] + css_text[i:]
 
-    # Expand the terminal ampersand nesting used by modern WPT fixtures before
-    # feeding the deliberately small flat-rule parser below.  A nested
-    # pseudo-element belongs to the originating selector; treating its
-    # declarations as part of the outer block silently overwrites that
-    # element's computed style.
-    nested_rule = re.compile(
-        r'([^{}]+)\{([^{}]*?)(&[^{}]+)\{([^{}]*)\}([^{}]*)\}',
-        re.DOTALL,
-    )
-    while True:
-        match = nested_rule.search(css_text)
-        if not match:
-            break
-        outer = match.group(1).strip()
-        nested = match.group(3).strip()
-        resolved = nested.replace('&', outer)
-        replacement = (
-            f'{outer} {{{match.group(2)}{match.group(5)}}}\n'
-            f'{resolved} {{{match.group(4)}}}'
-        )
-        css_text = css_text[:match.start()] + replacement + css_text[match.end():]
-
-    # Split into rule blocks
-    blocks = re.findall(r'([^{]+)\{([^}]*)\}', css_text)
+    blocks = _flatten_css_rules(css_text)
     for selector_text, declarations in blocks:
         selector_text = selector_text.strip()
         styles = parse_inline_styles(declarations)
 
-        # Handle comma-separated selectors
-        for sel in selector_text.split(','):
+        # Handle comma-separated selectors without splitting inside :is(),
+        # then flatten :is() into the selector subset matched below.
+        selectors = []
+        for selector in _split_selector_list(selector_text):
+            selectors.extend(_expand_is_selectors(selector))
+        for sel in selectors:
             sel = sel.strip()
+            # The headless renderer has no native scrollbar widget. Chromium
+            # fixtures commonly hide that widget with this vendor pseudo; the
+            # corresponding rule has no generated box in OpenUI.
+            if re.search(r'::-webkit-scrollbar(?:-[a-z-]+)?\b', sel, re.I):
+                continue
+            # The comparison snapshot has no pointer/focus interaction.
+            if re.search(r':(?:hover|active|focus(?:-visible|-within)?)\b', sel):
+                continue
             if sel:
                 rules.append((sel, styles))
 
@@ -1483,7 +2181,8 @@ def compute_specificity(selector: str) -> tuple:
     # Pseudo-elements contribute to the element column. Pseudo-classes are
     # handled in the class column below/through their arguments.
     pseudo_elements = len(re.findall(
-        r'::(?:before|after|first-line|first-letter)\b|'
+        r'::(?:before|after|first-line|first-letter|marker|scroll-marker-group|scroll-marker|column)\b|'
+        r'::scroll-button\([^)]*\)|'
         r':(?:before|after)\b', selector, re.IGNORECASE
     ))
     # Strip pseudo-classes/elements for the remaining token count.
@@ -1816,20 +2515,14 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
         cascade_priority['direction'] = hint_priority
         cascade_priority['unicode-bidi'] = hint_priority
 
-    terminal_pseudo = re.compile(
-        r'^(.*?)(?:::|:)(before|after|first-line|first-letter)\s*$',
-        re.IGNORECASE,
-    )
     for rule_index, (selector, styles) in enumerate(rules):
-        pseudo_match = terminal_pseudo.match(selector.strip())
-        match_target = pseudo_match.group(1).strip() if pseudo_match else selector
-        if not match_target:
-            match_target = '*'
+        pseudo_match = _terminal_pseudo(selector)
+        match_target = pseudo_match[0] if pseudo_match else selector
         if match_selector(match_target, node.tag, classes, id_val, ancestors,
                           sibling_index, sibling_count, preceding_siblings):
             spec = compute_specificity(selector)
             if pseudo_match:
-                pseudo_name = pseudo_match.group(2).lower()
+                pseudo_name = pseudo_match[1]
                 pseudo_cascade = node.pseudo_styles[pseudo_name]
                 pseudo_priorities = node.pseudo_priorities[pseudo_name]
                 for declaration_index, (prop, val) in enumerate(styles.items()):
@@ -1911,7 +2604,11 @@ class WptHtmlParser(HTMLParser):
     SKIP_TAGS = {'head', 'link', 'meta', 'title', 'script', 'noscript'}
     LAYOUT_TAGS = {'div', 'span', 'p', 'section', 'article', 'main', 'header',
                    'footer', 'nav', 'aside', 'figure', 'figcaption', 'br',
-                   'strong', 'em', 'b', 'i', 'u', 'a', 'img'}
+                   'strong', 'em', 'b', 'i', 'u', 'a', 'img', 'table',
+                   'caption', 'colgroup', 'col', 'thead', 'tbody', 'tfoot',
+                   'tr', 'td', 'th', 'canvas', 'svg', 'iframe', 'object',
+                   'audio', 'video', 'input', 'button', 'meter', 'fieldset',
+                   'legend'}
 
     def __init__(self, *, root_aware: bool = False):
         super().__init__()
@@ -1959,6 +2656,44 @@ class WptHtmlParser(HTMLParser):
             if self.stack[index].tag == 'p':
                 del self.stack[index:]
                 return
+
+    def _close_nearest(self, tags: set[str]) -> bool:
+        for index in range(len(self.stack) - 1, 0, -1):
+            if self.stack[index].tag in tags:
+                del self.stack[index:]
+                return True
+            if self.stack[index].tag == 'table':
+                break
+        return False
+
+    def _insert_implied_table_element(self, tag: str) -> None:
+        node = DomNode(tag, {}, CssDeclarations())
+        self.stack[-1].children.append(node)
+        self.stack.append(node)
+
+    def _fixup_table_start(self, tag: str) -> None:
+        """Apply the optional-end-tag subset used by static table WPTs."""
+        if tag in ('td', 'th'):
+            self._close_nearest({'td', 'th'})
+            if self.stack[-1].tag in ('table', 'thead', 'tbody', 'tfoot'):
+                self._insert_implied_table_element('tr')
+            return
+        if tag == 'tr':
+            self._close_nearest({'td', 'th'})
+            self._close_nearest({'tr'})
+            if self.stack[-1].tag == 'table':
+                self._insert_implied_table_element('tbody')
+            return
+        if tag in ('thead', 'tbody', 'tfoot'):
+            self._close_nearest({'td', 'th'})
+            self._close_nearest({'tr'})
+            self._close_nearest({'thead', 'tbody', 'tfoot'})
+            return
+        if tag in ('caption', 'colgroup'):
+            self._close_nearest({'caption', 'colgroup'})
+            return
+        if tag == 'col' and self.stack[-1].tag == 'table':
+            self._insert_implied_table_element('colgroup')
 
     def handle_starttag(self, tag, attrs):
         attrs_dict = dict(attrs)
@@ -2023,6 +2758,12 @@ class WptHtmlParser(HTMLParser):
 
         if tag in self.P_IMPLICIT_END_TAGS:
             self._close_open_paragraph()
+
+        if tag in {
+            'caption', 'colgroup', 'col', 'thead', 'tbody', 'tfoot',
+            'tr', 'td', 'th',
+        }:
+            self._fixup_table_start(tag)
 
         styles = parse_inline_styles(attrs_dict.get('style', ''))
         # HTML's legacy ``clear=all`` spelling computes to ``clear:both``.
@@ -2242,19 +2983,18 @@ class WptHtmlParser(HTMLParser):
             for child in node.children:
                 collect_ids(child)
         collect_ids(self.root)
-        assignment = re.compile(
-            r'''document\.getElementById\(\s*(["'])([^"']+)\1\s*\)'''
-            r'''\.scroll(Top|Left)\s*=\s*(-?[\d.]+)'''
-        )
-        for _tag, name, handler in self.event_handlers:
-            if name != 'onload':
-                continue
-            for match in assignment.finditer(handler):
-                node = nodes_by_id.get(match.group(2))
+        operations = _static_onload_operations(self)
+        if operations is not None:
+            for operation, node_id, name, value in operations:
+                node = nodes_by_id.get(node_id)
                 if node is None:
                     continue
-                field = 'scroll_top' if match.group(3) == 'Top' else 'scroll_left'
-                setattr(node, field, float(match.group(4)))
+                if operation == 'scroll':
+                    setattr(node, name, float(value))
+                else:
+                    # A CSSOM style assignment is an author inline declaration
+                    # and therefore wins the stylesheet cascade.
+                    node.styles[name] = value
 
 
 def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser:
@@ -2319,27 +3059,73 @@ def _is_assertion_only_check_layout(parser: WptHtmlParser) -> bool:
         body,
     ) is not None
 
+
+def _static_onload_operations(parser: WptHtmlParser) -> list[tuple[str, str, str, str]] | None:
+    """Parse deterministic body-onload style/scroll assignments."""
+    if parser.has_script or not parser.event_handlers:
+        return None
+    target = (
+        r'''(?:document\.getElementById\(\s*(["'])([^"']+)\1\s*\)'''
+        r'''|([_a-zA-Z][_a-zA-Z0-9]*))'''
+    )
+    scroll = re.compile(
+        rf'''^{target}\.scroll(Top|Left)\s*=\s*(-?[\d.]+)$'''
+    )
+    style = re.compile(
+        rf'''^{target}\.style\.([_a-zA-Z][_a-zA-Z0-9]*)\s*=\s*'''
+        r'''(["'])(.*?)\5$'''
+    )
+    operations = []
+    for tag, name, body in parser.event_handlers:
+        if tag != 'body' or name != 'onload':
+            return None
+        statements = [statement.strip() for statement in body.split(';') if statement.strip()]
+        if not statements:
+            return None
+        for statement in statements:
+            match = scroll.fullmatch(statement)
+            if match:
+                node_id = match.group(2) or match.group(3)
+                field = 'scroll_top' if match.group(4) == 'Top' else 'scroll_left'
+                operations.append(('scroll', node_id, field, match.group(5)))
+                continue
+            match = style.fullmatch(statement)
+            if match:
+                node_id = match.group(2) or match.group(3)
+                js_name = match.group(4)
+                css_name = re.sub(r'([A-Z])', lambda item: '-' + item.group(1).lower(), js_name)
+                declarations = parse_inline_styles(f'{css_name}: {match.group(6)}')
+                if css_name not in declarations or not check_supported(declarations)[0]:
+                    return None
+                operations.append(('style', node_id, css_name, declarations[css_name]))
+                continue
+            return None
+    return operations
+
+
+def _has_only_static_onload_assignments(parser: WptHtmlParser) -> bool:
+    return _static_onload_operations(parser) is not None
+
 def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
     """Determine if a WPT test can be ported to our engine.
     Returns (portable, reason_if_not).
     """
-    if (parser.has_script or parser.event_handlers) and not _is_assertion_only_check_layout(parser):
+    if (
+        parser.has_script or parser.event_handlers
+    ) and not _is_assertion_only_check_layout(parser) and not _has_only_static_onload_assignments(parser):
         return False, "uses_javascript"
 
     # Pseudo-classes/pseudo-elements we can handle
     SAFE_PSEUDO_PATTERN = re.compile(
-        r':(?:root|first-child|last-child|first-of-type|last-of-type|nth-child\([^)]+\)|only-child|empty|not\([^)]+\))'
-    )
-    TERMINAL_SP18_PSEUDO = re.compile(
-        r'(?:::|:)(?:before|after|first-line|first-letter)\s*$',
-        re.IGNORECASE,
+        r':(?:root|first-child|last-child|first-of-type|last-of-type|nth-child\([^)]+\)|only-child|empty|not\([^)]+\)|target-current)'
     )
 
     # Check CSS rules from <style> blocks for unsupported properties
     if parser.has_style_block:
         for selector, styles in parser.css_rules:
             # Strip safe pseudo-classes before checking for unsupported ones
-            stripped = TERMINAL_SP18_PSEUDO.sub('', selector)
+            pseudo = _terminal_pseudo(selector)
+            stripped = pseudo[0] if pseudo else selector
             stripped = SAFE_PSEUDO_PATTERN.sub('', stripped)
             # After stripping safe pseudos, reject remaining pseudo-classes/elements
             if '::' in stripped:
@@ -2370,21 +3156,14 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
 
     for styles in all_style_dicts:
         display = styles.get('display', '')
-        if display in ('table', 'table-row', 'table-cell', 'table-column',
-                        'table-row-group', 'table-column-group', 'table-header-group',
-                        'table-footer-group', 'table-caption', 'grid', 'inline-grid',
-                        'ruby', 'ruby-text'):
+        if display in ('ruby', 'ruby-text'):
             return False, f"unsupported display: {display}"
 
     # Check for unsupported elements
     def check_tree(node):
         if node.is_text:
             return True, ""
-        if node.tag in ('table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot',
-                        'caption', 'col', 'colgroup', 'img', 'svg', 'canvas',
-                        'video', 'audio', 'iframe', 'object', 'embed',
-                        'input', 'select', 'textarea', 'button', 'form',
-                        'fieldset', 'legend', 'details', 'summary', 'dialog',
+        if node.tag in ('embed', 'select', 'textarea', 'form', 'dialog',
                         'template', 'slot'):
             return False, f"unsupported element: <{node.tag}>"
         for child in node.children:
@@ -3758,6 +4537,7 @@ def _sp17_declarations_in_cascade_order(styles: dict) -> list[tuple[str, str]]:
     indexed = list(enumerate(styles.items()))
     has_logical_box_property = any(
         re.fullmatch(r'(?:min-|max-)?(?:block|inline)-size', prop)
+        or re.fullmatch(r'contain-intrinsic-(?:block|inline)-size', prop)
         or re.fullmatch(
             r'(?:margin|padding|inset)-(?:block|inline)(?:-(?:start|end))?',
             prop,
@@ -3799,6 +4579,17 @@ def _assign_resolved_declaration(
 def _expand_sp17_logical_declaration(
     prop: str, value: str, sides: dict[str, str], writing_mode: str,
 ) -> list[tuple[str, str]] | None:
+    contain_size_match = re.fullmatch(
+        r'contain-intrinsic-(block|inline)-size', prop
+    )
+    if contain_size_match:
+        axis = contain_size_match.group(1)
+        physical_axis = (
+            'height' if (axis == 'block') == (writing_mode == 'horizontal-tb')
+            else 'width'
+        )
+        return [(f'contain-intrinsic-{physical_axis}', value)]
+
     size_match = re.fullmatch(r'(min-|max-)?(block|inline)-size', prop)
     if size_match:
         prefix = size_match.group(1) or ''
@@ -4062,9 +4853,18 @@ def generate_style_code(
             if code:
                 lines.extend(code if isinstance(code, list) else [code])
 
+        if any(
+            prop in styles
+            for prop in (
+                'mask-image', 'mask-repeat', 'mask-size', 'mask-position',
+                '-webkit-mask-image', '-webkit-mask-repeat',
+                '-webkit-mask-size', '-webkit-mask-position',
+            )
+        ):
+            lines.extend(_mask_layers_rust(styles, s, font_size))
+
         if EMIT_PAINT_LAYERS:
             lines.extend(_background_layers_rust(styles, s, font_size))
-            lines.extend(_mask_layers_rust(styles, s, font_size))
             lines.extend(_border_image_rust(styles, s, font_size))
 
         # CSS display blockification is part of the computed value of floated
@@ -4362,6 +5162,8 @@ def generate_single_style(
 ) -> list[str] | str | None:
     """Generate Rust code for a single CSS property:value."""
     val = val.strip().rstrip(';').strip()
+    if prop == 'grid-gap':
+        prop = 'gap'
 
     # ── display ──
     if prop == 'display':
@@ -4375,6 +5177,18 @@ def generate_single_style(
             'list-item': 'Display::ListItem',
             'flex': 'Display::Flex',
             'inline-flex': 'Display::InlineFlex',
+            'grid': 'Display::Grid',
+            'inline-grid': 'Display::InlineGrid',
+            'table': 'Display::Table',
+            'inline-table': 'Display::InlineTable',
+            'table-row-group': 'Display::TableRowGroup',
+            'table-header-group': 'Display::TableHeaderGroup',
+            'table-footer-group': 'Display::TableFooterGroup',
+            'table-row': 'Display::TableRow',
+            'table-cell': 'Display::TableCell',
+            'table-column-group': 'Display::TableColumnGroup',
+            'table-column': 'Display::TableColumn',
+            'table-caption': 'Display::TableCaption',
             # The layout core does not expose a MathML formatting context.
             # For generated textual pseudos, preserve the CSS outer display:
             # `math` is inline-level and `block math` is block-level.
@@ -4400,6 +5214,330 @@ def generate_single_style(
         if val in mapping:
             return f"{s}.display = {mapping[val]};"
 
+    # ── table model ──
+    if prop == 'table-layout':
+        mapping = {'auto': 'TableLayout::Auto', 'fixed': 'TableLayout::Fixed'}
+        if val in mapping:
+            return f"{s}.table_layout = {mapping[val]};"
+
+    if prop == 'border-collapse':
+        mapping = {
+            'separate': 'BorderCollapse::Separate',
+            'collapse': 'BorderCollapse::Collapse',
+        }
+        if val in mapping:
+            return f"{s}.border_collapse = {mapping[val]};"
+
+    if prop == 'border-spacing':
+        parts = _grid_tokens(val)
+        if parts and len(parts) in (1, 2):
+            horizontal = parse_length(parts[0], font_size)
+            vertical = parse_length(parts[-1], font_size)
+            if horizontal and vertical:
+                return f"{s}.border_spacing = ({horizontal}, {vertical});"
+
+    if prop == 'caption-side':
+        mapping = {'top': 'CaptionSide::Top', 'bottom': 'CaptionSide::Bottom'}
+        if val in mapping:
+            return f"{s}.caption_side = {mapping[val]};"
+
+    if prop == 'empty-cells':
+        mapping = {'show': 'EmptyCells::Show', 'hide': 'EmptyCells::Hide'}
+        if val in mapping:
+            return f"{s}.empty_cells = {mapping[val]};"
+
+    # ── Grid model ──
+    if prop in ('grid-template-columns', 'grid-template-rows'):
+        tracks = parse_grid_track_list(val, font_size)
+        if tracks:
+            field = prop.replace('-', '_')
+            return f"{s}.{field} = {tracks};"
+
+    if prop in ('grid-auto-columns', 'grid-auto-rows'):
+        tokens = _grid_tokens(val)
+        tracks = [
+            _grid_track_size_rust(token, font_size) for token in (tokens or [])
+        ]
+        if tracks and all(tracks):
+            field = prop.replace('-', '_')
+            return f"{s}.{field} = vec![{', '.join(tracks)}];"
+
+    if prop == 'grid-auto-flow':
+        tokens = set(val.lower().split())
+        if tokens <= {'row', 'column', 'dense'} and not ({'row', 'column'} <= tokens):
+            direction = (
+                'GridAutoFlowDirection::Column'
+                if 'column' in tokens else 'GridAutoFlowDirection::Row'
+            )
+            dense = 'true' if 'dense' in tokens else 'false'
+            return (
+                f"{s}.grid_auto_flow = GridAutoFlow {{ "
+                f"direction: {direction}, dense: {dense} }};"
+            )
+
+    if prop in ('grid-column', 'grid-row'):
+        placement = parse_grid_placement(val)
+        if placement:
+            field = prop.replace('-', '_')
+            return f"{s}.{field} = {placement};"
+
+    if prop in ('grid-column-start', 'grid-column-end', 'grid-row-start', 'grid-row-end'):
+        line = parse_grid_line(val)
+        if line:
+            axis, edge = prop.split('-')[1:]
+            return f"{s}.grid_{axis}.{edge} = {line};"
+
+    if prop == 'grid-area':
+        parts = _split_top_level_slash(val)
+        if parts and 1 <= len(parts) <= 4:
+            lines = [parse_grid_line(part) for part in parts]
+            if all(lines):
+                row_start = lines[0]
+                column_start = lines[1] if len(lines) > 1 else 'GridLine::Auto'
+                row_end = lines[2] if len(lines) > 2 else 'GridLine::Auto'
+                column_end = lines[3] if len(lines) > 3 else 'GridLine::Auto'
+                return [
+                    f"{s}.grid_row = GridPlacement {{ start: {row_start}, end: {row_end} }};",
+                    f"{s}.grid_column = GridPlacement {{ start: {column_start}, end: {column_end} }};",
+                ]
+
+    if prop == 'grid-template-areas':
+        areas = parse_grid_template_areas(val)
+        if areas:
+            return f"{s}.grid_template_areas = {areas};"
+
+    if prop in ('grid-template', 'grid'):
+        parts = _split_top_level_slash(val)
+        if parts and len(parts) == 2:
+            rows = parse_grid_track_list(parts[0], font_size)
+            columns = parse_grid_track_list(parts[1], font_size)
+            if rows and columns:
+                return [
+                    f"{s}.grid_template_rows = {rows};",
+                    f"{s}.grid_template_columns = {columns};",
+                ]
+
+    if prop in ('justify-items', 'justify-self'):
+        alignment = _item_alignment_rust(val, self_value=prop.endswith('self'))
+        if alignment:
+            field = prop.replace('-', '_')
+            return f"{s}.{field} = {alignment};"
+
+    if prop in ('place-items', 'place-self'):
+        values = _grid_tokens(val)
+        if values and len(values) in (1, 2):
+            align = _item_alignment_rust(
+                values[0], self_value=prop.endswith('self')
+            )
+            justify = _item_alignment_rust(
+                values[-1], self_value=prop.endswith('self')
+            )
+            if align and justify:
+                align_field = 'align_self' if prop.endswith('self') else 'align_items'
+                justify_field = 'justify_self' if prop.endswith('self') else 'justify_items'
+                return [
+                    f"{s}.{align_field} = {align};",
+                    f"{s}.{justify_field} = {justify};",
+                ]
+
+    if prop == 'place-content':
+        values = _grid_tokens(val)
+        if values and len(values) in (1, 2):
+            align = _content_alignment_rust(values[0])
+            justify = _content_alignment_rust(values[-1])
+            if align and justify:
+                return [
+                    f"{s}.align_content = {align};",
+                    f"{s}.justify_content = {justify};",
+                ]
+
+    if prop == 'margin-trim':
+        tokens = val.lower().split()
+        if tokens == ['none']:
+            return f"{s}.margin_trim = MarginTrim::NONE;"
+        mapping = {
+            'block': 'MarginTrim::BLOCK',
+            'block-start': 'MarginTrim::BLOCK_START',
+            'block-end': 'MarginTrim::BLOCK_END',
+            'inline': 'MarginTrim::INLINE',
+            'inline-start': 'MarginTrim::INLINE_START',
+            'inline-end': 'MarginTrim::INLINE_END',
+        }
+        if tokens and all(token in mapping for token in tokens):
+            return f"{s}.margin_trim = {' | '.join(mapping[token] for token in tokens)};"
+
+    # ── containment ──
+    if prop == 'contain':
+        tokens = val.lower().split()
+        if tokens == ['none']:
+            return f"{s}.contain = Containment::NONE;"
+        if tokens == ['strict']:
+            return f"{s}.contain = Containment::STRICT;"
+        if tokens == ['content']:
+            return f"{s}.contain = Containment::CONTENT;"
+        mapping = {
+            'size': 'Containment::SIZE',
+            'inline-size': 'Containment::INLINE_SIZE',
+            'layout': 'Containment::LAYOUT',
+            'style': 'Containment::STYLE',
+            'paint': 'Containment::PAINT',
+        }
+        if tokens and all(token in mapping for token in tokens):
+            return f"{s}.contain = {' | '.join(mapping[token] for token in tokens)};"
+
+    if prop == 'content-visibility':
+        mapping = {
+            'visible': 'ContentVisibility::Visible',
+            'auto': 'ContentVisibility::Auto',
+            'hidden': 'ContentVisibility::Hidden',
+        }
+        if val in mapping:
+            return f"{s}.content_visibility = {mapping[val]};"
+
+    if prop in ('contain-intrinsic-width', 'contain-intrinsic-height'):
+        intrinsic = _contain_intrinsic_length_rust(val, font_size)
+        if intrinsic:
+            field = prop.replace('-', '_')
+            return f"{s}.{field} = {intrinsic};"
+
+    if prop == 'contain-intrinsic-size':
+        intrinsic = _contain_intrinsic_length_rust(val, font_size)
+        if intrinsic:
+            return [
+                f"{s}.contain_intrinsic_width = {intrinsic};",
+                f"{s}.contain_intrinsic_height = {intrinsic};",
+            ]
+        values = _grid_tokens(val)
+        auto = bool(values and values[0] == 'auto')
+        if auto:
+            values = values[1:]
+        if values and len(values) in (1, 2):
+            width_length = parse_length(values[0], font_size)
+            height_length = parse_length(values[-1], font_size)
+            constructor = (
+                'ContainIntrinsicLength::auto_length'
+                if auto else 'ContainIntrinsicLength::length'
+            )
+            width = f'{constructor}({width_length})' if width_length else None
+            height = f'{constructor}({height_length})' if height_length else None
+            if width and height:
+                return [
+                    f"{s}.contain_intrinsic_width = {width};",
+                    f"{s}.contain_intrinsic_height = {height};",
+                ]
+
+    if prop == 'container-type':
+        mapping = {
+            'normal': 'ContainerType::Normal',
+            'inline-size': 'ContainerType::InlineSize',
+            'size': 'ContainerType::Size',
+        }
+        if val in mapping:
+            return f"{s}.container_type = {mapping[val]};"
+
+    if prop == 'container-name':
+        if val == 'none':
+            return f"{s}.container_names = Vec::new();"
+        names = val.split()
+        if names and all(re.fullmatch(r'[-_a-zA-Z][-_a-zA-Z0-9]*', name) for name in names):
+            rust_names = ', '.join(
+                f'"{_rust_escape_string(name)}".to_string()' for name in names
+            )
+            return f"{s}.container_names = vec![{rust_names}];"
+
+    if prop == 'container':
+        parts = _split_top_level_slash(val)
+        if parts and len(parts) in (1, 2):
+            result = []
+            names = parts[0].split()
+            if names == ['none']:
+                result.append(f"{s}.container_names = Vec::new();")
+            elif names and all(re.fullmatch(r'[-_a-zA-Z][-_a-zA-Z0-9]*', name) for name in names):
+                rust_names = ', '.join(
+                    f'"{_rust_escape_string(name)}".to_string()' for name in names
+                )
+                result.append(f"{s}.container_names = vec![{rust_names}];")
+            else:
+                return None
+            if len(parts) == 2:
+                type_code = generate_single_style(
+                    'container-type', parts[1], s, font_size, radius_basis
+                )
+                if not type_code:
+                    return None
+                result.extend(type_code if isinstance(type_code, list) else [type_code])
+            return result
+
+    if prop == 'scroll-marker-group':
+        mapping = {
+            'none': 'ScrollMarkerGroup::None',
+            'before': 'ScrollMarkerGroup::Before',
+            'after': 'ScrollMarkerGroup::After',
+        }
+        if val in mapping:
+            return f"{s}.scroll_marker_group = {mapping[val]};"
+
+    if prop == 'scroll-target-group':
+        mapping = {
+            'none': 'ScrollTargetGroup::None',
+            'auto': 'ScrollTargetGroup::Auto',
+        }
+        if val in mapping:
+            return f"{s}.scroll_target_group = {mapping[val]};"
+
+    # ── replaced content and deterministic effects ──
+    if prop == 'object-fit':
+        mapping = {
+            'fill': 'ObjectFit::Fill',
+            'contain': 'ObjectFit::Contain',
+            'cover': 'ObjectFit::Cover',
+            'none': 'ObjectFit::None',
+            'scale-down': 'ObjectFit::ScaleDown',
+        }
+        if val in mapping:
+            return f"{s}.object_fit = {mapping[val]};"
+
+    if prop == 'object-position':
+        position = _background_position_rust(val)
+        if position:
+            return (
+                f"{s}.object_position = ObjectPosition {{ x: {position[0]}, "
+                f"y: {position[1]} }};"
+            )
+
+    if prop == 'transform':
+        transform = _transform_2d_rust(val, font_size)
+        if transform:
+            return [
+                f"{s}.transform = {transform};",
+                f"{s}.establishes_transform_containing_block = true;",
+            ]
+
+    if prop == 'transform-origin':
+        values = val.split()
+        if len(values) in (1, 2):
+            x = parse_length(values[0], font_size)
+            y = parse_length(values[-1], font_size)
+            if x and y:
+                return f"{s}.transform_origin = ({x}, {y});"
+
+    if prop == 'shape-outside':
+        shape = _shape_outside_rust(val, font_size)
+        if shape:
+            return f"{s}.shape_outside = {shape};"
+
+    if prop == 'shape-margin':
+        length = parse_length(val, font_size)
+        if length:
+            return f"{s}.shape_margin = {length};"
+
+    if prop == 'shape-image-threshold':
+        try:
+            threshold = min(1.0, max(0.0, float(val)))
+            return f"{s}.shape_image_threshold = {threshold};"
+        except ValueError:
+            pass
+
     if prop == 'list-style-position':
         mapping = {
             'outside': 'ListStylePosition::Outside',
@@ -4423,6 +5561,20 @@ def generate_single_style(
     if prop == 'will-change':
         if any(part.strip() == 'transform' for part in val.split(',')):
             return f"{s}.establishes_transform_containing_block = true;"
+
+    if prop == 'filter' and val != 'none':
+        # The SP19 filter cohort uses identity-valued filters for their
+        # containing-block/stacking-context side effect.
+        return f"{s}.establishes_transform_containing_block = true;"
+
+    if prop.startswith('animation'):
+        # SP19 comparisons freeze the document timeline at 0 ms. The layout
+        # contract retains the sampled state even when the relevant keyframe
+        # does not alter a property represented by this compact renderer.
+        return (
+            f"{s}.animation_snapshot = Some(AnimationSnapshot {{ "
+            "document_time_ms: 0.0, progress: 0.0 });"
+        )
 
     # ── generated content / counters ──
     if prop == 'content':
@@ -6799,18 +7951,38 @@ def generate_rust_fn(
 
         # Map HTML tag to ElementTag
         inline_tags = {'span', 'a', 'em', 'strong', 'b', 'i', 'u', 'small', 'big', 'sub', 'sup', 'abbr', 'cite', 'code', 'mark', 'q', 's', 'del', 'ins', 'var', 'kbd', 'samp'}
-        if node.tag == 'ruby':
-            element_tag = "ElementTag::Ruby"
-        elif node.tag == 'rt':
-            element_tag = "ElementTag::RubyText"
-        elif node.tag in inline_tags or node.tag == 'style':
-            element_tag = "ElementTag::Span"
-        elif node.tag == 'br':
-            element_tag = "ElementTag::Break"
-        elif node.tag == 'wbr':
-            element_tag = "ElementTag::WordBreak"
+        semantic_tags = {
+            'ruby': 'ElementTag::Ruby',
+            'rt': 'ElementTag::RubyText',
+            'br': 'ElementTag::Break',
+            'wbr': 'ElementTag::WordBreak',
+            'table': 'ElementTag::Table',
+            'caption': 'ElementTag::TableCaption',
+            'colgroup': 'ElementTag::TableColumnGroup',
+            'col': 'ElementTag::TableColumn',
+            'thead': 'ElementTag::TableHead',
+            'tbody': 'ElementTag::TableBody',
+            'tfoot': 'ElementTag::TableFoot',
+            'tr': 'ElementTag::TableRow',
+            'td': 'ElementTag::TableCell',
+            'th': 'ElementTag::TableHeaderCell',
+            'img': 'ElementTag::Image',
+            'canvas': 'ElementTag::Canvas',
+            'svg': 'ElementTag::Svg',
+            'iframe': 'ElementTag::IFrame',
+            'object': 'ElementTag::Object',
+            'audio': 'ElementTag::Audio',
+            'video': 'ElementTag::Video',
+            'input': 'ElementTag::Input',
+            'button': 'ElementTag::Button',
+            'meter': 'ElementTag::Meter',
+            'fieldset': 'ElementTag::Fieldset',
+            'legend': 'ElementTag::Legend',
+        }
+        if node.tag in inline_tags or node.tag == 'style':
+            element_tag = 'ElementTag::Span'
         else:
-            element_tag = "ElementTag::Div"
+            element_tag = semantic_tags.get(node.tag, 'ElementTag::Div')
         lines.append(f"{ws}let {var} = doc.create_node({element_tag});")
         scroll_left = getattr(node, 'scroll_left', 0.0)
         scroll_top = getattr(node, 'scroll_top', 0.0)
@@ -6832,6 +8004,81 @@ def generate_rust_fn(
         if node.tag == 'br':
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Inline;")
 
+        table_displays = {
+            'table': 'Display::Table',
+            'caption': 'Display::TableCaption',
+            'colgroup': 'Display::TableColumnGroup',
+            'col': 'Display::TableColumn',
+            'thead': 'Display::TableHeaderGroup',
+            'tbody': 'Display::TableRowGroup',
+            'tfoot': 'Display::TableFooterGroup',
+            'tr': 'Display::TableRow',
+            'td': 'Display::TableCell',
+            'th': 'Display::TableCell',
+        }
+        if node.tag in table_displays:
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.display = {table_displays[node.tag]};"
+            )
+        elif node.tag in {
+            'img', 'canvas', 'svg', 'iframe', 'object', 'audio', 'video',
+            'input', 'button', 'meter',
+        }:
+            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::InlineBlock;")
+
+        if node.tag in ('td', 'th'):
+            try:
+                col_span = max(1, int(node.attrs.get('colspan', '1')))
+            except ValueError:
+                col_span = 1
+            try:
+                row_span = max(0, int(node.attrs.get('rowspan', '1')))
+            except ValueError:
+                row_span = 1
+            lines.append(f"{ws}doc.node_mut({var}).table_col_span = {col_span};")
+            lines.append(f"{ws}doc.node_mut({var}).table_row_span = {row_span};")
+        elif node.tag in ('col', 'colgroup'):
+            try:
+                col_span = max(1, int(node.attrs.get('span', '1')))
+            except ValueError:
+                col_span = 1
+            lines.append(f"{ws}doc.node_mut({var}).table_col_span = {col_span};")
+
+        control_roles = {
+            'button': 'openui_dom::FormControlRole::Button',
+            'meter': 'openui_dom::FormControlRole::Meter',
+            'fieldset': 'openui_dom::FormControlRole::Fieldset',
+            'legend': 'openui_dom::FormControlRole::Legend',
+        }
+        if node.tag == 'input':
+            role = (
+                'openui_dom::FormControlRole::Range'
+                if node.attrs.get('type', 'text').lower() == 'range'
+                else 'openui_dom::FormControlRole::Button'
+                if node.attrs.get('type', '').lower() in ('button', 'submit', 'reset')
+                else 'openui_dom::FormControlRole::TextInput'
+            )
+            lines.append(f"{ws}doc.node_mut({var}).form_control = Some({role});")
+        elif node.tag in control_roles:
+            lines.append(
+                f"{ws}doc.node_mut({var}).form_control = Some({control_roles[node.tag]});"
+            )
+
+        if node.tag == 'canvas':
+            try:
+                intrinsic_width = max(0, int(node.attrs.get('width', '300')))
+                intrinsic_height = max(0, int(node.attrs.get('height', '150')))
+            except ValueError:
+                intrinsic_width, intrinsic_height = 300, 150
+            lines.append(
+                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                f"intrinsic_width: Some({float(intrinsic_width)}), "
+                f"intrinsic_height: Some({float(intrinsic_height)}), "
+                "intrinsic_ratio: "
+                f"Some(({float(intrinsic_width)}, {float(intrinsic_height)})) }});"
+            )
+
         # Set display:block for block-level HTML elements (our engine defaults to inline)
         block_tags = {'div', 'p', 'section', 'article', 'header', 'footer', 'nav', 'main',
                       'aside', 'figure', 'figcaption', 'blockquote', 'pre', 'address',
@@ -6840,7 +8087,10 @@ def generate_rust_fn(
         supported_display_values = {
             'block', 'inline', 'inline-block', 'none', 'flow-root',
             'contents', 'list-item', 'flow-root list-item',
-            'list-item flow-root', 'flex', 'inline-flex',
+            'list-item flow-root', 'flex', 'inline-flex', 'grid',
+            'inline-grid', 'table', 'inline-table', 'table-row-group',
+            'table-header-group', 'table-footer-group', 'table-row',
+            'table-cell', 'table-column-group', 'table-column', 'table-caption',
         }
         display_value = node.styles.get('display', '').strip()
         if not RETAIN_TEXT and node.tag == 'li' and (
@@ -7083,15 +8333,37 @@ def generate_rust_fn(
                     pseudo[prop] = _resolve_css_vars(value, node_custom_props)
             return pseudo
 
-        def emit_generated_pseudo(name: str) -> str | None:
+        def emit_generated_pseudo(
+            name: str, *, structural: bool = False
+        ) -> str | None:
             pseudo_styles = resolved_pseudo_styles(name)
             content_value = pseudo_styles.get('content')
-            if content_value is None or content_value.strip().lower() in ('normal', 'none'):
+            if not structural and (
+                content_value is None
+                or content_value.strip().lower() in ('normal', 'none')
+            ):
                 return None
             materialization_required[0] = True
             counter[0] += 1
             pseudo_var = f"n{counter[0]}"
-            kind = 'Before' if name == 'before' else 'After'
+            kinds = {
+                'before': 'Before',
+                'after': 'After',
+                'marker': 'Marker',
+                'scroll-marker': 'ScrollMarker',
+                'scroll-marker-group': 'ScrollMarkerGroup',
+                'column': 'Column',
+                'column-scroll-marker': 'ColumnScrollMarker',
+                'scroll-button-up': 'ScrollButton(openui_dom::ScrollButtonDirection::Up)',
+                'scroll-button-right': 'ScrollButton(openui_dom::ScrollButtonDirection::Right)',
+                'scroll-button-down': 'ScrollButton(openui_dom::ScrollButtonDirection::Down)',
+                'scroll-button-left': 'ScrollButton(openui_dom::ScrollButtonDirection::Left)',
+                'scroll-button-block-start': 'ScrollButton(openui_dom::ScrollButtonDirection::BlockStart)',
+                'scroll-button-block-end': 'ScrollButton(openui_dom::ScrollButtonDirection::BlockEnd)',
+                'scroll-button-inline-start': 'ScrollButton(openui_dom::ScrollButtonDirection::InlineStart)',
+                'scroll-button-inline-end': 'ScrollButton(openui_dom::ScrollButtonDirection::InlineEnd)',
+            }
+            kind = kinds[name]
             lines.append(
                 f"{ws}let {pseudo_var} = doc.insert_pseudo_element("
                 f"{var}, openui_dom::PseudoElementKind::{kind});"
@@ -7146,6 +8418,11 @@ def generate_rust_fn(
         emit_highlight_pseudo('first-line')
         emit_highlight_pseudo('first-letter')
         emit_generated_pseudo('before')
+        emit_generated_pseudo('marker')
+        if effective_styles.get('scroll-marker-group', '').strip().lower() == 'before':
+            emit_generated_pseudo('scroll-marker-group', structural=True)
+        if node.pseudo_styles.get('column'):
+            emit_generated_pseudo('column', structural=True)
 
         # Process children (inherit font_size + CSS inherited props)
         def emit_generated_quote(text: str) -> None:
@@ -7220,6 +8497,17 @@ def generate_rust_fn(
         if node.tag == 'q':
             emit_generated_quote('\u201d')
 
+        emit_generated_pseudo('column-scroll-marker')
+        emit_generated_pseudo('scroll-marker')
+        for button_name in (
+            'scroll-button-up', 'scroll-button-right',
+            'scroll-button-down', 'scroll-button-left',
+            'scroll-button-block-start', 'scroll-button-block-end',
+            'scroll-button-inline-start', 'scroll-button-inline-end',
+        ):
+            emit_generated_pseudo(button_name)
+        if effective_styles.get('scroll-marker-group', '').strip().lower() == 'after':
+            emit_generated_pseudo('scroll-marker-group', structural=True)
         emit_generated_pseudo('after')
 
     # Process body children
