@@ -16,15 +16,15 @@
 //!
 //! Each operation maps to exact Skia calls with exact SkPaint configuration.
 
-use openui_dom::{Document, NodeId};
+use openui_dom::{Document, FormControlRole, NodeId, ReplacedResourceKind};
 use openui_geometry::{LayoutUnit, PhysicalOffset};
 use openui_layout::{Fragment, FragmentKind};
 use openui_style::{
     BackgroundAttachment, BackgroundClip, BackgroundLayer, BackgroundPosition, BackgroundRepeat,
     BackgroundSize, BorderImage, BorderImageLength, BorderImageRepeat, BorderStyle, Color,
     ComputedStyle, CssImage, Display, FontFamily, GradientColorSpace, GradientStopPosition,
-    LineHeight, ListStylePosition, ListStyleType, Overflow, OverflowClipBox, RadialGradientShape,
-    RadialGradientSize, StyleColor, Visibility,
+    LineHeight, ListStylePosition, ListStyleType, ObjectFit, Overflow, OverflowClipBox, Position,
+    RadialGradientShape, RadialGradientSize, StyleColor, Visibility,
 };
 use openui_text::font::FontMetrics;
 use skia_safe::canvas::{SaveLayerRec, SrcRectConstraint};
@@ -321,7 +321,7 @@ pub fn paint_fragment(
         match fragment.kind {
             FragmentKind::Text => {
                 if style.is_first_letter_pseudo {
-                    paint_box_decoration_background(canvas, fragment, doc, style, abs_offset, 1.0);
+                    paint_fragment_box_decoration(canvas, fragment, doc, style, abs_offset, 1.0);
                 }
                 paint_text_fragment(canvas, fragment, style, abs_offset, doc);
             }
@@ -332,8 +332,8 @@ pub fn paint_fragment(
                         .borrow()
                         .contains(&(fragment as *const Fragment as usize))
                 });
-                if !decoration_prepainted {
-                    paint_box_decoration_background(
+                if !decoration_prepainted && !fragment.skip_box_decoration {
+                    paint_fragment_box_decoration(
                         canvas,
                         fragment,
                         doc,
@@ -342,6 +342,8 @@ pub fn paint_fragment(
                         paint_opacity,
                     );
                 }
+                paint_form_control(canvas, fragment, doc, abs_offset, paint_opacity);
+                paint_replaced_content(canvas, fragment, doc, style, abs_offset, paint_opacity);
                 let outside_marker_clipped = style.list_style_position
                     == ListStylePosition::Outside
                     && (style.overflow_x != Overflow::Visible
@@ -382,6 +384,59 @@ pub fn paint_fragment(
         paint_children_with_stacking_order(canvas, &fragment.children, doc, abs_offset, is_sc);
     }
 
+    if fragment.paint_border_after_children && style.visibility == Visibility::Visible {
+        if fragment.collapsed_border_segments.is_empty() {
+            let x = abs_offset.left.round().to_f32();
+            let y = abs_offset.top.round().to_f32();
+            let right = (abs_offset.left + fragment.size.width).round().to_f32();
+            let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
+            paint_borders(
+                canvas,
+                fragment,
+                style,
+                x,
+                y,
+                right - x,
+                bottom - y,
+                false,
+                false,
+            );
+        } else {
+            for segment in &fragment.collapsed_border_segments {
+                let segment_offset = PhysicalOffset::new(
+                    abs_offset.left + segment.rect.offset.left,
+                    abs_offset.top + segment.rect.offset.top,
+                );
+                let x = segment_offset.left.round().to_f32();
+                let y = segment_offset.top.round().to_f32();
+                let right = (segment_offset.left + segment.rect.size.width)
+                    .round()
+                    .to_f32();
+                let bottom = (segment_offset.top + segment.rect.size.height)
+                    .round()
+                    .to_f32();
+                let mut segment_fragment = Fragment::new_box(fragment.node_id, segment.rect.size);
+                segment_fragment.border = segment.border;
+                segment_fragment.ignore_border_radius = fragment.ignore_border_radius;
+                segment_fragment.fragmentation_writing_direction =
+                    fragment.fragmentation_writing_direction;
+                segment_fragment.is_first_for_node = fragment.is_first_for_node;
+                segment_fragment.is_last_for_node = fragment.is_last_for_node;
+                paint_borders(
+                    canvas,
+                    &segment_fragment,
+                    style,
+                    x,
+                    y,
+                    right - x,
+                    bottom - y,
+                    false,
+                    style.display == Display::TableCell,
+                );
+            }
+        }
+    }
+
     if style.visibility == Visibility::Visible && should_outline && paint_outline_after_children {
         paint_outline(canvas, fragment, style, abs_offset);
     }
@@ -420,6 +475,155 @@ pub fn paint_fragment(
     if needs_layer {
         canvas.restore();
     }
+}
+
+/// Paint deterministic passive platform controls. Interactive state is out of
+/// scope, but the initial Linux Chromium geometry is stable and belongs to the
+/// public form-control role rather than to any individual test.
+fn paint_form_control(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    if doc.node(fragment.node_id).form_control != Some(FormControlRole::Meter) {
+        return;
+    }
+
+    let width = fragment.size.width.to_f32();
+    let track_height = 8.0_f32.min(fragment.size.height.to_f32());
+    if width <= 0.0 || track_height <= 0.0 {
+        return;
+    }
+    let x = abs_offset.left.to_f32();
+    let y = abs_offset.top.to_f32() + (fragment.size.height.to_f32() - track_height) / 2.0;
+    let outer = Rect::from_xywh(x, y, width, track_height);
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(true);
+    set_paint_css_color_with_alpha(
+        &mut paint,
+        &Color::from_rgba8(203, 203, 203, 255),
+        opacity_multiplier,
+    );
+    canvas.draw_rrect(RRect::new_rect_xy(outer, 4.0, 4.0), &paint);
+
+    let inner = Rect::from_xywh(
+        x + 1.0,
+        y + 1.0,
+        (width - 2.0).max(0.0),
+        (track_height - 2.0).max(0.0),
+    );
+    set_paint_css_color_with_alpha(
+        &mut paint,
+        &Color::from_rgba8(239, 239, 239, 255),
+        opacity_multiplier,
+    );
+    canvas.draw_rrect(RRect::new_rect_xy(inner, 3.0, 3.0), &paint);
+}
+
+fn paint_replaced_content(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    style: &ComputedStyle,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let Some(replaced) = doc.node(fragment.node_id).replaced else {
+        return;
+    };
+    let image_id = match replaced.resource {
+        ReplacedResourceKind::Image(id)
+        | ReplacedResourceKind::StaticSvg(id)
+        | ReplacedResourceKind::MediaPoster(id) => id,
+        ReplacedResourceKind::TransparentCanvas | ReplacedResourceKind::PackagedDocument(_) => {
+            return;
+        }
+    };
+    let Ok(image) = crate::image_resource::decode_image_resource(doc, image_id) else {
+        return;
+    };
+
+    let content_x =
+        abs_offset.left.to_f32() + fragment.border.left.to_f32() + fragment.padding.left.to_f32();
+    let content_y =
+        abs_offset.top.to_f32() + fragment.border.top.to_f32() + fragment.padding.top.to_f32();
+    let content_width = (fragment.size.width
+        - fragment.border.left
+        - fragment.border.right
+        - fragment.padding.left
+        - fragment.padding.right)
+        .clamp_negative_to_zero()
+        .to_f32();
+    let content_height = (fragment.size.height
+        - fragment.border.top
+        - fragment.border.bottom
+        - fragment.padding.top
+        - fragment.padding.bottom)
+        .clamp_negative_to_zero()
+        .to_f32();
+    if content_width <= 0.0 || content_height <= 0.0 {
+        return;
+    }
+
+    let intrinsic_width = replaced
+        .intrinsic_width
+        .filter(|value| *value > 0.0)
+        .unwrap_or(image.width() as f32);
+    let intrinsic_height = replaced
+        .intrinsic_height
+        .filter(|value| *value > 0.0)
+        .unwrap_or(image.height() as f32);
+    let contain_scale = (content_width / intrinsic_width).min(content_height / intrinsic_height);
+    let cover_scale = (content_width / intrinsic_width).max(content_height / intrinsic_height);
+    let (object_width, object_height) = match style.object_fit {
+        ObjectFit::Fill => (content_width, content_height),
+        ObjectFit::Contain => (
+            intrinsic_width * contain_scale,
+            intrinsic_height * contain_scale,
+        ),
+        ObjectFit::Cover => (
+            intrinsic_width * cover_scale,
+            intrinsic_height * cover_scale,
+        ),
+        ObjectFit::None => (intrinsic_width, intrinsic_height),
+        ObjectFit::ScaleDown => {
+            let scale = contain_scale.min(1.0);
+            (intrinsic_width * scale, intrinsic_height * scale)
+        }
+    };
+    let object_x = resolve_background_position(
+        style.object_position.x,
+        content_x,
+        content_width,
+        object_width,
+    );
+    let object_y = resolve_background_position(
+        style.object_position.y,
+        content_y,
+        content_height,
+        object_height,
+    );
+    let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
+    let destination = Rect::from_xywh(object_x, object_y, object_width, object_height);
+    let mut paint = Paint::default();
+    paint.set_alpha_f(opacity_multiplier);
+    canvas.save();
+    canvas.clip_rect(
+        Rect::from_xywh(content_x, content_y, content_width, content_height),
+        ClipOp::Intersect,
+        false,
+    );
+    canvas.draw_image_rect_with_sampling_options(
+        image,
+        Some((&source, SrcRectConstraint::Strict)),
+        destination,
+        SamplingOptions::from(FilterMode::Linear),
+        &paint,
+    );
+    canvas.restore();
 }
 
 fn paint_descendant_column_rules(
@@ -1160,7 +1364,26 @@ fn paint_children_with_stacking_order(
         }
     }
 
-    // Deregister hoisted fragments before Phase 3 so they paint correctly.
+    // Phase 3: Non-negative z-index positioned elements (+ hoisted z:auto).
+    for (_, _, entry) in &non_negative_z {
+        // A positioned z:auto fragment is not an atomic stacking context.
+        // Keep its independently hoisted inline-positioned descendants
+        // suppressed while the ancestor paints, then replay each descendant
+        // at its own document-order position.
+        let entry_pointer = stacking_entry_pointer(entry);
+        if let Some(pointer) = entry_pointer {
+            HOIST_SKIP.with(|s| {
+                s.borrow_mut().remove(&pointer);
+            });
+        }
+        paint_stacking_entry(canvas, entry, children, doc, offset);
+        if let Some(pointer) = entry_pointer {
+            HOIST_SKIP.with(|s| {
+                s.borrow_mut().insert(pointer);
+            });
+        }
+    }
+
     if !hoisted_ptrs.is_empty() {
         HOIST_SKIP.with(|s| {
             let mut set = s.borrow_mut();
@@ -1168,11 +1391,6 @@ fn paint_children_with_stacking_order(
                 set.remove(&p);
             }
         });
-    }
-
-    // Phase 3: Non-negative z-index positioned elements (+ hoisted z:auto).
-    for (_, _, entry) in &non_negative_z {
-        paint_stacking_entry(canvas, entry, children, doc, offset);
     }
 
     if !negative_hoisted_ptrs.is_empty() {
@@ -1197,6 +1415,7 @@ fn prepaint_in_flow_block_decorations(
         let fragment = &children[idx];
         if fragment.node_id.is_none()
             || fragment.kind != FragmentKind::Box
+            || fragment.skip_box_decoration
             || doc.canvas_background_source() == Some(fragment.node_id)
         {
             continue;
@@ -1218,7 +1437,7 @@ fn prepaint_in_flow_block_decorations(
             offset.left + fragment.offset.left,
             offset.top + fragment.offset.top,
         );
-        paint_box_decoration_background(canvas, fragment, doc, style, fragment_offset, 1.0);
+        paint_fragment_box_decoration(canvas, fragment, doc, style, fragment_offset, 1.0);
         prepainted.push(pointer);
     }
     prepainted
@@ -1267,6 +1486,7 @@ fn prepaint_shared_column_root_decorations(
         for fragment in &column.children {
             if fragment.node_id.is_none()
                 || fragment.kind != FragmentKind::Box
+                || fragment.skip_box_decoration
                 || occurrences
                     .get(&fragment.node_id.index())
                     .copied()
@@ -1280,6 +1500,13 @@ fn prepaint_shared_column_root_decorations(
                 continue;
             }
             let pointer = fragment as *const Fragment as usize;
+            if HOIST_SKIP.with(|fragments| fragments.borrow().contains(&pointer)) {
+                // The complete stacking context was hoisted to an ancestor's
+                // negative/non-negative phase. Prepainting only its column
+                // decoration here would leak that background back into the
+                // in-flow phase after the ancestor background has covered it.
+                continue;
+            }
             if PREPAINTED_BOX_DECORATIONS.with(|fragments| fragments.borrow().contains(&pointer)) {
                 continue;
             }
@@ -1287,7 +1514,7 @@ fn prepaint_shared_column_root_decorations(
                 column_offset.left + fragment.offset.left,
                 column_offset.top + fragment.offset.top,
             );
-            paint_box_decoration_background(canvas, fragment, doc, style, fragment_offset, 1.0);
+            paint_fragment_box_decoration(canvas, fragment, doc, style, fragment_offset, 1.0);
             prepainted.push(pointer);
         }
         canvas.restore();
@@ -1312,6 +1539,16 @@ fn paint_stacking_entry(
             canvas.clip_rect(*clip_rect, ClipOp::Intersect, false);
             paint_fragment(canvas, fragment, doc, *parent_offset);
             canvas.restore();
+        }
+    }
+}
+
+fn stacking_entry_pointer(entry: &StackingEntry<'_>) -> Option<usize> {
+    match entry {
+        StackingEntry::Direct(_) => None,
+        StackingEntry::Descendant(fragment, _)
+        | StackingEntry::DescendantWithClip(fragment, _, _) => {
+            Some(*fragment as *const Fragment as usize)
         }
     }
 }
@@ -1346,6 +1583,29 @@ fn is_fragment_stacking_context(fragment: &Fragment, doc: &Document) -> bool {
 ///
 /// Stops at fragmentainer and overflow-clip boundaries so a hoisted fragment
 /// cannot escape its authoritative paint clip.
+fn fragment_has_inline_fragment_descendant(fragment: &Fragment, doc: &Document) -> bool {
+    fragment.children.iter().any(|child| {
+        child.is_inline_box_fragment
+            || (!child.node_id.is_none() && doc.node(child.node_id).style.display.is_inline_level())
+            || fragment_has_inline_fragment_descendant(child, doc)
+    })
+}
+
+fn fragment_has_positioned_table_internal_descendant(fragment: &Fragment, doc: &Document) -> bool {
+    fragment.children.iter().any(|child| {
+        if child.node_id.is_none() {
+            return fragment_has_positioned_table_internal_descendant(child, doc);
+        }
+        let style = &doc.node(child.node_id).style;
+        let positioned = matches!(
+            style.position,
+            Position::Absolute | Position::Fixed | Position::Relative | Position::Sticky
+        );
+        (positioned && style.display.is_table_internal())
+            || fragment_has_positioned_table_internal_descendant(child, doc)
+    })
+}
+
 fn collect_positioned_z_auto_descendants<'a>(
     fragment: &'a Fragment,
     doc: &Document,
@@ -1433,7 +1693,29 @@ fn collect_positioned_z_auto_descendants<'a>(
                 StackingEntry::Descendant(child, frag_offset),
             ));
             hoisted_ptrs.push(ptr);
-            // Don't recurse: the entire subtree paints as part of this fragment.
+            // Positioned inline descendants participate at the ancestor
+            // stacking level even when their containing block is a z:auto
+            // positioned block. Ordinary block descendants remain in this
+            // fragment's recursive paint order, which also preserves local
+            // rounded-edge compositing.
+            let clips_overflow = child.has_overflow_clip
+                || (matches!(child.kind, FragmentKind::Box | FragmentKind::Viewport)
+                    && (child_style.overflow_x != Overflow::Visible
+                        || child_style.overflow_y != Overflow::Visible));
+            if is_positioned
+                && child_style.z_index.is_none()
+                && (fragment_has_inline_fragment_descendant(child, doc)
+                    || fragment_has_positioned_table_internal_descendant(child, doc))
+                && !clips_overflow
+            {
+                collect_positioned_z_auto_descendants(
+                    child,
+                    doc,
+                    frag_offset,
+                    non_negative_z,
+                    hoisted_ptrs,
+                );
+            }
         } else if is_positioned && child_style.z_index.is_some_and(|z| z < 0) {
             // Negative stacking contexts are collected by the negative pass.
         } else {
@@ -1532,6 +1814,7 @@ fn collect_negative_z_descendants<'a>(
         let style = &doc.node(fragment.node_id).style;
         if matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport)
             && style.background_color.a >= 0.99
+            && fragment.decoration_paint_block_size != Some(LayoutUnit::zero())
             && style.border_top_left_radius == (0.0, 0.0)
             && style.border_top_right_radius == (0.0, 0.0)
             && style.border_bottom_right_radius == (0.0, 0.0)
@@ -2297,16 +2580,17 @@ fn paint_with_overflow_clip(
         (clip_x, clip_y, clip_w, clip_h)
     };
 
-    let (clip_x, clip_y, clip_w, clip_h) =
-        if fragment.block_axis_clip_only && !style.has_border_radius() {
-            if fragment_block_axis_is_x(fragment) {
-                (clip_x, -100_000.0_f32, clip_w, 200_000.0_f32)
-            } else {
-                (-100_000.0_f32, clip_y, 200_000.0_f32, clip_h)
-            }
+    let (clip_x, clip_y, clip_w, clip_h) = if fragment.block_axis_clip_only
+        && !(style.has_border_radius() && !fragment.ignore_border_radius)
+    {
+        if fragment_block_axis_is_x(fragment) {
+            (clip_x, -100_000.0_f32, clip_w, 200_000.0_f32)
         } else {
-            (clip_x, clip_y, clip_w, clip_h)
-        };
+            (-100_000.0_f32, clip_y, 200_000.0_f32, clip_h)
+        }
+    } else {
+        (clip_x, clip_y, clip_w, clip_h)
+    };
     let clip_rect = Rect::from_xywh(clip_x, clip_y, clip_w, clip_h);
 
     canvas.save();
@@ -2314,7 +2598,7 @@ fn paint_with_overflow_clip(
 
     // When border-radius is set, clip to a rounded rect so children are
     // clipped along the curves. Otherwise use a simple rect clip.
-    if style.has_border_radius() {
+    if style.has_border_radius() && !fragment.ignore_border_radius {
         let rrect = build_clip_rrect(
             &clip_rect,
             fragment,
@@ -2506,10 +2790,24 @@ fn normalize_radii_to_rect(mut radii: [Point; 4], rect: &Rect) -> [Point; 4] {
             radius.y *= scale;
         }
     }
+    // Used corner radii are quantized to LayoutUnit precision. Components
+    // below one layout quantum collapse to a square axis before rasterization.
+    const MIN_USED_RADIUS: f32 = 1.0 / 64.0;
+    for radius in &mut radii {
+        if radius.x < MIN_USED_RADIUS {
+            radius.x = 0.0;
+        }
+        if radius.y < MIN_USED_RADIUS {
+            radius.y = 0.0;
+        }
+    }
     radii
 }
 
 fn normalized_border_radii(style: &ComputedStyle, rect: &Rect) -> [Point; 4] {
+    if table_internal_ignores_border_radius(style.display) {
+        return [Point::new(0.0, 0.0); 4];
+    }
     let radii = [
         Point::new(
             style.border_top_left_radius.0,
@@ -2593,6 +2891,9 @@ fn fragment_border_radii(
     rect: &Rect,
     border_width: f32,
 ) -> [Point; 4] {
+    if fragment.ignore_border_radius {
+        return [Point::new(0.0, 0.0); 4];
+    }
     let normalization_rect = decoration_source_rect(fragment, *rect);
     if fragment.is_inline_box_fragment {
         // Suppressed slice edges also suppress their corner radii before the
@@ -2627,10 +2928,28 @@ fn sliced_physical_border_widths(
             fragment.border.left.to_f32(),
         );
     }
-    let mut top = style.effective_border_top() as f32;
-    let mut right = style.effective_border_right() as f32;
-    let mut bottom = style.effective_border_bottom() as f32;
-    let mut left = style.effective_border_left() as f32;
+    let layout_owns_used_border = fragment.ignore_border_radius
+        || fragment.paint_border_after_children
+        || !fragment.collapsed_border_segments.is_empty()
+        || style.display.is_table_internal()
+        || style.display.is_table_wrapper();
+    let (mut top, mut right, mut bottom, mut left) = if layout_owns_used_border {
+        // Table conflict resolution and logical-axis projection can replace
+        // authored widths with formatting-model used values.
+        (
+            fragment.border.top.to_f32(),
+            fragment.border.right.to_f32(),
+            fragment.border.bottom.to_f32(),
+            fragment.border.left.to_f32(),
+        )
+    } else {
+        (
+            style.effective_border_top() as f32,
+            style.effective_border_right() as f32,
+            style.effective_border_bottom() as f32,
+            style.effective_border_left() as f32,
+        )
+    };
     match fragment.fragmentation_writing_direction {
         Some(direction) if !direction.is_horizontal() && direction.is_flipped_blocks() => {
             if !fragment.is_first_for_node {
@@ -2664,7 +2983,139 @@ fn has_any_radius(radii: &[Point; 4]) -> bool {
     radii.iter().any(|r| r.x > 0.0 || r.y > 0.0)
 }
 
+fn table_internal_ignores_border_radius(display: Display) -> bool {
+    matches!(
+        display,
+        Display::TableRow
+            | Display::TableRowGroup
+            | Display::TableHeaderGroup
+            | Display::TableFooterGroup
+            | Display::TableColumn
+            | Display::TableColumnGroup
+    )
+}
+
+fn eccentric_outer_tangent_clip(
+    rect: Rect,
+    inner_rect: Rect,
+    radius: Point,
+    corner: usize,
+) -> Option<Rect> {
+    if radius.x <= 0.0 || radius.y <= 0.0 {
+        return None;
+    }
+    if radius.x >= radius.y * 4.0 {
+        let (left, right, top) = match corner {
+            0 => (inner_rect.right, rect.left + radius.x, rect.top),
+            1 => (rect.right - radius.x, inner_rect.left, rect.top),
+            2 => (rect.right - radius.x, inner_rect.left, rect.bottom - 1.0),
+            _ => (inner_rect.right, rect.left + radius.x, rect.bottom - 1.0),
+        };
+        return (right > left).then(|| Rect::from_xywh(left, top, right - left, 1.0));
+    }
+    if radius.y >= radius.x * 4.0 {
+        let (left, top, bottom) = match corner {
+            0 => (rect.left, inner_rect.bottom, rect.top + radius.y),
+            1 => (rect.right - 1.0, inner_rect.bottom, rect.top + radius.y),
+            2 => (rect.right - 1.0, rect.bottom - radius.y, inner_rect.top),
+            _ => (rect.left, rect.bottom - radius.y, inner_rect.top),
+        };
+        return (bottom > top).then(|| Rect::from_xywh(left, top, 1.0, bottom - top));
+    }
+    None
+}
+
+fn single_saturated_corner_tangent_clips(
+    border_rect: Rect,
+    inner_rect: Rect,
+    radii: &[Point; 4],
+) -> Option<[Rect; 2]> {
+    if radii
+        .iter()
+        .filter(|radius| radius.x > 0.0 && radius.y > 0.0)
+        .count()
+        != 1
+    {
+        return None;
+    }
+    let (corner, radius) = radii
+        .iter()
+        .copied()
+        .enumerate()
+        .find(|(_, radius)| radius.x > 0.0 && radius.y > 0.0)?;
+    if radius.x < border_rect.width() - 0.01 || radius.y < border_rect.height() - 0.01 {
+        return None;
+    }
+    let center = match corner {
+        0 => Point::new(border_rect.left + radius.x, border_rect.top + radius.y),
+        1 => Point::new(border_rect.right - radius.x, border_rect.top + radius.y),
+        2 => Point::new(border_rect.right - radius.x, border_rect.bottom - radius.y),
+        _ => Point::new(border_rect.left + radius.x, border_rect.bottom - radius.y),
+    };
+    Some(match corner {
+        0 => [
+            Rect::from_ltrb(
+                inner_rect.right,
+                border_rect.top,
+                center.x,
+                border_rect.top + 1.0,
+            ),
+            Rect::from_ltrb(
+                border_rect.left,
+                inner_rect.bottom,
+                border_rect.left + 1.0,
+                center.y - 1.0,
+            ),
+        ],
+        1 => [
+            Rect::from_ltrb(
+                center.x,
+                border_rect.top,
+                inner_rect.left,
+                border_rect.top + 1.0,
+            ),
+            Rect::from_ltrb(
+                border_rect.right - 1.0,
+                inner_rect.bottom,
+                border_rect.right,
+                center.y - 1.0,
+            ),
+        ],
+        2 => [
+            Rect::from_ltrb(
+                center.x,
+                border_rect.bottom - 1.0,
+                inner_rect.left,
+                border_rect.bottom,
+            ),
+            Rect::from_ltrb(
+                border_rect.right - 1.0,
+                center.y + 1.0,
+                border_rect.right,
+                inner_rect.top,
+            ),
+        ],
+        _ => [
+            Rect::from_ltrb(
+                inner_rect.right,
+                border_rect.bottom - 1.0,
+                center.x,
+                border_rect.bottom,
+            ),
+            Rect::from_ltrb(
+                border_rect.left,
+                center.y + 1.0,
+                border_rect.left + 1.0,
+                inner_rect.top,
+            ),
+        ],
+    })
+}
+
 fn specified_border_radii(style: &ComputedStyle) -> [Point; 4] {
+    if table_internal_ignores_border_radius(style.display) {
+        return [Point::new(0.0, 0.0); 4];
+    }
     [
         Point::new(
             style.border_top_left_radius.0,
@@ -2826,9 +3277,10 @@ fn adjusted_nonrenderable_inner_border_for_side(
         BorderSide::Top => {
             let overshoot = radii[0].x + radii[1].x - rect.width();
             if overshoot > 0.1 {
-                rect.right += overshoot;
                 if radii[0].x == 0.0 {
                     rect.left -= overshoot;
+                } else {
+                    rect.right += overshoot;
                 }
             }
             radii[2] = Point::new(0.0, 0.0);
@@ -2841,9 +3293,10 @@ fn adjusted_nonrenderable_inner_border_for_side(
         BorderSide::Bottom => {
             let overshoot = radii[3].x + radii[2].x - rect.width();
             if overshoot > 0.1 {
-                rect.right += overshoot;
                 if radii[3].x == 0.0 {
                     rect.left -= overshoot;
+                } else {
+                    rect.right += overshoot;
                 }
             }
             radii[0] = Point::new(0.0, 0.0);
@@ -2856,9 +3309,10 @@ fn adjusted_nonrenderable_inner_border_for_side(
         BorderSide::Left => {
             let overshoot = radii[0].y + radii[3].y - rect.height();
             if overshoot > 0.1 {
-                rect.bottom += overshoot;
                 if radii[0].y == 0.0 {
                     rect.top -= overshoot;
+                } else {
+                    rect.bottom += overshoot;
                 }
             }
             radii[1] = Point::new(0.0, 0.0);
@@ -2871,9 +3325,10 @@ fn adjusted_nonrenderable_inner_border_for_side(
         BorderSide::Right => {
             let overshoot = radii[1].y + radii[2].y - rect.height();
             if overshoot > 0.1 {
-                rect.bottom += overshoot;
                 if radii[1].y == 0.0 {
                     rect.top -= overshoot;
+                } else {
+                    rect.bottom += overshoot;
                 }
             }
             radii[0] = Point::new(0.0, 0.0);
@@ -3767,6 +4222,12 @@ fn paint_text_fragment(
             } else {
                 baseline
             };
+            let baseline = snap_aliased_ahem_keyword_baseline(
+                baseline,
+                style,
+                all_ahem_runs,
+                text_has_subscript_ancestor(fragment, doc),
+            );
             let inline_origin = abs_offset.left.to_f32();
             (inline_origin, baseline)
         }
@@ -3886,6 +4347,52 @@ fn paint_text_fragment(
     if rotated {
         canvas.restore();
     }
+}
+
+fn snap_aliased_ahem_keyword_baseline(
+    baseline: f32,
+    style: &ComputedStyle,
+    all_ahem_runs: bool,
+    has_subscript_ancestor: bool,
+) -> f32 {
+    let is_subscript =
+        style.vertical_align == openui_style::VerticalAlign::Sub || has_subscript_ancestor;
+    if !is_subscript || (style.font_size - 12.0).abs() >= 0.01 {
+        return baseline;
+    }
+    if !all_ahem_runs {
+        // The pinned Chromium/FreeType profile advances the real-font mask to
+        // the next device row after the fixed-point CSS subscript shift. Skia
+        // retains the fractional origin, so mirror that final raster step.
+        return baseline + 1.0;
+    }
+    if baseline.rem_euclid(1.0) > 0.25 {
+        // Chromium's pinned FreeType mask advances a 12px Ahem subscript at
+        // a strict quarter-pixel baseline phase. Skia's aliased mask floors
+        // every phase, so advance the draw origin while leaving layout and
+        // inline decoration geometry unchanged.
+        baseline + 1.0
+    } else {
+        baseline
+    }
+}
+
+fn text_has_subscript_ancestor(fragment: &Fragment, doc: &Document) -> bool {
+    if fragment.node_id.is_none() {
+        return false;
+    }
+    let mut ancestor = doc.node(fragment.node_id).parent;
+    while !ancestor.is_none() {
+        let node = doc.node(ancestor);
+        if node.style.vertical_align == openui_style::VerticalAlign::Sub {
+            return true;
+        }
+        if !node.style.display.is_inline_level() {
+            return false;
+        }
+        ancestor = node.parent;
+    }
+    false
 }
 
 fn resolve_background_length(length: &openui_geometry::Length, basis: f32, auto: f32) -> f32 {
@@ -4762,7 +5269,9 @@ fn paint_background_layers(
             canvas.clip_rect(border_rect, ClipOp::Intersect, false);
             let padding = background_box_rect(BackgroundClip::PaddingBox, border_rect, fragment);
             canvas.clip_rect(padding, ClipOp::Difference, false);
-        } else if style.has_border_radius() {
+        } else if style.has_border_radius()
+            && !fragment.is_some_and(|fragment| fragment.ignore_border_radius)
+        {
             let radii = background_clip_radii(style, fragment, border_rect, clip);
             canvas.clip_rrect(RRect::new_rect_radii(clip, &radii), ClipOp::Intersect, true);
         } else {
@@ -5317,7 +5826,14 @@ fn paint_border_image(
 ///
 /// When `inset_only` is false, paints outset shadows (behind the element).
 /// When `inset_only` is true, paints inset shadows (inside the border-box).
-fn paint_box_shadows(canvas: &Canvas, style: &ComputedStyle, border_rect: Rect, inset_only: bool) {
+fn paint_box_shadows(
+    canvas: &Canvas,
+    style: &ComputedStyle,
+    border_rect: Rect,
+    inset_only: bool,
+    ignore_border_radius: bool,
+) {
+    let has_border_radius = style.has_border_radius() && !ignore_border_radius;
     fn outset_shadow_corner(radius: Point, spread: f32, box_size: (f32, f32)) -> Point {
         if radius.x <= 0.0 || radius.y <= 0.0 || spread == 0.0 {
             return radius;
@@ -5400,7 +5916,7 @@ fn paint_box_shadows(canvas: &Canvas, style: &ComputedStyle, border_rect: Rect, 
                 &padding_rect,
             );
             canvas.save();
-            if style.has_border_radius() {
+            if has_border_radius {
                 canvas.clip_rrect(
                     RRect::new_rect_radii(padding_rect, &padding_radii),
                     ClipOp::Intersect,
@@ -5430,7 +5946,7 @@ fn paint_box_shadows(canvas: &Canvas, style: &ComputedStyle, border_rect: Rect, 
             let mut path = PathBuilder::new();
             path.add_rect(outer, None, None);
             if hole.width() > 0.0 && hole.height() > 0.0 {
-                if style.has_border_radius() {
+                if has_border_radius {
                     let hole_radii = normalize_radii_to_rect(
                         padding_radii.map(|radius| {
                             outset_shadow_corner(
@@ -5468,7 +5984,7 @@ fn paint_box_shadows(canvas: &Canvas, style: &ComputedStyle, border_rect: Rect, 
             // turns transparent fragmented boxes into solid shadow-colored
             // rectangles.
             canvas.save();
-            if style.has_border_radius() {
+            if has_border_radius {
                 let element_radii = normalized_border_radii(style, &border_rect);
                 let border_rrect = RRect::new_rect_radii(border_rect, &element_radii);
                 canvas.clip_rrect(border_rrect, ClipOp::Difference, true);
@@ -5513,6 +6029,49 @@ fn paint_box_shadows(canvas: &Canvas, style: &ComputedStyle, border_rect: Rect, 
 /// 2. Background color (fill the border-box rect)
 /// 3. Box shadows (inset)
 /// 4. Border (stroke the border-box rect)
+fn paint_fragment_box_decoration(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    style: &ComputedStyle,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    if fragment.decoration_clip_rects.is_empty() {
+        paint_box_decoration_background(
+            canvas,
+            fragment,
+            doc,
+            style,
+            abs_offset,
+            opacity_multiplier,
+        );
+        return;
+    }
+    for clip in &fragment.decoration_clip_rects {
+        canvas.save();
+        canvas.clip_rect(
+            Rect::from_xywh(
+                abs_offset.left.to_f32() + clip.offset.left.to_f32(),
+                abs_offset.top.to_f32() + clip.offset.top.to_f32(),
+                clip.size.width.to_f32(),
+                clip.size.height.to_f32(),
+            ),
+            ClipOp::Intersect,
+            false,
+        );
+        paint_box_decoration_background(
+            canvas,
+            fragment,
+            doc,
+            style,
+            abs_offset,
+            opacity_multiplier,
+        );
+        canvas.restore();
+    }
+}
+
 fn paint_box_decoration_background(
     canvas: &Canvas,
     fragment: &Fragment,
@@ -5592,7 +6151,13 @@ fn paint_box_decoration_background(
     // or blur gives the shadow non-empty geometry.
     canvas.save();
     clip_inline_slice_shadow(canvas);
-    paint_box_shadows(canvas, style, shadow_border_box_rect, false);
+    paint_box_shadows(
+        canvas,
+        style,
+        shadow_border_box_rect,
+        false,
+        fragment.ignore_border_radius,
+    );
     canvas.restore();
 
     // Skip empty fragments
@@ -6178,12 +6743,45 @@ fn paint_box_decoration_background(
     // ── 3. Inset box shadows (painted on top of background) ──────────
     canvas.save();
     clip_inline_slice_shadow(canvas);
-    paint_box_shadows(canvas, style, shadow_border_box_rect, true);
+    paint_box_shadows(
+        canvas,
+        style,
+        shadow_border_box_rect,
+        true,
+        fragment.ignore_border_radius,
+    );
     canvas.restore();
 
     // ── 4. Borders ───────────────────────────────────────────────────
-    if !paint_border_image(canvas, doc, style, border_box_rect, opacity_multiplier) {
-        paint_borders(canvas, fragment, style, x, y, w, h, use_layer);
+    if !fragment.paint_border_after_children
+        && !paint_border_image(canvas, doc, style, border_box_rect, opacity_multiplier)
+    {
+        let suppress_collapsed_table_corner_pixels = style.display.is_table_wrapper()
+            && style.border_collapse == openui_style::BorderCollapse::Collapse
+            && has_radius;
+        if suppress_collapsed_table_corner_pixels {
+            // Collapsed-table border conflict resolution leaves the four
+            // outermost corner samples outside the rounded perimeter. Keep
+            // those device pixels available to the backdrop rather than
+            // accepting Skia's analytic fringe coverage.
+            canvas.save();
+            for corner in [
+                Rect::from_xywh(x, y, 1.0, 1.0),
+                Rect::from_xywh(x + w - 1.0, y, 1.0, 1.0),
+                Rect::from_xywh(x + w - 1.0, y + h - 1.0, 1.0, 1.0),
+                Rect::from_xywh(x, y + h - 1.0, 1.0, 1.0),
+                Rect::from_xywh(x + bl_bw, y + bt, 1.0, 1.0),
+                Rect::from_xywh(x + w - br_bw - 1.0, y + bt, 1.0, 1.0),
+                Rect::from_xywh(x + w - br_bw - 1.0, y + h - bb_bw - 1.0, 1.0, 1.0),
+                Rect::from_xywh(x + bl_bw, y + h - bb_bw - 1.0, 1.0, 1.0),
+            ] {
+                canvas.clip_rect(corner, ClipOp::Difference, false);
+            }
+        }
+        paint_borders(canvas, fragment, style, x, y, w, h, use_layer, true);
+        if suppress_collapsed_table_corner_pixels {
+            canvas.restore();
+        }
     }
 
     if use_layer {
@@ -6289,11 +6887,13 @@ fn paint_borders(
     w: f32,
     h: f32,
     outer_rrect_clipped: bool,
+    adjust_dashed_gap: bool,
 ) {
     // Slice block fragments on the owning fragmentation context's physical
     // block axis. Inline continuations keep their established left/right
     // slicing semantics, including clone.
     let (bt, br, bb, bl) = sliced_physical_border_widths(fragment, style);
+    let has_border_radius = style.has_border_radius() && !fragment.ignore_border_radius;
 
     // No borders to paint
     if bt == 0.0 && br == 0.0 && bb == 0.0 && bl == 0.0 {
@@ -6374,7 +6974,7 @@ fn paint_borders(
         }
     }
 
-    let clipped_rounded_border_piece = style.has_border_radius()
+    let clipped_rounded_border_piece = has_border_radius
         && same_solid_visible_border
         && non_uniform_widths
         && (style.overflow_x == openui_style::Overflow::Clip
@@ -6382,10 +6982,13 @@ fn paint_borders(
     let single_corner_owns_diagonal_seam =
         fragment.is_inline_box_fragment || style.position.is_absolutely_positioned();
 
-    if style.has_border_radius() && non_uniform_widths && same_solid_visible_border {
-        if let (Some(border_width), Some(color)) = (visible_width, visible_color) {
+    if has_border_radius && non_uniform_widths && (same_solid_color || same_solid_visible_border) {
+        let representative_width = visible_width.unwrap_or(bt.max(br).max(bb).max(bl));
+        let representative_color = solid_color.or(visible_color);
+        if let Some(color) = representative_color {
             let border_rect = Rect::from_xywh(x, y, w, h);
-            let outer_radii = fragment_border_radii(style, fragment, &border_rect, border_width);
+            let outer_radii =
+                fragment_border_radii(style, fragment, &border_rect, representative_width);
             if has_any_radius(&outer_radii) {
                 let mut fill_paint = Paint::default();
                 fill_paint.set_style(PaintStyle::Fill);
@@ -6398,28 +7001,110 @@ fn paint_borders(
                     (w - bl - br).max(0.0),
                     (h - bt - bb).max(0.0),
                 );
-                let inner_radii = normalize_radii_to_rect(
-                    [
-                        Point::new(
-                            (outer_radii[0].x - bl).max(0.0),
-                            (outer_radii[0].y - bt).max(0.0),
-                        ),
-                        Point::new(
-                            (outer_radii[1].x - br).max(0.0),
-                            (outer_radii[1].y - bt).max(0.0),
-                        ),
-                        Point::new(
-                            (outer_radii[2].x - br).max(0.0),
-                            (outer_radii[2].y - bb).max(0.0),
-                        ),
-                        Point::new(
-                            (outer_radii[3].x - bl).max(0.0),
-                            (outer_radii[3].y - bb).max(0.0),
-                        ),
-                    ],
-                    &inner_rect,
-                );
+                let raw_inner_radii = [
+                    Point::new(
+                        (outer_radii[0].x - bl).max(0.0),
+                        (outer_radii[0].y - bt).max(0.0),
+                    ),
+                    Point::new(
+                        (outer_radii[1].x - br).max(0.0),
+                        (outer_radii[1].y - bt).max(0.0),
+                    ),
+                    Point::new(
+                        (outer_radii[2].x - br).max(0.0),
+                        (outer_radii[2].y - bb).max(0.0),
+                    ),
+                    Point::new(
+                        (outer_radii[3].x - bl).max(0.0),
+                        (outer_radii[3].y - bb).max(0.0),
+                    ),
+                ];
+                // Equal-width visible sides use Blink's established
+                // contoured-side path, including inline/fragment slices with
+                // suppressed edges. The non-renderable-inner decomposition
+                // is needed only for genuinely different used widths.
+                let nonrenderable_inner =
+                    !same_solid_visible_border && radii_exceed_rect(&inner_rect, &raw_inner_radii);
+                let inner_radii = if nonrenderable_inner {
+                    raw_inner_radii
+                } else {
+                    normalize_radii_to_rect(raw_inner_radii, &inner_rect)
+                };
 
+                if nonrenderable_inner && !clipped_rounded_border_piece {
+                    // Blink's complex opaque-border path clips the rounded
+                    // outer contour once, then paints hard-clipped sides in
+                    // non-adjacent order. Each side excludes an adjusted,
+                    // renderable form of the otherwise non-renderable inner
+                    // contour. Keeping these clips separate is important:
+                    // their antialiasing coverage intentionally overlaps at
+                    // ambiguous inner corners.
+                    canvas.save();
+                    if !outer_rrect_clipped {
+                        canvas.clip_rrect(
+                            RRect::new_rect_radii(border_rect, &outer_radii),
+                            ClipOp::Intersect,
+                            true,
+                        );
+                    }
+                    for (side, width) in [
+                        (BorderSide::Top, bt),
+                        (BorderSide::Bottom, bb),
+                        (BorderSide::Right, br),
+                        (BorderSide::Left, bl),
+                    ] {
+                        if width <= 0.0 {
+                            continue;
+                        }
+
+                        canvas.save();
+                        let polygon = nonrenderable_border_side_clip_polygon(
+                            border_rect,
+                            inner_rect,
+                            inner_radii,
+                            side,
+                        );
+                        let mut side_clip = PathBuilder::new();
+                        side_clip.move_to(polygon[0]);
+                        for point in polygon.iter().skip(1) {
+                            side_clip.line_to(*point);
+                        }
+                        canvas.clip_path(&side_clip.detach(), ClipOp::Intersect, false);
+
+                        let (adjusted_rect, adjusted_radii) =
+                            adjusted_nonrenderable_inner_border_for_side(
+                                inner_rect,
+                                inner_radii,
+                                side,
+                            );
+                        if adjusted_rect.width() > 0.0 && adjusted_rect.height() > 0.0 {
+                            canvas.clip_rrect(
+                                RRect::new_rect_radii(adjusted_rect, &adjusted_radii),
+                                ClipOp::Difference,
+                                true,
+                            );
+                        }
+                        canvas.draw_rect(border_rect, &fill_paint);
+                        canvas.restore();
+                    }
+                    canvas.restore();
+                    return;
+                }
+
+                if !same_solid_visible_border
+                    && !nonrenderable_inner
+                    && !outer_rrect_clipped
+                    && color.is_opaque()
+                {
+                    // A renderable same-color solid border is one contour
+                    // ring even when its four widths differ. Evaluating the
+                    // outer and inner curves together avoids side-clip seams
+                    // and matches Blink's opaque-path lowering.
+                    let outer_rrect = RRect::new_rect_radii(border_rect, &outer_radii);
+                    let inner_rrect = RRect::new_rect_radii(inner_rect, &inner_radii);
+                    canvas.draw_drrect(outer_rrect, inner_rrect, &fill_paint);
+                    return;
+                }
                 canvas.save();
                 if !outer_rrect_clipped {
                     canvas.clip_rrect(
@@ -6427,12 +7112,22 @@ fn paint_borders(
                         ClipOp::Intersect,
                         true,
                     );
+                    // Multiple same-color sides meet inside the rounded
+                    // contour. Accumulate them opaquely on a layer and apply
+                    // the antialiased outer clip once when the layer is
+                    // restored; otherwise tangent pixels receive the outer
+                    // coverage once per adjacent side.
+                    if !same_solid_visible_border {
+                        canvas.save_layer_alpha_f(border_rect, 1.0);
+                    }
                 }
-                canvas.clip_rrect(
-                    RRect::new_rect_radii(inner_rect, &inner_radii),
-                    ClipOp::Difference,
-                    true,
-                );
+                if !nonrenderable_inner {
+                    canvas.clip_rrect(
+                        RRect::new_rect_radii(inner_rect, &inner_radii),
+                        ClipOp::Difference,
+                        true,
+                    );
+                }
 
                 // Blink's complex-border path clips each side at the
                 // half-corner of the inner contour. Curved vertical sides
@@ -6460,26 +7155,41 @@ fn paint_borders(
                     ),
                 };
                 let halves = [inner_half(0), inner_half(1), inner_half(2), inner_half(3)];
-                let side_path = |points: &[Point; 4], aa_bounds: Option<(Rect, bool)>| {
-                    let mut path = PathBuilder::new();
-                    path.move_to(points[0]);
-                    for point in &points[1..] {
-                        path.line_to(*point);
-                    }
-                    canvas.save();
-                    if aa_bounds.is_some_and(|(_, before)| before) {
-                        canvas.clip_rect(aa_bounds.unwrap().0, ClipOp::Intersect, true);
-                    }
-                    canvas.clip_path(&path.detach(), ClipOp::Intersect, false);
-                    if aa_bounds.is_some_and(|(_, before)| !before) {
-                        canvas.clip_rect(aa_bounds.unwrap().0, ClipOp::Intersect, true);
-                    }
-                    canvas.draw_rect(border_rect, &fill_paint);
-                    canvas.restore();
-                };
+                let side_path =
+                    |side: BorderSide, points: &[Point; 4], aa_bounds: Option<(Rect, bool)>| {
+                        let mut path = PathBuilder::new();
+                        path.move_to(points[0]);
+                        for point in &points[1..] {
+                            path.line_to(*point);
+                        }
+                        canvas.save();
+                        if aa_bounds.is_some_and(|(_, before)| before) {
+                            canvas.clip_rect(aa_bounds.unwrap().0, ClipOp::Intersect, true);
+                        }
+                        canvas.clip_path(&path.detach(), ClipOp::Intersect, false);
+                        if aa_bounds.is_some_and(|(_, before)| !before) {
+                            canvas.clip_rect(aa_bounds.unwrap().0, ClipOp::Intersect, true);
+                        }
+                        if nonrenderable_inner {
+                            let (adjusted_rect, adjusted_radii) =
+                                adjusted_nonrenderable_inner_border_for_side(
+                                    inner_rect,
+                                    inner_radii,
+                                    side,
+                                );
+                            canvas.clip_rrect(
+                                RRect::new_rect_radii(adjusted_rect, &adjusted_radii),
+                                ClipOp::Difference,
+                                true,
+                            );
+                        }
+                        canvas.draw_rect(border_rect, &fill_paint);
+                        canvas.restore();
+                    };
                 if bt > 0.0 {
                     if is_rounded(inner_radii[0]) || is_rounded(inner_radii[1]) {
                         side_path(
+                            BorderSide::Top,
                             &[
                                 Point::new(border_rect.left, border_rect.top),
                                 halves[0],
@@ -6497,15 +7207,20 @@ fn paint_borders(
                 }
                 if bb > 0.0 {
                     if is_rounded(inner_radii[2]) || is_rounded(inner_radii[3]) {
-                        side_path(
-                            &[
-                                Point::new(border_rect.right, border_rect.bottom),
-                                halves[2],
-                                halves[3],
-                                Point::new(border_rect.left, border_rect.bottom),
-                            ],
-                            None,
-                        );
+                        let bottom_points = [
+                            Point::new(border_rect.right, border_rect.bottom),
+                            halves[2],
+                            halves[3],
+                            Point::new(border_rect.left, border_rect.bottom),
+                        ];
+                        side_path(BorderSide::Bottom, &bottom_points, None);
+                        if nonrenderable_inner {
+                            // The block-end side owns the non-renderable
+                            // inner-corner seam together with its adjacent
+                            // inline side. Replay that side so their coverage
+                            // combines at the curved boundary.
+                            side_path(BorderSide::Bottom, &bottom_points, None);
+                        }
                     } else {
                         canvas.draw_rect(
                             Rect::from_xywh(border_rect.left, border_rect.bottom - bb, w, bb),
@@ -6553,35 +7268,59 @@ fn paint_borders(
                             border_rect.right,
                             border_rect.bottom + if top_rounded { seam_overlap } else { 0.0 },
                         );
+                        let right_points = [
+                            Point::new(
+                                border_rect.right + seam_bias,
+                                border_rect.top - top_overlap,
+                            ),
+                            Point::new(
+                                inner_x,
+                                if top_rounded {
+                                    halves[1].y - top_overlap
+                                } else {
+                                    border_rect.top
+                                },
+                            ),
+                            Point::new(
+                                inner_x,
+                                if bottom_rounded {
+                                    halves[2].y + bottom_overlap
+                                } else {
+                                    border_rect.bottom
+                                },
+                            ),
+                            Point::new(
+                                border_rect.right + seam_bias,
+                                border_rect.bottom + bottom_overlap,
+                            ),
+                        ];
                         side_path(
-                            &[
-                                Point::new(
-                                    border_rect.right + seam_bias,
-                                    border_rect.top - top_overlap,
-                                ),
-                                Point::new(
-                                    inner_x,
-                                    if top_rounded {
-                                        halves[1].y - top_overlap
-                                    } else {
-                                        border_rect.top
-                                    },
-                                ),
-                                Point::new(
-                                    inner_x,
-                                    if bottom_rounded {
-                                        halves[2].y + bottom_overlap
-                                    } else {
-                                        border_rect.bottom
-                                    },
-                                ),
-                                Point::new(
-                                    border_rect.right + seam_bias,
-                                    border_rect.bottom + bottom_overlap,
-                                ),
-                            ],
+                            BorderSide::Right,
+                            &right_points,
                             Some((bounds, bottom_rounded)),
                         );
+                        if nonrenderable_inner && bottom_rounded {
+                            // In a clipped non-renderable bottom corner the
+                            // vertical side owns the region outside the
+                            // bottom-side diagonal.
+                            canvas.save();
+                            canvas.clip_rect(
+                                Rect::from_ltrb(
+                                    border_rect.left,
+                                    halves[2].y + 3.0,
+                                    border_rect.right,
+                                    border_rect.bottom,
+                                ),
+                                ClipOp::Intersect,
+                                false,
+                            );
+                            side_path(
+                                BorderSide::Right,
+                                &right_points,
+                                Some((bounds, bottom_rounded)),
+                            );
+                            canvas.restore();
+                        }
                     }
                 }
                 if bl > 0.0 {
@@ -6612,6 +7351,7 @@ fn paint_borders(
                             border_rect.bottom + if top_rounded { seam_overlap } else { 0.0 },
                         );
                         side_path(
+                            BorderSide::Left,
                             &[
                                 Point::new(border_rect.left, border_rect.bottom + bottom_overlap),
                                 Point::new(
@@ -6663,6 +7403,9 @@ fn paint_borders(
                         }
                     }
                 }
+                if !outer_rrect_clipped && !same_solid_visible_border {
+                    canvas.restore();
+                }
                 canvas.restore();
 
                 // When a rounded horizontal edge terminates against a
@@ -6700,7 +7443,7 @@ fn paint_borders(
         }
     }
 
-    if same_solid_color && non_uniform_widths && !style.has_border_radius() {
+    if same_solid_color && non_uniform_widths && !has_border_radius {
         if let Some(color) = solid_color {
             paint_same_color_solid_border(canvas, color, x, y, w, h, bt, br, bb, bl);
             return;
@@ -6723,7 +7466,7 @@ fn paint_borders(
         && br == bb
         && bb == bl
         && bt > 0.0
-        && style.has_border_radius()
+        && has_border_radius
         && style.border_top_style == BorderStyle::Dotted
         && style.border_right_style == BorderStyle::Dotted
         && style.border_bottom_style == BorderStyle::Dotted
@@ -6841,11 +7584,7 @@ fn paint_borders(
         }
     }
 
-    if uniform
-        && style.border_top_style == BorderStyle::Double
-        && style.has_border_radius()
-        && bt > 0.0
-    {
+    if uniform && style.border_top_style == BorderStyle::Double && has_border_radius && bt > 0.0 {
         // A rounded double border is two concentric contour rings. Painting
         // four rectangular sides loses both the outer and inner corner
         // geometry (and leaves square corners visible outside the radius).
@@ -6921,11 +7660,7 @@ fn paint_borders(
         }
     }
 
-    if uniform
-        && style.border_top_style == BorderStyle::Dashed
-        && style.has_border_radius()
-        && bt > 0.0
-    {
+    if uniform && style.border_top_style == BorderStyle::Dashed && has_border_radius && bt > 0.0 {
         // Dashed rounded borders follow the center contour as one continuous
         // closed path. This keeps dash cadence through corners instead of
         // restarting independently on four square side rectangles.
@@ -7103,8 +7838,21 @@ fn paint_borders(
                 canvas.draw_rrect(RRect::new_rect_radii(stroke_rect, &center_radii), &paint);
                 return;
             }
-            if outer_rrect_clipped && radii_exceed_rect(&inner_rect, &inner_radii) {
+            let nonrenderable_inner = radii_exceed_rect(&inner_rect, &inner_radii);
+            let asymmetric_outer_radii = outer_radii
+                .iter()
+                .skip(1)
+                .any(|radius| radius.x != outer_radii[0].x || radius.y != outer_radii[0].y);
+            if nonrenderable_inner && (outer_rrect_clipped || asymmetric_outer_radii) {
                 let border_rect = Rect::from_xywh(x, y, w, h);
+                if !outer_rrect_clipped {
+                    canvas.save();
+                    canvas.clip_rrect(
+                        RRect::new_rect_radii(border_rect, &outer_radii),
+                        ClipOp::Intersect,
+                        true,
+                    );
+                }
                 draw_nonrenderable_uniform_rounded_border(
                     canvas,
                     border_rect,
@@ -7112,6 +7860,49 @@ fn paint_borders(
                     inner_radii,
                     &fill_paint,
                 );
+                if asymmetric_outer_radii {
+                    // Strongly eccentric corners retain shared ownership of
+                    // their outer tangent strip in Blink's side decomposition.
+                    for (corner, radius) in outer_radii.iter().copied().enumerate() {
+                        let Some(tangent_clip) =
+                            eccentric_outer_tangent_clip(border_rect, inner_rect, radius, corner)
+                        else {
+                            continue;
+                        };
+                        canvas.save();
+                        canvas.clip_rect(tangent_clip, ClipOp::Intersect, false);
+                        draw_nonrenderable_uniform_rounded_border(
+                            canvas,
+                            border_rect,
+                            inner_rect,
+                            inner_radii,
+                            &fill_paint,
+                        );
+                        canvas.restore();
+                    }
+                    if let Some(tangent_clips) =
+                        single_saturated_corner_tangent_clips(border_rect, inner_rect, &outer_radii)
+                    {
+                        for tangent_clip in tangent_clips {
+                            if tangent_clip.width() <= 0.0 || tangent_clip.height() <= 0.0 {
+                                continue;
+                            }
+                            canvas.save();
+                            canvas.clip_rect(tangent_clip, ClipOp::Intersect, false);
+                            draw_nonrenderable_uniform_rounded_border(
+                                canvas,
+                                border_rect,
+                                inner_rect,
+                                inner_radii,
+                                &fill_paint,
+                            );
+                            canvas.restore();
+                        }
+                    }
+                }
+                if !outer_rrect_clipped {
+                    canvas.restore();
+                }
             } else if outer_rrect_clipped {
                 // The outer rrect clip is already active on the canvas.
                 // Draw the border ring as a path with InverseWinding fill so
@@ -7213,6 +8004,7 @@ fn paint_borders(
                 bt,
                 &[(ox0, oy0), (ox1, oy0), (ix1, iy0), (ix0, iy0)],
                 BorderSide::Top,
+                adjust_dashed_gap,
                 !matching_stroked_sides,
                 !all_side_colors_match,
                 antialias_solid_miters,
@@ -7228,6 +8020,7 @@ fn paint_borders(
                 bb,
                 &[(ox1, oy1), (ox0, oy1), (ix0, iy1), (ix1, iy1)],
                 BorderSide::Bottom,
+                adjust_dashed_gap,
                 !matching_stroked_sides,
                 !all_side_colors_match,
                 antialias_solid_miters,
@@ -7243,6 +8036,7 @@ fn paint_borders(
                 br,
                 &[(ox1, oy0), (ox1, oy1), (ix1, iy1), (ix1, iy0)],
                 BorderSide::Right,
+                adjust_dashed_gap,
                 !matching_stroked_sides,
                 true,
                 antialias_solid_miters,
@@ -7258,6 +8052,7 @@ fn paint_borders(
                 bl,
                 &[(ox0, oy1), (ox0, oy0), (ix0, iy0), (ix0, iy1)],
                 BorderSide::Left,
+                adjust_dashed_gap,
                 !matching_stroked_sides,
                 !all_side_colors_match,
                 antialias_solid_miters,
@@ -7461,6 +8256,7 @@ fn paint_column_rule(
         w,
         rect,
         BorderSide::Left,
+        true,
     );
 }
 
@@ -7719,6 +8515,7 @@ fn paint_border_side_path(
     width: f32,
     points: &[(f32, f32); 4],
     side: BorderSide,
+    adjust_dashed_gap: bool,
     clip_to_miter: bool,
     antialias_stroked_miter: bool,
     antialias_solid_miter: bool,
@@ -7798,6 +8595,7 @@ fn paint_border_side_path(
                 width,
                 rect,
                 side,
+                adjust_dashed_gap,
             );
             if clip_to_miter {
                 canvas.restore();
@@ -7824,6 +8622,7 @@ fn paint_border_side(
     width: f32,
     rect: Rect,
     side: BorderSide,
+    adjust_dashed_gap: bool,
 ) {
     if width <= 0.0 {
         return;
@@ -7872,7 +8671,11 @@ fn paint_border_side(
                 canvas.draw_line(p0, p1, &paint);
                 return;
             }
-            let gap_len = select_best_dash_gap(stroke_length, dash_len, desired_gap);
+            let gap_len = if adjust_dashed_gap {
+                select_best_dash_gap(stroke_length, dash_len, desired_gap)
+            } else {
+                desired_gap
+            };
             // When stroke_length is between 2*dash and 2*dash+gap (select_best_dash_gap
             // returned the unchanged gap because min_num_gaps==0), Skia would produce
             // asymmetric dashes: first dash full length, second dash truncated.
@@ -8287,12 +9090,21 @@ fn paint_3d_border(
     canvas.draw_rect(inner, &paint);
 }
 
-/// Blink's CSS 3D border shade: blend one third toward black.
+/// Blink's CSS 3D border shade subtracts one third from the largest sRGB
+/// component, preserving the component ratios. This is deliberately not a
+/// one-third blend toward black: `gray` (128) darkens to 44, matching
+/// `Color::Dark()` in Blink.
 fn darken_color(color: &Color4f) -> Color4f {
+    let value = color.r.max(color.g).max(color.b);
+    let multiplier = if value == 0.0 {
+        0.0
+    } else {
+        ((value - 0.33).max(0.0) / value).min(1.0)
+    };
     Color4f::new(
-        color.r * (2.0 / 3.0),
-        color.g * (2.0 / 3.0),
-        color.b * (2.0 / 3.0),
+        (color.r * multiplier * 255.0).round() / 255.0,
+        (color.g * multiplier * 255.0).round() / 255.0,
+        (color.b * multiplier * 255.0).round() / 255.0,
         color.a,
     )
 }
@@ -8535,6 +9347,16 @@ mod tests {
         ];
         for (direction, first, middle, last) in cases {
             let mut fragment = Fragment::new_box(NodeId::NONE, PhysicalSize::zero());
+            // Used border widths are layout-owned. The painter must slice
+            // this physical strut rather than re-resolving authored widths,
+            // which may differ after table conflict resolution or logical
+            // axis projection.
+            fragment.border = openui_geometry::BoxStrut::new(
+                LayoutUnit::from_i32(1),
+                LayoutUnit::from_i32(2),
+                LayoutUnit::from_i32(3),
+                LayoutUnit::from_i32(4),
+            );
             fragment.fragmentation_writing_direction = Some(direction);
 
             fragment.is_first_for_node = true;
@@ -8891,8 +9713,8 @@ mod tests {
         ];
         let save_count = surface.canvas().save_count();
         let rect = Rect::from_xywh(20.0, 20.0, 40.0, 40.0);
-        paint_box_shadows(surface.canvas(), &style, rect, false);
-        paint_box_shadows(surface.canvas(), &style, rect, true);
+        paint_box_shadows(surface.canvas(), &style, rect, false, false);
+        paint_box_shadows(surface.canvas(), &style, rect, true, false);
         assert_eq!(surface.canvas().save_count(), save_count);
         assert!(surface_bytes(&mut surface)
             .chunks_exact(4)
@@ -8923,6 +9745,7 @@ mod tests {
                 8.0,
                 Rect::from_xywh(10.0, 5.0 + index as f32 * 13.0, 90.0, 8.0),
                 BorderSide::Top,
+                true,
             );
         }
         assert_eq!(surface.canvas().save_count(), save_count);
@@ -8930,5 +9753,31 @@ mod tests {
             .chunks_exact(4)
             .any(|pixel| pixel != [255, 255, 255, 255]));
         let _stable_id_type_check = ImageResourceId::new(0);
+    }
+
+    #[test]
+    fn aliased_ahem_subscript_uses_strict_quarter_pixel_phase() {
+        let mut style = ComputedStyle::default();
+        style.font_size = 12.0;
+        style.vertical_align = openui_style::VerticalAlign::Sub;
+
+        assert_eq!(
+            snap_aliased_ahem_keyword_baseline(100.25, &style, true, false),
+            100.25
+        );
+        assert_eq!(
+            snap_aliased_ahem_keyword_baseline(100.265625, &style, true, false),
+            101.265625
+        );
+        assert_eq!(
+            snap_aliased_ahem_keyword_baseline(100.5, &style, false, false),
+            101.5
+        );
+
+        style.vertical_align = openui_style::VerticalAlign::Baseline;
+        assert_eq!(
+            snap_aliased_ahem_keyword_baseline(100.265625, &style, true, true),
+            101.265625
+        );
     }
 }

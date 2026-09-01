@@ -1055,7 +1055,9 @@ impl ComputedStyle {
             // Tables
             table_layout: TableLayout::Auto,
             border_collapse: BorderCollapse::Separate,
-            border_spacing: (Length::px(2.0), Length::px(2.0)),
+            // CSS Tables initial value. HTML's 2px spacing is a UA rule for
+            // semantic <table> elements, not the computed-style initial.
+            border_spacing: (Length::zero(), Length::zero()),
             caption_side: CaptionSide::Top,
             empty_cells: EmptyCells::Show,
 
@@ -1288,6 +1290,14 @@ impl ComputedStyle {
         style.widows = origin.widows;
         style.text_wrap = origin.text_wrap;
         style
+    }
+
+    /// Initial anonymous-box style with inherited properties copied from its
+    /// parent formatting box. Anonymous table wrappers participate in the
+    /// computed-value inheritance chain even though they have no DOM node on
+    /// which the generated porter can materialize the cascade.
+    pub fn for_anonymous_box(parent: &Self) -> Self {
+        Self::for_pseudo(parent)
     }
 
     // ── Convenience: effective border width (0 if style is none/hidden) ──

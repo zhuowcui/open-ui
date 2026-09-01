@@ -964,7 +964,7 @@ aspect-ratio-intrinsic-size-006,not_portable,,unsupported element: <img>
 aspect-ratio-intrinsic-size-007-ref,not_portable,,unsupported element: <svg>
 aspect-ratio-intrinsic-size-007,not_portable,,unsupported element: <img>
 aspect-ratio-intrinsic-size-009,ported,css_flexbox_aspect_ratio_intrinsic_size_009,
-auto-margins-001-ref,not_portable,,unsupported property: writing-mode
+auto-margins-001-ref,ported,css_flexbox_auto_margins_001_ref,
 auto-margins-001,not_portable,,uses_javascript
 auto-margins-002,not_portable,,unsupported element: <img>
 auto-margins-003,ported,css_flexbox_auto_margins_003,
@@ -1017,7 +1017,7 @@ fieldset-baseline-alignment,not_portable,,unsupported element: <fieldset>
 fit-content-item-002,ported,css_flexbox_fit_content_item_002,
 fit-content-item-003,ported,css_flexbox_fit_content_item_003,
 fit-content-item-004,ported,css_flexbox_fit_content_item_004,
-fixed-table-layout-with-percentage-width-in-flex-item,not_portable,,style_block_unsupported property: table-layout
+fixed-table-layout-with-percentage-width-in-flex-item,ported,css_flexbox_fixed_table_layout_with_percentage_width_in_flex_item,
 fixedpos-video-in-abspos-quirk-crash,not_portable,,unsupported element: <video>
 flex-aspect-ratio-img-column-001,not_portable,,unsupported element: <img>
 flex-aspect-ratio-img-column-002,not_portable,,unsupported element: <img>
@@ -1117,12 +1117,12 @@ flex-shorthand-calc,not_portable,,uses_javascript
 flex-shorthand-flex-basis-middle,not_portable,,uses_javascript
 flex-vertical-align-effect,not_portable,,unsupported element: <input>
 flex-wrap-006,not_portable,,uses_javascript
-flexbox-align-self-baseline-horiz-001-ref,not_portable,,unsupported element: <table>
+flexbox-align-self-baseline-horiz-001-ref,ported,css_flexbox_flexbox_align_self_baseline_horiz_001_ref,
 flexbox-align-self-baseline-horiz-006-ref,ported,css_flexbox_flexbox_align_self_baseline_horiz_006_ref,
 flexbox-align-self-baseline-horiz-006,ported,css_flexbox_flexbox_align_self_baseline_horiz_006,
 flexbox-align-self-baseline-horiz-008-ref,ported,css_flexbox_flexbox_align_self_baseline_horiz_008_ref,
 flexbox-align-self-baseline-horiz-008,ported,css_flexbox_flexbox_align_self_baseline_horiz_008,
-flexbox-align-self-horiz-001-table,not_portable,,unsupported display: table
+flexbox-align-self-horiz-001-table,ported,css_flexbox_flexbox_align_self_horiz_001_table,
 flexbox-align-self-horiz-002-ref,ported,css_flexbox_flexbox_align_self_horiz_002_ref,
 flexbox-align-self-horiz-002,ported,css_flexbox_flexbox_align_self_horiz_002,
 flexbox-align-self-vert-001-ref,not_portable,,"complex_css_selector: and
@@ -1230,7 +1230,7 @@ flexbox-root-node-001a,ported,css_flexbox_flexbox_root_node_001a,
 flexbox-root-node-001b,ported,css_flexbox_flexbox_root_node_001b,
 flexbox-safe-overflow-position-005,ported,css_flexbox_flexbox_safe_overflow_position_005,
 flexbox-safe-overflow-position-006,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-align
-flexbox-table-fixup-001,not_portable,,unsupported element: <td>
+flexbox-table-fixup-001,ported,css_flexbox_flexbox_table_fixup_001,
 flexbox-vert-lr-with-img,not_portable,,unsupported property: writing-mode
 flexbox-whitespace-handling-001-ref,not_portable,,unsupported element: <img>
 flexbox-whitespace-handling-001a,not_portable,,unsupported element: <img>
@@ -1239,7 +1239,7 @@ flexbox-with-pseudo-elements-001-ref,ported,css_flexbox_flexbox_with_pseudo_elem
 flexbox-with-pseudo-elements-001,ported,css_flexbox_flexbox_with_pseudo_elements_001,
 flexbox-with-pseudo-elements-002,ported,css_flexbox_flexbox_with_pseudo_elements_002,
 flexbox-with-pseudo-elements-003-ref,ported,css_flexbox_flexbox_with_pseudo_elements_003_ref,
-flexbox-with-pseudo-elements-003,not_portable,,complex_css_selector: div.withBefore::before
+flexbox-with-pseudo-elements-003,ported,css_flexbox_flexbox_with_pseudo_elements_003,
 flexbox-writing-mode-001,ported,css_flexbox_flexbox_writing_mode_001,
 flexbox-writing-mode-002,ported,css_flexbox_flexbox_writing_mode_002,
 flexbox-writing-mode-003,ported,css_flexbox_flexbox_writing_mode_003,
@@ -1275,7 +1275,7 @@ flexbox_align-items-center-3,ported,css_flexbox_flexbox_align_items_center_3,
 flexbox_align-items-stretch-3,ported,css_flexbox_flexbox_align_items_stretch_3,
 flexbox_first-letter,not_portable,,uses_javascript
 flexbox_first-line,ported,css_flexbox_flexbox_first_line,
-flexbox_flex-formatting-interop-ref,not_portable,,style_block_unsupported property: table-layout
+flexbox_flex-formatting-interop-ref,ported,css_flexbox_flexbox_flex_formatting_interop_ref,
 flexbox_flow-row-wrap-ref,ported,css_flexbox_flexbox_flow_row_wrap_ref,
 flexbox_flow-row-wrap-reverse-ref,ported,css_flexbox_flexbox_flow_row_wrap_reverse_ref,
 flexbox_generated-flex-ref,ported,css_flexbox_flexbox_generated_flex_ref,
@@ -1300,19 +1300,19 @@ flexbox_justifycontent-start-rtl,not_portable,,unsupported display: inline-grid
 flexbox_justifycontent-start,not_portable,,unsupported display: inline-grid
 flexbox_object,not_portable,,unsupported element: <object>
 flexbox_quirks_body,ported,css_flexbox_flexbox_quirks_body,
-flexbox_rowspan-overflow-automatic,not_portable,,style_block_unsupported property: border-spacing
-flexbox_rowspan-overflow,not_portable,,style_block_unsupported property: table-layout
-flexbox_rowspan-ref,not_portable,,style_block_unsupported property: table-layout
-flexbox_rowspan,not_portable,,style_block_unsupported property: table-layout
+flexbox_rowspan-overflow-automatic,ported,css_flexbox_flexbox_rowspan_overflow_automatic,
+flexbox_rowspan-overflow,ported,css_flexbox_flexbox_rowspan_overflow,
+flexbox_rowspan-ref,ported,css_flexbox_flexbox_rowspan_ref,
+flexbox_rowspan,ported,css_flexbox_flexbox_rowspan,
 flexbox_rtl-direction-ref,ported,css_flexbox_flexbox_rtl_direction_ref,
-flexbox_stf-table-caption,not_portable,,unsupported display: table-caption
-flexbox_stf-table-cell,not_portable,,unsupported display: table-cell
-flexbox_stf-table-row-group,not_portable,,unsupported display: table-row-group
-flexbox_stf-table-row,not_portable,,unsupported display: table-row
-flexbox_stf-table-singleline-2,not_portable,,unsupported display: table
-flexbox_stf-table-singleline,not_portable,,unsupported display: table
-flexbox_stf-table,not_portable,,unsupported display: table
-flexbox_table-fixed-layout,not_portable,,style_block_unsupported property: table-layout
+flexbox_stf-table-caption,ported,css_flexbox_flexbox_stf_table_caption,
+flexbox_stf-table-cell,ported,css_flexbox_flexbox_stf_table_cell,
+flexbox_stf-table-row-group,ported,css_flexbox_flexbox_stf_table_row_group,
+flexbox_stf-table-row,ported,css_flexbox_flexbox_stf_table_row,
+flexbox_stf-table-singleline-2,ported,css_flexbox_flexbox_stf_table_singleline_2,
+flexbox_stf-table-singleline,ported,css_flexbox_flexbox_stf_table_singleline,
+flexbox_stf-table,ported,css_flexbox_flexbox_stf_table,
+flexbox_table-fixed-layout,ported,css_flexbox_flexbox_table_fixed_layout,
 flexbox_visibility-collapse-line-wrapping-ref,ported,css_flexbox_flexbox_visibility_collapse_line_wrapping_ref,
 flexbox_visibility-collapse-ref,ported,css_flexbox_flexbox_visibility_collapse_ref,
 flexbox_width-change-and-relayout-children,not_portable,,uses_javascript
@@ -1393,7 +1393,7 @@ inline-flex,not_portable,,uses_javascript
 inline-flexbox-vertical-rl-image-flexitem-crash-print,not_portable,,style_block_unsupported property: writing-mode
 inline-flexbox-wrap-vertically-width-calculation,not_portable,,uses_javascript
 intrinsic-width-orthogonal-writing-mode,not_portable,,uses_javascript
-item-with-table-with-infinite-max-intrinsic-width,not_portable,,unsupported element: <table>
+item-with-table-with-infinite-max-intrinsic-width,ported,css_flexbox_item_with_table_with_infinite_max_intrinsic_width,
 justify-content-006,not_portable,,uses_javascript
 justify-content-007,not_portable,,uses_javascript
 justify-content-rounding,not_portable,,uses_javascript
@@ -1411,7 +1411,7 @@ negative-overflow,not_portable,,uses_javascript
 nested-flex-image-loading-invalidates-intrinsic-sizes,not_portable,,unsupported element: <img>
 nested-orthogonal-flexbox-relayout,not_portable,,uses_javascript
 order_value,not_portable,,uses_javascript
-ortho-table-item-001,not_portable,,unsupported property: writing-mode
+ortho-table-item-001,ported,css_flexbox_ortho_table_item_001,
 orthogonal-flex-item-crash,not_portable,,uses_javascript
 orthogonal-writing-modes-and-intrinsic-sizing,not_portable,,uses_javascript
 overflow-auto-001,not_portable,,uses_javascript
@@ -1493,39 +1493,39 @@ svg-root-as-flex-item-004,not_portable,,unsupported element: <svg>
 svg-root-as-flex-item-005,not_portable,,unsupported element: <svg>
 svg-root-as-flex-item-006,not_portable,,uses_javascript
 synthesize-vrl-baseline,ported,css_flexbox_synthesize_vrl_baseline,
-table-as-flex-item-max-content,not_portable,,unsupported display: table
-table-as-item-auto-min-width,not_portable,,unsupported display: table
+table-as-flex-item-max-content,ported,css_flexbox_table_as_flex_item_max_content,
+table-as-item-auto-min-width,ported,css_flexbox_table_as_item_auto_min_width,
 table-as-item-change-cell,not_portable,,uses_javascript
 table-as-item-cross-size,not_portable,,uses_javascript
-table-as-item-fixed-min-width-2,not_portable,,unsupported display: table
-table-as-item-fixed-min-width-3,not_portable,,unsupported display: table
-table-as-item-fixed-min-width,not_portable,,unsupported display: table
-table-as-item-flex-cross-size,not_portable,,unsupported property: border-spacing
-table-as-item-inflexible-in-column-1,not_portable,,unsupported display: table
-table-as-item-inflexible-in-column-2,not_portable,,unsupported display: table
-table-as-item-inflexible-in-row-1,not_portable,,unsupported display: table
-table-as-item-inflexible-in-row-2,not_portable,,unsupported display: table
-table-as-item-large-intrinsic-size,not_portable,,unsupported property: border-spacing
-table-as-item-min-content-height-1.tentative,not_portable,,unsupported display: table
-table-as-item-min-content-height-2.tentative,not_portable,,unsupported display: table
-table-as-item-min-height-1,not_portable,,unsupported display: table
-table-as-item-narrow-content-2,not_portable,,unsupported display: table
-table-as-item-narrow-content,not_portable,,unsupported display: table
-table-as-item-percent-width-cell-001-ref,not_portable,,unsupported element: <table>
-table-as-item-percent-width-cell-001,not_portable,,unsupported element: <table>
-table-as-item-specified-height,not_portable,,unsupported display: table
-table-as-item-specified-width-vertical,not_portable,,unsupported property: writing-mode
-table-as-item-specified-width,not_portable,,unsupported display: table
-table-as-item-stretch-cross-size-2,not_portable,,unsupported property: border-spacing
-table-as-item-stretch-cross-size-3,not_portable,,unsupported property: border-spacing
-table-as-item-stretch-cross-size-4,not_portable,,unsupported display: table
-table-as-item-stretch-cross-size-5,not_portable,,unsupported display: table
-table-as-item-stretch-cross-size,not_portable,,unsupported property: border-spacing
-table-as-item-wide-content,not_portable,,unsupported display: table
-table-item-flex-percentage-min-width,not_portable,,unsupported display: table
-table-item-flex-percentage-width,not_portable,,unsupported display: table
-table-with-float-paint,not_portable,,unsupported display: table
-table-with-infinite-max-intrinsic-width,not_portable,,unsupported element: <table>
+table-as-item-fixed-min-width-2,ported,css_flexbox_table_as_item_fixed_min_width_2,
+table-as-item-fixed-min-width-3,ported,css_flexbox_table_as_item_fixed_min_width_3,
+table-as-item-fixed-min-width,ported,css_flexbox_table_as_item_fixed_min_width,
+table-as-item-flex-cross-size,ported,css_flexbox_table_as_item_flex_cross_size,
+table-as-item-inflexible-in-column-1,ported,css_flexbox_table_as_item_inflexible_in_column_1,
+table-as-item-inflexible-in-column-2,ported,css_flexbox_table_as_item_inflexible_in_column_2,
+table-as-item-inflexible-in-row-1,ported,css_flexbox_table_as_item_inflexible_in_row_1,
+table-as-item-inflexible-in-row-2,ported,css_flexbox_table_as_item_inflexible_in_row_2,
+table-as-item-large-intrinsic-size,ported,css_flexbox_table_as_item_large_intrinsic_size,
+table-as-item-min-content-height-1.tentative,ported,css_flexbox_table_as_item_min_content_height_1_tentative,
+table-as-item-min-content-height-2.tentative,ported,css_flexbox_table_as_item_min_content_height_2_tentative,
+table-as-item-min-height-1,ported,css_flexbox_table_as_item_min_height_1,
+table-as-item-narrow-content-2,ported,css_flexbox_table_as_item_narrow_content_2,
+table-as-item-narrow-content,ported,css_flexbox_table_as_item_narrow_content,
+table-as-item-percent-width-cell-001-ref,ported,css_flexbox_table_as_item_percent_width_cell_001_ref,
+table-as-item-percent-width-cell-001,ported,css_flexbox_table_as_item_percent_width_cell_001,
+table-as-item-specified-height,ported,css_flexbox_table_as_item_specified_height,
+table-as-item-specified-width-vertical,ported,css_flexbox_table_as_item_specified_width_vertical,
+table-as-item-specified-width,ported,css_flexbox_table_as_item_specified_width,
+table-as-item-stretch-cross-size-2,ported,css_flexbox_table_as_item_stretch_cross_size_2,
+table-as-item-stretch-cross-size-3,ported,css_flexbox_table_as_item_stretch_cross_size_3,
+table-as-item-stretch-cross-size-4,ported,css_flexbox_table_as_item_stretch_cross_size_4,
+table-as-item-stretch-cross-size-5,ported,css_flexbox_table_as_item_stretch_cross_size_5,
+table-as-item-stretch-cross-size,ported,css_flexbox_table_as_item_stretch_cross_size,
+table-as-item-wide-content,ported,css_flexbox_table_as_item_wide_content,
+table-item-flex-percentage-min-width,ported,css_flexbox_table_item_flex_percentage_min_width,
+table-item-flex-percentage-width,ported,css_flexbox_table_item_flex_percentage_width,
+table-with-float-paint,ported,css_flexbox_table_with_float_paint,
+table-with-infinite-max-intrinsic-width,ported,css_flexbox_table_with_infinite_max_intrinsic_width,
 table-with-percent-intrinsic-width,not_portable,,uses_javascript
 text-as-flexitem-size-001,not_portable,,uses_javascript
 total-min-max-violation-zero,not_portable,,uses_javascript

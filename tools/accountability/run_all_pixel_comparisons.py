@@ -18,7 +18,10 @@ import sys
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 RESULTS_DIR = os.path.join(SCRIPT_DIR, "data", "pixel_comparison", "results")
-PIXEL_COMPARE = os.path.join(PROJECT_ROOT, "bindings", "rust", "target", "release", "pixel_compare")
+PIXEL_COMPARE = os.environ.get(
+    "OPENUI_PIXEL_COMPARE",
+    os.path.join(PROJECT_ROOT, "bindings", "rust", "target", "release", "pixel_compare"),
+)
 PIXEL_DIFF = os.path.join(SCRIPT_DIR, "pixel_diff.py")
 # SP14: fontconfig that renders Ahem with zero antialiasing (binary {0,255}
 # coverage, matching OpenUI's rasterizer). It is applied only to IDs in the

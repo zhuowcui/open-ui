@@ -31,13 +31,13 @@ float-nowrap-hyphen-rewind-1-ref2,ported,css2_floats_float_nowrap_hyphen_rewind_
 float-paint-relayout,not_portable,,uses_javascript
 float-root,ported,css2_floats_float_root,
 float-root-ref,ported,css2_floats_float_root_ref,
-float-table-align-left-quirk,not_portable,,unsupported element: <table>
-float-table-align-left-quirk-ref,not_portable,,unsupported element: <table>
+float-table-align-left-quirk,ported,css2_floats_float_table_align_left_quirk,
+float-table-align-left-quirk-ref,ported,css2_floats_float_table_align_left_quirk_ref,
 float-under-flatten-under-preserve-3d,ported,css2_floats_float_under_flatten_under_preserve_3d,
 float-with-absolutely-positioned-child-with-static-inset,ported,css2_floats_float_with_absolutely_positioned_child_with_static_inset,
 float-with-absolutely-positioned-child-with-static-inset-ref,ported,css2_floats_float_with_absolutely_positioned_child_with_static_inset_ref,
-floated-table-wider-than-specified,not_portable,,unsupported display: table
-floats-in-table-caption-001,not_portable,,unsupported element: <table>
+floated-table-wider-than-specified,ported,css2_floats_floated_table_wider_than_specified,
+floats-in-table-caption-001,ported,css2_floats_floats_in_table_caption_001,
 floats-in-table-caption-001-ref,ported,css2_floats_floats_in_table_caption_001_ref,
 floats-line-wrap-shifted-001,ported,css2_floats_floats_line_wrap_shifted_001,
 floats-line-wrap-shifted-001-ref,ported,css2_floats_floats_line_wrap_shifted_001_ref,
@@ -72,36 +72,36 @@ floats-rule7-outside-left-001-ref,ported,css2_floats_floats_rule7_outside_left_0
 floats-rule7-outside-right-001,ported,css2_floats_floats_rule7_outside_right_001,
 floats-rule7-outside-right-001-ref,ported,css2_floats_floats_rule7_outside_right_001_ref,
 floats-saturated-position-crash,not_portable,,uses_javascript
-floats-wrap-bfc-001-left-overflow,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-001-left-overflow,ported,css2_floats_floats_wrap_bfc_001_left_overflow,
 floats-wrap-bfc-001-left-overflow-ref,ported,css2_floats_floats_wrap_bfc_001_left_overflow_ref,
-floats-wrap-bfc-001-left-table,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-001-left-table,ported,css2_floats_floats_wrap_bfc_001_left_table,
 floats-wrap-bfc-001-left-table-ref,ported,css2_floats_floats_wrap_bfc_001_left_table_ref,
-floats-wrap-bfc-001-right-overflow,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-001-right-overflow,ported,css2_floats_floats_wrap_bfc_001_right_overflow,
 floats-wrap-bfc-001-right-overflow-ref,ported,css2_floats_floats_wrap_bfc_001_right_overflow_ref,
-floats-wrap-bfc-001-right-table,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-001-right-table,ported,css2_floats_floats_wrap_bfc_001_right_table,
 floats-wrap-bfc-001-right-table-ref,ported,css2_floats_floats_wrap_bfc_001_right_table_ref,
-floats-wrap-bfc-002-left-overflow,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-002-left-overflow,ported,css2_floats_floats_wrap_bfc_002_left_overflow,
 floats-wrap-bfc-002-left-ref,ported,css2_floats_floats_wrap_bfc_002_left_ref,
-floats-wrap-bfc-002-left-table,not_portable,,style_block_unsupported property: border-spacing
-floats-wrap-bfc-002-right-overflow,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-002-left-table,ported,css2_floats_floats_wrap_bfc_002_left_table,
+floats-wrap-bfc-002-right-overflow,ported,css2_floats_floats_wrap_bfc_002_right_overflow,
 floats-wrap-bfc-002-right-ref,ported,css2_floats_floats_wrap_bfc_002_right_ref,
-floats-wrap-bfc-002-right-table,not_portable,,style_block_unsupported property: border-spacing
-floats-wrap-bfc-003-left-overflow,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-002-right-table,ported,css2_floats_floats_wrap_bfc_002_right_table,
+floats-wrap-bfc-003-left-overflow,ported,css2_floats_floats_wrap_bfc_003_left_overflow,
 floats-wrap-bfc-003-left-overflow-ref,ported,css2_floats_floats_wrap_bfc_003_left_overflow_ref,
-floats-wrap-bfc-003-left-table,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-003-left-table,ported,css2_floats_floats_wrap_bfc_003_left_table,
 floats-wrap-bfc-003-left-table-ref,ported,css2_floats_floats_wrap_bfc_003_left_table_ref,
-floats-wrap-bfc-003-right-overflow,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-003-right-overflow,ported,css2_floats_floats_wrap_bfc_003_right_overflow,
 floats-wrap-bfc-003-right-overflow-ref,ported,css2_floats_floats_wrap_bfc_003_right_overflow_ref,
-floats-wrap-bfc-003-right-table,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-003-right-table,ported,css2_floats_floats_wrap_bfc_003_right_table,
 floats-wrap-bfc-003-right-table-ref,ported,css2_floats_floats_wrap_bfc_003_right_table_ref,
-floats-wrap-bfc-004,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-004,ported,css2_floats_floats_wrap_bfc_004,
 floats-wrap-bfc-004-ref,ported,css2_floats_floats_wrap_bfc_004_ref,
-floats-wrap-bfc-005,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-005,ported,css2_floats_floats_wrap_bfc_005,
 floats-wrap-bfc-005-ref,ported,css2_floats_floats_wrap_bfc_005_ref,
-floats-wrap-bfc-006,not_portable,,style_block_unsupported property: border-spacing
-floats-wrap-bfc-006-ref,not_portable,,style_block_unsupported property: border-spacing
-floats-wrap-bfc-007,not_portable,,style_block_unsupported property: border-spacing
-floats-wrap-bfc-007-ref,not_portable,,style_block_unsupported property: border-spacing
+floats-wrap-bfc-006,ported,css2_floats_floats_wrap_bfc_006,
+floats-wrap-bfc-006-ref,ported,css2_floats_floats_wrap_bfc_006_ref,
+floats-wrap-bfc-007,ported,css2_floats_floats_wrap_bfc_007,
+floats-wrap-bfc-007-ref,ported,css2_floats_floats_wrap_bfc_007_ref,
 floats-wrap-bfc-008,ported,css2_floats_floats_wrap_bfc_008,
 floats-wrap-bfc-outside-001,not_portable,,unsupported element: <textarea>
 floats-wrap-bfc-outside-001-ref,not_portable,,unsupported element: <textarea>
@@ -179,3 +179,4 @@ zero-space-between-floats-003,not_portable,,uses_javascript
 zero-space-between-floats-004,not_portable,,uses_javascript
 zero-width-floats,ported,css2_floats_zero_width_floats,
 zero-width-floats-positioning.tentative,ported,css2_floats_zero_width_floats_positioning_tentative,
+crashtests_firefox-bug-1904428,ported,css2_floats_crashtests_firefox_bug_1904428,

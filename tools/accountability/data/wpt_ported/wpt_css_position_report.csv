@@ -81,8 +81,8 @@ invalidate-opacity-negative-z-index,not_portable,,uses_javascript
 nested-positions-crash,not_portable,,uses_javascript
 position-absolute-abspos-table-dynamic,not_portable,,uses_javascript
 position-absolute-center-002,ported,css_position_position_absolute_center_002,
-position-absolute-center-006,not_portable,,unsupported display: table
-position-absolute-center-007,not_portable,,unsupported display: table
+position-absolute-center-006,ported,css_position_position_absolute_center_006,
+position-absolute-center-007,ported,css_position_position_absolute_center_007,
 position-absolute-chrome-bug-001,not_portable,,uses_javascript
 position-absolute-chrome-bug-002,not_portable,,uses_javascript
 position-absolute-container-dynamic-002,not_portable,,uses_javascript
@@ -133,7 +133,7 @@ position-absolute-percentage-height,not_portable,,uses_javascript
 position-absolute-replaced-intrinsic-size.tentative,not_portable,,unsupported element: <img>
 position-absolute-replaced-minmax,not_portable,,uses_javascript
 position-absolute-replaced-no-intrinsic-size.tentative,not_portable,,unsupported element: <img>
-position-absolute-replaced-with-display-table,not_portable,,unsupported display: table
+position-absolute-replaced-with-display-table,ported,css_position_position_absolute_replaced_with_display_table,
 position-absolute-root-element-flex,ported,css_position_position_absolute_root_element_flex,
 position-absolute-root-element-grid,not_portable,,unsupported display: grid
 position-absolute-root-element-ref,ported,css_position_position_absolute_root_element_ref,
@@ -159,35 +159,35 @@ position-fixed-scroll-overlap,not_portable,,uses_javascript
 position-fixed-video-controls-print,not_portable,,unsupported element: <audio>
 position-relative-004,not_portable,,uses_javascript
 position-relative-005,not_portable,,uses_javascript
-position-relative-008,not_portable,,unsupported property: border-spacing
-position-relative-009,not_portable,,unsupported property: border-spacing
-position-relative-010,not_portable,,unsupported property: border-spacing
-position-relative-011,not_portable,,unsupported property: border-spacing
-position-relative-012,not_portable,,unsupported property: border-spacing
-position-relative-013,not_portable,,unsupported property: border-spacing
+position-relative-008,ported,css_position_position_relative_008,
+position-relative-009,ported,css_position_position_relative_009,
+position-relative-010,ported,css_position_position_relative_010,
+position-relative-011,ported,css_position_position_relative_011,
+position-relative-012,ported,css_position_position_relative_012,
+position-relative-013,ported,css_position_position_relative_013,
 position-relative-014,not_portable,,uses_javascript
-position-relative-table-caption,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-left-ref,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tbody-left-absolute-child,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tbody-left,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tbody-top-absolute-child,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tbody-top,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-td-left,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-td-top,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tfoot-left-absolute-child,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tfoot-left,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tfoot-top-absolute-child,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tfoot-top-ref,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tfoot-top,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-thead-left-absolute-child,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-thead-left,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-thead-top-absolute-child,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-thead-top,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-top-ref,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tr-left-absolute-child,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tr-left,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tr-top-absolute-child,not_portable,,style_block_unsupported property: border-collapse
-position-relative-table-tr-top,not_portable,,style_block_unsupported property: border-collapse
+position-relative-table-caption,ported,css_position_position_relative_table_caption,
+position-relative-table-left-ref,ported,css_position_position_relative_table_left_ref,
+position-relative-table-tbody-left-absolute-child,ported,css_position_position_relative_table_tbody_left_absolute_child,
+position-relative-table-tbody-left,ported,css_position_position_relative_table_tbody_left,
+position-relative-table-tbody-top-absolute-child,ported,css_position_position_relative_table_tbody_top_absolute_child,
+position-relative-table-tbody-top,ported,css_position_position_relative_table_tbody_top,
+position-relative-table-td-left,ported,css_position_position_relative_table_td_left,
+position-relative-table-td-top,ported,css_position_position_relative_table_td_top,
+position-relative-table-tfoot-left-absolute-child,ported,css_position_position_relative_table_tfoot_left_absolute_child,
+position-relative-table-tfoot-left,ported,css_position_position_relative_table_tfoot_left,
+position-relative-table-tfoot-top-absolute-child,ported,css_position_position_relative_table_tfoot_top_absolute_child,
+position-relative-table-tfoot-top-ref,ported,css_position_position_relative_table_tfoot_top_ref,
+position-relative-table-tfoot-top,ported,css_position_position_relative_table_tfoot_top,
+position-relative-table-thead-left-absolute-child,ported,css_position_position_relative_table_thead_left_absolute_child,
+position-relative-table-thead-left,ported,css_position_position_relative_table_thead_left,
+position-relative-table-thead-top-absolute-child,ported,css_position_position_relative_table_thead_top_absolute_child,
+position-relative-table-thead-top,ported,css_position_position_relative_table_thead_top,
+position-relative-table-top-ref,ported,css_position_position_relative_table_top_ref,
+position-relative-table-tr-left-absolute-child,ported,css_position_position_relative_table_tr_left_absolute_child,
+position-relative-table-tr-left,ported,css_position_position_relative_table_tr_left,
+position-relative-table-tr-top-absolute-child,ported,css_position_position_relative_table_tr_top_absolute_child,
+position-relative-table-tr-top,ported,css_position_position_relative_table_tr_top,
 position-static-001,not_portable,,unsupported display: grid
 position-sticky-dynamic-ancestor-001,not_portable,,uses_javascript
 replaced-object-backdrop,not_portable,,uses_javascript
@@ -244,7 +244,7 @@ sticky_position-sticky-change-top,not_portable,,uses_javascript
 sticky_position-sticky-child-multicolumn-ref,not_portable,,uses_javascript
 sticky_position-sticky-child-multicolumn,not_portable,,uses_javascript
 sticky_position-sticky-column-reverse-flex,not_portable,,uses_javascript
-sticky_position-sticky-contained-by-display-table-ref,not_portable,,unsupported display: table-cell
+sticky_position-sticky-contained-by-display-table-ref,ported,css_position_sticky_position_sticky_contained_by_display_table_ref,
 sticky_position-sticky-contained-by-display-table,not_portable,,uses_javascript
 sticky_position-sticky-details-crash,not_portable,,uses_javascript
 sticky_position-sticky-escape-scroller-001,not_portable,,uses_javascript
@@ -326,16 +326,16 @@ sticky_position-sticky-stacking-context,not_portable,,uses_javascript
 sticky_position-sticky-table-cell-scrollIntoView,not_portable,,uses_javascript
 sticky_position-sticky-table-parts-ref,not_portable,,uses_javascript
 sticky_position-sticky-table-parts,not_portable,,uses_javascript
-sticky_position-sticky-table-pixel-rounding-ref,not_portable,,style_block_unsupported property: border-spacing
-sticky_position-sticky-table-pixel-rounding,not_portable,,style_block_unsupported property: border-spacing
+sticky_position-sticky-table-pixel-rounding-ref,ported,css_position_sticky_position_sticky_table_pixel_rounding_ref,
+sticky_position-sticky-table-pixel-rounding,ported,css_position_sticky_position_sticky_table_pixel_rounding,
 sticky_position-sticky-table-td-bottom-ref,not_portable,,uses_javascript
 sticky_position-sticky-table-td-bottom,not_portable,,uses_javascript
 sticky_position-sticky-table-td-left-ref,not_portable,,uses_javascript
 sticky_position-sticky-table-td-left,not_portable,,uses_javascript
 sticky_position-sticky-table-td-right-ref,not_portable,,uses_javascript
 sticky_position-sticky-table-td-right,not_portable,,uses_javascript
-sticky_position-sticky-table-td-subpixel-zoom-ref,not_portable,,style_block_unsupported property: border-spacing
-sticky_position-sticky-table-td-subpixel-zoom,not_portable,,style_block_unsupported property: border-spacing
+sticky_position-sticky-table-td-subpixel-zoom-ref,ported,css_position_sticky_position_sticky_table_td_subpixel_zoom_ref,
+sticky_position-sticky-table-td-subpixel-zoom,ported,css_position_sticky_position_sticky_table_td_subpixel_zoom,
 sticky_position-sticky-table-td-top-ref,not_portable,,uses_javascript
 sticky_position-sticky-table-td-top,not_portable,,uses_javascript
 sticky_position-sticky-table-tfoot-bottom-ref,not_portable,,uses_javascript

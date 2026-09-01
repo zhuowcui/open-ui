@@ -55,6 +55,11 @@ fn configure_line_breaker(
     breaker.set_writing_direction(space.writing_direction);
     breaker.set_text_align(style.text_align);
     breaker.set_container_white_space(style.white_space);
+    breaker.set_preserve_leading_inline_fragment(
+        style.line_clamp != openui_style::LineClamp::None
+            || style.text_wrap == openui_style::TextWrap::Balance
+            || space.line_clamp_context.is_some(),
+    );
     breaker.set_hyphens(style.hyphens, style.hyphenate_limit_chars);
 }
 
@@ -601,6 +606,50 @@ fn fragment_contains_tag(doc: &Document, fragment: &Fragment, tag: ElementTag) -
             .any(|child| fragment_contains_tag(doc, child, tag))
 }
 
+/// CSS 2.1 exposes an inline-block's last in-flow line-box baseline. A block
+/// child's synthesized baseline (for example a table row baseline) is useful
+/// to flex/grid alignment, but it must not turn a line-less inline-block into
+/// one with a line baseline.
+fn inline_block_last_line_baseline(fragment: &Fragment) -> Option<LayoutUnit> {
+    fn contains_anonymous_line(fragment: &Fragment) -> bool {
+        fragment.children.iter().any(|child| {
+            (child.node_id.is_none()
+                && (child.last_baseline.is_some()
+                    || child.first_baseline.is_some()
+                    || (child.kind == FragmentKind::Box && child.baseline_offset > 0.0)))
+                || contains_anonymous_line(child)
+        })
+    }
+
+    if !contains_anonymous_line(fragment) {
+        return None;
+    }
+    // The formatting context's exported baseline is already projected onto
+    // the parent's physical baseline axis. This matters for vertical writing,
+    // where summing a descendant line's top offset reconstructs the wrong
+    // physical coordinate.
+    if let Some(baseline) = fragment.last_baseline.or(fragment.first_baseline) {
+        return Some(baseline);
+    }
+    for child in fragment.children.iter().rev() {
+        if child.node_id.is_none() {
+            if let Some(baseline) = child.last_baseline.or(child.first_baseline) {
+                return Some(child.offset.top + baseline);
+            }
+            // Anonymous IFC line fragments expose their baseline through the
+            // line-local offset. They are not formatting-context roots, so
+            // first_baseline/last_baseline are intentionally unset here.
+            if child.kind == FragmentKind::Box && child.baseline_offset > 0.0 {
+                return Some(child.offset.top + LayoutUnit::from_f32(child.baseline_offset));
+            }
+        }
+        if let Some(baseline) = inline_block_last_line_baseline(child) {
+            return Some(child.offset.top + baseline);
+        }
+    }
+    None
+}
+
 fn align_ruby_internal_content(fragment: &mut Fragment, inline_size: LayoutUnit) {
     for line in &mut fragment.children {
         let Some(start) = line.children.iter().map(|child| child.offset.left).min() else {
@@ -859,6 +908,7 @@ fn materialize_inline_line_child(
     baseline: LayoutUnit,
     line_height: LayoutUnit,
     parent_metrics: &FontMetrics,
+    parent_font_size: f32,
     snap_block_edges: bool,
 ) -> Fragment {
     match child {
@@ -886,6 +936,7 @@ fn materialize_inline_line_child(
                         baseline,
                         line_height,
                         &metrics,
+                        style.font_size,
                         snap_block_edges,
                     ),
                 })
@@ -944,7 +995,7 @@ fn materialize_inline_line_child(
                 used_line_height(&metrics, &style.line_height, style.font_size);
             let keyword_shift = compute_baseline_shift(
                 &style.vertical_align,
-                style.font_size,
+                parent_font_size,
                 parent_metrics.ascent,
                 parent_metrics.descent,
                 parent_metrics.x_height,
@@ -1153,6 +1204,11 @@ fn text_line_metrics(
 
 // ── Vertical alignment (CSS 2.2 §10.8) ──────────────────────────────────
 
+fn keyword_baseline_shift(parent_font_size: f32, divisor: i32) -> f32 {
+    let fixed_font_size = LayoutUnit::from_f32(parent_font_size);
+    (LayoutUnit::from_raw(fixed_font_size.raw() / divisor) + LayoutUnit::from_i32(1)).to_f32()
+}
+
 /// Compute baseline shift for vertical-align.
 ///
 /// Returns a float offset where positive = downward shift from parent baseline.
@@ -1160,7 +1216,7 @@ fn text_line_metrics(
 /// `inline_box_state.cc`.
 fn compute_baseline_shift(
     vertical_align: &VerticalAlign,
-    font_size: f32,
+    parent_font_size: f32,
     parent_ascent: f32,
     parent_descent: f32,
     parent_x_height: f32,
@@ -1170,11 +1226,11 @@ fn compute_baseline_shift(
 ) -> f32 {
     match vertical_align {
         VerticalAlign::Baseline => 0.0,
-        // Blink's Linux used values include a two-pixel keyword offset in
+        // Blink's used values include a one-pixel keyword offset in
         // addition to the font-relative component. These keywords are
         // deliberately UA-defined rather than fixed by CSS Values.
-        VerticalAlign::Sub => font_size / 5.0 + 2.0,
-        VerticalAlign::Super => -(font_size / 3.0 + 2.0),
+        VerticalAlign::Sub => keyword_baseline_shift(parent_font_size, 5),
+        VerticalAlign::Super => -keyword_baseline_shift(parent_font_size, 3),
         VerticalAlign::Middle => (item_ascent - item_descent) / 2.0 - parent_x_height / 2.0,
         VerticalAlign::TextTop => item_ascent - parent_ascent,
         VerticalAlign::TextBottom => parent_descent - item_descent,
@@ -3551,6 +3607,7 @@ fn create_line_box(
     // metrics, not the block container's. The stack is pushed on OpenTag
     // and popped on CloseTag.
     let mut inline_metrics_stack: Vec<FontMetrics> = Vec::new();
+    let mut inline_font_size_stack: Vec<f32> = Vec::new();
 
     // === PRE-STEP: Run block_layout for atomic inlines ===
     // Per CSS 2.1 §10.6.1, inline-block/inline-flex/inline-grid establish a new
@@ -3631,7 +3688,9 @@ fn create_line_box(
                 // Keep that used inline size authoritative after child block
                 // layout; the latter receives a content constraint and can
                 // otherwise return a box smaller by its own borders.
-                if uses_deterministic_text_profile(style) {
+                if uses_deterministic_text_profile(style)
+                    && doc.node(item.node_id).replaced.is_none()
+                {
                     result.size.width = item_width;
                 }
                 atomic_layout_results[idx] = Some(result);
@@ -3799,7 +3858,7 @@ fn create_line_box(
                                 {
                                     // CSS 2.1 §10.8.1: an inline-block exports the
                                     // baseline of its last in-flow line box.
-                                    result.last_baseline.or(result.first_baseline)
+                                    inline_block_last_line_baseline(result)
                                 } else {
                                     result.first_baseline
                                 }
@@ -3868,13 +3927,21 @@ fn create_line_box(
                     }
                     VerticalAlign::Sub => {
                         // Lowered by sub_offset below the baseline.
-                        let sub_offset = style.font_size / 5.0 + 2.0;
+                        let parent_font_size = inline_font_size_stack
+                            .last()
+                            .copied()
+                            .unwrap_or(block_style.font_size);
+                        let sub_offset = keyword_baseline_shift(parent_font_size, 5);
                         line_ascent = line_ascent.max((margin_box_height - sub_offset).max(0.0));
                         line_descent = line_descent.max(sub_offset);
                     }
                     VerticalAlign::Super => {
                         // Raised by super_offset above the baseline.
-                        let super_offset = style.font_size / 3.0 + 2.0;
+                        let parent_font_size = inline_font_size_stack
+                            .last()
+                            .copied()
+                            .unwrap_or(block_style.font_size);
+                        let super_offset = keyword_baseline_shift(parent_font_size, 3);
                         line_ascent = line_ascent.max(margin_box_height + super_offset);
                         // Item bottom is at super_offset above baseline → 0 descent.
                         line_descent = line_descent.max(0.0);
@@ -3906,9 +3973,13 @@ fn create_line_box(
                 let element_line_height =
                     used_line_height(&metrics, &style.line_height, style.font_size);
                 let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
+                let parent_font_size = inline_font_size_stack
+                    .last()
+                    .copied()
+                    .unwrap_or(block_style.font_size);
                 let baseline_shift = compute_baseline_shift(
                     &style.vertical_align,
-                    style.font_size,
+                    parent_font_size,
                     parent_metrics.ascent,
                     parent_metrics.descent,
                     parent_metrics.x_height,
@@ -3938,10 +4009,12 @@ fn create_line_box(
                     }
                 }
                 inline_metrics_stack.push(metrics);
+                inline_font_size_stack.push(style.font_size);
             }
             // CloseTag: pop the parent inline's font metrics.
             InlineItemType::CloseTag => {
                 inline_metrics_stack.pop();
+                inline_font_size_stack.pop();
             }
             InlineItemType::Control => {
                 // A semantic <br> has no inline-size or painted fragment, but
@@ -4128,6 +4201,7 @@ fn create_line_box(
 
     // Reset the inline metrics stack for the positioning pass.
     inline_metrics_stack.clear();
+    inline_font_size_stack.clear();
 
     // --- Inline box decoration tracking (CSS Fragmentation §4.4) ---
     // Build a set of style indices for boxes open at line start, for quick lookup.
@@ -4454,6 +4528,7 @@ fn create_line_box(
                 let font = Font::new(font_desc);
                 let metrics = font.font_metrics().copied().unwrap_or_default();
                 inline_metrics_stack.push(metrics);
+                inline_font_size_stack.push(style.font_size);
                 // Track that this box opened on this line (is_first = true).
                 inline_box_stack.push((item.style_index, true));
             }
@@ -4501,6 +4576,7 @@ fn create_line_box(
                     }
                 }
                 inline_metrics_stack.pop();
+                inline_font_size_stack.pop();
                 inline_box_stack.pop();
             }
             InlineItemType::Control => {
@@ -4568,7 +4644,7 @@ fn create_line_box(
                             } else if style.display == Display::InlineBlock
                                 && uses_deterministic_text_profile(style)
                             {
-                                result.last_baseline.or(result.first_baseline)
+                                inline_block_last_line_baseline(result)
                             } else {
                                 result.first_baseline
                             }
@@ -4615,11 +4691,21 @@ fn create_line_box(
                             - margin_bottom_lu
                     }
                     VerticalAlign::Sub => {
-                        let shift = LayoutUnit::from_f32(style.font_size / 5.0 + 2.0);
+                        let parent_font_size = inline_font_size_stack
+                            .last()
+                            .copied()
+                            .unwrap_or(block_style.font_size);
+                        let shift =
+                            LayoutUnit::from_f32(keyword_baseline_shift(parent_font_size, 5));
                         baseline + shift - item_height - margin_bottom_lu
                     }
                     VerticalAlign::Super => {
-                        let shift = LayoutUnit::from_f32(style.font_size / 3.0 + 2.0);
+                        let parent_font_size = inline_font_size_stack
+                            .last()
+                            .copied()
+                            .unwrap_or(block_style.font_size);
+                        let shift =
+                            LayoutUnit::from_f32(keyword_baseline_shift(parent_font_size, 3));
                         baseline - shift - item_height - margin_bottom_lu
                     }
                     VerticalAlign::Length(px) => {
@@ -4868,6 +4954,7 @@ fn create_line_box(
                 baseline,
                 line_height,
                 block_metrics,
+                block_style.font_size,
                 block_style.line_clamp == openui_style::LineClamp::None
                     && space.line_clamp_context.is_none(),
             )
@@ -6361,14 +6448,14 @@ mod tests {
     fn baseline_shift_sub() {
         let shift =
             compute_baseline_shift(&VerticalAlign::Sub, 16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 16.0);
-        assert_eq!(shift, 16.0 / 5.0 + 2.0);
+        assert_eq!(shift, keyword_baseline_shift(16.0, 5));
     }
 
     #[test]
     fn baseline_shift_super() {
         let shift =
             compute_baseline_shift(&VerticalAlign::Super, 16.0, 10.0, 4.0, 8.0, 10.0, 4.0, 16.0);
-        assert_eq!(shift, -(16.0 / 3.0 + 2.0));
+        assert_eq!(shift, -keyword_baseline_shift(16.0, 3));
     }
 
     #[test]

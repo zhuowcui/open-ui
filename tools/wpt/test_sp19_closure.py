@@ -120,6 +120,24 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
             closure.build_outputs(mapping, summary),
             closure.build_outputs(mapping, summary),
         )
+        target = json.loads(closure.LAYOUT_TARGETS.read_text(encoding="utf-8"))[0]
+        exact = {target: {"id": target, "status": "pass", "mismatch_pct": 0.0}}
+        promoted = closure.promoted_mapping_bytes(mapping, exact, {target})
+        self.assertEqual(
+            closure.promoted_mapping_bytes(promoted, exact, {target}), promoted
+        )
+        original_rows = {
+            closure.canonical_id(row): row for row in closure.parse_mapping(mapping)
+        }
+        promoted_rows = {
+            closure.canonical_id(row): row for row in closure.parse_mapping(promoted)
+        }
+        self.assertEqual(original_rows.keys(), promoted_rows.keys())
+        for test_id in original_rows.keys() - {target}:
+            self.assertEqual(original_rows[test_id], promoted_rows[test_id])
+        self.assertEqual(promoted_rows[target]["ported"], "yes")
+        self.assertEqual(promoted_rows[target]["our_test_id"], target)
+        self.assertEqual(promoted_rows[target]["pixel_result"], "pass")
 
     def test_08_html_table_optional_end_tags_are_fixed_up(self):
         parser = self.parse("", "<table><tr><td>a<td>b<tr><th>c</table>")
@@ -138,8 +156,42 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
         )
         for role in ("Table", "TableCaption", "TableRowGroup", "TableRow", "TableCell"):
             self.assertIn(f"Display::{role}", rust)
+        self.assertNotIn("style.display = Display::Block", rust)
         self.assertIn("TableLayout::Fixed", rust)
         self.assertIn("BorderCollapse::Collapse", rust)
+        self.assertIn("VerticalAlign::Middle", rust)
+        anonymous = self.generate("div{display:table}", "<div>a<br>b</div>")
+        self.assertEqual(anonymous.count("Display::TableRow;"), 1)
+        self.assertEqual(anonymous.count("Display::TableCell;"), 1)
+        orphan = self.parse("", "<div><td>a</td><tbody>b</tbody></div>")
+        div = next(node for node in orphan.root.children if node.tag == "div")
+        self.assertTrue(all(child.is_text for child in div.children))
+        fostered = self.parse(
+            "", "<div><table>before<br>after</table><span>end</span></div>"
+        )
+        host = next(node for node in fostered.root.children if node.tag == "div")
+        self.assertEqual(
+            [node.tag for node in host.children],
+            ["#text", "br", "#text", "table", "span"],
+        )
+        table = next(node for node in host.children if node.tag == "table")
+        self.assertFalse(table.children)
+        align_inherit = self.generate(
+            ".p{display:flex;align-self:flex-end}.p>*{display:table;align-self:inherit}",
+            "<div class=p><div>x</div></div>",
+        )
+        self.assertGreaterEqual(
+            align_inherit.count("ItemAlignment::new(ItemPosition::FlexEnd)"), 2
+        )
+        presentational = self.generate(
+            "",
+            '<table width="300" align="left"><tr><td height="20" valign="top">x</td></tr></table>',
+        )
+        self.assertIn("style.width = Length::px(300.0)", presentational)
+        self.assertIn("style.height = Length::px(20.0)", presentational)
+        self.assertIn("style.float = Float::Left", presentational)
+        self.assertIn("VerticalAlign::Top", presentational)
+        self.assertNotIn("style.display = Display::Block", presentational)
 
     def test_10_table_spans_emit_normalized_metadata(self):
         rust = self.generate("", "<table><tr><td colspan=3 rowspan=0></td></tr></table>")
@@ -200,6 +252,26 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
         self.assertIn("intrinsic_width: Some(40.0)", rust)
         self.assertIn("ObjectFit::None", rust)
         self.assertIn("ObjectPosition", rust)
+        image = self.generate(
+            "",
+            '<img src="support/black20x20.png" width="40" height="30">',
+        )
+        self.assertIn("ReplacedResourceKind::Image", image)
+        self.assertIn("3f08031eb1f4aa651ed4b94e383920d3", image)
+        self.assertIn("style.width = Length::px(40.0)", image)
+        self.assertIn("style.height = Length::px(30.0)", image)
+        template = port_wpt._embed_paint_asset_urls(
+            "<img src='support/black20x20.png' width='40' height='30'>"
+        )
+        self.assertIn('data:image/png;base64,', template)
+        data_image = self.generate(
+            "img{width:10px;height:20px}",
+            "<img src='data:image/png;base64,"
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6Q"
+            "AAAA1JREFUGFdjYGhg+A8AAoQBgNXA8F0AAAAASUVORK5CYII='>",
+        )
+        self.assertIn("intrinsic_width: Some(1.0)", data_image)
+        self.assertIn("ReplacedResourceKind::Image", data_image)
 
     def test_19_form_control_roles_emit(self):
         rust = self.generate(

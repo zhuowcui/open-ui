@@ -10294,6 +10294,6759 @@ fn css_display_display_math_on_pseudo_elements_002_ref() -> Document {
     doc
 }
 
+// Source: css-display/display-contents-001-crash.html
+fn css_display_display_contents_001_crash() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.display = Display::TableCell;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n1);
+    doc.set_attribute(n1, "style", "display: table-cell;");
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.display = Display::InlineBlock;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n2);
+    doc.set_attribute(n2, "id", "c");
+    doc
+}
+
+// Source: css-display/display-contents-table-001.html
+fn css_display_display_contents_table_001() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.font_size = 16.0;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(0.0);
+    doc.node_mut(vp).style.padding_right = Length::px(0.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.padding_left = Length::px(0.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.color = Color::RED;
+    doc.node_mut(vp).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.color = Color::RED;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.append_child(vp, n1);
+    doc.set_attribute(n1, "style", "color: red");
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style = ComputedStyle::for_anonymous_box(&doc.node(n1).style);
+    doc.node_mut(n2).style.display = Display::Table;
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.display = Display::Contents;
+    doc.node_mut(n3).style.color = Color::from_rgba8(0, 255, 0, 255);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.font_size = 16.0;
+    doc.append_child(n2, n3);
+    doc.set_attribute(n3, "class", "contents c1");
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.display = Display::Contents;
+    doc.node_mut(n4).style.background_color = Color::BLUE;
+    doc.node_mut(n4).style.background_linear_gradient = None;
+    doc.node_mut(n4).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.font_size = 16.0;
+    doc.append_child(n3, n4);
+    doc.set_attribute(n4, "class", "contents c2");
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.display = Display::TableCaption;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n5).style.font_size = 16.0;
+    doc.append_child(n4, n5);
+    doc.set_attribute(n5, "class", "caption");
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n6).text = Some("1".to_string());
+    doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n7).style.background_linear_gradient = None;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n7).style.font_size = 16.0;
+    doc.append_child(n5, n7);
+    doc.set_attribute(n7, "class", "b");
+    let n8 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n8).style.font_size = 16.0;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n8).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n8).text = Some("1".to_string());
+    doc.append_child(n7, n8);
+    let n9 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n9).style.margin_top = Length::px(0.0);
+    doc.node_mut(n9).style.margin_right = Length::px(0.0);
+    doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.margin_left = Length::px(0.0);
+    doc.node_mut(n9).style.padding_top = Length::px(0.0);
+    doc.node_mut(n9).style.padding_right = Length::px(0.0);
+    doc.node_mut(n9).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.padding_left = Length::px(0.0);
+    doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n9).style.display = Display::Contents;
+    doc.node_mut(n9).style.background_color = Color::BLUE;
+    doc.node_mut(n9).style.background_linear_gradient = None;
+    doc.node_mut(n9).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).style.font_size = 16.0;
+    doc.append_child(n2, n9);
+    doc.set_attribute(n9, "class", "contents c2");
+    let n10 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n10).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n10).style.margin_top = Length::px(0.0);
+    doc.node_mut(n10).style.margin_right = Length::px(0.0);
+    doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.margin_left = Length::px(0.0);
+    doc.node_mut(n10).style.padding_top = Length::px(0.0);
+    doc.node_mut(n10).style.padding_right = Length::px(0.0);
+    doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.padding_left = Length::px(0.0);
+    doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.display = Display::TableRow;
+    doc.node_mut(n10).style.border_top_width = 1;
+    doc.node_mut(n10).style.border_top_style = BorderStyle::Dashed;
+    doc.node_mut(n10).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n10).style.border_right_width = 1;
+    doc.node_mut(n10).style.border_right_style = BorderStyle::Dashed;
+    doc.node_mut(n10).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n10).style.border_bottom_width = 1;
+    doc.node_mut(n10).style.border_bottom_style = BorderStyle::Dashed;
+    doc.node_mut(n10).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n10).style.border_left_width = 1;
+    doc.node_mut(n10).style.border_left_style = BorderStyle::Dashed;
+    doc.node_mut(n10).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n10).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n10).style.font_size = 16.0;
+    doc.append_child(n9, n10);
+    doc.set_attribute(n10, "class", "row");
+    let n11 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n11).style = ComputedStyle::for_anonymous_box(&doc.node(n10).style);
+    doc.node_mut(n11).style.display = Display::TableCell;
+    doc.append_child(n10, n11);
+    let n12 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n12).style.font_size = 16.0;
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n12).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n12).text = Some("2a".to_string());
+    doc.append_child(n11, n12);
+    let n13 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n13).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n13).style.margin_top = Length::px(0.0);
+    doc.node_mut(n13).style.margin_right = Length::px(0.0);
+    doc.node_mut(n13).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n13).style.margin_left = Length::px(0.0);
+    doc.node_mut(n13).style.padding_top = Length::px(0.0);
+    doc.node_mut(n13).style.padding_right = Length::px(0.0);
+    doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n13).style.padding_left = Length::px(0.0);
+    doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n13).style.display = Display::TableCell;
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n13_inherited_border = doc.node(n10).style.clone();
+    doc.node_mut(n13).style.border_top_width = n13_inherited_border.border_top_width;
+    doc.node_mut(n13).style.border_top_style = n13_inherited_border.border_top_style;
+    doc.node_mut(n13).style.border_top_color = n13_inherited_border.border_top_color;
+    doc.node_mut(n13).style.border_right_width = n13_inherited_border.border_right_width;
+    doc.node_mut(n13).style.border_right_style = n13_inherited_border.border_right_style;
+    doc.node_mut(n13).style.border_right_color = n13_inherited_border.border_right_color;
+    doc.node_mut(n13).style.border_bottom_width = n13_inherited_border.border_bottom_width;
+    doc.node_mut(n13).style.border_bottom_style = n13_inherited_border.border_bottom_style;
+    doc.node_mut(n13).style.border_bottom_color = n13_inherited_border.border_bottom_color;
+    doc.node_mut(n13).style.border_left_width = n13_inherited_border.border_left_width;
+    doc.node_mut(n13).style.border_left_style = n13_inherited_border.border_left_style;
+    doc.node_mut(n13).style.border_left_color = n13_inherited_border.border_left_color;
+    doc.node_mut(n13).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n13).style.font_size = 16.0;
+    doc.append_child(n10, n13);
+    doc.set_attribute(n13, "class", "cell");
+    let n14 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n14).style.font_size = 16.0;
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n14).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n14).text = Some("2".to_string());
+    doc.append_child(n13, n14);
+    let n15 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n15).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n15).style.margin_top = Length::px(0.0);
+    doc.node_mut(n15).style.margin_right = Length::px(0.0);
+    doc.node_mut(n15).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n15).style.margin_left = Length::px(0.0);
+    doc.node_mut(n15).style.padding_top = Length::px(0.0);
+    doc.node_mut(n15).style.padding_right = Length::px(0.0);
+    doc.node_mut(n15).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n15).style.padding_left = Length::px(0.0);
+    doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n15).style.display = Display::Contents;
+    doc.node_mut(n15).style.background_color = Color::BLUE;
+    doc.node_mut(n15).style.background_linear_gradient = None;
+    doc.node_mut(n15).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n15).style.font_size = 16.0;
+    doc.append_child(n13, n15);
+    doc.set_attribute(n15, "class", "contents c2");
+    let n16 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n16).style.font_size = 16.0;
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n16).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n16).text = Some("b".to_string());
+    doc.append_child(n15, n16);
+    let n17 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n17).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n17).style.margin_top = Length::px(0.0);
+    doc.node_mut(n17).style.margin_right = Length::px(0.0);
+    doc.node_mut(n17).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.margin_left = Length::px(0.0);
+    doc.node_mut(n17).style.padding_top = Length::px(0.0);
+    doc.node_mut(n17).style.padding_right = Length::px(0.0);
+    doc.node_mut(n17).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.padding_left = Length::px(0.0);
+    doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n17).style.background_color = Color::BLUE;
+    doc.node_mut(n17).style.background_linear_gradient = None;
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n17).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n17).style.font_size = 16.0;
+    doc.append_child(n15, n17);
+    doc.set_attribute(n17, "class", "b");
+    let n18 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n18).style.font_size = 16.0;
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n18).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n18).text = Some("b".to_string());
+    doc.append_child(n17, n18);
+    let n19 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n19).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n19).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n19).style.margin_top = Length::px(0.0);
+    doc.node_mut(n19).style.margin_right = Length::px(0.0);
+    doc.node_mut(n19).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n19).style.margin_left = Length::px(0.0);
+    doc.node_mut(n19).style.padding_top = Length::px(0.0);
+    doc.node_mut(n19).style.padding_right = Length::px(0.0);
+    doc.node_mut(n19).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n19).style.padding_left = Length::px(0.0);
+    doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n19).style.display = Display::Contents;
+    doc.node_mut(n19).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.node_mut(n19).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n19).style.font_size = 16.0;
+    doc.append_child(n2, n19);
+    doc.set_attribute(n19, "class", "contents c3");
+    let n20 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n20).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n20).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n20).style.margin_top = Length::px(0.0);
+    doc.node_mut(n20).style.margin_right = Length::px(0.0);
+    doc.node_mut(n20).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n20).style.margin_left = Length::px(0.0);
+    doc.node_mut(n20).style.padding_top = Length::px(0.0);
+    doc.node_mut(n20).style.padding_right = Length::px(0.0);
+    doc.node_mut(n20).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n20).style.padding_left = Length::px(0.0);
+    doc.node_mut(n20).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n20).style.display = Display::TableCell;
+    doc.node_mut(n20).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n20_inherited_border = doc.node(n19).style.clone();
+    doc.node_mut(n20).style.border_top_width = n20_inherited_border.border_top_width;
+    doc.node_mut(n20).style.border_top_style = n20_inherited_border.border_top_style;
+    doc.node_mut(n20).style.border_top_color = n20_inherited_border.border_top_color;
+    doc.node_mut(n20).style.border_right_width = n20_inherited_border.border_right_width;
+    doc.node_mut(n20).style.border_right_style = n20_inherited_border.border_right_style;
+    doc.node_mut(n20).style.border_right_color = n20_inherited_border.border_right_color;
+    doc.node_mut(n20).style.border_bottom_width = n20_inherited_border.border_bottom_width;
+    doc.node_mut(n20).style.border_bottom_style = n20_inherited_border.border_bottom_style;
+    doc.node_mut(n20).style.border_bottom_color = n20_inherited_border.border_bottom_color;
+    doc.node_mut(n20).style.border_left_width = n20_inherited_border.border_left_width;
+    doc.node_mut(n20).style.border_left_style = n20_inherited_border.border_left_style;
+    doc.node_mut(n20).style.border_left_color = n20_inherited_border.border_left_color;
+    doc.node_mut(n20).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.node_mut(n20).style.font_size = 16.0;
+    doc.append_child(n19, n20);
+    doc.set_attribute(n20, "class", "cell");
+    let n21 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n21).style.font_size = 16.0;
+    doc.node_mut(n21).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n21).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.node_mut(n21).text = Some("3".to_string());
+    doc.append_child(n20, n21);
+    let n22 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n22).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n22).style.margin_top = Length::px(0.0);
+    doc.node_mut(n22).style.margin_right = Length::px(0.0);
+    doc.node_mut(n22).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n22).style.margin_left = Length::px(0.0);
+    doc.node_mut(n22).style.padding_top = Length::px(0.0);
+    doc.node_mut(n22).style.padding_right = Length::px(0.0);
+    doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n22).style.padding_left = Length::px(0.0);
+    doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n22).style.display = Display::Contents;
+    doc.node_mut(n22).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n22).style.font_size = 16.0;
+    doc.append_child(n2, n22);
+    doc.set_attribute(n22, "class", "contents c4");
+    let n23 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n23).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n23).style.margin_top = Length::px(0.0);
+    doc.node_mut(n23).style.margin_right = Length::px(0.0);
+    doc.node_mut(n23).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n23).style.margin_left = Length::px(0.0);
+    doc.node_mut(n23).style.padding_top = Length::px(0.0);
+    doc.node_mut(n23).style.padding_right = Length::px(0.0);
+    doc.node_mut(n23).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n23).style.padding_left = Length::px(0.0);
+    doc.node_mut(n23).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n23).style.display = Display::TableRowGroup;
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n23).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n23).style.font_size = 16.0;
+    doc.append_child(n22, n23);
+    doc.set_attribute(n23, "class", "rowg");
+    let n24 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n24).style = ComputedStyle::for_anonymous_box(&doc.node(n23).style);
+    doc.node_mut(n24).style.display = Display::TableRow;
+    doc.append_child(n23, n24);
+    let n25 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n25).style = ComputedStyle::for_anonymous_box(&doc.node(n24).style);
+    doc.node_mut(n25).style.display = Display::TableCell;
+    doc.append_child(n24, n25);
+    let n26 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n26).style.font_size = 16.0;
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n26).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n26).text = Some("4".to_string());
+    doc.append_child(n25, n26);
+    let n27 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n27).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n27).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n27).style.margin_top = Length::px(0.0);
+    doc.node_mut(n27).style.margin_right = Length::px(0.0);
+    doc.node_mut(n27).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n27).style.margin_left = Length::px(0.0);
+    doc.node_mut(n27).style.padding_top = Length::px(0.0);
+    doc.node_mut(n27).style.padding_right = Length::px(0.0);
+    doc.node_mut(n27).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n27).style.padding_left = Length::px(0.0);
+    doc.node_mut(n27).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n27).style.display = Display::Contents;
+    doc.node_mut(n27).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n27).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n27).style.font_size = 16.0;
+    doc.append_child(n2, n27);
+    doc.set_attribute(n27, "class", "contents c5");
+    let n28 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n28).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n28).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n28).style.margin_top = Length::px(0.0);
+    doc.node_mut(n28).style.margin_right = Length::px(0.0);
+    doc.node_mut(n28).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n28).style.margin_left = Length::px(0.0);
+    doc.node_mut(n28).style.padding_top = Length::px(0.0);
+    doc.node_mut(n28).style.padding_right = Length::px(0.0);
+    doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n28).style.padding_left = Length::px(0.0);
+    doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n28).style.display = Display::TableCell;
+    doc.node_mut(n28).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n28_inherited_border = doc.node(n27).style.clone();
+    doc.node_mut(n28).style.border_top_width = n28_inherited_border.border_top_width;
+    doc.node_mut(n28).style.border_top_style = n28_inherited_border.border_top_style;
+    doc.node_mut(n28).style.border_top_color = n28_inherited_border.border_top_color;
+    doc.node_mut(n28).style.border_right_width = n28_inherited_border.border_right_width;
+    doc.node_mut(n28).style.border_right_style = n28_inherited_border.border_right_style;
+    doc.node_mut(n28).style.border_right_color = n28_inherited_border.border_right_color;
+    doc.node_mut(n28).style.border_bottom_width = n28_inherited_border.border_bottom_width;
+    doc.node_mut(n28).style.border_bottom_style = n28_inherited_border.border_bottom_style;
+    doc.node_mut(n28).style.border_bottom_color = n28_inherited_border.border_bottom_color;
+    doc.node_mut(n28).style.border_left_width = n28_inherited_border.border_left_width;
+    doc.node_mut(n28).style.border_left_style = n28_inherited_border.border_left_style;
+    doc.node_mut(n28).style.border_left_color = n28_inherited_border.border_left_color;
+    doc.node_mut(n28).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n28).style.font_size = 16.0;
+    doc.append_child(n27, n28);
+    doc.set_attribute(n28, "class", "cell");
+    let n29 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n29).style.font_size = 16.0;
+    doc.node_mut(n29).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n29).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n29).text = Some("5a".to_string());
+    doc.append_child(n28, n29);
+    let n30 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n30).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n30).style.margin_top = Length::px(0.0);
+    doc.node_mut(n30).style.margin_right = Length::px(0.0);
+    doc.node_mut(n30).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n30).style.margin_left = Length::px(0.0);
+    doc.node_mut(n30).style.padding_top = Length::px(0.0);
+    doc.node_mut(n30).style.padding_right = Length::px(0.0);
+    doc.node_mut(n30).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n30).style.padding_left = Length::px(0.0);
+    doc.node_mut(n30).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n30).style.display = Display::TableCell;
+    doc.node_mut(n30).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n30_inherited_border = doc.node(n2).style.clone();
+    doc.node_mut(n30).style.border_top_width = n30_inherited_border.border_top_width;
+    doc.node_mut(n30).style.border_top_style = n30_inherited_border.border_top_style;
+    doc.node_mut(n30).style.border_top_color = n30_inherited_border.border_top_color;
+    doc.node_mut(n30).style.border_right_width = n30_inherited_border.border_right_width;
+    doc.node_mut(n30).style.border_right_style = n30_inherited_border.border_right_style;
+    doc.node_mut(n30).style.border_right_color = n30_inherited_border.border_right_color;
+    doc.node_mut(n30).style.border_bottom_width = n30_inherited_border.border_bottom_width;
+    doc.node_mut(n30).style.border_bottom_style = n30_inherited_border.border_bottom_style;
+    doc.node_mut(n30).style.border_bottom_color = n30_inherited_border.border_bottom_color;
+    doc.node_mut(n30).style.border_left_width = n30_inherited_border.border_left_width;
+    doc.node_mut(n30).style.border_left_style = n30_inherited_border.border_left_style;
+    doc.node_mut(n30).style.border_left_color = n30_inherited_border.border_left_color;
+    doc.node_mut(n30).style.font_size = 16.0;
+    doc.append_child(n2, n30);
+    doc.set_attribute(n30, "class", "cell c5");
+    let n31 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n31).style.font_size = 16.0;
+    doc.node_mut(n31).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n31).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n31).text = Some("5b".to_string());
+    doc.append_child(n30, n31);
+    let n32 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n32).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n32).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n32).style.margin_top = Length::px(0.0);
+    doc.node_mut(n32).style.margin_right = Length::px(0.0);
+    doc.node_mut(n32).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n32).style.margin_left = Length::px(0.0);
+    doc.node_mut(n32).style.padding_top = Length::px(0.0);
+    doc.node_mut(n32).style.padding_right = Length::px(0.0);
+    doc.node_mut(n32).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n32).style.padding_left = Length::px(0.0);
+    doc.node_mut(n32).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n32).style.display = Display::Contents;
+    doc.node_mut(n32).style.color = Color::from_rgba8(0, 255, 255, 255);
+    doc.node_mut(n32).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n32).style.font_size = 16.0;
+    doc.append_child(n2, n32);
+    doc.set_attribute(n32, "class", "contents c6");
+    let n33 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n33).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n33).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n33).style.margin_top = Length::px(0.0);
+    doc.node_mut(n33).style.margin_right = Length::px(0.0);
+    doc.node_mut(n33).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n33).style.margin_left = Length::px(0.0);
+    doc.node_mut(n33).style.padding_top = Length::px(0.0);
+    doc.node_mut(n33).style.padding_right = Length::px(0.0);
+    doc.node_mut(n33).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n33).style.padding_left = Length::px(0.0);
+    doc.node_mut(n33).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n33).style.display = Display::TableHeaderGroup;
+    doc.node_mut(n33).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n33).style.color = Color::from_rgba8(0, 255, 255, 255);
+    doc.node_mut(n33).style.font_size = 16.0;
+    doc.append_child(n32, n33);
+    doc.set_attribute(n33, "class", "head");
+    let n34 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n34).style = ComputedStyle::for_anonymous_box(&doc.node(n33).style);
+    doc.node_mut(n34).style.display = Display::TableRow;
+    doc.append_child(n33, n34);
+    let n35 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n35).style = ComputedStyle::for_anonymous_box(&doc.node(n34).style);
+    doc.node_mut(n35).style.display = Display::TableCell;
+    doc.append_child(n34, n35);
+    let n36 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n36).style.font_size = 16.0;
+    doc.node_mut(n36).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n36).style.color = Color::from_rgba8(0, 255, 255, 255);
+    doc.node_mut(n36).text = Some("6".to_string());
+    doc.append_child(n35, n36);
+    let n37 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n37).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n37).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n37).style.margin_top = Length::px(0.0);
+    doc.node_mut(n37).style.margin_right = Length::px(0.0);
+    doc.node_mut(n37).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n37).style.margin_left = Length::px(0.0);
+    doc.node_mut(n37).style.padding_top = Length::px(0.0);
+    doc.node_mut(n37).style.padding_right = Length::px(0.0);
+    doc.node_mut(n37).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n37).style.padding_left = Length::px(0.0);
+    doc.node_mut(n37).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n37).style.display = Display::Contents;
+    doc.node_mut(n37).style.color = Color::from_rgba8(255, 0, 255, 255);
+    doc.node_mut(n37).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n37).style.font_size = 16.0;
+    doc.append_child(n2, n37);
+    doc.set_attribute(n37, "class", "contents c7");
+    let n38 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n38).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n38).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n38).style.margin_top = Length::px(0.0);
+    doc.node_mut(n38).style.margin_right = Length::px(0.0);
+    doc.node_mut(n38).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n38).style.margin_left = Length::px(0.0);
+    doc.node_mut(n38).style.padding_top = Length::px(0.0);
+    doc.node_mut(n38).style.padding_right = Length::px(0.0);
+    doc.node_mut(n38).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n38).style.padding_left = Length::px(0.0);
+    doc.node_mut(n38).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n38).style.display = Display::TableCell;
+    doc.node_mut(n38).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n38_inherited_border = doc.node(n37).style.clone();
+    doc.node_mut(n38).style.border_top_width = n38_inherited_border.border_top_width;
+    doc.node_mut(n38).style.border_top_style = n38_inherited_border.border_top_style;
+    doc.node_mut(n38).style.border_top_color = n38_inherited_border.border_top_color;
+    doc.node_mut(n38).style.border_right_width = n38_inherited_border.border_right_width;
+    doc.node_mut(n38).style.border_right_style = n38_inherited_border.border_right_style;
+    doc.node_mut(n38).style.border_right_color = n38_inherited_border.border_right_color;
+    doc.node_mut(n38).style.border_bottom_width = n38_inherited_border.border_bottom_width;
+    doc.node_mut(n38).style.border_bottom_style = n38_inherited_border.border_bottom_style;
+    doc.node_mut(n38).style.border_bottom_color = n38_inherited_border.border_bottom_color;
+    doc.node_mut(n38).style.border_left_width = n38_inherited_border.border_left_width;
+    doc.node_mut(n38).style.border_left_style = n38_inherited_border.border_left_style;
+    doc.node_mut(n38).style.border_left_color = n38_inherited_border.border_left_color;
+    doc.node_mut(n38).style.color = Color::from_rgba8(255, 0, 255, 255);
+    doc.node_mut(n38).style.font_size = 16.0;
+    doc.append_child(n37, n38);
+    doc.set_attribute(n38, "class", "cell");
+    let n39 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n39).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n39).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n39).style.margin_top = Length::px(0.0);
+    doc.node_mut(n39).style.margin_right = Length::px(0.0);
+    doc.node_mut(n39).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n39).style.margin_left = Length::px(0.0);
+    doc.node_mut(n39).style.padding_top = Length::px(0.0);
+    doc.node_mut(n39).style.padding_right = Length::px(0.0);
+    doc.node_mut(n39).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n39).style.padding_left = Length::px(0.0);
+    doc.node_mut(n39).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n39).style.display = Display::Contents;
+    doc.node_mut(n39).style.background_color = Color::BLUE;
+    doc.node_mut(n39).style.background_linear_gradient = None;
+    doc.node_mut(n39).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n39).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n39).style.font_size = 16.0;
+    doc.append_child(n38, n39);
+    doc.set_attribute(n39, "class", "contents c2");
+    let n40 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n40).style.font_size = 16.0;
+    doc.node_mut(n40).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n40).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n40).text = Some("7".to_string());
+    doc.append_child(n39, n40);
+    let n41 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n41).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n41).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n41).style.margin_top = Length::px(0.0);
+    doc.node_mut(n41).style.margin_right = Length::px(0.0);
+    doc.node_mut(n41).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n41).style.margin_left = Length::px(0.0);
+    doc.node_mut(n41).style.padding_top = Length::px(0.0);
+    doc.node_mut(n41).style.padding_right = Length::px(0.0);
+    doc.node_mut(n41).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n41).style.padding_left = Length::px(0.0);
+    doc.node_mut(n41).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n41).style.background_color = Color::BLUE;
+    doc.node_mut(n41).style.background_linear_gradient = None;
+    doc.node_mut(n41).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n41).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n41).style.font_size = 16.0;
+    doc.append_child(n39, n41);
+    doc.set_attribute(n41, "class", "b");
+    let n42 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n42).style.font_size = 16.0;
+    doc.node_mut(n42).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n42).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n42).text = Some("a".to_string());
+    doc.append_child(n41, n42);
+    let n43 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n43).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n43).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n43).style.margin_top = Length::px(0.0);
+    doc.node_mut(n43).style.margin_right = Length::px(0.0);
+    doc.node_mut(n43).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n43).style.margin_left = Length::px(0.0);
+    doc.node_mut(n43).style.padding_top = Length::px(0.0);
+    doc.node_mut(n43).style.padding_right = Length::px(0.0);
+    doc.node_mut(n43).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n43).style.padding_left = Length::px(0.0);
+    doc.node_mut(n43).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n43).style.display = Display::Contents;
+    doc.node_mut(n43).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n43).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n43).style.font_size = 16.0;
+    doc.append_child(n2, n43);
+    doc.set_attribute(n43, "class", "contents c8");
+    let n44 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n44).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n44).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n44).style.margin_top = Length::px(0.0);
+    doc.node_mut(n44).style.margin_right = Length::px(0.0);
+    doc.node_mut(n44).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n44).style.margin_left = Length::px(0.0);
+    doc.node_mut(n44).style.padding_top = Length::px(0.0);
+    doc.node_mut(n44).style.padding_right = Length::px(0.0);
+    doc.node_mut(n44).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n44).style.padding_left = Length::px(0.0);
+    doc.node_mut(n44).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n44).style.display = Display::TableCell;
+    doc.node_mut(n44).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n44_inherited_border = doc.node(n43).style.clone();
+    doc.node_mut(n44).style.border_top_width = n44_inherited_border.border_top_width;
+    doc.node_mut(n44).style.border_top_style = n44_inherited_border.border_top_style;
+    doc.node_mut(n44).style.border_top_color = n44_inherited_border.border_top_color;
+    doc.node_mut(n44).style.border_right_width = n44_inherited_border.border_right_width;
+    doc.node_mut(n44).style.border_right_style = n44_inherited_border.border_right_style;
+    doc.node_mut(n44).style.border_right_color = n44_inherited_border.border_right_color;
+    doc.node_mut(n44).style.border_bottom_width = n44_inherited_border.border_bottom_width;
+    doc.node_mut(n44).style.border_bottom_style = n44_inherited_border.border_bottom_style;
+    doc.node_mut(n44).style.border_bottom_color = n44_inherited_border.border_bottom_color;
+    doc.node_mut(n44).style.border_left_width = n44_inherited_border.border_left_width;
+    doc.node_mut(n44).style.border_left_style = n44_inherited_border.border_left_style;
+    doc.node_mut(n44).style.border_left_color = n44_inherited_border.border_left_color;
+    doc.node_mut(n44).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n44).style.font_size = 16.0;
+    doc.append_child(n43, n44);
+    doc.set_attribute(n44, "class", "cell");
+    let n45 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n45).style.font_size = 16.0;
+    doc.node_mut(n45).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n45).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n45).text = Some("7b".to_string());
+    doc.append_child(n44, n45);
+    let n46 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n46).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n46).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n46).style.margin_top = Length::px(0.0);
+    doc.node_mut(n46).style.margin_right = Length::px(0.0);
+    doc.node_mut(n46).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n46).style.margin_left = Length::px(0.0);
+    doc.node_mut(n46).style.padding_top = Length::px(0.0);
+    doc.node_mut(n46).style.padding_right = Length::px(0.0);
+    doc.node_mut(n46).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n46).style.padding_left = Length::px(0.0);
+    doc.node_mut(n46).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n46).style.display = Display::Contents;
+    doc.node_mut(n46).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n46).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n46).style.font_size = 16.0;
+    doc.append_child(n2, n46);
+    doc.set_attribute(n46, "class", "contents c9");
+    let n47 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n47).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n47).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n47).style.margin_top = Length::px(0.0);
+    doc.node_mut(n47).style.margin_right = Length::px(0.0);
+    doc.node_mut(n47).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n47).style.margin_left = Length::px(0.0);
+    doc.node_mut(n47).style.padding_top = Length::px(0.0);
+    doc.node_mut(n47).style.padding_right = Length::px(0.0);
+    doc.node_mut(n47).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n47).style.padding_left = Length::px(0.0);
+    doc.node_mut(n47).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n47).style.display = Display::TableFooterGroup;
+    doc.node_mut(n47).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n47).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n47).style.font_size = 16.0;
+    doc.append_child(n46, n47);
+    doc.set_attribute(n47, "class", "foot");
+    let n48 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n48).style = ComputedStyle::for_anonymous_box(&doc.node(n47).style);
+    doc.node_mut(n48).style.display = Display::TableRow;
+    doc.append_child(n47, n48);
+    let n49 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n49).style = ComputedStyle::for_anonymous_box(&doc.node(n48).style);
+    doc.node_mut(n49).style.display = Display::TableCell;
+    doc.append_child(n48, n49);
+    let n50 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n50).style.font_size = 16.0;
+    doc.node_mut(n50).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n50).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n50).text = Some("8".to_string());
+    doc.append_child(n49, n50);
+    let n51 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n51).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n51).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n51).style.margin_top = Length::px(0.0);
+    doc.node_mut(n51).style.margin_right = Length::px(0.0);
+    doc.node_mut(n51).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n51).style.margin_left = Length::px(0.0);
+    doc.node_mut(n51).style.padding_top = Length::px(0.0);
+    doc.node_mut(n51).style.padding_right = Length::px(0.0);
+    doc.node_mut(n51).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n51).style.padding_left = Length::px(0.0);
+    doc.node_mut(n51).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n51).style.display = Display::Contents;
+    doc.node_mut(n51).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n51).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n51).style.font_size = 16.0;
+    doc.append_child(n2, n51);
+    doc.set_attribute(n51, "class", "contents c9");
+    let n52 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n52).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n52).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n52).style.margin_top = Length::px(0.0);
+    doc.node_mut(n52).style.margin_right = Length::px(0.0);
+    doc.node_mut(n52).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n52).style.margin_left = Length::px(0.0);
+    doc.node_mut(n52).style.padding_top = Length::px(0.0);
+    doc.node_mut(n52).style.padding_right = Length::px(0.0);
+    doc.node_mut(n52).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n52).style.padding_left = Length::px(0.0);
+    doc.node_mut(n52).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n52).style.display = Display::TableFooterGroup;
+    doc.node_mut(n52).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n52).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n52).style.font_size = 16.0;
+    doc.append_child(n51, n52);
+    doc.set_attribute(n52, "class", "foot");
+    let n53 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n53).style = ComputedStyle::for_anonymous_box(&doc.node(n52).style);
+    doc.node_mut(n53).style.display = Display::TableRow;
+    doc.append_child(n52, n53);
+    let n54 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n54).style = ComputedStyle::for_anonymous_box(&doc.node(n53).style);
+    doc.node_mut(n54).style.display = Display::TableCell;
+    doc.append_child(n53, n54);
+    let n55 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n55).style.font_size = 16.0;
+    doc.node_mut(n55).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n55).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n55).text = Some("9".to_string());
+    doc.append_child(n54, n55);
+    let n56 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n56).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n56).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n56).style.margin_top = Length::px(0.0);
+    doc.node_mut(n56).style.margin_right = Length::px(0.0);
+    doc.node_mut(n56).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n56).style.margin_left = Length::px(0.0);
+    doc.node_mut(n56).style.padding_top = Length::px(0.0);
+    doc.node_mut(n56).style.padding_right = Length::px(0.0);
+    doc.node_mut(n56).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n56).style.padding_left = Length::px(0.0);
+    doc.node_mut(n56).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n56).style.display = Display::Contents;
+    doc.node_mut(n56).style.background_color = Color::BLUE;
+    doc.node_mut(n56).style.background_linear_gradient = None;
+    doc.node_mut(n56).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n56).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n56).style.font_size = 16.0;
+    doc.append_child(n54, n56);
+    doc.set_attribute(n56, "class", "contents c2");
+    let n57 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n57).style.font_size = 16.0;
+    doc.node_mut(n57).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n57).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n57).text = Some("a".to_string());
+    doc.append_child(n56, n57);
+    let n58 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n58).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n58).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n58).style.margin_top = Length::px(0.0);
+    doc.node_mut(n58).style.margin_right = Length::px(0.0);
+    doc.node_mut(n58).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n58).style.margin_left = Length::px(0.0);
+    doc.node_mut(n58).style.padding_top = Length::px(0.0);
+    doc.node_mut(n58).style.padding_right = Length::px(0.0);
+    doc.node_mut(n58).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n58).style.padding_left = Length::px(0.0);
+    doc.node_mut(n58).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n58).style.background_color = Color::BLUE;
+    doc.node_mut(n58).style.background_linear_gradient = None;
+    doc.node_mut(n58).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n58).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n58).style.font_size = 16.0;
+    doc.append_child(n56, n58);
+    doc.set_attribute(n58, "class", "b");
+    let n59 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n59).style.font_size = 16.0;
+    doc.node_mut(n59).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n59).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n59).text = Some("b".to_string());
+    doc.append_child(n58, n59);
+    let n60 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n60).style.font_size = 16.0;
+    doc.node_mut(n60).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n60).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n60).text = Some("c".to_string());
+    doc.append_child(n56, n60);
+    let n61 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n61).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n61).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n61).style.margin_top = Length::px(0.0);
+    doc.node_mut(n61).style.margin_right = Length::px(0.0);
+    doc.node_mut(n61).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n61).style.margin_left = Length::px(0.0);
+    doc.node_mut(n61).style.padding_top = Length::px(0.0);
+    doc.node_mut(n61).style.padding_right = Length::px(0.0);
+    doc.node_mut(n61).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n61).style.padding_left = Length::px(0.0);
+    doc.node_mut(n61).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n61).style.display = Display::Contents;
+    doc.node_mut(n61).style.color = Color::BLACK;
+    doc.node_mut(n61).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n61).style.font_size = 16.0;
+    doc.append_child(n2, n61);
+    doc.set_attribute(n61, "class", "contents c10");
+    let n62 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n62).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n62).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n62).style.margin_top = Length::px(0.0);
+    doc.node_mut(n62).style.margin_right = Length::px(0.0);
+    doc.node_mut(n62).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n62).style.margin_left = Length::px(0.0);
+    doc.node_mut(n62).style.padding_top = Length::px(0.0);
+    doc.node_mut(n62).style.padding_right = Length::px(0.0);
+    doc.node_mut(n62).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n62).style.padding_left = Length::px(0.0);
+    doc.node_mut(n62).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n62).style.display = Display::TableCell;
+    doc.node_mut(n62).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n62_inherited_border = doc.node(n61).style.clone();
+    doc.node_mut(n62).style.border_top_width = n62_inherited_border.border_top_width;
+    doc.node_mut(n62).style.border_top_style = n62_inherited_border.border_top_style;
+    doc.node_mut(n62).style.border_top_color = n62_inherited_border.border_top_color;
+    doc.node_mut(n62).style.border_right_width = n62_inherited_border.border_right_width;
+    doc.node_mut(n62).style.border_right_style = n62_inherited_border.border_right_style;
+    doc.node_mut(n62).style.border_right_color = n62_inherited_border.border_right_color;
+    doc.node_mut(n62).style.border_bottom_width = n62_inherited_border.border_bottom_width;
+    doc.node_mut(n62).style.border_bottom_style = n62_inherited_border.border_bottom_style;
+    doc.node_mut(n62).style.border_bottom_color = n62_inherited_border.border_bottom_color;
+    doc.node_mut(n62).style.border_left_width = n62_inherited_border.border_left_width;
+    doc.node_mut(n62).style.border_left_style = n62_inherited_border.border_left_style;
+    doc.node_mut(n62).style.border_left_color = n62_inherited_border.border_left_color;
+    doc.node_mut(n62).style.color = Color::BLACK;
+    doc.node_mut(n62).style.font_size = 16.0;
+    doc.append_child(n61, n62);
+    doc.set_attribute(n62, "class", "cell");
+    let n63 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n63).style.font_size = 16.0;
+    doc.node_mut(n63).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n63).style.color = Color::BLACK;
+    doc.node_mut(n63).text = Some("10".to_string());
+    doc.append_child(n62, n63);
+    doc
+}
+
+// Source: css-display/display-contents-table-001-ref.html
+fn css_display_display_contents_table_001_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.font_size = 16.0;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(0.0);
+    doc.node_mut(vp).style.padding_right = Length::px(0.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.padding_left = Length::px(0.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.color = Color::RED;
+    doc.node_mut(vp).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.color = Color::RED;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.append_child(vp, n1);
+    doc.set_attribute(n1, "class", "ref");
+    doc.set_attribute(n1, "style", "color: red");
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style = ComputedStyle::for_anonymous_box(&doc.node(n1).style);
+    doc.node_mut(n2).style.display = Display::Table;
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.display = Display::TableCaption;
+    doc.node_mut(n3).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n3).style.background_linear_gradient = None;
+    doc.node_mut(n3).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.font_size = 16.0;
+    doc.append_child(n2, n3);
+    doc.set_attribute(n3, "class", "caption c2");
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 16.0;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n4).text = Some("1".to_string());
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n5).style.font_size = 16.0;
+    doc.append_child(n3, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n6).text = Some("1".to_string());
+    doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.display = Display::TableRow;
+    doc.node_mut(n7).style.border_top_width = 1;
+    doc.node_mut(n7).style.border_top_style = BorderStyle::Dashed;
+    doc.node_mut(n7).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n7).style.border_right_width = 1;
+    doc.node_mut(n7).style.border_right_style = BorderStyle::Dashed;
+    doc.node_mut(n7).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n7).style.border_bottom_width = 1;
+    doc.node_mut(n7).style.border_bottom_style = BorderStyle::Dashed;
+    doc.node_mut(n7).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n7).style.border_left_width = 1;
+    doc.node_mut(n7).style.border_left_style = BorderStyle::Dashed;
+    doc.node_mut(n7).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n7).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n7).style.background_linear_gradient = None;
+    doc.node_mut(n7).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.font_size = 16.0;
+    doc.append_child(n2, n7);
+    doc.set_attribute(n7, "class", "row c2");
+    let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).style = ComputedStyle::for_anonymous_box(&doc.node(n7).style);
+    doc.node_mut(n8).style.display = Display::TableCell;
+    doc.append_child(n7, n8);
+    let n9 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n9).style.font_size = 16.0;
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n9).text = Some("2a".to_string());
+    doc.append_child(n8, n9);
+    let n10 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n10).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n10).style.margin_top = Length::px(0.0);
+    doc.node_mut(n10).style.margin_right = Length::px(0.0);
+    doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.margin_left = Length::px(0.0);
+    doc.node_mut(n10).style.padding_top = Length::px(0.0);
+    doc.node_mut(n10).style.padding_right = Length::px(0.0);
+    doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.padding_left = Length::px(0.0);
+    doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.display = Display::TableCell;
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n10_inherited_border = doc.node(n7).style.clone();
+    doc.node_mut(n10).style.border_top_width = n10_inherited_border.border_top_width;
+    doc.node_mut(n10).style.border_top_style = n10_inherited_border.border_top_style;
+    doc.node_mut(n10).style.border_top_color = n10_inherited_border.border_top_color;
+    doc.node_mut(n10).style.border_right_width = n10_inherited_border.border_right_width;
+    doc.node_mut(n10).style.border_right_style = n10_inherited_border.border_right_style;
+    doc.node_mut(n10).style.border_right_color = n10_inherited_border.border_right_color;
+    doc.node_mut(n10).style.border_bottom_width = n10_inherited_border.border_bottom_width;
+    doc.node_mut(n10).style.border_bottom_style = n10_inherited_border.border_bottom_style;
+    doc.node_mut(n10).style.border_bottom_color = n10_inherited_border.border_bottom_color;
+    doc.node_mut(n10).style.border_left_width = n10_inherited_border.border_left_width;
+    doc.node_mut(n10).style.border_left_style = n10_inherited_border.border_left_style;
+    doc.node_mut(n10).style.border_left_color = n10_inherited_border.border_left_color;
+    doc.node_mut(n10).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n10).style.font_size = 16.0;
+    doc.append_child(n7, n10);
+    doc.set_attribute(n10, "class", "cell");
+    let n11 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n11).style.font_size = 16.0;
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n11).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n11).text = Some("2".to_string());
+    doc.append_child(n10, n11);
+    let n12 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n12).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n12).style.margin_top = Length::px(0.0);
+    doc.node_mut(n12).style.margin_right = Length::px(0.0);
+    doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n12).style.margin_left = Length::px(0.0);
+    doc.node_mut(n12).style.padding_top = Length::px(0.0);
+    doc.node_mut(n12).style.padding_right = Length::px(0.0);
+    doc.node_mut(n12).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n12).style.padding_left = Length::px(0.0);
+    doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n12).style.display = Display::Inline;
+    doc.node_mut(n12).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n12).style.background_linear_gradient = None;
+    doc.node_mut(n12).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n12).style.font_size = 16.0;
+    doc.append_child(n10, n12);
+    doc.set_attribute(n12, "class", "inline c2");
+    let n13 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n13).style.font_size = 16.0;
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n13).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n13).text = Some("b".to_string());
+    doc.append_child(n12, n13);
+    let n14 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n14).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n14).style.margin_top = Length::px(0.0);
+    doc.node_mut(n14).style.margin_right = Length::px(0.0);
+    doc.node_mut(n14).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n14).style.margin_left = Length::px(0.0);
+    doc.node_mut(n14).style.padding_top = Length::px(0.0);
+    doc.node_mut(n14).style.padding_right = Length::px(0.0);
+    doc.node_mut(n14).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n14).style.padding_left = Length::px(0.0);
+    doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n14).style.background_color = Color::BLUE;
+    doc.node_mut(n14).style.background_linear_gradient = None;
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n14).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n14).style.font_size = 16.0;
+    doc.append_child(n12, n14);
+    doc.set_attribute(n14, "class", "b");
+    let n15 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n15).style.font_size = 16.0;
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n15).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n15).text = Some("b".to_string());
+    doc.append_child(n14, n15);
+    let n16 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n16).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n16).style.margin_top = Length::px(0.0);
+    doc.node_mut(n16).style.margin_right = Length::px(0.0);
+    doc.node_mut(n16).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n16).style.margin_left = Length::px(0.0);
+    doc.node_mut(n16).style.padding_top = Length::px(0.0);
+    doc.node_mut(n16).style.padding_right = Length::px(0.0);
+    doc.node_mut(n16).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n16).style.padding_left = Length::px(0.0);
+    doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n16).style.display = Display::TableCell;
+    doc.node_mut(n16).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n16_inherited_border = doc.node(n2).style.clone();
+    doc.node_mut(n16).style.border_top_width = n16_inherited_border.border_top_width;
+    doc.node_mut(n16).style.border_top_style = n16_inherited_border.border_top_style;
+    doc.node_mut(n16).style.border_top_color = n16_inherited_border.border_top_color;
+    doc.node_mut(n16).style.border_right_width = n16_inherited_border.border_right_width;
+    doc.node_mut(n16).style.border_right_style = n16_inherited_border.border_right_style;
+    doc.node_mut(n16).style.border_right_color = n16_inherited_border.border_right_color;
+    doc.node_mut(n16).style.border_bottom_width = n16_inherited_border.border_bottom_width;
+    doc.node_mut(n16).style.border_bottom_style = n16_inherited_border.border_bottom_style;
+    doc.node_mut(n16).style.border_bottom_color = n16_inherited_border.border_bottom_color;
+    doc.node_mut(n16).style.border_left_width = n16_inherited_border.border_left_width;
+    doc.node_mut(n16).style.border_left_style = n16_inherited_border.border_left_style;
+    doc.node_mut(n16).style.border_left_color = n16_inherited_border.border_left_color;
+    doc.node_mut(n16).style.font_size = 16.0;
+    doc.append_child(n2, n16);
+    doc.set_attribute(n16, "class", "cell c3");
+    let n17 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n17).style.font_size = 16.0;
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n17).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.node_mut(n17).text = Some("3".to_string());
+    doc.append_child(n16, n17);
+    let n18 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n18).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n18).style.margin_top = Length::px(0.0);
+    doc.node_mut(n18).style.margin_right = Length::px(0.0);
+    doc.node_mut(n18).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n18).style.margin_left = Length::px(0.0);
+    doc.node_mut(n18).style.padding_top = Length::px(0.0);
+    doc.node_mut(n18).style.padding_right = Length::px(0.0);
+    doc.node_mut(n18).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n18).style.padding_left = Length::px(0.0);
+    doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n18).style.display = Display::TableRowGroup;
+    doc.node_mut(n18).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n18).style.font_size = 16.0;
+    doc.append_child(n2, n18);
+    doc.set_attribute(n18, "class", "rowg c4");
+    let n19 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n19).style = ComputedStyle::for_anonymous_box(&doc.node(n18).style);
+    doc.node_mut(n19).style.display = Display::TableRow;
+    doc.append_child(n18, n19);
+    let n20 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n20).style = ComputedStyle::for_anonymous_box(&doc.node(n19).style);
+    doc.node_mut(n20).style.display = Display::TableCell;
+    doc.append_child(n19, n20);
+    let n21 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n21).style.font_size = 16.0;
+    doc.node_mut(n21).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n21).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n21).text = Some("4".to_string());
+    doc.append_child(n20, n21);
+    let n22 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n22).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n22).style.margin_top = Length::px(0.0);
+    doc.node_mut(n22).style.margin_right = Length::px(0.0);
+    doc.node_mut(n22).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n22).style.margin_left = Length::px(0.0);
+    doc.node_mut(n22).style.padding_top = Length::px(0.0);
+    doc.node_mut(n22).style.padding_right = Length::px(0.0);
+    doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n22).style.padding_left = Length::px(0.0);
+    doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n22).style.display = Display::TableCell;
+    doc.node_mut(n22).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n22_inherited_border = doc.node(n2).style.clone();
+    doc.node_mut(n22).style.border_top_width = n22_inherited_border.border_top_width;
+    doc.node_mut(n22).style.border_top_style = n22_inherited_border.border_top_style;
+    doc.node_mut(n22).style.border_top_color = n22_inherited_border.border_top_color;
+    doc.node_mut(n22).style.border_right_width = n22_inherited_border.border_right_width;
+    doc.node_mut(n22).style.border_right_style = n22_inherited_border.border_right_style;
+    doc.node_mut(n22).style.border_right_color = n22_inherited_border.border_right_color;
+    doc.node_mut(n22).style.border_bottom_width = n22_inherited_border.border_bottom_width;
+    doc.node_mut(n22).style.border_bottom_style = n22_inherited_border.border_bottom_style;
+    doc.node_mut(n22).style.border_bottom_color = n22_inherited_border.border_bottom_color;
+    doc.node_mut(n22).style.border_left_width = n22_inherited_border.border_left_width;
+    doc.node_mut(n22).style.border_left_style = n22_inherited_border.border_left_style;
+    doc.node_mut(n22).style.border_left_color = n22_inherited_border.border_left_color;
+    doc.node_mut(n22).style.font_size = 16.0;
+    doc.append_child(n2, n22);
+    doc.set_attribute(n22, "class", "cell c5");
+    let n23 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n23).style.font_size = 16.0;
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n23).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n23).text = Some("5a".to_string());
+    doc.append_child(n22, n23);
+    let n24 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n24).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n24).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n24).style.margin_top = Length::px(0.0);
+    doc.node_mut(n24).style.margin_right = Length::px(0.0);
+    doc.node_mut(n24).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n24).style.margin_left = Length::px(0.0);
+    doc.node_mut(n24).style.padding_top = Length::px(0.0);
+    doc.node_mut(n24).style.padding_right = Length::px(0.0);
+    doc.node_mut(n24).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n24).style.padding_left = Length::px(0.0);
+    doc.node_mut(n24).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n24).style.display = Display::TableCell;
+    doc.node_mut(n24).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n24).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n24_inherited_border = doc.node(n2).style.clone();
+    doc.node_mut(n24).style.border_top_width = n24_inherited_border.border_top_width;
+    doc.node_mut(n24).style.border_top_style = n24_inherited_border.border_top_style;
+    doc.node_mut(n24).style.border_top_color = n24_inherited_border.border_top_color;
+    doc.node_mut(n24).style.border_right_width = n24_inherited_border.border_right_width;
+    doc.node_mut(n24).style.border_right_style = n24_inherited_border.border_right_style;
+    doc.node_mut(n24).style.border_right_color = n24_inherited_border.border_right_color;
+    doc.node_mut(n24).style.border_bottom_width = n24_inherited_border.border_bottom_width;
+    doc.node_mut(n24).style.border_bottom_style = n24_inherited_border.border_bottom_style;
+    doc.node_mut(n24).style.border_bottom_color = n24_inherited_border.border_bottom_color;
+    doc.node_mut(n24).style.border_left_width = n24_inherited_border.border_left_width;
+    doc.node_mut(n24).style.border_left_style = n24_inherited_border.border_left_style;
+    doc.node_mut(n24).style.border_left_color = n24_inherited_border.border_left_color;
+    doc.node_mut(n24).style.font_size = 16.0;
+    doc.append_child(n2, n24);
+    doc.set_attribute(n24, "class", "cell c5");
+    let n25 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n25).style.font_size = 16.0;
+    doc.node_mut(n25).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n25).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n25).text = Some("5b".to_string());
+    doc.append_child(n24, n25);
+    let n26 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n26).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n26).style.margin_top = Length::px(0.0);
+    doc.node_mut(n26).style.margin_right = Length::px(0.0);
+    doc.node_mut(n26).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n26).style.margin_left = Length::px(0.0);
+    doc.node_mut(n26).style.padding_top = Length::px(0.0);
+    doc.node_mut(n26).style.padding_right = Length::px(0.0);
+    doc.node_mut(n26).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n26).style.padding_left = Length::px(0.0);
+    doc.node_mut(n26).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n26).style.display = Display::TableHeaderGroup;
+    doc.node_mut(n26).style.color = Color::from_rgba8(0, 255, 255, 255);
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n26).style.font_size = 16.0;
+    doc.append_child(n2, n26);
+    doc.set_attribute(n26, "class", "head c6");
+    let n27 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n27).style = ComputedStyle::for_anonymous_box(&doc.node(n26).style);
+    doc.node_mut(n27).style.display = Display::TableRow;
+    doc.append_child(n26, n27);
+    let n28 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n28).style = ComputedStyle::for_anonymous_box(&doc.node(n27).style);
+    doc.node_mut(n28).style.display = Display::TableCell;
+    doc.append_child(n27, n28);
+    let n29 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n29).style.font_size = 16.0;
+    doc.node_mut(n29).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n29).style.color = Color::from_rgba8(0, 255, 255, 255);
+    doc.node_mut(n29).text = Some("6".to_string());
+    doc.append_child(n28, n29);
+    let n30 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n30).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n30).style.margin_top = Length::px(0.0);
+    doc.node_mut(n30).style.margin_right = Length::px(0.0);
+    doc.node_mut(n30).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n30).style.margin_left = Length::px(0.0);
+    doc.node_mut(n30).style.padding_top = Length::px(0.0);
+    doc.node_mut(n30).style.padding_right = Length::px(0.0);
+    doc.node_mut(n30).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n30).style.padding_left = Length::px(0.0);
+    doc.node_mut(n30).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n30).style.display = Display::TableCell;
+    doc.node_mut(n30).style.color = Color::from_rgba8(255, 0, 255, 255);
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n30_inherited_border = doc.node(n2).style.clone();
+    doc.node_mut(n30).style.border_top_width = n30_inherited_border.border_top_width;
+    doc.node_mut(n30).style.border_top_style = n30_inherited_border.border_top_style;
+    doc.node_mut(n30).style.border_top_color = n30_inherited_border.border_top_color;
+    doc.node_mut(n30).style.border_right_width = n30_inherited_border.border_right_width;
+    doc.node_mut(n30).style.border_right_style = n30_inherited_border.border_right_style;
+    doc.node_mut(n30).style.border_right_color = n30_inherited_border.border_right_color;
+    doc.node_mut(n30).style.border_bottom_width = n30_inherited_border.border_bottom_width;
+    doc.node_mut(n30).style.border_bottom_style = n30_inherited_border.border_bottom_style;
+    doc.node_mut(n30).style.border_bottom_color = n30_inherited_border.border_bottom_color;
+    doc.node_mut(n30).style.border_left_width = n30_inherited_border.border_left_width;
+    doc.node_mut(n30).style.border_left_style = n30_inherited_border.border_left_style;
+    doc.node_mut(n30).style.border_left_color = n30_inherited_border.border_left_color;
+    doc.node_mut(n30).style.font_size = 16.0;
+    doc.append_child(n2, n30);
+    doc.set_attribute(n30, "class", "cell c7");
+    let n31 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n31).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n31).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n31).style.margin_top = Length::px(0.0);
+    doc.node_mut(n31).style.margin_right = Length::px(0.0);
+    doc.node_mut(n31).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n31).style.margin_left = Length::px(0.0);
+    doc.node_mut(n31).style.padding_top = Length::px(0.0);
+    doc.node_mut(n31).style.padding_right = Length::px(0.0);
+    doc.node_mut(n31).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n31).style.padding_left = Length::px(0.0);
+    doc.node_mut(n31).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n31).style.display = Display::Inline;
+    doc.node_mut(n31).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n31).style.background_linear_gradient = None;
+    doc.node_mut(n31).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n31).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n31).style.font_size = 16.0;
+    doc.append_child(n30, n31);
+    doc.set_attribute(n31, "class", "inline c2");
+    let n32 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n32).style.font_size = 16.0;
+    doc.node_mut(n32).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n32).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n32).text = Some("7".to_string());
+    doc.append_child(n31, n32);
+    let n33 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n33).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n33).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n33).style.margin_top = Length::px(0.0);
+    doc.node_mut(n33).style.margin_right = Length::px(0.0);
+    doc.node_mut(n33).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n33).style.margin_left = Length::px(0.0);
+    doc.node_mut(n33).style.padding_top = Length::px(0.0);
+    doc.node_mut(n33).style.padding_right = Length::px(0.0);
+    doc.node_mut(n33).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n33).style.padding_left = Length::px(0.0);
+    doc.node_mut(n33).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n33).style.background_color = Color::BLUE;
+    doc.node_mut(n33).style.background_linear_gradient = None;
+    doc.node_mut(n33).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n33).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n33).style.font_size = 16.0;
+    doc.append_child(n31, n33);
+    doc.set_attribute(n33, "class", "b");
+    let n34 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n34).style.font_size = 16.0;
+    doc.node_mut(n34).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n34).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n34).text = Some("a".to_string());
+    doc.append_child(n33, n34);
+    let n35 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n35).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n35).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n35).style.margin_top = Length::px(0.0);
+    doc.node_mut(n35).style.margin_right = Length::px(0.0);
+    doc.node_mut(n35).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n35).style.margin_left = Length::px(0.0);
+    doc.node_mut(n35).style.padding_top = Length::px(0.0);
+    doc.node_mut(n35).style.padding_right = Length::px(0.0);
+    doc.node_mut(n35).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n35).style.padding_left = Length::px(0.0);
+    doc.node_mut(n35).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n35).style.display = Display::TableCell;
+    doc.node_mut(n35).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n35).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n35_inherited_border = doc.node(n2).style.clone();
+    doc.node_mut(n35).style.border_top_width = n35_inherited_border.border_top_width;
+    doc.node_mut(n35).style.border_top_style = n35_inherited_border.border_top_style;
+    doc.node_mut(n35).style.border_top_color = n35_inherited_border.border_top_color;
+    doc.node_mut(n35).style.border_right_width = n35_inherited_border.border_right_width;
+    doc.node_mut(n35).style.border_right_style = n35_inherited_border.border_right_style;
+    doc.node_mut(n35).style.border_right_color = n35_inherited_border.border_right_color;
+    doc.node_mut(n35).style.border_bottom_width = n35_inherited_border.border_bottom_width;
+    doc.node_mut(n35).style.border_bottom_style = n35_inherited_border.border_bottom_style;
+    doc.node_mut(n35).style.border_bottom_color = n35_inherited_border.border_bottom_color;
+    doc.node_mut(n35).style.border_left_width = n35_inherited_border.border_left_width;
+    doc.node_mut(n35).style.border_left_style = n35_inherited_border.border_left_style;
+    doc.node_mut(n35).style.border_left_color = n35_inherited_border.border_left_color;
+    doc.node_mut(n35).style.font_size = 16.0;
+    doc.append_child(n2, n35);
+    doc.set_attribute(n35, "class", "cell c8");
+    let n36 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n36).style.font_size = 16.0;
+    doc.node_mut(n36).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n36).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n36).text = Some("7b".to_string());
+    doc.append_child(n35, n36);
+    let n37 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n37).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n37).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n37).style.margin_top = Length::px(0.0);
+    doc.node_mut(n37).style.margin_right = Length::px(0.0);
+    doc.node_mut(n37).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n37).style.margin_left = Length::px(0.0);
+    doc.node_mut(n37).style.padding_top = Length::px(0.0);
+    doc.node_mut(n37).style.padding_right = Length::px(0.0);
+    doc.node_mut(n37).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n37).style.padding_left = Length::px(0.0);
+    doc.node_mut(n37).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n37).style.display = Display::TableFooterGroup;
+    doc.node_mut(n37).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n37).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n37).style.font_size = 16.0;
+    doc.append_child(n2, n37);
+    doc.set_attribute(n37, "class", "foot c9");
+    let n38 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n38).style = ComputedStyle::for_anonymous_box(&doc.node(n37).style);
+    doc.node_mut(n38).style.display = Display::TableRow;
+    doc.append_child(n37, n38);
+    let n39 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n39).style = ComputedStyle::for_anonymous_box(&doc.node(n38).style);
+    doc.node_mut(n39).style.display = Display::TableCell;
+    doc.append_child(n38, n39);
+    let n40 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n40).style.font_size = 16.0;
+    doc.node_mut(n40).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n40).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n40).text = Some("8".to_string());
+    doc.append_child(n39, n40);
+    let n41 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n41).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n41).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n41).style.margin_top = Length::px(0.0);
+    doc.node_mut(n41).style.margin_right = Length::px(0.0);
+    doc.node_mut(n41).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n41).style.margin_left = Length::px(0.0);
+    doc.node_mut(n41).style.padding_top = Length::px(0.0);
+    doc.node_mut(n41).style.padding_right = Length::px(0.0);
+    doc.node_mut(n41).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n41).style.padding_left = Length::px(0.0);
+    doc.node_mut(n41).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n41).style.display = Display::TableFooterGroup;
+    doc.node_mut(n41).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n41).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n41).style.font_size = 16.0;
+    doc.append_child(n2, n41);
+    doc.set_attribute(n41, "class", "foot c9");
+    let n42 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n42).style = ComputedStyle::for_anonymous_box(&doc.node(n41).style);
+    doc.node_mut(n42).style.display = Display::TableRow;
+    doc.append_child(n41, n42);
+    let n43 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n43).style = ComputedStyle::for_anonymous_box(&doc.node(n42).style);
+    doc.node_mut(n43).style.display = Display::TableCell;
+    doc.append_child(n42, n43);
+    let n44 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n44).style.font_size = 16.0;
+    doc.node_mut(n44).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n44).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n44).text = Some("9".to_string());
+    doc.append_child(n43, n44);
+    let n45 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n45).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n45).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n45).style.margin_top = Length::px(0.0);
+    doc.node_mut(n45).style.margin_right = Length::px(0.0);
+    doc.node_mut(n45).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n45).style.margin_left = Length::px(0.0);
+    doc.node_mut(n45).style.padding_top = Length::px(0.0);
+    doc.node_mut(n45).style.padding_right = Length::px(0.0);
+    doc.node_mut(n45).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n45).style.padding_left = Length::px(0.0);
+    doc.node_mut(n45).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n45).style.display = Display::Inline;
+    doc.node_mut(n45).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n45).style.background_linear_gradient = None;
+    doc.node_mut(n45).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n45).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n45).style.font_size = 16.0;
+    doc.append_child(n43, n45);
+    doc.set_attribute(n45, "class", "inline c2");
+    let n46 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n46).style.font_size = 16.0;
+    doc.node_mut(n46).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n46).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n46).text = Some("a".to_string());
+    doc.append_child(n45, n46);
+    let n47 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n47).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n47).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n47).style.margin_top = Length::px(0.0);
+    doc.node_mut(n47).style.margin_right = Length::px(0.0);
+    doc.node_mut(n47).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n47).style.margin_left = Length::px(0.0);
+    doc.node_mut(n47).style.padding_top = Length::px(0.0);
+    doc.node_mut(n47).style.padding_right = Length::px(0.0);
+    doc.node_mut(n47).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n47).style.padding_left = Length::px(0.0);
+    doc.node_mut(n47).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n47).style.background_color = Color::BLUE;
+    doc.node_mut(n47).style.background_linear_gradient = None;
+    doc.node_mut(n47).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n47).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n47).style.font_size = 16.0;
+    doc.append_child(n45, n47);
+    doc.set_attribute(n47, "class", "b");
+    let n48 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n48).style.font_size = 16.0;
+    doc.node_mut(n48).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n48).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n48).text = Some("b".to_string());
+    doc.append_child(n47, n48);
+    let n49 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n49).style.font_size = 16.0;
+    doc.node_mut(n49).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n49).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n49).text = Some("c".to_string());
+    doc.append_child(n45, n49);
+    let n50 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n50).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n50).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n50).style.margin_top = Length::px(0.0);
+    doc.node_mut(n50).style.margin_right = Length::px(0.0);
+    doc.node_mut(n50).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n50).style.margin_left = Length::px(0.0);
+    doc.node_mut(n50).style.padding_top = Length::px(0.0);
+    doc.node_mut(n50).style.padding_right = Length::px(0.0);
+    doc.node_mut(n50).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n50).style.padding_left = Length::px(0.0);
+    doc.node_mut(n50).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n50).style.display = Display::TableCell;
+    doc.node_mut(n50).style.color = Color::BLACK;
+    doc.node_mut(n50).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n50_inherited_border = doc.node(n2).style.clone();
+    doc.node_mut(n50).style.border_top_width = n50_inherited_border.border_top_width;
+    doc.node_mut(n50).style.border_top_style = n50_inherited_border.border_top_style;
+    doc.node_mut(n50).style.border_top_color = n50_inherited_border.border_top_color;
+    doc.node_mut(n50).style.border_right_width = n50_inherited_border.border_right_width;
+    doc.node_mut(n50).style.border_right_style = n50_inherited_border.border_right_style;
+    doc.node_mut(n50).style.border_right_color = n50_inherited_border.border_right_color;
+    doc.node_mut(n50).style.border_bottom_width = n50_inherited_border.border_bottom_width;
+    doc.node_mut(n50).style.border_bottom_style = n50_inherited_border.border_bottom_style;
+    doc.node_mut(n50).style.border_bottom_color = n50_inherited_border.border_bottom_color;
+    doc.node_mut(n50).style.border_left_width = n50_inherited_border.border_left_width;
+    doc.node_mut(n50).style.border_left_style = n50_inherited_border.border_left_style;
+    doc.node_mut(n50).style.border_left_color = n50_inherited_border.border_left_color;
+    doc.node_mut(n50).style.font_size = 16.0;
+    doc.append_child(n2, n50);
+    doc.set_attribute(n50, "class", "cell c10");
+    let n51 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n51).style.font_size = 16.0;
+    doc.node_mut(n51).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n51).style.color = Color::BLACK;
+    doc.node_mut(n51).text = Some("10".to_string());
+    doc.append_child(n50, n51);
+    doc
+}
+
+// Source: css-display/display-contents-table-002.html
+fn css_display_display_contents_table_002() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.font_size = 16.0;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(0.0);
+    doc.node_mut(vp).style.padding_right = Length::px(0.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.padding_left = Length::px(0.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.color = Color::RED;
+    doc.node_mut(vp).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.color = Color::RED;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.append_child(vp, n1);
+    doc.set_attribute(n1, "style", "color: red");
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.display = Display::Table;
+    doc.node_mut(n2).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n2).style.border_top_width = 1;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_right_width = 1;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_bottom_width = 1;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_left_width = 1;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.float = Float::Right;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.color = Color::RED;
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.append_child(n1, n2);
+    doc.set_attribute(n2, "class", "table");
+    doc.set_attribute(n2, "style", "float:right");
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.display = Display::Contents;
+    doc.node_mut(n3).style.color = Color::from_rgba8(0, 255, 0, 255);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n3).style.font_size = 16.0;
+    doc.append_child(n2, n3);
+    doc.set_attribute(n3, "class", "contents c1");
+    let n4 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.display = Display::Contents;
+    doc.node_mut(n4).style.background_color = Color::BLUE;
+    doc.node_mut(n4).style.background_linear_gradient = None;
+    doc.node_mut(n4).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n4).style.font_size = 16.0;
+    doc.append_child(n3, n4);
+    doc.set_attribute(n4, "class", "contents c2");
+    let n5 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.display = Display::TableCaption;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n5).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n5).style.font_size = 16.0;
+    doc.append_child(n4, n5);
+    doc.set_attribute(n5, "class", "caption");
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n6).text = Some("1".to_string());
+    doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n7).style.background_linear_gradient = None;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n7).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n7).style.font_size = 16.0;
+    doc.append_child(n5, n7);
+    doc.set_attribute(n7, "class", "b");
+    let n8 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n8).style.font_size = 16.0;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n8).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n8).text = Some("1".to_string());
+    doc.append_child(n7, n8);
+    let n9 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n9).style.margin_top = Length::px(0.0);
+    doc.node_mut(n9).style.margin_right = Length::px(0.0);
+    doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.margin_left = Length::px(0.0);
+    doc.node_mut(n9).style.padding_top = Length::px(0.0);
+    doc.node_mut(n9).style.padding_right = Length::px(0.0);
+    doc.node_mut(n9).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.padding_left = Length::px(0.0);
+    doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n9).style.display = Display::Contents;
+    doc.node_mut(n9).style.background_color = Color::BLUE;
+    doc.node_mut(n9).style.background_linear_gradient = None;
+    doc.node_mut(n9).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n9).style.font_size = 16.0;
+    doc.append_child(n2, n9);
+    doc.set_attribute(n9, "class", "contents c2");
+    let n10 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n10).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n10).style.margin_top = Length::px(0.0);
+    doc.node_mut(n10).style.margin_right = Length::px(0.0);
+    doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.margin_left = Length::px(0.0);
+    doc.node_mut(n10).style.padding_top = Length::px(0.0);
+    doc.node_mut(n10).style.padding_right = Length::px(0.0);
+    doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.padding_left = Length::px(0.0);
+    doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.display = Display::TableRow;
+    doc.node_mut(n10).style.border_top_width = 1;
+    doc.node_mut(n10).style.border_top_style = BorderStyle::Dashed;
+    doc.node_mut(n10).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n10).style.border_right_width = 1;
+    doc.node_mut(n10).style.border_right_style = BorderStyle::Dashed;
+    doc.node_mut(n10).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n10).style.border_bottom_width = 1;
+    doc.node_mut(n10).style.border_bottom_style = BorderStyle::Dashed;
+    doc.node_mut(n10).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n10).style.border_left_width = 1;
+    doc.node_mut(n10).style.border_left_style = BorderStyle::Dashed;
+    doc.node_mut(n10).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n10).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n10).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n10).style.font_size = 16.0;
+    doc.append_child(n9, n10);
+    doc.set_attribute(n10, "class", "row");
+    let n11 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n11).style = ComputedStyle::for_anonymous_box(&doc.node(n10).style);
+    doc.node_mut(n11).style.display = Display::TableCell;
+    doc.append_child(n10, n11);
+    let n12 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n12).style.font_size = 16.0;
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n12).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n12).text = Some("2a".to_string());
+    doc.append_child(n11, n12);
+    let n13 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n13).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n13).style.margin_top = Length::px(0.0);
+    doc.node_mut(n13).style.margin_right = Length::px(0.0);
+    doc.node_mut(n13).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n13).style.margin_left = Length::px(0.0);
+    doc.node_mut(n13).style.padding_top = Length::px(0.0);
+    doc.node_mut(n13).style.padding_right = Length::px(0.0);
+    doc.node_mut(n13).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n13).style.padding_left = Length::px(0.0);
+    doc.node_mut(n13).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n13).style.display = Display::TableCell;
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n13_inherited_border = doc.node(n10).style.clone();
+    doc.node_mut(n13).style.border_top_width = n13_inherited_border.border_top_width;
+    doc.node_mut(n13).style.border_top_style = n13_inherited_border.border_top_style;
+    doc.node_mut(n13).style.border_top_color = n13_inherited_border.border_top_color;
+    doc.node_mut(n13).style.border_right_width = n13_inherited_border.border_right_width;
+    doc.node_mut(n13).style.border_right_style = n13_inherited_border.border_right_style;
+    doc.node_mut(n13).style.border_right_color = n13_inherited_border.border_right_color;
+    doc.node_mut(n13).style.border_bottom_width = n13_inherited_border.border_bottom_width;
+    doc.node_mut(n13).style.border_bottom_style = n13_inherited_border.border_bottom_style;
+    doc.node_mut(n13).style.border_bottom_color = n13_inherited_border.border_bottom_color;
+    doc.node_mut(n13).style.border_left_width = n13_inherited_border.border_left_width;
+    doc.node_mut(n13).style.border_left_style = n13_inherited_border.border_left_style;
+    doc.node_mut(n13).style.border_left_color = n13_inherited_border.border_left_color;
+    doc.node_mut(n13).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n13).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n13).style.font_size = 16.0;
+    doc.append_child(n10, n13);
+    doc.set_attribute(n13, "class", "cell");
+    let n14 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n14).style.font_size = 16.0;
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n14).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n14).text = Some("2".to_string());
+    doc.append_child(n13, n14);
+    let n15 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n15).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n15).style.margin_top = Length::px(0.0);
+    doc.node_mut(n15).style.margin_right = Length::px(0.0);
+    doc.node_mut(n15).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n15).style.margin_left = Length::px(0.0);
+    doc.node_mut(n15).style.padding_top = Length::px(0.0);
+    doc.node_mut(n15).style.padding_right = Length::px(0.0);
+    doc.node_mut(n15).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n15).style.padding_left = Length::px(0.0);
+    doc.node_mut(n15).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n15).style.display = Display::Contents;
+    doc.node_mut(n15).style.background_color = Color::BLUE;
+    doc.node_mut(n15).style.background_linear_gradient = None;
+    doc.node_mut(n15).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n15).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n15).style.font_size = 16.0;
+    doc.append_child(n13, n15);
+    doc.set_attribute(n15, "class", "contents c2");
+    let n16 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n16).style.font_size = 16.0;
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n16).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n16).text = Some("b".to_string());
+    doc.append_child(n15, n16);
+    let n17 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n17).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n17).style.margin_top = Length::px(0.0);
+    doc.node_mut(n17).style.margin_right = Length::px(0.0);
+    doc.node_mut(n17).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.margin_left = Length::px(0.0);
+    doc.node_mut(n17).style.padding_top = Length::px(0.0);
+    doc.node_mut(n17).style.padding_right = Length::px(0.0);
+    doc.node_mut(n17).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n17).style.padding_left = Length::px(0.0);
+    doc.node_mut(n17).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n17).style.background_color = Color::BLUE;
+    doc.node_mut(n17).style.background_linear_gradient = None;
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n17).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n17).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n17).style.font_size = 16.0;
+    doc.append_child(n15, n17);
+    doc.set_attribute(n17, "class", "b");
+    let n18 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n18).style.font_size = 16.0;
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n18).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n18).text = Some("b".to_string());
+    doc.append_child(n17, n18);
+    let n19 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n19).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n19).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n19).style.margin_top = Length::px(0.0);
+    doc.node_mut(n19).style.margin_right = Length::px(0.0);
+    doc.node_mut(n19).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n19).style.margin_left = Length::px(0.0);
+    doc.node_mut(n19).style.padding_top = Length::px(0.0);
+    doc.node_mut(n19).style.padding_right = Length::px(0.0);
+    doc.node_mut(n19).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n19).style.padding_left = Length::px(0.0);
+    doc.node_mut(n19).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n19).style.display = Display::Contents;
+    doc.node_mut(n19).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.node_mut(n19).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n19).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n19).style.font_size = 16.0;
+    doc.append_child(n2, n19);
+    doc.set_attribute(n19, "class", "contents c3");
+    let n20 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n20).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n20).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n20).style.margin_top = Length::px(0.0);
+    doc.node_mut(n20).style.margin_right = Length::px(0.0);
+    doc.node_mut(n20).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n20).style.margin_left = Length::px(0.0);
+    doc.node_mut(n20).style.padding_top = Length::px(0.0);
+    doc.node_mut(n20).style.padding_right = Length::px(0.0);
+    doc.node_mut(n20).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n20).style.padding_left = Length::px(0.0);
+    doc.node_mut(n20).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n20).style.display = Display::TableCell;
+    doc.node_mut(n20).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n20_inherited_border = doc.node(n19).style.clone();
+    doc.node_mut(n20).style.border_top_width = n20_inherited_border.border_top_width;
+    doc.node_mut(n20).style.border_top_style = n20_inherited_border.border_top_style;
+    doc.node_mut(n20).style.border_top_color = n20_inherited_border.border_top_color;
+    doc.node_mut(n20).style.border_right_width = n20_inherited_border.border_right_width;
+    doc.node_mut(n20).style.border_right_style = n20_inherited_border.border_right_style;
+    doc.node_mut(n20).style.border_right_color = n20_inherited_border.border_right_color;
+    doc.node_mut(n20).style.border_bottom_width = n20_inherited_border.border_bottom_width;
+    doc.node_mut(n20).style.border_bottom_style = n20_inherited_border.border_bottom_style;
+    doc.node_mut(n20).style.border_bottom_color = n20_inherited_border.border_bottom_color;
+    doc.node_mut(n20).style.border_left_width = n20_inherited_border.border_left_width;
+    doc.node_mut(n20).style.border_left_style = n20_inherited_border.border_left_style;
+    doc.node_mut(n20).style.border_left_color = n20_inherited_border.border_left_color;
+    doc.node_mut(n20).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n20).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.node_mut(n20).style.font_size = 16.0;
+    doc.append_child(n19, n20);
+    doc.set_attribute(n20, "class", "cell");
+    let n21 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n21).style.font_size = 16.0;
+    doc.node_mut(n21).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n21).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.node_mut(n21).text = Some("3".to_string());
+    doc.append_child(n20, n21);
+    let n22 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n22).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n22).style.margin_top = Length::px(0.0);
+    doc.node_mut(n22).style.margin_right = Length::px(0.0);
+    doc.node_mut(n22).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n22).style.margin_left = Length::px(0.0);
+    doc.node_mut(n22).style.padding_top = Length::px(0.0);
+    doc.node_mut(n22).style.padding_right = Length::px(0.0);
+    doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n22).style.padding_left = Length::px(0.0);
+    doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n22).style.display = Display::Contents;
+    doc.node_mut(n22).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n22).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n22).style.font_size = 16.0;
+    doc.append_child(n2, n22);
+    doc.set_attribute(n22, "class", "contents c4");
+    let n23 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n23).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n23).style.margin_top = Length::px(0.0);
+    doc.node_mut(n23).style.margin_right = Length::px(0.0);
+    doc.node_mut(n23).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n23).style.margin_left = Length::px(0.0);
+    doc.node_mut(n23).style.padding_top = Length::px(0.0);
+    doc.node_mut(n23).style.padding_right = Length::px(0.0);
+    doc.node_mut(n23).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n23).style.padding_left = Length::px(0.0);
+    doc.node_mut(n23).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n23).style.display = Display::TableRowGroup;
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n23).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n23).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n23).style.font_size = 16.0;
+    doc.append_child(n22, n23);
+    doc.set_attribute(n23, "class", "rowg");
+    let n24 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n24).style = ComputedStyle::for_anonymous_box(&doc.node(n23).style);
+    doc.node_mut(n24).style.display = Display::TableRow;
+    doc.append_child(n23, n24);
+    let n25 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n25).style = ComputedStyle::for_anonymous_box(&doc.node(n24).style);
+    doc.node_mut(n25).style.display = Display::TableCell;
+    doc.append_child(n24, n25);
+    let n26 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n26).style.font_size = 16.0;
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n26).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n26).text = Some("4".to_string());
+    doc.append_child(n25, n26);
+    let n27 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n27).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n27).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n27).style.margin_top = Length::px(0.0);
+    doc.node_mut(n27).style.margin_right = Length::px(0.0);
+    doc.node_mut(n27).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n27).style.margin_left = Length::px(0.0);
+    doc.node_mut(n27).style.padding_top = Length::px(0.0);
+    doc.node_mut(n27).style.padding_right = Length::px(0.0);
+    doc.node_mut(n27).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n27).style.padding_left = Length::px(0.0);
+    doc.node_mut(n27).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n27).style.display = Display::Contents;
+    doc.node_mut(n27).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n27).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n27).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n27).style.font_size = 16.0;
+    doc.append_child(n2, n27);
+    doc.set_attribute(n27, "class", "contents c5");
+    let n28 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n28).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n28).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n28).style.margin_top = Length::px(0.0);
+    doc.node_mut(n28).style.margin_right = Length::px(0.0);
+    doc.node_mut(n28).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n28).style.margin_left = Length::px(0.0);
+    doc.node_mut(n28).style.padding_top = Length::px(0.0);
+    doc.node_mut(n28).style.padding_right = Length::px(0.0);
+    doc.node_mut(n28).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n28).style.padding_left = Length::px(0.0);
+    doc.node_mut(n28).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n28).style.display = Display::TableCell;
+    doc.node_mut(n28).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n28_inherited_border = doc.node(n27).style.clone();
+    doc.node_mut(n28).style.border_top_width = n28_inherited_border.border_top_width;
+    doc.node_mut(n28).style.border_top_style = n28_inherited_border.border_top_style;
+    doc.node_mut(n28).style.border_top_color = n28_inherited_border.border_top_color;
+    doc.node_mut(n28).style.border_right_width = n28_inherited_border.border_right_width;
+    doc.node_mut(n28).style.border_right_style = n28_inherited_border.border_right_style;
+    doc.node_mut(n28).style.border_right_color = n28_inherited_border.border_right_color;
+    doc.node_mut(n28).style.border_bottom_width = n28_inherited_border.border_bottom_width;
+    doc.node_mut(n28).style.border_bottom_style = n28_inherited_border.border_bottom_style;
+    doc.node_mut(n28).style.border_bottom_color = n28_inherited_border.border_bottom_color;
+    doc.node_mut(n28).style.border_left_width = n28_inherited_border.border_left_width;
+    doc.node_mut(n28).style.border_left_style = n28_inherited_border.border_left_style;
+    doc.node_mut(n28).style.border_left_color = n28_inherited_border.border_left_color;
+    doc.node_mut(n28).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n28).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n28).style.font_size = 16.0;
+    doc.append_child(n27, n28);
+    doc.set_attribute(n28, "class", "cell");
+    let n29 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n29).style.font_size = 16.0;
+    doc.node_mut(n29).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n29).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n29).text = Some("5a".to_string());
+    doc.append_child(n28, n29);
+    let n30 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n30).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n30).style.margin_top = Length::px(0.0);
+    doc.node_mut(n30).style.margin_right = Length::px(0.0);
+    doc.node_mut(n30).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n30).style.margin_left = Length::px(0.0);
+    doc.node_mut(n30).style.padding_top = Length::px(0.0);
+    doc.node_mut(n30).style.padding_right = Length::px(0.0);
+    doc.node_mut(n30).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n30).style.padding_left = Length::px(0.0);
+    doc.node_mut(n30).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n30).style.display = Display::TableCell;
+    doc.node_mut(n30).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n30_inherited_border = doc.node(n2).style.clone();
+    doc.node_mut(n30).style.border_top_width = n30_inherited_border.border_top_width;
+    doc.node_mut(n30).style.border_top_style = n30_inherited_border.border_top_style;
+    doc.node_mut(n30).style.border_top_color = n30_inherited_border.border_top_color;
+    doc.node_mut(n30).style.border_right_width = n30_inherited_border.border_right_width;
+    doc.node_mut(n30).style.border_right_style = n30_inherited_border.border_right_style;
+    doc.node_mut(n30).style.border_right_color = n30_inherited_border.border_right_color;
+    doc.node_mut(n30).style.border_bottom_width = n30_inherited_border.border_bottom_width;
+    doc.node_mut(n30).style.border_bottom_style = n30_inherited_border.border_bottom_style;
+    doc.node_mut(n30).style.border_bottom_color = n30_inherited_border.border_bottom_color;
+    doc.node_mut(n30).style.border_left_width = n30_inherited_border.border_left_width;
+    doc.node_mut(n30).style.border_left_style = n30_inherited_border.border_left_style;
+    doc.node_mut(n30).style.border_left_color = n30_inherited_border.border_left_color;
+    doc.node_mut(n30).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n30).style.font_size = 16.0;
+    doc.append_child(n2, n30);
+    doc.set_attribute(n30, "class", "cell c5");
+    let n31 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n31).style.font_size = 16.0;
+    doc.node_mut(n31).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n31).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n31).text = Some("5b".to_string());
+    doc.append_child(n30, n31);
+    let n32 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n32).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n32).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n32).style.margin_top = Length::px(0.0);
+    doc.node_mut(n32).style.margin_right = Length::px(0.0);
+    doc.node_mut(n32).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n32).style.margin_left = Length::px(0.0);
+    doc.node_mut(n32).style.padding_top = Length::px(0.0);
+    doc.node_mut(n32).style.padding_right = Length::px(0.0);
+    doc.node_mut(n32).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n32).style.padding_left = Length::px(0.0);
+    doc.node_mut(n32).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n32).style.display = Display::Contents;
+    doc.node_mut(n32).style.color = Color::from_rgba8(0, 255, 255, 255);
+    doc.node_mut(n32).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n32).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n32).style.font_size = 16.0;
+    doc.append_child(n2, n32);
+    doc.set_attribute(n32, "class", "contents c6");
+    let n33 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n33).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n33).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n33).style.margin_top = Length::px(0.0);
+    doc.node_mut(n33).style.margin_right = Length::px(0.0);
+    doc.node_mut(n33).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n33).style.margin_left = Length::px(0.0);
+    doc.node_mut(n33).style.padding_top = Length::px(0.0);
+    doc.node_mut(n33).style.padding_right = Length::px(0.0);
+    doc.node_mut(n33).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n33).style.padding_left = Length::px(0.0);
+    doc.node_mut(n33).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n33).style.display = Display::TableHeaderGroup;
+    doc.node_mut(n33).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n33).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n33).style.color = Color::from_rgba8(0, 255, 255, 255);
+    doc.node_mut(n33).style.font_size = 16.0;
+    doc.append_child(n32, n33);
+    doc.set_attribute(n33, "class", "head");
+    let n34 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n34).style = ComputedStyle::for_anonymous_box(&doc.node(n33).style);
+    doc.node_mut(n34).style.display = Display::TableRow;
+    doc.append_child(n33, n34);
+    let n35 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n35).style = ComputedStyle::for_anonymous_box(&doc.node(n34).style);
+    doc.node_mut(n35).style.display = Display::TableCell;
+    doc.append_child(n34, n35);
+    let n36 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n36).style.font_size = 16.0;
+    doc.node_mut(n36).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n36).style.color = Color::from_rgba8(0, 255, 255, 255);
+    doc.node_mut(n36).text = Some("6".to_string());
+    doc.append_child(n35, n36);
+    let n37 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n37).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n37).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n37).style.margin_top = Length::px(0.0);
+    doc.node_mut(n37).style.margin_right = Length::px(0.0);
+    doc.node_mut(n37).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n37).style.margin_left = Length::px(0.0);
+    doc.node_mut(n37).style.padding_top = Length::px(0.0);
+    doc.node_mut(n37).style.padding_right = Length::px(0.0);
+    doc.node_mut(n37).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n37).style.padding_left = Length::px(0.0);
+    doc.node_mut(n37).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n37).style.display = Display::Contents;
+    doc.node_mut(n37).style.color = Color::from_rgba8(255, 0, 255, 255);
+    doc.node_mut(n37).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n37).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n37).style.font_size = 16.0;
+    doc.append_child(n2, n37);
+    doc.set_attribute(n37, "class", "contents c7");
+    let n38 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n38).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n38).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n38).style.margin_top = Length::px(0.0);
+    doc.node_mut(n38).style.margin_right = Length::px(0.0);
+    doc.node_mut(n38).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n38).style.margin_left = Length::px(0.0);
+    doc.node_mut(n38).style.padding_top = Length::px(0.0);
+    doc.node_mut(n38).style.padding_right = Length::px(0.0);
+    doc.node_mut(n38).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n38).style.padding_left = Length::px(0.0);
+    doc.node_mut(n38).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n38).style.display = Display::TableCell;
+    doc.node_mut(n38).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n38_inherited_border = doc.node(n37).style.clone();
+    doc.node_mut(n38).style.border_top_width = n38_inherited_border.border_top_width;
+    doc.node_mut(n38).style.border_top_style = n38_inherited_border.border_top_style;
+    doc.node_mut(n38).style.border_top_color = n38_inherited_border.border_top_color;
+    doc.node_mut(n38).style.border_right_width = n38_inherited_border.border_right_width;
+    doc.node_mut(n38).style.border_right_style = n38_inherited_border.border_right_style;
+    doc.node_mut(n38).style.border_right_color = n38_inherited_border.border_right_color;
+    doc.node_mut(n38).style.border_bottom_width = n38_inherited_border.border_bottom_width;
+    doc.node_mut(n38).style.border_bottom_style = n38_inherited_border.border_bottom_style;
+    doc.node_mut(n38).style.border_bottom_color = n38_inherited_border.border_bottom_color;
+    doc.node_mut(n38).style.border_left_width = n38_inherited_border.border_left_width;
+    doc.node_mut(n38).style.border_left_style = n38_inherited_border.border_left_style;
+    doc.node_mut(n38).style.border_left_color = n38_inherited_border.border_left_color;
+    doc.node_mut(n38).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n38).style.color = Color::from_rgba8(255, 0, 255, 255);
+    doc.node_mut(n38).style.font_size = 16.0;
+    doc.append_child(n37, n38);
+    doc.set_attribute(n38, "class", "cell");
+    let n39 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n39).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n39).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n39).style.margin_top = Length::px(0.0);
+    doc.node_mut(n39).style.margin_right = Length::px(0.0);
+    doc.node_mut(n39).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n39).style.margin_left = Length::px(0.0);
+    doc.node_mut(n39).style.padding_top = Length::px(0.0);
+    doc.node_mut(n39).style.padding_right = Length::px(0.0);
+    doc.node_mut(n39).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n39).style.padding_left = Length::px(0.0);
+    doc.node_mut(n39).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n39).style.display = Display::Contents;
+    doc.node_mut(n39).style.background_color = Color::BLUE;
+    doc.node_mut(n39).style.background_linear_gradient = None;
+    doc.node_mut(n39).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n39).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n39).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n39).style.font_size = 16.0;
+    doc.append_child(n38, n39);
+    doc.set_attribute(n39, "class", "contents c2");
+    let n40 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n40).style.font_size = 16.0;
+    doc.node_mut(n40).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n40).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n40).text = Some("7".to_string());
+    doc.append_child(n39, n40);
+    let n41 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n41).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n41).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n41).style.margin_top = Length::px(0.0);
+    doc.node_mut(n41).style.margin_right = Length::px(0.0);
+    doc.node_mut(n41).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n41).style.margin_left = Length::px(0.0);
+    doc.node_mut(n41).style.padding_top = Length::px(0.0);
+    doc.node_mut(n41).style.padding_right = Length::px(0.0);
+    doc.node_mut(n41).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n41).style.padding_left = Length::px(0.0);
+    doc.node_mut(n41).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n41).style.background_color = Color::BLUE;
+    doc.node_mut(n41).style.background_linear_gradient = None;
+    doc.node_mut(n41).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n41).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n41).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n41).style.font_size = 16.0;
+    doc.append_child(n39, n41);
+    doc.set_attribute(n41, "class", "b");
+    let n42 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n42).style.font_size = 16.0;
+    doc.node_mut(n42).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n42).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n42).text = Some("a".to_string());
+    doc.append_child(n41, n42);
+    let n43 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n43).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n43).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n43).style.margin_top = Length::px(0.0);
+    doc.node_mut(n43).style.margin_right = Length::px(0.0);
+    doc.node_mut(n43).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n43).style.margin_left = Length::px(0.0);
+    doc.node_mut(n43).style.padding_top = Length::px(0.0);
+    doc.node_mut(n43).style.padding_right = Length::px(0.0);
+    doc.node_mut(n43).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n43).style.padding_left = Length::px(0.0);
+    doc.node_mut(n43).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n43).style.display = Display::Contents;
+    doc.node_mut(n43).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n43).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n43).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n43).style.font_size = 16.0;
+    doc.append_child(n2, n43);
+    doc.set_attribute(n43, "class", "contents c8");
+    let n44 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n44).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n44).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n44).style.margin_top = Length::px(0.0);
+    doc.node_mut(n44).style.margin_right = Length::px(0.0);
+    doc.node_mut(n44).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n44).style.margin_left = Length::px(0.0);
+    doc.node_mut(n44).style.padding_top = Length::px(0.0);
+    doc.node_mut(n44).style.padding_right = Length::px(0.0);
+    doc.node_mut(n44).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n44).style.padding_left = Length::px(0.0);
+    doc.node_mut(n44).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n44).style.display = Display::TableCell;
+    doc.node_mut(n44).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n44_inherited_border = doc.node(n43).style.clone();
+    doc.node_mut(n44).style.border_top_width = n44_inherited_border.border_top_width;
+    doc.node_mut(n44).style.border_top_style = n44_inherited_border.border_top_style;
+    doc.node_mut(n44).style.border_top_color = n44_inherited_border.border_top_color;
+    doc.node_mut(n44).style.border_right_width = n44_inherited_border.border_right_width;
+    doc.node_mut(n44).style.border_right_style = n44_inherited_border.border_right_style;
+    doc.node_mut(n44).style.border_right_color = n44_inherited_border.border_right_color;
+    doc.node_mut(n44).style.border_bottom_width = n44_inherited_border.border_bottom_width;
+    doc.node_mut(n44).style.border_bottom_style = n44_inherited_border.border_bottom_style;
+    doc.node_mut(n44).style.border_bottom_color = n44_inherited_border.border_bottom_color;
+    doc.node_mut(n44).style.border_left_width = n44_inherited_border.border_left_width;
+    doc.node_mut(n44).style.border_left_style = n44_inherited_border.border_left_style;
+    doc.node_mut(n44).style.border_left_color = n44_inherited_border.border_left_color;
+    doc.node_mut(n44).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n44).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n44).style.font_size = 16.0;
+    doc.append_child(n43, n44);
+    doc.set_attribute(n44, "class", "cell");
+    let n45 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n45).style.font_size = 16.0;
+    doc.node_mut(n45).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n45).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n45).text = Some("7b".to_string());
+    doc.append_child(n44, n45);
+    let n46 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n46).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n46).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n46).style.margin_top = Length::px(0.0);
+    doc.node_mut(n46).style.margin_right = Length::px(0.0);
+    doc.node_mut(n46).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n46).style.margin_left = Length::px(0.0);
+    doc.node_mut(n46).style.padding_top = Length::px(0.0);
+    doc.node_mut(n46).style.padding_right = Length::px(0.0);
+    doc.node_mut(n46).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n46).style.padding_left = Length::px(0.0);
+    doc.node_mut(n46).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n46).style.display = Display::Contents;
+    doc.node_mut(n46).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n46).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n46).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n46).style.font_size = 16.0;
+    doc.append_child(n2, n46);
+    doc.set_attribute(n46, "class", "contents c9");
+    let n47 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n47).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n47).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n47).style.margin_top = Length::px(0.0);
+    doc.node_mut(n47).style.margin_right = Length::px(0.0);
+    doc.node_mut(n47).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n47).style.margin_left = Length::px(0.0);
+    doc.node_mut(n47).style.padding_top = Length::px(0.0);
+    doc.node_mut(n47).style.padding_right = Length::px(0.0);
+    doc.node_mut(n47).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n47).style.padding_left = Length::px(0.0);
+    doc.node_mut(n47).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n47).style.display = Display::TableFooterGroup;
+    doc.node_mut(n47).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n47).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n47).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n47).style.font_size = 16.0;
+    doc.append_child(n46, n47);
+    doc.set_attribute(n47, "class", "foot");
+    let n48 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n48).style = ComputedStyle::for_anonymous_box(&doc.node(n47).style);
+    doc.node_mut(n48).style.display = Display::TableRow;
+    doc.append_child(n47, n48);
+    let n49 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n49).style = ComputedStyle::for_anonymous_box(&doc.node(n48).style);
+    doc.node_mut(n49).style.display = Display::TableCell;
+    doc.append_child(n48, n49);
+    let n50 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n50).style.font_size = 16.0;
+    doc.node_mut(n50).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n50).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n50).text = Some("8".to_string());
+    doc.append_child(n49, n50);
+    let n51 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n51).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n51).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n51).style.margin_top = Length::px(0.0);
+    doc.node_mut(n51).style.margin_right = Length::px(0.0);
+    doc.node_mut(n51).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n51).style.margin_left = Length::px(0.0);
+    doc.node_mut(n51).style.padding_top = Length::px(0.0);
+    doc.node_mut(n51).style.padding_right = Length::px(0.0);
+    doc.node_mut(n51).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n51).style.padding_left = Length::px(0.0);
+    doc.node_mut(n51).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n51).style.display = Display::Contents;
+    doc.node_mut(n51).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n51).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n51).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n51).style.font_size = 16.0;
+    doc.append_child(n2, n51);
+    doc.set_attribute(n51, "class", "contents c9");
+    let n52 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n52).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n52).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n52).style.margin_top = Length::px(0.0);
+    doc.node_mut(n52).style.margin_right = Length::px(0.0);
+    doc.node_mut(n52).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n52).style.margin_left = Length::px(0.0);
+    doc.node_mut(n52).style.padding_top = Length::px(0.0);
+    doc.node_mut(n52).style.padding_right = Length::px(0.0);
+    doc.node_mut(n52).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n52).style.padding_left = Length::px(0.0);
+    doc.node_mut(n52).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n52).style.display = Display::TableFooterGroup;
+    doc.node_mut(n52).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n52).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n52).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n52).style.font_size = 16.0;
+    doc.append_child(n51, n52);
+    doc.set_attribute(n52, "class", "foot");
+    let n53 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n53).style = ComputedStyle::for_anonymous_box(&doc.node(n52).style);
+    doc.node_mut(n53).style.display = Display::TableRow;
+    doc.append_child(n52, n53);
+    let n54 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n54).style = ComputedStyle::for_anonymous_box(&doc.node(n53).style);
+    doc.node_mut(n54).style.display = Display::TableCell;
+    doc.append_child(n53, n54);
+    let n55 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n55).style.font_size = 16.0;
+    doc.node_mut(n55).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n55).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n55).text = Some("9".to_string());
+    doc.append_child(n54, n55);
+    let n56 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n56).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n56).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n56).style.margin_top = Length::px(0.0);
+    doc.node_mut(n56).style.margin_right = Length::px(0.0);
+    doc.node_mut(n56).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n56).style.margin_left = Length::px(0.0);
+    doc.node_mut(n56).style.padding_top = Length::px(0.0);
+    doc.node_mut(n56).style.padding_right = Length::px(0.0);
+    doc.node_mut(n56).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n56).style.padding_left = Length::px(0.0);
+    doc.node_mut(n56).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n56).style.display = Display::Contents;
+    doc.node_mut(n56).style.background_color = Color::BLUE;
+    doc.node_mut(n56).style.background_linear_gradient = None;
+    doc.node_mut(n56).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n56).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n56).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n56).style.font_size = 16.0;
+    doc.append_child(n54, n56);
+    doc.set_attribute(n56, "class", "contents c2");
+    let n57 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n57).style.font_size = 16.0;
+    doc.node_mut(n57).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n57).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n57).text = Some("a".to_string());
+    doc.append_child(n56, n57);
+    let n58 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n58).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n58).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n58).style.margin_top = Length::px(0.0);
+    doc.node_mut(n58).style.margin_right = Length::px(0.0);
+    doc.node_mut(n58).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n58).style.margin_left = Length::px(0.0);
+    doc.node_mut(n58).style.padding_top = Length::px(0.0);
+    doc.node_mut(n58).style.padding_right = Length::px(0.0);
+    doc.node_mut(n58).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n58).style.padding_left = Length::px(0.0);
+    doc.node_mut(n58).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n58).style.background_color = Color::BLUE;
+    doc.node_mut(n58).style.background_linear_gradient = None;
+    doc.node_mut(n58).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n58).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n58).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n58).style.font_size = 16.0;
+    doc.append_child(n56, n58);
+    doc.set_attribute(n58, "class", "b");
+    let n59 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n59).style.font_size = 16.0;
+    doc.node_mut(n59).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n59).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n59).text = Some("b".to_string());
+    doc.append_child(n58, n59);
+    let n60 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n60).style.font_size = 16.0;
+    doc.node_mut(n60).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n60).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n60).text = Some("c".to_string());
+    doc.append_child(n56, n60);
+    let n61 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n61).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n61).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n61).style.margin_top = Length::px(0.0);
+    doc.node_mut(n61).style.margin_right = Length::px(0.0);
+    doc.node_mut(n61).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n61).style.margin_left = Length::px(0.0);
+    doc.node_mut(n61).style.padding_top = Length::px(0.0);
+    doc.node_mut(n61).style.padding_right = Length::px(0.0);
+    doc.node_mut(n61).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n61).style.padding_left = Length::px(0.0);
+    doc.node_mut(n61).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n61).style.display = Display::Contents;
+    doc.node_mut(n61).style.color = Color::BLACK;
+    doc.node_mut(n61).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n61).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n61).style.font_size = 16.0;
+    doc.append_child(n2, n61);
+    doc.set_attribute(n61, "class", "contents c10");
+    let n62 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n62).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n62).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n62).style.margin_top = Length::px(0.0);
+    doc.node_mut(n62).style.margin_right = Length::px(0.0);
+    doc.node_mut(n62).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n62).style.margin_left = Length::px(0.0);
+    doc.node_mut(n62).style.padding_top = Length::px(0.0);
+    doc.node_mut(n62).style.padding_right = Length::px(0.0);
+    doc.node_mut(n62).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n62).style.padding_left = Length::px(0.0);
+    doc.node_mut(n62).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n62).style.display = Display::TableCell;
+    doc.node_mut(n62).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n62_inherited_border = doc.node(n61).style.clone();
+    doc.node_mut(n62).style.border_top_width = n62_inherited_border.border_top_width;
+    doc.node_mut(n62).style.border_top_style = n62_inherited_border.border_top_style;
+    doc.node_mut(n62).style.border_top_color = n62_inherited_border.border_top_color;
+    doc.node_mut(n62).style.border_right_width = n62_inherited_border.border_right_width;
+    doc.node_mut(n62).style.border_right_style = n62_inherited_border.border_right_style;
+    doc.node_mut(n62).style.border_right_color = n62_inherited_border.border_right_color;
+    doc.node_mut(n62).style.border_bottom_width = n62_inherited_border.border_bottom_width;
+    doc.node_mut(n62).style.border_bottom_style = n62_inherited_border.border_bottom_style;
+    doc.node_mut(n62).style.border_bottom_color = n62_inherited_border.border_bottom_color;
+    doc.node_mut(n62).style.border_left_width = n62_inherited_border.border_left_width;
+    doc.node_mut(n62).style.border_left_style = n62_inherited_border.border_left_style;
+    doc.node_mut(n62).style.border_left_color = n62_inherited_border.border_left_color;
+    doc.node_mut(n62).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n62).style.color = Color::BLACK;
+    doc.node_mut(n62).style.font_size = 16.0;
+    doc.append_child(n61, n62);
+    doc.set_attribute(n62, "class", "cell");
+    let n63 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n63).style.font_size = 16.0;
+    doc.node_mut(n63).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n63).style.color = Color::BLACK;
+    doc.node_mut(n63).text = Some("10".to_string());
+    doc.append_child(n62, n63);
+    doc
+}
+
+// Source: css-display/display-contents-table-002-ref.html
+fn css_display_display_contents_table_002_ref() -> Document {
+    let (mut doc, html, vp) = root_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(html).style.margin_top = Length::px(0.0);
+    doc.node_mut(html).style.margin_right = Length::px(0.0);
+    doc.node_mut(html).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(html).style.margin_left = Length::px(0.0);
+    doc.node_mut(html).style.padding_top = Length::px(0.0);
+    doc.node_mut(html).style.padding_right = Length::px(0.0);
+    doc.node_mut(html).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(html).style.padding_left = Length::px(0.0);
+    doc.node_mut(html).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(html).style.color = Color::BLACK;
+    doc.node_mut(html).style.background_color = Color::WHITE;
+    doc.node_mut(html).style.font_size = 16.0;
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(0.0);
+    doc.node_mut(vp).style.padding_right = Length::px(0.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.padding_left = Length::px(0.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.color = Color::RED;
+    doc.node_mut(vp).style.background_color = Color::WHITE;
+    doc.node_mut(vp).style.font_size = 16.0;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.color = Color::RED;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.font_size = 16.0;
+    doc.append_child(vp, n1);
+    doc.set_attribute(n1, "class", "ref");
+    doc.set_attribute(n1, "style", "color: red");
+    let n2 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n2).style.margin_top = Length::px(0.0);
+    doc.node_mut(n2).style.margin_right = Length::px(0.0);
+    doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.margin_left = Length::px(0.0);
+    doc.node_mut(n2).style.padding_top = Length::px(0.0);
+    doc.node_mut(n2).style.padding_right = Length::px(0.0);
+    doc.node_mut(n2).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n2).style.padding_left = Length::px(0.0);
+    doc.node_mut(n2).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n2).style.display = Display::Table;
+    doc.node_mut(n2).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n2).style.border_top_width = 1;
+    doc.node_mut(n2).style.border_top_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_right_width = 1;
+    doc.node_mut(n2).style.border_right_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_right_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_bottom_width = 1;
+    doc.node_mut(n2).style.border_bottom_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.border_left_width = 1;
+    doc.node_mut(n2).style.border_left_style = BorderStyle::Solid;
+    doc.node_mut(n2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.node_mut(n2).style.float = Float::Right;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).style.color = Color::RED;
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.append_child(n1, n2);
+    doc.set_attribute(n2, "class", "table");
+    doc.set_attribute(n2, "style", "float:right");
+    let n3 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.display = Display::TableCaption;
+    doc.node_mut(n3).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n3).style.background_linear_gradient = None;
+    doc.node_mut(n3).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n3).style.font_size = 16.0;
+    doc.append_child(n2, n3);
+    doc.set_attribute(n3, "class", "caption c2");
+    let n4 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n4).style.font_size = 16.0;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n4).text = Some("1".to_string());
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n5).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n5).style.font_size = 16.0;
+    doc.append_child(n3, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n6).text = Some("1".to_string());
+    doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.display = Display::TableRow;
+    doc.node_mut(n7).style.border_top_width = 1;
+    doc.node_mut(n7).style.border_top_style = BorderStyle::Dashed;
+    doc.node_mut(n7).style.border_top_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n7).style.border_right_width = 1;
+    doc.node_mut(n7).style.border_right_style = BorderStyle::Dashed;
+    doc.node_mut(n7).style.border_right_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n7).style.border_bottom_width = 1;
+    doc.node_mut(n7).style.border_bottom_style = BorderStyle::Dashed;
+    doc.node_mut(n7).style.border_bottom_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n7).style.border_left_width = 1;
+    doc.node_mut(n7).style.border_left_style = BorderStyle::Dashed;
+    doc.node_mut(n7).style.border_left_color =
+        StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+    doc.node_mut(n7).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n7).style.background_linear_gradient = None;
+    doc.node_mut(n7).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n7).style.font_size = 16.0;
+    doc.append_child(n2, n7);
+    doc.set_attribute(n7, "class", "row c2");
+    let n8 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n8).style = ComputedStyle::for_anonymous_box(&doc.node(n7).style);
+    doc.node_mut(n8).style.display = Display::TableCell;
+    doc.append_child(n7, n8);
+    let n9 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n9).style.font_size = 16.0;
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n9).text = Some("2a".to_string());
+    doc.append_child(n8, n9);
+    let n10 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n10).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n10).style.margin_top = Length::px(0.0);
+    doc.node_mut(n10).style.margin_right = Length::px(0.0);
+    doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.margin_left = Length::px(0.0);
+    doc.node_mut(n10).style.padding_top = Length::px(0.0);
+    doc.node_mut(n10).style.padding_right = Length::px(0.0);
+    doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.padding_left = Length::px(0.0);
+    doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.display = Display::TableCell;
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n10_inherited_border = doc.node(n7).style.clone();
+    doc.node_mut(n10).style.border_top_width = n10_inherited_border.border_top_width;
+    doc.node_mut(n10).style.border_top_style = n10_inherited_border.border_top_style;
+    doc.node_mut(n10).style.border_top_color = n10_inherited_border.border_top_color;
+    doc.node_mut(n10).style.border_right_width = n10_inherited_border.border_right_width;
+    doc.node_mut(n10).style.border_right_style = n10_inherited_border.border_right_style;
+    doc.node_mut(n10).style.border_right_color = n10_inherited_border.border_right_color;
+    doc.node_mut(n10).style.border_bottom_width = n10_inherited_border.border_bottom_width;
+    doc.node_mut(n10).style.border_bottom_style = n10_inherited_border.border_bottom_style;
+    doc.node_mut(n10).style.border_bottom_color = n10_inherited_border.border_bottom_color;
+    doc.node_mut(n10).style.border_left_width = n10_inherited_border.border_left_width;
+    doc.node_mut(n10).style.border_left_style = n10_inherited_border.border_left_style;
+    doc.node_mut(n10).style.border_left_color = n10_inherited_border.border_left_color;
+    doc.node_mut(n10).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n10).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n10).style.font_size = 16.0;
+    doc.append_child(n7, n10);
+    doc.set_attribute(n10, "class", "cell");
+    let n11 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n11).style.font_size = 16.0;
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n11).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n11).text = Some("2".to_string());
+    doc.append_child(n10, n11);
+    let n12 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n12).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n12).style.margin_top = Length::px(0.0);
+    doc.node_mut(n12).style.margin_right = Length::px(0.0);
+    doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n12).style.margin_left = Length::px(0.0);
+    doc.node_mut(n12).style.padding_top = Length::px(0.0);
+    doc.node_mut(n12).style.padding_right = Length::px(0.0);
+    doc.node_mut(n12).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n12).style.padding_left = Length::px(0.0);
+    doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n12).style.display = Display::Inline;
+    doc.node_mut(n12).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n12).style.background_linear_gradient = None;
+    doc.node_mut(n12).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n12).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n12).style.font_size = 16.0;
+    doc.append_child(n10, n12);
+    doc.set_attribute(n12, "class", "inline c2");
+    let n13 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n13).style.font_size = 16.0;
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n13).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n13).text = Some("b".to_string());
+    doc.append_child(n12, n13);
+    let n14 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n14).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n14).style.margin_top = Length::px(0.0);
+    doc.node_mut(n14).style.margin_right = Length::px(0.0);
+    doc.node_mut(n14).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n14).style.margin_left = Length::px(0.0);
+    doc.node_mut(n14).style.padding_top = Length::px(0.0);
+    doc.node_mut(n14).style.padding_right = Length::px(0.0);
+    doc.node_mut(n14).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n14).style.padding_left = Length::px(0.0);
+    doc.node_mut(n14).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n14).style.background_color = Color::BLUE;
+    doc.node_mut(n14).style.background_linear_gradient = None;
+    doc.node_mut(n14).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n14).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n14).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n14).style.font_size = 16.0;
+    doc.append_child(n12, n14);
+    doc.set_attribute(n14, "class", "b");
+    let n15 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n15).style.font_size = 16.0;
+    doc.node_mut(n15).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n15).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n15).text = Some("b".to_string());
+    doc.append_child(n14, n15);
+    let n16 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n16).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n16).style.margin_top = Length::px(0.0);
+    doc.node_mut(n16).style.margin_right = Length::px(0.0);
+    doc.node_mut(n16).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n16).style.margin_left = Length::px(0.0);
+    doc.node_mut(n16).style.padding_top = Length::px(0.0);
+    doc.node_mut(n16).style.padding_right = Length::px(0.0);
+    doc.node_mut(n16).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n16).style.padding_left = Length::px(0.0);
+    doc.node_mut(n16).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n16).style.display = Display::TableCell;
+    doc.node_mut(n16).style.border_top_style = BorderStyle::None;
+    doc.node_mut(n16).style.border_right_style = BorderStyle::None;
+    doc.node_mut(n16).style.border_bottom_style = BorderStyle::None;
+    doc.node_mut(n16).style.border_left_style = BorderStyle::None;
+    doc.node_mut(n16).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.node_mut(n16).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n16).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n16).style.font_size = 16.0;
+    doc.append_child(n2, n16);
+    doc.set_attribute(n16, "class", "cell c3");
+    doc.set_attribute(n16, "style", "border:none");
+    let n17 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n17).style.font_size = 16.0;
+    doc.node_mut(n17).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n17).style.color = Color::from_rgba8(0, 128, 128, 255);
+    doc.node_mut(n17).text = Some("3".to_string());
+    doc.append_child(n16, n17);
+    let n18 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n18).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n18).style.margin_top = Length::px(0.0);
+    doc.node_mut(n18).style.margin_right = Length::px(0.0);
+    doc.node_mut(n18).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n18).style.margin_left = Length::px(0.0);
+    doc.node_mut(n18).style.padding_top = Length::px(0.0);
+    doc.node_mut(n18).style.padding_right = Length::px(0.0);
+    doc.node_mut(n18).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n18).style.padding_left = Length::px(0.0);
+    doc.node_mut(n18).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n18).style.display = Display::TableRowGroup;
+    doc.node_mut(n18).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n18).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n18).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n18).style.font_size = 16.0;
+    doc.append_child(n2, n18);
+    doc.set_attribute(n18, "class", "rowg c4");
+    let n19 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n19).style = ComputedStyle::for_anonymous_box(&doc.node(n18).style);
+    doc.node_mut(n19).style.display = Display::TableRow;
+    doc.append_child(n18, n19);
+    let n20 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n20).style = ComputedStyle::for_anonymous_box(&doc.node(n19).style);
+    doc.node_mut(n20).style.display = Display::TableCell;
+    doc.append_child(n19, n20);
+    let n21 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n21).style.font_size = 16.0;
+    doc.node_mut(n21).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n21).style.color = Color::from_rgba8(0, 128, 0, 255);
+    doc.node_mut(n21).text = Some("4".to_string());
+    doc.append_child(n20, n21);
+    let n22 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n22).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n22).style.margin_top = Length::px(0.0);
+    doc.node_mut(n22).style.margin_right = Length::px(0.0);
+    doc.node_mut(n22).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n22).style.margin_left = Length::px(0.0);
+    doc.node_mut(n22).style.padding_top = Length::px(0.0);
+    doc.node_mut(n22).style.padding_right = Length::px(0.0);
+    doc.node_mut(n22).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n22).style.padding_left = Length::px(0.0);
+    doc.node_mut(n22).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n22).style.display = Display::TableCell;
+    doc.node_mut(n22).style.border_top_style = BorderStyle::None;
+    doc.node_mut(n22).style.border_right_style = BorderStyle::None;
+    doc.node_mut(n22).style.border_bottom_style = BorderStyle::None;
+    doc.node_mut(n22).style.border_left_style = BorderStyle::None;
+    doc.node_mut(n22).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n22).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n22).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n22).style.font_size = 16.0;
+    doc.append_child(n2, n22);
+    doc.set_attribute(n22, "class", "cell c5");
+    doc.set_attribute(n22, "style", "border:none");
+    let n23 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n23).style.font_size = 16.0;
+    doc.node_mut(n23).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n23).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n23).text = Some("5a".to_string());
+    doc.append_child(n22, n23);
+    let n24 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n24).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n24).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n24).style.margin_top = Length::px(0.0);
+    doc.node_mut(n24).style.margin_right = Length::px(0.0);
+    doc.node_mut(n24).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n24).style.margin_left = Length::px(0.0);
+    doc.node_mut(n24).style.padding_top = Length::px(0.0);
+    doc.node_mut(n24).style.padding_right = Length::px(0.0);
+    doc.node_mut(n24).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n24).style.padding_left = Length::px(0.0);
+    doc.node_mut(n24).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n24).style.display = Display::TableCell;
+    doc.node_mut(n24).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n24).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    let n24_inherited_border = doc.node(n2).style.clone();
+    doc.node_mut(n24).style.border_top_width = n24_inherited_border.border_top_width;
+    doc.node_mut(n24).style.border_top_style = n24_inherited_border.border_top_style;
+    doc.node_mut(n24).style.border_top_color = n24_inherited_border.border_top_color;
+    doc.node_mut(n24).style.border_right_width = n24_inherited_border.border_right_width;
+    doc.node_mut(n24).style.border_right_style = n24_inherited_border.border_right_style;
+    doc.node_mut(n24).style.border_right_color = n24_inherited_border.border_right_color;
+    doc.node_mut(n24).style.border_bottom_width = n24_inherited_border.border_bottom_width;
+    doc.node_mut(n24).style.border_bottom_style = n24_inherited_border.border_bottom_style;
+    doc.node_mut(n24).style.border_bottom_color = n24_inherited_border.border_bottom_color;
+    doc.node_mut(n24).style.border_left_width = n24_inherited_border.border_left_width;
+    doc.node_mut(n24).style.border_left_style = n24_inherited_border.border_left_style;
+    doc.node_mut(n24).style.border_left_color = n24_inherited_border.border_left_color;
+    doc.node_mut(n24).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n24).style.font_size = 16.0;
+    doc.append_child(n2, n24);
+    doc.set_attribute(n24, "class", "cell c5");
+    let n25 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n25).style.font_size = 16.0;
+    doc.node_mut(n25).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n25).style.color = Color::from_rgba8(192, 192, 192, 255);
+    doc.node_mut(n25).text = Some("5b".to_string());
+    doc.append_child(n24, n25);
+    let n26 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n26).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n26).style.margin_top = Length::px(0.0);
+    doc.node_mut(n26).style.margin_right = Length::px(0.0);
+    doc.node_mut(n26).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n26).style.margin_left = Length::px(0.0);
+    doc.node_mut(n26).style.padding_top = Length::px(0.0);
+    doc.node_mut(n26).style.padding_right = Length::px(0.0);
+    doc.node_mut(n26).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n26).style.padding_left = Length::px(0.0);
+    doc.node_mut(n26).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n26).style.display = Display::TableHeaderGroup;
+    doc.node_mut(n26).style.color = Color::from_rgba8(0, 255, 255, 255);
+    doc.node_mut(n26).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n26).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n26).style.font_size = 16.0;
+    doc.append_child(n2, n26);
+    doc.set_attribute(n26, "class", "head c6");
+    let n27 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n27).style = ComputedStyle::for_anonymous_box(&doc.node(n26).style);
+    doc.node_mut(n27).style.display = Display::TableRow;
+    doc.append_child(n26, n27);
+    let n28 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n28).style = ComputedStyle::for_anonymous_box(&doc.node(n27).style);
+    doc.node_mut(n28).style.display = Display::TableCell;
+    doc.append_child(n27, n28);
+    let n29 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n29).style.font_size = 16.0;
+    doc.node_mut(n29).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n29).style.color = Color::from_rgba8(0, 255, 255, 255);
+    doc.node_mut(n29).text = Some("6".to_string());
+    doc.append_child(n28, n29);
+    let n30 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n30).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n30).style.margin_top = Length::px(0.0);
+    doc.node_mut(n30).style.margin_right = Length::px(0.0);
+    doc.node_mut(n30).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n30).style.margin_left = Length::px(0.0);
+    doc.node_mut(n30).style.padding_top = Length::px(0.0);
+    doc.node_mut(n30).style.padding_right = Length::px(0.0);
+    doc.node_mut(n30).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n30).style.padding_left = Length::px(0.0);
+    doc.node_mut(n30).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n30).style.display = Display::TableCell;
+    doc.node_mut(n30).style.border_top_style = BorderStyle::None;
+    doc.node_mut(n30).style.border_right_style = BorderStyle::None;
+    doc.node_mut(n30).style.border_bottom_style = BorderStyle::None;
+    doc.node_mut(n30).style.border_left_style = BorderStyle::None;
+    doc.node_mut(n30).style.color = Color::from_rgba8(255, 0, 255, 255);
+    doc.node_mut(n30).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n30).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n30).style.font_size = 16.0;
+    doc.append_child(n2, n30);
+    doc.set_attribute(n30, "class", "cell c7");
+    doc.set_attribute(n30, "style", "border:none");
+    let n31 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n31).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n31).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n31).style.margin_top = Length::px(0.0);
+    doc.node_mut(n31).style.margin_right = Length::px(0.0);
+    doc.node_mut(n31).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n31).style.margin_left = Length::px(0.0);
+    doc.node_mut(n31).style.padding_top = Length::px(0.0);
+    doc.node_mut(n31).style.padding_right = Length::px(0.0);
+    doc.node_mut(n31).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n31).style.padding_left = Length::px(0.0);
+    doc.node_mut(n31).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n31).style.display = Display::Inline;
+    doc.node_mut(n31).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n31).style.background_linear_gradient = None;
+    doc.node_mut(n31).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n31).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n31).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n31).style.font_size = 16.0;
+    doc.append_child(n30, n31);
+    doc.set_attribute(n31, "class", "inline c2");
+    let n32 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n32).style.font_size = 16.0;
+    doc.node_mut(n32).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n32).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n32).text = Some("7".to_string());
+    doc.append_child(n31, n32);
+    let n33 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n33).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n33).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n33).style.margin_top = Length::px(0.0);
+    doc.node_mut(n33).style.margin_right = Length::px(0.0);
+    doc.node_mut(n33).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n33).style.margin_left = Length::px(0.0);
+    doc.node_mut(n33).style.padding_top = Length::px(0.0);
+    doc.node_mut(n33).style.padding_right = Length::px(0.0);
+    doc.node_mut(n33).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n33).style.padding_left = Length::px(0.0);
+    doc.node_mut(n33).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n33).style.background_color = Color::BLUE;
+    doc.node_mut(n33).style.background_linear_gradient = None;
+    doc.node_mut(n33).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n33).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n33).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n33).style.font_size = 16.0;
+    doc.append_child(n31, n33);
+    doc.set_attribute(n33, "class", "b");
+    let n34 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n34).style.font_size = 16.0;
+    doc.node_mut(n34).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n34).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n34).text = Some("a".to_string());
+    doc.append_child(n33, n34);
+    let n35 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n35).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n35).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n35).style.margin_top = Length::px(0.0);
+    doc.node_mut(n35).style.margin_right = Length::px(0.0);
+    doc.node_mut(n35).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n35).style.margin_left = Length::px(0.0);
+    doc.node_mut(n35).style.padding_top = Length::px(0.0);
+    doc.node_mut(n35).style.padding_right = Length::px(0.0);
+    doc.node_mut(n35).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n35).style.padding_left = Length::px(0.0);
+    doc.node_mut(n35).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n35).style.display = Display::TableCell;
+    doc.node_mut(n35).style.border_top_style = BorderStyle::None;
+    doc.node_mut(n35).style.border_right_style = BorderStyle::None;
+    doc.node_mut(n35).style.border_bottom_style = BorderStyle::None;
+    doc.node_mut(n35).style.border_left_style = BorderStyle::None;
+    doc.node_mut(n35).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n35).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n35).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n35).style.font_size = 16.0;
+    doc.append_child(n2, n35);
+    doc.set_attribute(n35, "class", "cell c8");
+    doc.set_attribute(n35, "style", "border:none");
+    let n36 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n36).style.font_size = 16.0;
+    doc.node_mut(n36).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n36).style.color = Color::from_rgba8(255, 255, 0, 255);
+    doc.node_mut(n36).text = Some("7b".to_string());
+    doc.append_child(n35, n36);
+    let n37 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n37).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n37).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n37).style.margin_top = Length::px(0.0);
+    doc.node_mut(n37).style.margin_right = Length::px(0.0);
+    doc.node_mut(n37).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n37).style.margin_left = Length::px(0.0);
+    doc.node_mut(n37).style.padding_top = Length::px(0.0);
+    doc.node_mut(n37).style.padding_right = Length::px(0.0);
+    doc.node_mut(n37).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n37).style.padding_left = Length::px(0.0);
+    doc.node_mut(n37).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n37).style.display = Display::TableFooterGroup;
+    doc.node_mut(n37).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n37).style.border_top_style = BorderStyle::None;
+    doc.node_mut(n37).style.border_right_style = BorderStyle::None;
+    doc.node_mut(n37).style.border_bottom_style = BorderStyle::None;
+    doc.node_mut(n37).style.border_left_style = BorderStyle::None;
+    doc.node_mut(n37).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n37).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n37).style.font_size = 16.0;
+    doc.append_child(n2, n37);
+    doc.set_attribute(n37, "class", "foot c9");
+    doc.set_attribute(n37, "style", "border:none");
+    let n38 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n38).style = ComputedStyle::for_anonymous_box(&doc.node(n37).style);
+    doc.node_mut(n38).style.display = Display::TableRow;
+    doc.append_child(n37, n38);
+    let n39 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n39).style = ComputedStyle::for_anonymous_box(&doc.node(n38).style);
+    doc.node_mut(n39).style.display = Display::TableCell;
+    doc.append_child(n38, n39);
+    let n40 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n40).style.font_size = 16.0;
+    doc.node_mut(n40).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n40).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n40).text = Some("8".to_string());
+    doc.append_child(n39, n40);
+    let n41 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n41).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n41).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n41).style.margin_top = Length::px(0.0);
+    doc.node_mut(n41).style.margin_right = Length::px(0.0);
+    doc.node_mut(n41).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n41).style.margin_left = Length::px(0.0);
+    doc.node_mut(n41).style.padding_top = Length::px(0.0);
+    doc.node_mut(n41).style.padding_right = Length::px(0.0);
+    doc.node_mut(n41).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n41).style.padding_left = Length::px(0.0);
+    doc.node_mut(n41).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n41).style.display = Display::TableFooterGroup;
+    doc.node_mut(n41).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n41).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n41).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n41).style.font_size = 16.0;
+    doc.append_child(n2, n41);
+    doc.set_attribute(n41, "class", "foot c9");
+    let n42 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n42).style = ComputedStyle::for_anonymous_box(&doc.node(n41).style);
+    doc.node_mut(n42).style.display = Display::TableRow;
+    doc.append_child(n41, n42);
+    let n43 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n43).style = ComputedStyle::for_anonymous_box(&doc.node(n42).style);
+    doc.node_mut(n43).style.display = Display::TableCell;
+    doc.append_child(n42, n43);
+    let n44 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n44).style.font_size = 16.0;
+    doc.node_mut(n44).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n44).style.color = Color::from_rgba8(128, 128, 128, 255);
+    doc.node_mut(n44).text = Some("9".to_string());
+    doc.append_child(n43, n44);
+    let n45 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n45).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n45).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n45).style.margin_top = Length::px(0.0);
+    doc.node_mut(n45).style.margin_right = Length::px(0.0);
+    doc.node_mut(n45).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n45).style.margin_left = Length::px(0.0);
+    doc.node_mut(n45).style.padding_top = Length::px(0.0);
+    doc.node_mut(n45).style.padding_right = Length::px(0.0);
+    doc.node_mut(n45).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n45).style.padding_left = Length::px(0.0);
+    doc.node_mut(n45).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n45).style.display = Display::Inline;
+    doc.node_mut(n45).style.background_color = Color::TRANSPARENT;
+    doc.node_mut(n45).style.background_linear_gradient = None;
+    doc.node_mut(n45).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n45).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n45).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n45).style.font_size = 16.0;
+    doc.append_child(n43, n45);
+    doc.set_attribute(n45, "class", "inline c2");
+    let n46 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n46).style.font_size = 16.0;
+    doc.node_mut(n46).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n46).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n46).text = Some("a".to_string());
+    doc.append_child(n45, n46);
+    let n47 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n47).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n47).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n47).style.margin_top = Length::px(0.0);
+    doc.node_mut(n47).style.margin_right = Length::px(0.0);
+    doc.node_mut(n47).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n47).style.margin_left = Length::px(0.0);
+    doc.node_mut(n47).style.padding_top = Length::px(0.0);
+    doc.node_mut(n47).style.padding_right = Length::px(0.0);
+    doc.node_mut(n47).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n47).style.padding_left = Length::px(0.0);
+    doc.node_mut(n47).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n47).style.background_color = Color::BLUE;
+    doc.node_mut(n47).style.background_linear_gradient = None;
+    doc.node_mut(n47).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n47).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n47).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n47).style.font_size = 16.0;
+    doc.append_child(n45, n47);
+    doc.set_attribute(n47, "class", "b");
+    let n48 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n48).style.font_size = 16.0;
+    doc.node_mut(n48).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n48).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n48).text = Some("b".to_string());
+    doc.append_child(n47, n48);
+    let n49 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n49).style.font_size = 16.0;
+    doc.node_mut(n49).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n49).style.color = Color::from_rgba8(255, 192, 203, 255);
+    doc.node_mut(n49).text = Some("c".to_string());
+    doc.append_child(n45, n49);
+    let n50 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n50).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n50).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n50).style.margin_top = Length::px(0.0);
+    doc.node_mut(n50).style.margin_right = Length::px(0.0);
+    doc.node_mut(n50).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n50).style.margin_left = Length::px(0.0);
+    doc.node_mut(n50).style.padding_top = Length::px(0.0);
+    doc.node_mut(n50).style.padding_right = Length::px(0.0);
+    doc.node_mut(n50).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n50).style.padding_left = Length::px(0.0);
+    doc.node_mut(n50).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n50).style.display = Display::TableCell;
+    doc.node_mut(n50).style.border_top_style = BorderStyle::None;
+    doc.node_mut(n50).style.border_right_style = BorderStyle::None;
+    doc.node_mut(n50).style.border_bottom_style = BorderStyle::None;
+    doc.node_mut(n50).style.border_left_style = BorderStyle::None;
+    doc.node_mut(n50).style.color = Color::BLACK;
+    doc.node_mut(n50).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n50).style.border_collapse = BorderCollapse::Collapse;
+    doc.node_mut(n50).style.font_size = 16.0;
+    doc.append_child(n2, n50);
+    doc.set_attribute(n50, "class", "cell c10");
+    doc.set_attribute(n50, "style", "border:none");
+    let n51 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n51).style.font_size = 16.0;
+    doc.node_mut(n51).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n51).style.color = Color::BLACK;
+    doc.node_mut(n51).text = Some("10".to_string());
+    doc.append_child(n50, n51);
+    doc
+}
+
+// Source: css-display/display-contents-td-001.html
+fn css_display_display_contents_td_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).text = Some("You should see the word PASS below.".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Table);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.display = Display::Table;
+    doc.node_mut(n3).style.border_spacing = (Length::px(0.0), Length::px(0.0));
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.display = Display::Table;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n3);
+    doc.set_attribute(n3, "cellpadding", "0");
+    doc.set_attribute(n3, "cellspacing", "0");
+    let n4 = doc.create_node(ElementTag::TableBody);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n4).style.display = Display::TableRowGroup;
+    doc.node_mut(n4).style.vertical_align = VerticalAlign::Middle;
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.display = Display::TableRowGroup;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::TableRow);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n5).style.display = Display::TableRow;
+    doc.node_mut(n5).style.vertical_align = VerticalAlign::Middle;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.display = Display::TableRow;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n4, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).text = Some("P".to_string());
+    doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n7).style.font_size = 16.0;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).text = Some("A".to_string());
+    doc.append_child(n5, n7);
+    let n8 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n8).style.font_size = 16.0;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n8).text = Some("S".to_string());
+    doc.append_child(n5, n8);
+    let n9 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n9).style.font_size = 16.0;
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).text = Some("S".to_string());
+    doc.append_child(n5, n9);
+    doc
+}
+
+// Source: css-display/display-contents-tr-001.html
+fn css_display_display_contents_tr_001() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).text = Some("You should see the word PASS below.".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Table);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.display = Display::Table;
+    doc.node_mut(n3).style.border_spacing = (Length::px(0.0), Length::px(0.0));
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.display = Display::Table;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n3);
+    doc.set_attribute(n3, "cellpadding", "0");
+    doc.set_attribute(n3, "cellspacing", "0");
+    let n4 = doc.create_node(ElementTag::TableBody);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n4).style.display = Display::TableRowGroup;
+    doc.node_mut(n4).style.vertical_align = VerticalAlign::Middle;
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.display = Display::TableRowGroup;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::TableCell);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n5).style.display = Display::TableCell;
+    doc.node_mut(n5).style.vertical_align = VerticalAlign::Middle;
+    doc.node_mut(n5).table_col_span = 1;
+    doc.node_mut(n5).table_row_span = 1;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.display = Display::TableCell;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n4, n5);
+    let n6 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n6).style.font_size = 16.0;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).text = Some("P".to_string());
+    doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n7).style.margin_top = Length::px(0.0);
+    doc.node_mut(n7).style.margin_right = Length::px(0.0);
+    doc.node_mut(n7).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.margin_left = Length::px(0.0);
+    doc.node_mut(n7).style.padding_top = Length::px(0.0);
+    doc.node_mut(n7).style.padding_right = Length::px(0.0);
+    doc.node_mut(n7).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n7).style.padding_left = Length::px(0.0);
+    doc.node_mut(n7).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n5, n7);
+    let n8 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n8).style.font_size = 16.0;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n8).text = Some("A".to_string());
+    doc.append_child(n7, n8);
+    let n9 = doc.create_node(ElementTag::TableCell);
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n9).style.display = Display::TableCell;
+    doc.node_mut(n9).style.vertical_align = VerticalAlign::Middle;
+    doc.node_mut(n9).table_col_span = 1;
+    doc.node_mut(n9).table_row_span = 1;
+    doc.node_mut(n9).style.margin_top = Length::px(0.0);
+    doc.node_mut(n9).style.margin_right = Length::px(0.0);
+    doc.node_mut(n9).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.margin_left = Length::px(0.0);
+    doc.node_mut(n9).style.padding_top = Length::px(0.0);
+    doc.node_mut(n9).style.padding_right = Length::px(0.0);
+    doc.node_mut(n9).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n9).style.padding_left = Length::px(0.0);
+    doc.node_mut(n9).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n9).style.display = Display::TableCell;
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n4, n9);
+    let n10 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n10).style.font_size = 16.0;
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n10).text = Some("S".to_string());
+    doc.append_child(n9, n10);
+    let n11 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n11).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n11).style.margin_top = Length::px(0.0);
+    doc.node_mut(n11).style.margin_right = Length::px(0.0);
+    doc.node_mut(n11).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n11).style.margin_left = Length::px(0.0);
+    doc.node_mut(n11).style.padding_top = Length::px(0.0);
+    doc.node_mut(n11).style.padding_right = Length::px(0.0);
+    doc.node_mut(n11).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n11).style.padding_left = Length::px(0.0);
+    doc.node_mut(n11).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n9, n11);
+    let n12 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n12).style.font_size = 16.0;
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n12).text = Some("S".to_string());
+    doc.append_child(n11, n12);
+    doc
+}
+
+// Source: css-display/display-contents-tr-001-ref.html
+fn css_display_display_contents_tr_001_ref() -> Document {
+    let (mut doc, vp) = base_doc();
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.margin_top = Length::px(0.0);
+    doc.node_mut(vp).style.margin_right = Length::px(0.0);
+    doc.node_mut(vp).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(vp).style.margin_left = Length::px(0.0);
+    doc.node_mut(vp).style.padding_top = Length::px(20.0);
+    doc.node_mut(vp).style.padding_right = Length::px(20.0);
+    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
+    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.node_mut(vp).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(vp).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(vp).style.list_style_type = ListStyleType::None;
+    let n1 = doc.create_node(ElementTag::Div);
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n1).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n1).style.display = Display::Block;
+    doc.node_mut(n1).style.margin_top = Length::px(0.0);
+    doc.node_mut(n1).style.margin_right = Length::px(0.0);
+    doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.margin_left = Length::px(0.0);
+    doc.node_mut(n1).style.padding_top = Length::px(0.0);
+    doc.node_mut(n1).style.padding_right = Length::px(0.0);
+    doc.node_mut(n1).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n1).style.padding_left = Length::px(0.0);
+    doc.node_mut(n1).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n1).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n1);
+    let n2 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n2).style.font_size = 16.0;
+    doc.node_mut(n2).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n2).text = Some("You should see the word PASS below.".to_string());
+    doc.append_child(n1, n2);
+    let n3 = doc.create_node(ElementTag::Table);
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n3).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n3).style.display = Display::Table;
+    doc.node_mut(n3).style.border_spacing = (Length::px(0.0), Length::px(0.0));
+    doc.node_mut(n3).style.margin_top = Length::px(0.0);
+    doc.node_mut(n3).style.margin_right = Length::px(0.0);
+    doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.margin_left = Length::px(0.0);
+    doc.node_mut(n3).style.padding_top = Length::px(0.0);
+    doc.node_mut(n3).style.padding_right = Length::px(0.0);
+    doc.node_mut(n3).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n3).style.padding_left = Length::px(0.0);
+    doc.node_mut(n3).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n3).style.display = Display::Table;
+    doc.node_mut(n3).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(vp, n3);
+    doc.set_attribute(n3, "cellpadding", "0");
+    doc.set_attribute(n3, "cellspacing", "0");
+    let n4 = doc.create_node(ElementTag::TableBody);
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n4).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n4).style.display = Display::TableRowGroup;
+    doc.node_mut(n4).style.vertical_align = VerticalAlign::Middle;
+    doc.node_mut(n4).style.margin_top = Length::px(0.0);
+    doc.node_mut(n4).style.margin_right = Length::px(0.0);
+    doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.margin_left = Length::px(0.0);
+    doc.node_mut(n4).style.padding_top = Length::px(0.0);
+    doc.node_mut(n4).style.padding_right = Length::px(0.0);
+    doc.node_mut(n4).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n4).style.padding_left = Length::px(0.0);
+    doc.node_mut(n4).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n4).style.display = Display::TableRowGroup;
+    doc.node_mut(n4).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n3, n4);
+    let n5 = doc.create_node(ElementTag::TableRow);
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n5).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n5).style.display = Display::TableRow;
+    doc.node_mut(n5).style.vertical_align = VerticalAlign::Middle;
+    doc.node_mut(n5).style.margin_top = Length::px(0.0);
+    doc.node_mut(n5).style.margin_right = Length::px(0.0);
+    doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.margin_left = Length::px(0.0);
+    doc.node_mut(n5).style.padding_top = Length::px(0.0);
+    doc.node_mut(n5).style.padding_right = Length::px(0.0);
+    doc.node_mut(n5).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n5).style.padding_left = Length::px(0.0);
+    doc.node_mut(n5).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n5).style.display = Display::TableRow;
+    doc.node_mut(n5).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n4, n5);
+    let n6 = doc.create_node(ElementTag::TableCell);
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n6).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n6).style.display = Display::TableCell;
+    doc.node_mut(n6).style.vertical_align = VerticalAlign::Middle;
+    doc.node_mut(n6).table_col_span = 1;
+    doc.node_mut(n6).table_row_span = 1;
+    doc.node_mut(n6).style.margin_top = Length::px(0.0);
+    doc.node_mut(n6).style.margin_right = Length::px(0.0);
+    doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.margin_left = Length::px(0.0);
+    doc.node_mut(n6).style.padding_top = Length::px(0.0);
+    doc.node_mut(n6).style.padding_right = Length::px(0.0);
+    doc.node_mut(n6).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n6).style.padding_left = Length::px(0.0);
+    doc.node_mut(n6).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n6).style.display = Display::TableCell;
+    doc.node_mut(n6).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n5, n6);
+    let n7 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n7).style.font_size = 16.0;
+    doc.node_mut(n7).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n7).text = Some("P".to_string());
+    doc.append_child(n6, n7);
+    let n8 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n8).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n8).style.margin_top = Length::px(0.0);
+    doc.node_mut(n8).style.margin_right = Length::px(0.0);
+    doc.node_mut(n8).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.margin_left = Length::px(0.0);
+    doc.node_mut(n8).style.padding_top = Length::px(0.0);
+    doc.node_mut(n8).style.padding_right = Length::px(0.0);
+    doc.node_mut(n8).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n8).style.padding_left = Length::px(0.0);
+    doc.node_mut(n8).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n8).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n6, n8);
+    let n9 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n9).style.font_size = 16.0;
+    doc.node_mut(n9).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n9).text = Some("A".to_string());
+    doc.append_child(n8, n9);
+    let n10 = doc.create_node(ElementTag::TableCell);
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n10).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n10).style.display = Display::TableCell;
+    doc.node_mut(n10).style.vertical_align = VerticalAlign::Middle;
+    doc.node_mut(n10).table_col_span = 1;
+    doc.node_mut(n10).table_row_span = 1;
+    doc.node_mut(n10).style.margin_top = Length::px(0.0);
+    doc.node_mut(n10).style.margin_right = Length::px(0.0);
+    doc.node_mut(n10).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.margin_left = Length::px(0.0);
+    doc.node_mut(n10).style.padding_top = Length::px(0.0);
+    doc.node_mut(n10).style.padding_right = Length::px(0.0);
+    doc.node_mut(n10).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n10).style.padding_left = Length::px(0.0);
+    doc.node_mut(n10).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n10).style.display = Display::TableCell;
+    doc.node_mut(n10).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n5, n10);
+    let n11 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n11).style.font_size = 16.0;
+    doc.node_mut(n11).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n11).text = Some("S".to_string());
+    doc.append_child(n10, n11);
+    let n12 = doc.create_node(ElementTag::Span);
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n12).style.list_style_type = ListStyleType::None;
+    doc.node_mut(n12).style.margin_top = Length::px(0.0);
+    doc.node_mut(n12).style.margin_right = Length::px(0.0);
+    doc.node_mut(n12).style.margin_bottom = Length::px(0.0);
+    doc.node_mut(n12).style.margin_left = Length::px(0.0);
+    doc.node_mut(n12).style.padding_top = Length::px(0.0);
+    doc.node_mut(n12).style.padding_right = Length::px(0.0);
+    doc.node_mut(n12).style.padding_bottom = Length::px(0.0);
+    doc.node_mut(n12).style.padding_left = Length::px(0.0);
+    doc.node_mut(n12).style.box_sizing = BoxSizing::ContentBox;
+    doc.node_mut(n12).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.append_child(n10, n12);
+    let n13 = doc.create_node(ElementTag::Text);
+    doc.node_mut(n13).style.font_size = 16.0;
+    doc.node_mut(n13).style.font_family = FontFamilyList {
+        families: vec![
+            FontFamily::Named("Ahem".to_string()),
+            FontFamily::Named("Droid Sans Fallback".to_string()),
+            FontFamily::Named("Noto Sans Devanagari".to_string()),
+            FontFamily::Named("Noto Color Emoji".to_string()),
+            FontFamily::Named("DejaVu Sans".to_string()),
+        ],
+    };
+    doc.node_mut(n13).text = Some("S".to_string());
+    doc.append_child(n12, n13);
+    doc
+}
+
 pub fn css_display_registry() -> Vec<(&'static str, fn() -> Document)> {
     vec![
         (
@@ -10523,6 +17276,38 @@ pub fn css_display_registry() -> Vec<(&'static str, fn() -> Document)> {
         (
             "wpt/css_display/display-math-on-pseudo-elements-002-ref",
             css_display_display_math_on_pseudo_elements_002_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_display/display-contents-001-crash",
+            css_display_display_contents_001_crash as fn() -> Document,
+        ),
+        (
+            "wpt/css_display/display-contents-table-001",
+            css_display_display_contents_table_001 as fn() -> Document,
+        ),
+        (
+            "wpt/css_display/display-contents-table-001-ref",
+            css_display_display_contents_table_001_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_display/display-contents-table-002",
+            css_display_display_contents_table_002 as fn() -> Document,
+        ),
+        (
+            "wpt/css_display/display-contents-table-002-ref",
+            css_display_display_contents_table_002_ref as fn() -> Document,
+        ),
+        (
+            "wpt/css_display/display-contents-td-001",
+            css_display_display_contents_td_001 as fn() -> Document,
+        ),
+        (
+            "wpt/css_display/display-contents-tr-001",
+            css_display_display_contents_tr_001 as fn() -> Document,
+        ),
+        (
+            "wpt/css_display/display-contents-tr-001-ref",
+            css_display_display_contents_tr_001_ref as fn() -> Document,
         ),
     ]
 }

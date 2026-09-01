@@ -525,6 +525,22 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 cb_horizontal_start_is_left,
                 sp_horizontal_start_is_left,
             )
+        } else if style.display.is_table_wrapper() && style.width.is_auto() {
+            // The used width of an absolutely positioned table wrapper is
+            // its table shrink-to-fit width. It does not become the solution
+            // variable merely because both inline insets are specified; auto
+            // margins therefore center the intrinsic table border box.
+            resolve_horizontal_with_known_width(
+                style,
+                cb_width,
+                static_left,
+                candidate.static_position_horizontal_edge,
+                &border,
+                &padding,
+                intrinsic_width_max,
+                cb_horizontal_start_is_left,
+                sp_horizontal_start_is_left,
+            )
         } else {
             resolve_horizontal(
                 style,
@@ -615,6 +631,21 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
                 &border,
                 &padding,
                 known_bb_height,
+                cb_vertical_start_is_top,
+                sp_vertical_start_is_top,
+            )
+        } else if style.display.is_table_wrapper() && style.height.is_auto() {
+            // Table wrappers retain their content-based block size in the
+            // corresponding vertical constraint equation as well.
+            resolve_vertical_with_known_height(
+                style,
+                cb_width,
+                cb_height,
+                static_top,
+                candidate.static_position_vertical_edge,
+                &border,
+                &padding,
+                intrinsic.max_content_block_size,
                 cb_vertical_start_is_top,
                 sp_vertical_start_is_top,
             )

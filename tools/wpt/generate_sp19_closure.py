@@ -522,6 +522,81 @@ def write_transaction(outputs: dict[Path, bytes]) -> None:
             path.unlink(missing_ok=True)
 
 
+def _encode_csv_row(fieldnames: list[str], row: dict[str, str]) -> str:
+    output = io.StringIO(newline="")
+    writer = csv.DictWriter(output, fieldnames=fieldnames, lineterminator="\n")
+    writer.writerow(row)
+    return output.getvalue()
+
+
+def promoted_mapping_bytes(
+    original: bytes, summary_by_id: dict[str, dict], targets: set[str],
+) -> bytes:
+    """Promote exact targets while retaining every non-target record byte."""
+    text = original.decode("utf-8")
+    lines = text.splitlines(keepends=True)
+    reader = csv.reader(lines)
+    fieldnames = next(reader)
+    record_start = reader.line_num
+    updated = ["".join(lines[:record_start])]
+    seen: set[str] = set()
+    desired = {
+        "ported": "yes",
+        "pixel_result": "pass",
+        "mismatch_pct": "0.0",
+        "failure_category": "",
+        "dependency": "",
+        "notes": "",
+    }
+    for values in reader:
+        record_end = reader.line_num
+        original_record = "".join(lines[record_start:record_end])
+        record_start = record_end
+        row = dict(zip(fieldnames, values))
+        test_id = canonical_id(row)
+        if test_id not in targets:
+            updated.append(original_record)
+            continue
+        result = summary_by_id.get(test_id)
+        if (
+            not result
+            or result.get("status") != "pass"
+            or result.get("mismatch_pct") != 0.0
+        ):
+            raise ValueError(f"cannot promote non-exact SP19 target: {test_id}")
+        desired["our_test_id"] = test_id
+        if all(row.get(key) == value for key, value in desired.items()):
+            updated.append(original_record)
+        else:
+            row.update(desired)
+            updated.append(_encode_csv_row(fieldnames, row))
+        seen.add(test_id)
+    if seen != targets:
+        raise ValueError("SP19 mapping splice did not find every wave target")
+    return "".join(updated).encode("utf-8")
+
+
+def promote_wave(wave: str) -> None:
+    """Atomically publish one complete, exact layout wave to the live mapping."""
+    partitions = load_partitions(LAYOUT_PARTITIONS, LAYOUT_COUNTS)
+    if wave not in partitions:
+        raise ValueError(f"unknown SP19 layout wave: {wave}")
+    summary = json.loads(LIVE_SUMMARY.read_text(encoding="utf-8"))
+    summary_by_id = {item["id"]: item for item in summary.get("tests", [])}
+    if len(summary_by_id) != len(summary.get("tests", [])):
+        raise ValueError("SP19 live summary has duplicate IDs")
+    candidate = promoted_mapping_bytes(
+        LIVE_MAPPING.read_bytes(), summary_by_id, set(partitions[wave]),
+    )
+    candidate_rows = parse_mapping(candidate)
+    actual_wave = validate_live_snapshot(candidate_rows, summary)
+    if actual_wave != wave:
+        raise ValueError(
+            f"SP19 promotion would produce {actual_wave}, not requested {wave}"
+        )
+    write_transaction({LIVE_MAPPING: candidate})
+
+
 def check() -> str:
     kickoff_mapping, kickoff_summary = _historical_bytes()
     outputs = build_outputs(kickoff_mapping, kickoff_summary)
@@ -534,16 +609,24 @@ def check() -> str:
 
 
 def main() -> int:
-    if sys.argv[1:] not in ([], ["--check"]):
-        print("Usage: generate_sp19_closure.py [--check]", file=sys.stderr)
-        return 2
-    if sys.argv[1:] == ["--check"]:
+    args = sys.argv[1:]
+    if args[:1] == ["--promote-wave"] and len(args) == 2:
+        promote_wave(args[1])
         wave = check()
-    else:
+    elif args == ["--check"]:
+        wave = check()
+    elif not args:
         kickoff_mapping, kickoff_summary = _historical_bytes()
         outputs = build_outputs(kickoff_mapping, kickoff_summary)
         write_transaction(outputs)
         wave = check()
+    else:
+        print(
+            "Usage: generate_sp19_closure.py "
+            "[--check|--promote-wave WAVE]",
+            file=sys.stderr,
+        )
+        return 2
     print(
         "SP19 closure: repairs=81 layout=823 combined=904 "
         f"focused=4962 javascript-exclusions=221 projected-unported=2711 wave={wave}"

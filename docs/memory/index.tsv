@@ -56,3 +56,4 @@
 0055	active	sp19 fragmentation multicol inline-continuation floats margins outlines accountability handoff	SP19 W1C closes the fragmentation repair partition	2026-08-31	entries/0055-sp19-w1c-closes-the-fragmentation-repair-partition.md
 0056	active	sp19 position sticky inline-containing-block rounded-clips masks display-contents accountability handoff	SP19 W1D closes position, paint, and display repairs	2026-08-31	entries/0056-sp19-w1d-position-paint-display-repair-closure.md
 0057	active	sp19 table grid containment porter resources controls pseudos accountability handoff	SP19 W2 freezes shared layout-system contracts without baseline drift	2026-08-31	entries/0057-sp19-w2-layout-system-contracts.md
+0058	active	sp19 table fragmentation border-collapse captions rowspan colspan writing-mode accountability handoff	SP19 W3 closes the table formatting partition	2026-09-01	entries/0058-sp19-w3-table-formatting-closure.md

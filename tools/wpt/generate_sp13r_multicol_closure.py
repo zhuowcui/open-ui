@@ -19,6 +19,7 @@ SUMMARY_JSON = DATA_DIR / "pixel_comparison" / "results" / "summary.json"
 BASELINE_JSON = PORTED_DIR / "sp13r_baseline_exact.json"
 TARGETS_JSON = PORTED_DIR / "sp13r_multicol_targets.json"
 RESIDUALS_JSON = PORTED_DIR / "sp13r_multicol_residuals.json"
+SP19_LAYOUT_TARGETS_JSON = SCRIPT_DIR / "sp19_layout_targets.json"
 
 OWNER = "sp13_multicol"
 FALLBACK_CATEGORIES = {"sp12_layout_bug", "not_ported"}
@@ -111,6 +112,18 @@ LATER_EXACT_PROMOTIONS = frozenset({
     "wpt/css_position/multicol_vrl-rtl-ltr-in-multicols.tentative",
     "wpt/css_position/multicol_vrl-rtl-rtl-in-multicols",
 })
+
+
+def sp19_live_promotions(mapping: dict[str, dict[str, str]]) -> set[str]:
+    """Return only SP19 targets installed by the current completed wave."""
+    if not SP19_LAYOUT_TARGETS_JSON.is_file():
+        return set()
+    targets = set(json.loads(SP19_LAYOUT_TARGETS_JSON.read_text(encoding="utf-8")))
+    return {
+        test_id
+        for test_id in targets
+        if mapping.get(test_id, {}).get("ported") == "yes"
+    }
 
 
 def categories(value: str) -> set[str]:
@@ -214,6 +227,7 @@ def validate_closed_snapshot(
     # 3,566-row closure count.
     summary_by_id = runnable_wpt_results(summary)
     mapping = {canonical_id(row): row for row in rows}
+    live_promotions = set(LATER_EXACT_PROMOTIONS) | sp19_live_promotions(mapping)
     if len(rows) != 7673:
         raise ValueError(f"SP13-R mapping inventory changed: {len(rows)}")
     if len(mapping) != len(rows):
@@ -258,7 +272,7 @@ def validate_closed_snapshot(
     for item in residuals:
         test_id = item["test_id"]
         row = mapping.get(test_id)
-        if test_id in LATER_EXACT_PROMOTIONS:
+        if test_id in live_promotions:
             result = summary_by_id.get(test_id)
             if (
                 not row

@@ -122,9 +122,11 @@ class RootAwarePorterTests(unittest.TestCase):
         )
         parser = port_wpt.parse_wpt_html(str(path))
         rust = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
-        # The intermediate unboxed element's computed transparent background,
-        # rather than the outer blue value, is inherited by the leaf.
-        self.assertNotIn("background_color = Color::BLUE", rust)
+        # Retaining each unboxed element preserves its computed-style
+        # boundary. The outer node keeps blue without transferring it through
+        # the transparent middle node to the leaf.
+        self.assertEqual(rust.count("background_color = Color::BLUE"), 1)
+        self.assertIn("background_color = Color::TRANSPARENT", rust)
 
 
 class SupersessionTests(unittest.TestCase):

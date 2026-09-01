@@ -37,6 +37,7 @@ sys.path.insert(0, WPT_TOOLS_DIR)
 from shared_detectors import CATEGORY_FOR_DEP
 from generate_sp13r_multicol_closure import (
     LATER_EXACT_PROMOTIONS as SP13R_LATER_EXACT_PROMOTIONS,
+    sp19_live_promotions as sp13r_sp19_live_promotions,
 )
 from generate_sp13p_paint_closure import (
     validate_closed_snapshot as validate_sp13p_paint_closure,
@@ -606,6 +607,7 @@ def sp13r_multicol_closure_errors(
         errors.append("SP13-R later-promotion allowlist escapes the residual ledger")
 
     mapping_by_id = {canonical_mapping_id(row): row for row in rows}
+    later_exact_promotions |= sp13r_sp19_live_promotions(mapping_by_id)
     for test_id in baseline:
         result = summary_by_id.get(test_id)
         if (

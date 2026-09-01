@@ -86,8 +86,8 @@ line-clamp_line-clamp-004,ported,css_overflow_line_clamp_line_clamp_004,
 line-clamp_line-clamp-005,ported,css_overflow_line_clamp_line_clamp_005,
 line-clamp_line-clamp-006,ported,css_overflow_line_clamp_line_clamp_006,
 line-clamp_line-clamp-007,ported,css_overflow_line_clamp_line_clamp_007,
-line-clamp_line-clamp-008,not_portable,,style_block_unsupported property: line-clamp
-line-clamp_line-clamp-009,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-008,ported,css_overflow_line_clamp_line_clamp_008,
+line-clamp_line-clamp-009,ported,css_overflow_line_clamp_line_clamp_009,
 line-clamp_line-clamp-010,ported,css_overflow_line_clamp_line_clamp_010,
 line-clamp_line-clamp-011.tentative,ported,css_overflow_line_clamp_line_clamp_011_tentative,
 line-clamp_line-clamp-012.tentative,ported,css_overflow_line_clamp_line_clamp_012_tentative,
@@ -249,7 +249,7 @@ line-clamp_webkit-line-clamp-009,ported,css_overflow_line_clamp_webkit_line_clam
 line-clamp_webkit-line-clamp-010,ported,css_overflow_line_clamp_webkit_line_clamp_010,
 line-clamp_webkit-line-clamp-011,ported,css_overflow_line_clamp_webkit_line_clamp_011,
 line-clamp_webkit-line-clamp-012,ported,css_overflow_line_clamp_webkit_line_clamp_012,
-line-clamp_webkit-line-clamp-013,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-orient
+line-clamp_webkit-line-clamp-013,ported,css_overflow_line_clamp_webkit_line_clamp_013,
 line-clamp_webkit-line-clamp-014,ported,css_overflow_line_clamp_webkit_line_clamp_014,
 line-clamp_webkit-line-clamp-015,ported,css_overflow_line_clamp_webkit_line_clamp_015,
 line-clamp_webkit-line-clamp-016,ported,css_overflow_line_clamp_webkit_line_clamp_016,
@@ -303,8 +303,8 @@ no-scrollable-overflow-vertical-rl-2,ported,css_overflow_no_scrollable_overflow_
 orthogonal-flow-with-inline-end-margin,not_portable,,uses_javascript
 outline-with-opacity-crash,not_portable,,uses_javascript
 overflow-abpos-transform,not_portable,,uses_javascript
-overflow-alignment-001-ref,not_portable,,style_block_unsupported property: caption-side
-overflow-alignment-002-ref,not_portable,,style_block_unsupported property: caption-side
+overflow-alignment-001-ref,ported,css_overflow_overflow_alignment_001_ref,
+overflow-alignment-002-ref,ported,css_overflow_overflow_alignment_002_ref,
 overflow-alignment-block-001,not_portable,,uses_javascript
 overflow-alignment-block-002,not_portable,,uses_javascript
 overflow-alignment-flex-col-reverse-001,not_portable,,uses_javascript
@@ -408,8 +408,8 @@ overflow-clip-margin-visual-box-and-value-ref,ported,css_overflow_overflow_clip_
 overflow-clip-margin-visual-box-and-value-with-border-radius,ported,css_overflow_overflow_clip_margin_visual_box_and_value_with_border_radius,
 overflow-clip-margin-visual-box-and-value-with-border-radius-ref,ported,css_overflow_overflow_clip_margin_visual_box_and_value_with_border_radius_ref,
 overflow-clip-margin-visual-box-ref,ported,css_overflow_overflow_clip_margin_visual_box_ref,
-overflow-clip-rounded-table,not_portable,,style_block_unsupported property: border-collapse
-overflow-clip-rounded-table-ref,not_portable,,style_block_unsupported property: border-collapse
+overflow-clip-rounded-table,ported,css_overflow_overflow_clip_rounded_table,
+overflow-clip-rounded-table-ref,ported,css_overflow_overflow_clip_rounded_table_ref,
 overflow-clip-scroll-size,not_portable,,uses_javascript
 overflow-clip-transform-001,not_portable,,style_block_unsupported property: transform
 overflow-clip-transform-001-ref,not_portable,,style_block_unsupported property: transform
@@ -424,8 +424,8 @@ overflow-empty-child-box,not_portable,,uses_javascript
 overflow-hidden-resize-with-stacking-context-child,not_portable,,uses_javascript
 overflow-img,not_portable,,unsupported element: <img>
 overflow-img-border-radius,not_portable,,unsupported element: <img>
-overflow-img-display-table,not_portable,,unsupported display: table
-overflow-img-display-table-ref,not_portable,,unsupported element: <img>
+overflow-img-display-table,ported,css_overflow_overflow_img_display_table,
+overflow-img-display-table-ref,ported,css_overflow_overflow_img_display_table_ref,
 overflow-img-object-position,not_portable,,unsupported element: <img>
 overflow-img-object-position-ref,not_portable,,unsupported element: <img>
 overflow-img-ref,not_portable,,unsupported element: <img>
@@ -833,7 +833,7 @@ scroller-covered-by-empty-svg,not_portable,,uses_javascript
 select-size-overflow-001,not_portable,,unsupported element: <select>
 select-size-overflow-001-ref,not_portable,,unsupported element: <select>
 shrink-to-fit-auto-overflow-relayout-crash,not_portable,,uses_javascript
-table-header-group-overflow-crash,not_portable,,unsupported display: table-header-group
+table-header-group-overflow-crash,ported,css_overflow_table_header_group_overflow_crash,
 text-overflow-ellipsis-001,ported,css_overflow_text_overflow_ellipsis_001,
 text-overflow-ellipsis-002,ported,css_overflow_text_overflow_ellipsis_002,
 text-overflow-ellipsis-003,not_portable,,uses_javascript

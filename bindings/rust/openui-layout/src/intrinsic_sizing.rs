@@ -705,18 +705,23 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
 ///
 /// Border and padding of the container are added to the result.
 pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> IntrinsicSizes {
-    let style = &doc.node(node_id).style;
-    let tag = doc.node(node_id).tag;
+    let node = doc.node(node_id);
+    let style = &node.style;
+    let tag = node.tag;
 
     // Replaced elements use their own intrinsic dimensions.
-    if is_replaced_element(tag) {
-        return compute_replaced_intrinsic_sizes(style);
+    if node.replaced.is_some() || is_replaced_element(tag) {
+        return compute_replaced_intrinsic_sizes_for_node(doc, node_id);
     }
 
     // Flex containers have their own intrinsic sizing algorithm.
     // CSS Flexbox §9.9: Flex container intrinsic sizes.
     if style.display.is_flex() {
         return compute_flex_intrinsic_sizes(doc, node_id, style);
+    }
+
+    if style.display.is_table_wrapper() {
+        return crate::table::compute_table_intrinsic_sizes(doc, node_id);
     }
 
     let border = resolve_border(style);
@@ -754,11 +759,28 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     let mut multicol_spanner_max_inline = LayoutUnit::zero();
     let mut has_multicol_spanner = false;
 
-    let mut ordered_children: Vec<(usize, NodeId, i32)> = doc
-        .children(node_id)
-        .enumerate()
-        .map(|(index, child_id)| (index, child_id, doc.node(child_id).style.order))
-        .collect();
+    fn append_intrinsic_children(
+        doc: &Document,
+        parent: NodeId,
+        output: &mut Vec<(usize, NodeId, i32)>,
+        source_index: &mut usize,
+    ) {
+        for child_id in doc.children(parent) {
+            let child = doc.node(child_id);
+            if child.style.display == openui_style::Display::Contents
+                && !child.style.position.is_absolutely_positioned()
+            {
+                append_intrinsic_children(doc, child_id, output, source_index);
+            } else {
+                output.push((*source_index, child_id, child.style.order));
+                *source_index += 1;
+            }
+        }
+    }
+
+    let mut ordered_children = Vec::new();
+    let mut source_index = 0;
+    append_intrinsic_children(doc, node_id, &mut ordered_children, &mut source_index);
     ordered_children.sort_by_key(|&(index, _, order)| (order, index));
 
     let ordered_child_ids: Vec<NodeId> = ordered_children
@@ -944,18 +966,20 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         } else {
             LayoutUnit::zero()
         };
-        let specified_column_width = if has_multicol_columnar_content {
-            algo.column_width.unwrap_or(LayoutUnit::zero())
-        } else {
-            LayoutUnit::zero()
-        };
+        let specified_column_width = algo.column_width.unwrap_or(LayoutUnit::zero());
         // CSS Multicol §3: a specified column-width is the preferred
         // fragmentainer measure and therefore the columnar contribution to
         // the multicol min-content size. Oversized descendants may visibly
         // overflow that fragmentainer; they do not inflate it. With
         // column-width:auto, the columnar min-content contribution supplies
         // the measure instead.
-        let min_column_width = if algo.column_width.is_some() {
+        let min_column_width = if !has_multicol_columnar_content {
+            // An empty multicol has no min-content floor, but its authored
+            // column width remains its preferred (max-content) measure. This
+            // lets an auto-width float shrink to the available inline space
+            // while still filling that space instead of collapsing to zero.
+            LayoutUnit::zero()
+        } else if algo.column_width.is_some() {
             specified_column_width
         } else {
             multicol_columnar_min_inline
@@ -1256,6 +1280,19 @@ fn compute_flex_intrinsic_sizes(
             child_sizes.max_content_block_size = child_sizes
                 .max_content_block_size
                 .max_of(additional.max_content_block_size);
+        }
+        if child_group.len() == 1 && child_style.display.is_table_wrapper() {
+            // A table's specified inline size is a minimum for its used
+            // wrapper width. Generic child contribution code treats a fixed
+            // width as replacing intrinsic sizes, so restore the table-grid
+            // min-content floor before summing an intrinsic flex container.
+            let table_sizes = compute_intrinsic_block_sizes(doc, child_id);
+            child_sizes.min_content_inline_size = child_sizes
+                .min_content_inline_size
+                .max_of(table_sizes.min_content_inline_size);
+            child_sizes.max_content_inline_size = child_sizes
+                .max_content_inline_size
+                .max_of(table_sizes.min_content_inline_size);
         }
         if !writing_direction.is_horizontal() {
             let old_inline_edges =
@@ -1850,8 +1887,8 @@ pub fn compute_intrinsic_inline_sizes(doc: &Document, node_id: NodeId) -> MinMax
                 MinMaxSizes::zero()
             }
         }
-        _ if is_replaced_element(tag) => {
-            let sizes = compute_replaced_intrinsic_sizes(&node.style);
+        _ if node.replaced.is_some() || is_replaced_element(tag) => {
+            let sizes = compute_replaced_intrinsic_sizes_for_node(doc, node_id);
             MinMaxSizes::new(sizes.min_content_inline_size, sizes.max_content_inline_size)
         }
         _ => {
@@ -1878,8 +1915,8 @@ pub(crate) fn compute_logical_intrinsic_inline_sizes(
             .map(|text| compute_text_intrinsic_sizes(text, &node.style))
             .unwrap_or_else(MinMaxSizes::zero);
     }
-    if is_replaced_element(node.tag) {
-        let physical = compute_replaced_intrinsic_sizes(&node.style);
+    if node.replaced.is_some() || is_replaced_element(node.tag) {
+        let physical = compute_replaced_intrinsic_sizes_for_node(doc, node_id);
         let direction = IntrinsicAxisMapping::for_style(&node.style).writing_direction;
         return if direction.is_horizontal() {
             MinMaxSizes::new(
@@ -1893,10 +1930,17 @@ pub(crate) fn compute_logical_intrinsic_inline_sizes(
             )
         };
     }
-
     let direction = IntrinsicAxisMapping::for_style(&node.style).writing_direction;
     if direction.is_horizontal() {
         return compute_intrinsic_inline_sizes(doc, node_id);
+    }
+    if node.style.display.is_table_wrapper() {
+        // The table algorithm already reports contributions in the table's
+        // own logical axes and includes border spacing, captions, and track
+        // fixup. Falling through to the generic vertical block walk loses
+        // the inline-axis border-spacing edges around the table grid.
+        let sizes = crate::table::compute_table_intrinsic_sizes(doc, node_id);
+        return MinMaxSizes::new(sizes.min_content_inline_size, sizes.max_content_inline_size);
     }
 
     let border = resolve_border(&node.style).to_logical(direction);
@@ -2344,29 +2388,75 @@ pub fn shrink_to_fit_inline_size(
 ///   derive the other from the ratio.
 /// - Default to 300×150 for objects with no intrinsic size (CSS 2.1 §10.3.2).
 pub fn compute_replaced_intrinsic_sizes(style: &ComputedStyle) -> IntrinsicSizes {
+    compute_replaced_intrinsic_sizes_with_natural(style, 300.0, 150.0, Some((300.0, 150.0)))
+}
+
+/// Compute intrinsic contributions from the resource metadata stored on a DOM
+/// node. Percentage preferred sizes remain indefinite during intrinsic sizing;
+/// the element's natural dimensions are used until a definite containing-block
+/// size exists in normal layout.
+pub fn compute_replaced_intrinsic_sizes_for_node(
+    doc: &Document,
+    node_id: NodeId,
+) -> IntrinsicSizes {
+    let node = doc.node(node_id);
+    let replaced = node.replaced;
+    let natural_width = replaced
+        .and_then(|content| content.intrinsic_width)
+        .unwrap_or(300.0);
+    let natural_height = replaced
+        .and_then(|content| content.intrinsic_height)
+        .unwrap_or(150.0);
+    let natural_ratio = replaced.and_then(|content| content.intrinsic_ratio);
+    compute_replaced_intrinsic_sizes_with_natural(
+        &node.style,
+        natural_width,
+        natural_height,
+        natural_ratio,
+    )
+}
+
+fn compute_replaced_intrinsic_sizes_with_natural(
+    style: &ComputedStyle,
+    natural_width: f32,
+    natural_height: f32,
+    natural_ratio: Option<(f32, f32)>,
+) -> IntrinsicSizes {
     // Default replaced element size (CSS 2.1 §10.3.2).
-    let default_width = LayoutUnit::from_i32(300);
-    let default_height = LayoutUnit::from_i32(150);
+    let default_width = LayoutUnit::from_f32(natural_width);
+    let default_height = LayoutUnit::from_f32(natural_height);
 
     // Determine the effective aspect ratio for deriving the missing dimension.
     // CSS Sizing 4: If a CSS `aspect-ratio` is specified (without `auto`), it
     // overrides the natural ratio. With `auto <ratio>`, the natural ratio
     // (from the element's intrinsic dimensions) takes priority.
-    let (ratio_w, ratio_h) = if let Some(ref ar) = style.aspect_ratio {
+    let effective_ratio = if let Some(ref ar) = style.aspect_ratio {
         if ar.auto_flag {
-            // `auto <ratio>`: prefer the natural ratio (default 2:1).
-            (default_width, default_height)
+            // `auto <ratio>`: prefer the natural ratio.
+            natural_ratio
+                .filter(|(width, height)| *width > 0.0 && *height > 0.0)
+                .map(|(width, height)| (LayoutUnit::from_f32(width), LayoutUnit::from_f32(height)))
+                .or_else(|| {
+                    (ar.ratio.0 > 0.0 && ar.ratio.1 > 0.0).then(|| {
+                        (
+                            LayoutUnit::from_f32(ar.ratio.0),
+                            LayoutUnit::from_f32(ar.ratio.1),
+                        )
+                    })
+                })
         } else if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
             // Bare `<ratio>`: override natural ratio with specified one.
-            (
+            Some((
                 LayoutUnit::from_f32(ar.ratio.0),
                 LayoutUnit::from_f32(ar.ratio.1),
-            )
+            ))
         } else {
-            (default_width, default_height)
+            None
         }
     } else {
-        (default_width, default_height)
+        natural_ratio
+            .filter(|(width, height)| *width > 0.0 && *height > 0.0)
+            .map(|(width, height)| (LayoutUnit::from_f32(width), LayoutUnit::from_f32(height)))
     };
 
     let has_width = style.width.length_type() == openui_geometry::LengthType::Fixed;
@@ -2380,22 +2470,22 @@ pub fn compute_replaced_intrinsic_sizes(style: &ComputedStyle) -> IntrinsicSizes
         }
         (true, false) => {
             let w = LayoutUnit::from_f32(style.width.value());
-            // Derive height from aspect ratio.
-            let h = apply_aspect_ratio(w, ratio_w, ratio_h);
+            // Derive height only when the replaced resource has a natural or
+            // preferred aspect ratio; iframe/object default dimensions do
+            // not imply one.
+            let h = effective_ratio
+                .map(|(ratio_w, ratio_h)| apply_aspect_ratio(w, ratio_w, ratio_h))
+                .unwrap_or(default_height);
             (w, h)
         }
         (false, true) => {
             let h = LayoutUnit::from_f32(style.height.value());
-            // Derive width from aspect ratio.
-            let w = apply_aspect_ratio_inverse(h, ratio_w, ratio_h);
+            let w = effective_ratio
+                .map(|(ratio_w, ratio_h)| apply_aspect_ratio_inverse(h, ratio_w, ratio_h))
+                .unwrap_or(default_width);
             (w, h)
         }
-        (false, false) => {
-            // No explicit dimensions. Use natural width with the effective
-            // ratio to derive height, ensuring they're consistent.
-            let h = apply_aspect_ratio(default_width, ratio_w, ratio_h);
-            (default_width, h)
-        }
+        (false, false) => (default_width, default_height),
     };
 
     // Add border + padding.
@@ -2424,12 +2514,17 @@ pub fn compute_replaced_intrinsic_sizes(style: &ComputedStyle) -> IntrinsicSizes
 /// but this function provides the extension point. The caller can mark
 /// elements as replaced through the style (e.g., explicit width+height
 /// on an img-like element).
-fn is_replaced_element(_tag: ElementTag) -> bool {
-    // In the current DOM model there are no dedicated replaced element tags.
-    // Replaced sizing is triggered via `compute_replaced_intrinsic_sizes`
-    // when called explicitly by the layout algorithm for known replaced
-    // elements. For intrinsic block sizing, we always recurse into children.
-    false
+fn is_replaced_element(tag: ElementTag) -> bool {
+    matches!(
+        tag,
+        ElementTag::Image
+            | ElementTag::Canvas
+            | ElementTag::Svg
+            | ElementTag::IFrame
+            | ElementTag::Object
+            | ElementTag::Audio
+            | ElementTag::Video
+    )
 }
 
 /// Derive height from width using the default aspect ratio.

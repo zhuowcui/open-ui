@@ -579,7 +579,10 @@ class LedgerTests(unittest.TestCase):
         text_manifest = json.loads(
             (closure.PORTED_DIR / "text_ported_tests.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(len(text_manifest), 1292)
+        # Later sprints may append deterministic Ahem ports, but cannot remove
+        # any member of SP17's frozen text cohort.
+        self.assertGreaterEqual(len(text_manifest), 1292)
+        self.assertEqual(text_manifest, sorted(set(text_manifest)))
         self.assertTrue(set(targets) <= set(text_manifest))
 
     def test_frozen_ledgers_and_sp13r_later_promotion_allowlist_are_deterministic(self):

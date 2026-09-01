@@ -47,7 +47,7 @@ display-flow-root-dynamic-ref,ported,css_display_display_flow_root_dynamic_ref,
 display-flow-root-list-item-001,ported,css_display_display_flow_root_list_item_001,
 display-change-iframe,not_portable,,uses_javascript
 display-change-object-iframe,not_portable,,uses_javascript
-display-contents-001-crash,not_portable,,unsupported display: table-cell
+display-contents-001-crash,ported,css_display_display_contents_001_crash,
 display-contents-alignment-002-ref,not_portable,,unsupported display: grid
 display-contents-alignment-002,not_portable,,unsupported display: grid
 display-contents-before-after-001,ported,css_display_display_contents_before_after_001,
@@ -103,14 +103,14 @@ display-contents-svg-anchor-child,not_portable,,uses_javascript
 display-contents-svg-elements-ref,not_portable,,unsupported element: <svg>
 display-contents-svg-elements,not_portable,,unsupported element: <svg>
 display-contents-svg-switch-child,not_portable,,uses_javascript
-display-contents-table-001-ref,not_portable,,unsupported display: table-caption
-display-contents-table-001,not_portable,,unsupported display: table-caption
-display-contents-table-002-ref,not_portable,,unsupported property: border-collapse
-display-contents-table-002,not_portable,,unsupported property: border-collapse
-display-contents-td-001,not_portable,,unsupported element: <table>
+display-contents-table-001-ref,ported,css_display_display_contents_table_001_ref,
+display-contents-table-001,ported,css_display_display_contents_table_001,
+display-contents-table-002-ref,ported,css_display_display_contents_table_002_ref,
+display-contents-table-002,ported,css_display_display_contents_table_002,
+display-contents-td-001,ported,css_display_display_contents_td_001,
 display-contents-text-inherit-002,not_portable,,uses_javascript
-display-contents-tr-001-ref,not_portable,,unsupported element: <table>
-display-contents-tr-001,not_portable,,unsupported element: <table>
+display-contents-tr-001-ref,ported,css_display_display_contents_tr_001_ref,
+display-contents-tr-001,ported,css_display_display_contents_tr_001,
 display-contents-unusual-html-elements-none,not_portable,,unsupported element: <canvas>
 display-first-letter-001,not_portable,,uses_javascript
 display-first-line-001,not_portable,,uses_javascript

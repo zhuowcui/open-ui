@@ -205,8 +205,11 @@ class TextPorterTests(unittest.TestCase):
         parser = port_wpt.parse_wpt_html(str(path))
         rust = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
 
-        self.assertNotIn("Display::Contents", rust)
-        self.assertNotIn("border_top_width = 10", rust)
+        # The DOM snapshot retains the unboxed element so inheritance and
+        # custom-property boundaries remain observable. Layout, rather than
+        # the porter, suppresses its principal box and border painting.
+        self.assertIn("Display::Contents", rust)
+        self.assertIn("border_top_width = 10", rust)
         self.assertIn('Some("P".to_string())', rust)
         self.assertIn('Some("A".to_string())', rust)
         self.assertIn('Some("SS".to_string())', rust)

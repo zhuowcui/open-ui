@@ -876,6 +876,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 } else if display == Display::InlineBlock
                     || display == Display::InlineFlex
                     || display == Display::InlineGrid
+                    || display == Display::InlineTable
                 {
                     self.append_atomic_inline(child_id, &style);
                 } else if display == Display::Block
@@ -946,6 +947,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 } else if display == Display::InlineBlock
                     || display == Display::InlineFlex
                     || display == Display::InlineGrid
+                    || display == Display::InlineTable
                 {
                     let style = node.style.clone();
                     self.append_atomic_inline(child_id, &style);

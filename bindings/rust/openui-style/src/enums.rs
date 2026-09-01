@@ -130,6 +130,7 @@ impl Display {
                 | Self::FlowRoot
                 | Self::Table
                 | Self::InlineTable
+                | Self::TableCell
         )
     }
 }

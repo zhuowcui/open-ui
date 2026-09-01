@@ -1713,7 +1713,55 @@ fn resolve_flex_basis(
             } else {
                 resolved
             };
+            if child_style.display.is_table_wrapper() && !is_main_axis_horizontal {
+                let captions = crate::table::compute_table_caption_block_size(
+                    doc,
+                    child_id,
+                    child_percentage_inline,
+                    space,
+                );
+                return (content + captions, false);
+            }
             return (content, false);
+        }
+    }
+
+    // A percentage-width table inside an otherwise auto-sized block flex item
+    // contributes that percentage of the definite flex container to the
+    // item's flex base. This is the table-wrapper cyclic-percentage rule used
+    // before flex shrink distributes multiple such items across the line.
+    if is_main_axis_horizontal && !child_percentage_inline.is_indefinite() {
+        let mut in_flow = doc.children(child_id).filter(|descendant_id| {
+            let descendant = doc.node(*descendant_id);
+            descendant.style.display != openui_style::Display::None
+                && !descendant.style.is_out_of_flow()
+                && descendant.style.float == openui_style::Float::None
+        });
+        if let Some(descendant_id) = in_flow.next() {
+            let descendant_style = &doc.node(descendant_id).style;
+            if in_flow.next().is_none()
+                && descendant_style.display.is_table_wrapper()
+                && descendant_style.width.is_percent()
+            {
+                let descendant_border = resolve_border(descendant_style);
+                let descendant_padding = resolve_padding(descendant_style, child_percentage_inline);
+                let resolved = resolve_length(
+                    &descendant_style.width,
+                    child_percentage_inline,
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                );
+                let border_box =
+                    if descendant_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                        resolved
+                    } else {
+                        resolved + descendant_border.inline_sum() + descendant_padding.inline_sum()
+                    };
+                return (
+                    (border_box - main_axis_border_padding).clamp_negative_to_zero(),
+                    false,
+                );
+            }
         }
     }
 
@@ -2154,6 +2202,12 @@ fn resolve_content_based_size(
             } else {
                 intrinsic.max_content_block_size
             }
+        } else if child_style.display.is_table_wrapper() && child_style.height.is_auto() {
+            // Flex base sizes ignore min/max main-size constraints. Running a
+            // table layout here would already apply min-height and inflate the
+            // base before free-space distribution; use the raw table content
+            // contribution and clamp only when forming the hypothetical size.
+            compute_intrinsic_block_sizes(doc, child_id).max_content_block_size
         } else {
             // Preserve the established auto/content path: its layout-based
             // sizing also carries cross-axis constraints and aspect-ratio
@@ -2825,6 +2879,17 @@ fn resolve_main_axis_min_max(
         }
     } else {
         LayoutUnit::from_i32(33554431)
+    };
+
+    // A table wrapper cannot become narrower than its table-grid min-content
+    // width, even when an authored min-width is smaller. Otherwise flex would
+    // position the following item at the authored minimum while the principal
+    // table box overflows through it.
+    let min = if child_style.display.is_table_wrapper() && main_is_child_inline {
+        let intrinsic = crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id);
+        min.max_of((intrinsic.min - main_axis_border_padding).clamp_negative_to_zero())
+    } else {
+        min
     };
 
     let min = if min_prop.is_auto() {

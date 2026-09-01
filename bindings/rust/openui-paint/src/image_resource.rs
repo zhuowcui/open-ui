@@ -42,8 +42,8 @@ pub fn decode_image_resource(doc: &Document, id: ImageResourceId) -> Result<Imag
     }
 
     let image = match resource.mime_type.as_str() {
-        "image/png" => Image::from_encoded(Data::new_copy(&resource.bytes))
-            .ok_or_else(|| format!("failed to decode PNG resource {}", resource.source))?,
+        "image/png" | "image/jpeg" => Image::from_encoded(Data::new_copy(&resource.bytes))
+            .ok_or_else(|| format!("failed to decode raster resource {}", resource.source))?,
         "image/svg+xml" => {
             let svg = parsed_svg_resource(resource)?;
             rasterize_static_svg(&svg, &resource.source, None)?

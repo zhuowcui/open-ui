@@ -588,7 +588,9 @@ def parse_length(value: str, font_size: float = 16.0) -> str | None:
         return 'Length::stretch()'
     if value == 'content':
         return 'Length::content()'
-    # vw/vh — approximate as % of 800x600 viewport
+    # Viewport-relative lengths are frozen against the accountability
+    # renderer's 800x600 viewport.  Keep vmin/vmax distinct: crash tests use
+    # very large values to force float continuations across fragmentainers.
     m = re.match(r'^(-?[\d.]+)vw$', value)
     if m:
         px_val = _zoomed_px(float(m.group(1)) * 8.0)  # 800px viewport
@@ -596,6 +598,14 @@ def parse_length(value: str, font_size: float = 16.0) -> str | None:
     m = re.match(r'^(-?[\d.]+)vh$', value)
     if m:
         px_val = _zoomed_px(float(m.group(1)) * 6.0)  # 600px viewport
+        return f'Length::px({px_val})'
+    m = re.match(r'^(-?[\d.]+)vmin$', value)
+    if m:
+        px_val = _zoomed_px(float(m.group(1)) * 6.0)  # min(800, 600) / 100
+        return f'Length::px({px_val})'
+    m = re.match(r'^(-?[\d.]+)vmax$', value)
+    if m:
+        px_val = _zoomed_px(float(m.group(1)) * 8.0)  # max(800, 600) / 100
         return f'Length::px({px_val})'
     # calc() — pre-evaluate pure-px expressions
     m = re.match(r'^calc\((.+)\)$', value)
@@ -1113,6 +1123,12 @@ def _parse_calc_token(tok: str, font_size: float = 16.0):
     m = re.match(r'^(-?[\d.]+)vh$', tok)
     if m:
         return (float(m.group(1)) * 6.0, 'px')
+    m = re.match(r'^(-?[\d.]+)vmin$', tok)
+    if m:
+        return (float(m.group(1)) * 6.0, 'px')
+    m = re.match(r'^(-?[\d.]+)vmax$', tok)
+    if m:
+        return (float(m.group(1)) * 8.0, 'px')
     m = re.match(r'^(-?[\d.]+)$', tok)
     if m:
         return (float(m.group(1)), 'num')
@@ -1134,7 +1150,7 @@ def _try_eval_calc(expr: str, font_size: float = 16.0) -> str | None:
         pure,
     )
     pure = re.sub(r'(\d+\.?\d*)px', r'\1', pure)
-    if '%' not in pure and 'vw' not in pure and 'vh' not in pure:
+    if not any(unit in pure for unit in ('%', 'vw', 'vh', 'vmin', 'vmax')):
         try:
             result = eval(pure, {"__builtins__": {}}, {})
             return f'Length::px({_zoomed_px(float(result)):.6f})'
@@ -1599,7 +1615,11 @@ def _nonnegative_css_length(value: str, *, strictly_positive: bool = False) -> b
         # Functional values are validated by Chromium before reaching the
         # generated snapshot.  Reject only a statically evident negative.
         return not re.match(r'^(?:calc|min|max|clamp)\(\s*-', value)
-    match = re.fullmatch(r'([+-]?(?:\d+(?:\.\d*)?|\.\d+))(px|em|rem|%|pt|pc|in|cm|mm|q)?', value)
+    match = re.fullmatch(
+        r'([+-]?(?:\d+(?:\.\d*)?|\.\d+))'
+        r'(px|em|rem|%|pt|pc|in|cm|mm|q|vw|vh|vmin|vmax)?',
+        value,
+    )
     if not match:
         return False
     number = float(match.group(1))
@@ -2191,6 +2211,7 @@ def compute_specificity(selector: str) -> tuple:
 
     ids = len(re.findall(r'#[a-zA-Z0-9_-]+', sel))
     classes = len(re.findall(r'\.[a-zA-Z0-9_-]+', sel))
+    classes += len(re.findall(r'\[[^\]]+\]', sel))
     classes += len(re.findall(
         r':(?!:|before\b|after\b|not\b)[a-zA-Z-]+(?:\([^)]*\))?',
         selector,
@@ -2221,13 +2242,53 @@ BODY_STYLE_RULES = parse_simple_css_rules(
 # declarations erase the root/body propagation behavior these ports exercise.
 ROOT_BODY_STYLE_RULES = parse_simple_css_rules(
     '* { margin: 0; padding: 0; box-sizing: content-box; } '
-    'body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; '
-    'font-size: 16px; }'
+    'body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; }'
 )
 
 
-def _match_simple_selector(selector: str, tag: str, classes: list, id_val: str) -> bool:
+def _match_attribute_selector(expression: str, attrs: dict) -> bool:
+    match = re.fullmatch(
+        r'''\s*([-_a-zA-Z][-_a-zA-Z0-9]*)\s*'''
+        r'''(?:(~=|\|=|\^=|\$=|\*=|=)\s*'''
+        r'''(?:"([^"]*)"|'([^']*)'|([^\s]+?))\s*([isIS])?)?\s*''',
+        expression,
+    )
+    if not match:
+        return False
+    name = match.group(1).lower()
+    if name not in attrs:
+        return False
+    operator = match.group(2)
+    if operator is None:
+        return True
+    expected = next(
+        value for value in (match.group(3), match.group(4), match.group(5))
+        if value is not None
+    )
+    actual = str(attrs[name])
+    if (match.group(6) or '').lower() == 'i':
+        actual = actual.casefold()
+        expected = expected.casefold()
+    return {
+        '=': actual == expected,
+        '~=': expected in actual.split(),
+        '|=': actual == expected or actual.startswith(expected + '-'),
+        '^=': actual.startswith(expected),
+        '$=': actual.endswith(expected),
+        '*=': expected in actual,
+    }[operator]
+
+
+def _match_simple_selector(selector: str, tag: str, classes: list, id_val: str,
+                           attrs: dict = None) -> bool:
     """Check if a simple (non-compound) CSS selector matches an element."""
+    attrs = attrs or {}
+    for expression in re.findall(r'\[([^\]]+)\]', selector):
+        if not _match_attribute_selector(expression, attrs):
+            return False
+    selector = re.sub(r'\[[^\]]+\]', '', selector)
+    if not selector.strip():
+        return True
     parts = re.findall(r'[.#]?[a-zA-Z0-9_-]+|\*', selector)
     if not parts:
         return False
@@ -2285,11 +2346,13 @@ def _eval_nth_expr(expr: str, index: int) -> bool:
 def match_selector(selector: str, tag: str, classes: list, id_val: str,
                    ancestors: list = None, sibling_index: int = 0,
                    sibling_count: int = 0,
-                   preceding_siblings: list = None) -> bool:
+                   preceding_siblings: list = None, attrs: dict = None,
+                   sibling_type_index: int = None,
+                   sibling_type_count: int = None) -> bool:
     """Check if a CSS selector matches an element.
     
     Supports simple selectors, combinators (space, >, +, ~), and structural pseudo-classes.
-    ancestors: list of (tag, classes, id_val) tuples from outermost to innermost.
+    ancestors: list of (tag, classes, id_val[, attrs]) tuples from outermost to innermost.
     sibling_index: 1-based index among element siblings.
     sibling_count: total number of element siblings.
     preceding_siblings: list of (tag, classes, id_val) for preceding element siblings.
@@ -2298,6 +2361,19 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
     original_selector = selector
     if not selector:
         return False
+    # Keep the selector API compatible with the historical three-field DOM
+    # tuples while allowing SP19 attribute selectors to carry a fourth field.
+    # Normalizing once also keeps recursive selector matching consistent.
+    ancestors = [
+        (*entry, {}) if len(entry) == 3 else entry
+        for entry in (ancestors or [])
+    ]
+    preceding_siblings = [
+        (*entry, {}) if len(entry) == 3 else entry
+        for entry in (preceding_siblings or [])
+    ]
+    type_index = sibling_index if sibling_type_index is None else sibling_type_index
+    type_count = sibling_count if sibling_type_count is None else sibling_type_count
 
     # Evaluate :not() pseudo-class — handle both simple selectors and
     # structural pseudo-classes inside :not(). Use regex that handles
@@ -2310,11 +2386,15 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
                 return False
             continue
         if inner in (':last-child', ':last-of-type'):
-            if sibling_index == sibling_count:
+            index, count = (
+                (type_index, type_count)
+                if inner == ':last-of-type' else (sibling_index, sibling_count)
+            )
+            if index == count:
                 return False
             continue
         if inner in (':first-of-type',):
-            if sibling_index == 1:
+            if type_index == 1:
                 return False
             continue
         if inner == ':only-child':
@@ -2327,7 +2407,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
                 return False
             continue
         # Simple selector (tag, class, id)
-        if _match_simple_selector(inner, tag, classes, id_val):
+        if _match_simple_selector(inner, tag, classes, id_val, attrs):
             return False
 
     # Evaluate bare structural pseudo-classes (not inside :not())
@@ -2339,9 +2419,9 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
         return False
     if ':last-child' in bare_selector and sibling_index != sibling_count:
         return False
-    if ':last-of-type' in bare_selector and sibling_index != sibling_count:
+    if ':last-of-type' in bare_selector and type_index != type_count:
         return False
-    if ':first-of-type' in bare_selector and sibling_index != 1:
+    if ':first-of-type' in bare_selector and type_index != 1:
         return False
     if ':only-child' in bare_selector and sibling_count != 1:
         return False
@@ -2367,7 +2447,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
         prefix = re.sub(r'>\s*$', '', stripped_with_combinators).strip()
         if not prefix or not ancestors:
             return False
-        parent_tag, parent_classes, parent_id = ancestors[-1]
+        parent_tag, parent_classes, parent_id, parent_attrs = ancestors[-1]
         return match_selector(
             prefix,
             parent_tag,
@@ -2377,6 +2457,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
             1,
             1,
             [],
+            parent_attrs,
         )
 
     pseudo_only_descendant = re.match(
@@ -2388,16 +2469,32 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
         if not prefix or not ancestors:
             return False
         for idx in range(len(ancestors) - 1, -1, -1):
-            anc_tag, anc_classes, anc_id = ancestors[idx]
-            if match_selector(prefix, anc_tag, anc_classes, anc_id, ancestors[:idx], 1, 1, []):
+            anc_tag, anc_classes, anc_id, anc_attrs = ancestors[idx]
+            if match_selector(
+                prefix, anc_tag, anc_classes, anc_id, ancestors[:idx], 1, 1, [], anc_attrs
+            ):
                 return True
         return False
 
-    # Tokenize: split on combinators (>, +, ~, whitespace) preserving type
+    # Tokenize: split on combinators (>, +, ~, whitespace) preserving type.
+    # Protect attribute selectors first: their operators and quoted whitespace
+    # are part of a compound selector, not combinators.
     tokens = []
     combinators = []
-    normalized = re.sub(r'\s*([>+~])\s*', r' \1 ', selector).strip()
+    protected_attributes = []
+
+    def protect_attribute(match):
+        protected_attributes.append(match.group(0))
+        return f'__OPENUI_ATTR_{len(protected_attributes) - 1}__'
+
+    protected_selector = re.sub(r'\[[^\]]+\]', protect_attribute, selector)
+    normalized = re.sub(r'\s*([>+~])\s*', r' \1 ', protected_selector).strip()
     parts = normalized.split()
+
+    def restore_attributes(part):
+        for index, attribute in enumerate(protected_attributes):
+            part = part.replace(f'__OPENUI_ATTR_{index}__', attribute)
+        return part
 
     current_parts = []
     for p in parts:
@@ -2411,15 +2508,15 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
                 tokens.append(' '.join(current_parts))
                 combinators.append('descendant')
                 current_parts = []
-            current_parts.append(p)
+            current_parts.append(restore_attributes(p))
     if current_parts:
         tokens.append(' '.join(current_parts))
 
     if len(tokens) == 1:
-        return _match_simple_selector(tokens[0], tag, classes, id_val)
+        return _match_simple_selector(tokens[0], tag, classes, id_val, attrs)
 
     # Last token must match current element
-    if not _match_simple_selector(tokens[-1], tag, classes, id_val):
+    if not _match_simple_selector(tokens[-1], tag, classes, id_val, attrs):
         return False
 
     # Process remaining tokens right-to-left
@@ -2439,7 +2536,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
         if combinator == 'adjacent':
             prev = preceding_siblings[sibling_cursor]
             if not _match_simple_selector(
-                    remaining_tokens[ri], prev[0], prev[1], prev[2]):
+                    remaining_tokens[ri], prev[0], prev[1], prev[2], prev[3]):
                 return False
             sibling_cursor -= 1
         else:
@@ -2447,7 +2544,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
             for index in range(sibling_cursor, -1, -1):
                 prev = preceding_siblings[index]
                 if _match_simple_selector(
-                        remaining_tokens[ri], prev[0], prev[1], prev[2]):
+                        remaining_tokens[ri], prev[0], prev[1], prev[2], prev[3]):
                     matched_at = index
                     break
             if matched_at is None:
@@ -2461,11 +2558,13 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
         return ri < 0
 
     # Walk ancestor list matching remaining tokens with descendant/child combinators
-    for anc_tag, anc_classes, anc_id in reversed(ancestors):
+    for anc_tag, anc_classes, anc_id, anc_attrs in reversed(ancestors):
         if ri < 0:
             break
         comb = combinators[ri] if ri < len(combinators) else 'descendant'
-        if _match_simple_selector(remaining_tokens[ri], anc_tag, anc_classes, anc_id):
+        if _match_simple_selector(
+            remaining_tokens[ri], anc_tag, anc_classes, anc_id, anc_attrs
+        ):
             ri -= 1
         elif comb == 'child':
             return False
@@ -2475,14 +2574,17 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
 
 def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
                     sibling_index: int = 1, sibling_count: int = 1,
-                    preceding_siblings: list = None):
+                    preceding_siblings: list = None,
+                    trailing_element_siblings: int = 0,
+                    sibling_type_index: int = 1,
+                    sibling_type_count: int = 1):
     """Apply CSS rules to a DOM node and its descendants (recursively).
 
     CSS cascade: later rules override earlier rules for the same property.
     Inline styles (already in node.styles) take highest precedence.
     sibling_index: 1-based index among element siblings.
     sibling_count: total number of element siblings.
-    preceding_siblings: list of (tag, classes, id_val) for preceding element siblings.
+    preceding_siblings: list of (tag, classes, id_val, attrs) for preceding element siblings.
     """
     if node.is_text:
         return
@@ -2519,7 +2621,8 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
         pseudo_match = _terminal_pseudo(selector)
         match_target = pseudo_match[0] if pseudo_match else selector
         if match_selector(match_target, node.tag, classes, id_val, ancestors,
-                          sibling_index, sibling_count, preceding_siblings):
+                          sibling_index, sibling_count, preceding_siblings,
+                          node.attrs, sibling_type_index, sibling_type_count):
             spec = compute_specificity(selector)
             if pseudo_match:
                 pseudo_name = pseudo_match[1]
@@ -2580,20 +2683,26 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
             cascade_priority[prop] = priority
     node.styles = cascade
 
-    child_ancestors = ancestors + [(node.tag, classes, id_val)]
+    child_ancestors = ancestors + [(node.tag, classes, id_val, node.attrs)]
     # Compute sibling indices and preceding siblings for element children
     element_children = [c for c in node.children if not c.is_text]
-    total_elements = len(element_children)
+    total_elements = len(element_children) + trailing_element_siblings
+    type_counts = {}
+    for child in element_children:
+        type_counts[child.tag] = type_counts.get(child.tag, 0) + 1
+    type_seen = {}
     elem_idx = 0
     preceding = []
     for child in node.children:
         if not child.is_text:
             elem_idx += 1
+            type_seen[child.tag] = type_seen.get(child.tag, 0) + 1
             child_classes = child.attrs.get('class', '').split()
             child_id = child.attrs.get('id', '')
             apply_css_rules(rules, child, child_ancestors, elem_idx, total_elements,
-                            list(preceding))
-            preceding.append((child.tag, child_classes, child_id))
+                            list(preceding), sibling_type_index=type_seen[child.tag],
+                            sibling_type_count=type_counts[child.tag])
+            preceding.append((child.tag, child_classes, child_id, child.attrs))
         else:
             apply_css_rules(rules, child, child_ancestors)
 
@@ -2637,7 +2746,7 @@ class WptHtmlParser(HTMLParser):
 
     # Void elements that never have closing tags
     VOID_TAGS = {'link', 'meta', 'br', 'hr', 'img', 'input', 'col', 'area',
-                 'base', 'embed', 'param', 'source', 'track', 'wbr'}
+                 'base', 'bgsound', 'embed', 'param', 'source', 'track', 'wbr'}
 
     # Starting one of these elements implicitly closes an open paragraph in
     # the HTML tree builder.  Python's HTMLParser is only a tokenizer and does
@@ -2670,6 +2779,39 @@ class WptHtmlParser(HTMLParser):
         node = DomNode(tag, {}, CssDeclarations())
         self.stack[-1].children.append(node)
         self.stack.append(node)
+
+    def _table_foster_parent(self):
+        """Return the HTML foster-parent insertion point, when active.
+
+        Python's ``HTMLParser`` tokenizes markup without the tree builder's
+        "in table" insertion modes. Character data and ordinary elements
+        directly inside table structure therefore need to be inserted just
+        before the nearest table, matching the browser DOM that CSS sees.
+        Content inside a cell or caption uses the normal insertion mode.
+        """
+        table_index = None
+        for index in range(len(self.stack) - 1, 0, -1):
+            if self.stack[index].tag == 'table':
+                table_index = index
+                break
+        if table_index is None:
+            return None
+        current = self.stack[-1].tag
+        if current not in {
+            'table', 'thead', 'tbody', 'tfoot', 'tr', 'colgroup',
+        }:
+            return None
+        parent = self.stack[table_index - 1]
+        table = self.stack[table_index]
+        return parent, table
+
+    def _append_with_table_foster_parenting(self, node) -> None:
+        target = self._table_foster_parent()
+        if target is None:
+            self.stack[-1].children.append(node)
+            return
+        parent, table = target
+        parent.children.insert(parent.children.index(table), node)
 
     def _fixup_table_start(self, tag: str) -> None:
         """Apply the optional-end-tag subset used by static table WPTs."""
@@ -2763,6 +2905,12 @@ class WptHtmlParser(HTMLParser):
             'caption', 'colgroup', 'col', 'thead', 'tbody', 'tfoot',
             'tr', 'td', 'th',
         }:
+            # The HTML tree builder ignores table-structure start tags that
+            # occur without a table element in scope, while retaining their
+            # character data in the current parent. This matters for flexbox
+            # fixup tests whose source contains orphan `<td>`/`<tbody>` tags.
+            if not any(node.tag == 'table' for node in self.stack[1:]):
+                return
             self._fixup_table_start(tag)
 
         styles = parse_inline_styles(attrs_dict.get('style', ''))
@@ -2777,7 +2925,14 @@ class WptHtmlParser(HTMLParser):
         self.all_styles.append(styles)
 
         node = DomNode(tag, attrs_dict, styles)
-        self.stack[-1].children.append(node)
+        table_structure = {
+            'caption', 'colgroup', 'col', 'thead', 'tbody', 'tfoot',
+            'tr', 'td', 'th',
+        }
+        if tag in table_structure:
+            self.stack[-1].children.append(node)
+        else:
+            self._append_with_table_foster_parenting(node)
         if tag not in self.VOID_TAGS:
             self.stack.append(node)
 
@@ -2848,7 +3003,10 @@ class WptHtmlParser(HTMLParser):
                 node = DomNode('#text', {}, {})
                 node.is_text = True
                 node.text_content = data
-                self.stack[-1].children.append(node)
+                if data.strip(' \t\n\r\f'):
+                    self._append_with_table_foster_parenting(node)
+                else:
+                    self.stack[-1].children.append(node)
             return
         # HTML's collapsible source whitespace excludes U+00A0.  Python's
         # generic `str.strip()` includes it, which erased a layout-bearing
@@ -2858,7 +3016,7 @@ class WptHtmlParser(HTMLParser):
             node = DomNode('#text', {}, {})
             node.is_text = True
             node.text_content = text
-            self.stack[-1].children.append(node)
+            self._append_with_table_foster_parenting(node)
 
     def handle_comment(self, data):
         pass
@@ -2870,13 +3028,35 @@ class WptHtmlParser(HTMLParser):
         Specificity-based cascade ensures body { padding:20px } beats * { padding:0 }."""
         harness_rules = ROOT_BODY_STYLE_RULES if self.root_aware else BODY_STYLE_RULES
         all_rules = harness_rules + self.external_css_rules + self.css_rules
+        # Keep the Rust builder's pruning decisions synchronized with the
+        # Chromium template pass.  A universal rule does not turn an empty,
+        # otherwise unstyled instructional heading into retained structure;
+        # an explicit tag selector does.
+        self.css_targeted_tags = set()
+        for selector, _ in self.external_css_rules + self.css_rules:
+            for match in re.finditer(
+                r'(?:^|[\s>+~])([a-zA-Z][a-zA-Z0-9-]*)', selector
+            ):
+                self.css_targeted_tags.add(match.group(1).lower())
+        self.root.css_targeted_tags = set(self.css_targeted_tags)
         if all_rules:
             # In root-aware mode the parsed tree starts at <body>, but CSS
             # selectors still see the real <html> ancestor. Seeding that
             # ancestor prevents :root rules from being misapplied to body and
             # lets html-descendant selectors retain their browser semantics.
-            root_ancestors = [('html', [], '')] if self.root_aware else None
-            apply_css_rules(all_rules, self.root, ancestors=root_ancestors)
+            root_ancestors = [('html', [], '', self.html_attrs)] if self.root_aware else None
+            # The comparison template appends a hidden deterministic-font
+            # stylesheet after the source body. It is absent from the Rust
+            # DOM but still participates in structural selector matching in
+            # Chromium, so account for that trailing element when cascading
+            # over the source body children.
+            trailing_harness_style = int(RETAIN_TEXT and not is_real_font_profile())
+            apply_css_rules(
+                all_rules,
+                self.root,
+                ancestors=root_ancestors,
+                trailing_element_siblings=trailing_harness_style,
+            )
             # Apply html-targeted rules to self.html_styles for body-bg propagation logic.
             html_cascade = CssDeclarations()
             html_cascade_priority = {}
@@ -2893,8 +3073,19 @@ class WptHtmlParser(HTMLParser):
                 html_cascade_priority['unicode-bidi'] = hint_priority
             for rule_index, (selector, styles) in enumerate(all_rules):
                 # Match selectors targeting the html root element only.
-                sel = selector.strip().lower()
-                if sel in ('html', ':root', '*'):
+                html_classes = self.html_attrs.get('class', '').split()
+                html_id = self.html_attrs.get('id', '')
+                if match_selector(
+                    selector,
+                    'html',
+                    html_classes,
+                    html_id,
+                    ancestors=[],
+                    sibling_index=1,
+                    sibling_count=1,
+                    preceding_siblings=[],
+                    attrs=self.html_attrs,
+                ):
                     spec = compute_specificity(selector)
                     for declaration_index, (prop, val) in enumerate(styles.items()):
                         important = (
@@ -2944,15 +3135,23 @@ class WptHtmlParser(HTMLParser):
             # ordinary renderable text.  Retain it in source order ahead of
             # body content, matching the comparison template.
             visible_style_nodes = []
-            for attrs, text in self.author_style_blocks:
+            style_sibling_count = trailing_harness_style + len(self.author_style_blocks) + sum(
+                1 for child in self.root.children if not child.is_text
+            )
+            for style_index, (attrs, text) in enumerate(self.author_style_blocks, 1):
                 style_node = DomNode(
                     'style', attrs, parse_inline_styles(attrs.get('style', ''))
                 )
                 apply_css_rules(
                     all_rules,
                     style_node,
-                    ancestors=[('html', [], ''), ('body', [], '')]
+                    ancestors=[('html', [], '', self.html_attrs), ('body', [], '', {})]
                     if self.root_aware else None,
+                    sibling_index=style_index,
+                    sibling_count=style_sibling_count,
+                    sibling_type_index=style_index,
+                    sibling_type_count=len(self.author_style_blocks)
+                        + trailing_harness_style,
                 )
                 display = style_node.styles.get('display', '').strip().lower()
                 if display and display != 'none':
@@ -3420,10 +3619,28 @@ _PAINT_ASSETS = {
     'swatch-red.png': ('swatch-red.png', 'css-backgrounds/support/swatch-red.png', 'image/png', 'e42df70647347f5eedb984a611549d962ee362fb73f2135c9af05875b7681784'),
     '100x100-red.png': ('100x100-red.png', 'css-position/sticky/support/100x100-red.png', 'image/png', '0ca8457abb56c0b5df03ed741bfec7b54c0bd90b2dd8b8c3f6e47f9a691d3a58'),
     'stripes-100.png': (None, 'css-backgrounds/resources/stripes-100.png', 'image/png', 'cd8087c9a2e4825f5d6e4807bb739584a21ea1a8f4ed4cb76cecfbdcf797b903'),
+    'black20x20.png': (None, 'css-multicol/support/black20x20.png', 'image/png', '3f08031eb1f4aa651ed4b94e383920d3dde660efa5172ce9db4508c17d7ab301'),
+    'swatch-blue.png': (None, 'css-multicol/support/swatch-blue.png', 'image/png', 'a2cb741be17fd94f176247f4dca28146b237f34a6df1d46c813d4e0072e41578'),
+    'swatch-orange.png': (None, 'css-multicol/support/swatch-orange.png', 'image/png', '8f6d8b04d0f5f7dd0d153f9e5dfc0c54ed822ae9623410baf71759ec4ea02692'),
+    'exif-orientation-6-ru.jpg': (None, 'css-images/support/exif-orientation-6-ru.jpg', 'image/jpeg', 'f28b2be684a08d716d846f1f9fbc932f030436acbd5b80c8028d107c25886275'),
 }
 
 _INLINE_PAINT_ASSETS = {
     'stripes-100.png': 'iVBORw0KGgoAAAANSUhEUgAAAGQAAABkAQMAAABKLAcXAAAACXBIWXMAAAsTAAALEwEAmpwYAAAABlBMVEUAAABfyc6kY1PyAAAAAnRSTlMA/iyWEiMAAAAcSURBVDhPY2Cw/8D8H0YwjPJGeaO8Ud4oj8Y8APNILMPXB0e9AAAAAElFTkSuQmCC',
+    'black20x20.png': 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAIAAAAC64paAAAAAXNSR0IArs4c6QAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAAd0SU1FB9wEFxcoF1aBIYoAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAEklEQVQ4y2NgGAWjYBSMgqELAATEAAHkcNQ6AAAAAElFTkSuQmCC',
+    'swatch-blue.png': 'iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPAQMAAAABGAcJAAAAA1BMVEUAAP+KeNJXAAAADElEQVR42mNgIAEAAAAtAAH7KhMqAAAAAElFTkSuQmCC',
+    'swatch-orange.png': 'iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPAQMAAAABGAcJAAAAA1BMVEX/pQDKkkGbAAAADElEQVR42mNgIAEAAAAtAAH7KhMqAAAAAElFTkSuQmCC',
+    'exif-orientation-6-ru.jpg': '/9j/4AAQSkZJRgABAQEASABIAAD/4QDGRXhpZgAASUkqAAgAAAAHABIBAwABAAAABgAAABoBBQABAAAAYgAAABsBBQABAAAAagAAACgBAwABAAAAAgAAADEBAgANAAAAcgAAADIBAgAUAAAAgAAAAGmHBAABAAAAlAAAAAAAAABIAAAAAQAAAEgAAAABAAAAR0lNUCAyLjEwLjE0AAAyMDIwOjAyOjEzIDExOjMyOjQ4AAMAAaADAAEAAAABAAAAAqAEAAEAAABkAAAAA6AEAAEAAAAyAAAAAAAAAP/bAEMAAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAf/bAEMBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAf/CABEIADIAZAMBEQACEQEDEQH/xAAYAAEBAQEBAAAAAAAAAAAAAAAACAYJCv/EABgBAQEBAQEAAAAAAAAAAAAAAAAJCAoH/9oADAMBAAIQAxAAAAGK8r4nAAHcWfu4aX8p9LAAHmjqxNMAAdxZ+7hpfyn0sAAeaOrE0wAB3Fn7uGl/KfSwAB5Au6fIwAArSENod5l/RYAA58dafPIAAKNgDbzX5V0oAAJD6qOa8AAUbAG3mvyrpQAASH1Uc14AAo2ANvNflXSgAA//xAAeEAAABQUBAAAAAAAAAAAAAAAABAYVFgUHIDA1N//aAAgBAQABBQLKz/nWyz/nWyz/AJ1k4Hw4Hw4Hw4Hw4Hw4HwmVWqClEmixE0WImixE0WImixE0WOdB5Wyg8rZQeVl//8QAMBEAAAIECgsBAQAAAAAAAAAABQYAAgQHAwgVF1VWlJbT1AESEyAwNziFhrW2ERb/2gAIAQMBAT8B3nP8ui73b3onxXP8ui73b3onxXP8ui73b3onvyQFUYH2Jmw0kgKowPsTNhpJAVRgfYmbDSSAqjA+xM2GkkBVGB9iZsNJICqMD7EzYaRTiERhCL+QWxvJZTbmuF/qtq1NZdB2lohdmdTHBKbSGhmNeEX1IJRSDU1ltOqooqpo/FVdGhJtndVBJV1gPIpNs7qoJKusB5FJtndVBJV1gPIpNs7qoJKusB5FJtndVBJV1gPIpNs7qoJKusB5HfihdOzvfLPuDNxYoXTs73yz7gzcWKF07O98s+4M2/8A/8QALxEAAAIECgsBAAAAAAAAAAAABgcAAgMFBAgWF1ZXlpfU1QESEyAwNziFhra3Ef/aAAgBAgEBPwHeO7meJ+y+vOnindzPE/ZfXnTxTu5nifsvrzp35iiRqcKu70I5QkxRI1OFXd6EcoSYokanCru9COUJMUSNThV3ehHKEmKJGpwq7vQjlCTFEjU4Vd3oRyhI5hbF07YyZjwJ2gEFQCBMZH7GCQIKuOCwVltAEF2rTZMGEBUZM9dquu1X1VdGs0XXXW/VltOnTIQEUNCtnnRg0kICKGhWzzowaSEBFDQrZ50YNJCAihoVs86MGkhARQ0K2edGDSQgIoaFbPOjB78drqdMzwz58FOLHa6nTM8M+fBTix2up0zPDPnwU3//xAAqEAAAAwQJBQEBAAAAAAAAAAACAwQABQY0ARIgMDaUldLUIYOFtLURFP/aAAgBAQAGPwK1DvlvuvO9h3y33Xnew75b7rztzqvMnb2nVeZO3tOq8ydvadV5k7e06rzJ29p1XmTt7Ik6SJH+mTl/01CE74eBJIKys8YqhZagIA1hiEMX5R1EKkVPWmlsWRLrr05TYsiXXXpymxZEuuvTlNiyJddenKbFkS669OU2LIl116cq2l7/ALJ16l7/ALJ16l7/ALJ1v//EABcQAAMBAAAAAAAAAAAAAAAAAAEhUGH/2gAIAQEAAT8hm6aaGDBgwYMZeUTv3AG9CDNGDBgwYMYYY//aAAwDAQACAAMAAAAQAAAAAAAAAAAAAAAAAAADbbYSSSAAAAAAAAAAAAAAAAAAAH//xAAVEQEBAAAAAAAAAAAAAAAAAABQgf/aAAgBAwEBPxA1RRRy5cuXLmRI1sVvUlRG9+/fv373XXf/xAAVEQEBAAAAAAAAAAAAAAAAAABQAf/aAAgBAgEBPxA3DDB69evXr2OhTnbZ954BFixYsWLCSSf/xAAVEAEBAAAAAAAAAAAAAAAAAABQQf/aAAgBAQABPxA3XXUGDBgwYOhRVRROd5xGgYMGDBg8MMP/2Q==',
+}
+
+
+_REPLACED_ASSET_DIMENSIONS = {
+    'black20x20.png': (20.0, 20.0),
+    'swatch-blue.png': (15.0, 15.0),
+    'swatch-orange.png': (15.0, 15.0),
+    # The encoded raster is 100×50 with EXIF orientation 6. CSS Images uses
+    # the orientation-adjusted natural dimensions.
+    'exif-orientation-6-ru.jpg': (50.0, 100.0),
 }
 
 
@@ -3436,22 +3653,41 @@ def _embed_paint_asset_urls(template: str) -> str:
         'tools', 'accountability', 'data', 'wpt_assets', 'sp13p',
     )
 
-    def replace(match: re.Match) -> str:
-        source = match.group(1).strip().strip('"\'')
+    def encoded_asset(source: str) -> tuple[str, str] | None:
         if source.startswith('data:'):
-            return match.group(0)
+            return None
         asset = _PAINT_ASSETS.get(source.rsplit('/', 1)[-1])
         if asset is None:
-            return match.group(0)
+            return None
         filename, _, mime, _ = asset
         if filename is None:
             encoded = _INLINE_PAINT_ASSETS[source.rsplit('/', 1)[-1]]
         else:
             with open(os.path.join(asset_dir, filename), 'rb') as asset_file:
                 encoded = base64.b64encode(asset_file.read()).decode('ascii')
-        return f'url("data:{mime};base64,{encoded}")'
+        return mime, encoded
 
-    return re.sub(r'(?is)url\(\s*([^)]*?)\s*\)', replace, template)
+    def replace_url(match: re.Match) -> str:
+        source = match.group(1).strip().strip('"\'')
+        encoded = encoded_asset(source)
+        if encoded is None:
+            return match.group(0)
+        mime, payload = encoded
+        return f'url("data:{mime};base64,{payload}")'
+
+    def replace_src(match: re.Match) -> str:
+        source = match.group(3).strip()
+        encoded = encoded_asset(source)
+        if encoded is None:
+            return match.group(0)
+        mime, payload = encoded
+        return f'{match.group(1)}{match.group(2)}data:{mime};base64,{payload}{match.group(2)}'
+
+    template = re.sub(r'(?is)url\(\s*([^)]*?)\s*\)', replace_url, template)
+    template = re.sub(
+        r'(?is)(\bsrc\s*=\s*)(["\'])([^"\']+)\2', replace_src, template
+    )
+    return template
 
 
 def _extract_css_image(value: str) -> tuple[str, str] | None:
@@ -5733,6 +5969,10 @@ def generate_single_style(
         if not m:
             return None
         num = float(m.group(1))
+        # CSS Backgrounds §3: negative corner radii invalidate the complete
+        # declaration; they are not clamped independently to zero.
+        if num < 0.0:
+            return None
         unit = m.group(2)
         if unit in ('em', 'rem'):
             num = num * fs
@@ -7262,6 +7502,12 @@ EMIT_TEXT_NODES = False
 # box-only output stays byte-identical. Enabled by tools/wpt/splice_text_port.py.
 RETAIN_TEXT = False
 
+# Keep display:contents elements in the generated DOM. They produce no
+# principal layout box, but their computed style remains the inheritance and
+# custom-property boundary for descendants. Layout engines flatten the node
+# when constructing their formatting trees.
+PRESERVE_DISPLAY_CONTENTS_NODES = True
+
 # CSS override appended to text-retaining Chrome templates. Forces Ahem with
 # an explicit ordered set of Chromium-pinned CJK, complex-script, emoji, and
 # DejaVu terminal fallbacks. Every family is registered by the manifest-scoped
@@ -7630,6 +7876,7 @@ def generate_rust_fn(
 
     counter = [0]
     materialization_required = [False]
+    css_targeted_tags = getattr(root, 'css_targeted_tags', set())
 
     def _has_meaningful_styles(styles):
         """Check if styles have properties beyond BODY_STYLE * rule defaults."""
@@ -7646,7 +7893,8 @@ def generate_rust_fn(
                        'hyphens', 'text-wrap', 'text-align',
                        'font-size', 'line-height', 'visibility',
                        'orphans', 'widows', 'ruby-position', 'text-shadow',
-                       'quotes'}
+                       'quotes', 'border-collapse', 'border-spacing',
+                       'caption-side', 'empty-cells'}
     if is_real_font_profile():
         INHERITED_PROPS |= {
             'font-family', 'font-weight', 'font-style', 'font-stretch',
@@ -7656,7 +7904,7 @@ def generate_rust_fn(
     # values for non-inherited properties that WPT coverage exercises.
     EXPLICIT_INHERIT_PROPS = INHERITED_PROPS | {
         'background', 'background-color', 'background-clip', 'box-shadow',
-        'font-family', 'list-style-position',
+        'font-family', 'list-style-position', 'align-self',
         'column-count', 'column-width', 'column-height', 'column-gap',
         'column-fill', 'column-span', 'column-wrap',
         'column-rule-width', 'column-rule-style', 'column-rule-color',
@@ -7715,7 +7963,8 @@ def generate_rust_fn(
     def gen_node(node: DomNode, parent_var: str, indent: int,
                  parent_font_size: float = 16.0, inherited: dict | None = None,
                  custom_props: dict[str, str] | None = None,
-                 parent_zoom: float = 1.0):
+                 parent_zoom: float = 1.0,
+                 html_table_border: bool = False):
         if inherited is None:
             inherited = {}
         if custom_props is None:
@@ -7797,6 +8046,16 @@ def generate_rust_fn(
             has_real_styles = _has_meaningful_styles(node.styles)
             skip_self = False
             skip_subtree = False
+            heading_is_template_unstyled = (
+                node.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6')
+                and 'style' not in node.attrs
+                and 'class' not in node.attrs
+                and (
+                    'id' not in node.attrs
+                    or node.attrs.get('id', '') == 'testdetails'
+                )
+                and node.tag not in css_targeted_tags
+            )
             # The Chrome template removes instructional pass-condition
             # paragraphs before its text-stripping pass.  Keep the generated
             # document tree identical in every porter profile, including the
@@ -7811,7 +8070,7 @@ def generate_rust_fn(
                 #    sides (template regex strip);
                 #  - unstyled headings carry UA font styling we don't replicate,
                 #    so both sides drop the whole subtree.
-                if node.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6') and not has_real_styles:
+                if heading_is_template_unstyled:
                     skip_subtree = True
             else:
                 # Skip unstyled wrapper/heading elements but still process their
@@ -7819,7 +8078,9 @@ def generate_rust_fn(
                 # are usually section labels with user-agent styling (margins,
                 # bold, font-size) that our engine doesn't replicate. Skipping
                 # them avoids mismatches.
-                if not has_real_styles and node.tag in ('p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
+                if heading_is_template_unstyled:
+                    skip_subtree = True
+                elif not has_real_styles and node.tag in ('p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
                     skip_self = True
                 if node.tag in ('strong', 'em', 'b', 'i', 'u', 'a') and not has_real_styles:
                     skip_self = True
@@ -7843,6 +8104,7 @@ def generate_rust_fn(
                     gen_node(
                         child, parent_var, indent, parent_font_size,
                         child_inherited, child_custom_props, parent_zoom,
+                        html_table_border,
                     )
                 return
 
@@ -7883,6 +8145,7 @@ def generate_rust_fn(
             RETAIN_TEXT
             and node.styles.get('display', '').strip() == 'contents'
             and not has_generated_contents_pseudo
+            and not PRESERVE_DISPLAY_CONTENTS_NODES
         ):
             # display:contents generates no principal box. Reparent its
             # children while retaining the element's inheritance/custom-
@@ -7942,6 +8205,7 @@ def generate_rust_fn(
                     child_inherited,
                     node_custom_props,
                     contents_zoom,
+                    html_table_border,
                 )
             return
 
@@ -8020,6 +8284,40 @@ def generate_rust_fn(
             lines.append(
                 f"{ws}doc.node_mut({var}).style.display = {table_displays[node.tag]};"
             )
+            if node.tag == 'table':
+                # HTML's UA stylesheet supplies 2px spacing for semantic
+                # tables. CSS `display:table` boxes retain the 0px initial.
+                try:
+                    legacy_spacing = max(0.0, float(node.attrs.get('cellspacing', '2')))
+                except ValueError:
+                    legacy_spacing = 2.0
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.border_spacing = "
+                    f"(Length::px({legacy_spacing}), Length::px({legacy_spacing}));"
+                )
+            elif node.tag == 'caption':
+                # Chromium's semantic HTML caption rule centers inline
+                # content. A CSS `display:table-caption` box retains the CSS
+                # initial alignment, so keep this as an HTML-only UA default.
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.text_align = TextAlign::Center;"
+                )
+            elif node.tag == 'th':
+                # HTML header cells are centered by the UA stylesheet. Keep
+                # this as an HTML-only default; author declarations emitted
+                # below retain normal cascade precedence.
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.text_align = TextAlign::Center;"
+                )
+            if node.tag in {'thead', 'tbody', 'tfoot', 'tr', 'td', 'th'}:
+                # Chromium's HTML UA rules establish middle alignment on row
+                # groups and pass it through rows to cells. Emit the resolved
+                # default directly because the compact DOM stores computed
+                # values rather than UA declarations such as `inherit`.
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.vertical_align = "
+                    "VerticalAlign::Middle;"
+                )
         elif node.tag in {
             'img', 'canvas', 'svg', 'iframe', 'object', 'audio', 'video',
             'input', 'button', 'meter',
@@ -8064,7 +8362,59 @@ def generate_rust_fn(
                 f"{ws}doc.node_mut({var}).form_control = Some({control_roles[node.tag]});"
             )
 
-        if node.tag == 'canvas':
+        if node.tag == 'img':
+            source = node.attrs.get('src', '').strip()
+            name = source.rsplit('/', 1)[-1]
+            asset = _PAINT_ASSETS.get(name)
+            dimensions = _REPLACED_ASSET_DIMENSIONS.get(name)
+            if source.startswith('data:'):
+                header, comma, payload = source.partition(',')
+                mime = header[5:].split(';', 1)[0] or 'text/plain'
+                if comma:
+                    if ';base64' in header:
+                        import base64
+                        data = base64.b64decode(payload)
+                    else:
+                        data = urllib.parse.unquote_to_bytes(payload)
+                    if mime == 'image/png' and len(data) >= 24 and data[:8] == b'\x89PNG\r\n\x1a\n':
+                        dimensions = (
+                            float(int.from_bytes(data[16:20], 'big')),
+                            float(int.from_bytes(data[20:24], 'big')),
+                        )
+                    if dimensions is not None:
+                        sha = hashlib.sha256(data).hexdigest()
+                        source_label = f'data:{mime};sha256={sha}'
+                        byte_expr = f'vec![{", ".join(str(byte) for byte in data)}]'
+                        asset = (None, source_label, mime, sha)
+            if asset is not None and dimensions is not None:
+                filename, source_label, mime, sha = asset
+                if source.startswith('data:'):
+                    pass
+                elif filename is None:
+                    import base64
+                    data = base64.b64decode(_INLINE_PAINT_ASSETS[name])
+                    byte_expr = f'vec![{", ".join(str(byte) for byte in data)}]'
+                else:
+                    byte_expr = (
+                        'include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), '
+                        f'"/../../../tools/accountability/data/wpt_assets/sp13p/{filename}"))'
+                        '.as_slice().to_vec()'
+                    )
+                resource_var = f'{var}_image'
+                intrinsic_width, intrinsic_height = dimensions
+                lines.append(
+                    f'{ws}let {resource_var} = doc.register_image_resource('
+                    f'{json.dumps(source_label)}, {json.dumps(mime)}, {json.dumps(sha)}, '
+                    f'{byte_expr});'
+                )
+                lines.append(
+                    f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                    f"resource: openui_dom::ReplacedResourceKind::Image({resource_var}), "
+                    f"intrinsic_width: Some({intrinsic_width}), "
+                    f"intrinsic_height: Some({intrinsic_height}), "
+                    f"intrinsic_ratio: Some(({intrinsic_width}, {intrinsic_height})) }});"
+                )
+        elif node.tag == 'canvas':
             try:
                 intrinsic_width = max(0, int(node.attrs.get('width', '300')))
                 intrinsic_height = max(0, int(node.attrs.get('height', '150')))
@@ -8078,12 +8428,49 @@ def generate_rust_fn(
                 "intrinsic_ratio: "
                 f"Some(({float(intrinsic_width)}, {float(intrinsic_height)})) }});"
             )
+        elif node.tag == 'iframe':
+            # HTML iframe elements have a 300x150 default object size but no
+            # natural aspect ratio.  Package the deterministic initial
+            # about:blank document so sizing never depends on a live nested
+            # browsing context.
+            lines.append(
+                f'{ws}let {var}_document = doc.register_image_resource('
+                '"about:blank", "text/html", '
+                '"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", '
+                'Vec::new());'
+            )
+            lines.append(
+                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                f"resource: openui_dom::ReplacedResourceKind::PackagedDocument({var}_document), "
+                "intrinsic_width: Some(300.0), intrinsic_height: Some(150.0), "
+                "intrinsic_ratio: None });"
+            )
+            # Blink's iframe UA rule is a 2px inset border.
+            lines.append(f"{ws}doc.node_mut({var}).style.border_top_width = 2;")
+            lines.append(f"{ws}doc.node_mut({var}).style.border_right_width = 2;")
+            lines.append(f"{ws}doc.node_mut({var}).style.border_bottom_width = 2;")
+            lines.append(f"{ws}doc.node_mut({var}).style.border_left_width = 2;")
+            lines.append(f"{ws}doc.node_mut({var}).style.border_top_style = BorderStyle::Inset;")
+            lines.append(f"{ws}doc.node_mut({var}).style.border_right_style = BorderStyle::Inset;")
+            lines.append(f"{ws}doc.node_mut({var}).style.border_bottom_style = BorderStyle::Inset;")
+            lines.append(f"{ws}doc.node_mut({var}).style.border_left_style = BorderStyle::Inset;")
+        elif node.tag == 'meter':
+            # Chromium's Linux meter control is an 80x16 atomic widget.  Its
+            # passive track is painted by the form-control role; transparent
+            # canvas metadata supplies deterministic replaced sizing without
+            # inventing a raster resource.
+            lines.append(
+                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                "intrinsic_width: Some(80.0), intrinsic_height: Some(16.0), "
+                "intrinsic_ratio: None });"
+            )
 
         # Set display:block for block-level HTML elements (our engine defaults to inline)
         block_tags = {'div', 'p', 'section', 'article', 'header', 'footer', 'nav', 'main',
                       'aside', 'figure', 'figcaption', 'blockquote', 'pre', 'address',
                       'details', 'summary', 'fieldset', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-                      'dl', 'dt', 'dd', 'ol', 'ul', 'menu', 'li', 'hr', 'table'}
+                      'dl', 'dt', 'dd', 'ol', 'ul', 'menu', 'li', 'hr'}
         supported_display_values = {
             'block', 'inline', 'inline-block', 'none', 'flow-root',
             'contents', 'list-item', 'flow-root list-item',
@@ -8129,6 +8516,96 @@ def generate_rust_fn(
 
         # Resolve explicit CSS-wide `inherit` before generating style code.
         effective_styles = _copy_declarations(node.styles)
+
+        # A floated semantic table remains a table formatting context after
+        # display blockification (only `inline-table` blockifies to `table`).
+        # Make the UA display role explicit before the generic float lowering
+        # runs so it cannot mistake the element's initial builder value for an
+        # authored inline box.
+        semantic_table_displays = {
+            'table': 'table',
+            'caption': 'table-caption',
+            'colgroup': 'table-column-group',
+            'col': 'table-column',
+            'thead': 'table-header-group',
+            'tbody': 'table-row-group',
+            'tfoot': 'table-footer-group',
+            'tr': 'table-row',
+            'td': 'table-cell',
+            'th': 'table-cell',
+        }
+        if node.tag in semantic_table_displays and 'display' not in effective_styles:
+            effective_styles['display'] = semantic_table_displays[node.tag]
+
+        # HTML table presentational hints participate below author CSS in the
+        # cascade. Generated documents do not run Chromium's HTML mapping, so
+        # materialize the corresponding declarations only when author CSS did
+        # not supply the property itself.
+        table_width_tags = {'table', 'colgroup', 'col', 'td', 'th', 'img'}
+        table_height_tags = {'table', 'tr', 'td', 'th', 'img'}
+
+        def _legacy_dimension(value: str) -> str | None:
+            token = value.strip()
+            if not token:
+                return None
+            try:
+                if token.endswith('%'):
+                    amount = max(0.0, float(token[:-1]))
+                    return f'{amount}%'
+                amount = max(0.0, float(token))
+                return f'{amount}px'
+            except ValueError:
+                return None
+
+        if node.tag in table_width_tags and 'width' not in effective_styles:
+            hinted = _legacy_dimension(node.attrs.get('width', ''))
+            if hinted is not None:
+                effective_styles['width'] = hinted
+        if node.tag in table_height_tags and 'height' not in effective_styles:
+            hinted = _legacy_dimension(node.attrs.get('height', ''))
+            if hinted is not None:
+                effective_styles['height'] = hinted
+        if node.tag == 'table' and 'float' not in effective_styles:
+            legacy_align = node.attrs.get('align', '').strip().lower()
+            if legacy_align in {'left', 'right'}:
+                effective_styles['float'] = legacy_align
+        if node.tag == 'table':
+            try:
+                legacy_border_width = max(0, int(node.attrs.get('border', '0') or '0'))
+            except ValueError:
+                legacy_border_width = 1 if 'border' in node.attrs else 0
+            html_table_border = legacy_border_width > 0
+            if html_table_border:
+                authored_border = any(
+                    name == 'border' or name.startswith('border-')
+                    for name in node.styles
+                )
+                if not authored_border:
+                    effective_styles['border-width'] = f'{legacy_border_width}px'
+                    effective_styles['border-style'] = 'outset'
+                    effective_styles['border-color'] = 'gray'
+        elif node.tag in {'td', 'th'} and html_table_border:
+            authored_border = any(
+                name == 'border' or name.startswith('border-')
+                for name in node.styles
+            )
+            if not authored_border:
+                # HTML's legacy table-border mapping gives descendant cells a
+                # one-pixel inset border independently of the table's width.
+                effective_styles['border-width'] = '1px'
+                effective_styles['border-style'] = 'inset'
+                effective_styles['border-color'] = 'gray'
+        if (
+            node.tag in {'thead', 'tbody', 'tfoot', 'tr', 'td', 'th'}
+            and 'vertical-align' not in effective_styles
+        ):
+            legacy_valign = node.attrs.get('valign', '').strip().lower()
+            if legacy_valign in {'top', 'middle', 'bottom', 'baseline'}:
+                effective_styles['vertical-align'] = legacy_valign
+        if 'background-color' not in effective_styles and 'background' not in effective_styles:
+            legacy_background = node.attrs.get('bgcolor', '').strip()
+            if legacy_background:
+                effective_styles['background-color'] = legacy_background
         if (
             RETAIN_TEXT
             and node.tag == 'rt'
@@ -8255,6 +8732,23 @@ def generate_rust_fn(
             lines.append(f"{ws}let {var}_inherited_overflow_clip_box = doc.node({parent_var}).style.overflow_clip_box;")
             lines.append(f"{ws}doc.node_mut({var}).style.overflow_clip_margin = {var}_inherited_overflow_clip_margin;")
             lines.append(f"{ws}doc.node_mut({var}).style.overflow_clip_box = {var}_inherited_overflow_clip_box;")
+        if node.styles.get('border') == 'inherit':
+            # `border` is not inherited by default, but the CSS-wide inherit
+            # keyword copies all twelve computed longhands from the parent.
+            # The declaration map intentionally retains the shorthand, so
+            # materialize this dynamic parent dependency after ordinary style
+            # emission instead of trying to resolve it through inherited text
+            # properties.
+            lines.append(
+                f"{ws}let {var}_inherited_border = doc.node({parent_var}).style.clone();"
+            )
+            for side in ('top', 'right', 'bottom', 'left'):
+                for suffix in ('width', 'style', 'color'):
+                    field = f"border_{side}_{suffix}"
+                    lines.append(
+                        f"{ws}doc.node_mut({var}).style.{field} = "
+                        f"{var}_inherited_border.{field};"
+                    )
 
         # Apply inherited CSS properties from ancestors that this node doesn't override
         font_shorthand_longhands = {
@@ -8489,11 +8983,296 @@ def generate_rust_fn(
 
         if node.tag == 'q':
             emit_generated_quote('\u201c')
-        for child in node.children:
-            gen_node(
-                child, var, indent + 1, node_font_size,
-                child_inherited, node_custom_props, node_zoom,
+        parent_display = effective_styles.get('display', '').strip().lower()
+
+        table_internal_tags = {
+            'caption', 'colgroup', 'col', 'thead', 'tbody', 'tfoot',
+            'tr', 'td', 'th',
+        }
+        table_internal_displays = {
+            'table-caption', 'table-column-group', 'table-column',
+            'table-header-group', 'table-row-group', 'table-footer-group',
+            'table-row', 'table-cell',
+        }
+
+        def _flattens_only_to_table_internal(candidate: DomNode) -> bool:
+            if candidate.is_text:
+                return False
+            candidate_display = candidate.styles.get('display', '').strip().lower()
+            if candidate_display == 'contents':
+                generated = [child for child in candidate.children if not child.is_text]
+                return bool(generated) and all(
+                    _flattens_only_to_table_internal(child) for child in generated
+                )
+            return (
+                candidate.tag in table_internal_tags
+                or candidate_display in table_internal_displays
             )
+
+        if parent_display == 'table-row':
+            # A run of non-cell children in a table row generates one
+            # anonymous table cell. Keeping text and inline descendants in a
+            # single wrapper is observable through intrinsic column sizing.
+            index = 0
+            while index < len(node.children):
+                child = node.children[index]
+                child_display = child.styles.get('display', '').strip().lower()
+                if child.tag in {'td', 'th'} or child_display == 'table-cell':
+                    gen_node(
+                        child, var, indent + 1, node_font_size,
+                        child_inherited, node_custom_props, node_zoom,
+                        html_table_border,
+                    )
+                    index += 1
+                    continue
+
+                run = []
+                while index < len(node.children):
+                    candidate = node.children[index]
+                    candidate_display = candidate.styles.get('display', '').strip().lower()
+                    if candidate.tag in {'td', 'th'} or candidate_display == 'table-cell':
+                        break
+                    run.append(candidate)
+                    index += 1
+                counter[0] += 1
+                anonymous_cell = f"n{counter[0]}"
+                lines.append(
+                    f"{ws}    let {anonymous_cell} = doc.create_node(ElementTag::Div);"
+                )
+                lines.append(
+                    f"{ws}    doc.node_mut({anonymous_cell}).style = "
+                    f"ComputedStyle::for_anonymous_box(&doc.node({var}).style);"
+                )
+                lines.append(
+                    f"{ws}    doc.node_mut({anonymous_cell}).style.display = "
+                    "Display::TableCell;"
+                )
+                lines.append(f"{ws}    doc.append_child({var}, {anonymous_cell});")
+                for run_child in run:
+                    gen_node(
+                        run_child, anonymous_cell, indent + 2, node_font_size,
+                        child_inherited, node_custom_props, node_zoom,
+                        html_table_border,
+                    )
+        elif parent_display in {
+            'table-header-group', 'table-row-group', 'table-footer-group'
+        }:
+            # Row-group children first generate anonymous rows; within each
+            # row, consecutive improper content generates one anonymous cell.
+            index = 0
+            while index < len(node.children):
+                child = node.children[index]
+                child_display = child.styles.get('display', '').strip().lower()
+                if child.tag == 'tr' or child_display == 'table-row':
+                    gen_node(
+                        child, var, indent + 1, node_font_size,
+                        child_inherited, node_custom_props, node_zoom,
+                        html_table_border,
+                    )
+                    index += 1
+                    continue
+
+                run = []
+                while index < len(node.children):
+                    candidate = node.children[index]
+                    candidate_display = candidate.styles.get('display', '').strip().lower()
+                    if candidate.tag == 'tr' or candidate_display == 'table-row':
+                        break
+                    run.append(candidate)
+                    index += 1
+
+                counter[0] += 1
+                anonymous_row = f"n{counter[0]}"
+                lines.append(
+                    f"{ws}    let {anonymous_row} = doc.create_node(ElementTag::Div);"
+                )
+                lines.append(
+                    f"{ws}    doc.node_mut({anonymous_row}).style = "
+                    f"ComputedStyle::for_anonymous_box(&doc.node({var}).style);"
+                )
+                lines.append(
+                    f"{ws}    doc.node_mut({anonymous_row}).style.display = "
+                    "Display::TableRow;"
+                )
+                lines.append(f"{ws}    doc.append_child({var}, {anonymous_row});")
+
+                run_index = 0
+                while run_index < len(run):
+                    run_child = run[run_index]
+                    run_display = run_child.styles.get('display', '').strip().lower()
+                    if run_child.tag in {'td', 'th'} or run_display == 'table-cell':
+                        gen_node(
+                            run_child, anonymous_row, indent + 2, node_font_size,
+                            child_inherited, node_custom_props, node_zoom,
+                            html_table_border,
+                        )
+                        run_index += 1
+                        continue
+
+                    cell_run = []
+                    while run_index < len(run):
+                        candidate = run[run_index]
+                        candidate_display = candidate.styles.get('display', '').strip().lower()
+                        if candidate.tag in {'td', 'th'} or candidate_display == 'table-cell':
+                            break
+                        cell_run.append(candidate)
+                        run_index += 1
+                    counter[0] += 1
+                    anonymous_cell = f"n{counter[0]}"
+                    lines.append(
+                        f"{ws}        let {anonymous_cell} = "
+                        "doc.create_node(ElementTag::Div);"
+                    )
+                    lines.append(
+                        f"{ws}        doc.node_mut({anonymous_cell}).style = "
+                        f"ComputedStyle::for_anonymous_box("
+                        f"&doc.node({anonymous_row}).style);"
+                    )
+                    lines.append(
+                        f"{ws}        doc.node_mut({anonymous_cell}).style.display = "
+                        "Display::TableCell;"
+                    )
+                    lines.append(
+                        f"{ws}        doc.append_child({anonymous_row}, {anonymous_cell});"
+                    )
+                    for cell_child in cell_run:
+                        gen_node(
+                            cell_child, anonymous_cell, indent + 3, node_font_size,
+                            child_inherited, node_custom_props, node_zoom,
+                            html_table_border,
+                        )
+        elif parent_display in {'table', 'inline-table'} and node.tag != 'table':
+            # CSS table fixup groups each consecutive run of improper direct
+            # children into one anonymous row/cell. Keeping the run intact is
+            # essential for inline sequences such as `text<br>text`, which are
+            # one cell rather than three adjacent columns.
+            index = 0
+            while index < len(node.children):
+                child = node.children[index]
+                child_display = child.styles.get('display', '').strip().lower()
+                if (
+                    child.tag in table_internal_tags
+                    or child_display in table_internal_displays
+                    or _flattens_only_to_table_internal(child)
+                ):
+                    gen_node(
+                        child, var, indent + 1, node_font_size,
+                        child_inherited, node_custom_props, node_zoom,
+                        html_table_border,
+                    )
+                    index += 1
+                    continue
+
+                run = []
+                while index < len(node.children):
+                    candidate = node.children[index]
+                    candidate_display = candidate.styles.get('display', '').strip().lower()
+                    if (
+                        candidate.tag in table_internal_tags
+                        or candidate_display in table_internal_displays
+                        or _flattens_only_to_table_internal(candidate)
+                    ):
+                        break
+                    run.append(candidate)
+                    index += 1
+                counter[0] += 1
+                anonymous_row = f"n{counter[0]}"
+                counter[0] += 1
+                anonymous_cell = f"n{counter[0]}"
+                lines.append(
+                    f"{ws}    let {anonymous_row} = "
+                    "doc.create_node(ElementTag::Div);"
+                )
+                lines.append(
+                    f"{ws}    doc.node_mut({anonymous_row}).style = "
+                    f"ComputedStyle::for_anonymous_box(&doc.node({var}).style);"
+                )
+                lines.append(
+                    f"{ws}    doc.node_mut({anonymous_row}).style.display = "
+                    "Display::TableRow;"
+                )
+                lines.append(f"{ws}    doc.append_child({var}, {anonymous_row});")
+                lines.append(
+                    f"{ws}        let {anonymous_cell} = "
+                    "doc.create_node(ElementTag::Div);"
+                )
+                lines.append(
+                    f"{ws}        doc.node_mut({anonymous_cell}).style = "
+                    f"ComputedStyle::for_anonymous_box("
+                    f"&doc.node({anonymous_row}).style);"
+                )
+                lines.append(
+                    f"{ws}        doc.node_mut({anonymous_cell}).style.display = "
+                    "Display::TableCell;"
+                )
+                for prop in sorted(INHERITED_PROPS):
+                    if prop not in child_inherited:
+                        continue
+                    inherited_code = generate_single_style(
+                        prop,
+                        child_inherited[prop],
+                        f"doc.node_mut({anonymous_cell}).style",
+                        node_font_size,
+                    )
+                    for generated_line in (
+                        inherited_code if isinstance(inherited_code, list)
+                        else [inherited_code] if inherited_code else []
+                    ):
+                        lines.append(f"{ws}        {generated_line}")
+                lines.append(
+                    f"{ws}        doc.append_child({anonymous_row}, {anonymous_cell});"
+                )
+                for run_child in run:
+                    gen_node(
+                        run_child, anonymous_cell, indent + 2, node_font_size,
+                        child_inherited, node_custom_props, node_zoom,
+                        html_table_border,
+                    )
+        elif parent_display in {'', 'block', 'flow-root', 'list-item'}:
+            # CSS Display table fixup wraps a consecutive run of internal
+            # table boxes found directly in a block formatting context in one
+            # anonymous table. `display:contents` nodes have already lost their
+            # principal box, so classify their flattened children here while
+            # retaining the inheritance boundary in `gen_node` itself.
+            anonymous_table = None
+            for child in node.children:
+                child_parent = var
+                child_indent = indent + 1
+                if _flattens_only_to_table_internal(child):
+                    if anonymous_table is None:
+                        counter[0] += 1
+                        anonymous_table = f"n{counter[0]}"
+                        lines.append(
+                            f"{ws}    let {anonymous_table} = "
+                            "doc.create_node(ElementTag::Div);"
+                        )
+                        lines.append(
+                            f"{ws}    doc.node_mut({anonymous_table}).style = "
+                            f"ComputedStyle::for_anonymous_box(&doc.node({var}).style);"
+                        )
+                        lines.append(
+                            f"{ws}    doc.node_mut({anonymous_table}).style.display = "
+                            "Display::Table;"
+                        )
+                        lines.append(
+                            f"{ws}    doc.append_child({var}, {anonymous_table});"
+                        )
+                    child_parent = anonymous_table
+                    child_indent = indent + 2
+                else:
+                    anonymous_table = None
+                gen_node(
+                    child, child_parent, child_indent, node_font_size,
+                    child_inherited, node_custom_props, node_zoom,
+                    html_table_border,
+                )
+        else:
+            for child in node.children:
+                gen_node(
+                    child, var, indent + 1, node_font_size,
+                    child_inherited, node_custom_props, node_zoom,
+                    html_table_border,
+                )
         if node.tag == 'q':
             emit_generated_quote('\u201d')
 
@@ -8893,7 +9672,9 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     if RETAIN_TEXT and not is_real_font_profile():
         # Deterministic-font override LAST so it wins the cascade.
         template = template + '\n' + TEXT_TEMPLATE_OVERRIDE
-    if EMIT_PAINT_LAYERS:
+    if EMIT_PAINT_LAYERS or any(
+        asset_name in template for asset_name in _REPLACED_ASSET_DIMENSIONS
+    ):
         template = _embed_paint_asset_urls(template)
     if root_aware:
         template = '<!--OPENUI_ROOT_AWARE-->\n' + template

@@ -537,6 +537,10 @@ class GenerationAndRunnerTests(unittest.TestCase):
         with closure.MAPPING_CSV.open(newline="", encoding="utf-8") as stream:
             rows = list(csv.DictReader(stream))
         mapping = {closure.canonical_id(row): row for row in rows}
+        live_promotions = (
+            set(closure.LATER_EXACT_PROMOTIONS)
+            | closure.sp19_live_promotions(mapping)
+        )
         owned = {
             test_id
             for test_id, row in mapping.items()
@@ -544,14 +548,14 @@ class GenerationAndRunnerTests(unittest.TestCase):
         }
         self.assertEqual(
             owned,
-            set(residual_by_id) - closure.LATER_EXACT_PROMOTIONS,
+            set(residual_by_id) - live_promotions,
         )
         self.assertEqual(len(closure.LATER_EXACT_PROMOTIONS), 80)
         for test_id in targets:
             self.assertEqual(mapping[test_id]["ported"], "yes")
         for test_id, item in residual_by_id.items():
             row = mapping[test_id]
-            if test_id in closure.LATER_EXACT_PROMOTIONS:
+            if test_id in live_promotions:
                 self.assertEqual(row["ported"], "yes")
                 self.assertNotIn(
                     closure.OWNER,

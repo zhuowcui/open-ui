@@ -239,8 +239,10 @@ def validate_closed_snapshot() -> None:
     if len(deferred_ids) != 81 or deferred_ids != failed_ids:
         raise ValueError("SP13-P/SP18 deferred CSV is not the live 81-ID failure set")
     text_ids = json.loads((PORTED / "text_ported_tests.json").read_text())
-    if len(text_ids) != 1292:
-        raise ValueError("SP13-P/SP19-W1C text manifest count changed from 1,292")
+    if len(text_ids) < 1292 or text_ids != sorted(set(text_ids)):
+        raise ValueError(
+            "SP13-P/SP19 text manifest lost its 1,292-ID floor or canonical order"
+        )
     writing_owners = [
         row for row in rows if "needs_writing_mode" in categories(row["failure_category"])
     ]

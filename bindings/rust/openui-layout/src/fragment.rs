@@ -100,6 +100,18 @@ pub struct DecorationSlice {
     pub source_block_size: LayoutUnit,
 }
 
+/// One independently painted piece of a collapsed table structural border.
+///
+/// Collapsed-border conflict resolution can assign adjacent portions of one
+/// row edge to different table cells. Each winning portion has independent
+/// dash geometry, so paint must retain both its local border box and used
+/// side widths instead of clipping one full-row border path.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CollapsedBorderSegment {
+    pub rect: PhysicalRect,
+    pub border: BoxStrut,
+}
+
 /// Logical positioning inputs retained for an out-of-flow fragment that may
 /// later enter a fragmentation context.  A multicol ancestor maps these
 /// coordinates through its column geometry instead of reverse-engineering a
@@ -260,6 +272,34 @@ pub struct Fragment {
     /// (background/border/shadow), while leaving children free to overflow.
     pub decoration_paint_block_size: Option<LayoutUnit>,
 
+    /// Whether this structural fragment delegates its background and border
+    /// to a synthetic child with the same source style. Table wrappers use
+    /// this when captions sit outside the table-grid decoration box.
+    pub skip_box_decoration: bool,
+
+    /// Suppress authored corner radii for formatting-model-specific used
+    /// values. Collapsed tables ignore radii on the table box and internal
+    /// table boxes while preserving radii on ordinary descendants.
+    pub ignore_border_radius: bool,
+
+    /// Repaint the used border above descendants. Collapsed table structural
+    /// borders participate in a grid-wide border layer above cell backgrounds.
+    pub paint_border_after_children: bool,
+
+    /// Independently sized collapsed-table border pieces painted above cell
+    /// backgrounds. Empty means `border` uses the fragment's full border box.
+    pub collapsed_border_segments: Vec<CollapsedBorderSegment>,
+
+    /// Optional local rectangles that clip this fragment's table-structural
+    /// decoration while retaining the fragment border box as the background
+    /// positioning area. Row, row-group, and column backgrounds use these to
+    /// exclude separated-border spacing gaps.
+    pub decoration_clip_rects: Vec<PhysicalRect>,
+
+    /// Number of table rows occupied by a laid-out table-cell fragment.
+    /// Non-cell fragments and cells clamped to one available row use one.
+    pub table_row_span: usize,
+
     /// Shared source-space decoration geometry for a sliced continuation.
     /// `None` means this fragment owns an independent positioning area (the
     /// normal case, including `box-decoration-break:clone`).
@@ -415,6 +455,12 @@ impl Fragment {
             multicol_fragmentation: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
+            skip_box_decoration: false,
+            ignore_border_radius: false,
+            paint_border_after_children: false,
+            collapsed_border_segments: Vec::new(),
+            decoration_clip_rects: Vec::new(),
+            table_row_span: 1,
             decoration_slice: None,
             paint_zero_block_outline: false,
             is_block_end_decoration_marker: false,
@@ -469,6 +515,12 @@ impl Fragment {
             multicol_fragmentation: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
+            skip_box_decoration: false,
+            ignore_border_radius: false,
+            paint_border_after_children: false,
+            collapsed_border_segments: Vec::new(),
+            decoration_clip_rects: Vec::new(),
+            table_row_span: 1,
             decoration_slice: None,
             paint_zero_block_outline: false,
             is_block_end_decoration_marker: false,

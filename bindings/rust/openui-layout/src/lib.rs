@@ -24,6 +24,7 @@ pub mod relative;
 pub mod ruby;
 pub mod size_constraints;
 pub mod sticky;
+pub mod table;
 
 pub use crate::inline::algorithm::inline_layout;
 pub use crate::inline::algorithm::{apply_inline_fragmentation, resume_inline_from_break_token};
@@ -64,3 +65,4 @@ pub use size_constraints::{
     resolve_inline_size, resolve_size_constraints, SizeConstraint,
 };
 pub use sticky::{apply_sticky_offset, compute_sticky_offset, StickyPositionData};
+pub use table::table_layout;

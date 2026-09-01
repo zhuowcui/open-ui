@@ -297,9 +297,9 @@ block-size-with-min-or-max-content-1a,ported,css_sizing_block_size_with_min_or_m
 block-size-with-min-or-max-content-1b,ported,css_sizing_block_size_with_min_or_max_content_1b,
 block-size-with-min-or-max-content-4,not_portable,,unsupported property: grid-template-rows
 block-size-with-min-or-max-content-5,not_portable,,unsupported property: grid-template-rows
-block-size-with-min-or-max-content-table-1-ref,not_portable,,style_block_unsupported property: writing-mode
-block-size-with-min-or-max-content-table-1a,not_portable,,style_block_unsupported property: writing-mode
-block-size-with-min-or-max-content-table-1b,not_portable,,style_block_unsupported property: writing-mode
+block-size-with-min-or-max-content-table-1-ref,ported,css_sizing_block_size_with_min_or_max_content_table_1_ref,
+block-size-with-min-or-max-content-table-1a,ported,css_sizing_block_size_with_min_or_max_content_table_1a,
+block-size-with-min-or-max-content-table-1b,ported,css_sizing_block_size_with_min_or_max_content_table_1b,
 box-sizing-replaced-001-ref,not_portable,,unsupported element: <img>
 box-sizing-replaced-001,not_portable,,unsupported element: <img>
 box-sizing-replaced-002-ref,not_portable,,unsupported element: <img>
@@ -309,7 +309,7 @@ box-sizing-replaced-003,not_portable,,unsupported element: <img>
 button-min-width,not_portable,,uses_javascript
 calc-margins-fieldset-content,not_portable,,unsupported element: <fieldset>
 calc-margins-fieldset-legend,not_portable,,unsupported element: <fieldset>
-calc-margins-table-caption,not_portable,,unsupported display: table
+calc-margins-table-caption,ported,css_sizing_calc_margins_table_caption,
 canvas-intrinsic-dynamic,not_portable,,uses_javascript
 div-fit-content-orthogonal-auto-margin-left.tentative,ported,css_sizing_div_fit_content_orthogonal_auto_margin_left_tentative,
 div-fit-content-orthogonal-auto-margin-right.tentative,ported,css_sizing_div_fit_content_orthogonal_auto_margin_right_tentative,
@@ -385,7 +385,7 @@ intrinsic-percent-replaced-014,not_portable,,unsupported element: <canvas>
 intrinsic-percent-replaced-015,not_portable,,unsupported element: <img>
 intrinsic-percent-replaced-016,not_portable,,unsupported element: <img>
 intrinsic-percent-replaced-017,not_portable,,unsupported element: <img>
-intrinsic-percent-replaced-018,not_portable,,unsupported display: table
+intrinsic-percent-replaced-018,ported,css_sizing_intrinsic_percent_replaced_018,
 intrinsic-percent-replaced-019,not_portable,,unsupported element: <canvas>
 intrinsic-percent-replaced-020,not_portable,,unsupported element: <svg>
 intrinsic-percent-replaced-021,not_portable,,unsupported element: <button>
@@ -460,7 +460,7 @@ svg-intrinsic-size-006,not_portable,,unsupported element: <svg>
 svg-intrinsic-size-007.tentative,not_portable,,unsupported element: <svg>
 svg-no-ar-max-height-min-content,not_portable,,unsupported element: <svg>
 svg-no-ar-min-height-min-content,not_portable,,unsupported element: <svg>
-table-child-percentage-height-with-border-box,not_portable,,unsupported display: table
+table-child-percentage-height-with-border-box,ported,css_sizing_table_child_percentage_height_with_border_box,
 table-percentage-max-width-beside-float,not_portable,,uses_javascript
 table-percentage-min-width-below-float,not_portable,,uses_javascript
 table-percentage-min-width-beside-float,not_portable,,uses_javascript
@@ -482,7 +482,7 @@ stretch_block-height-007,not_portable,,uses_javascript
 stretch_block-height-008,not_portable,,uses_javascript
 stretch_cache-miss-001,not_portable,,uses_javascript
 stretch_content-contribution-001,not_portable,,uses_javascript
-stretch_fixed-table-1,not_portable,,unsupported property: table-layout
+stretch_fixed-table-1,ported,css_sizing_stretch_fixed_table_1,
 stretch_flex-basis-1,not_portable,,uses_javascript
 stretch_flex-line-001,not_portable,,uses_javascript
 stretch_flex-line-002,not_portable,,uses_javascript
@@ -706,7 +706,7 @@ aspect-ratio_replaced-element-dynamic-aspect-ratio,not_portable,,unsupported ele
 aspect-ratio_select-element-001-ref,not_portable,,unsupported element: <select>
 aspect-ratio_select-element-001,not_portable,,unsupported element: <select>
 aspect-ratio_sign-function-aspect-ratio,not_portable,,uses_javascript
-aspect-ratio_table-element-001,not_portable,,style_block_unsupported property: border-collapse
+aspect-ratio_table-element-001,ported,css_sizing_aspect_ratio_table_element_001,
 aspect-ratio_zero-or-infinity-006,not_portable,,unsupported element: <img>
 aspect-ratio_zero-or-infinity-007,not_portable,,unsupported element: <img>
 aspect-ratio_zero-or-infinity-008,not_portable,,unsupported element: <img>

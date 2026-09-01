@@ -64,6 +64,10 @@ pub struct LineBreaker<'a> {
     first_float_text_offset: Option<usize>,
     /// Hyphenation engine for `hyphens: auto` (lazily initialized).
     hyphenation: Option<Hyphenation>,
+    /// Line clamping needs the opening inline edge to remain on the line
+    /// where it was encountered so a later continuation and clamp marker
+    /// retain the correct inline-box geometry.
+    preserve_leading_inline_fragment: bool,
     /// Pre-computed byte-to-char mapping for O(1) lookups.
     char_map: ByteToCharMap,
 }
@@ -183,6 +187,7 @@ impl<'a> LineBreaker<'a> {
             hyphens: Hyphens::Manual,
             first_float_text_offset: None,
             hyphenation: None,
+            preserve_leading_inline_fragment: false,
             char_map,
         }
     }
@@ -194,6 +199,10 @@ impl<'a> LineBreaker<'a> {
 
     pub fn set_container_white_space(&mut self, ws: WhiteSpace) {
         self.container_white_space = ws;
+    }
+
+    pub(crate) fn set_preserve_leading_inline_fragment(&mut self, value: bool) {
+        self.preserve_leading_inline_fragment = value;
     }
 
     /// Select the logical inline axis used by atomic-inline sizing. Text is
@@ -288,24 +297,9 @@ impl<'a> LineBreaker<'a> {
                 InlineItemType::OpenTag => {
                     let style = &self.items_data.styles[item.style_index];
                     let pct_base = self.containing_block_width;
-                    let has_inline_wrap_geometry = style.box_decoration_break
-                        == openui_style::BoxDecorationBreak::Clone
-                        || style.effective_border_left() != 0
-                        || style.effective_border_right() != 0
-                        || resolve_margin_or_padding(&style.margin_left, pct_base)
-                            != LayoutUnit::zero()
-                        || resolve_margin_or_padding(&style.margin_right, pct_base)
-                            != LayoutUnit::zero()
-                        || resolve_margin_or_padding(&style.padding_left, pct_base)
-                            != LayoutUnit::zero()
-                        || resolve_margin_or_padding(&style.padding_right, pct_base)
-                            != LayoutUnit::zero()
-                        || self.has_leading_out_of_flow_placeholder_inside_inline_box(
-                            self.current_item,
-                        );
-                    if line.has_content()
+                    if !self.preserve_leading_inline_fragment
+                        && line.has_content()
                         && allows_line_wrap(self.container_white_space)
-                        && (has_inline_wrap_geometry || !allows_line_wrap(style.white_space))
                     {
                         let quantization_slack = LayoutUnit::from_raw(
                             i32::try_from(line.items.len().saturating_add(1)).unwrap_or(i32::MAX),
@@ -4246,5 +4240,83 @@ mod tests {
             first_word_end
         );
         assert_eq!(second.items.last().unwrap().text_range.end, text.len());
+    }
+
+    #[test]
+    fn whitespace_before_plain_inline_rewinds_its_min_content_unit() {
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+        use std::sync::Arc;
+
+        let prefix = "prefix ";
+        let link = "http://example.test/path";
+        let text = format!("{prefix}{link}");
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let prefix_shape = Arc::new(shaper.shape(prefix, &font, TextDirection::Ltr));
+        let link_shape = Arc::new(shaper.shape(link, &font, TextDirection::Ltr));
+        let link_start = prefix.len();
+        let items_data = InlineItemsData {
+            text,
+            items: vec![
+                InlineItem {
+                    item_type: InlineItemType::Text,
+                    text_range: 0..link_start,
+                    node_id: NodeId::NONE,
+                    shape_result: Some(prefix_shape.clone()),
+                    style_index: 0,
+                    end_collapse_type: CollapseType::Collapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::OpenTag,
+                    text_range: link_start..link_start,
+                    node_id: NodeId::NONE,
+                    shape_result: None,
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::Text,
+                    text_range: link_start..link_start + link.len(),
+                    node_id: NodeId::NONE,
+                    shape_result: Some(link_shape.clone()),
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::CloseTag,
+                    text_range: link_start + link.len()..link_start + link.len(),
+                    node_id: NodeId::NONE,
+                    shape_result: None,
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+            ],
+            styles: vec![ComputedStyle::default(), ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+        let width = LayoutUnit::from_f32(prefix_shape.width + link_shape.width / 2.0);
+        let mut breaker = LineBreaker::new(&items_data, width);
+
+        let first = breaker.next_line(width).expect("prefix line");
+        let second = breaker.next_line(width).expect("inline line");
+
+        assert_eq!(first.items.len(), 1);
+        assert_eq!(first.items[0].text_range, 0..link_start - 1);
+        assert_eq!(second.items[0].item_type, InlineItemType::OpenTag);
+        assert_eq!(second.items[1].text_range.start, link_start);
     }
 }
