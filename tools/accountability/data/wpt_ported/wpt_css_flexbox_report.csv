@@ -1008,7 +1008,7 @@ dynamic-isize-change-003,not_portable,,uses_javascript
 dynamic-isize-change-004,not_portable,,uses_javascript
 dynamic-orthogonal-flex-item,not_portable,,uses_javascript
 dynamic-stretch-change,not_portable,,uses_javascript
-empty-flex-box-and-margin-collapsing,not_portable,,unsupported display: grid
+empty-flex-box-and-margin-collapsing,ported,css_flexbox_empty_flex_box_and_margin_collapsing,
 fieldset-as-container-justify-center.tentative,not_portable,,uses_javascript
 fieldset-as-item-dynamic,not_portable,,uses_javascript
 fieldset-as-item-overflow,not_portable,,unsupported element: <fieldset>
@@ -1059,11 +1059,11 @@ flex-basis-009,not_portable,,uses_javascript
 flex-basis-013,not_portable,,uses_javascript
 flex-basis-intrinsics-001,not_portable,,uses_javascript
 flex-column-relayout-assert,not_portable,,uses_javascript
-flex-container-max-content-001-ref,not_portable,,style_block_unsupported property: grid-template-columns
-flex-container-max-content-001,not_portable,,style_block_unsupported property: grid-template-columns
+flex-container-max-content-001-ref,ported,css_flexbox_flex_container_max_content_001_ref,
+flex-container-max-content-001,ported,css_flexbox_flex_container_max_content_001,
 flex-container-max-content-002.tentative,not_portable,,uses_javascript
-flex-container-min-content-001-ref,not_portable,,style_block_unsupported property: grid-template-columns
-flex-container-min-content-001,not_portable,,style_block_unsupported property: grid-template-columns
+flex-container-min-content-001-ref,ported,css_flexbox_flex_container_min_content_001_ref,
+flex-container-min-content-001,ported,css_flexbox_flex_container_min_content_001,
 flex-container-min-content-002.tentative,not_portable,,uses_javascript
 flex-direction-column-overlap-001,not_portable,,uses_javascript
 flex-direction-modify,not_portable,,uses_javascript
@@ -1288,16 +1288,16 @@ flexbox_item-float-ref,ported,css_flexbox_flexbox_item_float_ref,
 flexbox_item-top-float-ref,ported,css_flexbox_flexbox_item_top_float_ref,
 flexbox_item-vertical-align-ref,ported,css_flexbox_flexbox_item_vertical_align_ref,
 flexbox_justifycontent-center-overflow,not_portable,,uses_javascript
-flexbox_justifycontent-end-ref,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-end-rtl-ref,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-end-rtl,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-end,not_portable,,unsupported display: inline-grid
+flexbox_justifycontent-end-ref,ported,css_flexbox_flexbox_justifycontent_end_ref,
+flexbox_justifycontent-end-rtl-ref,ported,css_flexbox_flexbox_justifycontent_end_rtl_ref,
+flexbox_justifycontent-end-rtl,ported,css_flexbox_flexbox_justifycontent_end_rtl,
+flexbox_justifycontent-end,ported,css_flexbox_flexbox_justifycontent_end,
 flexbox_justifycontent-rtl-001,not_portable,,uses_javascript
 flexbox_justifycontent-rtl-002,not_portable,,uses_javascript
-flexbox_justifycontent-start-ref,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-start-rtl-ref,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-start-rtl,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-start,not_portable,,unsupported display: inline-grid
+flexbox_justifycontent-start-ref,ported,css_flexbox_flexbox_justifycontent_start_ref,
+flexbox_justifycontent-start-rtl-ref,ported,css_flexbox_flexbox_justifycontent_start_rtl_ref,
+flexbox_justifycontent-start-rtl,ported,css_flexbox_flexbox_justifycontent_start_rtl,
+flexbox_justifycontent-start,ported,css_flexbox_flexbox_justifycontent_start,
 flexbox_object,not_portable,,unsupported element: <object>
 flexbox_quirks_body,ported,css_flexbox_flexbox_quirks_body,
 flexbox_rowspan-overflow-automatic,ported,css_flexbox_flexbox_rowspan_overflow_automatic,
@@ -1357,13 +1357,13 @@ gap-007-rl-ref,ported,css_flexbox_gap_007_rl_ref,
 gap-007-rl,ported,css_flexbox_gap_007_rl,
 gap-017,not_portable,,uses_javascript
 gap-018,not_portable,,uses_javascript
-grid-flex-item-001,not_portable,,unsupported property: grid
-grid-flex-item-002,not_portable,,unsupported property: grid
-grid-flex-item-003,not_portable,,unsupported property: grid-template-rows
-grid-flex-item-004,not_portable,,unsupported property: grid-template-rows
+grid-flex-item-001,ported,css_flexbox_grid_flex_item_001,
+grid-flex-item-002,ported,css_flexbox_grid_flex_item_002,
+grid-flex-item-003,ported,css_flexbox_grid_flex_item_003,
+grid-flex-item-004,ported,css_flexbox_grid_flex_item_004,
 grid-flex-item-005,not_portable,,uses_javascript
-grid-flex-item-006,not_portable,,unsupported display: grid
-grid-flex-item-007,not_portable,,unsupported display: grid
+grid-flex-item-006,ported,css_flexbox_grid_flex_item_006,
+grid-flex-item-007,ported,css_flexbox_grid_flex_item_007,
 height-percentage-with-dynamic-container-size,not_portable,,uses_javascript
 hittest-anonymous-box,not_portable,,uses_javascript
 hittest-before-pseudo,not_portable,,uses_javascript
@@ -1579,11 +1579,11 @@ abspos_position-absolute-002,not_portable,,uses_javascript
 abspos_position-absolute-003,not_portable,,uses_javascript
 abspos_position-absolute-004,not_portable,,uses_javascript
 abspos_position-absolute-005,not_portable,,uses_javascript
-abspos_position-absolute-006,not_portable,,unsupported display: grid
-abspos_position-absolute-008,not_portable,,unsupported display: grid
-abspos_position-absolute-009,not_portable,,unsupported display: grid
-abspos_position-absolute-010,not_portable,,unsupported display: grid
-abspos_position-absolute-011,not_portable,,unsupported display: grid
+abspos_position-absolute-006,ported,css_flexbox_abspos_position_absolute_006,
+abspos_position-absolute-008,ported,css_flexbox_abspos_position_absolute_008,
+abspos_position-absolute-009,ported,css_flexbox_abspos_position_absolute_009,
+abspos_position-absolute-010,ported,css_flexbox_abspos_position_absolute_010,
+abspos_position-absolute-011,ported,css_flexbox_abspos_position_absolute_011,
 abspos_position-absolute-012,not_portable,,uses_javascript
 abspos_position-absolute-013,not_portable,,uses_javascript
 abspos_position-absolute-014,not_portable,,uses_javascript

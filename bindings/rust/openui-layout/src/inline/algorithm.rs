@@ -9,7 +9,7 @@
 //! The algorithm follows CSS 2.2 §10.6.1 (inline formatting context),
 //! §10.8 (line height calculations), and §16.2 (text alignment).
 
-use openui_dom::{Document, ElementTag, NodeId};
+use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSize, WritingModeConverter};
 use openui_style::{
     BoxDecorationBreak, Clear, ComputedStyle, Direction, Display, Float, FontFamily, LineHeight,
@@ -1287,7 +1287,21 @@ fn compute_text_align_offset(
     match effective_align {
         TextAlign::Left => LayoutUnit::zero(),
         TextAlign::Right => remaining,
-        TextAlign::Center => LayoutUnit::from_raw(remaining.raw() / 2),
+        TextAlign::Center => {
+            // CSS Text's default overflow alignment is safe: an overlong
+            // centered line falls back to inline-start so its start remains
+            // reachable. This is especially visible for a two-glyph RTL
+            // scroll-marker label in a one-glyph-wide marker box.
+            if remaining < LayoutUnit::zero() {
+                if direction == Direction::Rtl {
+                    remaining
+                } else {
+                    LayoutUnit::zero()
+                }
+            } else {
+                LayoutUnit::from_raw(remaining.raw() / 2)
+            }
+        }
         TextAlign::Justify => {
             // Justification is handled by expanding spaces; offset is 0.
             LayoutUnit::zero()
@@ -3858,7 +3872,15 @@ fn create_line_box(
                                 {
                                     // CSS 2.1 §10.8.1: an inline-block exports the
                                     // baseline of its last in-flow line box.
-                                    inline_block_last_line_baseline(result)
+                                    inline_block_last_line_baseline(result).or_else(|| {
+                                        // Replaced form controls have their own
+                                        // synthesized baseline even though they
+                                        // contain no author-visible line box.
+                                        (!result.node_id.is_none()
+                                            && doc.node(result.node_id).form_control.is_some())
+                                        .then_some(result.first_baseline)
+                                        .flatten()
+                                    })
                                 } else {
                                     result.first_baseline
                                 }
@@ -4644,7 +4666,15 @@ fn create_line_box(
                             } else if style.display == Display::InlineBlock
                                 && uses_deterministic_text_profile(style)
                             {
-                                inline_block_last_line_baseline(result)
+                                inline_block_last_line_baseline(result).or_else(|| {
+                                    // Replaced form controls have their own
+                                    // synthesized baseline even though they
+                                    // contain no author-visible line box.
+                                    (!result.node_id.is_none()
+                                        && doc.node(result.node_id).form_control.is_some())
+                                    .then_some(result.first_baseline)
+                                    .flatten()
+                                })
                             } else {
                                 result.first_baseline
                             }
@@ -6035,6 +6065,12 @@ pub(crate) fn append_clamp_marker_to_last_line(
 pub fn has_inline_children(doc: &Document, node_id: NodeId) -> bool {
     for child_id in doc.children(node_id) {
         let child = doc.node(child_id);
+        if matches!(
+            child.pseudo_kind,
+            Some(PseudoElementKind::ScrollMarker) | Some(PseudoElementKind::ColumnScrollMarker)
+        ) {
+            continue;
+        }
         // display:none and out-of-flow children don't participate in layout.
         if child.style.display == Display::None || child.style.is_out_of_flow() {
             continue;

@@ -46,6 +46,7 @@ SP15_TARGETS_LIST = os.path.join(WPT_PORTED_DIR, "sp15_actionable_targets.json")
 SP13R_TARGETS_LIST = os.path.join(WPT_PORTED_DIR, "sp13r_multicol_targets.json")
 SP16_REAL_LIST = os.path.join(WPT_PORTED_DIR, "sp16_real_font_tests.json")
 SP14_W4_LIST = os.path.join(WPT_PORTED_DIR, "sp14_w4_residuals.json")
+SP18_TARGETS_LIST = os.path.join(SCRIPT_DIR, "sp18_targets.json")
 REPORT_COLUMNS = ["filename", "status", "fn_name", "reason"]
 
 sys.path.insert(0, SCRIPT_DIR)
@@ -283,6 +284,7 @@ def _generate_one(
     mapping: dict[str, dict[str, str]],
     profile: port_wpt.PorterProfile,
     text_manifest: set[str],
+    modern_line_clamp_ids: set[str],
     *,
     paint_layers: bool = False,
 ) -> GeneratedReplacement:
@@ -317,6 +319,7 @@ def _generate_one(
         else test_id in text_manifest
     )
     port_wpt.set_porter_profile(profile, retain_text=retains_text)
+    port_wpt.set_modern_line_clamp_enabled(test_id in modern_line_clamp_ids)
     parser = port_wpt.parse_wpt_html(upstream, root_aware=root_aware)
     if not root_aware and requires_distinct_root_box(parser):
         root_aware = True
@@ -575,6 +578,7 @@ def prepare_changes(
         if os.path.exists(SP16_REAL_LIST)
         else set()
     )
+    modern_line_clamp_ids = set(load_ids_file(SP18_TARGETS_LIST))
     if profile is port_wpt.PorterProfile.REAL_FONT:
         allowed = real_font_ids
         outside = set(test_ids) - allowed
@@ -584,7 +588,11 @@ def prepare_changes(
                 + ", ".join(sorted(outside))
             )
 
+    previous_profile = port_wpt.ACTIVE_PORTER_PROFILE
+    previous_emit_text = port_wpt.EMIT_TEXT_NODES
+    previous_retain_text = port_wpt.RETAIN_TEXT
     previous_paint_layers = port_wpt.EMIT_PAINT_LAYERS
+    previous_modern_line_clamp = port_wpt.MODERN_LINE_CLAMP_ENABLED
     port_wpt.set_paint_layer_emission(paint_layers)
     try:
         generated = [
@@ -601,12 +609,17 @@ def prepare_changes(
                     else profile
                 ),
                 text_manifest,
+                modern_line_clamp_ids,
                 paint_layers=paint_layers,
             )
             for test_id in sorted(test_ids)
         ]
     finally:
+        port_wpt.ACTIVE_PORTER_PROFILE = previous_profile
+        port_wpt.EMIT_TEXT_NODES = previous_emit_text
+        port_wpt.RETAIN_TEXT = previous_retain_text
         port_wpt.set_paint_layer_emission(previous_paint_layers)
+        port_wpt.set_modern_line_clamp_enabled(previous_modern_line_clamp)
     fn_names = [replacement.fn_name for replacement in generated]
     if len(fn_names) != len(set(fn_names)):
         raise ValueError("generated function-name collision in splice transaction")

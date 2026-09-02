@@ -210,6 +210,9 @@ pub struct NodeData {
     /// Optional deterministic intrinsic/replaced element state.
     pub replaced: Option<ReplacedContent>,
     pub form_control: Option<FormControlRole>,
+    /// Whether the platform-native form-control appearance remains enabled
+    /// after the authored `appearance` cascade.
+    pub form_control_native_appearance: bool,
 
     /// Static size-container queries evaluated after the first layout phase.
     pub container_query_rules: Vec<ContainerQueryRule>,
@@ -242,6 +245,7 @@ impl NodeData {
             table_row_span: 1,
             replaced: None,
             form_control: None,
+            form_control_native_appearance: true,
             container_query_rules: Vec::new(),
             parent: NodeId::NONE,
             first_child: NodeId::NONE,
@@ -359,6 +363,40 @@ impl Document {
         self.nodes[parent.index()].first_child = child;
     }
 
+    /// Insert a detached node immediately before an attached sibling.
+    fn insert_before_sibling(&mut self, sibling: NodeId, child: NodeId) {
+        assert!(self.nodes[child.index()].parent.is_none());
+        let parent = self.nodes[sibling.index()].parent;
+        assert!(!parent.is_none());
+        let previous = self.nodes[sibling.index()].prev_sibling;
+        self.nodes[child.index()].parent = parent;
+        self.nodes[child.index()].prev_sibling = previous;
+        self.nodes[child.index()].next_sibling = sibling;
+        self.nodes[sibling.index()].prev_sibling = child;
+        if previous.is_none() {
+            self.nodes[parent.index()].first_child = child;
+        } else {
+            self.nodes[previous.index()].next_sibling = child;
+        }
+    }
+
+    /// Insert a detached node immediately after an attached sibling.
+    fn insert_after_sibling(&mut self, sibling: NodeId, child: NodeId) {
+        assert!(self.nodes[child.index()].parent.is_none());
+        let parent = self.nodes[sibling.index()].parent;
+        assert!(!parent.is_none());
+        let next = self.nodes[sibling.index()].next_sibling;
+        self.nodes[child.index()].parent = parent;
+        self.nodes[child.index()].prev_sibling = sibling;
+        self.nodes[child.index()].next_sibling = next;
+        self.nodes[sibling.index()].next_sibling = child;
+        if next.is_none() {
+            self.nodes[parent.index()].last_child = child;
+        } else {
+            self.nodes[next.index()].prev_sibling = child;
+        }
+    }
+
     /// Create and attach an ordinary arena node for `::before` or `::after`.
     /// CSS tree order is guaranteed even when both pseudo boxes are present.
     pub fn insert_pseudo_element(&mut self, origin: NodeId, kind: PseudoElementKind) -> NodeId {
@@ -369,11 +407,21 @@ impl Document {
             PseudoElementKind::Before | PseudoElementKind::Marker => {
                 self.prepend_child(origin, pseudo)
             }
+            // A scroll-marker group is an external box immediately before or
+            // after the originating scroll container.  Keep its origin link
+            // for virtual marker collection, but put it in the parent's flow
+            // so it contributes size and is not clipped by the scrollport.
             PseudoElementKind::ScrollMarkerGroup
-                if self.nodes[origin.index()].style.scroll_marker_group
-                    == ScrollMarkerGroup::Before =>
+                if !self.nodes[origin.index()].parent.is_none()
+                    && self.nodes[origin.index()].style.scroll_marker_group
+                        == ScrollMarkerGroup::Before =>
             {
-                self.prepend_child(origin, pseudo)
+                self.insert_before_sibling(origin, pseudo)
+            }
+            PseudoElementKind::ScrollMarkerGroup
+                if !self.nodes[origin.index()].parent.is_none() =>
+            {
+                self.insert_after_sibling(origin, pseudo)
             }
             PseudoElementKind::After
             | PseudoElementKind::ScrollMarker

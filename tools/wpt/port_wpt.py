@@ -51,6 +51,7 @@ class PorterProfile(Enum):
 
 ACTIVE_PORTER_PROFILE = PorterProfile.LEGACY_BOX_ONLY
 EMIT_PAINT_LAYERS = False
+MODERN_LINE_CLAMP_ENABLED = True
 
 
 def set_porter_profile(profile: PorterProfile, *, retain_text: bool | None = None) -> None:
@@ -85,6 +86,17 @@ def set_paint_layer_emission(enabled: bool) -> None:
     """
     global EMIT_PAINT_LAYERS
     EMIT_PAINT_LAYERS = bool(enabled)
+
+
+def set_modern_line_clamp_enabled(enabled: bool) -> None:
+    """Mirror Chromium's runtime-gated modern line-clamp grammar.
+
+    Legacy ``-webkit-line-clamp`` remains available independently.  The WPT
+    splice driver scopes this switch to the same frozen feature-profile
+    manifest used by the Chromium comparison runner.
+    """
+    global MODERN_LINE_CLAMP_ENABLED
+    MODERN_LINE_CLAMP_ENABLED = bool(enabled)
 
 
 # ─── CSS property support map ──────────────────────────────────────────────
@@ -162,6 +174,7 @@ SUPPORTED_PROPERTIES = {
     # Replaced content and deterministic effects
     'object-fit', 'object-position', 'transform', 'transform-origin',
     'filter',
+    'appearance', '-webkit-appearance', '-moz-appearance',
     'shape-outside', 'shape-margin', 'shape-image-threshold',
     'animation', 'animation-name', 'animation-duration', 'animation-delay',
     'animation-fill-mode', 'animation-timing-function',
@@ -217,10 +230,9 @@ IGNORED_PROPERTIES = {
     'word-break', 'overflow-wrap', 'hyphens',
     'list-style', 'list-style-type', 'list-style-position',
     'cursor', 'pointer-events', 'user-select',
-    # Scroll selection is frozen at the runner's zero-scroll snapshot. The
-    # generated marker/group boxes are preserved separately; these properties
-    # only affect interactive snapping after that snapshot.
-    'scroll-snap-align', 'scroll-snap-type', 'scroll-snap-stop',
+    # `scroll-snap-stop` only changes traversal through intermediate snap
+    # positions; static snap geometry is emitted separately.
+    'scroll-snap-stop',
     # Print/page
     'print-color-adjust', 'image-rendering', 'size',
 }
@@ -1325,12 +1337,16 @@ def parse_border_width(value: str, font_size: float = 16.0) -> str | None:
         if m:
             raw = float(m.group(1)) * 16.0
     if raw is not None:
+        if raw < 0:
+            return None
         if raw > 0:
             rounded = max(1, math.floor(raw))
-        elif raw < 0:
-            rounded = min(-1, -math.floor(-raw))
         else:
             rounded = 0
+        # Computed border widths ultimately become Blink-style LayoutUnits
+        # (26 integer bits plus 6 fractional bits). Clamp at the largest
+        # whole-pixel value that the fixed-point representation can hold.
+        rounded = min(rounded, (2 ** 31 - 1) // 64)
         return str(rounded)
     return None
 
@@ -1926,6 +1942,7 @@ class DomNode:
             'first-letter': CssDeclarations(),
             'marker': CssDeclarations(),
             'scroll-marker': CssDeclarations(),
+            'scroll-marker-target-current': CssDeclarations(),
             'scroll-marker-group': CssDeclarations(),
             'scroll-button-up': CssDeclarations(),
             'scroll-button-right': CssDeclarations(),
@@ -1937,6 +1954,7 @@ class DomNode:
             'scroll-button-inline-end': CssDeclarations(),
             'column': CssDeclarations(),
             'column-scroll-marker': CssDeclarations(),
+            'column-scroll-marker-target-current': CssDeclarations(),
         }
         self.pseudo_priorities = {name: {} for name in self.pseudo_styles}
 
@@ -1952,13 +1970,13 @@ _TERMINAL_PSEUDO_RE = re.compile(
     r'scroll-marker-group|scroll-marker|'
     r'before|after|first-line|first-letter|marker|column'
     r')'
-    r'(?::(?:target-current|enabled|disabled))?\s*$',
+    r'(?::(target-current|enabled|disabled))?\s*$',
     re.IGNORECASE,
 )
 
 
-def _terminal_pseudo(selector: str) -> tuple[str, str] | None:
-    """Return the originating selector and normalized generated-box key."""
+def _terminal_pseudo(selector: str) -> tuple[str, str, str | None] | None:
+    """Return the origin selector, generated-box key, and optional state."""
     match = _TERMINAL_PSEUDO_RE.match(selector.strip())
     if not match:
         return None
@@ -1967,7 +1985,8 @@ def _terminal_pseudo(selector: str) -> tuple[str, str] | None:
         name = 'column-scroll-marker'
     elif name.startswith('scroll-button('):
         name = 'scroll-button-' + name[len('scroll-button('):-1]
-    return (match.group(1).strip() or '*', name)
+    state = match.group(3).lower() if match.group(3) else None
+    return (match.group(1).strip() or '*', name, state)
 
 
 def _split_selector_list(value: str) -> list[str]:
@@ -2120,6 +2139,79 @@ def _flatten_css_rules(css_text: str) -> list[tuple[str, str]]:
     return result
 
 
+def _strip_top_level_statement_at_rules(css_text: str) -> str:
+    """Remove non-block at-rules without consuming the following selector.
+
+    A stylesheet may begin with ``@import`` (or ``@charset``/``@namespace``).
+    Those statements have no declarations for the generated document, but
+    leaving them in the balanced-brace input makes the next style rule's
+    selector begin with ``@`` and causes that entire rule to be discarded.
+    Scan only at brace depth zero so semicolons in declarations are retained.
+    """
+    statement_names = {"charset", "import", "namespace"}
+    output = []
+    index = 0
+    brace_depth = 0
+    quote = None
+    escaped = False
+    while index < len(css_text):
+        char = css_text[index]
+        if escaped:
+            output.append(char)
+            escaped = False
+            index += 1
+            continue
+        if quote is not None:
+            output.append(char)
+            if char == "\\":
+                escaped = True
+            elif char == quote:
+                quote = None
+            index += 1
+            continue
+        if char in "\"'":
+            quote = char
+            output.append(char)
+            index += 1
+            continue
+        if char == "{":
+            brace_depth += 1
+        elif char == "}":
+            brace_depth = max(0, brace_depth - 1)
+        if char == "@" and brace_depth == 0:
+            match = re.match(r"@([-_a-zA-Z][-_a-zA-Z0-9]*)", css_text[index:])
+            if match and match.group(1).lower() in statement_names:
+                cursor = index + match.end()
+                local_quote = None
+                local_escaped = False
+                parentheses = 0
+                while cursor < len(css_text):
+                    current = css_text[cursor]
+                    if local_escaped:
+                        local_escaped = False
+                    elif local_quote is not None:
+                        if current == "\\":
+                            local_escaped = True
+                        elif current == local_quote:
+                            local_quote = None
+                    elif current in "\"'":
+                        local_quote = current
+                    elif current == "(":
+                        parentheses += 1
+                    elif current == ")":
+                        parentheses = max(0, parentheses - 1)
+                    elif current == ";" and parentheses == 0:
+                        cursor += 1
+                        break
+                    cursor += 1
+                output.append(" ")
+                index = cursor
+                continue
+        output.append(char)
+        index += 1
+    return "".join(output)
+
+
 def parse_simple_css_rules(css_text: str) -> list:
     """Parse simple CSS rules from a <style> block.
     Returns list of (selector, styles_dict) tuples.
@@ -2130,6 +2222,7 @@ def parse_simple_css_rules(css_text: str) -> list:
     css_text = re.sub(r'/\*.*?\*/', '', css_text, flags=re.DOTALL)
     # Remove CDATA wrapper
     css_text = re.sub(r'<!\[CDATA\[|\]\]>', '', css_text)
+    css_text = _strip_top_level_statement_at_rules(css_text)
     # Keyframe declarations are not ordinary selector rules. The comparison
     # runner freezes document time at 0 ms; generated styles record that
     # snapshot separately instead of letting nested percentage blocks leak
@@ -2397,6 +2490,10 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
             if type_index == 1:
                 return False
             continue
+        if inner == ':only-of-type':
+            if type_count == 1:
+                return False
+            continue
         if inner == ':only-child':
             if sibling_count == 1:
                 return False
@@ -2423,6 +2520,8 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
         return False
     if ':first-of-type' in bare_selector and type_index != 1:
         return False
+    if ':only-of-type' in bare_selector and type_count != 1:
+        return False
     if ':only-child' in bare_selector and sibling_count != 1:
         return False
     for nth_m in re.finditer(r':nth-child\(([^)]+)\)', bare_selector):
@@ -2431,7 +2530,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
 
     # Strip pseudo-classes after evaluation (including nested-paren :not())
     selector = re.sub(r':not\([^()]*(?:\([^)]*\)[^()]*)*\)', '', selector)
-    selector = re.sub(r':(?:root|first-child|last-child|first-of-type|last-of-type|nth-child\([^)]+\)|only-child|empty)', '', selector)
+    selector = re.sub(r':(?:root|first-child|last-child|first-of-type|last-of-type|only-of-type|nth-child\([^)]+\)|only-child|empty)', '', selector)
     stripped_with_combinators = selector
     selector = selector.strip()
 
@@ -2461,7 +2560,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
         )
 
     pseudo_only_descendant = re.match(
-        r'^(.*?)\s+:(?:root|first-child|last-child|first-of-type|last-of-type|nth-child\([^)]+\)|only-child|empty|not\([^)]*\))\s*$',
+        r'^(.*?)\s+:(?:root|first-child|last-child|first-of-type|last-of-type|only-of-type|nth-child\([^)]+\)|only-child|empty|not\([^)]*\))\s*$',
         original_selector,
     )
     if pseudo_only_descendant:
@@ -2626,6 +2725,10 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
             spec = compute_specificity(selector)
             if pseudo_match:
                 pseudo_name = pseudo_match[1]
+                if pseudo_match[2] == 'target-current':
+                    state_name = f'{pseudo_name}-target-current'
+                    if state_name in node.pseudo_styles:
+                        pseudo_name = state_name
                 pseudo_cascade = node.pseudo_styles[pseudo_name]
                 pseudo_priorities = node.pseudo_priorities[pseudo_name]
                 for declaration_index, (prop, val) in enumerate(styles.items()):
@@ -2729,6 +2832,8 @@ class WptHtmlParser(HTMLParser):
         self.in_style = False
         self.style_content = ""
         self.current_style_attrs = {}
+        self.current_style_prefix = ""
+        self.pending_pre_body_whitespace = ""
         self.author_style_blocks = []
         self.has_script = False
         self.script_elements = []
@@ -2869,6 +2974,8 @@ class WptHtmlParser(HTMLParser):
             self.in_style = True
             self.style_content = ""
             self.current_style_attrs = attrs_dict
+            self.current_style_prefix = self.pending_pre_body_whitespace
+            self.pending_pre_body_whitespace = ""
             return
 
         if tag in ('head', 'html', 'body'):
@@ -2952,9 +3059,14 @@ class WptHtmlParser(HTMLParser):
             self.in_style = False
             self.css_rules.extend(parse_simple_css_rules(self.style_content))
             self.author_style_blocks.append(
-                (dict(self.current_style_attrs), self.style_content)
+                (
+                    dict(self.current_style_attrs),
+                    self.style_content,
+                    self.current_style_prefix,
+                )
             )
             self.current_style_attrs = {}
+            self.current_style_prefix = ""
             return
         if tag == 'script':
             self.current_script = None
@@ -2997,8 +3109,12 @@ class WptHtmlParser(HTMLParser):
             # so source indentation between blocks cannot create line boxes.
             # Non-whitespace character data after head metadata implicitly
             # opens HTML's body even when the source omits a <body> tag.
-            if not self.in_body and data and data.strip():
-                self.in_body = True
+            if not self.in_body:
+                if data and data.strip():
+                    self.in_body = True
+                else:
+                    self.pending_pre_body_whitespace += data
+                    return
             if data and self.in_body:
                 node = DomNode('#text', {}, {})
                 node.is_text = True
@@ -3050,7 +3166,14 @@ class WptHtmlParser(HTMLParser):
             # DOM but still participates in structural selector matching in
             # Chromium, so account for that trailing element when cascading
             # over the source body children.
-            trailing_harness_style = int(RETAIN_TEXT and not is_real_font_profile())
+            # The deterministic-font stylesheet is appended after the source
+            # markup.  In malformed HTML the browser inserts it into the
+            # still-open source element rather than as a direct body child;
+            # only count it for body-child structural selectors when the
+            # tokenizer stack has actually returned to the synthetic body.
+            trailing_harness_style = int(
+                RETAIN_TEXT and not is_real_font_profile() and len(self.stack) == 1
+            )
             apply_css_rules(
                 all_rules,
                 self.root,
@@ -3138,7 +3261,9 @@ class WptHtmlParser(HTMLParser):
             style_sibling_count = trailing_harness_style + len(self.author_style_blocks) + sum(
                 1 for child in self.root.children if not child.is_text
             )
-            for style_index, (attrs, text) in enumerate(self.author_style_blocks, 1):
+            for style_index, (attrs, text, prefix) in enumerate(
+                self.author_style_blocks, 1
+            ):
                 style_node = DomNode(
                     'style', attrs, parse_inline_styles(attrs.get('style', ''))
                 )
@@ -3155,6 +3280,11 @@ class WptHtmlParser(HTMLParser):
                 )
                 display = style_node.styles.get('display', '').strip().lower()
                 if display and display != 'none':
+                    if prefix:
+                        prefix_node = DomNode('#text', {}, {})
+                        prefix_node.is_text = True
+                        prefix_node.text_content = prefix
+                        visible_style_nodes.append(prefix_node)
                     text_node = DomNode('#text', {}, {})
                     text_node.is_text = True
                     text_node.text_content = text
@@ -3316,7 +3446,7 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
 
     # Pseudo-classes/pseudo-elements we can handle
     SAFE_PSEUDO_PATTERN = re.compile(
-        r':(?:root|first-child|last-child|first-of-type|last-of-type|nth-child\([^)]+\)|only-child|empty|not\([^)]+\)|target-current)'
+        r':(?:root|first-child|last-child|first-of-type|last-of-type|only-of-type|nth-child\([^)]+\)|only-child|empty|not\([^)]+\)|target-current)'
     )
 
     # Check CSS rules from <style> blocks for unsupported properties
@@ -5529,7 +5659,19 @@ def generate_single_style(
             lines = [parse_grid_line(part) for part in parts]
             if all(lines):
                 row_start = lines[0]
-                column_start = lines[1] if len(lines) > 1 else 'GridLine::Auto'
+                # A single custom identifier names a template area on both
+                # axes. Numeric/special grid lines retain the shorthand's
+                # `auto` default for the omitted column start.
+                single_named_area = (
+                    len(parts) == 1
+                    and re.fullmatch(r'[-_a-zA-Z][-_a-zA-Z0-9]*', parts[0].strip())
+                    and parts[0].strip().lower() not in {'auto', 'span'}
+                )
+                column_start = (
+                    lines[0]
+                    if single_named_area
+                    else lines[1] if len(lines) > 1 else 'GridLine::Auto'
+                )
                 row_end = lines[2] if len(lines) > 2 else 'GridLine::Auto'
                 column_end = lines[3] if len(lines) > 3 else 'GridLine::Auto'
                 return [
@@ -5721,6 +5863,34 @@ def generate_single_style(
         if val in mapping:
             return f"{s}.scroll_target_group = {mapping[val]};"
 
+    if prop == 'scroll-snap-align':
+        tokens = val.split()
+        if len(tokens) in (1, 2):
+            # SP19 stores the cohort's shared/inline alignment point.  All
+            # selected rows use identical one-value axis alignment.
+            mapping = {
+                'none': 'ScrollSnapAlign::None',
+                'start': 'ScrollSnapAlign::Start',
+                'center': 'ScrollSnapAlign::Center',
+                'end': 'ScrollSnapAlign::End',
+            }
+            if tokens[0] in mapping and (len(tokens) == 1 or tokens[1] == tokens[0]):
+                return f"{s}.scroll_snap_align = {mapping[tokens[0]]};"
+
+    if prop == 'scroll-snap-type':
+        tokens = val.split()
+        if tokens:
+            mapping = {
+                'none': 'ScrollSnapAxis::None',
+                'x': 'ScrollSnapAxis::X',
+                'y': 'ScrollSnapAxis::Y',
+                'both': 'ScrollSnapAxis::Both',
+                'inline': 'ScrollSnapAxis::Inline',
+                'block': 'ScrollSnapAxis::Block',
+            }
+            if tokens[0] in mapping:
+                return f"{s}.scroll_snap_axis = {mapping[tokens[0]]};"
+
     # ── replaced content and deterministic effects ──
     if prop == 'object-fit':
         mapping = {
@@ -5831,6 +6001,8 @@ def generate_single_style(
             return f"{s}.quotes = vec![{', '.join(pairs)}];"
 
     # ── line clamp compatibility ──
+    if prop == 'line-clamp' and not MODERN_LINE_CLAMP_ENABLED:
+        return None
     if prop in ('line-clamp', '-webkit-line-clamp'):
         return generate_line_clamp_style(val, s, legacy=prop.startswith('-webkit-'))
 
@@ -5854,7 +6026,15 @@ def generate_single_style(
 
     # ── float ──
     if prop == 'float':
-        mapping = {'left': 'Float::Left', 'right': 'Float::Right', 'none': 'Float::None'}
+        mapping = {
+            'left': 'Float::Left',
+            'right': 'Float::Right',
+            # Logical floats resolve against the inherited default horizontal
+            # LTR direction used by the deterministic WPT profile.
+            'inline-start': 'Float::Left',
+            'inline-end': 'Float::Right',
+            'none': 'Float::None',
+        }
         if val in mapping:
             return f"{s}.float = {mapping[val]};"
 
@@ -7239,7 +7419,10 @@ def generate_single_style(
                 g = float(val)
                 return [f"{s}.flex_grow = {g};", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = Length::percent(0.0);"]
             except ValueError:
-                pass
+                basis = parse_length(val, font_size)
+                if basis and 'Length::px(-' not in basis:
+                    # A lone <flex-basis> expands to `1 1 <flex-basis>`.
+                    return [f"{s}.flex_grow = 1.0;", f"{s}.flex_shrink = 1.0;", f"{s}.flex_basis = {basis};"]
         elif len(parts) == 2:
             # flex: <grow> <shrink> | <grow> <basis>
             try:
@@ -7777,12 +7960,16 @@ def _filter_ws_only_text_nodes(node, inherited_white_space='normal'):
     parent_display = (node.styles or {}).get('display', '').strip()
     white_space = (node.styles or {}).get('white-space', inherited_white_space).strip()
     preserves_white_space = white_space in ('pre', 'pre-wrap', 'break-spaces')
+    preserves_segment_breaks = preserves_white_space or white_space == 'pre-line'
     for i, c in enumerate(children):
         if (
             getattr(c, 'is_text', False)
             and _is_css_whitespace_only(getattr(c, 'text_content', '') or '')
         ):
-            if preserves_white_space:
+            text = getattr(c, 'text_content', '') or ''
+            if preserves_white_space or (
+                preserves_segment_breaks and any(ch in text for ch in '\n\r\f')
+            ):
                 kept.append(c)
                 continue
             # Collapsible whitespace between flex items is not wrapped in an
@@ -7812,7 +7999,11 @@ def generate_rust_fn(
     """Generate a Rust function that builds a Document matching the DOM tree."""
     if RETAIN_TEXT:
         _filter_ws_only_text_nodes(root)
-        if root_aware and root.children:
+        root_white_space = (root.styles or {}).get('white-space', 'normal').strip()
+        root_preserves_segment_breaks = root_white_space in (
+            'pre', 'pre-line', 'pre-wrap', 'break-spaces',
+        )
+        if root_aware and root.children and not root_preserves_segment_breaks:
             # Collapsible whitespace at the start/end of the body formatting
             # context disappears. Trim only boundary text nodes; separators
             # between inline siblings remain intact.
@@ -7876,6 +8067,9 @@ def generate_rust_fn(
 
     counter = [0]
     materialization_required = [False]
+    generated_scroll_markers: list[
+        tuple[str, CssDeclarations, float, float]
+    ] = []
     css_targeted_tags = getattr(root, 'css_targeted_tags', set())
 
     def _has_meaningful_styles(styles):
@@ -8040,6 +8234,8 @@ def generate_rust_fn(
                     )
                     lines.append(f"{ws}doc.append_child({parent_var}, {tvar});")
             return
+
+        marker_scope_start = len(generated_scroll_markers)
 
         if node.tag in ('p', 'strong', 'em', 'b', 'i', 'u', 'a',
                         'h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
@@ -8454,6 +8650,20 @@ def generate_rust_fn(
             lines.append(f"{ws}doc.node_mut({var}).style.border_right_style = BorderStyle::Inset;")
             lines.append(f"{ws}doc.node_mut({var}).style.border_bottom_style = BorderStyle::Inset;")
             lines.append(f"{ws}doc.node_mut({var}).style.border_left_style = BorderStyle::Inset;")
+        elif (
+            node.tag == 'input'
+            and node.attrs.get('type', 'text').lower() == 'range'
+        ):
+            # Chromium's Linux range control is a 129x16 atomic widget. The
+            # intrinsic-size algorithm handles cyclic percentage preferred
+            # sizes; the passive native track/thumb are painted from the DOM
+            # form-control role.
+            lines.append(
+                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                "intrinsic_width: Some(129.0), intrinsic_height: Some(16.0), "
+                "intrinsic_ratio: None });"
+            )
         elif node.tag == 'meter':
             # Chromium's Linux meter control is an 80x16 atomic widget.  Its
             # passive track is painted by the form-control role; transparent
@@ -8710,6 +8920,32 @@ def generate_rust_fn(
             if isinstance(val, str) and not prop.startswith('--'):
                 effective_styles[prop] = _resolve_css_vars(val, node_custom_props)
 
+        if (
+            node.tag == 'input'
+            and node.attrs.get('type', 'text').lower() == 'range'
+        ):
+            # `appearance` and its vendor aliases are one cascaded control
+            # property in Chromium. Select the winning alias by the preserved
+            # declaration priority instead of depending on dictionary order.
+            appearance_candidates = []
+            for appearance_prop in (
+                'appearance', '-webkit-appearance', '-moz-appearance'
+            ):
+                if appearance_prop in effective_styles:
+                    appearance_candidates.append((
+                        effective_styles.cascade_priority.get(
+                            appearance_prop, (0, 0, 0, 0, 0, 0, 0)
+                        ),
+                        appearance_prop,
+                        effective_styles[appearance_prop].strip().lower(),
+                    ))
+            if appearance_candidates:
+                _, _, appearance_value = max(appearance_candidates)
+                if appearance_value == 'none':
+                    lines.append(
+                        f"{ws}doc.node_mut({var}).form_control_native_appearance = false;"
+                    )
+
         # Generate style code
         node_zoom = _effective_css_zoom(effective_styles, parent_zoom)
         style_lines, node_font_size = generate_style_code(
@@ -8872,7 +9108,56 @@ def generate_rust_fn(
             )
             for pseudo_line in pseudo_lines:
                 lines.append(f"{ws}{pseudo_line}")
+            if name in ('scroll-marker', 'column-scroll-marker') and 'color' not in pseudo_styles:
+                # Scroll markers have link-like activation semantics and use
+                # the UA link color when author CSS does not specify one.
+                lines.append(
+                    f"{ws}doc.node_mut({pseudo_var}).style.color = "
+                    "Color::from_rgba8(0, 0, 238, 255);"
+                )
+            if name in ('scroll-marker', 'column-scroll-marker'):
+                current_styles = resolved_pseudo_styles(
+                    f'{name}-target-current'
+                )
+                def static_px(prop: str) -> float:
+                    value = effective_styles.get(prop, '0').strip().lower()
+                    match = re.fullmatch(r'([+-]?(?:\d+(?:\.\d*)?|\.\d+))(?:px)?', value)
+                    return float(match.group(1)) if match else 0.0
+                generated_scroll_markers.append((
+                    pseudo_var, current_styles,
+                    static_px('top'), static_px('left'),
+                ))
             return pseudo_var
+
+        def apply_current_scroll_marker_state() -> None:
+            group_position = effective_styles.get(
+                'scroll-marker-group', ''
+            ).strip().lower()
+            if group_position not in ('before', 'after'):
+                return
+            candidates = generated_scroll_markers[marker_scope_start:]
+            if not candidates:
+                return
+            writing_mode = effective_styles.get(
+                'writing-mode', 'horizontal-tb'
+            ).strip().lower()
+            if writing_mode == 'vertical-lr':
+                marker_var, current_styles, _, _ = min(
+                    candidates, key=lambda candidate: candidate[3]
+                )
+            elif writing_mode == 'vertical-rl':
+                marker_var, current_styles, _, _ = max(
+                    candidates, key=lambda candidate: candidate[3]
+                )
+            else:
+                marker_var, current_styles, _, _ = min(
+                    candidates, key=lambda candidate: candidate[2]
+                )
+            current_lines, _ = generate_style_code(
+                current_styles, marker_var, node_font_size, node_zoom
+            )
+            for current_line in current_lines:
+                lines.append(f"{ws}{current_line}")
 
         def emit_highlight_pseudo(name: str) -> None:
             pseudo_styles = resolved_pseudo_styles(name)
@@ -9285,6 +9570,7 @@ def generate_rust_fn(
             'scroll-button-inline-start', 'scroll-button-inline-end',
         ):
             emit_generated_pseudo(button_name)
+        apply_current_scroll_marker_state()
         if effective_styles.get('scroll-marker-group', '').strip().lower() == 'after':
             emit_generated_pseudo('scroll-marker-group', structural=True)
         emit_generated_pseudo('after')

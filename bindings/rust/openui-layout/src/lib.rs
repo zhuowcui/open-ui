@@ -10,6 +10,7 @@ pub mod exclusions;
 pub mod flex;
 mod fragment;
 pub mod fragmentation;
+pub mod grid;
 pub mod inflow_position;
 pub mod inline;
 pub mod intrinsic_sizing;
@@ -44,6 +45,7 @@ pub use fragment::{
 pub use fragmentation::{
     BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,
 };
+pub use grid::grid_layout;
 pub use inflow_position::{InflowChildData, PreviousInflowPosition};
 pub use intrinsic_sizing::{
     compute_block_size_from_content, compute_intrinsic_block_sizes, compute_intrinsic_inline_sizes,

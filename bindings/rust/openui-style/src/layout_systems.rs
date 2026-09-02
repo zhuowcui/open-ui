@@ -274,6 +274,28 @@ pub enum ScrollTargetGroup {
     Auto,
 }
 
+/// Alignment point contributed by a scroll-snap area on both axes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum ScrollSnapAlign {
+    #[default]
+    None,
+    Start,
+    Center,
+    End,
+}
+
+/// Axis on which a scroll container establishes snap positions.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum ScrollSnapAxis {
+    #[default]
+    None,
+    X,
+    Y,
+    Both,
+    Inline,
+    Block,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ContainerAxis {
     Width,

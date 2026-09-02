@@ -48,8 +48,8 @@ display-flow-root-list-item-001,ported,css_display_display_flow_root_list_item_0
 display-change-iframe,not_portable,,uses_javascript
 display-change-object-iframe,not_portable,,uses_javascript
 display-contents-001-crash,ported,css_display_display_contents_001_crash,
-display-contents-alignment-002-ref,not_portable,,unsupported display: grid
-display-contents-alignment-002,not_portable,,unsupported display: grid
+display-contents-alignment-002-ref,ported,css_display_display_contents_alignment_002_ref,
+display-contents-alignment-002,ported,css_display_display_contents_alignment_002,
 display-contents-before-after-001,ported,css_display_display_contents_before_after_001,
 display-contents-before-after-002,ported,css_display_display_contents_before_after_002,
 display-contents-before-after-003,ported,css_display_display_contents_before_after_003,

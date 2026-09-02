@@ -135,7 +135,7 @@ position-absolute-replaced-minmax,not_portable,,uses_javascript
 position-absolute-replaced-no-intrinsic-size.tentative,not_portable,,unsupported element: <img>
 position-absolute-replaced-with-display-table,ported,css_position_position_absolute_replaced_with_display_table,
 position-absolute-root-element-flex,ported,css_position_position_absolute_root_element_flex,
-position-absolute-root-element-grid,not_portable,,unsupported display: grid
+position-absolute-root-element-grid,ported,css_position_position_absolute_root_element_grid,
 position-absolute-root-element-ref,ported,css_position_position_absolute_root_element_ref,
 position-absolute-scrollable-overflow-001,not_portable,,uses_javascript
 position-absolute-semi-replaced-stretch-button-ref,not_portable,,unsupported element: <button>
@@ -152,7 +152,7 @@ position-change,not_portable,,uses_javascript
 position-fixed-at-bottom-right-on-viewport,not_portable,,uses_javascript
 position-fixed-dynamic-transformed-sibling,not_portable,,uses_javascript
 position-fixed-root-element-flex,ported,css_position_position_fixed_root_element_flex,
-position-fixed-root-element-grid,not_portable,,unsupported display: grid
+position-fixed-root-element-grid,ported,css_position_position_fixed_root_element_grid,
 position-fixed-root-element-ref,ported,css_position_position_fixed_root_element_ref,
 position-fixed-scroll-nested-fixed,not_portable,,uses_javascript
 position-fixed-scroll-overlap,not_portable,,uses_javascript
@@ -188,7 +188,7 @@ position-relative-table-tr-left-absolute-child,ported,css_position_position_rela
 position-relative-table-tr-left,ported,css_position_position_relative_table_tr_left,
 position-relative-table-tr-top-absolute-child,ported,css_position_position_relative_table_tr_top_absolute_child,
 position-relative-table-tr-top,ported,css_position_position_relative_table_tr_top,
-position-static-001,not_portable,,unsupported display: grid
+position-static-001,ported,css_position_position_static_001,
 position-sticky-dynamic-ancestor-001,not_portable,,uses_javascript
 replaced-object-backdrop,not_portable,,uses_javascript
 sticky-dialog,not_portable,,uses_javascript

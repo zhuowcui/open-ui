@@ -113,17 +113,17 @@ margin-trim_flex-row-style-change-triggers-layout-inline-end,not_portable,,uses_
 margin-trim_flex-row-style-change-triggers-layout-inline-start,not_portable,,uses_javascript
 margin-trim_flex-row-style-change-triggers-layout-inline,not_portable,,uses_javascript
 margin-trim_flex-trim-all-margins,not_portable,,style_block_unsupported property: margin-trim
-margin-trim_grid-block-end-ref,not_portable,,style_block_unsupported property: grid-template-columns
-margin-trim_grid-block-end,not_portable,,style_block_unsupported property: grid-template-columns
-margin-trim_grid-block-start-ref,not_portable,,style_block_unsupported property: grid-template-columns
-margin-trim_grid-block-start,not_portable,,style_block_unsupported property: grid-template-columns
-margin-trim_grid-block,not_portable,,style_block_unsupported property: grid-template-columns
-margin-trim_grid-inline-end-ref,not_portable,,style_block_unsupported property: grid-template-columns
-margin-trim_grid-inline-end,not_portable,,style_block_unsupported property: grid-template-columns
-margin-trim_grid-inline-start-ref,not_portable,,style_block_unsupported property: grid-template-columns
-margin-trim_grid-inline-start,not_portable,,style_block_unsupported property: grid-template-columns
-margin-trim_grid-inline,not_portable,,style_block_unsupported property: grid-template-columns
-margin-trim_grid-trim-ignores-collapsed-tracks,not_portable,,style_block_unsupported property: grid-template-rows
+margin-trim_grid-block-end-ref,ported,css_box_margin_trim_grid_block_end_ref,
+margin-trim_grid-block-end,ported,css_box_margin_trim_grid_block_end,
+margin-trim_grid-block-start-ref,ported,css_box_margin_trim_grid_block_start_ref,
+margin-trim_grid-block-start,ported,css_box_margin_trim_grid_block_start,
+margin-trim_grid-block,ported,css_box_margin_trim_grid_block,
+margin-trim_grid-inline-end-ref,ported,css_box_margin_trim_grid_inline_end_ref,
+margin-trim_grid-inline-end,ported,css_box_margin_trim_grid_inline_end,
+margin-trim_grid-inline-start-ref,ported,css_box_margin_trim_grid_inline_start_ref,
+margin-trim_grid-inline-start,ported,css_box_margin_trim_grid_inline_start,
+margin-trim_grid-inline,ported,css_box_margin_trim_grid_inline,
+margin-trim_grid-trim-ignores-collapsed-tracks,ported,css_box_margin_trim_grid_trim_ignores_collapsed_tracks,
 margin-trim_multicol-spanner-001,not_portable,,unsupported property: margin-trim
 margin-trim_multicol-spanner-002,not_portable,,unsupported property: margin-trim
 margin-trim_multicol-spanner-003,not_portable,,unsupported property: margin-trim

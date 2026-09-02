@@ -478,7 +478,11 @@ def render_chrome(
         return False
 
 
-def openui_environment(use_ahem_noaa=False, use_real_font=False):
+def openui_environment(
+    use_ahem_noaa=False,
+    use_real_font=False,
+    preserve_subpixel_positioning=False,
+):
     """Build OpenUI's environment with the same profile precedence."""
     env = os.environ.copy()
     if use_real_font:
@@ -495,17 +499,31 @@ def openui_environment(use_ahem_noaa=False, use_real_font=False):
         env["OPENUI_AUTOHINT"] = "0"
     elif use_ahem_noaa:
         env["OPENUI_EDGING"] = "alias"
-        env["OPENUI_SUBPIXEL"] = "0"
+        # Aliased glyph coverage and subpixel positioning are independent.
+        # Inline native controls retain fractional layout accumulation even
+        # when the surrounding Ahem glyphs are rasterized without AA; forcing
+        # whole-pixel positioning changes the control's stable raster phase.
+        env["OPENUI_SUBPIXEL"] = "1" if preserve_subpixel_positioning else "0"
         env["OPENUI_HINTING"] = "none"
     return env
 
 
-def render_openui(test_id, output_png, use_ahem_noaa=False, use_real_font=False):
+def render_openui(
+    test_id,
+    output_png,
+    use_ahem_noaa=False,
+    use_real_font=False,
+    preserve_subpixel_positioning=False,
+):
     """Render test pattern with our engine."""
     try:
         result = subprocess.run(
             [PIXEL_COMPARE, "render", test_id, output_png],
-            env=openui_environment(use_ahem_noaa, use_real_font),
+            env=openui_environment(
+                use_ahem_noaa,
+                use_real_font,
+                preserve_subpixel_positioning,
+            ),
             capture_output=True,
             timeout=30,
         )
@@ -793,6 +811,13 @@ def main():
                 test_id in text_ported_tests and test_id not in real_font_tests
             ),
             use_real_font=test_id in real_font_tests,
+            preserve_subpixel_positioning=bool(
+                re.search(
+                    r'<input\b[^>]*\btype\s*=\s*["\']?range\b',
+                    template,
+                    re.IGNORECASE,
+                )
+            ),
         ):
             print(f"  ERROR  {test_id} — openui render failed")
             errors += 1

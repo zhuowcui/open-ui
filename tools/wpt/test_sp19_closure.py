@@ -27,12 +27,14 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
         self.old_profile = port_wpt.ACTIVE_PORTER_PROFILE
         self.old_emit = port_wpt.EMIT_TEXT_NODES
         self.old_retain = port_wpt.RETAIN_TEXT
+        self.old_modern_line_clamp = port_wpt.MODERN_LINE_CLAMP_ENABLED
         port_wpt.set_porter_profile(port_wpt.PorterProfile.DETERMINISTIC_AHEM)
 
     def tearDown(self):
         port_wpt.ACTIVE_PORTER_PROFILE = self.old_profile
         port_wpt.EMIT_TEXT_NODES = self.old_emit
         port_wpt.RETAIN_TEXT = self.old_retain
+        port_wpt.MODERN_LINE_CLAMP_ENABLED = self.old_modern_line_clamp
 
     def parse(self, css: str, body: str = "<div id='x'>text</div>"):
         temp = tempfile.TemporaryDirectory()
@@ -332,6 +334,58 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
         first = self.generate(css)
         second = self.generate(css)
         self.assertEqual(first, second)
+        self.assertEqual(port_wpt.parse_border_width("4294967295px"), "33554431")
+        self.assertIsNone(port_wpt.parse_border_width("-1px"))
+        imported = self.parse(
+            '@import "/fonts/ahem.css"; body{display:grid;grid-auto-rows:50px}'
+        )
+        self.assertEqual(imported.root.styles["display"], "grid")
+        self.assertEqual(imported.root.styles["grid-auto-rows"], "50px")
+        named_area = self.generate(
+            "#x{display:grid;grid-template-areas:'a';} #y{grid-area:a}",
+            "<div id='x'><div id='y'></div></div>",
+        )
+        self.assertEqual(named_area.count('name: Some("a".to_string())'), 2)
+        single_basis = self.generate(
+            "#x{display:flex} #y{flex:6ch}",
+            "<div id=x><div id=y>text</div></div>",
+        )
+        self.assertIn("style.flex_grow = 1.0", single_basis)
+        self.assertIn("style.flex_shrink = 1.0", single_basis)
+        self.assertIn("style.flex_basis = Length::px(96.0)", single_basis)
+        structural = self.generate(
+            "*:only-of-type{white-space:pre-line;margin-bottom:76%}"
+            "*:last-of-type{float:inline-end}",
+            "<section><main></main><b></b><b></b></section>",
+        )
+        self.assertIn("WhiteSpace::PreLine", structural)
+        self.assertIn("Length::percent(76.0)", structural)
+        self.assertIn("Float::Right", structural)
+        port_wpt.set_modern_line_clamp_enabled(False)
+        disabled_clamp = self.generate(
+            ".modern{line-clamp:1}.legacy{-webkit-line-clamp:2}",
+            "<div class=modern>x</div><div class=legacy>x</div>",
+        )
+        self.assertNotIn("LineClamp::Lines(1)", disabled_clamp)
+        self.assertIn("LineClamp::Lines(2)", disabled_clamp)
+        with tempfile.TemporaryDirectory() as temp:
+            malformed = Path(temp) / "visible-style.html"
+            malformed.write_text(
+                "<!--quirks-->\n<style>body{white-space:pre-line}"
+                "*:last-of-type{display:flow}</style><section>",
+                encoding="utf-8",
+            )
+            parser = port_wpt.parse_wpt_html(str(malformed), root_aware=True)
+            visible_style = port_wpt.generate_rust_fn(
+                "visible_style", parser.root, parser.html_styles, root_aware=True
+            )
+        self.assertIn('text = Some("\\n".to_string())', visible_style)
+        self.assertIn("*:last-of-type{display:flow}", visible_style)
+        control_env = pixel_runner.openui_environment(
+            use_ahem_noaa=True, preserve_subpixel_positioning=True
+        )
+        self.assertEqual(control_env["OPENUI_EDGING"], "alias")
+        self.assertEqual(control_env["OPENUI_SUBPIXEL"], "1")
 
 
 if __name__ == "__main__":

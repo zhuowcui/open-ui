@@ -720,6 +720,10 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         return compute_flex_intrinsic_sizes(doc, node_id, style);
     }
 
+    if style.display.is_grid() {
+        return crate::grid::compute_grid_intrinsic_sizes(doc, node_id);
+    }
+
     if style.display.is_table_wrapper() {
         return crate::table::compute_table_intrinsic_sizes(doc, node_id);
     }
@@ -1448,12 +1452,107 @@ fn compute_flex_intrinsic_sizes(
             }
         }
 
-        // Check for explicit flex-basis
+        // Check for explicit flex-basis. CSS Flexbox 9.9.1 compares the
+        // item's *outer* flex base size with its outer min/max-content
+        // contribution, then moves toward that contribution only when the
+        // corresponding grow/shrink factor permits it. A fixed basis is not
+        // itself the intrinsic contribution, and `min-size:auto` does not
+        // clamp this intrinsic flex-fraction calculation.
         let flex_basis = &child_style.flex_basis;
         let main_contribution_min;
         let main_contribution_max;
 
-        if flex_basis.is_fixed() {
+        if writing_direction.is_horizontal() {
+            let logical_child_border = child_border.to_logical(writing_direction);
+            let logical_child_padding = child_padding.to_logical(writing_direction);
+            let logical_child_margin = child_margin.to_logical(writing_direction);
+            let (main_bp, main_margin) = if is_column {
+                (
+                    logical_child_border.block_sum() + logical_child_padding.block_sum(),
+                    logical_child_margin.block_sum(),
+                )
+            } else {
+                (
+                    logical_child_border.inline_sum() + logical_child_padding.inline_sum(),
+                    logical_child_margin.inline_sum(),
+                )
+            };
+            let to_outer = |length: &Length| {
+                let value = resolve_length(
+                    length,
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                );
+                if child_style.box_sizing == BoxSizing::BorderBox {
+                    value.max_of(main_bp) + main_margin
+                } else {
+                    value + main_bp + main_margin
+                }
+            };
+
+            // Recursive block intrinsic sizing deliberately measures the
+            // contents before the child's preferred size is applied. A
+            // definite preferred main size replaces that axis's content
+            // contribution; otherwise the raw content contribution is used.
+            let (raw_min, raw_max) = if doc.node(child_id).tag == ElementTag::Text {
+                // Anonymous flex text already has its correct min/max-content
+                // pair in `child_sizes`. Re-entering block intrinsic sizing
+                // collapses max-content to the longest word.
+                (main_min, main_max)
+            } else {
+                let raw = compute_intrinsic_block_sizes(doc, child_id);
+                if is_column {
+                    (
+                        raw.min_content_block_size + main_margin,
+                        raw.max_content_block_size + main_margin,
+                    )
+                } else {
+                    (
+                        raw.min_content_inline_size + main_margin,
+                        raw.max_content_inline_size + main_margin,
+                    )
+                }
+            };
+            let preferred = axes.main_size(child_style, is_column);
+            let preferred_outer = preferred.is_fixed().then(|| to_outer(preferred));
+            let flex_grow = child_style.flex_grow.max(0.0);
+            let flex_shrink = child_style.flex_shrink.max(0.0);
+            let target_min = if is_column && flex_basis.is_fixed() {
+                preferred_outer.map_or(raw_min, |size| raw_min.min_of(size))
+            } else {
+                preferred_outer.unwrap_or(raw_min)
+            };
+            let target_max = if is_column && flex_basis.is_fixed() {
+                preferred_outer.map_or(raw_max, |size| raw_max.min_of(size))
+            } else {
+                preferred_outer.unwrap_or(raw_max)
+            };
+            let outer_flex_base = if flex_basis.is_fixed() {
+                to_outer(flex_basis)
+            } else if let Some(preferred) = preferred_outer {
+                preferred
+            } else {
+                raw_max
+            };
+            let flex_toward = |target: LayoutUnit| {
+                if (target > outer_flex_base && flex_grow > 0.0)
+                    || (target < outer_flex_base
+                        && flex_shrink > 0.0
+                        && !(is_column && flex_basis.is_fixed()))
+                {
+                    target
+                } else {
+                    outer_flex_base
+                }
+            };
+            main_contribution_min = if flex_basis.is_auto() {
+                target_min
+            } else {
+                flex_toward(target_min)
+            };
+            main_contribution_max = flex_toward(target_max);
+        } else if flex_basis.is_fixed() {
             let basis = resolve_length(
                 flex_basis,
                 LayoutUnit::zero(),
@@ -1670,7 +1769,14 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
     // For text nodes and inline-level elements, use inline intrinsic sizing.
     // Block-size contribution requires running inline layout at the given
     // width to determine how many lines wrap.
-    let child_intrinsic = if child_tag == ElementTag::Text || is_inline_level(child_style) {
+    let child_intrinsic = if doc.node(child_id).replaced.is_some() || is_replaced_element(child_tag)
+    {
+        // Replaced elements are atomic in both axes even when their computed
+        // outer display is inline-level. Their natural block size therefore
+        // participates in Grid row sizing; treating an inline-block control
+        // as an ordinary inline item incorrectly erases that contribution.
+        compute_replaced_intrinsic_sizes_for_node(doc, child_id)
+    } else if child_tag == ElementTag::Text || is_inline_level(child_style) {
         let inline_sizes = compute_intrinsic_inline_sizes(doc, child_id);
         IntrinsicSizes {
             min_content_inline_size: inline_sizes.min,
@@ -1739,10 +1845,16 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
     // be taller than at max-content width (CSS Sizing 3 §5).
     let min_block_size =
         apply_size_override_block(child_style, child_intrinsic.min_content_block_size);
-    let min_block_size = apply_min_max_block(child_style, min_block_size);
+    let mut min_block_size = apply_min_max_block(child_style, min_block_size);
     let max_block_size =
         apply_size_override_block(child_style, child_intrinsic.max_content_block_size);
-    let max_block_size = apply_min_max_block(child_style, max_block_size);
+    let mut max_block_size = apply_min_max_block(child_style, max_block_size);
+    if child_style.min_height.is_content_or_intrinsic() {
+        if let Some(transferred) = aspect_ratio_block_from_fixed_width(child_style) {
+            min_block_size = min_block_size.max_of(transferred);
+            max_block_size = max_block_size.max_of(transferred);
+        }
+    }
 
     // CSS Sizing 4 §5.1: When height is auto and the element has aspect-ratio,
     // the intrinsic block size is the transferred size from the resolved inline
@@ -1858,6 +1970,18 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
         }
     } else {
         (min_inline, max_inline)
+    };
+
+    let min_inline = if child_style.width.is_auto()
+        && child_style.min_width.is_auto()
+        && child_style.aspect_ratio.is_some()
+        && child_style.is_scroll_container()
+    {
+        // The aspect-ratio reverse-transfer above contributes to max-content,
+        // but a scroll container's automatic minimum contribution is zero.
+        LayoutUnit::zero()
+    } else {
+        min_inline
     };
 
     IntrinsicSizes {
@@ -2401,19 +2525,48 @@ pub fn compute_replaced_intrinsic_sizes_for_node(
 ) -> IntrinsicSizes {
     let node = doc.node(node_id);
     let replaced = node.replaced;
+    let missing_image = node.tag == ElementTag::Image && replaced.is_none();
     let natural_width = replaced
         .and_then(|content| content.intrinsic_width)
-        .unwrap_or(300.0);
+        .unwrap_or(if missing_image { 16.0 } else { 300.0 });
     let natural_height = replaced
         .and_then(|content| content.intrinsic_height)
-        .unwrap_or(150.0);
+        .unwrap_or(if missing_image { 16.0 } else { 150.0 });
     let natural_ratio = replaced.and_then(|content| content.intrinsic_ratio);
-    compute_replaced_intrinsic_sizes_with_natural(
+    let mut sizes = compute_replaced_intrinsic_sizes_with_natural(
         &node.style,
         natural_width,
         natural_height,
         natural_ratio,
-    )
+    );
+    if node.form_control == Some(openui_dom::FormControlRole::Range) {
+        // CSS Sizing 3 §5.2.1: a cyclic percentage preferred size contributes
+        // zero to min-content while the control's natural size remains its
+        // max-content contribution. This distinction is what lets a range
+        // shrink inside a definite wrapper without erasing its auto size.
+        if matches!(
+            node.style.width.length_type(),
+            openui_geometry::LengthType::Percent | openui_geometry::LengthType::Calculated
+        ) {
+            let border = resolve_border(&node.style);
+            let padding = resolve_padding(&node.style, LayoutUnit::zero());
+            sizes.min_content_inline_size = border.inline_sum() + padding.inline_sum();
+        }
+        if matches!(
+            node.style.height.length_type(),
+            openui_geometry::LengthType::Percent | openui_geometry::LengthType::Calculated
+        ) || (node.style.min_height.is_auto()
+            && matches!(
+                node.style.max_height.length_type(),
+                openui_geometry::LengthType::Percent | openui_geometry::LengthType::Calculated
+            ))
+        {
+            let border = resolve_border(&node.style);
+            let padding = resolve_padding(&node.style, LayoutUnit::zero());
+            sizes.min_content_block_size = border.block_sum() + padding.block_sum();
+        }
+    }
+    sizes
 }
 
 fn compute_replaced_intrinsic_sizes_with_natural(
@@ -2577,12 +2730,15 @@ pub fn apply_size_override_inline(style: &ComputedStyle, intrinsic: LayoutUnit) 
         } else {
             raw + bp_val
         }
-    } else if style.width.is_auto() || style.width.is_content_or_intrinsic() {
+    } else if style.width.is_auto()
+        || style.width.is_content_or_intrinsic()
+        || style.width.is_percent()
+    {
         // CSS Sizing 4 §5.1: When width is auto (or an intrinsic keyword like
         // min-content/max-content) and the element has aspect-ratio + definite
         // height, compute width from height × ratio. For intrinsic keywords,
         // the transferred size replaces the content-based intrinsic size.
-        if let Some(ref ar) = style.aspect_ratio {
+        let transferred = if let Some(ref ar) = style.aspect_ratio {
             if style.height.length_type() == openui_geometry::LengthType::Fixed
                 && ar.ratio.0 != 0.0
                 && ar.ratio.1 != 0.0
@@ -2645,6 +2801,14 @@ pub fn apply_size_override_inline(style: &ComputedStyle, intrinsic: LayoutUnit) 
             }
         } else {
             intrinsic
+        };
+        // A cyclic percentage preferred size is treated as auto for
+        // intrinsic sizing. Ratio transfer is one size suggestion, while
+        // descendant content may still establish a larger contribution.
+        if style.width.is_percent() {
+            transferred.max_of(intrinsic)
+        } else {
+            transferred
         }
     } else {
         intrinsic
@@ -2653,6 +2817,24 @@ pub fn apply_size_override_inline(style: &ComputedStyle, intrinsic: LayoutUnit) 
 
 /// If the element has an explicit fixed height, use it (as border-box);
 /// otherwise return the intrinsic value (already border-box).
+fn aspect_ratio_block_from_fixed_width(style: &ComputedStyle) -> Option<LayoutUnit> {
+    let ar = style.aspect_ratio.as_ref()?;
+    if !style.width.is_fixed() || ar.ratio.0 <= 0.0 || ar.ratio.1 <= 0.0 {
+        return None;
+    }
+    let b = resolve_border(style);
+    let p = resolve_padding(style, LayoutUnit::zero());
+    let bp_inline = b.left + b.right + p.left + p.right;
+    let bp_block = b.top + b.bottom + p.top + p.bottom;
+    let width = LayoutUnit::from_f32(style.width.value());
+    let content_width = if style.box_sizing == BoxSizing::BorderBox {
+        (width - bp_inline).clamp_negative_to_zero()
+    } else {
+        width
+    };
+    Some(LayoutUnit::from_f32(content_width.to_f32() * ar.ratio.1 / ar.ratio.0) + bp_block)
+}
+
 fn apply_size_override_block(style: &ComputedStyle, intrinsic: LayoutUnit) -> LayoutUnit {
     if style.height.length_type() == openui_geometry::LengthType::Fixed {
         let raw = LayoutUnit::from_f32(style.height.value());
@@ -2666,33 +2848,10 @@ fn apply_size_override_block(style: &ComputedStyle, intrinsic: LayoutUnit) -> La
         } else {
             raw + bp_val
         }
-    } else if style.height.is_auto() {
+    } else if style.height.is_auto() || style.height.is_content_or_intrinsic() {
         // CSS Sizing 4 §5.1: When height is auto and the element has
         // aspect-ratio + definite width, compute height from width × ratio.
-        if let Some(ref ar) = style.aspect_ratio {
-            if style.width.length_type() == openui_geometry::LengthType::Fixed
-                && ar.ratio.0 != 0.0
-                && ar.ratio.1 != 0.0
-            {
-                let b = resolve_border(style);
-                let p = resolve_padding(style, LayoutUnit::zero());
-                let bp_inline = b.left + b.right + p.left + p.right;
-                let bp_block = b.top + b.bottom + p.top + p.bottom;
-
-                let w_raw = LayoutUnit::from_f32(style.width.value());
-                let content_w = if style.box_sizing == BoxSizing::BorderBox {
-                    (w_raw - bp_inline).clamp_negative_to_zero()
-                } else {
-                    w_raw
-                };
-                let content_h = LayoutUnit::from_f32(content_w.to_f32() * ar.ratio.1 / ar.ratio.0);
-                content_h + bp_block
-            } else {
-                intrinsic
-            }
-        } else {
-            intrinsic
-        }
+        aspect_ratio_block_from_fixed_width(style).unwrap_or(intrinsic)
     } else {
         intrinsic
     }

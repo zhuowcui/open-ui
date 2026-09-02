@@ -180,3 +180,4 @@ zero-space-between-floats-004,not_portable,,uses_javascript
 zero-width-floats,ported,css2_floats_zero_width_floats,
 zero-width-floats-positioning.tentative,ported,css2_floats_zero_width_floats_positioning_tentative,
 crashtests_firefox-bug-1904428,ported,css2_floats_crashtests_firefox_bug_1904428,
+crashtests_firefox-bug-1904419,ported,css2_floats_crashtests_firefox_bug_1904419,

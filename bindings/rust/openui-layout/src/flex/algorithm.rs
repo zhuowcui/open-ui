@@ -5,7 +5,7 @@
 //!
 //! Orchestrates: item collection → line breaking → flexing → alignment → positioning.
 
-use openui_dom::{Document, ElementTag, NodeId};
+use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::Length;
 use openui_geometry::{
     BoxStrut, LayoutUnit, LengthType, LogicalOffset, LogicalSize, MinMaxSizes, PhysicalOffset,
@@ -1143,6 +1143,11 @@ fn resolve_total_block_size(
         } else {
             intrinsic_block_size
         }
+    } else if block_size.is_content_or_intrinsic() && !style.flex_direction.is_column() {
+        // In a row flex container the block axis is the cross axis. Its
+        // intrinsic keyword is resolved from the already flexed line at the
+        // final intrinsic inline size so wrapping feeds back into cross size.
+        intrinsic_block_size
     } else if block_size.is_content_or_intrinsic() {
         let sizes = compute_intrinsic_block_sizes(doc, node_id);
         match block_size.length_type() {
@@ -1447,6 +1452,24 @@ fn flex_box_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
 }
 
 fn flatten_flex_box_children(doc: &Document, parent_id: NodeId, output: &mut Vec<NodeId>) {
+    if doc.node(parent_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup) {
+        fn collect_markers(doc: &Document, origin: NodeId, output: &mut Vec<NodeId>) {
+            for child_id in doc.children(origin) {
+                match doc.node(child_id).pseudo_kind {
+                    Some(PseudoElementKind::ScrollMarker)
+                    | Some(PseudoElementKind::ColumnScrollMarker) => output.push(child_id),
+                    Some(PseudoElementKind::ScrollMarkerGroup) => {}
+                    _ => collect_markers(doc, child_id, output),
+                }
+            }
+        }
+        let origin = doc.node(parent_id).pseudo_origin;
+        if !origin.is_none() {
+            collect_markers(doc, origin, output);
+        }
+        return;
+    }
+
     for child_id in doc.children(parent_id) {
         let child_style = &doc.node(child_id).style;
         if child_style.display == openui_style::Display::Contents
@@ -3127,7 +3150,7 @@ fn resolve_cross_size(
     cross_border_padding: LayoutUnit,
     child_percentage_inline: LayoutUnit,
     child_percentage_block: LayoutUnit,
-    space: &ConstraintSpace,
+    _space: &ConstraintSpace,
 ) -> LayoutUnit {
     let (cross_prop, pct_base) = if is_main_axis_horizontal {
         (&child_style.height, child_percentage_block)
@@ -3255,26 +3278,15 @@ fn resolve_cross_size(
         // Auto cross size → lay out child to get intrinsic size.
         // For row flex: we know the inline size (main axis), need intrinsic block (cross).
         // For column flex: we know the block size (main axis), need intrinsic inline (cross).
-        let (available_inline, available_block) = if is_main_axis_horizontal {
-            (
-                item.flexed_border_box_size(), // known inline size (main axis)
-                LayoutUnit::from_raw(-64),     // indefinite block to find intrinsic height
-            )
-        } else {
-            (
-                LayoutUnit::from_raw(-64),     // indefinite inline to find intrinsic width
-                item.flexed_border_box_size(), // known block size (main axis)
-            )
-        };
-        let child_space = crate::block_child_constraint_space(
-            space,
-            child_style,
-            available_inline,
-            available_block,
+        let axis_mapping =
+            FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal);
+        let mut child_space = axis_mapping.child_space(
+            item.flexed_border_box_size(),
+            LayoutUnit::from_raw(-64),
             child_percentage_inline,
             child_percentage_block,
-            true,
         );
+        axis_mapping.set_main_fixed(&mut child_space);
 
         let child_fragment = layout_flex_item(doc, item.node_id, &child_space);
         let cross_size = if is_main_axis_horizontal {
@@ -3286,20 +3298,15 @@ fn resolve_cross_size(
         (cross_size - cross_border_padding).clamp_negative_to_zero()
     } else {
         // Intrinsic keyword or other non-auto, non-fixed cross size
-        let (available_inline, available_block) = if is_main_axis_horizontal {
-            (item.flexed_border_box_size(), LayoutUnit::from_raw(-64))
-        } else {
-            (LayoutUnit::from_raw(-64), item.flexed_border_box_size())
-        };
-        let child_space = crate::block_child_constraint_space(
-            space,
-            child_style,
-            available_inline,
-            available_block,
+        let axis_mapping =
+            FlexItemAxisMapping::new(child_style, is_column, is_main_axis_horizontal);
+        let mut child_space = axis_mapping.child_space(
+            item.flexed_border_box_size(),
+            LayoutUnit::from_raw(-64),
             child_percentage_inline,
             child_percentage_block,
-            true,
         );
+        axis_mapping.set_main_fixed(&mut child_space);
 
         let child_fragment = layout_flex_item(doc, item.node_id, &child_space);
         let cross_size = if is_main_axis_horizontal {
@@ -3761,6 +3768,17 @@ fn give_items_final_position(
             }
 
             let mut child_fragment = layout_flex_item(doc, item.node_id, &child_space);
+
+            if doc.node(item.node_id).replaced.is_some() {
+                // Replaced flex items still resolve their authored preferred
+                // size during their own layout, but the post-flexing main
+                // size is authoritative at the flex-item boundary.
+                if is_main_axis_horizontal {
+                    child_fragment.size.width = final_main;
+                } else {
+                    child_fragment.size.height = final_main;
+                }
+            }
 
             // For an externally fixed cross-size, project the resolved pair at
             // the flex boundary. An automatic cross-size must retain the size

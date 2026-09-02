@@ -25,8 +25,8 @@ balance-break-avoidance-001,ported,css_multicol_balance_break_avoidance_001,
 balance-break-avoidance-002,ported,css_multicol_balance_break_avoidance_002,
 balance-extremely-tall-monolithic-content-crash,not_portable,,unsupported property: contain
 balance-grid-001,not_portable,,uses_javascript
-balance-grid-container,not_portable,,style_block_unsupported property: grid-template-columns
-balance-grid-container-ref,not_portable,,style_block_unsupported property: grid-template-columns
+balance-grid-container,ported,css_multicol_balance_grid_container,
+balance-grid-container-ref,ported,css_multicol_balance_grid_container_ref,
 balance-orphans-widows-000,ported,css_multicol_balance_orphans_widows_000,
 baseline-000,ported,css_multicol_baseline_000,
 baseline-000-ref,ported,css_multicol_baseline_000_ref,
@@ -248,7 +248,7 @@ multicol-dynamic-add-001-ref,ported,css_multicol_multicol_dynamic_add_001_ref,
 multicol-dynamic-add-002,not_portable,,uses_javascript
 multicol-dynamic-add-002-ref,ported,css_multicol_multicol_dynamic_add_002_ref,
 multicol-dynamic-add-003,not_portable,,uses_javascript
-multicol-dynamic-add-003-ref,not_portable,,style_block_unsupported property: grid
+multicol-dynamic-add-003-ref,ported,css_multicol_multicol_dynamic_add_003_ref,
 multicol-dynamic-add-004,not_portable,,uses_javascript
 multicol-dynamic-add-004-ref,ported,css_multicol_multicol_dynamic_add_004_ref,
 multicol-dynamic-change-inside-break-inside-avoid-001,not_portable,,uses_javascript
@@ -647,7 +647,7 @@ multicol-width-004-ref,ported,css_multicol_multicol_width_004_ref,
 multicol-width-005,ported,css_multicol_multicol_width_005,
 multicol-width-005-ref,ported,css_multicol_multicol_width_005_ref,
 multicol-width-ch-001,ported,css_multicol_multicol_width_ch_001,
-multicol-width-ch-ref,not_portable,,style_block_unsupported property: grid-template-columns
+multicol-width-ch-ref,ported,css_multicol_multicol_width_ch_ref,
 multicol-width-count-001,ported,css_multicol_multicol_width_count_001,
 multicol-width-count-002,ported,css_multicol_multicol_width_count_002,
 multicol-width-invalid-001,ported,css_multicol_multicol_width_invalid_001,
@@ -801,3 +801,4 @@ crashtests_nested-with-multicol-table-cell,ported,css_multicol_crashtests_nested
 crashtests_repeated-table-footer-in-caption-nested-multicol,ported,css_multicol_crashtests_repeated_table_footer_in_caption_nested_multicol,
 crashtests_scrollable-spanner-in-nested,ported,css_multicol_crashtests_scrollable_spanner_in_nested,
 crashtests_table-caption-in-clipped-overflow,ported,css_multicol_crashtests_table_caption_in_clipped_overflow,
+crashtests_as-baseline-aligned-grid-item,ported,css_multicol_crashtests_as_baseline_aligned_grid_item,

@@ -10,7 +10,7 @@
 //! - Forced breaks (`<br>` via ElementTag convention)
 //! - Text shaping via openui-text
 
-use openui_dom::{Document, ElementTag, NodeId};
+use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::WritingDirectionMode;
 use openui_style::{
     ComputedStyle, Direction, Display, Float, FontFamily, TabSize, TextTransform, UnicodeBidi,
@@ -813,6 +813,16 @@ impl<'a> InlineItemsBuilder<'a> {
     /// Process a single child node into inline items.
     fn collect_single_child(&mut self, child_id: NodeId) {
         let node = self.doc.node(child_id);
+
+        // Scroll markers live in the external marker-group formatting tree.
+        // Their DOM attachment records origin/order only; the originating
+        // element must not also lay them out as principal inline content.
+        if matches!(
+            node.pseudo_kind,
+            Some(PseudoElementKind::ScrollMarker) | Some(PseudoElementKind::ColumnScrollMarker)
+        ) {
+            return;
+        }
 
         // display:none generates no boxes at all.
         if node.style.display == Display::None {

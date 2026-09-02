@@ -24,12 +24,15 @@ class Sp18ClosureTests(unittest.TestCase):
         self.old_profile = port_wpt.ACTIVE_PORTER_PROFILE
         self.old_emit = port_wpt.EMIT_TEXT_NODES
         self.old_retain = port_wpt.RETAIN_TEXT
+        self.old_modern_line_clamp = port_wpt.MODERN_LINE_CLAMP_ENABLED
         port_wpt.set_porter_profile(port_wpt.PorterProfile.DETERMINISTIC_AHEM)
+        port_wpt.set_modern_line_clamp_enabled(True)
 
     def tearDown(self):
         port_wpt.ACTIVE_PORTER_PROFILE = self.old_profile
         port_wpt.EMIT_TEXT_NODES = self.old_emit
         port_wpt.RETAIN_TEXT = self.old_retain
+        port_wpt.MODERN_LINE_CLAMP_ENABLED = self.old_modern_line_clamp
 
     def generate(self, css: str, body: str = "<div id='x'>text</div>") -> str:
         with tempfile.TemporaryDirectory() as temp:
@@ -150,7 +153,9 @@ class Sp18ClosureTests(unittest.TestCase):
         sample = [targets[0], targets[-1]]
         mapping = splice_text_port.load_mapping_rows()
         first = splice_text_port.prepare_changes(sample, mapping)
+        self.assertTrue(port_wpt.MODERN_LINE_CLAMP_ENABLED)
         second = splice_text_port.prepare_changes(sample, mapping)
+        self.assertTrue(port_wpt.MODERN_LINE_CLAMP_ENABLED)
         self.assertEqual(first, second)
 
     def test_closure_validator_is_deterministic_twice(self):

@@ -2280,6 +2280,36 @@ fn resolve_atomic_inline_size(
                 LayoutUnit::zero()
             }
         }
+        LengthType::MinContent | LengthType::MaxContent | LengthType::FitContent => {
+            let intrinsic = intrinsic_inline_size
+                .map(|(min_size, max_size)| {
+                    let min_size = LayoutUnit::from_f32(min_size);
+                    let max_size = LayoutUnit::from_f32(max_size);
+                    if style.display.is_flex() {
+                        (min_size, max_size)
+                    } else {
+                        (min_size + border_padding, max_size + border_padding)
+                    }
+                })
+                .unwrap_or((border_padding, border_padding));
+            match size.length_type() {
+                LengthType::MinContent => intrinsic.0,
+                LengthType::MaxContent => intrinsic.1,
+                LengthType::FitContent => {
+                    let available = if containing_block_width > LayoutUnit::zero() {
+                        containing_block_width
+                    } else {
+                        intrinsic.1
+                    };
+                    crate::intrinsic_sizing::shrink_to_fit_inline_size(
+                        intrinsic.0,
+                        intrinsic.1,
+                        available,
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
         // Auto: use intrinsic size (shrink-to-fit), then min-width as floor, then zero.
         // Flex intrinsic sizing already returns border-box sizes; the recursive
         // non-flex atomic intrinsic helper returns content-box sizes.
@@ -2343,6 +2373,32 @@ fn resolve_atomic_inline_size(
             };
             result
         }
+    };
+
+    // Min/max constraints apply after resolving every preferred-size form,
+    // including intrinsic keywords. Keeping this floor only in the `auto`
+    // branch made the principal box disagree with the space reserved for it.
+    let base = match min_size.length_type() {
+        LengthType::Fixed => {
+            let min = LayoutUnit::from_f32(min_size.value());
+            let min = if style.box_sizing == BoxSizing::ContentBox {
+                min + border_padding
+            } else {
+                min
+            };
+            base.max_of(min)
+        }
+        LengthType::Percent if containing_block_width > LayoutUnit::zero() => {
+            let min =
+                LayoutUnit::from_f32(min_size.value() / 100.0 * containing_block_width.to_f32());
+            let min = if style.box_sizing == BoxSizing::ContentBox {
+                min + border_padding
+            } else {
+                min
+            };
+            base.max_of(min)
+        }
+        _ => base,
     };
 
     // Clamp to max-width if specified.

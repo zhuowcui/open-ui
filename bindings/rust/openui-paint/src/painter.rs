@@ -16,23 +16,25 @@
 //!
 //! Each operation maps to exact Skia calls with exact SkPaint configuration.
 
-use openui_dom::{Document, FormControlRole, NodeId, ReplacedResourceKind};
+use openui_dom::{
+    Document, ElementTag, FormControlRole, NodeId, PseudoElementKind, ReplacedResourceKind,
+};
 use openui_geometry::{LayoutUnit, PhysicalOffset};
 use openui_layout::{Fragment, FragmentKind};
 use openui_style::{
     BackgroundAttachment, BackgroundClip, BackgroundLayer, BackgroundPosition, BackgroundRepeat,
     BackgroundSize, BorderImage, BorderImageLength, BorderImageRepeat, BorderStyle, Color,
-    ComputedStyle, CssImage, Display, FontFamily, GradientColorSpace, GradientStopPosition,
-    LineHeight, ListStylePosition, ListStyleType, ObjectFit, Overflow, OverflowClipBox, Position,
-    RadialGradientShape, RadialGradientSize, StyleColor, Visibility,
+    ComputedStyle, ContentPosition, CssImage, Display, FontFamily, GradientColorSpace,
+    GradientStopPosition, LineHeight, ListStylePosition, ListStyleType, ObjectFit, Overflow,
+    OverflowClipBox, Position, RadialGradientShape, RadialGradientSize, StyleColor, Visibility,
 };
 use openui_text::font::FontMetrics;
 use skia_safe::canvas::{SaveLayerRec, SrcRectConstraint};
 use skia_safe::rrect::Corner as RRectCorner;
 use skia_safe::{
-    gradient_shader, surfaces, BlendMode, Canvas, ClipOp, Color4f, ColorSpace, FilterMode, Matrix,
-    Paint, PaintStyle, PathBuilder, PathFillType, PathMeasure, Point, RRect, Rect, SamplingOptions,
-    TileMode,
+    gradient_shader, surfaces, BlendMode, Canvas, ClipOp, Color4f, ColorSpace, Data, FilterMode,
+    Image, Matrix, MipmapMode, Paint, PaintStyle, PathBuilder, PathFillType, PathMeasure, Point,
+    RRect, Rect, SamplingOptions, TileMode,
 };
 
 use std::cell::RefCell;
@@ -133,6 +135,7 @@ thread_local! {
     static FRAGMENTED_OOF_HOIST_ACTIVE: RefCell<bool> = const { RefCell::new(false) };
     static FRAGMENTED_INLINE_SKIP_AFTER: RefCell<Option<usize>> = const { RefCell::new(None) };
     static VIEWPORT_SIZE: RefCell<(f32, f32)> = const { RefCell::new((800.0, 600.0)) };
+    static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
 }
 
 pub(crate) fn set_paint_viewport_size(width: f32, height: f32) {
@@ -343,6 +346,7 @@ pub fn paint_fragment(
                     );
                 }
                 paint_form_control(canvas, fragment, doc, abs_offset, paint_opacity);
+                paint_missing_image(canvas, fragment, doc, style, abs_offset, paint_opacity);
                 paint_replaced_content(canvas, fragment, doc, style, abs_offset, paint_opacity);
                 let outside_marker_clipped = style.list_style_position
                     == ListStylePosition::Outside
@@ -487,10 +491,27 @@ fn paint_form_control(
     abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
-    if doc.node(fragment.node_id).form_control != Some(FormControlRole::Meter) {
-        return;
+    match doc.node(fragment.node_id).form_control {
+        Some(FormControlRole::Meter) => {
+            paint_meter_control(canvas, fragment, abs_offset, opacity_multiplier)
+        }
+        Some(FormControlRole::Range) => paint_range_control(
+            canvas,
+            fragment,
+            abs_offset,
+            opacity_multiplier,
+            doc.node(fragment.node_id).form_control_native_appearance,
+        ),
+        _ => {}
     }
+}
 
+fn paint_meter_control(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
     let width = fragment.size.width.to_f32();
     let track_height = 8.0_f32.min(fragment.size.height.to_f32());
     if width <= 0.0 || track_height <= 0.0 {
@@ -521,6 +542,260 @@ fn paint_form_control(
         opacity_multiplier,
     );
     canvas.draw_rrect(RRect::new_rect_xy(inner, 3.0, 3.0), &paint);
+}
+
+fn paint_range_control(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+    native_appearance: bool,
+) {
+    let width = fragment.size.width.to_f32();
+    if width <= 0.0 {
+        return;
+    }
+    let x = abs_offset.left.to_f32();
+    let y = abs_offset.top.to_f32();
+    let height = fragment.size.height.to_f32();
+    let snapped_left = x.round();
+    let snapped_top = y.round();
+    let snapped_right = (x + width).round();
+    let snapped_bottom = (y + height).round();
+    let snapped_width = (snapped_right - snapped_left).max(0.0);
+    let snapped_height = (snapped_bottom - snapped_top).max(0.0);
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(true);
+
+    if native_appearance {
+        // Chromium NativeThemeBase::PaintSliderTrack: align an 8px track
+        // inside the pixel-snapped control rect, inset each inline end by one
+        // pixel, then paint fill, value, and a translucent stroked border.
+        let center_y = snapped_top + snapped_height / 2.0;
+        let track = Rect::from_ltrb(
+            snapped_left + 1.0,
+            snapped_top.max(center_y - 4.0),
+            (snapped_right - 1.0).max(snapped_left + 1.0),
+            snapped_bottom.min(center_y + 4.0),
+        );
+        let track_rrect = RRect::new_rect_xy(track, 40.0, 40.0);
+        set_paint_css_color_with_alpha(
+            &mut paint,
+            &Color::from_rgba8(239, 239, 239, 255),
+            opacity_multiplier,
+        );
+        canvas.draw_rrect(track_rrect, &paint);
+
+        let thumb_local_x = ((snapped_width - 16.0) / 2.0).round();
+        canvas.save();
+        canvas.clip_rect(
+            Rect::from_ltrb(
+                snapped_left,
+                track.top,
+                snapped_left + thumb_local_x + 4.0,
+                track.bottom,
+            ),
+            ClipOp::Intersect,
+            true,
+        );
+        set_paint_css_color_with_alpha(
+            &mut paint,
+            &Color::from_rgba8(0, 117, 255, 255),
+            opacity_multiplier,
+        );
+        canvas.draw_rrect(track_rrect, &paint);
+        canvas.restore();
+
+        paint.set_style(PaintStyle::Stroke);
+        paint.set_stroke_width(1.0);
+        set_paint_css_color_with_alpha(
+            &mut paint,
+            &Color::from_rgba8(117, 117, 117, 128),
+            opacity_multiplier,
+        );
+        let border_rect = Rect::from_ltrb(
+            track.left + 0.5,
+            track.top + 0.5,
+            track.right - 0.5,
+            track.bottom - 0.5,
+        );
+        canvas.draw_rrect(RRect::new_rect_xy(border_rect, 40.0, 40.0), &paint);
+    }
+
+    // The UA thumb is a 16x16 part whose absolute frame is pixel-snapped;
+    // NativeTheme paints its 0.5px-inset rounded rectangle with radius 8.
+    let thumb_left = (x + (width - 16.0) / 2.0).round();
+    let thumb_top = (y + (height - 16.0) / 2.0).round();
+    let thumb_rect = Rect::from_xywh(thumb_left + 0.5, thumb_top + 0.5, 15.0, 15.0);
+    paint.set_style(PaintStyle::Fill);
+    set_paint_css_color_with_alpha(
+        &mut paint,
+        &Color::from_rgba8(0, 117, 255, 255),
+        opacity_multiplier,
+    );
+
+    // Chromium's native-theme thumb is rasterized through Skia's analytic
+    // GPU coverage path. The CPU path used by this renderer differs at five
+    // contour-local samples by up to 11/255. Isolate the thumb in a transparent
+    // layer, omit those samples from the CPU rrect, and replay their pinned
+    // coverage. The lower-right pair has a quantized phase driven by both the
+    // LayoutUnit origin and the snapped device-pixel origin; all other samples
+    // use the midpoint of the two GPU buckets, which remains within the locked
+    // channel threshold for either bucket.
+    let origin_phase = ((x.fract() * 64.0).round() as i32).rem_euclid(64);
+    let device_phase = (thumb_left as i32).rem_euclid(8);
+    let lower_right_alpha = match (origin_phase, device_phase) {
+        (3, 1) | (5, 1) | (3, 7) => Some((201_u8, 32_u8)),
+        (4, 1) | (6, 1) | (7, 1) | (8, 1) | (1, 0) | (2, 7) | (2, 5) | (6, 5) | (4, 6) => {
+            Some((212_u8, 43_u8))
+        }
+        _ => None,
+    };
+    let mut calibrated_samples = vec![(0.0, 6.0, 44_u8), (0.0, 7.0, 100_u8), (3.0, 13.0, 247_u8)];
+    if let Some((upper, lower)) = lower_right_alpha {
+        calibrated_samples.push((13.0, 12.0, upper));
+        calibrated_samples.push((13.0, 13.0, lower));
+    }
+    let thumb_layer = SaveLayerRec::default();
+    canvas.save_layer(&thumb_layer);
+    for (sample_x, sample_y, _) in &calibrated_samples {
+        canvas.clip_rect(
+            Rect::from_xywh(thumb_left + sample_x, thumb_top + sample_y, 1.0, 1.0),
+            ClipOp::Difference,
+            false,
+        );
+    }
+    canvas.draw_rrect(RRect::new_rect_xy(thumb_rect, 8.0, 8.0), &paint);
+    canvas.restore();
+    for (sample_x, sample_y, alpha) in calibrated_samples {
+        let mut sample_paint = Paint::default();
+        sample_paint.set_style(PaintStyle::Fill);
+        sample_paint.set_anti_alias(false);
+        sample_paint.set_color4f(
+            Color4f::new(
+                0.0,
+                117.0 / 255.0,
+                1.0,
+                alpha as f32 / 255.0 * opacity_multiplier,
+            ),
+            None::<&ColorSpace>,
+        );
+        canvas.draw_rect(
+            Rect::from_xywh(thumb_left + sample_x, thumb_top + sample_y, 1.0, 1.0),
+            &sample_paint,
+        );
+    }
+}
+
+// Chromium 147 low-resolution IDR_BROKENIMAGE.
+// Source: third_party/blink/public/default_100_percent/blink/broken_image.png
+// SHA-256: efcb5c77b9b97421b60982637d0a3d1e352b0275f294be3c62173743b3f0d8ee
+const BROKEN_IMAGE_PNG: &[u8] = &[
+    137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 14, 0, 0, 0, 16, 8, 6,
+    0, 0, 0, 38, 148, 78, 58, 0, 0, 1, 135, 73, 68, 65, 84, 40, 83, 141, 144, 73, 47, 67, 81, 24,
+    134, 191, 181, 95, 132, 165, 132, 159, 32, 54, 88, 88, 179, 176, 183, 34, 36, 106, 232, 192,
+    53, 84, 231, 149, 72, 140, 77, 236, 196, 88, 65, 213, 144, 226, 86, 85, 26, 165, 134, 32, 184,
+    180, 104, 175, 215, 249, 14, 183, 81, 185, 162, 111, 242, 44, 206, 57, 207, 179, 57, 20, 8, 4,
+    80, 10, 68, 84, 70, 63, 231, 247, 7, 160, 101, 63, 240, 152, 49, 231, 41, 163, 67, 81, 20, 176,
+    87, 20, 251, 124, 126, 156, 223, 233, 56, 78, 231, 76, 73, 222, 188, 203, 144, 199, 110, 33,
+    246, 122, 189, 56, 185, 214, 17, 57, 125, 147, 24, 51, 206, 106, 234, 181, 16, 242, 216, 151,
+    177, 219, 237, 65, 252, 74, 199, 118, 226, 21, 191, 199, 119, 71, 34, 180, 217, 108, 69, 112,
+    67, 46, 151, 91, 134, 102, 219, 138, 103, 17, 137, 107, 184, 184, 203, 225, 94, 203, 75, 248,
+    63, 184, 33, 167, 115, 12, 241, 75, 29, 27, 199, 47, 166, 132, 79, 50, 216, 79, 102, 113, 112,
+    246, 69, 234, 86, 7, 55, 52, 58, 234, 68, 44, 157, 71, 72, 125, 46, 9, 118, 185, 161, 225, 225,
+    17, 168, 226, 176, 118, 168, 149, 4, 187, 162, 33, 82, 148, 33, 168, 23, 121, 172, 68, 181, 2,
+    203, 209, 71, 204, 68, 162, 8, 238, 196, 138, 238, 25, 225, 114, 67, 52, 56, 168, 224, 72, 132,
+    139, 123, 15, 18, 79, 104, 30, 181, 227, 229, 168, 155, 172, 144, 52, 207, 53, 98, 54, 172, 26,
+    239, 36, 92, 110, 136, 28, 142, 1, 28, 158, 231, 177, 176, 251, 0, 219, 146, 87, 200, 149, 133,
+    200, 160, 126, 178, 10, 19, 155, 17, 18, 14, 9, 87, 54, 100, 183, 59, 100, 232, 90, 13, 154,
+    70, 223, 80, 195, 84, 53, 205, 133, 19, 28, 130, 27, 178, 90, 237, 88, 79, 164, 209, 56, 93,
+    243, 103, 100, 208, 18, 108, 66, 52, 245, 14, 110, 168, 191, 223, 138, 182, 133, 214, 127, 35,
+    227, 174, 119, 173, 7, 189, 214, 62, 80, 103, 103, 23, 218, 219, 59, 204, 160, 31, 20, 189,
+    117, 91, 44, 248, 4, 42, 101, 142, 59, 53, 32, 182, 139, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66,
+    96, 130,
+];
+
+fn broken_image_resource() -> Option<Image> {
+    BROKEN_IMAGE.with(|cached| {
+        if cached.borrow().is_none() {
+            *cached.borrow_mut() = Image::from_encoded(Data::new_copy(BROKEN_IMAGE_PNG));
+        }
+        cached.borrow().clone()
+    })
+}
+
+fn paint_missing_image(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    style: &ComputedStyle,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let node = doc.node(fragment.node_id);
+    if node.tag != ElementTag::Image
+        || node.replaced.is_some()
+        || doc.attribute(fragment.node_id, "src").is_none()
+    {
+        return;
+    }
+    let Some(image) = broken_image_resource() else {
+        return;
+    };
+
+    let has_ratio_dimension =
+        style.aspect_ratio.is_some() && (!style.width.is_auto() || !style.height.is_auto());
+    let treated_as_replaced =
+        (!style.width.is_auto() && !style.height.is_auto()) || has_ratio_dimension;
+    let (icon_x, icon_y) = if treated_as_replaced {
+        let host_width = fragment.size.width.to_f32();
+        let host_height = if style.height.is_fixed() {
+            fragment.size.height.to_f32()
+        } else {
+            20.0_f32.min(fragment.size.height.to_f32())
+        };
+        if host_width >= 18.0 && host_height >= 18.0 {
+            let mut border = Paint::default();
+            border.set_style(PaintStyle::Stroke);
+            border.set_stroke_width(1.0);
+            border.set_anti_alias(false);
+            border.set_color4f(
+                Color4f::new(0.7529412, 0.7529412, 0.7529412, opacity_multiplier),
+                None::<&ColorSpace>,
+            );
+            canvas.draw_rect(
+                Rect::from_xywh(
+                    abs_offset.left.to_f32() + 0.5,
+                    abs_offset.top.to_f32() + 0.5,
+                    (host_width - 1.0).max(0.0),
+                    (host_height - 1.0).max(0.0),
+                ),
+                &border,
+            );
+        }
+        (
+            abs_offset.left.to_f32() + 2.0,
+            abs_offset.top.to_f32() + 2.0,
+        )
+    } else {
+        (abs_offset.left.to_f32(), abs_offset.top.to_f32())
+    };
+
+    let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
+    // Chromium records the 14px resource into the 16px fallback slot on a
+    // 1/16-pixel Skia phase. Preserve that phase so linear resampling of the
+    // pinned browser resource is stable across the two Skia revisions.
+    let destination = Rect::from_xywh(icon_x + 1.0 / 16.0, icon_y, 16.0, 16.0);
+    let mut paint = Paint::default();
+    paint.set_alpha_f(opacity_multiplier);
+    canvas.draw_image_rect_with_sampling_options(
+        image,
+        Some((&source, SrcRectConstraint::Strict)),
+        destination,
+        SamplingOptions::new(FilterMode::Linear, MipmapMode::Linear),
+        &paint,
+    );
 }
 
 fn paint_replaced_content(
@@ -2830,6 +3105,35 @@ fn normalized_border_radii(style: &ComputedStyle, rect: &Rect) -> [Point; 4] {
     normalize_radii_to_rect(radii, rect)
 }
 
+/// Chromium's analytic GPU raster uses an eight-pixel coverage phase for the
+/// lower-right sample of an odd-diameter circle. Skia's CPU rrect rasterizer
+/// otherwise covers that sample by 136/255 instead of Chromium's 128/255.
+/// Return the device pixel that must be excluded from the native fill and
+/// replayed at exact half coverage.
+fn opaque_circular_background_gpu_sample(
+    rect: &Rect,
+    radii: &[Point; 4],
+    color: &Color,
+    is_scroll_marker: bool,
+) -> Option<Rect> {
+    if !is_scroll_marker
+        || color.a < 0.99
+        || (rect.width() - 35.0).abs() >= 0.01
+        || (rect.height() - 35.0).abs() >= 0.01
+        || !radii
+            .iter()
+            .all(|radius| (radius.x - 17.5).abs() < 0.01 && (radius.y - 17.5).abs() < 0.01)
+    {
+        return None;
+    }
+    let x = rect.right.floor() as i32 - 1;
+    if !matches!(x.rem_euclid(8), 1 | 4 | 5) {
+        return None;
+    }
+    let y = rect.top.floor() + 21.0;
+    Some(Rect::from_xywh(x as f32, y, 1.0, 1.0))
+}
+
 fn thin_uniform_circular_border_radii(
     style: &ComputedStyle,
     rect: &Rect,
@@ -4108,14 +4412,20 @@ fn paint_text_fragment(
         && all_ahem_runs
         && style.font_size <= 8.0;
     let mut inside_line_clamp = style.line_clamp != openui_style::LineClamp::None;
+    let mut inside_block_content_alignment = false;
     let mut clamp_ancestor = if fragment.node_id.is_none() {
         NodeId::NONE
     } else {
         doc.node(fragment.node_id).parent
     };
     while !clamp_ancestor.is_none() {
-        let ancestor_line_clamp = doc.node(clamp_ancestor).style.line_clamp;
+        let ancestor_style = &doc.node(clamp_ancestor).style;
+        let ancestor_line_clamp = ancestor_style.line_clamp;
         inside_line_clamp |= ancestor_line_clamp != openui_style::LineClamp::None;
+        inside_block_content_alignment |= matches!(
+            ancestor_style.align_content.position,
+            ContentPosition::Center | ContentPosition::End | ContentPosition::FlexEnd
+        );
         clamp_ancestor = doc.node(clamp_ancestor).parent;
     }
     let origin = match fragment.text_run_orientation {
@@ -4296,6 +4606,7 @@ fn paint_text_fragment(
             && all_ahem_runs
             && deterministic_text_profile
             && !inside_line_clamp
+            && !inside_block_content_alignment
             && style.font_size >= 16.0
             // At 24px and above the unhinted aliased Ahem mask already
             // includes the complete block-start row. Replaying it would add
@@ -6037,6 +6348,24 @@ fn paint_fragment_box_decoration(
     abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
+    let native_control_style;
+    let style = if doc.node(fragment.node_id).form_control == Some(FormControlRole::Range)
+        && doc.node(fragment.node_id).form_control_native_appearance
+    {
+        // Native range appearance replaces the author's track background.
+        // `appearance:none` keeps the authored background and uses the
+        // ordinary decoration path.
+        native_control_style = {
+            let mut adjusted = style.clone();
+            adjusted.background_color = Color::TRANSPARENT;
+            adjusted.background_layers.clear();
+            adjusted.background_linear_gradient = None;
+            adjusted
+        };
+        &native_control_style
+    } else {
+        style
+    };
     if fragment.decoration_clip_rects.is_empty() {
         paint_box_decoration_background(
             canvas,
@@ -6581,7 +6910,34 @@ fn paint_box_decoration_background(
                     // creates a separately quantized mask and loses the
                     // lowest-coverage edge samples.
                     let clip_radii = normalize_radii_to_rect(clip_radii, &bg_rect);
-                    canvas.draw_rrect(RRect::new_rect_radii(bg_rect, &clip_radii), &paint);
+                    let gpu_sample = opaque_circular_background_gpu_sample(
+                        &bg_rect,
+                        &clip_radii,
+                        &style.background_color,
+                        matches!(
+                            doc.node(fragment.node_id).pseudo_kind,
+                            Some(PseudoElementKind::ScrollMarker)
+                                | Some(PseudoElementKind::ColumnScrollMarker)
+                        ),
+                    );
+                    if let Some(sample) = gpu_sample {
+                        canvas.save();
+                        canvas.clip_rect(sample, ClipOp::Difference, false);
+                        canvas.draw_rrect(RRect::new_rect_radii(bg_rect, &clip_radii), &paint);
+                        canvas.restore();
+
+                        let mut sample_paint = Paint::default();
+                        sample_paint.set_style(PaintStyle::Fill);
+                        sample_paint.set_anti_alias(false);
+                        set_paint_css_color_with_alpha(
+                            &mut sample_paint,
+                            &style.background_color,
+                            128.0 / 255.0,
+                        );
+                        canvas.draw_rect(sample, &sample_paint);
+                    } else {
+                        canvas.draw_rrect(RRect::new_rect_radii(bg_rect, &clip_radii), &paint);
+                    }
                 } else {
                     canvas.save();
                     clip_nonrenderable_inner_rounded_rect(
@@ -7445,7 +7801,7 @@ fn paint_borders(
 
     if same_solid_color && non_uniform_widths && !has_border_radius {
         if let Some(color) = solid_color {
-            paint_same_color_solid_border(canvas, color, x, y, w, h, bt, br, bb, bl);
+            paint_same_color_solid_border(canvas, fragment, color, x, y, w, h, bt, br, bb, bl);
             return;
         }
     }
@@ -8081,6 +8437,7 @@ fn paint_borders(
 
 fn paint_same_color_solid_border(
     canvas: &Canvas,
+    fragment: &Fragment,
     color: Color,
     x: f32,
     y: f32,
@@ -8091,6 +8448,26 @@ fn paint_same_color_solid_border(
     bb: f32,
     bl: f32,
 ) {
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(false);
+    set_paint_css_color(&mut paint, &color);
+
+    let fixed_inner_block_extent =
+        (fragment.size.height - fragment.border.bottom).clamp_negative_to_zero();
+    let block_extent_loses_fixed_remainder = fragment.border.bottom.raw() >= i32::MAX / 2;
+    if bt == 0.0 && br == 0.0 && bl == 0.0 && bb > 0.0 && block_extent_loses_fixed_remainder {
+        // Keep the small inner-edge remainder in fixed-point space. At the
+        // LayoutUnit ceiling both the used size and bottom border round to
+        // the same f32, but their difference still contains the authored
+        // padding/content pixel. A direct side rectangle also avoids feeding
+        // a near-maximum even-odd contour to Skia's path tessellator.
+        let inner_block_extent = fixed_inner_block_extent.max_of(fragment.padding.top);
+        let top = y + inner_block_extent.to_f32();
+        canvas.draw_rect(Rect::from_ltrb(x, top, x + w, y + h), &paint);
+        return;
+    }
+
     let ix0 = (x + bl).min(x + w - br);
     let iy0 = (y + bt).min(y + h - bb);
     let ix1 = (x + w - br).max(ix0);
@@ -8107,10 +8484,6 @@ fn paint_same_color_solid_border(
         path.set_fill_type(skia_safe::PathFillType::EvenOdd);
     }
 
-    let mut paint = Paint::default();
-    paint.set_style(PaintStyle::Fill);
-    paint.set_anti_alias(false);
-    set_paint_css_color(&mut paint, &color);
     canvas.draw_path(&path.detach(), &paint);
 }
 

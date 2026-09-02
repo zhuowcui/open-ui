@@ -122,15 +122,15 @@ box-decoration-break-clone-022,ported,css_break_box_decoration_break_clone_022,
 box-decoration-break-clone-023,not_portable,,unsupported property: contain
 box-decoration-break-clone-024,not_portable,,unsupported element: <fieldset>
 box-decoration-break-clone-025,not_portable,,unsupported element: <fieldset>
-box-decoration-break-clone-026,not_portable,,unsupported display: grid
-box-decoration-break-clone-027,not_portable,,unsupported display: grid
-box-decoration-break-clone-028,not_portable,,unsupported display: grid
-box-decoration-break-clone-029,not_portable,,unsupported display: grid
-box-decoration-break-clone-030,not_portable,,unsupported display: grid
-box-decoration-break-clone-031,not_portable,,unsupported display: grid
-box-decoration-break-clone-032-crash,not_portable,,unsupported display: grid
-box-decoration-break-clone-033,not_portable,,unsupported display: grid
-box-decoration-break-clone-034,not_portable,,unsupported display: grid
+box-decoration-break-clone-026,ported,css_break_box_decoration_break_clone_026,
+box-decoration-break-clone-027,ported,css_break_box_decoration_break_clone_027,
+box-decoration-break-clone-028,ported,css_break_box_decoration_break_clone_028,
+box-decoration-break-clone-029,ported,css_break_box_decoration_break_clone_029,
+box-decoration-break-clone-030,ported,css_break_box_decoration_break_clone_030,
+box-decoration-break-clone-031,ported,css_break_box_decoration_break_clone_031,
+box-decoration-break-clone-032-crash,ported,css_break_box_decoration_break_clone_032_crash,
+box-decoration-break-clone-033,ported,css_break_box_decoration_break_clone_033,
+box-decoration-break-clone-034,ported,css_break_box_decoration_break_clone_034,
 box-decoration-break-clone-035-crash,ported,css_break_box_decoration_break_clone_035_crash,
 box-decoration-break-clone-036-crash,ported,css_break_box_decoration_break_clone_036_crash,
 box-shadow-001,ported,css_break_box_shadow_001,
@@ -651,85 +651,85 @@ fragmented-empty-contenteditable-crash,ported,css_break_fragmented_empty_content
 fragmented-float-in-inline-crash,ported,css_break_fragmented_float_in_inline_crash,
 fragmented-float-overflowing-container,ported,css_break_fragmented_float_overflowing_container,
 fragmented-oof-in-inline-crash,not_portable,,uses_javascript
-grid_grid-container-fragmentation-001,not_portable,,unsupported display: grid
-grid_grid-container-fragmentation-002,not_portable,,unsupported property: grid-template-rows
-grid_grid-container-fragmentation-003,not_portable,,unsupported display: grid
-grid_grid-container-fragmentation-004,not_portable,,unsupported display: grid
-grid_grid-container-fragmentation-005,not_portable,,unsupported display: grid
-grid_grid-container-fragmentation-006,not_portable,,unsupported display: grid
-grid_grid-container-fragmentation-007,not_portable,,unsupported display: grid
-grid_grid-container-fragmentation-008,not_portable,,unsupported display: grid
+grid_grid-container-fragmentation-001,ported,css_break_grid_grid_container_fragmentation_001,
+grid_grid-container-fragmentation-002,ported,css_break_grid_grid_container_fragmentation_002,
+grid_grid-container-fragmentation-003,ported,css_break_grid_grid_container_fragmentation_003,
+grid_grid-container-fragmentation-004,ported,css_break_grid_grid_container_fragmentation_004,
+grid_grid-container-fragmentation-005,ported,css_break_grid_grid_container_fragmentation_005,
+grid_grid-container-fragmentation-006,ported,css_break_grid_grid_container_fragmentation_006,
+grid_grid-container-fragmentation-007,ported,css_break_grid_grid_container_fragmentation_007,
+grid_grid-container-fragmentation-008,ported,css_break_grid_grid_container_fragmentation_008,
 grid_grid-container-fragmentation-009,not_portable,,style_block_unsupported property: contain
-grid_grid-container-fragmentation-010,not_portable,,unsupported property: grid-template-columns
-grid_grid-container-fragmentation-011,not_portable,,unsupported property: grid-template-columns
+grid_grid-container-fragmentation-010,ported,css_break_grid_grid_container_fragmentation_010,
+grid_grid-container-fragmentation-011,ported,css_break_grid_grid_container_fragmentation_011,
 grid_grid-container-fragmentation-012,not_portable,,unsupported property: contain
-grid_grid-item-008,not_portable,,unsupported property: grid-template
-grid_grid-item-009,not_portable,,unsupported property: grid-template
-grid_grid-item-fragmentation-001,not_portable,,unsupported display: grid
-grid_grid-item-fragmentation-002,not_portable,,unsupported property: grid-row-start
-grid_grid-item-fragmentation-003,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-fragmentation-004,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-005,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-006,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-007,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-008,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-fragmentation-009,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-010,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-011,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-012,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-013,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-014,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-015,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-016,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-017,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-018,not_portable,,unsupported display: grid
-grid_grid-item-fragmentation-019,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-020,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-021,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-fragmentation-022,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-fragmentation-023,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-fragmentation-024,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-fragmentation-025,not_portable,,unsupported property: grid-template-areas
-grid_grid-item-fragmentation-026,not_portable,,unsupported property: grid-template
-grid_grid-item-fragmentation-027.tentative,not_portable,,unsupported property: grid-template
-grid_grid-item-fragmentation-028,not_portable,,unsupported property: grid-template
-grid_grid-item-fragmentation-029,not_portable,,unsupported property: grid-template
-grid_grid-item-fragmentation-030,not_portable,,unsupported display: grid
-grid_grid-item-fragmentation-031,not_portable,,unsupported display: grid
-grid_grid-item-fragmentation-032,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-fragmentation-033,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-fragmentation-034,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-fragmentation-035,not_portable,,unsupported display: grid
-grid_grid-item-fragmentation-036,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-fragmentation-037,not_portable,,unsupported display: grid
-grid_grid-item-fragmentation-038,not_portable,,unsupported display: grid
-grid_grid-item-fragmentation-039,not_portable,,unsupported display: grid
-grid_grid-item-fragmentation-040,not_portable,,unsupported property: grid-template-areas
-grid_grid-item-fragmentation-041,not_portable,,unsupported display: grid
-grid_grid-item-fragmentation-042,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-fragmentation-043,not_portable,,unsupported display: grid
-grid_grid-item-fragmentation-044,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-045,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-046,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-047,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-fragmentation-048,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-infinite-expansion,not_portable,,unsupported display: grid
-grid_grid-item-oof-001,not_portable,,unsupported display: grid
-grid_grid-item-oof-002,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-oof-003,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-oof-004,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-oof-005,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-oof-006,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-oof-007,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-oof-008,not_portable,,unsupported display: grid
-grid_grid-item-oof-009,not_portable,,unsupported display: grid
-grid_grid-item-oof-010,not_portable,,unsupported display: grid
-grid_grid-item-oof-011,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-oof-crash,not_portable,,unsupported property: grid-template-rows
-grid_grid-item-overflow-001,not_portable,,unsupported display: grid
-grid_grid-item-placement-crash,not_portable,,unsupported property: grid-template-columns
-grid_grid-item-placement-multiple-crash,not_portable,,unsupported property: grid-template-columns
-grid_grid-large-end-border-crash,not_portable,,unsupported display: grid
+grid_grid-item-008,ported,css_break_grid_grid_item_008,
+grid_grid-item-009,ported,css_break_grid_grid_item_009,
+grid_grid-item-fragmentation-001,ported,css_break_grid_grid_item_fragmentation_001,
+grid_grid-item-fragmentation-002,ported,css_break_grid_grid_item_fragmentation_002,
+grid_grid-item-fragmentation-003,ported,css_break_grid_grid_item_fragmentation_003,
+grid_grid-item-fragmentation-004,ported,css_break_grid_grid_item_fragmentation_004,
+grid_grid-item-fragmentation-005,ported,css_break_grid_grid_item_fragmentation_005,
+grid_grid-item-fragmentation-006,ported,css_break_grid_grid_item_fragmentation_006,
+grid_grid-item-fragmentation-007,ported,css_break_grid_grid_item_fragmentation_007,
+grid_grid-item-fragmentation-008,ported,css_break_grid_grid_item_fragmentation_008,
+grid_grid-item-fragmentation-009,ported,css_break_grid_grid_item_fragmentation_009,
+grid_grid-item-fragmentation-010,ported,css_break_grid_grid_item_fragmentation_010,
+grid_grid-item-fragmentation-011,ported,css_break_grid_grid_item_fragmentation_011,
+grid_grid-item-fragmentation-012,ported,css_break_grid_grid_item_fragmentation_012,
+grid_grid-item-fragmentation-013,ported,css_break_grid_grid_item_fragmentation_013,
+grid_grid-item-fragmentation-014,ported,css_break_grid_grid_item_fragmentation_014,
+grid_grid-item-fragmentation-015,ported,css_break_grid_grid_item_fragmentation_015,
+grid_grid-item-fragmentation-016,ported,css_break_grid_grid_item_fragmentation_016,
+grid_grid-item-fragmentation-017,ported,css_break_grid_grid_item_fragmentation_017,
+grid_grid-item-fragmentation-018,ported,css_break_grid_grid_item_fragmentation_018,
+grid_grid-item-fragmentation-019,ported,css_break_grid_grid_item_fragmentation_019,
+grid_grid-item-fragmentation-020,ported,css_break_grid_grid_item_fragmentation_020,
+grid_grid-item-fragmentation-021,ported,css_break_grid_grid_item_fragmentation_021,
+grid_grid-item-fragmentation-022,ported,css_break_grid_grid_item_fragmentation_022,
+grid_grid-item-fragmentation-023,ported,css_break_grid_grid_item_fragmentation_023,
+grid_grid-item-fragmentation-024,ported,css_break_grid_grid_item_fragmentation_024,
+grid_grid-item-fragmentation-025,ported,css_break_grid_grid_item_fragmentation_025,
+grid_grid-item-fragmentation-026,ported,css_break_grid_grid_item_fragmentation_026,
+grid_grid-item-fragmentation-027.tentative,ported,css_break_grid_grid_item_fragmentation_027_tentative,
+grid_grid-item-fragmentation-028,ported,css_break_grid_grid_item_fragmentation_028,
+grid_grid-item-fragmentation-029,ported,css_break_grid_grid_item_fragmentation_029,
+grid_grid-item-fragmentation-030,ported,css_break_grid_grid_item_fragmentation_030,
+grid_grid-item-fragmentation-031,ported,css_break_grid_grid_item_fragmentation_031,
+grid_grid-item-fragmentation-032,ported,css_break_grid_grid_item_fragmentation_032,
+grid_grid-item-fragmentation-033,ported,css_break_grid_grid_item_fragmentation_033,
+grid_grid-item-fragmentation-034,ported,css_break_grid_grid_item_fragmentation_034,
+grid_grid-item-fragmentation-035,ported,css_break_grid_grid_item_fragmentation_035,
+grid_grid-item-fragmentation-036,ported,css_break_grid_grid_item_fragmentation_036,
+grid_grid-item-fragmentation-037,ported,css_break_grid_grid_item_fragmentation_037,
+grid_grid-item-fragmentation-038,ported,css_break_grid_grid_item_fragmentation_038,
+grid_grid-item-fragmentation-039,ported,css_break_grid_grid_item_fragmentation_039,
+grid_grid-item-fragmentation-040,ported,css_break_grid_grid_item_fragmentation_040,
+grid_grid-item-fragmentation-041,ported,css_break_grid_grid_item_fragmentation_041,
+grid_grid-item-fragmentation-042,ported,css_break_grid_grid_item_fragmentation_042,
+grid_grid-item-fragmentation-043,ported,css_break_grid_grid_item_fragmentation_043,
+grid_grid-item-fragmentation-044,ported,css_break_grid_grid_item_fragmentation_044,
+grid_grid-item-fragmentation-045,ported,css_break_grid_grid_item_fragmentation_045,
+grid_grid-item-fragmentation-046,ported,css_break_grid_grid_item_fragmentation_046,
+grid_grid-item-fragmentation-047,ported,css_break_grid_grid_item_fragmentation_047,
+grid_grid-item-fragmentation-048,ported,css_break_grid_grid_item_fragmentation_048,
+grid_grid-item-infinite-expansion,ported,css_break_grid_grid_item_infinite_expansion,
+grid_grid-item-oof-001,ported,css_break_grid_grid_item_oof_001,
+grid_grid-item-oof-002,ported,css_break_grid_grid_item_oof_002,
+grid_grid-item-oof-003,ported,css_break_grid_grid_item_oof_003,
+grid_grid-item-oof-004,ported,css_break_grid_grid_item_oof_004,
+grid_grid-item-oof-005,ported,css_break_grid_grid_item_oof_005,
+grid_grid-item-oof-006,ported,css_break_grid_grid_item_oof_006,
+grid_grid-item-oof-007,ported,css_break_grid_grid_item_oof_007,
+grid_grid-item-oof-008,ported,css_break_grid_grid_item_oof_008,
+grid_grid-item-oof-009,ported,css_break_grid_grid_item_oof_009,
+grid_grid-item-oof-010,ported,css_break_grid_grid_item_oof_010,
+grid_grid-item-oof-011,ported,css_break_grid_grid_item_oof_011,
+grid_grid-item-oof-crash,ported,css_break_grid_grid_item_oof_crash,
+grid_grid-item-overflow-001,ported,css_break_grid_grid_item_overflow_001,
+grid_grid-item-placement-crash,ported,css_break_grid_grid_item_placement_crash,
+grid_grid-item-placement-multiple-crash,ported,css_break_grid_grid_item_placement_multiple_crash,
+grid_grid-large-end-border-crash,ported,css_break_grid_grid_large_end_border_crash,
 grid_grid-nested-columns-crash,not_portable,,unsupported property: contain
 grid_monolithic-overflow-001.tentative,not_portable,,unsupported property: contain
 grid_monolithic-overflow-002.tentative,not_portable,,unsupported property: contain
@@ -742,16 +742,16 @@ grid_monolithic-overflow-008,not_portable,,unsupported property: contain
 grid_monolithic-overflow-009,not_portable,,unsupported property: grid-template-rows
 grid_monolithic-overflow-print,not_portable,,unsupported property: grid-template-columns
 grid_monolithic-overflow-print-ref,not_portable,,unsupported property: grid-template-columns
-grid_subgrid_subgrid-container-fragmentation-001,not_portable,,unsupported property: grid-template
-grid_subgrid_subgrid-container-fragmentation-002,not_portable,,unsupported property: grid-template-rows
-grid_subgrid_subgrid-container-fragmentation-003,not_portable,,unsupported property: grid-template
-grid_subgrid_subgrid-container-fragmentation-004,not_portable,,unsupported property: grid-template
-grid_subgrid_subgrid-container-fragmentation-005,not_portable,,unsupported property: grid-template
-grid_subgrid_subgrid-item-fragmentation-001,not_portable,,unsupported property: grid-template
-grid_subgrid_subgrid-item-fragmentation-002,not_portable,,unsupported property: grid-template
-grid_subgrid_subgrid-item-fragmentation-003,not_portable,,unsupported property: grid-template-columns
-grid_subgrid_subgrid-item-fragmentation-004,not_portable,,unsupported property: grid-template-rows
-grid_subgrid_subgrid-item-fragmentation-005,not_portable,,unsupported property: grid-template-rows
+grid_subgrid_subgrid-container-fragmentation-001,ported,css_break_grid_subgrid_subgrid_container_fragmentation_001,
+grid_subgrid_subgrid-container-fragmentation-002,ported,css_break_grid_subgrid_subgrid_container_fragmentation_002,
+grid_subgrid_subgrid-container-fragmentation-003,ported,css_break_grid_subgrid_subgrid_container_fragmentation_003,
+grid_subgrid_subgrid-container-fragmentation-004,ported,css_break_grid_subgrid_subgrid_container_fragmentation_004,
+grid_subgrid_subgrid-container-fragmentation-005,ported,css_break_grid_subgrid_subgrid_container_fragmentation_005,
+grid_subgrid_subgrid-item-fragmentation-001,ported,css_break_grid_subgrid_subgrid_item_fragmentation_001,
+grid_subgrid_subgrid-item-fragmentation-002,ported,css_break_grid_subgrid_subgrid_item_fragmentation_002,
+grid_subgrid_subgrid-item-fragmentation-003,ported,css_break_grid_subgrid_subgrid_item_fragmentation_003,
+grid_subgrid_subgrid-item-fragmentation-004,ported,css_break_grid_subgrid_subgrid_item_fragmentation_004,
+grid_subgrid_subgrid-item-fragmentation-005,ported,css_break_grid_subgrid_subgrid_item_fragmentation_005,
 hit-test-hidden-overflow,not_portable,,uses_javascript
 hit-test-inline-fragmentation-with-border-radius,not_portable,,uses_javascript
 hit-test-transformed,not_portable,,uses_javascript
@@ -949,7 +949,7 @@ out-of-flow-in-multicolumn-126,ported,css_break_out_of_flow_in_multicolumn_126,
 out-of-flow-in-multicolumn-crash,ported,css_break_out_of_flow_in_multicolumn_crash,
 out-of-flow-in-multicolumn-paint-order-001,ported,css_break_out_of_flow_in_multicolumn_paint_order_001,
 out-of-flow-in-multicolumn-paint-order-002,ported,css_break_out_of_flow_in_multicolumn_paint_order_002,
-out-of-flow-in-multicolumn-paint-order-003,not_portable,,unsupported display: grid
+out-of-flow-in-multicolumn-paint-order-003,ported,css_break_out_of_flow_in_multicolumn_paint_order_003,
 out-of-flow-in-multicolumn-paint-order-004,not_portable,,unsupported element: <fieldset>
 out-of-flow-in-nested-spanner-multicol-crash,ported,css_break_out_of_flow_in_nested_spanner_multicol_crash,
 out-of-flow-in-new-column-crash,ported,css_break_out_of_flow_in_new_column_crash,
@@ -1026,7 +1026,7 @@ ruby-000,ported,css_break_ruby_000,
 ruby-001,ported,css_break_ruby_001,
 ruby-002,ported,css_break_ruby_002,
 ruby-003,ported,css_break_ruby_003,
-soft-break-before-margin-001,not_portable,,unsupported display: grid
+soft-break-before-margin-001,ported,css_break_soft_break_before_margin_001,
 svg-with-transform,not_portable,,unsupported element: <svg>
 table-cell-padding-block-in-inline-crash,ported,css_break_table_cell_padding_block_in_inline_crash,
 table_border-collapse-001,ported,css_break_table_border_collapse_001,

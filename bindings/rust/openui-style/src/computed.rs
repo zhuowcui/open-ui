@@ -621,6 +621,8 @@ pub struct ComputedStyle {
     pub container_names: Vec<String>,
     pub scroll_marker_group: ScrollMarkerGroup,
     pub scroll_target_group: ScrollTargetGroup,
+    pub scroll_snap_align: ScrollSnapAlign,
+    pub scroll_snap_axis: ScrollSnapAxis,
 
     // ── Replaced content and deterministic effects ───────────────────
     pub object_fit: ObjectFit,
@@ -1083,6 +1085,8 @@ impl ComputedStyle {
             container_names: Vec::new(),
             scroll_marker_group: ScrollMarkerGroup::None,
             scroll_target_group: ScrollTargetGroup::None,
+            scroll_snap_align: ScrollSnapAlign::None,
+            scroll_snap_axis: ScrollSnapAxis::None,
 
             // Replaced content and deterministic effects
             object_fit: ObjectFit::Fill,
