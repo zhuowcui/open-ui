@@ -1,12 +1,12 @@
 {
-  "total": 4919,
-  "passed": 4919,
+  "total": 4962,
+  "passed": 4962,
   "failed": 0,
   "errors": 0,
   "near_miss_aa": 0,
   "aa_threshold_pct": 0.5,
-  "reference_tests": 1140,
-  "reference_tests_pass": 1140,
+  "reference_tests": 1143,
+  "reference_tests_pass": 1143,
   "tests": [
     {
       "id": "wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline",
@@ -10424,6 +10424,41 @@
       "mismatch_pct": 0.0
     },
     {
+      "id": "wpt/css_multicol/crashtests_break-before-multicol-caption",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_multicol-table-caption-parallel-flow-after-spanner-in-inline",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/crashtests_repeated-section-in-nested-table-nested-multicol",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/multicol-span-all-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/multicol-span-all-004-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/multicol-span-all-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_multicol/multicol-span-all-005-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
       "id": "wpt/css_overflow/clip-001-ref",
       "status": "pass",
       "mismatch_pct": 0.0
@@ -12420,6 +12455,11 @@
     },
     {
       "id": "wpt/css_overflow/scroll-markers_scroll-target-group-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_overflow/line-clamp_line-clamp-032",
       "status": "pass",
       "mismatch_pct": 0.0
     },
@@ -14560,6 +14600,31 @@
     },
     {
       "id": "wpt/css_sizing/responsive-iframe_responsive-iframe-cross-origin-not-embedded-sized.sub.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-022",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-023",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-024",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-025",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_sizing/contain-intrinsic-size_contain-intrinsic-size-026",
       "status": "pass",
       "mismatch_pct": 0.0
     },
@@ -20090,6 +20155,156 @@
     },
     {
       "id": "wpt/css_break/tall-content-inside-constrained-block-006.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/chrome-bug-1283776-000-crash",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/chrome-bug-1289999-crash.https",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_grid-container-fragmentation-009",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_grid-container-fragmentation-012",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_grid-nested-columns-crash",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_monolithic-overflow-001.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_monolithic-overflow-002.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_monolithic-overflow-003.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_monolithic-overflow-004.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_monolithic-overflow-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_monolithic-overflow-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_monolithic-overflow-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_monolithic-overflow-008",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_monolithic-overflow-009",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_monolithic-overflow-print",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/grid_monolithic-overflow-print-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_break-avoidance-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_break-avoidance-in-table-in-grid",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_caption-margin-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_caption-margin-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_monolithic-overflow-001.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_monolithic-overflow-002.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_monolithic-overflow-003.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_monolithic-overflow-004.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_monolithic-overflow-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_monolithic-overflow-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_repeated-section_abspos-in-monolithic.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_repeated-section_break-avoidance-in-bottom-caption.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_repeated-section_tall-monolithic-after-repeated-header.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_break/table_table-border-005",
       "status": "pass",
       "mismatch_pct": 0.0
     },

@@ -954,7 +954,9 @@ impl<'a> InlineItemsBuilder<'a> {
             | ElementTag::Button
             | ElementTag::Meter
             | ElementTag::Fieldset
-            | ElementTag::Legend => {
+            | ElementTag::Legend
+            | ElementTag::Details
+            | ElementTag::Summary => {
                 let display = node.style.display;
                 if display == Display::Contents {
                     self.collect_children(child_id);

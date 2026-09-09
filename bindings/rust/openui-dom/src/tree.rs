@@ -154,6 +154,8 @@ pub enum ElementTag {
     Meter,
     Fieldset,
     Legend,
+    Details,
+    Summary,
     /// The document element (`<html>`).
     Html,
     /// The document body (`<body>`).

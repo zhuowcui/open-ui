@@ -4099,6 +4099,57 @@ fn create_line_box(
         }
     }
 
+    // An explicit line height remains authoritative for a line made solely
+    // from atomic inlines that all fit inside that strut.
+    // A synthesized inline-block baseline can otherwise add a fractional
+    // descent to every line (for example 25.5px for a 25px atomic), causing
+    // the clamp edge to drift even though no item is taller than the line.
+    let atomic_only_explicit_line = block_style.line_height != LineHeight::Normal
+        && line_info
+            .items
+            .iter()
+            .any(|item| item.item_type == InlineItemType::AtomicInline)
+        && line_info.items.iter().all(|item| match item.item_type {
+            InlineItemType::AtomicInline => true,
+            InlineItemType::Text => items_data
+                .text
+                .get(item.text_range.clone())
+                .is_none_or(|text| text.chars().all(char::is_whitespace)),
+            _ => false,
+        });
+    if atomic_only_explicit_line && deferred_items.is_empty() {
+        let used_height = used_line_height(
+            block_metrics,
+            &block_style.line_height,
+            block_style.font_size,
+        );
+        let atomics_fit = line_info
+            .items
+            .iter()
+            .enumerate()
+            .filter(|(_, item)| item.item_type == InlineItemType::AtomicInline)
+            .all(|(index, item)| {
+                let inline_item = &items_data.items[item.item_index];
+                let style = &items_data.styles[inline_item.style_index];
+                let margins = if space.writing_direction.is_horizontal() {
+                    (&style.margin_top, &style.margin_bottom)
+                } else if space.writing_direction.is_flipped_blocks() {
+                    (&style.margin_right, &style.margin_left)
+                } else {
+                    (&style.margin_left, &style.margin_right)
+                };
+                let margin_box_height = atomic_layout_results[index]
+                    .as_ref()
+                    .map_or(LayoutUnit::zero(), |fragment| fragment.size.height)
+                    + resolve_margin_or_padding(margins.0, percentage_base)
+                    + resolve_margin_or_padding(margins.1, percentage_base);
+                margin_box_height.to_f32() <= used_height
+            });
+        if atomics_fit && line_ascent <= used_height {
+            line_descent = (used_height - line_ascent).max(0.0);
+        }
+    }
+
     let line_height = LayoutUnit::from_f32_ceil(line_ascent + line_descent);
     // Blink snaps negative half-leading from an explicit line-height toward
     // the line's block start. A normal line-height retains the font metric's

@@ -2401,7 +2401,29 @@ fn resolve_atomic_inline_size(
         _ => base,
     };
 
-    // Clamp to max-width if specified.
+    // Clamp to max-width if specified. CSS Sizing makes the minimum win an
+    // over-constrained min/max pair; atomic inline measurement must reserve
+    // the same width that the child layout will use.
+    let resolved_min = match min_size.length_type() {
+        LengthType::Fixed => {
+            let min = LayoutUnit::from_f32(min_size.value());
+            if style.box_sizing == BoxSizing::ContentBox {
+                min + border_padding
+            } else {
+                min
+            }
+        }
+        LengthType::Percent if containing_block_width > LayoutUnit::zero() => {
+            let min =
+                LayoutUnit::from_f32(min_size.value() / 100.0 * containing_block_width.to_f32());
+            if style.box_sizing == BoxSizing::ContentBox {
+                min + border_padding
+            } else {
+                min
+            }
+        }
+        _ => LayoutUnit::zero(),
+    };
     match max_size.length_type() {
         LengthType::Fixed => {
             let max = LayoutUnit::from_f32(max_size.value());
@@ -2409,7 +2431,8 @@ fn resolve_atomic_inline_size(
                 max + border_padding
             } else {
                 max
-            };
+            }
+            .max_of(resolved_min);
             if base > max {
                 max
             } else {
@@ -2425,7 +2448,8 @@ fn resolve_atomic_inline_size(
                     max + border_padding
                 } else {
                     max
-                };
+                }
+                .max_of(resolved_min);
                 if base > max {
                     max
                 } else {

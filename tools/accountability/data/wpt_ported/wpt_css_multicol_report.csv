@@ -499,10 +499,10 @@ multicol-span-all-001-ref,not_portable,,unsupported element: <img>
 multicol-span-all-002,ported,css_multicol_multicol_span_all_002,
 multicol-span-all-002-ref,not_portable,,unsupported element: <img>
 multicol-span-all-003,ported,css_multicol_multicol_span_all_003,
-multicol-span-all-004,not_portable,,unsupported display: grid
-multicol-span-all-004-ref,not_portable,,unsupported display: grid
-multicol-span-all-005,not_portable,,unsupported display: grid
-multicol-span-all-005-ref,not_portable,,unsupported display: grid
+multicol-span-all-004,ported,css_multicol_multicol_span_all_004,
+multicol-span-all-004-ref,ported,css_multicol_multicol_span_all_004_ref,
+multicol-span-all-005,ported,css_multicol_multicol_span_all_005,
+multicol-span-all-005-ref,ported,css_multicol_multicol_span_all_005_ref,
 multicol-span-all-006,not_portable,,unsupported element: <details>
 multicol-span-all-006-ref,not_portable,,unsupported element: <details>
 multicol-span-all-007,ported,css_multicol_multicol_span_all_007,
@@ -812,3 +812,6 @@ crashtests_nested-oof-multicol-with-monolithic-child,ported,css_multicol_crashte
 crashtests_restricted-height-bottom-border-overflow-and-spanner,ported,css_multicol_crashtests_restricted_height_bottom_border_overflow_and_spanner,
 crashtests_spanner-after-parallel-flow,ported,css_multicol_crashtests_spanner_after_parallel_flow,
 crashtests_text-in-inline-interrupted-by-float,ported,css_multicol_crashtests_text_in_inline_interrupted_by_float,
+crashtests_break-before-multicol-caption,ported,css_multicol_crashtests_break_before_multicol_caption,
+crashtests_multicol-table-caption-parallel-flow-after-spanner-in-inline,ported,css_multicol_crashtests_multicol_table_caption_parallel_flow_after_spanner_in_inline,
+crashtests_repeated-section-in-nested-table-nested-multicol,ported,css_multicol_crashtests_repeated_section_in_nested_table_nested_multicol,

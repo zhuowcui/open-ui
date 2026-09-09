@@ -110,7 +110,7 @@ line-clamp_line-clamp-028,ported,css_overflow_line_clamp_line_clamp_028,
 line-clamp_line-clamp-029,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_line-clamp-030,ported,css_overflow_line_clamp_line_clamp_030,
 line-clamp_line-clamp-031,ported,css_overflow_line_clamp_line_clamp_031,
-line-clamp_line-clamp-032,not_portable,,style_block_unsupported property: line-clamp
+line-clamp_line-clamp-032,ported,css_overflow_line_clamp_line_clamp_032,
 line-clamp_line-clamp-033,not_portable,,style_block_unsupported property: line-clamp
 line-clamp_line-clamp-034,ported,css_overflow_line_clamp_line_clamp_034,
 line-clamp_line-clamp-035.tentative,ported,css_overflow_line_clamp_line_clamp_035_tentative,

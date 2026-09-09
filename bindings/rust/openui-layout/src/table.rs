@@ -1924,18 +1924,13 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
     let grid_outer_width = actual_grid_width
         + inline_spacing * LayoutUnit::from_i32((column_count + 1) as i32)
         + collapsed_structural_inline_track_reduction;
-    let caption_outer_width = model
+    let (caption_min_outer_width, _caption_max_outer_width) = model
         .captions
         .iter()
         .copied()
         .map(|caption_id| {
             let caption_style = &doc.node(caption_id).style;
-            // A caption contributes a minimum width to the table wrapper; it
-            // does not make its max-content width the table's preferred
-            // width.  In particular, a caption-only table shrink-wraps to
-            // CAPMIN while a populated table's grid supplies the preferred
-            // width used by the wrapper.
-            let intrinsic = compute_intrinsic_block_sizes(doc, caption_id).min_content_inline_size;
+            let intrinsic = compute_intrinsic_block_sizes(doc, caption_id);
             let caption_border = logical_border(caption_style, writing_direction);
             let caption_padding = logical_padding(
                 caption_style,
@@ -1948,7 +1943,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
                 writing_direction,
             );
             let edges = caption_border.inline_sum() + caption_padding.inline_sum();
-            let border_box = authored_inline_size(
+            let authored_border_box = authored_inline_size(
                 doc,
                 caption_id,
                 space.percentage_resolution_inline_size,
@@ -1960,11 +1955,21 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
                 } else {
                     width + edges
                 }
-            })
-            .unwrap_or(intrinsic);
-            border_box + caption_margin.inline_sum()
+            });
+            let minimum = authored_border_box.map_or(intrinsic.min_content_inline_size, |width| {
+                intrinsic.min_content_inline_size.max_of(width)
+            }) + caption_margin.inline_sum();
+            let maximum = authored_border_box.map_or(intrinsic.max_content_inline_size, |width| {
+                intrinsic.max_content_inline_size.max_of(width)
+            }) + caption_margin.inline_sum();
+            (minimum, maximum)
         })
-        .fold(LayoutUnit::zero(), LayoutUnit::max_of);
+        .fold(
+            (LayoutUnit::zero(), LayoutUnit::zero()),
+            |(min_width, max_width), (caption_min, caption_max)| {
+                (min_width.max_of(caption_min), max_width.max_of(caption_max))
+            },
+        );
     let collapsed_inline_overhang =
         if style.border_collapse == BorderCollapse::Collapse && table_inline_is_definite {
             (collapsed_inline_boundaries
@@ -1992,7 +1997,16 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
     let border_box_width = if space.is_fixed_inline_size || space.stretch_inline_size {
         grid_border_box_width
     } else {
-        grid_border_box_width.max_of(caption_outer_width)
+        // A caption-only table uses CAPMIN plus the table grid's structural
+        // edge spacing. Populated auto tables keep their grid preferred width,
+        // with CAPMIN acting only as a floor; the caption's max-content width
+        // does not stretch the table to the available column measure.
+        let caption_floor = if column_count == 0 {
+            caption_min_outer_width + grid_border_box_width
+        } else {
+            caption_min_outer_width
+        };
+        grid_border_box_width.max_of(caption_floor)
     };
 
     let mut top_captions = Vec::new();

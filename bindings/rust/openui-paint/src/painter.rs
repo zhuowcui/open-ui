@@ -259,6 +259,14 @@ pub fn paint_fragment(
                 column_physical_rect(fragment, abs_offset),
                 fragment_block_axis_is_x(fragment),
             );
+            repaint_later_siblings_over_fragmented_outlines(
+                canvas,
+                &fragment.children,
+                doc,
+                abs_offset,
+                column_physical_rect(fragment, abs_offset),
+                fragment_block_axis_is_x(fragment),
+            );
             canvas.restore();
         } else {
             paint_children_with_stacking_order(canvas, &fragment.children, doc, abs_offset, false);
@@ -303,7 +311,6 @@ pub fn paint_fragment(
     } else {
         canvas_adjusted_style.as_ref().unwrap_or(original_style)
     };
-
     let needs_mask_layer = !style.mask_layers.is_empty()
         && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
     if needs_mask_layer {
@@ -1782,16 +1789,32 @@ fn paint_children_with_stacking_order(
         });
     }
 
-    // A spanner outline overlays the complete spanning box. Post-spanner
-    // column content may touch the same device row, but must not erase that
-    // outline; the multicol parent's outline still paints afterward.
-    for &idx in &in_flow {
+    // Outlines occupy the final in-flow painting phase. A following sibling
+    // can begin on the outlined border edge, but its glyph ink must not erase
+    // that edge. Spanners always need this replay because post-spanner column
+    // content belongs to the same painting phase.
+    for (position, &idx) in in_flow.iter().enumerate() {
         let child = &children[idx];
-        if child.node_id.is_none() {
+        if child.node_id.is_none()
+            || child.kind != FragmentKind::Box
+            || doc.node(child.node_id).tag == openui_dom::ElementTag::Text
+        {
             continue;
         }
         let style = &doc.node(child.node_id).style;
-        if style.column_span == openui_style::ColumnSpan::All
+        let outline_reaches_later_sibling = if style.outline_style == BorderStyle::Solid {
+            let outline_outset = LayoutUnit::from_i32(
+                (style.effective_outline_width() + style.outline_offset).max(0),
+            );
+            in_flow.iter().skip(position + 1).any(|later_idx| {
+                let later = &children[*later_idx];
+                later.kind != FragmentKind::ColumnRule
+                    && later.offset.top <= child.offset.top + child.size.height + outline_outset
+            })
+        } else {
+            false
+        };
+        if (style.column_span == openui_style::ColumnSpan::All || outline_reaches_later_sibling)
             && should_paint_outline(child, doc, style)
         {
             paint_outline(
@@ -1804,6 +1827,42 @@ fn paint_children_with_stacking_order(
                 ),
             );
         }
+    }
+
+    // Unfragmented descendant outlines retain the outline painting phase of
+    // their principal subtree. In particular, a table caption's outline may
+    // touch a following principal box even though the table wrapper itself
+    // has no outline. Replay those descendant outlines here, while excluding
+    // descendants of sliced ancestors (their fragment-edge outlines are
+    // handled in ColumnBox source order).
+    for (position, &idx) in in_flow.iter().enumerate() {
+        let child = &children[idx];
+        if child.node_id.is_none() || !doc.node(child.node_id).style.display.is_table_wrapper() {
+            continue;
+        }
+        let Some(later_top) = in_flow
+            .iter()
+            .skip(position + 1)
+            .filter_map(|later_idx| {
+                let later = &children[*later_idx];
+                (later.kind != FragmentKind::ColumnRule).then_some(later.offset.top)
+            })
+            .min()
+        else {
+            continue;
+        };
+        paint_touching_unfragmented_descendant_outlines(
+            canvas,
+            child,
+            doc,
+            PhysicalOffset::new(
+                offset.left + child.offset.left,
+                offset.top + child.offset.top,
+            ),
+            child.offset.top,
+            later_top,
+            child.decoration_slice.is_some() || !child.is_first_for_node || !child.is_last_for_node,
+        );
     }
 
     // Phase 3: Non-negative z-index positioned elements (+ hoisted z:auto).
@@ -2538,6 +2597,106 @@ fn paint_fragmented_descendant_outlines(
     }
 }
 
+fn fragmented_outline_crosses_slice(
+    fragment: &Fragment,
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+    slice: Rect,
+    block_axis_is_x: bool,
+) -> bool {
+    let fragment_offset = PhysicalOffset::new(
+        parent_offset.left + fragment.offset.left,
+        parent_offset.top + fragment.offset.top,
+    );
+    let crosses = if !fragment.node_id.is_none() && fragment.kind == FragmentKind::Box {
+        let style = &doc.node(fragment.node_id).style;
+        let (start, end, slice_start, slice_end) = if block_axis_is_x {
+            (
+                fragment_offset.left.to_f32(),
+                (fragment_offset.left + fragment.size.width).to_f32(),
+                slice.left,
+                slice.right,
+            )
+        } else {
+            (
+                fragment_offset.top.to_f32(),
+                (fragment_offset.top + fragment.size.height).to_f32(),
+                slice.top,
+                slice.bottom,
+            )
+        };
+        style.has_outline()
+            && end > slice_start
+            && start < slice_end
+            && (start < slice_start || end > slice_end)
+    } else {
+        false
+    };
+    crosses
+        || fragment.children.iter().any(|child| {
+            fragmented_outline_crosses_slice(child, doc, fragment_offset, slice, block_axis_is_x)
+        })
+}
+
+fn repaint_later_siblings_over_fragmented_outlines(
+    canvas: &Canvas,
+    children: &[Fragment],
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+    slice: Rect,
+    block_axis_is_x: bool,
+) {
+    let mut preceding_fragmented_outline = false;
+    for child in children {
+        if preceding_fragmented_outline && child.kind != FragmentKind::ColumnRule {
+            paint_fragment(canvas, child, doc, parent_offset);
+        }
+        preceding_fragmented_outline |=
+            fragmented_outline_crosses_slice(child, doc, parent_offset, slice, block_axis_is_x);
+    }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn paint_touching_unfragmented_descendant_outlines(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+    fragment_top_in_parent: LayoutUnit,
+    later_top_in_parent: LayoutUnit,
+    fragmented_ancestor: bool,
+) {
+    let fragmented_here = fragmented_ancestor
+        || fragment.decoration_slice.is_some()
+        || !fragment.is_first_for_node
+        || !fragment.is_last_for_node;
+    if !fragmented_here && !fragment.node_id.is_none() && fragment.kind == FragmentKind::Box {
+        let style = &doc.node(fragment.node_id).style;
+        let outline_outset =
+            LayoutUnit::from_i32((style.effective_outline_width() + style.outline_offset).max(0));
+        if style.outline_style == BorderStyle::Solid
+            && fragment_top_in_parent + fragment.size.height + outline_outset >= later_top_in_parent
+            && should_paint_outline(fragment, doc, style)
+        {
+            paint_outline(canvas, fragment, style, abs_offset);
+        }
+    }
+    for child in &fragment.children {
+        paint_touching_unfragmented_descendant_outlines(
+            canvas,
+            child,
+            doc,
+            PhysicalOffset::new(
+                abs_offset.left + child.offset.left,
+                abs_offset.top + child.offset.top,
+            ),
+            fragment_top_in_parent + child.offset.top,
+            later_top_in_parent,
+            fragmented_here,
+        );
+    }
+}
+
 fn can_flatten_box_opacity(fragment: &Fragment, style: &ComputedStyle) -> bool {
     // A background-only leaf box can fold opacity into its fill paint without
     // changing CSS compositing; this avoids an extra saveLayer AA quantization.
@@ -2631,6 +2790,21 @@ fn paint_list_marker(
     let marker_y_adjust = if font_size >= 18.0 { 1.0 } else { 0.0 };
     let line_top = first_in_flow_line_top(fragment, doc, LayoutUnit::zero())
         .unwrap_or(fragment.border.top + fragment.padding.top);
+    if style.list_style_type == ListStyleType::DisclosureOpen {
+        let left = abs_offset.left.round().to_f32();
+        let top = (abs_offset.top + line_top).round().to_f32() + 3.25;
+        let mut path = PathBuilder::new();
+        path.move_to(Point::new(left, top));
+        path.line_to(Point::new(left + 5.266, top + 8.875));
+        path.line_to(Point::new(left + 10.547, top));
+        path.close();
+        let mut paint = Paint::default();
+        paint.set_color(skia_safe::Color::BLACK);
+        paint.set_anti_alias(true);
+        paint.set_style(PaintStyle::Fill);
+        canvas.draw_path(&path.detach(), &paint);
+        return;
+    }
     let marker_y = (abs_offset.top + line_top).round().to_f32()
         + ((line_height - marker_diameter) / 2.0).floor()
         + marker_y_adjust;

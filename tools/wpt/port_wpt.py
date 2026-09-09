@@ -8578,6 +8578,8 @@ def generate_rust_fn(
             'meter': 'ElementTag::Meter',
             'fieldset': 'ElementTag::Fieldset',
             'legend': 'ElementTag::Legend',
+            'details': 'ElementTag::Details',
+            'summary': 'ElementTag::Summary',
         }
         if node.tag in inline_tags or node.tag == 'style':
             element_tag = 'ElementTag::Span'
@@ -9241,6 +9243,15 @@ def generate_rust_fn(
         for prop in sorted(child_inherit_props):
             if prop in effective_styles:
                 child_inherited[prop] = effective_styles[prop]
+        if (
+            node.tag in {'caption', 'th'}
+            and 'text-align' not in (node.styles or {})
+        ):
+            # The semantic UA rule wins over inherited alignment and is itself
+            # inherited by the caption/header-cell descendants. The compact
+            # DOM has no runtime cascade, so materialize that computed boundary
+            # in the porter's inheritance state as well as on the element.
+            child_inherited['text-align'] = 'center'
         if is_real_font_profile():
             if 'font-size' in child_inherited:
                 child_inherited['font-size'] = f'{node_font_size}px'
@@ -9561,6 +9572,37 @@ def generate_rust_fn(
                 candidate.tag in table_internal_tags
                 or candidate_display in table_internal_displays
             )
+
+        if node.tag == 'details' and not any(
+            not child.is_text and child.tag == 'summary' for child in node.children
+        ):
+            # HTML supplies a generated "Details" summary when no authored
+            # summary child exists. Keep it as a real list-item formatting
+            # object so its disclosure marker, inline advance, and line box
+            # participate in layout before the open details content.
+            counter[0] += 1
+            default_summary = f"n{counter[0]}"
+            counter[0] += 1
+            default_summary_text = f"n{counter[0]}"
+            lines.extend([
+                f"{ws}    let {default_summary} = doc.create_node(ElementTag::Summary);",
+                f"{ws}    doc.node_mut({default_summary}).style = "
+                f"ComputedStyle::for_anonymous_box(&doc.node({var}).style);",
+                f"{ws}    doc.node_mut({default_summary}).style.display = Display::ListItem;",
+                f"{ws}    doc.node_mut({default_summary}).style.list_style_type = "
+                "ListStyleType::DisclosureOpen;",
+                f"{ws}    doc.node_mut({default_summary}).style.list_style_position = "
+                "ListStylePosition::Inside;",
+                f"{ws}    doc.node_mut({default_summary}).style.padding_left = Length::px(17.0);",
+                f"{ws}    doc.node_mut({default_summary}).style.line_height = "
+                f"LineHeight::Length(doc.node({default_summary}).style.font_size);",
+                f"{ws}    doc.append_child({var}, {default_summary});",
+                f"{ws}        let {default_summary_text} = doc.create_node(ElementTag::Text);",
+                f"{ws}        doc.node_mut({default_summary_text}).style = "
+                f"ComputedStyle::for_anonymous_box(&doc.node({default_summary}).style);",
+                f"{ws}        doc.node_mut({default_summary_text}).text = Some(\"Details\".to_string());",
+                f"{ws}        doc.append_child({default_summary}, {default_summary_text});",
+            ])
 
         if parent_display == 'table-row':
             # A run of non-cell children in a table row generates one

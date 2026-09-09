@@ -57,6 +57,9 @@ pub enum ListStylePosition {
 pub enum ListStyleType {
     None,
     Disc,
+    /// The open-state disclosure marker used by a generated `<details>`
+    /// summary in the deterministic HTML surface.
+    DisclosureOpen,
 }
 
 impl Display {

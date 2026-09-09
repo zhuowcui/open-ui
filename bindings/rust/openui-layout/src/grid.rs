@@ -1754,7 +1754,12 @@ fn clamp_container_axis(
         LayoutUnit::max()
     } else {
         resolve_bound(max, LayoutUnit::max())
-    };
+    }
+    // CSS Sizing resolves an over-constrained min/max pair by letting the
+    // minimum win. Applying the maximum after the minimum without this
+    // normalization incorrectly shrinks `min-width: 200px; max-width: 150px`
+    // Grid containers back to 150px.
+    .max_of(min);
     size.max_of(min).min_of(max)
 }
 
@@ -1805,9 +1810,17 @@ fn resolve_container_inline_size(
     } else if preferred.is_content_or_intrinsic()
         || (style.display == Display::InlineGrid && preferred.is_auto())
     {
-        let intrinsic = compute_grid_intrinsic_sizes(doc, node_id);
-        let min = intrinsic.min_content_inline_size;
-        let max = intrinsic.max_content_inline_size;
+        let (min, max) = if let Some(fallback) = crate::containment::logical_inline_fallback(style)
+        {
+            let contained = fallback + border_padding;
+            (contained, contained)
+        } else {
+            let intrinsic = compute_grid_intrinsic_sizes(doc, node_id);
+            (
+                intrinsic.min_content_inline_size,
+                intrinsic.max_content_inline_size,
+            )
+        };
         match preferred.length_type() {
             LengthType::MinContent => min,
             LengthType::MaxContent => max,
@@ -1940,7 +1953,10 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     let content_inline = (container_inline - border_padding_inline).clamp_negative_to_zero();
     let column_gap = resolve_gap(&style.column_gap, content_inline);
     let preliminary_block = if logical_box.sizes.block_size.is_auto() {
-        INDEFINITE_SIZE
+        // Size containment substitutes the contain-intrinsic block size for
+        // the contents before track sizing. Treat that substituted content
+        // box as definite so fr and auto-repeat rows resolve against it.
+        crate::containment::logical_block_fallback(style).unwrap_or(INDEFINITE_SIZE)
     } else {
         let raw = resolve_length(
             logical_box.sizes.block_size,
@@ -2017,6 +2033,15 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     );
     distribute_flexible_tracks(&mut columns.tracks, content_inline, column_gap);
     collapse_empty_auto_fit_tracks(&mut columns.tracks, &items, true);
+    // Column-axis content alignment is part of the inline track result seen
+    // by row sizing. In particular, `justify-content: normal` stretches an
+    // auto column before a wrapping item's block contribution is measured.
+    let (column_initial, column_between) = content_alignment(
+        style.justify_content,
+        content_inline,
+        &mut columns.tracks,
+        column_gap,
+    );
 
     // Row contributions depend on the sized grid-area inline measure. The
     // intrinsic block contribution remains the stable first pass; child
@@ -2053,22 +2078,19 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
     collapse_empty_auto_fit_tracks(&mut rows.tracks, &items, false);
 
     let intrinsic_content_block = tracks_used_size(&rows.tracks, row_gap);
+    let intrinsic_container_block = crate::containment::logical_block_fallback(style)
+        .map_or(intrinsic_content_block, |fallback| fallback)
+        + border_padding_block;
     let container_block = resolve_container_block_size(
         style,
         space,
-        intrinsic_content_block + border_padding_block,
+        intrinsic_container_block,
         border_padding_block,
         container_inline,
     );
     let content_block = (container_block - border_padding_block).clamp_negative_to_zero();
     distribute_flexible_tracks(&mut rows.tracks, content_block, row_gap);
 
-    let (column_initial, column_between) = content_alignment(
-        style.justify_content,
-        content_inline,
-        &mut columns.tracks,
-        column_gap,
-    );
     let (row_initial, row_between) = content_alignment(
         style.align_content,
         content_block,

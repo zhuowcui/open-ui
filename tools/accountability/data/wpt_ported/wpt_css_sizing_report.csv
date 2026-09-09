@@ -781,15 +781,15 @@ contain-intrinsic-size_contain-intrinsic-size-020-ref,not_portable,,unsupported 
 contain-intrinsic-size_contain-intrinsic-size-020,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_020,
 contain-intrinsic-size_contain-intrinsic-size-021,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_021,
 contain-intrinsic-size_contain-intrinsic-size-022-ref,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_022_ref,
-contain-intrinsic-size_contain-intrinsic-size-022,not_portable,,style_block_unsupported property: grid-template
+contain-intrinsic-size_contain-intrinsic-size-022,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_022,
 contain-intrinsic-size_contain-intrinsic-size-023-ref,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_023_ref,
-contain-intrinsic-size_contain-intrinsic-size-023,not_portable,,style_block_unsupported property: grid-template
+contain-intrinsic-size_contain-intrinsic-size-023,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_023,
 contain-intrinsic-size_contain-intrinsic-size-024-ref,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_024_ref,
-contain-intrinsic-size_contain-intrinsic-size-024,not_portable,,style_block_unsupported property: grid-template
+contain-intrinsic-size_contain-intrinsic-size-024,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_024,
 contain-intrinsic-size_contain-intrinsic-size-025-ref,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_025_ref,
-contain-intrinsic-size_contain-intrinsic-size-025,not_portable,,style_block_unsupported property: contain-intrinsic-size
+contain-intrinsic-size_contain-intrinsic-size-025,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_025,
 contain-intrinsic-size_contain-intrinsic-size-026-ref,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_026_ref,
-contain-intrinsic-size_contain-intrinsic-size-026,not_portable,,style_block_unsupported property: grid-template-columns
+contain-intrinsic-size_contain-intrinsic-size-026,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_026,
 contain-intrinsic-size_contain-intrinsic-size-027,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_027,
 contain-intrinsic-size_contain-intrinsic-size-028,not_portable,,uses_javascript
 contain-intrinsic-size_contain-intrinsic-size-029,not_portable,,uses_javascript
