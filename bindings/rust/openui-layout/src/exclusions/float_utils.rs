@@ -230,7 +230,12 @@ fn resolve_float_position(
 /// `(opportunity_end, block_end)` for right floats.
 fn compute_exclusion_rect(float: &UnpositionedFloat, opportunity: &LayoutOpportunity) -> BfcRect {
     let margin_inline_size = compute_margin_box_inline_size(float);
-    let margin_block_size = float.margins.top + float.block_size + float.margins.bottom;
+    // As in the inline axis, negative margins may fully cancel the float's
+    // margin-box measure. Keep the border box at its resolved negative visual
+    // offset, but represent its exclusion as a zero-height rectangle rather
+    // than constructing an inverted BFC rectangle.
+    let margin_block_size =
+        (float.margins.top + float.block_size + float.margins.bottom).clamp_negative_to_zero();
 
     let opp_block_start = opportunity.rect.block_start_offset();
 
@@ -356,6 +361,22 @@ mod tests {
         let (positioned, exclusion) = position_float(&float, &space);
         assert_eq!(positioned.bfc_offset, BfcOffset::new(lu(0), lu(0)));
         assert_eq!(exclusion.rect.inline_size(), LayoutUnit::zero());
+    }
+
+    #[test]
+    fn negative_margin_box_block_size_clamps_to_zero() {
+        let space = ExclusionSpace::new();
+        let float = make_float_with_margins(
+            50,
+            50,
+            true,
+            100,
+            BoxStrut::new(lu(-100), lu(0), lu(0), lu(0)),
+        );
+
+        let (positioned, exclusion) = position_float(&float, &space);
+        assert_eq!(positioned.bfc_offset.block_offset, lu(-100));
+        assert_eq!(exclusion.rect.block_size(), LayoutUnit::zero());
     }
 
     #[test]

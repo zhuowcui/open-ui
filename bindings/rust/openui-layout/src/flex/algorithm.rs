@@ -580,12 +580,16 @@ pub fn flex_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
         border_padding_block,
     );
 
+    let sizing_intrinsic_block_size = crate::containment::logical_block_fallback(style)
+        .map_or(intrinsic_block_size, |fallback| {
+            fallback + border_padding_block
+        });
     let total_block_size = resolve_total_block_size(
         doc,
         node_id,
         style,
         space,
-        intrinsic_block_size,
+        sizing_intrinsic_block_size,
         border_padding_block,
         container_inline_size,
     );
@@ -1264,8 +1268,36 @@ fn construct_flex_items(
     // Collect children with their order values, then stable sort.  display:contents
     // nodes do not generate flex item boxes; their box-generating children are
     // promoted into the flex container's child list.
+    let mut flex_children = flex_box_children(doc, container_id);
+    if doc.node(container_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup) {
+        let origin = doc.node(container_id).pseudo_origin;
+        if !origin.is_none() {
+            let origin_fragment = crate::block::block_layout(doc, origin, space);
+            let column_count = origin_fragment
+                .children
+                .iter()
+                .filter(|fragment| fragment.kind == crate::fragment::FragmentKind::ColumnBox)
+                .count()
+                .max(1);
+            if column_count > 1 {
+                flex_children = flex_children
+                    .into_iter()
+                    .flat_map(|child_id| {
+                        let count = if doc.node(child_id).pseudo_kind
+                            == Some(PseudoElementKind::ColumnScrollMarker)
+                        {
+                            column_count
+                        } else {
+                            1
+                        };
+                        std::iter::repeat_n(child_id, count)
+                    })
+                    .collect();
+            }
+        }
+    }
     let mut children_with_order: Vec<(NodeId, i32)> = Vec::new();
-    for child_id in flex_box_children(doc, container_id) {
+    for child_id in flex_children {
         let child_style = &doc.node(child_id).style;
         children_with_order.push((child_id, child_style.order));
     }
@@ -1453,19 +1485,9 @@ fn flex_box_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
 
 fn flatten_flex_box_children(doc: &Document, parent_id: NodeId, output: &mut Vec<NodeId>) {
     if doc.node(parent_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup) {
-        fn collect_markers(doc: &Document, origin: NodeId, output: &mut Vec<NodeId>) {
-            for child_id in doc.children(origin) {
-                match doc.node(child_id).pseudo_kind {
-                    Some(PseudoElementKind::ScrollMarker)
-                    | Some(PseudoElementKind::ColumnScrollMarker) => output.push(child_id),
-                    Some(PseudoElementKind::ScrollMarkerGroup) => {}
-                    _ => collect_markers(doc, child_id, output),
-                }
-            }
-        }
         let origin = doc.node(parent_id).pseudo_origin;
         if !origin.is_none() {
-            collect_markers(doc, origin, output);
+            crate::block::collect_scroll_marker_group_items(doc, origin, output);
         }
         return;
     }
@@ -1618,7 +1640,7 @@ fn resolve_flex_basis(
                 main_axis_border_padding,
                 child_percentage_inline,
                 child_percentage_block,
-                false,
+                true,
                 space,
                 resolved_alignment,
             );
@@ -3442,6 +3464,7 @@ fn give_items_final_position(
     // axis = block axis and "ascent" maps to the physical top.
     let mut container_first_baseline: Option<LayoutUnit> = None;
     let mut container_last_baseline: Option<LayoutUnit> = None;
+    let mut column_marker_occurrence = 0usize;
 
     for line in lines.iter() {
         let line_children_start = children.len();
@@ -4188,6 +4211,13 @@ fn give_items_final_position(
             let mut positioned = data.fragment;
             positioned.offset = converter.to_physical_offset(logical_offset, positioned.size);
             positioned.margin = item.margin.clone();
+            if doc.node(item.node_id).pseudo_kind == Some(PseudoElementKind::ColumnScrollMarker) {
+                if column_marker_occurrence > 0 {
+                    positioned.paint_background_color_override =
+                        doc.node(item.node_id).scroll_marker_inactive_background;
+                }
+                column_marker_occurrence += 1;
+            }
 
             crate::relative::apply_relative_offset(
                 &mut positioned,

@@ -1368,11 +1368,43 @@ impl ComputedStyle {
         // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
         self.display.is_new_formatting_context()
             || (self.display == Display::ListItem && self.list_item_is_flow_root)
-            || self.contain.contains(Containment::LAYOUT)
-            || self.contain.contains(Containment::PAINT)
+            || self.has_layout_containment()
             || self.position.is_absolutely_positioned()
             || self.float != Float::None
             || self.is_scroll_container()
+    }
+
+    /// Size containment in the element's logical inline axis. A size query
+    /// container establishes the same containment even when `contain` does
+    /// not spell it out explicitly.
+    #[inline]
+    pub fn has_inline_size_containment(&self) -> bool {
+        self.contain.contains(Containment::SIZE)
+            || self.contain.contains(Containment::INLINE_SIZE)
+            || matches!(
+                self.container_type,
+                ContainerType::InlineSize | ContainerType::Size
+            )
+    }
+
+    /// Size containment in the element's logical block axis.
+    #[inline]
+    pub fn has_block_size_containment(&self) -> bool {
+        self.contain.contains(Containment::SIZE) || self.container_type == ContainerType::Size
+    }
+
+    /// Layout containment, including the implicit containment established by
+    /// size query containers.
+    #[inline]
+    pub fn has_layout_containment(&self) -> bool {
+        self.contain.contains(Containment::LAYOUT)
+            || self.contain.contains(Containment::PAINT)
+            || self.container_type != ContainerType::Normal
+    }
+
+    #[inline]
+    pub fn has_paint_containment(&self) -> bool {
+        self.contain.contains(Containment::PAINT)
     }
 
     /// True if this element is in the normal flow (not floated, not abs-pos).

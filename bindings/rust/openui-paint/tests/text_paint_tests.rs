@@ -1088,6 +1088,7 @@ fn paint_text_fragment_no_shape_result() {
         text_content: None,
         text_run_orientation: openui_layout::TextRunOrientation::Horizontal,
         inherited_style: None,
+        paint_background_color_override: None,
         baseline_offset: 0.0,
         text_combine: None,
         overflow_rect: None,
@@ -1458,6 +1459,7 @@ fn paint_ellipsis_hidden_visibility_no_output() {
             s.visibility = Visibility::Hidden;
             s
         }),
+        paint_background_color_override: None,
         baseline_offset: metrics.ascent,
         text_combine: None,
         overflow_rect: None,

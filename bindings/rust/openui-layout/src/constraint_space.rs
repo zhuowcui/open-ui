@@ -239,6 +239,13 @@ pub struct ConstraintSpace {
     /// no fragmentation context.
     pub fragmentainer_block_size: LayoutUnit,
 
+    /// Block size of the next fresh fragmentainer in an enclosing
+    /// fragmentation context. This differs from `fragmentainer_block_size`
+    /// when a nested multicol is laid out in the short remainder of the
+    /// current outer column. It lets the nested context preserve an avoided
+    /// unit that fits whole after the outer break.
+    pub outer_fragmentainer_block_size: LayoutUnit,
+
     /// How far into the current fragmentainer this element starts.
     pub block_offset_in_fragmentainer: LayoutUnit,
 
@@ -296,6 +303,7 @@ impl ConstraintSpace {
             stretch_block_size: false,
             is_initial_block_size_indefinite: false,
             fragmentainer_block_size: LayoutUnit::zero(),
+            outer_fragmentainer_block_size: LayoutUnit::zero(),
             block_offset_in_fragmentainer: LayoutUnit::zero(),
             is_resuming: false,
             needs_first_baseline: false,
@@ -349,6 +357,7 @@ impl ConstraintSpace {
             stretch_block_size: false,
             is_initial_block_size_indefinite: false,
             fragmentainer_block_size: LayoutUnit::zero(),
+            outer_fragmentainer_block_size: LayoutUnit::zero(),
             block_offset_in_fragmentainer: LayoutUnit::zero(),
             is_resuming: false,
             needs_first_baseline: false,
@@ -439,6 +448,7 @@ impl ConstraintSpace {
             stretch_block_size: false,
             is_initial_block_size_indefinite: false,
             fragmentainer_block_size: LayoutUnit::zero(),
+            outer_fragmentainer_block_size: LayoutUnit::zero(),
             block_offset_in_fragmentainer: LayoutUnit::zero(),
             is_resuming: false,
             needs_first_baseline: false,

@@ -7,7 +7,7 @@
 use std::collections::{BTreeMap, HashMap};
 
 use openui_style::{
-    ComputedStyle, ContainerCondition, CounterStyle, Display, GeneratedContentItem,
+    ComputedStyle, ContainerCondition, Containment, CounterStyle, Display, GeneratedContentItem,
     ImageResourceId, Overflow, QuotePair, ScrollMarkerGroup,
 };
 
@@ -214,6 +214,11 @@ pub struct NodeData {
     /// after the authored `appearance` cascade.
     pub form_control_native_appearance: bool,
 
+    /// Base marker color retained when a generated column marker's single
+    /// pseudo node is expanded into multiple virtual marker boxes. The first
+    /// box may use `:target-current`; later boxes paint this inactive color.
+    pub scroll_marker_inactive_background: Option<openui_style::Color>,
+
     /// Static size-container queries evaluated after the first layout phase.
     pub container_query_rules: Vec<ContainerQueryRule>,
 
@@ -246,6 +251,7 @@ impl NodeData {
             replaced: None,
             form_control: None,
             form_control_native_appearance: true,
+            scroll_marker_inactive_background: None,
             container_query_rules: Vec::new(),
             parent: NodeId::NONE,
             first_child: NodeId::NONE,
@@ -421,6 +427,12 @@ impl Document {
             PseudoElementKind::ScrollMarkerGroup
                 if !self.nodes[origin.index()].parent.is_none() =>
             {
+                self.insert_after_sibling(origin, pseudo)
+            }
+            // Scroll buttons are siblings of the scroll container's
+            // principal box. Size containment and overflow clipping on the
+            // scrollport therefore cannot suppress the passive control.
+            PseudoElementKind::ScrollButton(_) if !self.nodes[origin.index()].parent.is_none() => {
                 self.insert_after_sibling(origin, pseudo)
             }
             PseudoElementKind::After
@@ -659,9 +671,13 @@ impl Document {
         {
             return Some(html);
         }
+        if html_style.contain.contains(Containment::PAINT) {
+            return None;
+        }
         let body = self.body_element()?;
         let body_style = &self.node(body).style;
         if matches!(body_style.display, Display::None | Display::Contents)
+            || body_style.contain.contains(Containment::PAINT)
             || (body_style.background_color.is_transparent()
                 && body_style.background_layers.is_empty()
                 && body_style.background_linear_gradient.is_none())
@@ -687,6 +703,8 @@ impl Document {
             && !matches!(body_style.display, Display::None | Display::Contents)
             && html_style.overflow_x == Overflow::Visible
             && html_style.overflow_y == Overflow::Visible
+            && !html_style.contain.contains(Containment::PAINT)
+            && !body_style.contain.contains(Containment::PAINT)
             && (body_style.overflow_x != Overflow::Visible
                 || body_style.overflow_y != Overflow::Visible)
     }

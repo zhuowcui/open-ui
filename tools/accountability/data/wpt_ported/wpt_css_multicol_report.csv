@@ -23,7 +23,7 @@ auto-fill-auto-size-002-print-ref,ported,css_multicol_auto_fill_auto_size_002_pr
 balance-break-avoidance-000,ported,css_multicol_balance_break_avoidance_000,
 balance-break-avoidance-001,ported,css_multicol_balance_break_avoidance_001,
 balance-break-avoidance-002,ported,css_multicol_balance_break_avoidance_002,
-balance-extremely-tall-monolithic-content-crash,not_portable,,unsupported property: contain
+balance-extremely-tall-monolithic-content-crash,ported,css_multicol_balance_extremely_tall_monolithic_content_crash,
 balance-grid-001,not_portable,,uses_javascript
 balance-grid-container,ported,css_multicol_balance_grid_container,
 balance-grid-container-ref,ported,css_multicol_balance_grid_container_ref,
@@ -89,7 +89,7 @@ column-height-019,ported,css_multicol_column_height_019,
 column-height-020,ported,css_multicol_column_height_020,
 column-height-021,ported,css_multicol_column_height_021,
 column-height-022,ported,css_multicol_column_height_022,
-column-height-023,not_portable,,unsupported property: contain
+column-height-023,ported,css_multicol_column_height_023,
 column-height-024,ported,css_multicol_column_height_024,
 column-height-025,ported,css_multicol_column_height_025,
 column-height-026,ported,css_multicol_column_height_026,
@@ -303,13 +303,13 @@ multicol-fill-balance-029,ported,css_multicol_multicol_fill_balance_029,
 multicol-fill-balance-030,ported,css_multicol_multicol_fill_balance_030,
 multicol-fill-balance-031,ported,css_multicol_multicol_fill_balance_031,
 multicol-fill-balance-032,ported,css_multicol_multicol_fill_balance_032,
-multicol-fill-balance-033,not_portable,,unsupported property: contain
-multicol-fill-balance-034,not_portable,,unsupported property: contain
-multicol-fill-balance-035,not_portable,,unsupported property: contain
-multicol-fill-balance-036,not_portable,,unsupported property: contain
-multicol-fill-balance-037,not_portable,,unsupported property: contain
-multicol-fill-balance-038,not_portable,,unsupported property: contain
-multicol-fill-balance-039,not_portable,,unsupported property: contain
+multicol-fill-balance-033,ported,css_multicol_multicol_fill_balance_033,
+multicol-fill-balance-034,ported,css_multicol_multicol_fill_balance_034,
+multicol-fill-balance-035,ported,css_multicol_multicol_fill_balance_035,
+multicol-fill-balance-036,ported,css_multicol_multicol_fill_balance_036,
+multicol-fill-balance-037,ported,css_multicol_multicol_fill_balance_037,
+multicol-fill-balance-038,ported,css_multicol_multicol_fill_balance_038,
+multicol-fill-balance-039,ported,css_multicol_multicol_fill_balance_039,
 multicol-fill-balance-040,ported,css_multicol_multicol_fill_balance_040,
 multicol-fill-balance-041,ported,css_multicol_multicol_fill_balance_041,
 multicol-fill-balance-nested-000,ported,css_multicol_multicol_fill_balance_nested_000,
@@ -374,21 +374,21 @@ multicol-nested-006,not_portable,,uses_javascript
 multicol-nested-007,ported,css_multicol_multicol_nested_007,
 multicol-nested-008,ported,css_multicol_multicol_nested_008,
 multicol-nested-009,ported,css_multicol_multicol_nested_009,
-multicol-nested-010,not_portable,,unsupported property: contain
-multicol-nested-011,not_portable,,unsupported property: contain
+multicol-nested-010,ported,css_multicol_multicol_nested_010,
+multicol-nested-011,ported,css_multicol_multicol_nested_011,
 multicol-nested-012,not_portable,,uses_javascript
 multicol-nested-013,ported,css_multicol_multicol_nested_013,
-multicol-nested-014,not_portable,,unsupported property: contain
-multicol-nested-015,not_portable,,unsupported property: contain
-multicol-nested-016,not_portable,,unsupported property: contain
+multicol-nested-014,ported,css_multicol_multicol_nested_014,
+multicol-nested-015,ported,css_multicol_multicol_nested_015,
+multicol-nested-016,ported,css_multicol_multicol_nested_016,
 multicol-nested-017,ported,css_multicol_multicol_nested_017,
 multicol-nested-018,ported,css_multicol_multicol_nested_018,
 multicol-nested-019,ported,css_multicol_multicol_nested_019,
 multicol-nested-020,ported,css_multicol_multicol_nested_020,
-multicol-nested-021,not_portable,,unsupported property: contain
+multicol-nested-021,ported,css_multicol_multicol_nested_021,
 multicol-nested-022,ported,css_multicol_multicol_nested_022,
 multicol-nested-023,ported,css_multicol_multicol_nested_023,
-multicol-nested-024,not_portable,,unsupported property: contain
+multicol-nested-024,ported,css_multicol_multicol_nested_024,
 multicol-nested-025,ported,css_multicol_multicol_nested_025,
 multicol-nested-026,ported,css_multicol_multicol_nested_026,
 multicol-nested-027,ported,css_multicol_multicol_nested_027,
@@ -511,8 +511,8 @@ multicol-span-all-008,ported,css_multicol_multicol_span_all_008,
 multicol-span-all-008-ref,ported,css_multicol_multicol_span_all_008_ref,
 multicol-span-all-009,not_portable,,style_block_unsupported property: transform
 multicol-span-all-009-ref,not_portable,,style_block_unsupported property: transform
-multicol-span-all-010,not_portable,,unsupported property: transform
-multicol-span-all-010-ref,not_portable,,unsupported property: transform
+multicol-span-all-010,ported,css_multicol_multicol_span_all_010,
+multicol-span-all-010-ref,ported,css_multicol_multicol_span_all_010_ref,
 multicol-span-all-011,ported,css_multicol_multicol_span_all_011,
 multicol-span-all-011-ref,ported,css_multicol_multicol_span_all_011_ref,
 multicol-span-all-012,ported,css_multicol_multicol_span_all_012,
@@ -668,13 +668,13 @@ nested-after-float-clearance,ported,css_multicol_nested_after_float_clearance,
 nested-at-outer-boundary-as-fieldset,not_portable,,unsupported element: <fieldset>
 nested-at-outer-boundary-as-float,ported,css_multicol_nested_at_outer_boundary_as_float,
 nested-at-outer-boundary-as-legend,not_portable,,unsupported element: <fieldset>
-nested-balanced-monolithic-multicol-crash,not_portable,,unsupported property: contain
+nested-balanced-monolithic-multicol-crash,ported,css_multicol_nested_balanced_monolithic_multicol_crash,
 nested-balanced-very-tall-content-crash,ported,css_multicol_nested_balanced_very_tall_content_crash,
-nested-floated-multicol-with-monolithic-child,not_portable,,unsupported property: contain
-nested-floated-shape-outside-multicol-with-monolithic-child-crash,not_portable,,unsupported property: shape-outside
+nested-floated-multicol-with-monolithic-child,ported,css_multicol_nested_floated_multicol_with_monolithic_child,
+nested-floated-shape-outside-multicol-with-monolithic-child-crash,ported,css_multicol_nested_floated_shape_outside_multicol_with_monolithic_child_crash,
 nested-non-auto-inline-size-offset-top,not_portable,,uses_javascript
 nested-oofs-in-relative-multicol,ported,css_multicol_nested_oofs_in_relative_multicol,
-nested-past-fragmentation-line,not_portable,,unsupported property: contain
+nested-past-fragmentation-line,ported,css_multicol_nested_past_fragmentation_line,
 nested-with-overflowing-padding-crash,ported,css_multicol_nested_with_overflowing_padding_crash,
 nested-with-padding-and-spanner,ported,css_multicol_nested_with_padding_and_spanner,
 nested-with-too-tall-line,ported,css_multicol_nested_with_too_tall_line,
@@ -802,3 +802,13 @@ crashtests_repeated-table-footer-in-caption-nested-multicol,ported,css_multicol_
 crashtests_scrollable-spanner-in-nested,ported,css_multicol_crashtests_scrollable_spanner_in_nested,
 crashtests_table-caption-in-clipped-overflow,ported,css_multicol_crashtests_table_caption_in_clipped_overflow,
 crashtests_as-baseline-aligned-grid-item,ported,css_multicol_crashtests_as_baseline_aligned_grid_item,
+crashtests_balancing-flex-item-trailing-margin-freeze,ported,css_multicol_crashtests_balancing_flex_item_trailing_margin_freeze,
+crashtests_balancing-tall-borders-freeze,ported,css_multicol_crashtests_balancing_tall_borders_freeze,
+crashtests_interleaved-bfc-crash,ported,css_multicol_crashtests_interleaved_bfc_crash,
+crashtests_monolithic-oof-in-clipped-container,ported,css_multicol_crashtests_monolithic_oof_in_clipped_container,
+crashtests_multicol-parallel-flow-after-spanner-in-inline,ported,css_multicol_crashtests_multicol_parallel_flow_after_spanner_in_inline,
+crashtests_multicol-with-monolithic-oof-with-multicol-with-oof,ported,css_multicol_crashtests_multicol_with_monolithic_oof_with_multicol_with_oof,
+crashtests_nested-oof-multicol-with-monolithic-child,ported,css_multicol_crashtests_nested_oof_multicol_with_monolithic_child,
+crashtests_restricted-height-bottom-border-overflow-and-spanner,ported,css_multicol_crashtests_restricted_height_bottom_border_overflow_and_spanner,
+crashtests_spanner-after-parallel-flow,ported,css_multicol_crashtests_spanner_after_parallel_flow,
+crashtests_text-in-inline-interrupted-by-float,ported,css_multicol_crashtests_text_in_inline_interrupted_by_float,

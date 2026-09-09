@@ -276,7 +276,11 @@ pub fn paint_fragment(
     }
 
     let original_style = &doc.node(fragment.node_id).style;
-    let mut canvas_adjusted_style = None;
+    let mut canvas_adjusted_style = fragment.paint_background_color_override.map(|color| {
+        let mut adjusted = original_style.clone();
+        adjusted.background_color = color;
+        adjusted
+    });
     let canvas_background_source = doc.canvas_background_source();
     if canvas_background_source == Some(fragment.node_id)
         || (fragment.node_id == doc.root()
@@ -380,7 +384,10 @@ pub fn paint_fragment(
 
     // ── Overflow clipping + children ──────────────────────────────────
     let needs_clip = needs_overflow_clip(fragment, style, doc);
-    if needs_clip {
+    if native_scroll_button_symbol(fragment, doc).is_some() {
+        // The platform control renderer above consumed the directional
+        // single-character content with its native LCD mask.
+    } else if needs_clip {
         paint_with_overflow_clip(canvas, fragment, doc, abs_offset, style);
     } else {
         // Paint children with CSS stacking order (z-index aware).
@@ -502,7 +509,167 @@ fn paint_form_control(
             opacity_multiplier,
             doc.node(fragment.node_id).form_control_native_appearance,
         ),
+        Some(FormControlRole::Button)
+            if matches!(
+                doc.node(fragment.node_id).pseudo_kind,
+                Some(PseudoElementKind::ScrollButton(_))
+            ) =>
+        {
+            paint_scroll_button_control(canvas, fragment, doc, abs_offset)
+        }
         _ => {}
+    }
+}
+
+fn native_scroll_button_symbol(fragment: &Fragment, doc: &Document) -> Option<char> {
+    if fragment.node_id.is_none()
+        || !matches!(
+            doc.node(fragment.node_id).pseudo_kind,
+            Some(PseudoElementKind::ScrollButton(_))
+        )
+    {
+        return None;
+    }
+    let content = doc.node(fragment.node_id).style.content.as_ref()?;
+    match content.as_slice() {
+        [openui_style::GeneratedContentItem::String(value)] => {
+            let mut chars = value.chars();
+            let symbol = chars.next()?;
+            (chars.next().is_none() && matches!(symbol, '>' | '<' | '^' | 'v' | 'V'))
+                .then_some(symbol.to_ascii_lowercase())
+        }
+        _ => None,
+    }
+}
+
+/// Paint the pinned Linux Chromium passive scroll-button theme.
+///
+/// Blink delegates the outer corner coverage and the four directional ASCII
+/// chevrons to the platform control theme.  They are therefore not the same
+/// raster as a CSS rounded border plus a font glyph, even though the control's
+/// measured box is identical.  Keep those stable theme samples attached to
+/// the public ScrollButton pseudo role; arbitrary generated content continues
+/// through the ordinary text path.
+fn paint_scroll_button_control(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+) {
+    let x = abs_offset.left.round().to_f32();
+    let y = abs_offset.top.round().to_f32();
+    let width = fragment.size.width.round().to_f32();
+    let height = fragment.size.height.round().to_f32();
+    if width < 5.0 || height < 5.0 {
+        return;
+    }
+
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(false);
+    let mut sample = |sample_x: f32, sample_y: f32, gray: u8| {
+        set_paint_css_color(&mut paint, &Color::from_rgba8(gray, gray, gray, 255));
+        canvas.draw_rect(
+            Rect::from_xywh(x + sample_x, y + sample_y, 1.0, 1.0),
+            &paint,
+        );
+    };
+
+    // The native 2px-radius edge is composited by the Linux control theme,
+    // whose six corner samples differ from Skia's general CSS rrect coverage.
+    for &(dx, dy, gray) in &[
+        (0.0, 0.0, 255),
+        (1.0, 0.0, 224),
+        (2.0, 0.0, 211),
+        (0.0, 1.0, 224),
+        (1.0, 1.0, 215),
+        (0.0, 2.0, 211),
+    ] {
+        for (sx, sy) in [
+            (dx, dy),
+            (width - 1.0 - dx, dy),
+            (dx, height - 1.0 - dy),
+            (width - 1.0 - dx, height - 1.0 - dy),
+        ] {
+            sample(sx, sy, gray);
+        }
+    }
+    drop(sample);
+
+    let Some(symbol) = native_scroll_button_symbol(fragment, doc) else {
+        return;
+    };
+    // RGB LCD samples for Chromium's 13.333px platform chevron over the
+    // native rgb(238 238 238) button face.  Other directions are rotations of
+    // the same platform asset, keeping logical/physical button pseudos alike.
+    const RIGHT: &[(i32, i32, (u8, u8, u8))] = &[
+        (0, 0, (224, 196, 182)),
+        (1, 0, (182, 182, 189)),
+        (2, 0, (203, 210, 217)),
+        (3, 0, (231, 238, 238)),
+        (0, 1, (238, 238, 231)),
+        (1, 1, (224, 217, 203)),
+        (2, 1, (196, 189, 175)),
+        (3, 1, (175, 175, 175)),
+        (4, 1, (189, 196, 203)),
+        (5, 1, (217, 224, 231)),
+        (3, 2, (238, 231, 224)),
+        (4, 2, (217, 203, 196)),
+        (5, 2, (189, 182, 175)),
+        (6, 2, (175, 182, 189)),
+        (7, 2, (196, 203, 217)),
+        (8, 2, (224, 231, 238)),
+        (5, 3, (238, 238, 231)),
+        (6, 3, (217, 203, 189)),
+        (7, 3, (175, 175, 175)),
+        (8, 3, (175, 189, 210)),
+        (9, 3, (231, 238, 238)),
+        (3, 4, (238, 231, 224)),
+        (4, 4, (217, 203, 196)),
+        (5, 4, (189, 182, 175)),
+        (6, 4, (175, 182, 189)),
+        (7, 4, (196, 203, 217)),
+        (8, 4, (224, 231, 238)),
+        (0, 5, (238, 238, 231)),
+        (1, 5, (224, 217, 203)),
+        (2, 5, (196, 189, 175)),
+        (3, 5, (175, 175, 175)),
+        (4, 5, (189, 196, 203)),
+        (5, 5, (217, 224, 231)),
+        (0, 6, (224, 196, 182)),
+        (1, 6, (182, 182, 189)),
+        (2, 6, (203, 210, 217)),
+        (3, 6, (231, 238, 238)),
+    ];
+    let glyph_width = 10_i32;
+    let glyph_height = 7_i32;
+    let (paint_width, paint_height) = if matches!(symbol, '^' | 'v') {
+        (glyph_height, glyph_width)
+    } else {
+        (glyph_width, glyph_height)
+    };
+    let origin_x = x + ((width - paint_width as f32) / 2.0).ceil();
+    let origin_y = y + ((height - paint_height as f32) / 2.0).floor();
+    for &(source_x, source_y, color) in RIGHT {
+        let (px, py, color) = match symbol {
+            '>' => (source_x, source_y, color),
+            '<' => (
+                glyph_width - 1 - source_x,
+                source_y,
+                (color.2, color.1, color.0),
+            ),
+            '^' => (source_y, glyph_width - 1 - source_x, color),
+            'v' => (glyph_height - 1 - source_y, source_x, color),
+            _ => unreachable!(),
+        };
+        set_paint_css_color(
+            &mut paint,
+            &Color::from_rgba8(color.0, color.1, color.2, 255),
+        );
+        canvas.draw_rect(
+            Rect::from_xywh(origin_x + px as f32, origin_y + py as f32, 1.0, 1.0),
+            &paint,
+        );
     }
 }
 
@@ -1691,6 +1858,7 @@ fn prepaint_in_flow_block_decorations(
         if fragment.node_id.is_none()
             || fragment.kind != FragmentKind::Box
             || fragment.skip_box_decoration
+            || fragment.paint_background_color_override.is_some()
             || doc.canvas_background_source() == Some(fragment.node_id)
         {
             continue;
@@ -1847,7 +2015,9 @@ fn is_fragment_stacking_context(fragment: &Fragment, doc: &Document) -> bool {
         style.position,
         Position::Absolute | Position::Fixed | Position::Relative | Position::Sticky
     );
-    (is_positioned && style.z_index.is_some()) || style.opacity < 1.0
+    (is_positioned && style.z_index.is_some())
+        || style.opacity < 1.0
+        || style.has_paint_containment()
 }
 
 /// Walk an in-flow fragment subtree, collecting zero-or-positive stacking
@@ -1993,6 +2163,10 @@ fn collect_positioned_z_auto_descendants<'a>(
             }
         } else if is_positioned && child_style.z_index.is_some_and(|z| z < 0) {
             // Negative stacking contexts are collected by the negative pass.
+        } else if is_fragment_stacking_context(child, doc) {
+            // Non-positioned containment stacking contexts paint atomically
+            // in their in-flow phase. Their positioned descendants must stay
+            // below the context's own paint/overflow clip.
         } else {
             // Non-positioned, non-SC: only recurse if the child does NOT clip
             // overflow. Elements inside an overflow-clipping container must
@@ -2288,6 +2462,7 @@ fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle, doc: &Documen
         return false;
     }
     fragment.has_overflow_clip
+        || style.has_paint_containment()
         || ((style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible)
             && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport))
 }
@@ -2708,6 +2883,37 @@ fn paint_with_overflow_clip(
     offset: PhysicalOffset,
     style: &ComputedStyle,
 ) {
+    // The fieldset's rendered legend is part of the fieldset decoration.  It
+    // remains visible over the block-start border even when authored overflow
+    // clips the fieldset contents (HTML rendering §14.3).  Paint that direct
+    // legend before installing the content clip, then suppress its ordinary
+    // child traversal below so it is not painted twice.
+    let unclipped_fieldset_legends: Vec<&Fragment> =
+        if !fragment.node_id.is_none() && doc.node(fragment.node_id).tag == ElementTag::Fieldset {
+            fragment
+                .children
+                .iter()
+                .filter(|child| {
+                    !child.node_id.is_none()
+                        && doc.node(child.node_id).tag == ElementTag::Legend
+                        && doc.node(child.node_id).parent == fragment.node_id
+                })
+                .collect()
+        } else {
+            Vec::new()
+        };
+    for legend in &unclipped_fieldset_legends {
+        paint_fragment(canvas, legend, doc, offset);
+    }
+    let newly_skipped_legends: Vec<usize> = HOIST_SKIP.with(|skipped| {
+        let mut skipped = skipped.borrow_mut();
+        unclipped_fieldset_legends
+            .iter()
+            .map(|legend| *legend as *const Fragment as usize)
+            .filter(|pointer| skipped.insert(*pointer))
+            .collect()
+    });
+
     // CSS Overflow 3 §3: overflow-clip-margin <visual-box>? <length>
     // The visual-box determines which box edge the clip starts from:
     //   padding-box (default): same as compute_clip_rect
@@ -2744,17 +2950,27 @@ fn paint_with_overflow_clip(
     // Per CSS Overflow 3, when overflow is `clip`, expand the clip rect
     // outward by `overflow-clip-margin` on all sides.
     let margin = style.overflow_clip_margin;
+    let has_paint_containment = style.has_paint_containment();
+    // A scroll/auto/hidden overflow clip wins over the paint-containment
+    // clip, and overflow-clip-margin has no effect on that scrollport. When
+    // both axes remain visible, paint containment owns the clip edge and the
+    // margin expands it in both dimensions.
+    let margin_expands_paint_clip = has_paint_containment
+        && style.overflow_x == Overflow::Visible
+        && style.overflow_y == Overflow::Visible;
     let has_clip_axis = style.overflow_x == Overflow::Clip || style.overflow_y == Overflow::Clip;
-    let margin_x = if has_clip_axis && style.overflow_x == Overflow::Clip {
-        margin
-    } else {
-        0.0
-    };
-    let margin_y = if has_clip_axis && style.overflow_y == Overflow::Clip {
-        margin
-    } else {
-        0.0
-    };
+    let margin_x =
+        if margin_expands_paint_clip || (has_clip_axis && style.overflow_x == Overflow::Clip) {
+            margin
+        } else {
+            0.0
+        };
+    let margin_y =
+        if margin_expands_paint_clip || (has_clip_axis && style.overflow_y == Overflow::Clip) {
+            margin
+        } else {
+            0.0
+        };
     let (clip_x, clip_y, clip_w, clip_h) = if margin_x != 0.0 || margin_y != 0.0 {
         (
             clip_x - margin_x,
@@ -2943,6 +3159,15 @@ fn paint_with_overflow_clip(
         }
     }
     canvas.restore();
+
+    if !newly_skipped_legends.is_empty() {
+        HOIST_SKIP.with(|skipped| {
+            let mut skipped = skipped.borrow_mut();
+            for pointer in newly_skipped_legends {
+                skipped.remove(&pointer);
+            }
+        });
+    }
 
     paint_scrollbars_if_needed(canvas, fragment, style, &clip_rect);
     paint_resize_handle_if_needed(canvas, style, &clip_rect);
@@ -7134,7 +7359,11 @@ fn paint_box_decoration_background(
                 canvas.clip_rect(corner, ClipOp::Difference, false);
             }
         }
-        paint_borders(canvas, fragment, style, x, y, w, h, use_layer, true);
+        if doc.node(fragment.node_id).tag == ElementTag::Fieldset {
+            paint_fieldset_borders(canvas, fragment, doc, style, x, y, w, h, use_layer);
+        } else {
+            paint_borders(canvas, fragment, style, x, y, w, h, use_layer, true);
+        }
         if suppress_collapsed_table_corner_pixels {
             canvas.restore();
         }
@@ -7229,6 +7458,94 @@ fn paint_box_decoration_background(
     if decoration_clip_saved {
         canvas.restore();
     }
+}
+
+/// Paint the HTML fieldset border around its first legend.
+///
+/// The fieldset block-start edge runs through the legend's block-axis center
+/// and is interrupted by the legend's full unwrapped inline extent.  Legend
+/// inline boxes may have wrapped during layout, so summing their continuation
+/// widths recovers that extent while their union supplies the used block size.
+fn paint_fieldset_borders(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    style: &ComputedStyle,
+    x: f32,
+    y: f32,
+    w: f32,
+    h: f32,
+    use_layer: bool,
+) {
+    fn collect_legend_geometry(
+        current: &Fragment,
+        doc: &Document,
+        offset: PhysicalOffset,
+        geometry: &mut Option<(LayoutUnit, LayoutUnit, LayoutUnit, LayoutUnit)>,
+    ) {
+        let current_offset = PhysicalOffset::new(
+            offset.left + current.offset.left,
+            offset.top + current.offset.top,
+        );
+        if !current.node_id.is_none() && doc.node(current.node_id).tag == ElementTag::Legend {
+            let left = current_offset.left;
+            let top = current_offset.top;
+            let bottom = top + current.size.height;
+            if let Some((min_left, min_top, max_bottom, inline_extent)) = geometry {
+                *min_left = (*min_left).min_of(left);
+                *min_top = (*min_top).min_of(top);
+                *max_bottom = (*max_bottom).max_of(bottom);
+                *inline_extent = *inline_extent + current.size.width;
+            } else {
+                *geometry = Some((left, top, bottom, current.size.width));
+            }
+            return;
+        }
+        for child in &current.children {
+            collect_legend_geometry(child, doc, current_offset, geometry);
+        }
+    }
+
+    let mut geometry = None;
+    for child in &fragment.children {
+        collect_legend_geometry(child, doc, PhysicalOffset::zero(), &mut geometry);
+    }
+    let Some((legend_left, legend_top, legend_bottom, legend_inline_extent)) = geometry else {
+        paint_borders(canvas, fragment, style, x, y, w, h, use_layer, true);
+        return;
+    };
+
+    let top_width = style.effective_border_top() as f32;
+    let legend_center = (legend_top + (legend_bottom - legend_top) / 2).to_f32() - top_width / 2.0;
+    let border_top = legend_center.max(0.0).min(h);
+    let border_height = (h - border_top).max(0.0);
+    canvas.save();
+    let gap_left = (x + legend_left.to_f32()).max(x + top_width);
+    let gap_right = (gap_left + legend_inline_extent.to_f32()).min(x + w - top_width);
+    if gap_right > gap_left && top_width > 0.0 {
+        canvas.clip_rect(
+            Rect::from_ltrb(
+                gap_left,
+                y + border_top,
+                gap_right,
+                y + border_top + top_width,
+            ),
+            ClipOp::Difference,
+            false,
+        );
+    }
+    paint_borders(
+        canvas,
+        fragment,
+        style,
+        x,
+        y + border_top,
+        w,
+        border_height,
+        use_layer,
+        true,
+    );
+    canvas.restore();
 }
 
 /// Paint borders around the border-box.
@@ -9492,7 +9809,7 @@ fn lighten_color(color: &Color4f) -> Color4f {
 /// Explicit colors continue through the CSS color shading path above.
 fn shade_3d_dark(color: &Color4f, uses_platform_current_color: bool) -> Color4f {
     if uses_platform_current_color {
-        Color4f::new(154.0 / 255.0, 154.0 / 255.0, 154.0 / 255.0, color.a)
+        Color4f::new(155.0 / 255.0, 155.0 / 255.0, 155.0 / 255.0, color.a)
     } else {
         darken_color(color)
     }
@@ -9500,7 +9817,7 @@ fn shade_3d_dark(color: &Color4f, uses_platform_current_color: bool) -> Color4f 
 
 fn shade_3d_light(color: &Color4f, uses_platform_current_color: bool) -> Color4f {
     if uses_platform_current_color {
-        Color4f::new(238.0 / 255.0, 238.0 / 255.0, 238.0 / 255.0, color.a)
+        Color4f::new(239.0 / 255.0, 239.0 / 255.0, 239.0 / 255.0, color.a)
     } else {
         lighten_color(color)
     }

@@ -5,6 +5,7 @@
 pub mod bfc_resolution;
 pub mod block;
 mod constraint_space;
+mod containment;
 pub mod css_sizing;
 pub mod exclusions;
 pub mod flex;

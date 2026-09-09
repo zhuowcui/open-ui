@@ -700,6 +700,10 @@ pub struct InlineItemsBuilder<'a> {
     positioned_inline_stack: Vec<NodeId>,
     /// Block-in-inline interruptions found during collection.
     block_in_inline: Vec<BlockInInlineInfo>,
+    /// Virtual marker-group children are attached to their originating
+    /// elements for DOM order, but an explicit marker-group collection must
+    /// admit them into that pseudo box's inline formatting context.
+    include_scroll_markers: bool,
 }
 
 impl<'a> InlineItemsBuilder<'a> {
@@ -716,6 +720,7 @@ impl<'a> InlineItemsBuilder<'a> {
             inline_stack: Vec::new(),
             positioned_inline_stack: Vec::new(),
             block_in_inline: Vec::new(),
+            include_scroll_markers: false,
         }
     }
 
@@ -734,6 +739,8 @@ impl<'a> InlineItemsBuilder<'a> {
     ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
         let mut builder = InlineItemsBuilder::new(doc);
         let block_style = &doc.node(block_node_id).style;
+        builder.include_scroll_markers =
+            doc.node(block_node_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup);
         builder.inline_writing_direction = block_style
             .direction
             .writing_direction(block_style.writing_mode);
@@ -775,6 +782,8 @@ impl<'a> InlineItemsBuilder<'a> {
     ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
         let mut builder = InlineItemsBuilder::new(doc);
         let block_style = &doc.node(block_node_id).style;
+        builder.include_scroll_markers =
+            doc.node(block_node_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup);
         builder.inline_writing_direction = block_style
             .direction
             .writing_direction(block_style.writing_mode);
@@ -820,7 +829,8 @@ impl<'a> InlineItemsBuilder<'a> {
         if matches!(
             node.pseudo_kind,
             Some(PseudoElementKind::ScrollMarker) | Some(PseudoElementKind::ColumnScrollMarker)
-        ) {
+        ) && !self.include_scroll_markers
+        {
             return;
         }
 

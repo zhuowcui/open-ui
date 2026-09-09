@@ -248,8 +248,8 @@ background-color-body-propagation-004,ported,css_backgrounds_background_color_bo
 background-color-body-propagation-005,ported,css_backgrounds_background_color_body_propagation_005,
 background-color-body-propagation-006,not_portable,,uses_javascript
 background-color-body-propagation-007,ported,css_backgrounds_background_color_body_propagation_007,
-background-color-body-propagation-008,not_portable,,style_block_unsupported property: contain
-background-color-body-propagation-009,not_portable,,style_block_unsupported property: contain
+background-color-body-propagation-008,ported,css_backgrounds_background_color_body_propagation_008,
+background-color-body-propagation-009,ported,css_backgrounds_background_color_body_propagation_009,
 background-color-body-propagation-ref,ported,css_backgrounds_background_color_body_propagation_ref,
 background-color-clip,ported,css_backgrounds_background_color_clip,
 background-color-no-body-propagation-ref,ported,css_backgrounds_background_color_no_body_propagation_ref,

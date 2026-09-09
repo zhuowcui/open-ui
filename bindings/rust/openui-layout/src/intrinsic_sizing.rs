@@ -711,21 +711,30 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
 
     // Replaced elements use their own intrinsic dimensions.
     if node.replaced.is_some() || is_replaced_element(tag) {
-        return compute_replaced_intrinsic_sizes_for_node(doc, node_id);
+        return apply_size_containment(
+            style,
+            compute_replaced_intrinsic_sizes_for_node(doc, node_id),
+        );
     }
 
     // Flex containers have their own intrinsic sizing algorithm.
     // CSS Flexbox §9.9: Flex container intrinsic sizes.
     if style.display.is_flex() {
-        return compute_flex_intrinsic_sizes(doc, node_id, style);
+        return apply_size_containment(style, compute_flex_intrinsic_sizes(doc, node_id, style));
     }
 
     if style.display.is_grid() {
-        return crate::grid::compute_grid_intrinsic_sizes(doc, node_id);
+        return apply_size_containment(
+            style,
+            crate::grid::compute_grid_intrinsic_sizes(doc, node_id),
+        );
     }
 
     if style.display.is_table_wrapper() {
-        return crate::table::compute_table_intrinsic_sizes(doc, node_id);
+        return apply_size_containment(
+            style,
+            crate::table::compute_table_intrinsic_sizes(doc, node_id),
+        );
     }
 
     let border = resolve_border(style);
@@ -1069,12 +1078,35 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         max_inline = max_inline.max_of(min_inline);
     }
 
-    IntrinsicSizes {
-        min_content_inline_size: min_inline + bp_inline,
-        max_content_inline_size: max_inline + bp_inline,
-        min_content_block_size: min_content_block + bp_block,
-        max_content_block_size: max_content_block + bp_block,
+    apply_size_containment(
+        style,
+        IntrinsicSizes {
+            min_content_inline_size: min_inline + bp_inline,
+            max_content_inline_size: max_inline + bp_inline,
+            min_content_block_size: min_content_block + bp_block,
+            max_content_block_size: max_content_block + bp_block,
+        },
+    )
+}
+
+fn apply_size_containment(style: &ComputedStyle, mut sizes: IntrinsicSizes) -> IntrinsicSizes {
+    let border = resolve_border(style);
+    let padding = resolve_padding(style, LayoutUnit::zero());
+    if crate::containment::physical_width_is_contained(style) {
+        let width = crate::containment::physical_width_fallback(style)
+            + border.inline_sum()
+            + padding.inline_sum();
+        sizes.min_content_inline_size = width;
+        sizes.max_content_inline_size = width;
     }
+    if crate::containment::physical_height_is_contained(style) {
+        let height = crate::containment::physical_height_fallback(style)
+            + border.block_sum()
+            + padding.block_sum();
+        sizes.min_content_block_size = height;
+        sizes.max_content_block_size = height;
+    }
+    sizes
 }
 
 /// Compute intrinsic sizes for flex containers.
@@ -2032,6 +2064,15 @@ pub(crate) fn compute_logical_intrinsic_inline_sizes(
     node_id: NodeId,
 ) -> MinMaxSizes {
     let node = doc.node(node_id);
+    let logical_contained_size = || {
+        crate::containment::logical_inline_fallback(&node.style).map(|fallback| {
+            let direction = IntrinsicAxisMapping::for_style(&node.style).writing_direction;
+            let border = resolve_border(&node.style).to_logical(direction);
+            let padding = resolve_padding(&node.style, LayoutUnit::zero()).to_logical(direction);
+            let border_box = fallback + border.inline_sum() + padding.inline_sum();
+            MinMaxSizes::new(border_box, border_box)
+        })
+    };
     if node.tag == ElementTag::Text {
         return node
             .text
@@ -2057,6 +2098,9 @@ pub(crate) fn compute_logical_intrinsic_inline_sizes(
     let direction = IntrinsicAxisMapping::for_style(&node.style).writing_direction;
     if direction.is_horizontal() {
         return compute_intrinsic_inline_sizes(doc, node_id);
+    }
+    if let Some(contained) = logical_contained_size() {
+        return contained;
     }
     if node.style.display.is_table_wrapper() {
         // The table algorithm already reports contributions in the table's

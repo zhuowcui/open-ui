@@ -976,7 +976,7 @@ baseline-synthesis-vert-lr-line-under,ported,css_flexbox_baseline_synthesis_vert
 box-sizing-001,not_portable,,uses_javascript
 box-sizing-min-max-sizes-001,not_portable,,uses_javascript
 button-column-wrap-crash,not_portable,,unsupported element: <button>
-canvas-contain-size,not_portable,,unsupported property: contain
+canvas-contain-size,ported,css_flexbox_canvas_contain_size,
 canvas-dynamic-change-001,not_portable,,uses_javascript
 change-column-flex-width,not_portable,,uses_javascript
 column-flex-child-with-overflow-scroll,not_portable,,uses_javascript

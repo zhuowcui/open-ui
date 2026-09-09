@@ -154,6 +154,7 @@ pub struct PositionedFragmentationData {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MulticolFragmentationData {
     pub fragmentainer_block_size: LayoutUnit,
+    pub continuation_fragmentainer_block_size: LayoutUnit,
     pub column_inline_start: LayoutUnit,
     pub column_block_start: LayoutUnit,
     pub column_inline_stride: LayoutUnit,
@@ -207,6 +208,10 @@ pub struct Fragment {
     /// Inherited style for anonymous fragments (e.g., ellipsis "…") that have
     /// no DOM node. Used by the painter to render with the correct color/font.
     pub inherited_style: Option<ComputedStyle>,
+
+    /// Fragment-local generated-marker paint state. Column markers share one
+    /// DOM pseudo node but produce one box per generated column.
+    pub paint_background_color_override: Option<openui_style::Color>,
 
     /// Distance from the fragment's top edge to the text baseline.
     /// Computed during layout; used by paint to avoid recomputing from metrics.
@@ -442,6 +447,7 @@ impl Fragment {
             text_content: None,
             text_run_orientation: TextRunOrientation::Horizontal,
             inherited_style: None,
+            paint_background_color_override: None,
             baseline_offset: 0.0,
             text_combine: None,
             overflow_rect: None,
@@ -502,6 +508,7 @@ impl Fragment {
             text_content: Some(text_content),
             text_run_orientation: TextRunOrientation::Horizontal,
             inherited_style: None,
+            paint_background_color_override: None,
             baseline_offset: 0.0,
             text_combine: None,
             overflow_rect: None,

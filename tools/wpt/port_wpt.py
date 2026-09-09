@@ -1082,7 +1082,13 @@ def _transform_2d_rust(value: str, font_size: float) -> str | None:
         if operation is None:
             return None
         matrix = multiply(matrix, operation)
-    values = ', '.join(f'{name}: {value:.9g}' for name, value in zip('abcdef', matrix))
+    def rust_f32(value: float) -> str:
+        literal = f'{value:.9g}'
+        return literal if any(marker in literal for marker in '.eE') else literal + '.0'
+
+    values = ', '.join(
+        f'{name}: {rust_f32(value)}' for name, value in zip('abcdef', matrix)
+    )
     return f'Transform2D {{ {values} }}'
 
 
@@ -2810,6 +2816,129 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
             apply_css_rules(rules, child, child_ancestors)
 
 
+def apply_static_target_current_rules(
+    rules: list,
+    root: 'DomNode',
+    ancestors: list = None,
+    trailing_element_siblings: int = 0,
+):
+    """Resolve the initial, zero-scroll ``:target-current`` state.
+
+    A scroll target group selects one of its descendant links.  The SP19
+    comparison contract freezes scroll offsets at zero, so the first link in
+    document order is the deterministic current target.  This second cascade
+    phase runs only after ``scroll-target-group`` itself has computed and keeps
+    the original rule indices/specificities, including normal ``!important``
+    and inline-style precedence.
+    """
+    target_rules = [
+        (rule_index, selector, styles)
+        for rule_index, (selector, styles) in enumerate(rules)
+        if ':target-current' in selector.lower() and _terminal_pseudo(selector) is None
+    ]
+    if not target_rules:
+        return
+
+    current_nodes = set()
+
+    def first_target_link(node):
+        for child in node.children:
+            if child.is_text:
+                continue
+            if child.tag == 'a' and 'href' in child.attrs:
+                return child
+            match = first_target_link(child)
+            if match is not None:
+                return match
+        return None
+
+    def find_groups(node):
+        if node.is_text:
+            return
+        if node.styles.get('scroll-target-group', '').strip().lower() == 'auto':
+            current = first_target_link(node)
+            if current is not None:
+                current_nodes.add(id(current))
+        for child in node.children:
+            find_groups(child)
+
+    find_groups(root)
+    if not current_nodes:
+        return
+
+    def cascade(node, node_ancestors, sibling_index=1, sibling_count=1,
+                preceding_siblings=None, sibling_type_index=1,
+                sibling_type_count=1, trailing_siblings=0):
+        if node.is_text:
+            return
+        classes = node.attrs.get('class', '').split()
+        id_val = node.attrs.get('id', '')
+        if id(node) in current_nodes:
+            for rule_index, selector, styles in target_rules:
+                base_selector = re.sub(
+                    r':target-current\b', '', selector, flags=re.IGNORECASE
+                )
+                if not match_selector(
+                    base_selector, node.tag, classes, id_val, node_ancestors,
+                    sibling_index, sibling_count, preceding_siblings,
+                    node.attrs, sibling_type_index, sibling_type_count,
+                ):
+                    continue
+                spec = compute_specificity(selector)
+                for declaration_index, (prop, val) in enumerate(styles.items()):
+                    important = (
+                        styles.important.get(prop, False)
+                        if isinstance(styles, CssDeclarations) else False
+                    )
+                    if isinstance(styles, CssDeclarations):
+                        declaration_index = styles.cascade_priority.get(
+                            prop, (0, 0, 0, 0, 0, 0, declaration_index)
+                        )[-1]
+                    priority = (
+                        int(important), 0, spec[0], spec[1], spec[2],
+                        rule_index, declaration_index,
+                    )
+                    old_priority = node.styles.cascade_priority.get(prop)
+                    if old_priority is None or priority >= old_priority:
+                        _set_declaration(
+                            node.styles, prop, val, priority=priority,
+                            important=important,
+                        )
+
+        child_ancestors = node_ancestors + [
+            (node.tag, classes, id_val, node.attrs)
+        ]
+        element_children = [child for child in node.children if not child.is_text]
+        total_elements = len(element_children) + trailing_siblings
+        type_counts = {}
+        for child in element_children:
+            type_counts[child.tag] = type_counts.get(child.tag, 0) + 1
+        type_seen = {}
+        preceding = []
+        element_index = 0
+        for child in node.children:
+            if child.is_text:
+                continue
+            element_index += 1
+            type_seen[child.tag] = type_seen.get(child.tag, 0) + 1
+            cascade(
+                child, child_ancestors, element_index, total_elements,
+                list(preceding), type_seen[child.tag], type_counts[child.tag],
+            )
+            preceding.append((
+                child.tag,
+                child.attrs.get('class', '').split(),
+                child.attrs.get('id', ''),
+                child.attrs,
+            ))
+
+    cascade(
+        root,
+        ancestors or [],
+        trailing_siblings=trailing_element_siblings,
+    )
+
+
 class WptHtmlParser(HTMLParser):
     """Parse WPT HTML into a DOM tree, extracting only body content."""
 
@@ -2943,7 +3072,12 @@ class WptHtmlParser(HTMLParser):
             self._insert_implied_table_element('colgroup')
 
     def handle_starttag(self, tag, attrs):
-        attrs_dict = dict(attrs)
+        # The HTML tokenizer keeps the first occurrence of a duplicate
+        # attribute and drops later occurrences. ``dict(attrs)`` did the
+        # reverse, which changes selector matching and generated pseudo boxes.
+        attrs_dict = {}
+        for name, value in attrs:
+            attrs_dict.setdefault(name, value)
 
         for name, value in attrs:
             if re.fullmatch(r'on[a-z]+', name, re.IGNORECASE):
@@ -3175,6 +3309,12 @@ class WptHtmlParser(HTMLParser):
                 RETAIN_TEXT and not is_real_font_profile() and len(self.stack) == 1
             )
             apply_css_rules(
+                all_rules,
+                self.root,
+                ancestors=root_ancestors,
+                trailing_element_siblings=trailing_harness_style,
+            )
+            apply_static_target_current_rules(
                 all_rules,
                 self.root,
                 ancestors=root_ancestors,
@@ -8464,6 +8604,33 @@ def generate_rust_fn(
         if node.tag == 'br':
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Inline;")
 
+        if node.tag == 'rect':
+            # Inline SVG rectangles are deterministic vector primitives, not
+            # HTML flow boxes. Represent the primitive as an absolutely
+            # positioned painted box inside the SVG viewport. Layout/paint
+            # containment on the SVG element then supplies the correct
+            # containing block and overflow-clip-margin behavior.
+            def svg_number(name, default):
+                token = node.attrs.get(name, str(default)).strip()
+                match = re.fullmatch(r'[-+]?(?:\d+(?:\.\d*)?|\.\d+)', token)
+                return float(token) if match else float(default)
+
+            svg_x = _zoomed_px(svg_number('x', 0.0))
+            svg_y = _zoomed_px(svg_number('y', 0.0))
+            svg_width = max(0.0, _zoomed_px(svg_number('width', 0.0)))
+            svg_height = max(0.0, _zoomed_px(svg_number('height', 0.0)))
+            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
+            lines.append(f"{ws}doc.node_mut({var}).style.position = Position::Absolute;")
+            lines.append(f"{ws}doc.node_mut({var}).style.left = Length::px({svg_x});")
+            lines.append(f"{ws}doc.node_mut({var}).style.top = Length::px({svg_y});")
+            lines.append(f"{ws}doc.node_mut({var}).style.width = Length::px({svg_width});")
+            lines.append(f"{ws}doc.node_mut({var}).style.height = Length::px({svg_height});")
+            svg_fill = parse_color(node.attrs.get('fill', 'black'))
+            if svg_fill:
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.background_color = {svg_fill};"
+                )
+
         table_displays = {
             'table': 'Display::Table',
             'caption': 'Display::TableCaption',
@@ -8558,6 +8725,21 @@ def generate_rust_fn(
                 f"{ws}doc.node_mut({var}).form_control = Some({control_roles[node.tag]});"
             )
 
+        if node.tag == 'fieldset':
+            # Chromium's HTML UA rule supplies a 2px groove border. The
+            # comparison harness resets margin and padding, but deliberately
+            # leaves that native fieldset border intact. Emit it before the
+            # author declarations below so normal cascade overrides (such as
+            # `border: none`) retain their precedence.
+            for side in ('top', 'right', 'bottom', 'left'):
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.border_{side}_width = 2;"
+                )
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.border_{side}_style = "
+                    "BorderStyle::Groove;"
+                )
+
         if node.tag == 'img':
             source = node.attrs.get('src', '').strip()
             name = source.rsplit('/', 1)[-1]
@@ -8610,6 +8792,36 @@ def generate_rust_fn(
                     f"intrinsic_height: Some({intrinsic_height}), "
                     f"intrinsic_ratio: Some(({intrinsic_width}, {intrinsic_height})) }});"
                 )
+        elif node.tag == 'svg' and not node.children:
+            # An outer empty SVG viewport is an atomic replaced element even
+            # though it has no raster resource. Preserve the HTML/SVG default
+            # object size and viewBox ratio; CSS size containment can then
+            # substitute its intrinsic fallback through the normal replaced
+            # sizing algorithm.
+            intrinsic_width = 300.0
+            intrinsic_height = 150.0
+            viewbox_ratio = None
+            viewbox = node.attrs.get('viewbox', '').replace(',', ' ').split()
+            if len(viewbox) == 4:
+                try:
+                    viewbox_width = float(viewbox[2])
+                    viewbox_height = float(viewbox[3])
+                    if viewbox_width > 0.0 and viewbox_height > 0.0:
+                        viewbox_ratio = (viewbox_width, viewbox_height)
+                except ValueError:
+                    pass
+            ratio_rust = (
+                f"Some(({viewbox_ratio[0]}, {viewbox_ratio[1]}))"
+                if viewbox_ratio is not None
+                else "None"
+            )
+            lines.append(
+                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                f"intrinsic_width: Some({intrinsic_width}), "
+                f"intrinsic_height: Some({intrinsic_height}), "
+                f"intrinsic_ratio: {ratio_rust} }});"
+            )
         elif node.tag == 'canvas':
             try:
                 intrinsic_width = max(0, int(node.attrs.get('width', '300')))
@@ -9103,11 +9315,58 @@ def generate_rust_fn(
                 f"ComputedStyle::for_pseudo(&doc.node({var}).style);"
             )
             lines.append(f"{ws}doc.node_mut({pseudo_var}).style = {pseudo_var}_style;")
+            if name.startswith('scroll-button-'):
+                # Linux Chromium exposes passive scroll buttons through the
+                # platform button role. Preserve its stable minimum geometry
+                # and native-looking initial decoration; authored pseudo
+                # declarations below retain normal precedence.
+                lines.extend([
+                    f"{ws}doc.node_mut({pseudo_var}).form_control = "
+                    "Some(openui_dom::FormControlRole::Button);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.width = Length::fit_content();",
+                    f"{ws}doc.node_mut({pseudo_var}).style.min_width = Length::px(27.0);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.height = Length::px(21.0);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.box_sizing = BoxSizing::BorderBox;",
+                    f"{ws}doc.node_mut({pseudo_var}).style.padding_top = Length::px(1.0);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.padding_right = Length::px(6.0);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.padding_bottom = Length::px(1.0);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.padding_left = Length::px(6.0);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_top_width = 1;",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_right_width = 1;",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_width = 1;",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_left_width = 1;",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_top_style = BorderStyle::Solid;",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_right_style = BorderStyle::Solid;",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_style = BorderStyle::Solid;",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_left_style = BorderStyle::Solid;",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(208, 208, 208, 255));",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(208, 208, 208, 255));",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(208, 208, 208, 255));",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(208, 208, 208, 255));",
+                    f"{ws}doc.node_mut({pseudo_var}).style.background_color = Color::from_rgba8(238, 238, 238, 255);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_top_left_radius = (2.0, 2.0);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_top_right_radius = (2.0, 2.0);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_right_radius = (2.0, 2.0);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_left_radius = (2.0, 2.0);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.color = Color::from_rgba8(59, 59, 59, 255);",
+                    f"{ws}doc.node_mut({pseudo_var}).style.font_size = 13.333333;",
+                    f"{ws}doc.node_mut({pseudo_var}).style.font_family = "
+                    "FontFamilyList { families: vec![FontFamily::Generic("
+                    "GenericFontFamily::SansSerif)] };",
+                ])
             pseudo_lines, _ = generate_style_code(
                 pseudo_styles, pseudo_var, node_font_size, node_zoom
             )
             for pseudo_line in pseudo_lines:
                 lines.append(f"{ws}{pseudo_line}")
+            if name == 'scroll-marker-group':
+                # Scroll marker groups establish layout containment as part
+                # of their UA-defined box contract; authored `contain:none`
+                # cannot disable it.
+                lines.append(
+                    f"{ws}doc.node_mut({pseudo_var}).style.contain |= "
+                    "Containment::SIZE | Containment::LAYOUT;"
+                )
             if name in ('scroll-marker', 'column-scroll-marker') and 'color' not in pseudo_styles:
                 # Scroll markers have link-like activation semantics and use
                 # the UA link color when author CSS does not specify one.
@@ -9156,6 +9415,15 @@ def generate_rust_fn(
             current_lines, _ = generate_style_code(
                 current_styles, marker_var, node_font_size, node_zoom
             )
+            if 'background' in current_styles or 'background-color' in current_styles:
+                lines.append(
+                    f"{ws}let {marker_var}_inactive_background = "
+                    f"doc.node({marker_var}).style.background_color;"
+                )
+                lines.append(
+                    f"{ws}doc.node_mut({marker_var}).scroll_marker_inactive_background = "
+                    f"Some({marker_var}_inactive_background);"
+                )
             for current_line in current_lines:
                 lines.append(f"{ws}{current_line}")
 

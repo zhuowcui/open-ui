@@ -59,3 +59,4 @@
 0058	active	sp19 table fragmentation border-collapse captions rowspan colspan writing-mode accountability handoff	SP19 W3 closes the table formatting partition	2026-09-01	entries/0058-sp19-w3-table-formatting-closure.md
 0059	active	sp19 grid subgrid fragmentation accountability handoff	SP19 W4 closes the Grid and subgrid partition	2026-09-01	entries/0059-sp19-w4-closes-the-grid-and-subgrid-partition.md
 0060	active	build skia pixel-compare gotcha chromium rustfmt	Build pixel_compare from bindings/rust to preserve Chromium Skia parity	2026-09-01	entries/0060-build-pixel-compare-from-bindings-rust-to-preser.md
+0061	active	sp19 containment container-queries content-visibility intrinsic-sizing fragmentation accountability handoff	SP19 W5 closes containment and container queries	2026-09-08	entries/0061-sp19-w5-closes-containment-and-container-quer.md

@@ -312,7 +312,7 @@ sticky_position-sticky-rendering,not_portable,,uses_javascript
 sticky_position-sticky-right,not_portable,,uses_javascript
 sticky_position-sticky-root-scroller,not_portable,,uses_javascript
 sticky_position-sticky-scroll-offset-clamp-crash,not_portable,,uses_javascript
-sticky_position-sticky-scroll-reposition-ref,not_portable,,unsupported property: contain
+sticky_position-sticky-scroll-reposition-ref,ported,css_position_sticky_position_sticky_scroll_reposition_ref,
 sticky_position-sticky-scroll-reposition,not_portable,,uses_javascript
 sticky_position-sticky-scroll-with-clip-and-abspos-ref,not_portable,,uses_javascript
 sticky_position-sticky-scroll-with-clip-and-abspos,not_portable,,uses_javascript

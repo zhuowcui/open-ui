@@ -274,6 +274,12 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
         )
         self.assertIn("intrinsic_width: Some(1.0)", data_image)
         self.assertIn("ReplacedResourceKind::Image", data_image)
+        empty_svg = self.generate(
+            "svg{contain:size;contain-intrinsic-size:60px;aspect-ratio:1}",
+            "<svg viewBox='0 0 1 1'></svg>",
+        )
+        self.assertIn("ReplacedResourceKind::TransparentCanvas", empty_svg)
+        self.assertIn("intrinsic_ratio: Some((1.0, 1.0))", empty_svg)
 
     def test_19_form_control_roles_emit(self):
         rust = self.generate(
@@ -292,6 +298,16 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
         self.assertIn("PseudoElementKind::ScrollMarkerGroup", rust)
         self.assertIn("PseudoElementKind::ColumnScrollMarker", rust)
         self.assertIn("ScrollButton(openui_dom::ScrollButtonDirection::Right)", rust)
+        target_group = self.parse(
+            "#group{scroll-target-group:auto}a{color:red}"
+            "a:target-current{color:green}",
+            "<div id='group'><a href='#one'>one</a><a href='#two'>two</a></div>",
+        )
+        links = [
+            child for child in target_group.root.children[0].children
+            if not child.is_text
+        ]
+        self.assertEqual([link.styles['color'] for link in links], ['green', 'red'])
 
     def test_21_masks_transforms_and_shapes_emit(self):
         rust = self.generate(
@@ -300,6 +316,8 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
         )
         self.assertIn("mask_layers = vec!", rust)
         self.assertIn("Transform2D", rust)
+        self.assertIn("a: 1.0", rust)
+        self.assertIn("f: 0.0", rust)
         self.assertIn("ShapeOutside::Circle", rust)
 
     def test_22_animation_snapshot_is_frozen_at_zero(self):
