@@ -34,6 +34,7 @@ import json
 import hashlib
 import html as html_module
 import math
+import mimetypes
 import urllib.parse
 from enum import Enum
 from pathlib import Path
@@ -52,6 +53,14 @@ class PorterProfile(Enum):
 ACTIVE_PORTER_PROFILE = PorterProfile.LEGACY_BOX_ONLY
 EMIT_PAINT_LAYERS = False
 MODERN_LINE_CLAMP_ENABLED = True
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+WPT_SOURCE_ROOT = Path(os.environ.get(
+    'CHROMIUM_WPT_ROOT',
+    os.path.expanduser('~/chromium/src/third_party/blink/web_tests/external/wpt'),
+)).resolve()
+SP20_ASSET_DIR = PROJECT_ROOT / 'tools' / 'accountability' / 'data' / 'wpt_assets' / 'sp20'
+_ACTIVE_RESOURCE_BASE: Path | None = None
 
 
 def set_porter_profile(profile: PorterProfile, *, retain_text: bool | None = None) -> None:
@@ -175,6 +184,7 @@ SUPPORTED_PROPERTIES = {
     'object-fit', 'object-position', 'transform', 'transform-origin',
     'filter',
     'appearance', '-webkit-appearance', '-moz-appearance',
+    '-webkit-box-align', '-webkit-box-pack',
     'shape-outside', 'shape-margin', 'shape-image-threshold',
     'animation', 'animation-name', 'animation-duration', 'animation-delay',
     'animation-fill-mode', 'animation-timing-function',
@@ -216,9 +226,10 @@ SUPPORTED_PROPERTIES = {
 
 UNSUPPORTED_FEATURES = {
     # 3D/individual transforms and live transitions remain outside SP19.
-    'rotate', 'scale', 'translate', 'transition',
-    # General clip paths and filters are not part of the layout cohort.
-    'clip-path', 'mask',
+    'rotate', 'scale', 'transition',
+    # General path/mask syntax stays unsupported. ``clip-path: inset()`` is
+    # accepted by the SP20 typed parser below.
+    'mask',
 }
 
 # Properties we can safely IGNORE (don't affect box layout geometry)
@@ -1913,11 +1924,18 @@ def parse_inline_styles(style_str: str) -> dict:
 def check_supported(styles: dict) -> tuple[bool, str]:
     """Check if all CSS properties in styles are supported. Returns (supported, reason)."""
     for prop in styles:
+        if prop == 'clip-path' and not re.fullmatch(
+            r'(?is)\s*(?:none|inset\([^{}]*\))\s*', styles[prop]
+        ):
+            return False, f"unsupported clip-path: {styles[prop]}"
         if prop in UNSUPPORTED_FEATURES:
             return False, f"unsupported property: {prop}"
         if prop in IGNORED_PROPERTIES:
             continue  # Safe to ignore — doesn't affect box layout
-        if prop in ('-webkit-line-clamp', '-webkit-box-orient'):
+        if prop in (
+            '-webkit-line-clamp', '-webkit-box-orient', '-webkit-box-align',
+            '-webkit-box-pack', '-webkit-appearance', '-moz-appearance',
+        ):
             continue
         if prop.startswith('-webkit-') or prop.startswith('-moz-'):
             # Skip vendor-prefixed properties if the unprefixed version is present
@@ -1961,6 +1979,7 @@ class DomNode:
             'column': CssDeclarations(),
             'column-scroll-marker': CssDeclarations(),
             'column-scroll-marker-target-current': CssDeclarations(),
+            'details-content': CssDeclarations(),
         }
         self.pseudo_priorities = {name: {} for name in self.pseudo_styles}
 
@@ -1972,9 +1991,9 @@ _TERMINAL_PSEUDO_RE = re.compile(
     r'^(.*?)'
     r'(?:::|:)('
     r'column\s*::\s*scroll-marker|'
-    r'scroll-button\(\s*(?:up|right|down|left|block-start|block-end|inline-start|inline-end)\s*\)|'
+    r'scroll-button\(\s*(?:\*|up|right|down|left|block-start|block-end|inline-start|inline-end)\s*\)|'
     r'scroll-marker-group|scroll-marker|'
-    r'before|after|first-line|first-letter|marker|column'
+    r'before|after|first-line|first-letter|marker|column|details-content'
     r')'
     r'(?::(target-current|enabled|disabled))?\s*$',
     re.IGNORECASE,
@@ -2226,6 +2245,10 @@ def parse_simple_css_rules(css_text: str) -> list:
     rules = []
     # Remove comments
     css_text = re.sub(r'/\*.*?\*/', '', css_text, flags=re.DOTALL)
+    # XHTML-era WPT style blocks use HTML CDO/CDC comments.  In CSS syntax
+    # those wrappers and their prose are inert; feeding the prose to the
+    # balanced-rule parser turns its final words into a bogus selector.
+    css_text = re.sub(r'<!--.*?-->', '', css_text, flags=re.DOTALL)
     # Remove CDATA wrapper
     css_text = re.sub(r'<!\[CDATA\[|\]\]>', '', css_text)
     css_text = _strip_top_level_statement_at_rules(css_text)
@@ -2300,7 +2323,7 @@ def compute_specificity(selector: str) -> tuple:
     # Pseudo-elements contribute to the element column. Pseudo-classes are
     # handled in the class column below/through their arguments.
     pseudo_elements = len(re.findall(
-        r'::(?:before|after|first-line|first-letter|marker|scroll-marker-group|scroll-marker|column)\b|'
+        r'::(?:before|after|first-line|first-letter|marker|scroll-marker-group|scroll-marker|column|details-content)\b|'
         r'::scroll-button\([^)]*\)|'
         r':(?:before|after)\b', selector, re.IGNORECASE
     ))
@@ -2730,32 +2753,41 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
                           node.attrs, sibling_type_index, sibling_type_count):
             spec = compute_specificity(selector)
             if pseudo_match:
-                pseudo_name = pseudo_match[1]
-                if pseudo_match[2] == 'target-current':
-                    state_name = f'{pseudo_name}-target-current'
-                    if state_name in node.pseudo_styles:
-                        pseudo_name = state_name
-                pseudo_cascade = node.pseudo_styles[pseudo_name]
-                pseudo_priorities = node.pseudo_priorities[pseudo_name]
-                for declaration_index, (prop, val) in enumerate(styles.items()):
-                    important = (
-                        styles.important.get(prop, False)
-                        if isinstance(styles, CssDeclarations) else False
-                    )
-                    if isinstance(styles, CssDeclarations):
-                        declaration_index = styles.cascade_priority.get(
-                            prop, (0, 0, 0, 0, 0, 0, declaration_index)
-                        )[-1]
-                    priority = (
-                        int(important), 0, spec[0], spec[1], spec[2],
-                        rule_index, declaration_index,
-                    )
-                    if prop not in pseudo_priorities or priority >= pseudo_priorities[prop]:
-                        _set_declaration(
-                            pseudo_cascade, prop, val, priority=priority,
-                            important=important,
+                pseudo_names = [pseudo_match[1]]
+                if pseudo_names == ['scroll-button-*']:
+                    # The wildcard creates/styles one button for each physical
+                    # direction. Logical spellings remain distinct pseudos and
+                    # are only materialized when explicitly authored.
+                    pseudo_names = [
+                        'scroll-button-up', 'scroll-button-right',
+                        'scroll-button-down', 'scroll-button-left',
+                    ]
+                for pseudo_name in pseudo_names:
+                    if pseudo_match[2] == 'target-current':
+                        state_name = f'{pseudo_name}-target-current'
+                        if state_name in node.pseudo_styles:
+                            pseudo_name = state_name
+                    pseudo_cascade = node.pseudo_styles[pseudo_name]
+                    pseudo_priorities = node.pseudo_priorities[pseudo_name]
+                    for declaration_index, (prop, val) in enumerate(styles.items()):
+                        important = (
+                            styles.important.get(prop, False)
+                            if isinstance(styles, CssDeclarations) else False
                         )
-                        pseudo_priorities[prop] = priority
+                        if isinstance(styles, CssDeclarations):
+                            declaration_index = styles.cascade_priority.get(
+                                prop, (0, 0, 0, 0, 0, 0, declaration_index)
+                            )[-1]
+                        priority = (
+                            int(important), 0, spec[0], spec[1], spec[2],
+                            rule_index, declaration_index,
+                        )
+                        if prop not in pseudo_priorities or priority >= pseudo_priorities[prop]:
+                            _set_declaration(
+                                pseudo_cascade, prop, val, priority=priority,
+                                important=important,
+                            )
+                            pseudo_priorities[prop] = priority
                 continue
             for declaration_index, (prop, val) in enumerate(styles.items()):
                 important = (
@@ -2949,7 +2981,8 @@ class WptHtmlParser(HTMLParser):
                    'caption', 'colgroup', 'col', 'thead', 'tbody', 'tfoot',
                    'tr', 'td', 'th', 'canvas', 'svg', 'iframe', 'object',
                    'audio', 'video', 'input', 'button', 'meter', 'fieldset',
-                   'legend'}
+                   'legend', 'textarea', 'select', 'option', 'optgroup',
+                   'form', 'embed'}
 
     def __init__(self, *, root_aware: bool = False):
         super().__init__()
@@ -3276,6 +3309,15 @@ class WptHtmlParser(HTMLParser):
         BODY_STYLE_RULES come first (matching Chrome's BODY_STYLE wrapper),
         then external stylesheet rules, then inline <style> rules.
         Specificity-based cascade ensures body { padding:20px } beats * { padding:0 }."""
+        operations = _static_onload_operations(self)
+        if operations is not None:
+            for operation, _node_id, _name, value in operations:
+                if operation == 'class':
+                    authored = self.root.attrs.get('class', '').split()
+                    if value not in authored:
+                        authored.append(value)
+                    self.root.attrs['class'] = ' '.join(authored)
+
         harness_rules = ROOT_BODY_STYLE_RULES if self.root_aware else BODY_STYLE_RULES
         all_rules = harness_rules + self.external_css_rules + self.css_rules
         # Keep the Rust builder's pruning decisions synchronized with the
@@ -3452,9 +3494,10 @@ class WptHtmlParser(HTMLParser):
             for child in node.children:
                 collect_ids(child)
         collect_ids(self.root)
-        operations = _static_onload_operations(self)
         if operations is not None:
             for operation, node_id, name, value in operations:
+                if operation == 'class':
+                    continue
                 node = nodes_by_id.get(node_id)
                 if node is None:
                     continue
@@ -3476,6 +3519,7 @@ def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser
 
     parser = WptHtmlParser(root_aware=root_aware)
     parser.html_dir = os.path.dirname(os.path.abspath(html_path))
+    parser.root.resource_base = parser.html_dir
     parser.feed(content)
 
     # Resolve and load external stylesheets
@@ -3530,7 +3574,7 @@ def _is_assertion_only_check_layout(parser: WptHtmlParser) -> bool:
 
 
 def _static_onload_operations(parser: WptHtmlParser) -> list[tuple[str, str, str, str]] | None:
-    """Parse deterministic body-onload style/scroll assignments."""
+    """Parse deterministic body-onload style/scroll/class assignments."""
     if parser.has_script or not parser.event_handlers:
         return None
     target = (
@@ -3544,6 +3588,9 @@ def _static_onload_operations(parser: WptHtmlParser) -> list[tuple[str, str, str
         rf'''^{target}\.style\.([_a-zA-Z][_a-zA-Z0-9]*)\s*=\s*'''
         r'''(["'])(.*?)\5$'''
     )
+    class_add = re.compile(
+        r'''^document\.body\.classList\.add\(\s*(["'])([-_a-zA-Z][-_a-zA-Z0-9]*)\1\s*\)$'''
+    )
     operations = []
     for tag, name, body in parser.event_handlers:
         if tag != 'body' or name != 'onload':
@@ -3552,6 +3599,10 @@ def _static_onload_operations(parser: WptHtmlParser) -> list[tuple[str, str, str
         if not statements:
             return None
         for statement in statements:
+            match = class_add.fullmatch(statement)
+            if match:
+                operations.append(('class', '', 'class', match.group(2)))
+                continue
             match = scroll.fullmatch(statement)
             if match:
                 node_id = match.group(2) or match.group(3)
@@ -3632,7 +3683,7 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
     def check_tree(node):
         if node.is_text:
             return True, ""
-        if node.tag in ('embed', 'select', 'textarea', 'form', 'dialog',
+        if node.tag in ('dialog',
                         'template', 'slot'):
             return False, f"unsupported element: <{node.tag}>"
         for child in node.children:
@@ -3667,6 +3718,8 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
                 or 0x0750 <= cp <= 0x077F  # Arabic Supplement
                 or 0x08A0 <= cp <= 0x08FF  # Arabic Extended-A
                 or 0x0900 <= cp <= 0x097F  # Devanagari
+                or cp == 0x1680  # Ogham space mark
+                or 0x2000 <= cp <= 0x206F  # Unicode spaces/general punctuation
                 or 0x200C <= cp <= 0x200D  # ZWNJ / ZWJ
                 or 0x3000 <= cp <= 0x30FF  # CJK punctuation / kana
                 or 0x3400 <= cp <= 0x4DBF  # CJK Extension A
@@ -3868,6 +3921,150 @@ def _linear_gradient_rust(value: str) -> str | None:
     )
 
 
+def _resource_mime(path: Path, data: bytes) -> str:
+    if data.startswith(b'\x89PNG\r\n\x1a\n'):
+        return 'image/png'
+    if data.startswith(b'\xff\xd8'):
+        return 'image/jpeg'
+    if data[:6] in (b'GIF87a', b'GIF89a'):
+        return 'image/gif'
+    if b'<svg' in data[:1024].lower():
+        return 'image/svg+xml'
+    overrides = {
+        '.svg': 'image/svg+xml', '.xht': 'text/html',
+        '.xhtml': 'application/xhtml+xml', '.webm': 'video/webm',
+        '.mp4': 'video/mp4', '.ttf': 'font/ttf',
+    }
+    return overrides.get(path.suffix.lower()) or mimetypes.guess_type(path.name)[0] or 'application/octet-stream'
+
+
+def _svg_number(value: str | None) -> float | None:
+    if value is None:
+        return None
+    match = re.fullmatch(r'\s*([0-9]+(?:\.[0-9]+)?)\s*(?:px)?\s*', value)
+    return float(match.group(1)) if match else None
+
+
+def _resource_dimensions(path: Path, data: bytes, mime: str) -> tuple[float, float] | None:
+    width = height = None
+    if mime == 'image/png' and len(data) >= 24:
+        width = float(int.from_bytes(data[16:20], 'big'))
+        height = float(int.from_bytes(data[20:24], 'big'))
+    elif mime == 'image/gif' and len(data) >= 10:
+        width = float(int.from_bytes(data[6:8], 'little'))
+        height = float(int.from_bytes(data[8:10], 'little'))
+    elif mime == 'image/jpeg':
+        offset = 2
+        while offset + 9 <= len(data):
+            if data[offset] != 0xff:
+                offset += 1
+                continue
+            marker = data[offset + 1]
+            if marker in {0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf}:
+                height = float(int.from_bytes(data[offset + 5:offset + 7], 'big'))
+                width = float(int.from_bytes(data[offset + 7:offset + 9], 'big'))
+                break
+            if marker in {0xd8, 0xd9}:
+                offset += 2
+            elif offset + 4 <= len(data):
+                offset += 2 + int.from_bytes(data[offset + 2:offset + 4], 'big')
+            else:
+                break
+        if 'orientation-6' in path.name and width is not None:
+            width, height = height, width
+    elif mime == 'image/svg+xml':
+        text = data.decode('utf-8', errors='ignore')
+        root = re.search(r'<svg\b([^>]*)>', text, re.IGNORECASE)
+        attrs = root.group(1) if root else ''
+        width_match = re.search(r'\bwidth\s*=\s*[\'\"]([^\'\"]+)', attrs, re.IGNORECASE)
+        height_match = re.search(r'\bheight\s*=\s*[\'\"]([^\'\"]+)', attrs, re.IGNORECASE)
+        width = _svg_number(width_match.group(1)) if width_match else None
+        height = _svg_number(height_match.group(1)) if height_match else None
+        viewbox = re.search(r'\bviewBox\s*=\s*[\'\"]([^\'\"]+)', attrs, re.IGNORECASE)
+        if viewbox:
+            parts = re.split(r'[\s,]+', viewbox.group(1).strip())
+            try:
+                view_width, view_height = float(parts[2]), float(parts[3])
+                if width is None and height is None:
+                    scale = min(300.0 / view_width, 150.0 / view_height)
+                    width, height = view_width * scale, view_height * scale
+                elif width is None and height is not None:
+                    width = height * view_width / view_height
+                elif height is None and width is not None:
+                    height = width * view_height / view_width
+            except (IndexError, ValueError, ZeroDivisionError):
+                pass
+        width = 300.0 if width is None else width
+        height = 150.0 if height is None else height
+    elif mime.startswith('video/'):
+        named = re.search(r'(?:^|[^0-9])(\d+)x(\d+)(?:[^0-9]|$)', path.name)
+        if named:
+            width, height = float(named.group(1)), float(named.group(2))
+    return (width, height) if width is not None and height is not None else None
+
+
+def _resolve_local_resource(source: str, base: Path | None = None) -> Path | None:
+    source = html_module.unescape(source.strip())
+    if not source or source.startswith(('data:', 'about:', 'blob:', 'javascript:')):
+        return None
+    base = (base or _ACTIVE_RESOURCE_BASE)
+    if base is None:
+        return None
+    if '{{location[path]}}/../' in source:
+        source = source.split('{{location[path]}}/../', 1)[1]
+        candidate = base / source
+    elif source.startswith('//') or re.match(r'^[a-zA-Z][a-zA-Z0-9+.-]*:', source):
+        return None
+    else:
+        clean = urllib.parse.unquote(source.split('?', 1)[0].split('#', 1)[0])
+        candidate = WPT_SOURCE_ROOT / clean.lstrip('/') if clean.startswith('/') else base / clean
+    resolved = candidate.resolve()
+    try:
+        resolved.relative_to(WPT_SOURCE_ROOT)
+    except ValueError:
+        return None
+    return resolved if resolved.is_file() else None
+
+
+def _packaged_resource(source: str, base: Path | None = None) -> tuple[str, str, str, str, tuple[float, float] | None] | None:
+    path = _resolve_local_resource(source, base)
+    if path is None:
+        return None
+    data = path.read_bytes()
+    sha = hashlib.sha256(data).hexdigest()
+    mime = _resource_mime(path, data)
+    filename = f'{sha}{path.suffix.lower() or ".bin"}'
+    package = SP20_ASSET_DIR / filename
+    if not package.is_file() or package.read_bytes() != data:
+        return None
+    label = path.relative_to(WPT_SOURCE_ROOT).as_posix()
+    return filename, label, mime, sha, _resource_dimensions(path, data, mime)
+
+
+def _data_url_resource(source: str) -> tuple[str, str, str, tuple[float, float] | None, bytes] | None:
+    if not source.startswith('data:'):
+        return None
+    header, comma, payload = source.partition(',')
+    if not comma:
+        return None
+    mime = header[5:].split(';', 1)[0] or 'text/plain'
+    try:
+        import base64
+        data = base64.b64decode(payload) if ';base64' in header else urllib.parse.unquote_to_bytes(payload)
+    except Exception:
+        return None
+    sha = hashlib.sha256(data).hexdigest()
+    return f'data:{mime};sha256={sha}', mime, sha, _resource_dimensions(Path('inline'), data, mime), data
+
+
+def _packaged_bytes_expr(filename: str) -> str:
+    return (
+        'include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), '
+        f'"/../../../tools/accountability/data/wpt_assets/sp20/{filename}"))'
+        '.as_slice().to_vec()'
+    )
+
+
 _PAINT_ASSETS = {
     '60x60-green.png': ('60x60-green.png', 'css-backgrounds/support/60x60-green.png', 'image/png', '38a9a0ea560a60b9ce79be68126b1e57bbbbcab0c013b9893f4f43fce7ebc3c4'),
     'cat.png': ('cat.png', 'support/cat.png', 'image/png', '18ca1a3f23c106c4b31f0faec34a24cb17d4f2cb31abd1a51df814ba3f58ed7d'),
@@ -3914,7 +4111,7 @@ _REPLACED_ASSET_DIMENSIONS = {
 }
 
 
-def _embed_paint_asset_urls(template: str) -> str:
+def _embed_paint_asset_urls(template: str, html_dir: str | None = None) -> str:
     """Make focused Chrome templates independent of an ambient WPT server."""
     import base64
 
@@ -3926,6 +4123,16 @@ def _embed_paint_asset_urls(template: str) -> str:
     def encoded_asset(source: str) -> tuple[str, str] | None:
         if source.startswith('data:'):
             return None
+        packaged = _packaged_resource(source, Path(html_dir) if html_dir else None)
+        if packaged is not None:
+            filename, _, mime, _, _ = packaged
+            # Font URLs are supplied by the pinned Chromium harness. Inlining
+            # them into every template is wasteful and changes font origins;
+            # all visual and embedded resources remain self-contained.
+            if not (mime.startswith('image/') or mime.startswith('video/') or mime in ('text/html', 'application/xhtml+xml')):
+                return None
+            encoded = base64.b64encode((SP20_ASSET_DIR / filename).read_bytes()).decode('ascii')
+            return mime, encoded
         asset = _PAINT_ASSETS.get(source.rsplit('/', 1)[-1])
         if asset is None:
             return None
@@ -3955,7 +4162,7 @@ def _embed_paint_asset_urls(template: str) -> str:
 
     template = re.sub(r'(?is)url\(\s*([^)]*?)\s*\)', replace_url, template)
     template = re.sub(
-        r'(?is)(\bsrc\s*=\s*)(["\'])([^"\']+)\2', replace_src, template
+        r'(?is)(\b(?:src|poster|data)\s*=\s*)(["\'])([^"\']+)\2', replace_src, template
     )
     return template
 
@@ -4299,21 +4506,26 @@ def _css_image_rust(value: str, resource_var: str) -> tuple[list[str], str] | No
         byte_expr = f'vec![{", ".join(str(byte) for byte in data)}]'
         source_label = f'data:{mime};sha256={sha}'
     else:
-        name = source.rsplit('/', 1)[-1]
-        asset = _PAINT_ASSETS.get(name)
-        if asset is None:
-            return None
-        filename, source_label, mime, sha = asset
-        if filename is None:
-            import base64
-            data = base64.b64decode(_INLINE_PAINT_ASSETS[name])
-            byte_expr = f'vec![{", ".join(str(byte) for byte in data)}]'
+        packaged = _packaged_resource(source)
+        if packaged is not None:
+            filename, source_label, mime, sha, _ = packaged
+            byte_expr = _packaged_bytes_expr(filename)
         else:
-            byte_expr = (
-                'include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), '
-                f'"/../../../tools/accountability/data/wpt_assets/sp13p/{filename}"))'
-                '.as_slice().to_vec()'
-            )
+            name = source.rsplit('/', 1)[-1]
+            asset = _PAINT_ASSETS.get(name)
+            if asset is None:
+                return None
+            filename, source_label, mime, sha = asset
+            if filename is None:
+                import base64
+                data = base64.b64decode(_INLINE_PAINT_ASSETS[name])
+                byte_expr = f'vec![{", ".join(str(byte) for byte in data)}]'
+            else:
+                byte_expr = (
+                    'include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), '
+                    f'"/../../../tools/accountability/data/wpt_assets/sp13p/{filename}"))'
+                    '.as_slice().to_vec()'
+                )
     line = (
         f'let {resource_var} = doc.register_image_resource('
         f'{json.dumps(source_label)}, {json.dumps(mime)}, {json.dumps(sha)}, {byte_expr});'
@@ -6067,6 +6279,36 @@ def generate_single_style(
             if x and y:
                 return f"{s}.transform_origin = ({x}, {y});"
 
+    if prop == 'translate':
+        values = val.split()
+        if len(values) in (1, 2):
+            x = _css_length_px(values[0], font_size)
+            y = _css_length_px(values[-1], font_size) if len(values) == 2 else 0.0
+            if x is not None and y is not None:
+                return [
+                    f"{s}.transform = Transform2D {{ a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: {x}, f: {y} }};",
+                    f"{s}.establishes_transform_containing_block = true;",
+                ]
+
+    if prop == 'clip-path':
+        if val == 'none':
+            return f"{s}.clip_path_inset = None;"
+        match = re.fullmatch(r'inset\(\s*(.*?)\s*\)', val, re.IGNORECASE)
+        if match:
+            tokens = _split_respecting_parens(match.group(1))
+            if 'round' in [token.lower() for token in tokens]:
+                tokens = tokens[:[token.lower() for token in tokens].index('round')]
+            if 1 <= len(tokens) <= 4:
+                expanded = (
+                    [tokens[0]] * 4 if len(tokens) == 1 else
+                    [tokens[0], tokens[1], tokens[0], tokens[1]] if len(tokens) == 2 else
+                    [tokens[0], tokens[1], tokens[2], tokens[1]] if len(tokens) == 3 else
+                    tokens
+                )
+                lengths = [parse_length(token, font_size) for token in expanded]
+                if all(lengths):
+                    return f"{s}.clip_path_inset = Some([{', '.join(lengths)}]);"
+
     if prop == 'shape-outside':
         shape = _shape_outside_rust(val, font_size)
         if shape:
@@ -6729,7 +6971,13 @@ def generate_single_style(
         if val in mapping:
             return f"{s}.flex_wrap = {mapping[val]};"
 
-    if prop == 'justify-content':
+    if prop in ('justify-content', '-webkit-box-pack'):
+        if prop == '-webkit-box-pack':
+            val = {
+                'start': 'flex-start',
+                'end': 'flex-end',
+                'justify': 'space-between',
+            }.get(val, val)
         mapping = {
             'flex-start': 'ContentAlignment::new(ContentPosition::FlexStart)',
             'start': 'ContentAlignment::new(ContentPosition::Start)',
@@ -6758,7 +7006,12 @@ def generate_single_style(
             if parts[1] in pos_map:
                 return f"{s}.justify_content = ContentAlignment {{ position: {pos_map[parts[1]]}, distribution: ContentDistribution::Default, overflow: {overflow} }};"
 
-    if prop == 'align-items':
+    if prop in ('align-items', '-webkit-box-align'):
+        if prop == '-webkit-box-align':
+            val = {
+                'start': 'flex-start',
+                'end': 'flex-end',
+            }.get(val, val)
         mapping = {
             'flex-start': 'ItemAlignment::new(ItemPosition::FlexStart)',
             'start': 'ItemAlignment::new(ItemPosition::Start)',
@@ -8137,6 +8390,9 @@ def generate_rust_fn(
     root_aware: bool = False,
 ) -> str:
     """Generate a Rust function that builds a Document matching the DOM tree."""
+    global _ACTIVE_RESOURCE_BASE
+    resource_base = getattr(root, 'resource_base', None)
+    _ACTIVE_RESOURCE_BASE = Path(resource_base).resolve() if resource_base else None
     if RETAIN_TEXT:
         _filter_ws_only_text_nodes(root)
         root_white_space = (root.styles or {}).get('white-space', 'normal').strip()
@@ -8293,6 +8549,36 @@ def generate_rust_fn(
             if parse_color(token):
                 return token
         return None
+
+    def _node_resource(source: str):
+        """Return stable encoded-resource metadata for one replaced node."""
+        inline = _data_url_resource(source)
+        if inline is not None:
+            source_label, mime, sha, dimensions, data = inline
+            return source_label, mime, sha, dimensions, (
+                f'vec![{", ".join(str(byte) for byte in data)}]'
+            )
+        packaged = _packaged_resource(source)
+        if packaged is not None:
+            filename, source_label, mime, sha, dimensions = packaged
+            return source_label, mime, sha, dimensions, _packaged_bytes_expr(filename)
+        name = source.rsplit('/', 1)[-1]
+        asset = _PAINT_ASSETS.get(name)
+        dimensions = _REPLACED_ASSET_DIMENSIONS.get(name)
+        if asset is None:
+            return None
+        filename, source_label, mime, sha = asset
+        if filename is None:
+            import base64
+            data = base64.b64decode(_INLINE_PAINT_ASSETS[name])
+            byte_expr = f'vec![{", ".join(str(byte) for byte in data)}]'
+        else:
+            byte_expr = (
+                'include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), '
+                f'"/../../../tools/accountability/data/wpt_assets/sp13p/{filename}"))'
+                '.as_slice().to_vec()'
+            )
+        return source_label, mime, sha, dimensions, byte_expr
 
     def gen_node(node: DomNode, parent_var: str, indent: int,
                  parent_font_size: float = 16.0, inherited: dict | None = None,
@@ -8580,6 +8866,12 @@ def generate_rust_fn(
             'legend': 'ElementTag::Legend',
             'details': 'ElementTag::Details',
             'summary': 'ElementTag::Summary',
+            'textarea': 'ElementTag::TextArea',
+            'select': 'ElementTag::Select',
+            'option': 'ElementTag::Option',
+            'optgroup': 'ElementTag::OptGroup',
+            'form': 'ElementTag::Form',
+            'embed': 'ElementTag::Embed',
         }
         if node.tag in inline_tags or node.tag == 'style':
             element_tag = 'ElementTag::Span'
@@ -8685,7 +8977,7 @@ def generate_rust_fn(
                 )
         elif node.tag in {
             'img', 'canvas', 'svg', 'iframe', 'object', 'audio', 'video',
-            'input', 'button', 'meter',
+            'input', 'button', 'meter', 'textarea', 'select', 'embed',
         }:
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::InlineBlock;")
 
@@ -8709,6 +9001,10 @@ def generate_rust_fn(
 
         control_roles = {
             'button': 'openui_dom::FormControlRole::Button',
+            'textarea': 'openui_dom::FormControlRole::TextArea',
+            'select': 'openui_dom::FormControlRole::Select',
+            'option': 'openui_dom::FormControlRole::Option',
+            'optgroup': 'openui_dom::FormControlRole::OptGroup',
             'meter': 'openui_dom::FormControlRole::Meter',
             'fieldset': 'openui_dom::FormControlRole::Fieldset',
             'legend': 'openui_dom::FormControlRole::Legend',
@@ -8727,6 +9023,44 @@ def generate_rust_fn(
                 f"{ws}doc.node_mut({var}).form_control = Some({control_roles[node.tag]});"
             )
 
+        if node.tag in {'input', 'textarea', 'select'}:
+            # Pinned Linux Chromium UA metrics. Author declarations are
+            # emitted later and therefore retain normal cascade precedence.
+            lines.append(f"{ws}doc.node_mut({var}).style.box_sizing = BoxSizing::BorderBox;")
+            if node.tag == 'input':
+                lines.append(f"{ws}doc.node_mut({var}).style.width = Length::px(169.0);")
+                lines.append(f"{ws}doc.node_mut({var}).style.height = Length::px(20.0);")
+            elif node.tag == 'textarea':
+                rows = node.attrs.get('rows', '2')
+                cols = node.attrs.get('cols', '20')
+                try:
+                    rows_value = max(1, int(rows))
+                    cols_value = max(1, int(cols))
+                except ValueError:
+                    rows_value, cols_value = 2, 20
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.width = Length::px({cols_value * 8.0 + 6.0});"
+                )
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.height = Length::px({rows_value * 15.0 + 6.0});"
+                )
+            else:
+                size = node.attrs.get('size', '')
+                multiple = 'multiple' in node.attrs
+                try:
+                    visible_rows = max(1, int(size)) if size else (4 if multiple else 1)
+                except ValueError:
+                    visible_rows = 4 if multiple else 1
+                lines.append(f"{ws}doc.node_mut({var}).style.min_width = Length::px(2.0);")
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.height = Length::px({visible_rows * 17.0 + 2.0});"
+                )
+            for side in ('top', 'right', 'bottom', 'left'):
+                lines.append(f"{ws}doc.node_mut({var}).style.border_{side}_width = 1;")
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.border_{side}_style = BorderStyle::Inset;"
+                )
+
         if node.tag == 'fieldset':
             # Chromium's HTML UA rule supplies a 2px groove border. The
             # comparison harness resets margin and padding, but deliberately
@@ -8742,46 +9076,19 @@ def generate_rust_fn(
                     "BorderStyle::Groove;"
                 )
 
-        if node.tag == 'img':
-            source = node.attrs.get('src', '').strip()
-            name = source.rsplit('/', 1)[-1]
-            asset = _PAINT_ASSETS.get(name)
-            dimensions = _REPLACED_ASSET_DIMENSIONS.get(name)
-            if source.startswith('data:'):
-                header, comma, payload = source.partition(',')
-                mime = header[5:].split(';', 1)[0] or 'text/plain'
-                if comma:
-                    if ';base64' in header:
-                        import base64
-                        data = base64.b64decode(payload)
-                    else:
-                        data = urllib.parse.unquote_to_bytes(payload)
-                    if mime == 'image/png' and len(data) >= 24 and data[:8] == b'\x89PNG\r\n\x1a\n':
-                        dimensions = (
-                            float(int.from_bytes(data[16:20], 'big')),
-                            float(int.from_bytes(data[20:24], 'big')),
-                        )
-                    if dimensions is not None:
-                        sha = hashlib.sha256(data).hexdigest()
-                        source_label = f'data:{mime};sha256={sha}'
-                        byte_expr = f'vec![{", ".join(str(byte) for byte in data)}]'
-                        asset = (None, source_label, mime, sha)
-            if asset is not None and dimensions is not None:
-                filename, source_label, mime, sha = asset
-                if source.startswith('data:'):
-                    pass
-                elif filename is None:
-                    import base64
-                    data = base64.b64decode(_INLINE_PAINT_ASSETS[name])
-                    byte_expr = f'vec![{", ".join(str(byte) for byte in data)}]'
-                else:
-                    byte_expr = (
-                        'include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), '
-                        f'"/../../../tools/accountability/data/wpt_assets/sp13p/{filename}"))'
-                        '.as_slice().to_vec()'
-                    )
+        if node.tag in {'img', 'embed', 'object'}:
+            attribute = 'data' if node.tag == 'object' else 'src'
+            source = node.attrs.get(attribute, '').strip()
+            resource = _node_resource(source) if source else None
+            if resource is not None:
+                source_label, mime, sha, dimensions, byte_expr = resource
+                intrinsic_width, intrinsic_height = dimensions or (300.0, 150.0)
                 resource_var = f'{var}_image'
-                intrinsic_width, intrinsic_height = dimensions
+                kind = (
+                    'openui_dom::ReplacedResourceKind::StaticSvg'
+                    if mime == 'image/svg+xml'
+                    else 'openui_dom::ReplacedResourceKind::Image'
+                )
                 lines.append(
                     f'{ws}let {resource_var} = doc.register_image_resource('
                     f'{json.dumps(source_label)}, {json.dumps(mime)}, {json.dumps(sha)}, '
@@ -8789,10 +9096,48 @@ def generate_rust_fn(
                 )
                 lines.append(
                     f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
-                    f"resource: openui_dom::ReplacedResourceKind::Image({resource_var}), "
+                    f"resource: {kind}({resource_var}), "
                     f"intrinsic_width: Some({intrinsic_width}), "
                     f"intrinsic_height: Some({intrinsic_height}), "
                     f"intrinsic_ratio: Some(({intrinsic_width}, {intrinsic_height})) }});"
+                )
+            elif node.tag in {'embed', 'object'}:
+                lines.append(
+                    f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                    "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                    "intrinsic_width: Some(300.0), intrinsic_height: Some(150.0), "
+                    "intrinsic_ratio: None });"
+                )
+        elif node.tag == 'video':
+            poster = node.attrs.get('poster', '').strip()
+            resource = _node_resource(poster) if poster else None
+            if resource is not None:
+                source_label, mime, sha, dimensions, byte_expr = resource
+                intrinsic_width, intrinsic_height = dimensions or (300.0, 150.0)
+                lines.append(
+                    f'{ws}let {var}_poster = doc.register_image_resource('
+                    f'{json.dumps(source_label)}, {json.dumps(mime)}, {json.dumps(sha)}, {byte_expr});'
+                )
+                lines.append(
+                    f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                    f"resource: openui_dom::ReplacedResourceKind::MediaPoster({var}_poster), "
+                    f"intrinsic_width: Some({intrinsic_width}), intrinsic_height: Some({intrinsic_height}), "
+                    f"intrinsic_ratio: Some(({intrinsic_width}, {intrinsic_height})) }});"
+                )
+            else:
+                source = node.attrs.get('src', '').strip()
+                local = _packaged_resource(source) if source else None
+                dimensions = local[4] if local is not None else None
+                intrinsic_width, intrinsic_height = dimensions or (300.0, 150.0)
+                ratio = (
+                    f'Some(({intrinsic_width}, {intrinsic_height}))'
+                    if dimensions is not None else 'None'
+                )
+                lines.append(
+                    f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                    "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                    f"intrinsic_width: Some({intrinsic_width}), intrinsic_height: Some({intrinsic_height}), "
+                    f"intrinsic_ratio: {ratio} }});"
                 )
         elif node.tag == 'svg' and not node.children:
             # An outer empty SVG viewport is an atomic replaced element even
@@ -8840,14 +9185,30 @@ def generate_rust_fn(
             )
         elif node.tag == 'iframe':
             # HTML iframe elements have a 300x150 default object size but no
-            # natural aspect ratio.  Package the deterministic initial
-            # about:blank document so sizing never depends on a live nested
-            # browsing context.
+            # natural aspect ratio. Package srcdoc/local documents so sizing
+            # and passive paint never depend on a live browsing context.
+            srcdoc = node.attrs.get('srcdoc')
+            source = node.attrs.get('src', '').strip()
+            if srcdoc is not None:
+                data = srcdoc.encode('utf-8')
+                document_source = f'inline:srcdoc;sha256={hashlib.sha256(data).hexdigest()}'
+                document_mime = 'text/html'
+                document_sha = hashlib.sha256(data).hexdigest()
+                document_bytes = f'vec![{", ".join(str(byte) for byte in data)}]'
+            else:
+                packaged_document = _packaged_resource(source) if source else None
+                if packaged_document is not None and packaged_document[2] in ('text/html', 'application/xhtml+xml'):
+                    filename, document_source, document_mime, document_sha, _ = packaged_document
+                    document_bytes = _packaged_bytes_expr(filename)
+                else:
+                    document_source = 'about:blank'
+                    document_mime = 'text/html'
+                    document_sha = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'
+                    document_bytes = 'Vec::new()'
             lines.append(
                 f'{ws}let {var}_document = doc.register_image_resource('
-                '"about:blank", "text/html", '
-                '"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", '
-                'Vec::new());'
+                f'{json.dumps(document_source)}, {json.dumps(document_mime)}, '
+                f'{json.dumps(document_sha)}, {document_bytes});'
             )
             lines.append(
                 f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
@@ -9307,6 +9668,7 @@ def generate_rust_fn(
                 'scroll-marker-group': 'ScrollMarkerGroup',
                 'column': 'Column',
                 'column-scroll-marker': 'ColumnScrollMarker',
+                'details-content': 'DetailsContent',
                 'scroll-button-up': 'ScrollButton(openui_dom::ScrollButtonDirection::Up)',
                 'scroll-button-right': 'ScrollButton(openui_dom::ScrollButtonDirection::Right)',
                 'scroll-button-down': 'ScrollButton(openui_dom::ScrollButtonDirection::Down)',
@@ -9604,7 +9966,31 @@ def generate_rust_fn(
                 f"{ws}        doc.append_child({default_summary}, {default_summary_text});",
             ])
 
-        if parent_display == 'table-row':
+        if node.tag == 'details' and node.pseudo_styles.get('details-content'):
+            # CSS creates one ::details-content wrapper around every authored
+            # child except the first summary. The pseudo is structural even
+            # without generated `content`; its display and box decorations
+            # apply to the wrapped subtree.
+            first_summary = next((
+                child for child in node.children
+                if not child.is_text and child.tag == 'summary'
+            ), None)
+            if first_summary is not None:
+                gen_node(
+                    first_summary, var, indent + 1, node_font_size,
+                    child_inherited, node_custom_props, node_zoom,
+                    html_table_border,
+                )
+            details_content = emit_generated_pseudo('details-content', structural=True)
+            for child in node.children:
+                if child is first_summary:
+                    continue
+                gen_node(
+                    child, details_content, indent + 1, node_font_size,
+                    child_inherited, node_custom_props, node_zoom,
+                    html_table_border,
+                )
+        elif parent_display == 'table-row':
             # A run of non-cell children in a table row generates one
             # anonymous table cell. Keeping text and inline descendants in a
             # single wrapper is observable through intrinsic column sizing.
@@ -10050,6 +10436,21 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
         style_attr = re.search(r'\bstyle=["\']([^"\']*)["\']', body_open.group(1), re.IGNORECASE)
         if style_attr:
             style_blocks.append(f"<style>body {{{style_attr.group(1)}}}</style>")
+        onload_attr = re.search(
+            r'''\bonload\s*=\s*(["'])(.*?)\1''',
+            body_open.group(1), re.IGNORECASE | re.DOTALL,
+        )
+        if onload_attr:
+            class_add = re.fullmatch(
+                r'''\s*document\.body\.classList\.add\(\s*(["'])([-_a-zA-Z][-_a-zA-Z0-9]*)\1\s*\)\s*;?\s*''',
+                onload_attr.group(2),
+            )
+            if class_add:
+                class_name = re.escape(class_add.group(2))
+                style_blocks = [
+                    re.sub(rf'(?i)\bbody\.{class_name}\b', 'body', block)
+                    for block in style_blocks
+                ]
 
     if root_aware:
         html_open = re.search(r'<html\b([^>]*)>', markup_content, re.IGNORECASE)
@@ -10268,10 +10669,10 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     if RETAIN_TEXT and not is_real_font_profile():
         # Deterministic-font override LAST so it wins the cascade.
         template = template + '\n' + TEXT_TEMPLATE_OVERRIDE
-    if EMIT_PAINT_LAYERS or any(
-        asset_name in template for asset_name in _REPLACED_ASSET_DIMENSIONS
-    ):
-        template = _embed_paint_asset_urls(template)
+    # All visual and embedded resources are lowered to immutable data URLs.
+    # This is deliberately unconditional: the SP20 package is content
+    # addressed, and historical hard-coded assets remain the fallback.
+    template = _embed_paint_asset_urls(template, html_dir)
     if root_aware:
         template = '<!--OPENUI_ROOT_AWARE-->\n' + template
     return template

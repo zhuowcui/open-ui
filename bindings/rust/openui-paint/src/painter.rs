@@ -311,6 +311,27 @@ pub fn paint_fragment(
     } else {
         canvas_adjusted_style.as_ref().unwrap_or(original_style)
     };
+    let has_clip_path = style.clip_path_inset.is_some()
+        && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
+    if let Some(inset) = style.clip_path_inset.as_ref().filter(|_| has_clip_path) {
+        let width = fragment.size.width.to_f32();
+        let height = fragment.size.height.to_f32();
+        let top = resolve_background_length(&inset[0], height, 0.0);
+        let right = resolve_background_length(&inset[1], width, 0.0);
+        let bottom = resolve_background_length(&inset[2], height, 0.0);
+        let left = resolve_background_length(&inset[3], width, 0.0);
+        canvas.save();
+        canvas.clip_rect(
+            Rect::from_xywh(
+                abs_offset.left.to_f32() + left,
+                abs_offset.top.to_f32() + top,
+                (width - left - right).max(0.0),
+                (height - top - bottom).max(0.0),
+            ),
+            ClipOp::Intersect,
+            true,
+        );
+    }
     let needs_mask_layer = !style.mask_layers.is_empty()
         && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
     if needs_mask_layer {
@@ -491,6 +512,9 @@ pub fn paint_fragment(
     }
 
     if needs_layer {
+        canvas.restore();
+    }
+    if has_clip_path {
         canvas.restore();
     }
 }

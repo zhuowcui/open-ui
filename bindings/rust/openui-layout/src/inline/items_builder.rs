@@ -952,6 +952,12 @@ impl<'a> InlineItemsBuilder<'a> {
             | ElementTag::Video
             | ElementTag::Input
             | ElementTag::Button
+            | ElementTag::TextArea
+            | ElementTag::Select
+            | ElementTag::Option
+            | ElementTag::OptGroup
+            | ElementTag::Form
+            | ElementTag::Embed
             | ElementTag::Meter
             | ElementTag::Fieldset
             | ElementTag::Legend

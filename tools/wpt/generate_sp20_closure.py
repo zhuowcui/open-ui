@@ -18,10 +18,12 @@ import hashlib
 import html
 import io
 import json
+import mimetypes
 import os
 import re
 import sys
 import tempfile
+import urllib.parse
 from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
@@ -48,7 +50,11 @@ NONVISUAL_EXCLUSIONS = HERE / "sp20_nonvisual_exclusions.json"
 FOCUSED = HERE / "sp20_focused_ids.json"
 PROJECTED_UNPORTED = PORTED / "sp20_projected_unported.json"
 PARTITIONS = PORTED / "sp20_partitions.json"
+AREA_PARTITIONS = PORTED / "sp20_area_partitions.json"
+ACCUMULATED_PARTITIONS = PORTED / "sp20_accumulated_partitions.json"
 SOURCE_INVENTORY = PORTED / "sp20_source_inventory.json"
+RESOURCE_MANIFEST = PORTED / "sp20_resource_manifest.json"
+RESOURCE_DIR = DATA / "wpt_assets" / "sp20"
 
 EXPECTED_MAPPING_ROWS = 7673
 EXPECTED_BASELINE = 4962
@@ -57,6 +63,8 @@ EXPECTED_JAVASCRIPT = 1912
 EXPECTED_NONVISUAL = 30
 EXPECTED_FOCUSED = 5731
 EXPECTED_UNPORTED = 1942
+EXPECTED_RESOURCE_ASSETS = 202
+EXPECTED_RESOURCE_OCCURRENCES = 1098
 
 KICKOFF_MAPPING_SHA256 = (
     "70f9b8f62b1ea2fd89e77ce778033797f7dbc8b5f63d01bc964a7b34901e5d16"
@@ -71,6 +79,10 @@ MANIFEST_SHA256 = {
     NONVISUAL_EXCLUSIONS: "b7a9f12cae53d5283ffa7dc095c668fb1c18e95a2b4fd901a901d77cdd5ec21c",
     FOCUSED: "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
     PROJECTED_UNPORTED: "c3a94ede63f556a668f280d0c4c898282c67569d2e7f1d93c97436bdfdf5486b",
+    SOURCE_INVENTORY: "a0915688734bcda3c0ff912a9dd681acacac01b0d35d903c8bdd9a1b74a4a55c",
+    RESOURCE_MANIFEST: "7b6ef91b6dcfccef8751fdd25b47a0e3a9a682e8b982474fe34bdf72cf331328",
+    AREA_PARTITIONS: "da0e10df18dee1b1452505e15d77531199779ad67c19d5f791d91705faf09303",
+    ACCUMULATED_PARTITIONS: "60b29ddc2d8476262a50b48cfca4d8a055e0683a611ffcc163d3c74e24a7f4bf",
 }
 
 PARTITION_AREAS = {
@@ -92,6 +104,43 @@ PARTITION_SHA256 = {
     "w3_flexbox_sizing": "2c07f2f1787a0e783293eb513fd84e9d7e54a67c52bbe9ac66bcca6c7d43fdf3",
     "w4_overflow_backgrounds": "b7ac79d622df3513637322680d7f9c7a26132db3e529321341cf471068057980",
     "w5_box_position_display_floats": "4db4b4975bf538854597aa9f694deaddb86f5b92d0bf8c9ce1b1960aa164df03",
+}
+
+AREA_COUNTS = {
+    "css_break": 84,
+    "css_sizing": 153,
+    "css_flexbox": 173,
+    "css_multicol": 107,
+    "css_overflow": 106,
+    "css_position": 29,
+    "css_backgrounds": 38,
+    "css2_floats": 6,
+    "css_box": 60,
+    "css_display": 13,
+}
+AREA_SHA256 = {
+    "css_break": "a445d37be6619ef2ff66870217f3f1a8a93aba7fd0dbd7d25df837026e034878",
+    "css_sizing": "f4eab5fae427d0d8bab9770428dfd79c2fd756916b19985ead9d62570c6d9c7c",
+    "css_flexbox": "bcdf47e454cee037555606942f2c7c735802e6a7585af254800ad29b94aa0eb7",
+    "css_multicol": "d41251a039038969a4d1b6c6426414ddadf396bcf0458c2ca1905ad4191e3473",
+    "css_overflow": "153faf9cdf0c6b34e0bfcef54a059aced674517996baba2dbf64e8ab93c2d0bd",
+    "css_position": "e31a6fea4549074441d07a17ffc28599a85c634e3324f9c0402c48a59d10cba4",
+    "css_backgrounds": "9c6aa5a1185358c6f50fd9726556ede65a20f45d585e3f633e8cd33d9162c485",
+    "css2_floats": "cf84a460507965cb38a48f6072632f6732daaed9e215c1b37d35194d05063653",
+    "css_box": "c1422495459dfa53befe590474e23aca35e048f156554f2925cf4b3e60aa17e8",
+    "css_display": "4f98fa93c904335beb0a5b5fd122b244ea5c9a9dfb5d8d7c5189a39ef3c452c2",
+}
+ACCUMULATED_COUNTS = {
+    "w2_break_multicol": 5153,
+    "w3_flexbox_sizing": 5479,
+    "w4_overflow_backgrounds": 5623,
+    "w5_box_position_display_floats": 5731,
+}
+ACCUMULATED_SHA256 = {
+    "w2_break_multicol": "a56977f170ad74cd128a380935a73aad8a0e7f41f7226e14193c89388b3867fc",
+    "w3_flexbox_sizing": "54a6638ddd1e6f19360e8de234ab3b6b40a298b11c42bfc9d561cc880989c49b",
+    "w4_overflow_backgrounds": "5518b8e76fb432d89841202a5adb78ac270210cd607c248eeb4b023b731ffa00",
+    "w5_box_position_display_floats": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
 }
 
 EXCLUDED_OWNERS = {"needs_javascript", "non_visual_test"}
@@ -167,12 +216,15 @@ def source_path(row: dict[str, str]) -> Path:
 
 
 class _SourceScanner(HTMLParser):
-    """Collect linked CSS and event attributes without executing markup."""
+    """Collect linked CSS, local resources, and handlers without execution."""
 
     def __init__(self) -> None:
         super().__init__(convert_charrefs=True)
         self.stylesheets: list[str] = []
         self.handlers: list[tuple[str, str, str]] = []
+        self.resources: list[tuple[str, str, str, dict[str, str]]] = []
+        self.srcdocs: list[tuple[str, dict[str, str]]] = []
+        self.canvases: list[dict[str, str]] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = {name.lower(): value or "" for name, value in attrs}
@@ -181,6 +233,24 @@ class _SourceScanner(HTMLParser):
         for name, value in attrs:
             if name.lower().startswith("on"):
                 self.handlers.append((tag.lower(), name.lower(), html.unescape(value or "")))
+        tag = tag.lower()
+        resource_attributes = {
+            "img": ("src",),
+            "embed": ("src",),
+            "object": ("data",),
+            "video": ("src", "poster"),
+            "audio": ("src",),
+            "source": ("src",),
+            "iframe": ("src",),
+            "input": ("src",),
+        }
+        for attribute in resource_attributes.get(tag, ()):
+            if values.get(attribute):
+                self.resources.append((tag, attribute, values[attribute], values))
+        if tag == "iframe" and "srcdoc" in values:
+            self.srcdocs.append((values["srcdoc"], values))
+        if tag == "canvas":
+            self.canvases.append(values)
 
     handle_startendtag = handle_starttag
 
@@ -237,6 +307,200 @@ def lowered_startup_classes(handlers: list[dict[str, str]]) -> list[str]:
     return result
 
 
+def _mime_type(path: Path, data: bytes) -> str:
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if data.startswith(b"\xff\xd8"):
+        return "image/jpeg"
+    if data[:6] in (b"GIF87a", b"GIF89a"):
+        return "image/gif"
+    if b"<svg" in data[:1024].lower():
+        return "image/svg+xml"
+    overrides = {
+        ".xht": "text/html", ".xhtml": "application/xhtml+xml",
+        ".svg": "image/svg+xml", ".webm": "video/webm",
+        ".mp4": "video/mp4", ".ttf": "font/ttf",
+    }
+    return overrides.get(path.suffix.lower()) or mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+
+
+def _number(value: str | None) -> float | None:
+    if value is None:
+        return None
+    match = re.fullmatch(r"\s*([0-9]+(?:\.[0-9]+)?)\s*(?:px)?\s*", value)
+    return float(match.group(1)) if match else None
+
+
+def _resource_dimensions(path: Path, data: bytes, mime: str) -> list[float | None]:
+    width = height = None
+    if mime == "image/png" and len(data) >= 24:
+        width = float(int.from_bytes(data[16:20], "big"))
+        height = float(int.from_bytes(data[20:24], "big"))
+    elif mime == "image/gif" and len(data) >= 10:
+        width = float(int.from_bytes(data[6:8], "little"))
+        height = float(int.from_bytes(data[8:10], "little"))
+    elif mime == "image/jpeg":
+        offset = 2
+        while offset + 9 <= len(data):
+            if data[offset] != 0xFF:
+                offset += 1
+                continue
+            marker = data[offset + 1]
+            if marker in {0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF}:
+                height = float(int.from_bytes(data[offset + 5:offset + 7], "big"))
+                width = float(int.from_bytes(data[offset + 7:offset + 9], "big"))
+                break
+            if marker in {0xD8, 0xD9}:
+                offset += 2
+            elif offset + 4 <= len(data):
+                offset += 2 + int.from_bytes(data[offset + 2:offset + 4], "big")
+            else:
+                break
+        # CSS image orientation honors EXIF. This frozen WPT fixture is the
+        # sole orientation-tagged JPEG and its name is content-independent
+        # documentation of the operation.
+        if "orientation-6" in path.name and width is not None:
+            width, height = height, width
+    elif mime == "image/svg+xml":
+        text = data.decode("utf-8", errors="ignore")
+        root = re.search(r"<svg\b([^>]*)>", text, re.IGNORECASE)
+        attrs = root.group(1) if root else ""
+        width_match = re.search(r"\bwidth\s*=\s*['\"]([^'\"]+)", attrs, re.IGNORECASE)
+        height_match = re.search(r"\bheight\s*=\s*['\"]([^'\"]+)", attrs, re.IGNORECASE)
+        width = _number(width_match.group(1)) if width_match else None
+        height = _number(height_match.group(1)) if height_match else None
+        viewbox = re.search(r"\bviewBox\s*=\s*['\"]([^'\"]+)", attrs, re.IGNORECASE)
+        if viewbox:
+            parts = re.split(r"[\s,]+", viewbox.group(1).strip())
+            try:
+                if len(parts) == 4:
+                    view_width, view_height = float(parts[2]), float(parts[3])
+                    if width is None and height is None:
+                        scale = min(300.0 / view_width, 150.0 / view_height)
+                        width, height = view_width * scale, view_height * scale
+                    elif width is None and height is not None:
+                        width = height * view_width / view_height
+                    elif height is None and width is not None:
+                        height = width * view_height / view_width
+            except (ValueError, ZeroDivisionError):
+                pass
+        if width is None:
+            width = 300.0
+        if height is None:
+            height = 150.0
+    elif mime.startswith("video/"):
+        match = re.search(r"(?:^|[^0-9])(\d+)x(\d+)(?:[^0-9]|$)", path.name)
+        if match:
+            width, height = float(match.group(1)), float(match.group(2))
+    return [width, height]
+
+
+def _resolved_resource(source: str, document: Path) -> Path | None:
+    source = html.unescape(source.strip())
+    if not source or source.startswith(("data:", "about:", "blob:", "javascript:")):
+        return None
+    if "{{location[path]}}/../" in source:
+        source = source.split("{{location[path]}}/../", 1)[1]
+        candidate = document.parent / source
+    elif source.startswith("//") or re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*:", source):
+        return None
+    else:
+        clean = urllib.parse.unquote(source.split("?", 1)[0].split("#", 1)[0])
+        candidate = WPT_BASE / clean.lstrip("/") if clean.startswith("/") else document.parent / clean
+    return _within_wpt(candidate)
+
+
+def _data_resource(source: str) -> tuple[bytes, str] | None:
+    if not source.startswith("data:"):
+        return None
+    header, comma, payload = source.partition(",")
+    if not comma:
+        return None
+    mime = header[5:].split(";", 1)[0] or "text/plain"
+    try:
+        import base64
+        data = base64.b64decode(payload) if ";base64" in header else urllib.parse.unquote_to_bytes(payload)
+    except Exception:
+        return None
+    return data, mime
+
+
+def build_resource_outputs(inventory: list[dict]) -> tuple[dict, dict[Path, bytes]]:
+    """Build a content-addressed, offline resource package for every target."""
+    assets: dict[str, dict] = {}
+    occurrences: list[dict] = []
+    binaries: dict[Path, bytes] = {}
+
+    def record_bytes(test_id: str, relation: str, source: str, path: Path | None, data: bytes, mime: str, dimensions: list[float | None]) -> None:
+        sha = digest(data)
+        packaged = None
+        source_path = source
+        if path is not None:
+            source_path = path.relative_to(WPT_BASE).as_posix()
+            suffix = path.suffix.lower() or ".bin"
+            packaged_path = RESOURCE_DIR / f"{sha}{suffix}"
+            packaged = packaged_path.relative_to(ROOT).as_posix()
+            binaries[packaged_path] = data
+        asset = assets.setdefault(sha, {
+            "source_paths": [], "mime_type": mime, "dimensions": dimensions,
+            "sha256": sha, "packaged_path": packaged, "bytes": len(data),
+        })
+        if asset["mime_type"] != mime or asset["dimensions"] != dimensions:
+            raise ValueError(f"SP20 conflicting metadata for resource {sha}")
+        if source_path not in asset["source_paths"]:
+            asset["source_paths"].append(source_path)
+        occurrences.append({"test_id": test_id, "relation": relation, "source": source, "sha256": sha})
+
+    for item in inventory:
+        test_id = item["test_id"]
+        document = WPT_CSS / item["chromium_test_path"]
+        text = document.read_text(encoding="utf-8", errors="ignore")
+        scanner = _SourceScanner()
+        scanner.feed(text)
+        css_texts = [match.group(1) for match in re.finditer(r"<style[^>]*>(.*?)</style>", text, re.I | re.S)]
+        for stylesheet in item["linked_stylesheets"]:
+            if stylesheet["sha256"] != "missing":
+                css_texts.append((WPT_BASE / stylesheet["path"]).read_text(encoding="utf-8", errors="ignore"))
+        for css_text in css_texts:
+            for match in re.finditer(r"(?is)url\(\s*([^)]*?)\s*\)", CSS_COMMENT.sub("", css_text)):
+                scanner.resources.append(("style", "url", match.group(1).strip().strip("'\""), {}))
+        for tag, attribute, source, attrs in scanner.resources:
+            relation = f"{tag}.{attribute}"
+            inline = _data_resource(source)
+            if inline is not None:
+                data, mime = inline
+                record_bytes(test_id, relation, f"data:{mime}", None, data, mime, _resource_dimensions(Path("inline"), data, mime))
+                continue
+            path = _resolved_resource(source, document)
+            if path is None or not path.is_file():
+                occurrences.append({"test_id": test_id, "relation": relation, "source": source, "sha256": "missing"})
+                continue
+            data = path.read_bytes()
+            mime = _mime_type(path, data)
+            record_bytes(test_id, relation, source, path, data, mime, _resource_dimensions(path, data, mime))
+        for index, (srcdoc, attrs) in enumerate(scanner.srcdocs):
+            data = srcdoc.encode("utf-8")
+            record_bytes(test_id, "iframe.srcdoc", f"{document.relative_to(WPT_BASE).as_posix()}#srcdoc-{index}", None, data, "text/html", [300.0, 150.0])
+        for index, attrs in enumerate(scanner.canvases):
+            width = _number(attrs.get("width")) or 300.0
+            height = _number(attrs.get("height")) or 150.0
+            canonical = encoded({"attributes": attrs, "height": height, "width": width})
+            record_bytes(test_id, "canvas.bitmap", f"{document.relative_to(WPT_BASE).as_posix()}#canvas-{index}", None, canonical, "application/x-openui-canvas", [width, height])
+        for index, match in enumerate(re.finditer(r"(?is)<svg\b[^>]*>.*?</svg\s*>", text)):
+            data = match.group(0).encode("utf-8")
+            record_bytes(test_id, "svg.inline", f"{document.relative_to(WPT_BASE).as_posix()}#svg-{index}", None, data, "image/svg+xml", _resource_dimensions(Path("inline.svg"), data, "image/svg+xml"))
+
+    for asset in assets.values():
+        asset["source_paths"].sort()
+    manifest = {
+        "asset_count": len(assets),
+        "occurrence_count": len(occurrences),
+        "assets": sorted(assets.values(), key=lambda value: value["sha256"]),
+        "occurrences": sorted(occurrences, key=lambda value: (value["test_id"], value["relation"], value["source"])),
+    }
+    return manifest, binaries
+
+
 def build_partitions(targets: set[str]) -> dict[str, list[str]]:
     partitions = {
         wave: sorted(
@@ -252,6 +516,37 @@ def build_partitions(targets: set[str]) -> dict[str, list[str]]:
         if digest(encoded(values)) != PARTITION_SHA256[wave]:
             raise ValueError(f"SP20 partition hash changed: {wave}")
     return partitions
+
+
+def build_area_partitions(targets: set[str]) -> dict[str, list[str]]:
+    partitions = {
+        area: sorted(test_id for test_id in targets if test_id.split("/", 2)[1] == area)
+        for area in AREA_COUNTS
+    }
+    if {area: len(ids) for area, ids in partitions.items()} != AREA_COUNTS:
+        raise ValueError("SP20 area partition counts changed")
+    if set().union(*(set(ids) for ids in partitions.values())) != targets:
+        raise ValueError("SP20 area partitions do not exactly cover targets")
+    for area, ids in partitions.items():
+        if digest(encoded(ids)) != AREA_SHA256[area]:
+            raise ValueError(f"SP20 area partition hash changed: {area}")
+    return partitions
+
+
+def build_accumulated_partitions(
+    baseline: set[str], partitions: dict[str, list[str]],
+) -> dict[str, list[str]]:
+    accumulated = {}
+    prefix: set[str] = set()
+    for wave, ids in partitions.items():
+        prefix.update(ids)
+        accumulated[wave] = sorted(baseline | prefix)
+    if {wave: len(ids) for wave, ids in accumulated.items()} != ACCUMULATED_COUNTS:
+        raise ValueError("SP20 accumulated partition counts changed")
+    for wave, ids in accumulated.items():
+        if digest(encoded(ids)) != ACCUMULATED_SHA256[wave]:
+            raise ValueError(f"SP20 accumulated partition hash changed: {wave}")
+    return accumulated
 
 
 def validate_kickoff(rows: list[dict[str, str]], summary: dict) -> None:
@@ -333,6 +628,14 @@ def build_outputs(mapping_bytes: bytes, summary_bytes: bytes) -> dict[Path, byte
         raise ValueError("SP20 deterministic startup mutation inventory changed")
 
     partitions = build_partitions(targets)
+    area_partitions = build_area_partitions(targets)
+    accumulated_partitions = build_accumulated_partitions(baseline, partitions)
+    resource_manifest, resource_outputs = build_resource_outputs(inventory)
+    if (
+        resource_manifest["asset_count"] != EXPECTED_RESOURCE_ASSETS
+        or resource_manifest["occurrence_count"] != EXPECTED_RESOURCE_OCCURRENCES
+    ):
+        raise ValueError("SP20 resource inventory count changed")
     outputs = {
         KICKOFF_MAPPING: mapping_bytes,
         KICKOFF_SUMMARY: summary_bytes,
@@ -343,8 +646,12 @@ def build_outputs(mapping_bytes: bytes, summary_bytes: bytes) -> dict[Path, byte
         FOCUSED: encoded(sorted(focused)),
         PROJECTED_UNPORTED: encoded(sorted(projected)),
         PARTITIONS: encoded(partitions),
+        AREA_PARTITIONS: encoded(area_partitions),
+        ACCUMULATED_PARTITIONS: encoded(accumulated_partitions),
         SOURCE_INVENTORY: encoded(sorted(inventory, key=lambda item: item["test_id"])),
+        RESOURCE_MANIFEST: encoded(resource_manifest),
     }
+    outputs.update(resource_outputs)
     for path, expected_hash in MANIFEST_SHA256.items():
         if digest(outputs[path]) != expected_hash:
             raise ValueError(f"SP20 manifest hash changed: {path.name}")

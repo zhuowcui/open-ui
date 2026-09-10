@@ -629,6 +629,8 @@ pub struct ComputedStyle {
     pub object_position: ObjectPosition,
     pub transform: Transform2D,
     pub transform_origin: (Length, Length),
+    /// CSS basic-shape `clip-path: inset(top right bottom left)`.
+    pub clip_path_inset: Option<[Length; 4]>,
     pub shape_outside: ShapeOutside,
     pub shape_margin: Length,
     pub shape_image_threshold: f32,
@@ -1093,6 +1095,7 @@ impl ComputedStyle {
             object_position: ObjectPosition::default(),
             transform: Transform2D::IDENTITY,
             transform_origin: (Length::percent(50.0), Length::percent(50.0)),
+            clip_path_inset: None,
             shape_outside: ShapeOutside::None,
             shape_margin: Length::zero(),
             shape_image_threshold: 0.0,

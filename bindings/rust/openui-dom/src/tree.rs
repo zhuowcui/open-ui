@@ -47,6 +47,10 @@ pub struct ReplacedContent {
 pub enum FormControlRole {
     Button,
     TextInput,
+    TextArea,
+    Select,
+    Option,
+    OptGroup,
     Range,
     Meter,
     Fieldset,
@@ -156,6 +160,12 @@ pub enum ElementTag {
     Legend,
     Details,
     Summary,
+    TextArea,
+    Select,
+    Option,
+    OptGroup,
+    Form,
+    Embed,
     /// The document element (`<html>`).
     Html,
     /// The document body (`<body>`).
@@ -183,6 +193,7 @@ pub enum PseudoElementKind {
     ScrollButton(ScrollButtonDirection),
     Column,
     ColumnScrollMarker,
+    DetailsContent,
 }
 
 /// Data stored for each node in the tree.
@@ -442,7 +453,8 @@ impl Document {
             | PseudoElementKind::ScrollButton(_)
             | PseudoElementKind::Column
             | PseudoElementKind::ColumnScrollMarker
-            | PseudoElementKind::ScrollMarkerGroup => self.append_child(origin, pseudo),
+            | PseudoElementKind::ScrollMarkerGroup
+            | PseudoElementKind::DetailsContent => self.append_child(origin, pseudo),
         }
         pseudo
     }
