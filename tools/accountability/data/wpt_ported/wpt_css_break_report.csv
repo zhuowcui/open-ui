@@ -71,8 +71,8 @@ block-max-height-002,ported,css_break_block_max_height_002,
 block-max-height-002b,ported,css_break_block_max_height_002b,
 block-max-height-003,ported,css_break_block_max_height_003,
 block-max-height-003b,ported,css_break_block_max_height_003b,
-block-max-height-004,not_portable,,unsupported element: <img>
-block-max-height-004-ref,not_portable,,unsupported element: <img>
+block-max-height-004,ported,css_break_block_max_height_004,
+block-max-height-004-ref,ported,css_break_block_max_height_004_ref,
 block-min-height-001,ported,css_break_block_min_height_001,
 block-min-height-001-ref,ported,css_break_block_min_height_001_ref,
 block-min-height-001b,ported,css_break_block_min_height_001b,
@@ -120,8 +120,8 @@ box-decoration-break-clone-020,ported,css_break_box_decoration_break_clone_020,
 box-decoration-break-clone-021,ported,css_break_box_decoration_break_clone_021,
 box-decoration-break-clone-022,ported,css_break_box_decoration_break_clone_022,
 box-decoration-break-clone-023,ported,css_break_box_decoration_break_clone_023,
-box-decoration-break-clone-024,not_portable,,unsupported element: <fieldset>
-box-decoration-break-clone-025,not_portable,,unsupported element: <fieldset>
+box-decoration-break-clone-024,ported,css_break_box_decoration_break_clone_024,
+box-decoration-break-clone-025,ported,css_break_box_decoration_break_clone_025,
 box-decoration-break-clone-026,ported,css_break_box_decoration_break_clone_026,
 box-decoration-break-clone-027,ported,css_break_box_decoration_break_clone_027,
 box-decoration-break-clone-028,ported,css_break_box_decoration_break_clone_028,
@@ -180,7 +180,7 @@ break-inside-avoid-min-block-size-2,ported,css_break_break_inside_avoid_min_bloc
 break-inside-avoid-min-block-size-2-ref,ported,css_break_break_inside_avoid_min_block_size_2_ref,
 break-inside-avoid-multicol-001-print,ported,css_break_break_inside_avoid_multicol_001_print,
 break-inside-avoid-multicol-001-print-ref,ported,css_break_break_inside_avoid_multicol_001_print_ref,
-break-inside-avoid-multicol-iframe-crash-print,not_portable,,unsupported element: <iframe>
+break-inside-avoid-multicol-iframe-crash-print,ported,css_break_break_inside_avoid_multicol_iframe_crash_print,
 break-nested-float-in-table-001-print,ported,css_break_break_nested_float_in_table_001_print,
 break-nested-float-in-table-001-print-ref,ported,css_break_break_nested_float_in_table_001_print_ref,
 break-overflowed-block-dynamic-001,not_portable,,uses_javascript
@@ -215,26 +215,26 @@ clipping-002,ported,css_break_clipping_002,
 column-balancing-with-oofs-crash,ported,css_break_column_balancing_with_oofs_crash,
 contain-strict-with-opacity-and-oof,ported,css_break_contain_strict_with_opacity_and_oof,
 contain-strict-with-opacity-and-oof-ref,ported,css_break_contain_strict_with_opacity_and_oof_ref,
-empty-fieldset-tall-bottom-padding-crash,not_portable,,unsupported element: <fieldset>
+empty-fieldset-tall-bottom-padding-crash,ported,css_break_empty_fieldset_tall_bottom_padding_crash,
 empty-multicol-at-scrollport-edge,not_portable,,uses_javascript
-fieldset,not_portable,,unsupported element: <fieldset>
-fieldset-001,not_portable,,unsupported element: <fieldset>
-fieldset-001-ref,not_portable,,unsupported element: <legend>
-fieldset-002,not_portable,,unsupported element: <fieldset>
+fieldset,ported,css_break_fieldset,
+fieldset-001,ported,css_break_fieldset_001,
+fieldset-001-ref,ported,css_break_fieldset_001_ref,
+fieldset-002,ported,css_break_fieldset_002,
 fieldset-002-ref,ported,css_break_fieldset_002_ref,
-fieldset-003,not_portable,,unsupported element: <fieldset>
+fieldset-003,ported,css_break_fieldset_003,
 fieldset-003-ref,ported,css_break_fieldset_003_ref,
-fieldset-004,not_portable,,unsupported element: <fieldset>
+fieldset-004,ported,css_break_fieldset_004,
 fieldset-004-ref,ported,css_break_fieldset_004_ref,
-fieldset-005,not_portable,,unsupported element: <fieldset>
-fieldset-006,not_portable,,unsupported element: <fieldset>
-fieldset-007,not_portable,,unsupported element: <fieldset>
+fieldset-005,ported,css_break_fieldset_005,
+fieldset-006,ported,css_break_fieldset_006,
+fieldset-007,ported,css_break_fieldset_007,
 firefox-bug-1693616-001-crash,ported,css_break_firefox_bug_1693616_001_crash,
 firefox-bug-1693616-002-crash,ported,css_break_firefox_bug_1693616_002_crash,
 firefox-bug-1903652-crash,not_portable,,uses_javascript
 flex-item-padding-block-in-inline-crash,ported,css_break_flex_item_padding_block_in_inline_crash,
 flexbox_auto-height-flex-item-in-multicol-crash,ported,css_break_flexbox_auto_height_flex_item_in_multicol_crash,
-flexbox_button-in-multicol-crash,not_portable,,unsupported element: <button>
+flexbox_button-in-multicol-crash,ported,css_break_flexbox_button_in_multicol_crash,
 flexbox_fixed-flex-item-inside-abs-flex-in-multicol-crash,not_portable,,uses_javascript
 flexbox_flex-container-fragmentation-001,ported,css_break_flexbox_flex_container_fragmentation_001,
 flexbox_flex-container-fragmentation-002,ported,css_break_flexbox_flex_container_fragmentation_002,
@@ -257,7 +257,7 @@ flexbox_flex-item-content-overflow-002b,ported,css_break_flexbox_flex_item_conte
 flexbox_flex-item-content-overflow-003,ported,css_break_flexbox_flex_item_content_overflow_003,
 flexbox_flexbox-fragmentation-layout-001-crash,not_portable,,uses_javascript
 flexbox_float-in-webkit-box-in-multicol-crash,ported,css_break_flexbox_float_in_webkit_box_in_multicol_crash,
-flexbox_image-in-fragmented-flexbox-001-crash,not_portable,,unsupported element: <img>
+flexbox_image-in-fragmented-flexbox-001-crash,ported,css_break_flexbox_image_in_fragmented_flexbox_001_crash,
 flexbox_image-in-fragmented-flexbox-002-crash,ported,css_break_flexbox_image_in_fragmented_flexbox_002_crash,
 flexbox_increase-fragmentainer-size-flex-item-trailing-margin,not_portable,,uses_javascript
 flexbox_monolithic-item-in-fragmented-flexbox-crash,ported,css_break_flexbox_monolithic_item_in_fragmented_flexbox_crash,
@@ -601,8 +601,8 @@ flexbox_single-line-row-flex-fragmentation-047,ported,css_break_flexbox_single_l
 flexbox_single-line-row-flex-fragmentation-048,ported,css_break_flexbox_single_line_row_flex_fragmentation_048,
 flexbox_single-line-row-flex-fragmentation-049,ported,css_break_flexbox_single_line_row_flex_fragmentation_049,
 flexbox_single-line-row-flex-fragmentation-050,ported,css_break_flexbox_single_line_row_flex_fragmentation_050,
-flexbox_slider-in-multicol-crash,not_portable,,unsupported element: <input>
-flexbox_textarea-input-flex-items-in-multicol-crash,not_portable,,unsupported element: <textarea>
+flexbox_slider-in-multicol-crash,ported,css_break_flexbox_slider_in_multicol_crash,
+flexbox_textarea-input-flex-items-in-multicol-crash,ported,css_break_flexbox_textarea_input_flex_items_in_multicol_crash,
 float-000,ported,css_break_float_000,
 float-001,ported,css_break_float_001,
 float-002,ported,css_break_float_002,
@@ -642,7 +642,7 @@ forced-break-at-fragmentainer-start-001,ported,css_break_forced_break_at_fragmen
 forced-break-before-new-fc-001,ported,css_break_forced_break_before_new_fc_001,
 forced-break-before-new-fc-002,ported,css_break_forced_break_before_new_fc_002,
 forced-break-before-new-fc-003,ported,css_break_forced_break_before_new_fc_003,
-form-control,not_portable,,unsupported element: <input>
+form-control,ported,css_break_form_control,
 fragmentainer-1px-clamping-000-crash,ported,css_break_fragmentainer_1px_clamping_000_crash,
 fragmentainer-1px-clamping-001-crash,ported,css_break_fragmentainer_1px_clamping_001_crash,
 fragmented-autowidth-fc-root-beside-floats,ported,css_break_fragmented_autowidth_fc_root_beside_floats,
@@ -794,14 +794,14 @@ monolithic-overflow-006.tentative,ported,css_break_monolithic_overflow_006_tenta
 monolithic-with-overflow,ported,css_break_monolithic_with_overflow,
 monolithic-with-overflow-lr,ported,css_break_monolithic_with_overflow_lr,
 monolithic-with-overflow-rl,ported,css_break_monolithic_with_overflow_rl,
-nested-fixedpos-in-inline-000-crash,not_portable,,unsupported property: filter
-nested-fixedpos-in-inline-001-crash,not_portable,,unsupported property: filter
-nested-fixedpos-in-inline-002-crash,not_portable,,unsupported property: filter
-nested-fixedpos-in-inline-003-crash,not_portable,,unsupported property: filter
+nested-fixedpos-in-inline-000-crash,ported,css_break_nested_fixedpos_in_inline_000_crash,
+nested-fixedpos-in-inline-001-crash,ported,css_break_nested_fixedpos_in_inline_001_crash,
+nested-fixedpos-in-inline-002-crash,ported,css_break_nested_fixedpos_in_inline_002_crash,
+nested-fixedpos-in-inline-003-crash,ported,css_break_nested_fixedpos_in_inline_003_crash,
 nested-float-in-multicol-crash,ported,css_break_nested_float_in_multicol_crash,
 nested-multicol-with-spanner-and-oof-001-crash,ported,css_break_nested_multicol_with_spanner_and_oof_001_crash,
 nested-multicol-with-spanner-and-oof-002-crash,ported,css_break_nested_multicol_with_spanner_and_oof_002_crash,
-nested-multicol-with-spanner-and-oof-003-crash,not_portable,,unsupported property: transform
+nested-multicol-with-spanner-and-oof-003-crash,ported,css_break_nested_multicol_with_spanner_and_oof_003_crash,
 nested-multicol-with-spanner-and-oof-004-crash,ported,css_break_nested_multicol_with_spanner_and_oof_004_crash,
 nested-multicol-with-spanner-and-oof-005-crash,ported,css_break_nested_multicol_with_spanner_and_oof_005_crash,
 nested-multicol-with-spanner-and-oof-006-crash,ported,css_break_nested_multicol_with_spanner_and_oof_006_crash,
@@ -809,7 +809,7 @@ nested-multicol-with-spanner-and-oof-007-crash,ported,css_break_nested_multicol_
 nested-multicol-with-spanner-and-oof-008-crash,ported,css_break_nested_multicol_with_spanner_and_oof_008_crash,
 nested-multicol-with-spanners-and-oofs-crash,not_portable,,uses_javascript
 nested-oof-in-multicol-crash,ported,css_break_nested_oof_in_multicol_crash,
-no-room-for-line-in-first-fragmentainer-crash,not_portable,,unsupported element: <canvas>
+no-room-for-line-in-first-fragmentainer-crash,ported,css_break_no_room_for_line_in_first_fragmentainer_crash,
 offset-top-block-in-inline,not_portable,,uses_javascript
 orphans-in-parallel-flow,ported,css_break_orphans_in_parallel_flow,
 out-of-flow-in-inline-with-negative-offset-crash,ported,css_break_out_of_flow_in_inline_with_negative_offset_crash,
@@ -845,22 +845,22 @@ out-of-flow-in-multicolumn-025,ported,css_break_out_of_flow_in_multicolumn_025,
 out-of-flow-in-multicolumn-026,ported,css_break_out_of_flow_in_multicolumn_026,
 out-of-flow-in-multicolumn-027,ported,css_break_out_of_flow_in_multicolumn_027,
 out-of-flow-in-multicolumn-028,ported,css_break_out_of_flow_in_multicolumn_028,
-out-of-flow-in-multicolumn-029,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-030,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-031,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-032,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-033,not_portable,,style_block_unsupported property: transform
-out-of-flow-in-multicolumn-034,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-035,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-036,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-037,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-038,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-039,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-040,not_portable,,unsupported property: transform
-out-of-flow-in-multicolumn-041,not_portable,,unsupported property: transform
+out-of-flow-in-multicolumn-029,ported,css_break_out_of_flow_in_multicolumn_029,
+out-of-flow-in-multicolumn-030,ported,css_break_out_of_flow_in_multicolumn_030,
+out-of-flow-in-multicolumn-031,ported,css_break_out_of_flow_in_multicolumn_031,
+out-of-flow-in-multicolumn-032,ported,css_break_out_of_flow_in_multicolumn_032,
+out-of-flow-in-multicolumn-033,ported,css_break_out_of_flow_in_multicolumn_033,
+out-of-flow-in-multicolumn-034,ported,css_break_out_of_flow_in_multicolumn_034,
+out-of-flow-in-multicolumn-035,ported,css_break_out_of_flow_in_multicolumn_035,
+out-of-flow-in-multicolumn-036,ported,css_break_out_of_flow_in_multicolumn_036,
+out-of-flow-in-multicolumn-037,ported,css_break_out_of_flow_in_multicolumn_037,
+out-of-flow-in-multicolumn-038,ported,css_break_out_of_flow_in_multicolumn_038,
+out-of-flow-in-multicolumn-039,ported,css_break_out_of_flow_in_multicolumn_039,
+out-of-flow-in-multicolumn-040,ported,css_break_out_of_flow_in_multicolumn_040,
+out-of-flow-in-multicolumn-041,ported,css_break_out_of_flow_in_multicolumn_041,
 out-of-flow-in-multicolumn-042,ported,css_break_out_of_flow_in_multicolumn_042,
 out-of-flow-in-multicolumn-043,ported,css_break_out_of_flow_in_multicolumn_043,
-out-of-flow-in-multicolumn-044,not_portable,,unsupported property: transform
+out-of-flow-in-multicolumn-044,ported,css_break_out_of_flow_in_multicolumn_044,
 out-of-flow-in-multicolumn-045,ported,css_break_out_of_flow_in_multicolumn_045,
 out-of-flow-in-multicolumn-046,ported,css_break_out_of_flow_in_multicolumn_046,
 out-of-flow-in-multicolumn-047,ported,css_break_out_of_flow_in_multicolumn_047,
@@ -877,11 +877,11 @@ out-of-flow-in-multicolumn-057,ported,css_break_out_of_flow_in_multicolumn_057,
 out-of-flow-in-multicolumn-058,ported,css_break_out_of_flow_in_multicolumn_058,
 out-of-flow-in-multicolumn-059,ported,css_break_out_of_flow_in_multicolumn_059,
 out-of-flow-in-multicolumn-060,ported,css_break_out_of_flow_in_multicolumn_060,
-out-of-flow-in-multicolumn-061,not_portable,,unsupported property: transform
+out-of-flow-in-multicolumn-061,ported,css_break_out_of_flow_in_multicolumn_061,
 out-of-flow-in-multicolumn-062,ported,css_break_out_of_flow_in_multicolumn_062,
 out-of-flow-in-multicolumn-063,ported,css_break_out_of_flow_in_multicolumn_063,
 out-of-flow-in-multicolumn-064,ported,css_break_out_of_flow_in_multicolumn_064,
-out-of-flow-in-multicolumn-065,not_portable,,style_block_unsupported property: writing-mode
+out-of-flow-in-multicolumn-065,ported,css_break_out_of_flow_in_multicolumn_065,
 out-of-flow-in-multicolumn-066,ported,css_break_out_of_flow_in_multicolumn_066,
 out-of-flow-in-multicolumn-067,ported,css_break_out_of_flow_in_multicolumn_067,
 out-of-flow-in-multicolumn-068,ported,css_break_out_of_flow_in_multicolumn_068,
@@ -889,7 +889,7 @@ out-of-flow-in-multicolumn-069,ported,css_break_out_of_flow_in_multicolumn_069,
 out-of-flow-in-multicolumn-070,ported,css_break_out_of_flow_in_multicolumn_070,
 out-of-flow-in-multicolumn-071,ported,css_break_out_of_flow_in_multicolumn_071,
 out-of-flow-in-multicolumn-072,ported,css_break_out_of_flow_in_multicolumn_072,
-out-of-flow-in-multicolumn-073,not_portable,,unsupported property: transform
+out-of-flow-in-multicolumn-073,ported,css_break_out_of_flow_in_multicolumn_073,
 out-of-flow-in-multicolumn-074,ported,css_break_out_of_flow_in_multicolumn_074,
 out-of-flow-in-multicolumn-075,ported,css_break_out_of_flow_in_multicolumn_075,
 out-of-flow-in-multicolumn-076,not_portable,,uses_javascript
@@ -901,14 +901,14 @@ out-of-flow-in-multicolumn-081,ported,css_break_out_of_flow_in_multicolumn_081,
 out-of-flow-in-multicolumn-082,ported,css_break_out_of_flow_in_multicolumn_082,
 out-of-flow-in-multicolumn-083,ported,css_break_out_of_flow_in_multicolumn_083,
 out-of-flow-in-multicolumn-084,ported,css_break_out_of_flow_in_multicolumn_084,
-out-of-flow-in-multicolumn-085,not_portable,,unsupported property: filter
-out-of-flow-in-multicolumn-086,not_portable,,unsupported property: filter
-out-of-flow-in-multicolumn-087,not_portable,,unsupported property: filter
-out-of-flow-in-multicolumn-088,not_portable,,unsupported property: filter
-out-of-flow-in-multicolumn-089,not_portable,,unsupported property: filter
-out-of-flow-in-multicolumn-090,not_portable,,unsupported property: filter
-out-of-flow-in-multicolumn-091,not_portable,,style_block_unsupported property: transform
-out-of-flow-in-multicolumn-092,not_portable,,style_block_unsupported property: transform
+out-of-flow-in-multicolumn-085,ported,css_break_out_of_flow_in_multicolumn_085,
+out-of-flow-in-multicolumn-086,ported,css_break_out_of_flow_in_multicolumn_086,
+out-of-flow-in-multicolumn-087,ported,css_break_out_of_flow_in_multicolumn_087,
+out-of-flow-in-multicolumn-088,ported,css_break_out_of_flow_in_multicolumn_088,
+out-of-flow-in-multicolumn-089,ported,css_break_out_of_flow_in_multicolumn_089,
+out-of-flow-in-multicolumn-090,ported,css_break_out_of_flow_in_multicolumn_090,
+out-of-flow-in-multicolumn-091,ported,css_break_out_of_flow_in_multicolumn_091,
+out-of-flow-in-multicolumn-092,ported,css_break_out_of_flow_in_multicolumn_092,
 out-of-flow-in-multicolumn-093,ported,css_break_out_of_flow_in_multicolumn_093,
 out-of-flow-in-multicolumn-093-ref,ported,css_break_out_of_flow_in_multicolumn_093_ref,
 out-of-flow-in-multicolumn-094,ported,css_break_out_of_flow_in_multicolumn_094,
@@ -950,7 +950,7 @@ out-of-flow-in-multicolumn-crash,ported,css_break_out_of_flow_in_multicolumn_cra
 out-of-flow-in-multicolumn-paint-order-001,ported,css_break_out_of_flow_in_multicolumn_paint_order_001,
 out-of-flow-in-multicolumn-paint-order-002,ported,css_break_out_of_flow_in_multicolumn_paint_order_002,
 out-of-flow-in-multicolumn-paint-order-003,ported,css_break_out_of_flow_in_multicolumn_paint_order_003,
-out-of-flow-in-multicolumn-paint-order-004,not_portable,,unsupported element: <fieldset>
+out-of-flow-in-multicolumn-paint-order-004,ported,css_break_out_of_flow_in_multicolumn_paint_order_004,
 out-of-flow-in-nested-spanner-multicol-crash,ported,css_break_out_of_flow_in_nested_spanner_multicol_crash,
 out-of-flow-in-new-column-crash,ported,css_break_out_of_flow_in_new_column_crash,
 out-of-flow-with-negative-offset-crash,ported,css_break_out_of_flow_with_negative_offset_crash,
@@ -965,9 +965,9 @@ overflow-clip-005,ported,css_break_overflow_clip_005,
 overflow-clip-006,ported,css_break_overflow_clip_006,
 overflow-clip-007,not_portable,,uses_javascript
 overflow-clip-008,ported,css_break_overflow_clip_008,
-overflow-clip-009,not_portable,,unsupported element: <fieldset>
+overflow-clip-009,ported,css_break_overflow_clip_009,
 overflow-clip-010,ported,css_break_overflow_clip_010,
-overflow-clip-011,not_portable,,unsupported element: <fieldset>
+overflow-clip-011,ported,css_break_overflow_clip_011,
 overflow-clip-012,ported,css_break_overflow_clip_012,
 overflow-clip-013,ported,css_break_overflow_clip_013,
 overflow-clip-014,ported,css_break_overflow_clip_014,
@@ -1027,7 +1027,7 @@ ruby-001,ported,css_break_ruby_001,
 ruby-002,ported,css_break_ruby_002,
 ruby-003,ported,css_break_ruby_003,
 soft-break-before-margin-001,ported,css_break_soft_break_before_margin_001,
-svg-with-transform,not_portable,,unsupported element: <svg>
+svg-with-transform,ported,css_break_svg_with_transform,
 table-cell-padding-block-in-inline-crash,ported,css_break_table_cell_padding_block_in_inline_crash,
 table_border-collapse-001,ported,css_break_table_border_collapse_001,
 table_border-spacing,not_portable,,uses_javascript
@@ -1247,41 +1247,41 @@ tall-line-in-short-fragmentainer-002,ported,css_break_tall_line_in_short_fragmen
 text-indent-and-wide-float,ported,css_break_text_indent_and_wide_float,
 trailing-child-margin-000,ported,css_break_trailing_child_margin_000,
 trailing-child-margin-001,ported,css_break_trailing_child_margin_001,
-trailing-child-margin-002,not_portable,,unsupported element: <fieldset>
+trailing-child-margin-002,ported,css_break_trailing_child_margin_002,
 trailing-child-margin-003,ported,css_break_trailing_child_margin_003,
-transform-000,not_portable,,unsupported property: transform
-transform-001,not_portable,,unsupported property: writing-mode
-transform-002,not_portable,,unsupported property: writing-mode
-transform-003,not_portable,,unsupported property: transform
-transform-004,not_portable,,unsupported property: writing-mode
-transform-005,not_portable,,unsupported property: writing-mode
-transform-006,not_portable,,style_block_unsupported property: transform
-transform-006-ref,not_portable,,style_block_unsupported property: transform
-transform-007,not_portable,,style_block_unsupported property: transform
-transform-007-ref,not_portable,,style_block_unsupported property: transform
-transform-008,not_portable,,style_block_unsupported property: transform
-transform-008-ref,not_portable,,style_block_unsupported property: transform
-transform-009,not_portable,,style_block_unsupported property: transform
-transform-009-ref,not_portable,,style_block_unsupported property: transform
+transform-000,ported,css_break_transform_000,
+transform-001,ported,css_break_transform_001,
+transform-002,ported,css_break_transform_002,
+transform-003,ported,css_break_transform_003,
+transform-004,ported,css_break_transform_004,
+transform-005,ported,css_break_transform_005,
+transform-006,ported,css_break_transform_006,
+transform-006-ref,ported,css_break_transform_006_ref,
+transform-007,ported,css_break_transform_007,
+transform-007-ref,ported,css_break_transform_007_ref,
+transform-008,ported,css_break_transform_008,
+transform-008-ref,ported,css_break_transform_008_ref,
+transform-009,ported,css_break_transform_009,
+transform-009-ref,ported,css_break_transform_009_ref,
 transform-010,not_portable,,uses_javascript
 transform-011,not_portable,,uses_javascript
-transform-012,not_portable,,unsupported property: transform
-transform-013,not_portable,,unsupported property: transform
-transform-014,not_portable,,unsupported property: writing-mode
-transform-015,not_portable,,unsupported property: transform
+transform-012,ported,css_break_transform_012,
+transform-013,ported,css_break_transform_013,
+transform-014,ported,css_break_transform_014,
+transform-015,ported,css_break_transform_015,
 transform-016,not_portable,,uses_javascript
-transform-017,not_portable,,unsupported property: transform
-transform-018,not_portable,,unsupported property: transform
-transform-019,not_portable,,unsupported property: transform
-transform-020,not_portable,,unsupported property: transform
-transform-021,not_portable,,unsupported property: transform
-transform-022-print,not_portable,,unsupported property: transform
+transform-017,ported,css_break_transform_017,
+transform-018,ported,css_break_transform_018,
+transform-019,ported,css_break_transform_019,
+transform-020,ported,css_break_transform_020,
+transform-021,ported,css_break_transform_021,
+transform-022-print,ported,css_break_transform_022_print,
 transform-022-print-ref,ported,css_break_transform_022_print_ref,
-transform-023-print,not_portable,,unsupported property: transform
+transform-023-print,ported,css_break_transform_023_print,
 transform-023-print-ref,ported,css_break_transform_023_print_ref,
-transform-024-print,not_portable,,unsupported property: transform
+transform-024-print,ported,css_break_transform_024_print,
 transform-024-print-ref,ported,css_break_transform_024_print_ref,
-transform-025,not_portable,,unsupported property: writing-mode
+transform-025,ported,css_break_transform_025,
 truncated-margin-at-fragmentainer-end-001,not_portable,,uses_javascript
 truncated-margin-at-fragmentainer-end-002,not_portable,,uses_javascript
 uncontained-oof-in-inline-after-break-000-crash,not_portable,,uses_javascript
@@ -1314,6 +1314,6 @@ widows-orphans-020,ported,css_break_widows_orphans_020,
 widows-orphans-021,ported,css_break_widows_orphans_021,
 widows-orphans-022,ported,css_break_widows_orphans_022,
 widows-orphans-023,ported,css_break_widows_orphans_023,
-will-change-filter,not_portable,,unsupported property: filter
+will-change-filter,ported,css_break_will_change_filter,
 zero-height-page-break-001-print,ported,css_break_zero_height_page_break_001_print,
 zero-height-page-break-001-print-ref,ported,css_break_zero_height_page_break_001_print_ref,

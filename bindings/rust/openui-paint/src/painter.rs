@@ -19,16 +19,16 @@
 use openui_dom::{
     Document, ElementTag, FormControlRole, NodeId, PseudoElementKind, ReplacedResourceKind,
 };
-use openui_geometry::{LayoutUnit, PhysicalOffset};
+use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset};
 use openui_layout::{Fragment, FragmentKind};
 use openui_style::{
     BackgroundAttachment, BackgroundClip, BackgroundLayer, BackgroundPosition, BackgroundRepeat,
     BackgroundSize, BorderImage, BorderImageLength, BorderImageRepeat, BorderStyle, Color,
-    ComputedStyle, ContentPosition, CssImage, Display, FontFamily, GradientColorSpace,
+    ComputedStyle, ContentPosition, CssImage, Direction, Display, FontFamily, GradientColorSpace,
     GradientStopPosition, LineHeight, ListStylePosition, ListStyleType, ObjectFit, Overflow,
     OverflowClipBox, Position, RadialGradientShape, RadialGradientSize, StyleColor, Visibility,
 };
-use openui_text::font::FontMetrics;
+use openui_text::{Font, FontMetrics, TextDirection, TextShaper};
 use skia_safe::canvas::{SaveLayerRec, SrcRectConstraint};
 use skia_safe::rrect::Corner as RRectCorner;
 use skia_safe::{
@@ -136,6 +136,7 @@ thread_local! {
     static FRAGMENTED_INLINE_SKIP_AFTER: RefCell<Option<usize>> = const { RefCell::new(None) };
     static VIEWPORT_SIZE: RefCell<(f32, f32)> = const { RefCell::new((800.0, 600.0)) };
     static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
+    static RASTERIZING_PROMOTED_TRANSFORM: RefCell<bool> = const { RefCell::new(false) };
 }
 
 pub(crate) fn set_paint_viewport_size(width: f32, height: f32) {
@@ -160,6 +161,202 @@ fn resolve_margin_or_padding_f32(len: &openui_geometry::Length, container_size: 
     } else {
         0.0
     }
+}
+
+fn fragment_transform_matrix(
+    style: &ComputedStyle,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+) -> Matrix {
+    let mut width = fragment.size.width.to_f32();
+    let mut height = fragment.size.height.to_f32();
+    if let Some(fragmented_block_size) = fragment.decoration_paint_block_size {
+        if fragment_block_axis_is_x(fragment) {
+            width = fragmented_block_size.to_f32();
+        } else {
+            height = fragmented_block_size.to_f32();
+        }
+    }
+    let origin_x = resolve_background_length(&style.transform_origin.0, width, width * 0.5);
+    let origin_y = resolve_background_length(&style.transform_origin.1, height, height * 0.5);
+    let pivot_x = abs_offset.left.to_f32() + origin_x;
+    let pivot_y = abs_offset.top.to_f32() + origin_y;
+    let transform = style.transform;
+    Matrix::new_all(
+        transform.a,
+        transform.c,
+        transform.e + pivot_x - transform.a * pivot_x - transform.c * pivot_y,
+        transform.b,
+        transform.d,
+        transform.f + pivot_y - transform.b * pivot_x - transform.d * pivot_y,
+        0.0,
+        0.0,
+        1.0,
+    )
+}
+
+fn promoted_subtree_bounds(fragment: &Fragment) -> Rect {
+    fn extend(fragment: &Fragment, x: f32, y: f32, bounds: &mut Rect) {
+        let own = Rect::from_xywh(
+            x,
+            y,
+            fragment.size.width.to_f32(),
+            fragment.size.height.to_f32(),
+        );
+        bounds.join(own);
+        for child in &fragment.children {
+            extend(
+                child,
+                x + child.offset.left.to_f32(),
+                y + child.offset.top.to_f32(),
+                bounds,
+            );
+        }
+    }
+
+    let mut bounds = Rect::from_xywh(
+        0.0,
+        0.0,
+        fragment.size.width.to_f32(),
+        fragment.size.height.to_f32(),
+    );
+    for child in &fragment.children {
+        extend(
+            child,
+            child.offset.left.to_f32(),
+            child.offset.top.to_f32(),
+            &mut bounds,
+        );
+    }
+    Rect::from_ltrb(
+        bounds.left.floor(),
+        bounds.top.floor(),
+        bounds.right.ceil(),
+        bounds.bottom.ceil(),
+    )
+}
+
+fn is_monolithic_column_fragment(fragment: &Fragment, doc: &Document) -> bool {
+    if fragment.node_id.is_none() || fragment.kind != FragmentKind::Box {
+        return false;
+    }
+    let node = doc.node(fragment.node_id);
+    node.replaced.is_some()
+        || matches!(
+            node.form_control,
+            Some(
+                FormControlRole::Button
+                    | FormControlRole::TextInput
+                    | FormControlRole::TextArea
+                    | FormControlRole::Select
+                    | FormControlRole::Range
+                    | FormControlRole::Meter
+            )
+        )
+        || matches!(
+            node.tag,
+            ElementTag::Legend
+                | ElementTag::Image
+                | ElementTag::Svg
+                | ElementTag::Canvas
+                | ElementTag::Embed
+                | ElementTag::IFrame
+        )
+        || ((node.style.overflow_x != Overflow::Visible && node.style.overflow_x != Overflow::Clip)
+            || (node.style.overflow_y != Overflow::Visible
+                && node.style.overflow_y != Overflow::Clip))
+}
+
+fn collect_overflowing_monolithic_column_fragments<'a>(
+    fragment: &'a Fragment,
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+    clip: Rect,
+    block_axis_is_x: bool,
+    result: &mut Vec<(&'a Fragment, PhysicalOffset)>,
+) {
+    for child in &fragment.children {
+        let child_offset = PhysicalOffset::new(
+            parent_offset.left + child.offset.left,
+            parent_offset.top + child.offset.top,
+        );
+        let (start, end, clip_start, clip_end) = if block_axis_is_x {
+            (
+                child_offset.left.to_f32(),
+                (child_offset.left + child.size.width).to_f32(),
+                clip.left,
+                clip.right,
+            )
+        } else {
+            (
+                child_offset.top.to_f32(),
+                (child_offset.top + child.size.height).to_f32(),
+                clip.top,
+                clip.bottom,
+            )
+        };
+        if is_monolithic_column_fragment(child, doc) && (start < clip_start || end > clip_end) {
+            result.push((child, parent_offset));
+        } else {
+            collect_overflowing_monolithic_column_fragments(
+                child,
+                doc,
+                child_offset,
+                clip,
+                block_axis_is_x,
+                result,
+            );
+        }
+    }
+}
+
+fn collect_overflowing_max_block_decorations<'a>(
+    fragment: &'a Fragment,
+    doc: &Document,
+    parent_offset: PhysicalOffset,
+    result: &mut Vec<(&'a Fragment, PhysicalOffset)>,
+) {
+    for child in &fragment.children {
+        let child_offset = PhysicalOffset::new(
+            parent_offset.left + child.offset.left,
+            parent_offset.top + child.offset.top,
+        );
+        if !child.node_id.is_none()
+            && child.kind == FragmentKind::Box
+            && child.is_first_for_node
+            && (doc.node(child.node_id).tag == ElementTag::Fieldset
+                || child.children.iter().any(|descendant| {
+                    fragment_is_in_flow_monolithic(descendant, doc)
+                        || fragment_has_in_flow_monolithic_descendant(descendant, doc)
+                }))
+            && (!doc.node(child.node_id).style.max_height.is_none()
+                || doc.node(child.node_id).style.height.is_fixed())
+            && child.decoration_slice.is_some_and(|slice| {
+                slice.source_block_size > fragment_physical_block_extent(child)
+            })
+        {
+            result.push((child, child_offset));
+        }
+        collect_overflowing_max_block_decorations(child, doc, child_offset, result);
+    }
+}
+
+fn fragment_is_in_flow_monolithic(fragment: &Fragment, doc: &Document) -> bool {
+    !fragment.node_id.is_none()
+        && !doc.node(fragment.node_id).style.is_out_of_flow()
+        && is_monolithic_column_fragment(fragment, doc)
+}
+
+fn fragment_has_in_flow_monolithic_descendant(fragment: &Fragment, doc: &Document) -> bool {
+    fragment.children.iter().any(|child| {
+        if child.node_id.is_none() {
+            fragment_has_in_flow_monolithic_descendant(child, doc)
+        } else {
+            !doc.node(child.node_id).style.is_out_of_flow()
+                && (fragment_is_in_flow_monolithic(child, doc)
+                    || fragment_has_in_flow_monolithic_descendant(child, doc))
+        }
+    })
 }
 
 /// Paint a fragment tree onto a Skia canvas.
@@ -221,6 +418,99 @@ pub fn paint_fragment(
     // to the column boundaries.
     if fragment.kind == FragmentKind::ColumnBox {
         if fragment.has_overflow_clip {
+            let mut overflowing_max_decorations = Vec::new();
+            collect_overflowing_max_block_decorations(
+                fragment,
+                doc,
+                abs_offset,
+                &mut overflowing_max_decorations,
+            );
+            for (overflow, overflow_offset) in overflowing_max_decorations {
+                let Some(slice) = overflow.decoration_slice else {
+                    continue;
+                };
+                let mut complete = overflow.clone();
+                let is_fieldset = doc.node(complete.node_id).tag == ElementTag::Fieldset;
+                if is_fieldset {
+                    let style = &doc.node(complete.node_id).style;
+                    let legend_end = complete
+                        .children
+                        .iter()
+                        .filter(|child| {
+                            !child.node_id.is_none()
+                                && doc.node(child.node_id).tag == ElementTag::Legend
+                        })
+                        .map(|child| child.offset.top + child.size.height)
+                        .max_by_key(|end| end.raw())
+                        .unwrap_or(LayoutUnit::zero());
+                    complete.size.height = complete
+                        .size
+                        .height
+                        .max_of(LayoutUnit::from_i32(style.effective_border_top()))
+                        .max_of(legend_end);
+                    // Fragment slicing suppresses the block-start and inline
+                    // borders on continuation fragments.  This replay is the
+                    // fieldset's complete first decoration, so restore those
+                    // authored struts while retaining block-end suppression
+                    // until the fragment that actually owns the final edge.
+                    complete.border = BoxStrut::new(
+                        LayoutUnit::from_i32(style.effective_border_top()),
+                        LayoutUnit::from_i32(style.effective_border_right()),
+                        if overflow.is_last_for_node {
+                            LayoutUnit::from_i32(style.effective_border_bottom())
+                        } else {
+                            LayoutUnit::zero()
+                        },
+                        LayoutUnit::from_i32(style.effective_border_left()),
+                    );
+                } else if fragment_block_axis_is_x(&complete) {
+                    complete.size.width = slice.source_block_size;
+                } else {
+                    complete.size.height = slice.source_block_size;
+                }
+                complete.decoration_slice = None;
+                complete.decoration_paint_block_size = None;
+                complete.is_first_for_node = true;
+                complete.is_last_for_node = overflow.is_last_for_node;
+                if is_fieldset {
+                    canvas.save();
+                    canvas.clip_rect(
+                        column_block_only_clip_rect(fragment, abs_offset),
+                        ClipOp::Intersect,
+                        false,
+                    );
+                }
+                paint_fragment_box_decoration(
+                    canvas,
+                    &complete,
+                    doc,
+                    &doc.node(complete.node_id).style,
+                    overflow_offset,
+                    1.0,
+                );
+                if is_fieldset {
+                    canvas.restore();
+                }
+            }
+            let mut overflowing_monolithic = Vec::new();
+            if fragment.block_axis_clip_only {
+                collect_overflowing_monolithic_column_fragments(
+                    fragment,
+                    doc,
+                    abs_offset,
+                    column_physical_rect(fragment, abs_offset),
+                    fragment_block_axis_is_x(fragment),
+                    &mut overflowing_monolithic,
+                );
+            }
+            let monolithic_skip: Vec<usize> = HOIST_SKIP.with(|skipped| {
+                let mut skipped = skipped.borrow_mut();
+                overflowing_monolithic
+                    .iter()
+                    .map(|(overflow, _)| *overflow as *const Fragment as usize)
+                    .filter(|pointer| skipped.insert(*pointer))
+                    .collect()
+            });
             // A nested multicol's rule is ink in the intervening column gap,
             // not content clipped to the ancestor column's inline edge. When
             // the ancestor owns a two-axis continuation clip, paint only the
@@ -268,6 +558,15 @@ pub fn paint_fragment(
                 fragment_block_axis_is_x(fragment),
             );
             canvas.restore();
+            HOIST_SKIP.with(|skipped| {
+                let mut skipped = skipped.borrow_mut();
+                for pointer in &monolithic_skip {
+                    skipped.remove(pointer);
+                }
+            });
+            for (overflow, parent_offset) in overflowing_monolithic {
+                paint_fragment(canvas, overflow, doc, parent_offset);
+            }
         } else {
             paint_children_with_stacking_order(canvas, &fragment.children, doc, abs_offset, false);
         }
@@ -311,6 +610,146 @@ pub fn paint_fragment(
     } else {
         canvas_adjusted_style.as_ref().unwrap_or(original_style)
     };
+    let promoted_transform_parent_offset = PhysicalOffset::new(
+        abs_offset.left - fragment.offset.left,
+        abs_offset.top - fragment.offset.top,
+    );
+    for ancestor in &fragment.promoted_transform_ancestors {
+        let ancestor_style = &doc.node(ancestor.node_id).style;
+        let transform = ancestor_style.transform;
+        if transform == openui_style::Transform2D::IDENTITY {
+            continue;
+        }
+        let width = ancestor.fragment_size.width.to_f32();
+        let height = ancestor.fragment_size.height.to_f32();
+        let origin_x =
+            resolve_background_length(&ancestor_style.transform_origin.0, width, width * 0.5);
+        let origin_y =
+            resolve_background_length(&ancestor_style.transform_origin.1, height, height * 0.5);
+        let pivot_x = (promoted_transform_parent_offset.left + ancestor.fragment_offset.left)
+            .to_f32()
+            + origin_x;
+        let pivot_y = (promoted_transform_parent_offset.top + ancestor.fragment_offset.top)
+            .to_f32()
+            + origin_y;
+        let matrix = Matrix::new_all(
+            transform.a,
+            transform.c,
+            transform.e + pivot_x - transform.a * pivot_x - transform.c * pivot_y,
+            transform.b,
+            transform.d,
+            transform.f + pivot_y - transform.b * pivot_x - transform.d * pivot_y,
+            0.0,
+            0.0,
+            1.0,
+        );
+        canvas.save();
+        canvas.concat(&matrix);
+    }
+    let suppress_transform = RASTERIZING_PROMOTED_TRANSFORM.with(|active| *active.borrow());
+    let transform = if suppress_transform {
+        openui_style::Transform2D::IDENTITY
+    } else {
+        style.transform
+    };
+    let has_transform = transform != openui_style::Transform2D::IDENTITY
+        && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
+    let has_precomposited_transform = has_transform
+        && style.will_change_transform
+        && (transform.b != 0.0 || transform.c != 0.0)
+        && (fragment.decoration_slice.is_none() || fragment.is_first_for_node);
+    let has_layout_fragmentation_transform_clip = has_transform
+        && fragment.decoration_slice.is_some()
+        && fragment.block_axis_clip_only
+        && style.overflow_x == Overflow::Visible
+        && style.overflow_y == Overflow::Visible;
+    let has_fixed_fragmentation_transform_clip = has_layout_fragmentation_transform_clip
+        && transform.a == 1.0
+        && transform.b == 0.0
+        && transform.c == 0.0
+        && transform.d == 1.0;
+    if has_fixed_fragmentation_transform_clip {
+        // Fragmentation clips in the fragmentainer coordinate space before
+        // transforms are applied. Install that one-axis clip while the canvas
+        // still has the ancestor transform, then transform only the fragment
+        // and its contents below. Applying this clip after concat would move a
+        // vertical-writing column edge by translateX and hide the very ink
+        // translated back into that fragment by a relative descendant.
+        let big = 100_000.0_f32;
+        let clip = if fragment_block_axis_is_x(fragment) {
+            Rect::from_xywh(
+                abs_offset.left.to_f32(),
+                -big,
+                fragment.size.width.to_f32(),
+                big * 2.0,
+            )
+        } else {
+            Rect::from_xywh(
+                -big,
+                abs_offset.top.to_f32(),
+                big * 2.0,
+                fragment.size.height.to_f32(),
+            )
+        };
+        canvas.save();
+        canvas.clip_rect(clip, ClipOp::Intersect, false);
+    }
+    if has_precomposited_transform {
+        let bounds = promoted_subtree_bounds(fragment);
+        let raster_width = bounds.width().ceil().max(1.0) as i32;
+        let raster_height = bounds.height().ceil().max(1.0) as i32;
+        if let Some(mut surface) = surfaces::raster_n32_premul((raster_width, raster_height)) {
+            surface.canvas().clear(skia_safe::Color::TRANSPARENT);
+            RASTERIZING_PROMOTED_TRANSFORM.with(|active| *active.borrow_mut() = true);
+            let raster_parent_offset = PhysicalOffset::new(
+                LayoutUnit::from_f32(-bounds.left) - fragment.offset.left,
+                LayoutUnit::from_f32(-bounds.top) - fragment.offset.top,
+            );
+            paint_fragment(surface.canvas(), fragment, doc, raster_parent_offset);
+            RASTERIZING_PROMOTED_TRANSFORM.with(|active| *active.borrow_mut() = false);
+
+            let image = surface.image_snapshot();
+            let destination = Rect::from_xywh(
+                abs_offset.left.to_f32() + bounds.left,
+                abs_offset.top.to_f32() + bounds.top,
+                bounds.width(),
+                bounds.height(),
+            );
+            let shader_matrix = Matrix::translate((destination.left, destination.top));
+            let mut paint = Paint::default();
+            paint.set_anti_alias(true);
+            paint.set_shader(image.to_shader(
+                (TileMode::Clamp, TileMode::Clamp),
+                SamplingOptions::from(FilterMode::Linear),
+                &shader_matrix,
+            ));
+
+            canvas.save();
+            canvas.concat(&fragment_transform_matrix(style, fragment, abs_offset));
+            canvas.draw_rect(destination, &paint);
+            canvas.restore();
+        }
+        if has_fixed_fragmentation_transform_clip {
+            canvas.restore();
+        }
+        for ancestor in fragment.promoted_transform_ancestors.iter().rev() {
+            if doc.node(ancestor.node_id).style.transform != openui_style::Transform2D::IDENTITY {
+                canvas.restore();
+            }
+        }
+        return;
+    }
+    if has_transform {
+        // Fragment geometry is stored in the untransformed coordinate space.
+        // Apply the element's affine transform while painting its complete
+        // fragment subtree, around the CSS transform-origin in the border box.
+        // Using absolute pivot coordinates is important because this painter
+        // carries offsets explicitly instead of translating the SkCanvas while
+        // descending the fragment tree.
+        let matrix = fragment_transform_matrix(style, fragment, abs_offset);
+        canvas.save();
+        canvas.concat(&matrix);
+    }
     let has_clip_path = style.clip_path_inset.is_some()
         && matches!(fragment.kind, FragmentKind::Box | FragmentKind::Viewport);
     if let Some(inset) = style.clip_path_inset.as_ref().filter(|_| has_clip_path) {
@@ -411,7 +850,8 @@ pub fn paint_fragment(
     }
 
     // ── Overflow clipping + children ──────────────────────────────────
-    let needs_clip = needs_overflow_clip(fragment, style, doc);
+    let needs_clip =
+        needs_overflow_clip(fragment, style, doc) && !has_fixed_fragmentation_transform_clip;
     if native_scroll_button_symbol(fragment, doc).is_some() {
         // The platform control renderer above consumed the directional
         // single-character content with its native LCD mask.
@@ -517,6 +957,17 @@ pub fn paint_fragment(
     if has_clip_path {
         canvas.restore();
     }
+    if has_transform {
+        canvas.restore();
+    }
+    if has_fixed_fragmentation_transform_clip {
+        canvas.restore();
+    }
+    for ancestor in fragment.promoted_transform_ancestors.iter().rev() {
+        if doc.node(ancestor.node_id).style.transform != openui_style::Transform2D::IDENTITY {
+            canvas.restore();
+        }
+    }
 }
 
 /// Paint deterministic passive platform controls. Interactive state is out of
@@ -540,6 +991,17 @@ fn paint_form_control(
             opacity_multiplier,
             doc.node(fragment.node_id).form_control_native_appearance,
         ),
+        Some(FormControlRole::TextInput) => {
+            paint_text_input_control(canvas, fragment, doc, abs_offset, opacity_multiplier)
+        }
+        Some(FormControlRole::TextArea) => {
+            paint_textarea_resize_grip(canvas, fragment, abs_offset, opacity_multiplier)
+        }
+        Some(FormControlRole::Select)
+            if doc.node(fragment.node_id).form_control_native_appearance =>
+        {
+            paint_select_arrow(canvas, fragment, abs_offset, opacity_multiplier)
+        }
         Some(FormControlRole::Button)
             if matches!(
                 doc.node(fragment.node_id).pseudo_kind,
@@ -548,7 +1010,241 @@ fn paint_form_control(
         {
             paint_scroll_button_control(canvas, fragment, doc, abs_offset)
         }
+        Some(FormControlRole::Button) if uses_native_button_theme(fragment, doc) => {
+            paint_native_button_corners(canvas, fragment, abs_offset, opacity_multiplier)
+        }
         _ => {}
+    }
+}
+
+/// Paint the passive Linux select indicator used by the pinned Chromium
+/// theme. The theme centers a downward chevron in very small controls and
+/// lets the border box clip it; larger controls retain the conventional
+/// right-side placement.
+fn paint_select_arrow(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let rect_x = abs_offset.left.round().to_i32();
+    let rect_y = abs_offset.top.round().to_i32();
+    let rect_width = fragment.size.width.round().to_i32();
+    let rect_height = fragment.size.height.round().to_i32();
+    if rect_width <= 2 || rect_height <= 2 {
+        return;
+    }
+
+    // ThemePainterDefault::SetupMenuListArrow uses the 15px Linux scrollbar
+    // button measure as the arrow padding box and truncates the resulting
+    // coordinates into integer ExtraParams. NativeThemeBase then draws an
+    // 8x4 open path centered on the control's integer paint rect.
+    let border_right = fragment.border.right.floor().to_i32();
+    let right = rect_x + rect_width - border_right;
+    let arrow_x = (right as f32 - (15.0 + 8.0) / 2.0) as i32;
+    let arrow_y = rect_y + rect_height / 2;
+    let arrow_top = arrow_y - 2;
+
+    let mut path = PathBuilder::new();
+    path.move_to(Point::new(arrow_x as f32, arrow_top as f32));
+    path.line_to(Point::new((arrow_x + 4) as f32, (arrow_top + 4) as f32));
+    path.line_to(Point::new((arrow_x + 8) as f32, arrow_top as f32));
+
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Stroke);
+    paint.set_stroke_width(2.0);
+    paint.set_anti_alias(true);
+    set_paint_css_color(
+        &mut paint,
+        &Color::from_rgba8(0, 0, 0, (255.0 * opacity_multiplier).round() as u8),
+    );
+
+    canvas.draw_path(&path.detach(), &paint);
+}
+
+/// Paint the deterministic lower-right resize affordance of a native
+/// textarea. The pinned Linux theme uses two one-device-pixel diagonals.
+fn paint_textarea_resize_grip(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let right = (abs_offset.left + fragment.size.width).round().to_f32();
+    let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(false);
+    set_paint_css_color(
+        &mut paint,
+        &Color::from_rgba8(102, 102, 102, (255.0 * opacity_multiplier).round() as u8),
+    );
+    for i in 0..7 {
+        canvas.draw_rect(
+            Rect::from_xywh(right - 3.0 - i as f32, bottom - 9.0 + i as f32, 1.0, 1.0),
+            &paint,
+        );
+    }
+    for i in 0..3 {
+        canvas.draw_rect(
+            Rect::from_xywh(right - 3.0 - i as f32, bottom - 5.0 + i as f32, 1.0, 1.0),
+            &paint,
+        );
+    }
+}
+
+/// Paint the deterministic initial value of a single-line text field.
+///
+/// The editable host is native anonymous content in Blink, so it is not a DOM
+/// child available to the compact layout tree.  Its initial value is still
+/// deterministic: shape it with the control's computed font and clip it to the
+/// CSS padding box, exactly like the anonymous editing host would be.
+fn paint_text_input_control(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let node = doc.node(fragment.node_id);
+    let Some(value) = doc
+        .attribute(fragment.node_id, "value")
+        .filter(|value| !value.is_empty())
+    else {
+        return;
+    };
+    let style = &node.style;
+    let font = Font::new(crate::text_painter::style_to_font_description(style));
+    let direction = if style.direction == Direction::Rtl {
+        TextDirection::Rtl
+    } else {
+        TextDirection::Ltr
+    };
+    let shaped = TextShaper::new().shape(value, &font, direction);
+    let metrics = font.font_metrics().copied().unwrap_or_default();
+    let line_metrics =
+        openui_text::used_line_height_metrics(&metrics, &style.line_height, style.font_size);
+    let content_left = abs_offset.left.to_f32() + fragment.border.left.to_f32();
+    let content_top = abs_offset.top.to_f32() + fragment.border.top.to_f32();
+    let content_right = (abs_offset.left + fragment.size.width - fragment.border.right).to_f32();
+    let content_bottom = (abs_offset.top + fragment.size.height - fragment.border.bottom).to_f32();
+    if content_right <= content_left || content_bottom <= content_top {
+        return;
+    }
+
+    canvas.save();
+    canvas.clip_rect(
+        Rect::from_ltrb(content_left, content_top, content_right, content_bottom),
+        ClipOp::Intersect,
+        false,
+    );
+    let mut text_style = style.clone();
+    text_style.color.a *= opacity_multiplier;
+    crate::text_painter::paint_text(
+        canvas,
+        &shaped,
+        (content_left, content_top + line_metrics.ascent),
+        &text_style,
+    );
+    canvas.restore();
+}
+
+fn uses_native_button_theme(fragment: &Fragment, doc: &Document) -> bool {
+    if fragment.node_id.is_none() {
+        return false;
+    }
+    let node = doc.node(fragment.node_id);
+    let style = &node.style;
+    node.form_control == Some(FormControlRole::Button)
+        && node.form_control_native_appearance
+        && node.pseudo_kind.is_none()
+        && style.border_top_style == BorderStyle::Solid
+        && style.border_right_style == BorderStyle::Solid
+        && style.border_bottom_style == BorderStyle::Solid
+        && style.border_left_style == BorderStyle::Solid
+        && style.effective_border_top() == 2
+        && style.effective_border_right() == 2
+        && style.effective_border_bottom() == 2
+        && style.effective_border_left() == 2
+        && style.border_top_color.resolve(&style.color) == Color::from_rgba8(118, 118, 118, 255)
+        && style.border_right_color.resolve(&style.color) == Color::from_rgba8(118, 118, 118, 255)
+        && style.border_bottom_color.resolve(&style.color) == Color::from_rgba8(118, 118, 118, 255)
+        && style.border_left_color.resolve(&style.color) == Color::from_rgba8(118, 118, 118, 255)
+}
+
+/// Complete the pinned Linux passive-button theme's 2px-radius corner mask.
+/// The general CSS rrect path paints the straight one-pixel edge; these five
+/// coverage samples per corner are supplied by Chromium's native theme.
+fn paint_native_button_corners(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let x = abs_offset.left.round().to_f32();
+    let y = abs_offset.top.round().to_f32();
+    let width = fragment.size.width.round().to_f32();
+    let height = fragment.size.height.round().to_f32();
+    if width < 6.0 || height < 6.0 {
+        return;
+    }
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(false);
+    set_paint_css_color(
+        &mut paint,
+        &Color::from_rgba8(239, 239, 239, (255.0 * opacity_multiplier).round() as u8),
+    );
+    for &(dx, dy) in &[(2.0, 1.0), (1.0, 2.0), (2.0, 2.0)] {
+        for (sx, sy) in [
+            (x + dx, y + dy),
+            (x + width - 1.0 - dx, y + dy),
+            (x + dx, y + height - 1.0 - dy),
+            (x + width - 1.0 - dx, y + height - 1.0 - dy),
+        ] {
+            canvas.draw_rect(Rect::from_xywh(sx, sy, 1.0, 1.0), &paint);
+        }
+    }
+    let border = 118.0 / 255.0;
+    let samples = [
+        (1.0, 0.0, 93.0 / 137.0),
+        (2.0, 0.0, 104.0 / 137.0),
+        (0.0, 1.0, 93.0 / 137.0),
+        (1.0, 1.0, 84.0 / 137.0),
+        (0.0, 2.0, 104.0 / 137.0),
+    ];
+    for &(dx, dy, coverage) in &samples {
+        paint.set_color4f(
+            Color4f::new(border, border, border, coverage * opacity_multiplier),
+            None::<&ColorSpace>,
+        );
+        for (sx, sy) in [
+            (x + dx, y + dy),
+            (x + width - 1.0 - dx, y + dy),
+            (x + dx, y + height - 1.0 - dy),
+            (x + width - 1.0 - dx, y + height - 1.0 - dy),
+        ] {
+            canvas.draw_rect(Rect::from_xywh(sx, sy, 1.0, 1.0), &paint);
+        }
+    }
+}
+
+fn clip_native_button_corner_cells(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+) {
+    let x = abs_offset.left.round().to_f32();
+    let y = abs_offset.top.round().to_f32();
+    let right = (abs_offset.left + fragment.size.width).round().to_f32();
+    let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
+    for rect in [
+        Rect::from_xywh(x, y, 3.0, 3.0),
+        Rect::from_xywh(right - 3.0, y, 3.0, 3.0),
+        Rect::from_xywh(x, bottom - 3.0, 3.0, 3.0),
+        Rect::from_xywh(right - 3.0, bottom - 3.0, 3.0, 3.0),
+    ] {
+        canvas.clip_rect(rect, ClipOp::Difference, false);
     }
 }
 
@@ -932,9 +1628,13 @@ fn paint_missing_image(
     opacity_multiplier: f32,
 ) {
     let node = doc.node(fragment.node_id);
+    let source_less_alt = doc.attribute(fragment.node_id, "src").is_none()
+        && doc
+            .attribute(fragment.node_id, "alt")
+            .is_some_and(|alt| !alt.is_empty());
     if node.tag != ElementTag::Image
         || node.replaced.is_some()
-        || doc.attribute(fragment.node_id, "src").is_none()
+        || (doc.attribute(fragment.node_id, "src").is_none() && !source_less_alt)
     {
         return;
     }
@@ -946,12 +1646,72 @@ fn paint_missing_image(
         style.aspect_ratio.is_some() && (!style.width.is_auto() || !style.height.is_auto());
     let treated_as_replaced =
         (!style.width.is_auto() && !style.height.is_auto()) || has_ratio_dimension;
+    let host_width = fragment.size.width.to_f32();
+    let host_height = fragment.size.height.to_f32();
+    if treated_as_replaced
+        && doc.attribute(fragment.node_id, "src") == Some("")
+        && host_width > 0.0
+        && host_width < 18.0
+        && host_height >= 18.0
+    {
+        // Blink keeps an explicitly empty image's broken-resource placeholder
+        // at its minimum eight-pixel inline extent when the authored replaced
+        // box is narrower than the normal 18px framed icon. The remainder of
+        // the element continues to show the author's background.
+        let placeholder_width = 8.0_f32.min(host_width);
+        let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
+        let destination = Rect::from_xywh(
+            abs_offset.left.to_f32() + 2.0 + 1.0 / 16.0,
+            abs_offset.top.to_f32() + 2.0,
+            16.0,
+            16.0,
+        );
+        let mut image_paint = Paint::default();
+        image_paint.set_alpha_f(opacity_multiplier);
+        canvas.save();
+        canvas.clip_rect(
+            Rect::from_xywh(
+                abs_offset.left.to_f32() + 1.0,
+                abs_offset.top.to_f32() + 1.0,
+                (placeholder_width - 2.0).max(0.0),
+                (host_height - 2.0).max(0.0),
+            ),
+            ClipOp::Intersect,
+            false,
+        );
+        canvas.draw_image_rect_with_sampling_options(
+            image,
+            Some((&source, SrcRectConstraint::Strict)),
+            destination,
+            SamplingOptions::new(FilterMode::Linear, MipmapMode::Linear),
+            &image_paint,
+        );
+        canvas.restore();
+
+        let mut border = Paint::default();
+        border.set_style(PaintStyle::Stroke);
+        border.set_stroke_width(1.0);
+        border.set_anti_alias(false);
+        border.set_color4f(
+            Color4f::new(0.7529412, 0.7529412, 0.7529412, opacity_multiplier),
+            None::<&ColorSpace>,
+        );
+        canvas.draw_rect(
+            Rect::from_xywh(
+                abs_offset.left.to_f32() + 0.5,
+                abs_offset.top.to_f32() + 0.5,
+                (placeholder_width - 1.0).max(0.0),
+                (host_height - 1.0).max(0.0),
+            ),
+            &border,
+        );
+        return;
+    }
     let (icon_x, icon_y) = if treated_as_replaced {
-        let host_width = fragment.size.width.to_f32();
         let host_height = if style.height.is_fixed() {
-            fragment.size.height.to_f32()
+            host_height
         } else {
-            20.0_f32.min(fragment.size.height.to_f32())
+            20.0_f32.min(host_height)
         };
         if host_width >= 18.0 && host_height >= 18.0 {
             let mut border = Paint::default();
@@ -994,6 +1754,28 @@ fn paint_missing_image(
         SamplingOptions::new(FilterMode::Linear, MipmapMode::Linear),
         &paint,
     );
+
+    if source_less_alt && !treated_as_replaced {
+        let alt = doc.attribute(fragment.node_id, "alt").unwrap_or("");
+        let font = Font::new(crate::text_painter::style_to_font_description(style));
+        let direction = if style.direction == Direction::Rtl {
+            TextDirection::Rtl
+        } else {
+            TextDirection::Ltr
+        };
+        let shaped = TextShaper::new().shape(alt, &font, direction);
+        let metrics = font.font_metrics().copied().unwrap_or_default();
+        let line_metrics =
+            openui_text::used_line_height_metrics(&metrics, &style.line_height, style.font_size);
+        let mut alt_style = style.clone();
+        alt_style.color.a *= opacity_multiplier;
+        crate::text_painter::paint_text(
+            canvas,
+            &shaped,
+            (icon_x + 16.0, abs_offset.top.to_f32() + line_metrics.ascent),
+            &alt_style,
+        );
+    }
 }
 
 fn paint_replaced_content(
@@ -1598,8 +2380,11 @@ fn paint_children_with_stacking_order(
     let mut order = 0usize;
 
     for (i, child) in children.iter().enumerate() {
-        if child.node_id.is_none() {
-            // Anonymous fragments (line boxes, etc.) are in-flow
+        if child.node_id.is_none() || child.kind == FragmentKind::ColumnRule {
+            // Anonymous fragments (line boxes, etc.) and generated column
+            // rules are in-flow paint artifacts. A rule carries its multicol
+            // owner's node ID solely as paint identity; it must not inherit
+            // that owner's positioned stacking classification.
             in_flow.push(i);
             continue;
         }
@@ -1949,6 +2734,7 @@ fn prepaint_in_flow_block_decorations(
         let style = &doc.node(fragment.node_id).style;
         if !style.display.is_block_level()
             || style.float != openui_style::Float::None
+            || style.transform != openui_style::Transform2D::IDENTITY
             || !uses_deterministic_text_profile(style)
             || style.visibility != Visibility::Visible
             || style.opacity < 1.0
@@ -2022,7 +2808,10 @@ fn prepaint_shared_column_root_decorations(
                 continue;
             }
             let style = &doc.node(fragment.node_id).style;
-            if style.visibility != Visibility::Visible || style.opacity < 1.0 {
+            if style.visibility != Visibility::Visible
+                || style.opacity < 1.0
+                || style.transform != openui_style::Transform2D::IDENTITY
+            {
                 continue;
             }
             let pointer = fragment as *const Fragment as usize;
@@ -2085,6 +2874,7 @@ fn stacking_entry_pointer(entry: &StackingEntry<'_>) -> Option<usize> {
 ///   - The viewport (root)
 ///   - Positioned elements with an explicit z-index value
 ///   - Elements with opacity < 1 (composited via save_layer in paint_fragment)
+///   - Elements with a transform, including identity-valued transforms
 fn is_fragment_stacking_context(fragment: &Fragment, doc: &Document) -> bool {
     use openui_style::Position;
     if fragment.kind == FragmentKind::Viewport {
@@ -2101,6 +2891,7 @@ fn is_fragment_stacking_context(fragment: &Fragment, doc: &Document) -> bool {
     (is_positioned && style.z_index.is_some())
         || style.opacity < 1.0
         || style.has_paint_containment()
+        || style.establishes_transform_containing_block
 }
 
 /// Walk an in-flow fragment subtree, collecting zero-or-positive stacking
@@ -2195,7 +2986,11 @@ fn collect_positioned_z_auto_descendants<'a>(
         // between inline content and later positioned continuations.
         let owned_by_fragmented_inline =
             child.positioned_fragmentation.as_ref().is_some_and(|data| {
-                data.inline_containing_block_node.is_some() && data.fragmentainer_index.is_some()
+                data.inline_containing_block_node.is_some_and(|target| {
+                    !doc.node(target)
+                        .style
+                        .establishes_transform_containing_block
+                }) && data.fragmentainer_index.is_some()
             });
         if is_positioned && owned_by_fragmented_inline {
             continue;
@@ -2271,10 +3066,10 @@ fn collect_positioned_z_auto_descendants<'a>(
     }
 }
 
-/// Hoist opacity stacking contexts out of a column's in-flow paint pass while
-/// retaining that fragmentainer's authoritative clip. Opacity establishes a
-/// stacking context at the nearest ancestor stacking level, so its visible
-/// overflow paints after later in-flow siblings in the same column row.
+/// Hoist composited stacking contexts out of a column's in-flow paint pass.
+/// Opacity retains the fragmentainer clip. A transformed fragment is painted
+/// after fragmentation and its transformed ink may overflow that clip, so its
+/// per-fragment stacking context is replayed without the column clip.
 fn collect_fragmented_opacity_stacking_contexts<'a>(
     fragment: &'a Fragment,
     doc: &Document,
@@ -2300,12 +3095,16 @@ fn collect_fragmented_opacity_stacking_contexts<'a>(
             continue;
         }
         let style = &doc.node(child.node_id).style;
-        if style.opacity < 1.0 {
+        let has_visual_transform = style.transform != openui_style::Transform2D::IDENTITY;
+        if style.opacity < 1.0 || has_visual_transform {
             let pointer = child as *const Fragment as usize;
-            let entry = column_clip
-                .map_or(StackingEntry::Descendant(child, fragment_offset), |clip| {
+            let entry = if has_visual_transform {
+                StackingEntry::Descendant(child, fragment_offset)
+            } else {
+                column_clip.map_or(StackingEntry::Descendant(child, fragment_offset), |clip| {
                     StackingEntry::DescendantWithClip(child, fragment_offset, clip)
-                });
+                })
+            };
             non_negative_z.push((style.z_index.unwrap_or(0), child.node_id.index(), entry));
             hoisted_ptrs.push(pointer);
         } else if !is_fragment_stacking_context(child, doc) {
@@ -2543,6 +3342,15 @@ fn needs_overflow_clip(fragment: &Fragment, style: &ComputedStyle, doc: &Documen
         && doc.body_overflow_is_propagated()
     {
         return false;
+    }
+    if fragment.decoration_slice.is_some()
+        && fragment.block_axis_clip_only
+        && style.transform != openui_style::Transform2D::IDENTITY
+    {
+        // Fragmentation slices a transformed box before transforming each
+        // fragment. Its local slice clips the cloned subtree, while the
+        // transformed result may overflow the enclosing column.
+        return true;
     }
     fragment.has_overflow_clip
         || style.has_paint_containment()
@@ -2927,6 +3735,9 @@ fn block_start_sized_rect(
 }
 
 fn decoration_source_rect(fragment: &Fragment, rect: Rect) -> Rect {
+    if fragment.promoted_transform_uses_fragment_decoration {
+        return rect;
+    }
     fragment.decoration_slice.map_or(rect, |slice| {
         let offset = slice.source_block_offset.to_f32();
         let size = slice.source_block_size.to_f32();
@@ -3086,28 +3897,37 @@ fn paint_with_overflow_clip(
     // clips the fieldset contents (HTML rendering §14.3).  Paint that direct
     // legend before installing the content clip, then suppress its ordinary
     // child traversal below so it is not painted twice.
-    let unclipped_fieldset_legends: Vec<&Fragment> =
+    let unclipped_fieldset_legend_content: Vec<&Fragment> =
         if !fragment.node_id.is_none() && doc.node(fragment.node_id).tag == ElementTag::Fieldset {
+            let fieldset_id = fragment.node_id;
+            let belongs_to_direct_legend = |node_id: NodeId| {
+                let mut ancestor = node_id;
+                while !ancestor.is_none() && ancestor != fieldset_id {
+                    if doc.node(ancestor).tag == ElementTag::Legend
+                        && doc.node(ancestor).parent == fieldset_id
+                    {
+                        return true;
+                    }
+                    ancestor = doc.node(ancestor).parent;
+                }
+                false
+            };
             fragment
                 .children
                 .iter()
-                .filter(|child| {
-                    !child.node_id.is_none()
-                        && doc.node(child.node_id).tag == ElementTag::Legend
-                        && doc.node(child.node_id).parent == fragment.node_id
-                })
+                .filter(|child| !child.node_id.is_none() && belongs_to_direct_legend(child.node_id))
                 .collect()
         } else {
             Vec::new()
         };
-    for legend in &unclipped_fieldset_legends {
-        paint_fragment(canvas, legend, doc, offset);
+    for legend_content in &unclipped_fieldset_legend_content {
+        paint_fragment(canvas, legend_content, doc, offset);
     }
     let newly_skipped_legends: Vec<usize> = HOIST_SKIP.with(|skipped| {
         let mut skipped = skipped.borrow_mut();
-        unclipped_fieldset_legends
+        unclipped_fieldset_legend_content
             .iter()
-            .map(|legend| *legend as *const Fragment as usize)
+            .map(|legend_content| *legend_content as *const Fragment as usize)
             .filter(|pointer| skipped.insert(*pointer))
             .collect()
     });
@@ -3264,6 +4084,78 @@ fn paint_with_overflow_clip(
             (clip_x - outset, clip_y, clip_w + outset * 2.0, clip_h)
         } else {
             (clip_x, clip_y - outset, clip_w, clip_h + outset * 2.0)
+        }
+    } else {
+        (clip_x, clip_y, clip_w, clip_h)
+    };
+
+    // The clip installed on a coordinate slice is a fragmentation clip, not
+    // authored overflow clipping. Descendant ink that crosses the slice's
+    // local block edge remains visible up to the enclosing fragmentainer
+    // edge. This includes both positioned ink above the principal box and
+    // in-flow overflow beyond a definite block-size. Expand only this
+    // synthetic block-axis clip; the surrounding ColumnBox still supplies
+    // the authoritative fragmentainer boundary.
+    let (clip_x, clip_y, clip_w, clip_h) = if fragmented_outline_clip.is_some() {
+        let descendant_extent = fragment
+            .children
+            .iter()
+            .filter(|child| {
+                if let Some(positioned) = child.positioned_fragmentation {
+                    positioned.fragmentainer_index.is_none()
+                        && child.decoration_slice.is_none()
+                        && !child.node_id.is_none()
+                        && doc.node(child.node_id).style.top.is_fixed()
+                        && doc.node(child.node_id).style.top.value() < 0.0
+                        && if fragment_block_axis_is_x(fragment) {
+                            child.offset.left < LayoutUnit::zero()
+                        } else {
+                            child.offset.top < LayoutUnit::zero()
+                        }
+                } else {
+                    fragment.decoration_paint_block_size.is_some()
+                }
+            })
+            .map(|child| {
+                let start = if fragment_block_axis_is_x(fragment) {
+                    (offset.left + child.offset.left).to_f32()
+                } else {
+                    (offset.top + child.offset.top).to_f32()
+                };
+                let size = if fragment_block_axis_is_x(fragment) {
+                    child.size.width.to_f32()
+                } else {
+                    child.size.height.to_f32()
+                };
+                (start, start + size)
+            })
+            .reduce(|(start, end), (child_start, child_end)| {
+                (start.min(child_start), end.max(child_end))
+            });
+        if let Some((descendant_start, descendant_end)) = descendant_extent {
+            if fragment_block_axis_is_x(fragment) {
+                let right = (clip_x + clip_w).max(descendant_end);
+                let left = clip_x.min(descendant_start);
+                (left, clip_y, right - left, clip_h)
+            } else {
+                let bottom = (clip_y + clip_h).max(descendant_end);
+                let top = clip_y.min(descendant_start);
+                (clip_x, top, clip_w, bottom - top)
+            }
+        } else {
+            (clip_x, clip_y, clip_w, clip_h)
+        }
+    } else {
+        (clip_x, clip_y, clip_w, clip_h)
+    };
+
+    let (clip_x, clip_y, clip_w, clip_h) = if fragmented_outline_clip.is_some() {
+        let start = fragment.column_block_start_ink_overflow.to_f32();
+        let end = fragment.column_block_end_ink_overflow.to_f32();
+        if fragment_block_axis_is_x(fragment) {
+            (clip_x - start, clip_y, clip_w + start + end, clip_h)
+        } else {
+            (clip_x, clip_y - start, clip_w, clip_h + start + end)
         }
     } else {
         (clip_x, clip_y, clip_w, clip_h)
@@ -6768,12 +7660,58 @@ fn paint_fragment_box_decoration(
     fragment: &Fragment,
     doc: &Document,
     style: &ComputedStyle,
-    abs_offset: PhysicalOffset,
+    mut abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
+    let mut fieldset_decoration_fragment = None;
+    if fragment.is_first_for_node
+        && !fragment.node_id.is_none()
+        && doc.node(fragment.node_id).tag == ElementTag::Fieldset
+    {
+        let legend_block_size = fragment
+            .children
+            .iter()
+            .filter(|child| {
+                !child.node_id.is_none() && doc.node(child.node_id).tag == ElementTag::Legend
+            })
+            .map(|child| child.size.height)
+            .max_by_key(|size| size.raw())
+            .unwrap_or(LayoutUnit::zero());
+        let decoration_shift =
+            ((legend_block_size - LayoutUnit::from_i32(style.effective_border_top())) / 2)
+                .clamp_negative_to_zero();
+        if decoration_shift > LayoutUnit::zero() {
+            let mut adjusted = fragment.clone();
+            adjusted.size.height =
+                (adjusted.size.height - decoration_shift).clamp_negative_to_zero();
+            // The decoration is translated to the legend centerline here.
+            // Keep legend geometry in that translated coordinate space so
+            // paint_fieldset_borders does not apply the same displacement a
+            // second time when it computes the border gap.
+            for child in &mut adjusted.children {
+                if !child.node_id.is_none() && doc.node(child.node_id).tag == ElementTag::Legend {
+                    child.offset.top = child.offset.top - decoration_shift;
+                }
+            }
+            abs_offset.top = abs_offset.top + decoration_shift;
+            fieldset_decoration_fragment = Some(adjusted);
+        }
+    }
+    let fragment = fieldset_decoration_fragment.as_ref().unwrap_or(fragment);
     let native_control_style;
-    let style = if doc.node(fragment.node_id).form_control == Some(FormControlRole::Range)
-        && doc.node(fragment.node_id).form_control_native_appearance
+    let node = doc.node(fragment.node_id);
+    let native_button_theme = uses_native_button_theme(fragment, doc);
+    let native_text_control_theme = node.form_control_native_appearance
+        && matches!(
+            node.form_control,
+            Some(FormControlRole::TextInput | FormControlRole::TextArea | FormControlRole::Select)
+        )
+        && style.effective_border_top() > 0
+        && style.effective_border_right() > 0
+        && style.effective_border_bottom() > 0
+        && style.effective_border_left() > 0;
+    let style = if node.form_control == Some(FormControlRole::Range)
+        && node.form_control_native_appearance
     {
         // Native range appearance replaces the author's track background.
         // `appearance:none` keeps the authored background and uses the
@@ -6786,10 +7724,67 @@ fn paint_fragment_box_decoration(
             adjusted
         };
         &native_control_style
+    } else if native_button_theme {
+        // Blink reserves a 2px CSS border for native button geometry, while
+        // the passive Linux theme paints only its outer device-pixel ring;
+        // the inner pixel is button-face background. Preserve the layout
+        // strut in the fragment and narrow only the paint representation.
+        native_control_style = {
+            let mut adjusted = style.clone();
+            let painted_border = i32::from(
+                fragment.size.width >= LayoutUnit::from_i32(6)
+                    && fragment.size.height >= LayoutUnit::from_i32(6),
+            );
+            adjusted.border_top_width = painted_border;
+            adjusted.border_right_width = painted_border;
+            adjusted.border_bottom_width = painted_border;
+            adjusted.border_left_width = painted_border;
+            if painted_border == 0 {
+                adjusted.border_top_left_radius = (0.0, 0.0);
+                adjusted.border_top_right_radius = (0.0, 0.0);
+                adjusted.border_bottom_right_radius = (0.0, 0.0);
+                adjusted.border_bottom_left_radius = (0.0, 0.0);
+            }
+            adjusted
+        };
+        &native_control_style
+    } else if native_text_control_theme {
+        // Passive Linux text controls reserve their UA inset widths for
+        // layout, but the native theme raster is a single neutral outer ring.
+        // Keep the fragment struts intact and narrow only the painted border.
+        native_control_style = {
+            let mut adjusted = style.clone();
+            adjusted.border_top_width = 1;
+            adjusted.border_right_width = 1;
+            adjusted.border_bottom_width = 1;
+            adjusted.border_left_width = 1;
+            adjusted.border_top_style = BorderStyle::Solid;
+            adjusted.border_right_style = BorderStyle::Solid;
+            adjusted.border_bottom_style = BorderStyle::Solid;
+            adjusted.border_left_style = BorderStyle::Solid;
+            let border = openui_style::StyleColor::Resolved(Color::from_rgba8(118, 118, 118, 255));
+            adjusted.border_top_color = border;
+            adjusted.border_right_color = border;
+            adjusted.border_bottom_color = border;
+            adjusted.border_left_color = border;
+            adjusted
+        };
+        &native_control_style
     } else {
         style
     };
     if fragment.decoration_clip_rects.is_empty() {
+        if native_button_theme
+            && fragment.size.width >= LayoutUnit::from_i32(6)
+            && fragment.size.height >= LayoutUnit::from_i32(6)
+        {
+            canvas.save();
+            clip_native_button_corner_cells(canvas, fragment, abs_offset);
+        }
+        if native_text_control_theme {
+            canvas.save();
+            clip_native_text_control_corner_cells(canvas, fragment, abs_offset);
+        }
         paint_box_decoration_background(
             canvas,
             fragment,
@@ -6798,6 +7793,15 @@ fn paint_fragment_box_decoration(
             abs_offset,
             opacity_multiplier,
         );
+        if native_text_control_theme {
+            canvas.restore();
+        }
+        if native_button_theme
+            && fragment.size.width >= LayoutUnit::from_i32(6)
+            && fragment.size.height >= LayoutUnit::from_i32(6)
+        {
+            canvas.restore();
+        }
         return;
     }
     for clip in &fragment.decoration_clip_rects {
@@ -6812,6 +7816,9 @@ fn paint_fragment_box_decoration(
             ClipOp::Intersect,
             false,
         );
+        if native_button_theme {
+            clip_native_button_corner_cells(canvas, fragment, abs_offset);
+        }
         paint_box_decoration_background(
             canvas,
             fragment,
@@ -6821,6 +7828,25 @@ fn paint_fragment_box_decoration(
             opacity_multiplier,
         );
         canvas.restore();
+    }
+}
+
+fn clip_native_text_control_corner_cells(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+) {
+    let x = abs_offset.left.round().to_f32();
+    let y = abs_offset.top.round().to_f32();
+    let right = (abs_offset.left + fragment.size.width).round().to_f32();
+    let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
+    for rect in [
+        Rect::from_xywh(x, y, 1.0, 1.0),
+        Rect::from_xywh(right - 1.0, y, 1.0, 1.0),
+        Rect::from_xywh(x, bottom - 1.0, 1.0, 1.0),
+        Rect::from_xywh(right - 1.0, bottom - 1.0, 1.0, 1.0),
+    ] {
+        canvas.clip_rect(rect, ClipOp::Difference, false);
     }
 }
 
@@ -7183,29 +8209,54 @@ fn paint_box_decoration_background(
                 );
             }
         } else if effective_background_clip != BackgroundClip::Text {
+            // A sliced block keeps one continuous decoration geometry.  The
+            // anonymous fragmentainer clip selects the visible portion; its
+            // local fragment height must not independently subtract the
+            // block-start/end border and padding on every continuation.
+            let background_box = decoration_source_rect(fragment, border_box_rect);
+            let (
+                background_border_top,
+                background_border_right,
+                background_border_bottom,
+                background_border_left,
+            ) = if fragment.decoration_slice.is_some() {
+                (
+                    style.effective_border_top() as f32,
+                    style.effective_border_right() as f32,
+                    style.effective_border_bottom() as f32,
+                    style.effective_border_left() as f32,
+                )
+            } else {
+                (
+                    fragment.border.top.round().to_f32(),
+                    fragment.border.right.round().to_f32(),
+                    fragment.border.bottom.round().to_f32(),
+                    fragment.border.left.round().to_f32(),
+                )
+            };
             let bg_rect = match effective_background_clip {
                 BackgroundClip::BorderBox => border_box_rect,
                 BackgroundClip::PaddingBox => {
-                    let bx = x + fragment.border.left.round().to_f32();
-                    let by = y + fragment.border.top.round().to_f32();
-                    let br = right - fragment.border.right.round().to_f32();
-                    let bb = bottom - fragment.border.bottom.round().to_f32();
+                    let bx = background_box.left + background_border_left;
+                    let by = background_box.top + background_border_top;
+                    let br = background_box.right - background_border_right;
+                    let bb = background_box.bottom - background_border_bottom;
                     let bw = (br - bx).max(0.0);
                     let bh = (bb - by).max(0.0);
                     Rect::from_xywh(bx, by, bw, bh)
                 }
                 BackgroundClip::ContentBox => {
-                    let bx = x
-                        + fragment.border.left.round().to_f32()
+                    let bx = background_box.left
+                        + background_border_left
                         + fragment.padding.left.round().to_f32();
-                    let by = y
-                        + fragment.border.top.round().to_f32()
+                    let by = background_box.top
+                        + background_border_top
                         + fragment.padding.top.round().to_f32();
-                    let br = right
-                        - fragment.border.right.round().to_f32()
+                    let br = background_box.right
+                        - background_border_right
                         - fragment.padding.right.round().to_f32();
-                    let bb = bottom
-                        - fragment.border.bottom.round().to_f32()
+                    let bb = background_box.bottom
+                        - background_border_bottom
                         - fragment.padding.bottom.round().to_f32();
                     let bw = (br - bx).max(0.0);
                     let bh = (bb - by).max(0.0);
@@ -7675,6 +8726,32 @@ fn paint_fieldset_borders(
     h: f32,
     use_layer: bool,
 ) {
+    fn legend_auto_inline_extent(fragment: &Fragment, doc: &Document) -> LayoutUnit {
+        fn collect(
+            fragment: &Fragment,
+            doc: &Document,
+            offset: LayoutUnit,
+            maximum: &mut LayoutUnit,
+        ) {
+            for child in &fragment.children {
+                let child_offset = offset + child.offset.left;
+                if child.node_id.is_none() {
+                    collect(child, doc, child_offset, maximum);
+                    continue;
+                }
+                let child_style = &doc.node(child.node_id).style;
+                if child_style.position.is_absolutely_positioned() {
+                    continue;
+                }
+                *maximum = (*maximum).max_of(child_offset + child.size.width);
+            }
+        }
+
+        let mut maximum = LayoutUnit::zero();
+        collect(fragment, doc, LayoutUnit::zero(), &mut maximum);
+        maximum
+    }
+
     fn collect_legend_geometry(
         current: &Fragment,
         doc: &Document,
@@ -7689,13 +8766,18 @@ fn paint_fieldset_borders(
             let left = current_offset.left;
             let top = current_offset.top;
             let bottom = top + current.size.height;
-            if let Some((min_left, min_top, max_bottom, inline_extent)) = geometry {
+            let legend_extent = if doc.node(current.node_id).style.width.is_auto() {
+                legend_auto_inline_extent(current, doc)
+            } else {
+                current.size.width
+            };
+            if let Some((min_left, min_top, max_bottom, accumulated_extent)) = geometry {
                 *min_left = (*min_left).min_of(left);
                 *min_top = (*min_top).min_of(top);
                 *max_bottom = (*max_bottom).max_of(bottom);
-                *inline_extent = *inline_extent + current.size.width;
+                *accumulated_extent = *accumulated_extent + legend_extent;
             } else {
-                *geometry = Some((left, top, bottom, current.size.width));
+                *geometry = Some((left, top, bottom, legend_extent));
             }
             return;
         }

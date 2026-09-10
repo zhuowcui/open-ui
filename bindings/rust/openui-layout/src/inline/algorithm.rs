@@ -2353,12 +2353,25 @@ fn append_positioned_inline_candidates(
                 (cb_node_id, offset, size)
             })
         });
+        let unresolved_transform_inline_cb = (inline_cb.is_none())
+            .then_some(oof.inline_containing_block)
+            .flatten()
+            .filter(|target| {
+                doc.node(*target)
+                    .style
+                    .establishes_transform_containing_block
+            });
+        let retained_inline_cb = inline_cb
+            .map(|(target, _, _)| target)
+            .or(unresolved_transform_inline_cb);
         let (containing_block_offset, containing_block_size, containing_block_direction) =
             inline_cb.map_or(
                 (
                     PhysicalOffset::zero(),
                     border_box_size,
-                    doc.node(node_id).style.direction,
+                    retained_inline_cb.map_or(doc.node(node_id).style.direction, |target| {
+                        doc.node(target).style.direction
+                    }),
                 ),
                 |(cb_node_id, offset, size)| (offset, size, doc.node(cb_node_id).style.direction),
             );
@@ -2399,12 +2412,12 @@ fn append_positioned_inline_candidates(
             static_position_horizontal_edge: crate::out_of_flow::StaticPositionEdge::Start,
             static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge::Start,
             containing_block_offset,
-            containing_block_node: inline_cb.map_or(NodeId::NONE, |(cb_node_id, _, _)| cb_node_id),
+            containing_block_node: retained_inline_cb.unwrap_or(NodeId::NONE),
             containing_block_size,
             containing_block_border: openui_geometry::BoxStrut::zero(),
             containing_block_direction,
             static_position_direction: doc.node(node_id).style.direction,
-            has_inline_containing_block: inline_cb.is_some(),
+            has_inline_containing_block: retained_inline_cb.is_some(),
             inline_containing_block_node: oof.inline_containing_block,
         });
     }
@@ -4845,6 +4858,17 @@ fn create_line_box(
                     frag.offset = PhysicalOffset::new(inline_offset + margin_left_lu, atomic_top);
                     frag
                 };
+                // block_layout computes atomic geometry before the line
+                // breaker assigns its final normal-flow position. Reapply the
+                // relative visual offset after that assignment; otherwise a
+                // positioned image/control loses left/top when it becomes an
+                // atomic inline fragment.
+                crate::relative::apply_relative_offset(
+                    &mut atomic_fragment,
+                    style,
+                    percentage_base,
+                    space.percentage_resolution_block_size,
+                );
 
                 let containing_inline = inline_box_record_stack.iter().rev().find_map(|index| {
                     let inline_box = &inline_boxes[*index];

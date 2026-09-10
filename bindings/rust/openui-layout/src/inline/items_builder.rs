@@ -13,8 +13,8 @@
 use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::WritingDirectionMode;
 use openui_style::{
-    ComputedStyle, Direction, Display, Float, FontFamily, TabSize, TextTransform, UnicodeBidi,
-    WhiteSpace,
+    ComputedStyle, Direction, Display, Float, FontFamily, Position, TabSize, TextTransform,
+    UnicodeBidi, WhiteSpace,
 };
 use openui_text::shaping::Script;
 use openui_text::{
@@ -696,7 +696,8 @@ pub struct InlineItemsBuilder<'a> {
     /// Inline boxes currently open during the DOM walk. Float source
     /// positions use this stack even when the ancestor is not positioned.
     inline_stack: Vec<(NodeId, usize)>,
-    /// Positioned inline ancestors currently open during the DOM walk.
+    /// Inline ancestors that establish a containing block for positioned
+    /// descendants currently open during the DOM walk.
     positioned_inline_stack: Vec<NodeId>,
     /// Block-in-inline interruptions found during collection.
     block_in_inline: Vec<BlockInInlineInfo>,
@@ -846,7 +847,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 self.oof_children.push(OofPlaceholder {
                     node_id: child_id,
                     item_index: self.items.len(),
-                    inline_containing_block: self.positioned_inline_stack.last().copied(),
+                    inline_containing_block: self.inline_containing_block_for(&node.style),
                 });
             } else if node.style.float != Float::None {
                 let (inline_ancestor, inline_ancestor_text_offset) = self
@@ -1154,14 +1155,14 @@ impl<'a> InlineItemsBuilder<'a> {
             intrinsic_inline_size: None,
         });
         self.inline_stack.push((node_id, offset));
-        if style.position.is_positioned() {
+        if style.position.is_positioned() || style.establishes_transform_containing_block {
             self.positioned_inline_stack.push(node_id);
         }
     }
 
     /// Handle inline element close (`</span>`).
     fn exit_inline(&mut self, node_id: NodeId, style: &ComputedStyle) {
-        if style.position.is_positioned() {
+        if style.position.is_positioned() || style.establishes_transform_containing_block {
             let popped = self.positioned_inline_stack.pop();
             debug_assert_eq!(popped, Some(node_id));
         }
@@ -1180,6 +1181,22 @@ impl<'a> InlineItemsBuilder<'a> {
             bidi_level: 0,
             intrinsic_inline_size: None,
         });
+    }
+
+    /// Find the nearest open inline box that establishes the relevant
+    /// containing block. Relative positioning captures absolute descendants;
+    /// fixed descendants pass through it until a transform/filter boundary.
+    fn inline_containing_block_for(&self, style: &ComputedStyle) -> Option<NodeId> {
+        self.positioned_inline_stack
+            .iter()
+            .rev()
+            .copied()
+            .find(|ancestor| {
+                let ancestor_style = &self.doc.node(*ancestor).style;
+                ancestor_style.establishes_transform_containing_block
+                    || (style.position != Position::Fixed
+                        && ancestor_style.position.is_positioned())
+            })
     }
 
     /// Handle an atomic inline element (inline-block, etc.).

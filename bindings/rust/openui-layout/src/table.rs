@@ -916,7 +916,7 @@ pub(crate) fn compute_table_caption_block_size(
                 authored_inline_size(doc, caption_id, inline_size, parent_space.writing_direction)
                     .is_none();
             let mut caption = block_layout(doc, caption_id, &caption_space);
-            normalize_multicol_child_outer_box(&mut caption, parent_space.writing_direction);
+            normalize_multicol_child_outer_box(doc, &mut caption, parent_space.writing_direction);
             let margin =
                 logical_margins(caption_style, inline_size, parent_space.writing_direction);
             margin.top + caption.size.height + margin.bottom
@@ -1200,7 +1200,7 @@ fn layout_cell(
     } else {
         block_layout(doc, slot.node_id, &cell_space)
     };
-    normalize_multicol_child_outer_box(&mut fragment, table_space.writing_direction);
+    normalize_multicol_child_outer_box(doc, &mut fragment, table_space.writing_direction);
     if style.display == Display::TableCell
         && crate::inline::algorithm::has_inline_children(doc, slot.node_id)
     {
@@ -2028,7 +2028,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         caption_space.is_fixed_inline_size =
             authored_inline_size(doc, caption_id, border_box_width, writing_direction).is_none();
         let mut caption = block_layout(doc, caption_id, &caption_space);
-        normalize_multicol_child_outer_box(&mut caption, writing_direction);
+        normalize_multicol_child_outer_box(doc, &mut caption, writing_direction);
         if caption_style.caption_side == CaptionSide::Bottom {
             bottom_captions.push(caption);
         } else {
@@ -3028,7 +3028,7 @@ pub fn table_layout(doc: &Document, table_id: NodeId, space: &ConstraintSpace) -
         }
         suppress_collapsed_table_radii(doc, &mut table);
     }
-    project_logical_fragment_tree_to_physical(&mut table, writing_direction);
+    project_logical_fragment_tree_to_physical(doc, &mut table, writing_direction);
     table
 }
 

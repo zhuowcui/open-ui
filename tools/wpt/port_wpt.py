@@ -1022,10 +1022,18 @@ def _transform_2d_rust(value: str, font_size: float) -> str | None:
         token = token.strip()
         if token == '0':
             return 0.0
-        match = re.fullmatch(r'(-?[\d.]+)(px|em|rem)', token)
+        match = re.fullmatch(r'(-?[\d.]+)(px|em|rem|vw|vh|vmin|vmax)', token)
         if not match:
             return None
-        scale = font_size if match.group(2) == 'em' else 16.0 if match.group(2) == 'rem' else 1.0
+        scale = {
+            'px': 1.0,
+            'em': font_size,
+            'rem': 16.0,
+            'vw': 8.0,
+            'vh': 6.0,
+            'vmin': 6.0,
+            'vmax': 8.0,
+        }[match.group(2)]
         return _zoomed_px(float(match.group(1)) * scale)
 
     def angle(token: str) -> float | None:
@@ -1115,6 +1123,29 @@ def _shape_outside_rust(value: str, font_size: float) -> str | None:
         return 'ShapeOutside::None'
     if lower in boxes:
         return boxes[lower]
+    inset = re.fullmatch(r'inset\(\s*(.*?)\s*\)', lower)
+    if inset:
+        inset_value = inset.group(1)
+        offset_value = inset_value.split(' round ', 1)[0].strip()
+        offset_tokens = _split_respecting_parens(offset_value)
+        if 1 <= len(offset_tokens) <= 4:
+            parsed_offsets = [parse_length(token, font_size) for token in offset_tokens]
+            if all(parsed_offsets):
+                if len(parsed_offsets) == 1:
+                    top = right = bottom = left = parsed_offsets[0]
+                elif len(parsed_offsets) == 2:
+                    top = bottom = parsed_offsets[0]
+                    right = left = parsed_offsets[1]
+                elif len(parsed_offsets) == 3:
+                    top, right, bottom = parsed_offsets
+                    left = right
+                else:
+                    top, right, bottom, left = parsed_offsets
+                return (
+                    'ShapeOutside::Inset { offsets: '
+                    f'[{top}, {right}, {bottom}, {left}], '
+                    'radii: [(0.0, 0.0); 4] }'
+                )
     circle = re.search(r'circle\(\s*([^)]*?)\s*\)', lower)
     if circle:
         radius_token = circle.group(1).split(' at ', 1)[0].strip() or '50%'
@@ -1935,6 +1966,7 @@ def check_supported(styles: dict) -> tuple[bool, str]:
         if prop in (
             '-webkit-line-clamp', '-webkit-box-orient', '-webkit-box-align',
             '-webkit-box-pack', '-webkit-appearance', '-moz-appearance',
+            '-webkit-column-break-before', '-webkit-column-break-after',
         ):
             continue
         if prop.startswith('-webkit-') or prop.startswith('-moz-'):
@@ -2156,7 +2188,26 @@ def _flatten_css_rules(css_text: str) -> list[tuple[str, str]]:
         closing = _matching_css_brace(css_text, opening)
         selector = css_text[cursor:opening].strip()
         body = css_text[opening + 1:closing]
-        if selector.lower().startswith(('@container', '@supports', '@layer')):
+        lower_selector = ' '.join(selector.lower().split())
+        if lower_selector.startswith('@supports'):
+            condition = lower_selector[len('@supports'):].strip()
+            supported_selector_features = {
+                '::column',
+                '::details-content',
+                '::scroll-button(*)',
+            }
+            negated = condition.startswith('not ')
+            if negated:
+                condition = condition[4:].strip()
+            selector_match = re.fullmatch(r'selector\((.*)\)', condition)
+            supported = bool(
+                selector_match
+                and selector_match.group(1).strip() in supported_selector_features
+            )
+            enabled = not supported if negated else supported
+            if enabled:
+                result.extend(_flatten_css_rules(body))
+        elif lower_selector.startswith(('@container', '@layer')):
             result.extend(_flatten_css_rules(body))
         elif not selector.startswith('@'):
             result.extend(_flatten_css_rule(selector, body))
@@ -2365,6 +2416,15 @@ BODY_STYLE_RULES = parse_simple_css_rules(
 ROOT_BODY_STYLE_RULES = parse_simple_css_rules(
     '* { margin: 0; padding: 0; box-sizing: content-box; } '
     'body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; }'
+)
+
+# A statically lowered embedded document does not inherit the outer comparison
+# harness reset. Preserve the HTML body viewport's stable UA margin; ordinary
+# element UA defaults are materialized by the Rust generator below.
+EMBEDDED_DOCUMENT_RULES = parse_simple_css_rules(
+    'body { margin: 8px; padding: 0; box-sizing: content-box; '
+    'color: black; font-size: 16px; line-height: normal; direction: ltr; '
+    'writing-mode: horizontal-tb; visibility: visible; }'
 )
 
 
@@ -2703,6 +2763,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
 def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
                     sibling_index: int = 1, sibling_count: int = 1,
                     preceding_siblings: list = None,
+                    leading_element_siblings: int = 0,
                     trailing_element_siblings: int = 0,
                     sibling_type_index: int = 1,
                     sibling_type_count: int = 1):
@@ -2827,13 +2888,18 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
     child_ancestors = ancestors + [(node.tag, classes, id_val, node.attrs)]
     # Compute sibling indices and preceding siblings for element children
     element_children = [c for c in node.children if not c.is_text]
-    total_elements = len(element_children) + trailing_element_siblings
+    total_elements = (
+        leading_element_siblings + len(element_children) + trailing_element_siblings
+    )
     type_counts = {}
     for child in element_children:
         type_counts[child.tag] = type_counts.get(child.tag, 0) + 1
     type_seen = {}
-    elem_idx = 0
-    preceding = []
+    elem_idx = leading_element_siblings
+    preceding = [
+        ('style', [], '', {'style': 'display:none!important'})
+        for _ in range(leading_element_siblings)
+    ]
     for child in node.children:
         if not child.is_text:
             elem_idx += 1
@@ -2852,6 +2918,7 @@ def apply_static_target_current_rules(
     rules: list,
     root: 'DomNode',
     ancestors: list = None,
+    leading_element_siblings: int = 0,
     trailing_element_siblings: int = 0,
 ):
     """Resolve the initial, zero-scroll ``:target-current`` state.
@@ -2900,7 +2967,7 @@ def apply_static_target_current_rules(
 
     def cascade(node, node_ancestors, sibling_index=1, sibling_count=1,
                 preceding_siblings=None, sibling_type_index=1,
-                sibling_type_count=1, trailing_siblings=0):
+                sibling_type_count=1, leading_siblings=0, trailing_siblings=0):
         if node.is_text:
             return
         classes = node.attrs.get('class', '').split()
@@ -2941,13 +3008,16 @@ def apply_static_target_current_rules(
             (node.tag, classes, id_val, node.attrs)
         ]
         element_children = [child for child in node.children if not child.is_text]
-        total_elements = len(element_children) + trailing_siblings
+        total_elements = leading_siblings + len(element_children) + trailing_siblings
         type_counts = {}
         for child in element_children:
             type_counts[child.tag] = type_counts.get(child.tag, 0) + 1
         type_seen = {}
-        preceding = []
-        element_index = 0
+        preceding = [
+            ('style', [], '', {'style': 'display:none!important'})
+            for _ in range(leading_siblings)
+        ]
+        element_index = leading_siblings
         for child in node.children:
             if child.is_text:
                 continue
@@ -2967,6 +3037,7 @@ def apply_static_target_current_rules(
     cascade(
         root,
         ancestors or [],
+        leading_siblings=leading_element_siblings,
         trailing_siblings=trailing_element_siblings,
     )
 
@@ -2984,9 +3055,15 @@ class WptHtmlParser(HTMLParser):
                    'legend', 'textarea', 'select', 'option', 'optgroup',
                    'form', 'embed'}
 
-    def __init__(self, *, root_aware: bool = False):
+    def __init__(
+        self,
+        *,
+        root_aware: bool = False,
+        harness_rules: list | None = None,
+    ):
         super().__init__()
         self.root_aware = root_aware
+        self.harness_rules = harness_rules
         self.root = DomNode('body', {}, {})
         self.stack = [self.root]
         self.in_body = False
@@ -3318,7 +3395,9 @@ class WptHtmlParser(HTMLParser):
                         authored.append(value)
                     self.root.attrs['class'] = ' '.join(authored)
 
-        harness_rules = ROOT_BODY_STYLE_RULES if self.root_aware else BODY_STYLE_RULES
+        harness_rules = self.harness_rules
+        if harness_rules is None:
+            harness_rules = ROOT_BODY_STYLE_RULES if self.root_aware else BODY_STYLE_RULES
         all_rules = harness_rules + self.external_css_rules + self.css_rules
         # Keep the Rust builder's pruning decisions synchronized with the
         # Chromium template pass.  A universal rule does not turn an empty,
@@ -3350,16 +3429,19 @@ class WptHtmlParser(HTMLParser):
             trailing_harness_style = int(
                 RETAIN_TEXT and not is_real_font_profile() and len(self.stack) == 1
             )
+            leading_author_styles = len(self.author_style_blocks)
             apply_css_rules(
                 all_rules,
                 self.root,
                 ancestors=root_ancestors,
+                leading_element_siblings=leading_author_styles,
                 trailing_element_siblings=trailing_harness_style,
             )
             apply_static_target_current_rules(
                 all_rules,
                 self.root,
                 ancestors=root_ancestors,
+                leading_element_siblings=leading_author_styles,
                 trailing_element_siblings=trailing_harness_style,
             )
             # Apply html-targeted rules to self.html_styles for body-bg propagation logic.
@@ -3509,16 +3591,19 @@ class WptHtmlParser(HTMLParser):
                     node.styles[name] = value
 
 
-def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser:
-    """Parse a WPT HTML file and return the parser with DOM tree."""
-    # Decode a leading UTF-8 BOM as an encoding signature.  Leaving U+FEFF in
-    # the character stream makes HTMLParser synthesize body text before the
-    # doctype, which later creates a spurious line box in generated fixtures.
-    with open(html_path, 'r', encoding='utf-8-sig', errors='replace') as f:
-        content = f.read()
-
-    parser = WptHtmlParser(root_aware=root_aware)
-    parser.html_dir = os.path.dirname(os.path.abspath(html_path))
+def _parse_wpt_markup(
+    content: str,
+    html_dir: str,
+    *,
+    root_aware: bool = False,
+    harness_rules: list | None = None,
+) -> WptHtmlParser:
+    """Parse one already-decoded HTML document under an explicit harness."""
+    parser = WptHtmlParser(
+        root_aware=root_aware,
+        harness_rules=harness_rules,
+    )
+    parser.html_dir = html_dir
     parser.root.resource_base = parser.html_dir
     parser.feed(content)
 
@@ -3533,6 +3618,21 @@ def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser
 
     parser.finalize()
     return parser
+
+
+def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser:
+    """Parse a WPT HTML file and return the parser with DOM tree."""
+    # Decode a leading UTF-8 BOM as an encoding signature.  Leaving U+FEFF in
+    # the character stream makes HTMLParser synthesize body text before the
+    # doctype, which later creates a spurious line box in generated fixtures.
+    with open(html_path, 'r', encoding='utf-8-sig', errors='replace') as f:
+        content = f.read()
+
+    return _parse_wpt_markup(
+        content,
+        os.path.dirname(os.path.abspath(html_path)),
+        root_aware=root_aware,
+    )
 
 
 # ─── Portability analysis ──────────────────────────────────────────────────
@@ -3781,7 +3881,7 @@ def _css_length_px(value: str, font_size: float = 16.0) -> float | None:
     value = value.strip()
     if value in ('0', '0px'):
         return 0.0
-    m = re.match(r'^(-?[\d.]+)(px|em|rem|in|cm|mm|pt|pc)$', value)
+    m = re.match(r'^(-?[\d.]+)(px|em|rem|in|cm|mm|pt|pc|vw|vh|vmin|vmax)$', value)
     if not m:
         return None
     num = float(m.group(1))
@@ -3795,6 +3895,10 @@ def _css_length_px(value: str, font_size: float = 16.0) -> float | None:
         'mm': 96.0 / 25.4,
         'pt': 96.0 / 72.0,
         'pc': 16.0,
+        'vw': 8.0,
+        'vh': 6.0,
+        'vmin': 6.0,
+        'vmax': 8.0,
     }
     return _zoomed_px(num * factors[unit])
 
@@ -6274,8 +6378,22 @@ def generate_single_style(
     if prop == 'transform-origin':
         values = val.split()
         if len(values) in (1, 2):
-            x = parse_length(values[0], font_size)
-            y = parse_length(values[-1], font_size)
+            horizontal = {'left': '0%', 'center': '50%', 'right': '100%'}
+            vertical = {'top': '0%', 'center': '50%', 'bottom': '100%'}
+            if len(values) == 1:
+                token = values[0]
+                if token in ('top', 'bottom'):
+                    x_token, y_token = '50%', vertical[token]
+                else:
+                    x_token, y_token = horizontal.get(token, token), '50%'
+            else:
+                first, second = values
+                if first in ('top', 'bottom') or second in ('left', 'right'):
+                    first, second = second, first
+                x_token = horizontal.get(first, first)
+                y_token = vertical.get(second, second)
+            x = parse_length(x_token, font_size)
+            y = parse_length(y_token, font_size)
             if x and y:
                 return f"{s}.transform_origin = ({x}, {y});"
 
@@ -6348,7 +6466,10 @@ def generate_single_style(
 
     if prop == 'will-change':
         if any(part.strip() == 'transform' for part in val.split(',')):
-            return f"{s}.establishes_transform_containing_block = true;"
+            return (
+                f"{s}.establishes_transform_containing_block = true;\n"
+                f"{s}.will_change_transform = true;"
+            )
 
     if prop == 'filter' and val != 'none':
         # The SP19 filter cohort uses identity-valued filters for their
@@ -7256,6 +7377,19 @@ def generate_single_style(
         }
         if val in legacy_mapping:
             rust_prop = prop.replace('page-break', 'break').replace('-', '_')
+            return f"{s}.{rust_prop} = {legacy_mapping[val]};"
+
+    # Blink's legacy column-break aliases remain observable in old paged and
+    # multicol content. ``always`` forces a column boundary rather than the
+    # page boundary represented by page-break-*.
+    if prop in ('-webkit-column-break-before', '-webkit-column-break-after'):
+        legacy_mapping = {
+            'auto': 'BreakValue::Auto',
+            'avoid': 'BreakValue::AvoidColumn',
+            'always': 'BreakValue::Column',
+        }
+        if val in legacy_mapping:
+            rust_prop = prop.removeprefix('-webkit-column-').replace('-', '_')
             return f"{s}.{rust_prop} = {legacy_mapping[val]};"
 
     if prop == 'break-inside':
@@ -8277,7 +8411,9 @@ def _computed_border_radius(styles: dict[str, str]) -> dict[str, str] | None:
 
 _INLINE_LEVEL_TAGS = {'span', 'a', 'em', 'strong', 'b', 'i', 'u', 'small',
                       'big', 'sub', 'sup', 'abbr', 'cite', 'code', 'mark',
-                      'q', 's', 'del', 'ins', 'var', 'kbd', 'samp', 'br', 'wbr'}
+                      'q', 's', 'del', 'ins', 'var', 'kbd', 'samp', 'br', 'wbr',
+                      'img', 'canvas', 'svg', 'iframe', 'object', 'audio', 'video',
+                      'input', 'button', 'meter', 'textarea', 'select', 'embed'}
 _CSS_COLLAPSIBLE_WHITESPACE = ' \t\n\r\f'
 
 
@@ -8296,6 +8432,43 @@ def _subtree_text(node) -> str:
     if getattr(node, 'is_text', False):
         return getattr(node, 'text_content', '') or ''
     return ''.join(_subtree_text(c) for c in node.children)
+
+
+def _embedded_multicol_leading_margin(root: 'DomNode') -> float:
+    """Return a collapsed UA leading margin retained by an iframe canvas.
+
+    A multicol body establishes the nested document canvas boundary. Blink
+    retains the first paragraph's UA margin there, whereas ordinary column
+    fragmentation trims a leading adjoining margin. Walk transparent block
+    wrappers so static lowering can represent that boundary as padding.
+    """
+    if not any(prop in root.styles for prop in ('columns', 'column-count', 'column-width')):
+        return 0.0
+    current = root
+    while True:
+        children = [child for child in current.children if not child.is_text]
+        if not children:
+            return 0.0
+        child = children[0]
+        if child.styles.get('position', 'static') in ('absolute', 'fixed'):
+            return 0.0
+        authored_margin = child.styles.get('margin-top')
+        if authored_margin:
+            parsed = parse_length(authored_margin, 16.0)
+            match = re.fullmatch(r'Length::px\((-?[\d.]+)\)', parsed or '')
+            return float(match.group(1)) if match else 0.0
+        if child.tag == 'p':
+            return 16.0
+        if any(
+            prop in child.styles
+            for prop in (
+                'border', 'border-top', 'border-width', 'border-top-width',
+                'padding', 'padding-top', 'height', 'min-height',
+                'overflow', 'overflow-y', 'display',
+            )
+        ):
+            return 0.0
+        current = child
 
 
 def _is_inline_level(node) -> bool:
@@ -8834,6 +9007,7 @@ def generate_rust_fn(
         counter[0] += 1
         var = f"n{counter[0]}"
         ws = "    " * indent
+        render_children = node.children
 
         # Map HTML tag to ElementTag
         inline_tags = {'span', 'a', 'em', 'strong', 'b', 'i', 'u', 'small', 'big', 'sub', 'sup', 'abbr', 'cite', 'code', 'mark', 'q', 's', 'del', 'ins', 'var', 'kbd', 'samp'}
@@ -8898,6 +9072,25 @@ def generate_rust_fn(
         if node.tag == 'br':
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Inline;")
 
+        if node.tag == 'svg':
+            # An outermost inline SVG viewport is a replaced element with the
+            # HTML default object size when neither dimension is authored.
+            # CSS declarations emitted below remain authoritative and can
+            # override these intrinsic-equivalent defaults.
+            def svg_viewport_number(name, default):
+                token = node.attrs.get(name, str(default)).strip()
+                match = re.fullmatch(r'[-+]?(?:\d+(?:\.\d*)?|\.\d+)', token)
+                return float(token) if match else float(default)
+
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.width = "
+                f"Length::px({_zoomed_px(svg_viewport_number('width', 300.0))});"
+            )
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.height = "
+                f"Length::px({_zoomed_px(svg_viewport_number('height', 150.0))});"
+            )
+
         if node.tag == 'rect':
             # Inline SVG rectangles are deterministic vector primitives, not
             # HTML flow boxes. Represent the primitive as an absolutely
@@ -8924,6 +9117,19 @@ def generate_rust_fn(
                 lines.append(
                     f"{ws}doc.node_mut({var}).style.background_color = {svg_fill};"
                 )
+            svg_transform = node.attrs.get('transform', '').strip()
+            if svg_transform:
+                transform = _transform_2d_rust(svg_transform, parent_font_size)
+                if transform:
+                    lines.append(f"{ws}doc.node_mut({var}).style.transform = {transform};")
+                    lines.append(
+                        f"{ws}doc.node_mut({var}).style.transform_origin = "
+                        "(Length::px(0.0), Length::px(0.0));"
+                    )
+                    lines.append(
+                        f"{ws}doc.node_mut({var}).style."
+                        "establishes_transform_containing_block = true;"
+                    )
 
         table_displays = {
             'table': 'Display::Table',
@@ -9026,10 +9232,29 @@ def generate_rust_fn(
         if node.tag in {'input', 'textarea', 'select'}:
             # Pinned Linux Chromium UA metrics. Author declarations are
             # emitted later and therefore retain normal cascade precedence.
+            appearance_none = any(
+                node.styles.get(prop, '').strip().lower() == 'none'
+                for prop in ('appearance', '-webkit-appearance', '-moz-appearance')
+            )
             lines.append(f"{ws}doc.node_mut({var}).style.box_sizing = BoxSizing::BorderBox;")
             if node.tag == 'input':
-                lines.append(f"{ws}doc.node_mut({var}).style.width = Length::px(169.0);")
-                lines.append(f"{ws}doc.node_mut({var}).style.height = Length::px(20.0);")
+                # With native appearance disabled, Blink sizes the default
+                # text field from its 20-character editing host in the
+                # control's deterministic 13.333px Ahem font.  The reset
+                # stylesheet makes this a content-box, so the 2px UA inset
+                # border is outside these dimensions.
+                input_type = node.attrs.get('type', 'text').lower()
+                if input_type == 'range' and not appearance_none:
+                    input_width, input_height = 129.0, 16.0
+                else:
+                    input_width = 262.0
+                    input_height = 26.0 if not appearance_none else 14.0
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.width = Length::px({input_width});"
+                )
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.height = Length::px({input_height});"
+                )
             elif node.tag == 'textarea':
                 rows = node.attrs.get('rows', '2')
                 cols = node.attrs.get('cols', '20')
@@ -9039,11 +9264,13 @@ def generate_rust_fn(
                 except ValueError:
                     rows_value, cols_value = 2, 20
                 lines.append(
-                    f"{ws}doc.node_mut({var}).style.width = Length::px({cols_value * 8.0 + 6.0});"
+                    f"{ws}doc.node_mut({var}).style.width = Length::px({cols_value * 8.5 + 6.0});"
                 )
                 lines.append(
-                    f"{ws}doc.node_mut({var}).style.height = Length::px({rows_value * 15.0 + 6.0});"
+                    f"{ws}doc.node_mut({var}).style.height = Length::px({rows_value * 11.0 + 6.0});"
                 )
+                lines.append(f"{ws}doc.node_mut({var}).style.overflow_x = Overflow::Auto;")
+                lines.append(f"{ws}doc.node_mut({var}).style.overflow_y = Overflow::Auto;")
             else:
                 size = node.attrs.get('size', '')
                 multiple = 'multiple' in node.attrs
@@ -9051,12 +9278,34 @@ def generate_rust_fn(
                     visible_rows = max(1, int(size)) if size else (4 if multiple else 1)
                 except ValueError:
                     visible_rows = 4 if multiple else 1
-                lines.append(f"{ws}doc.node_mut({var}).style.min_width = Length::px(2.0);")
+                select_width = 20.0 if visible_rows == 1 else 2.0
+                select_font_size = parent_font_size
+                if 'font-size' in node.styles:
+                    try:
+                        select_font_size = _computed_font_size(
+                            node.styles['font-size'], parent_font_size
+                        )
+                    except (UnsupportedFontShorthand, ValueError):
+                        pass
+                select_row_height = max(3.0, round(select_font_size * 1.125 + 2.0))
                 lines.append(
-                    f"{ws}doc.node_mut({var}).style.height = Length::px({visible_rows * 17.0 + 2.0});"
+                    f"{ws}doc.node_mut({var}).style.width = Length::px({select_width});"
                 )
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.height = "
+                    f"Length::px({visible_rows * select_row_height});"
+                )
+            input_type = node.attrs.get('type', 'text').lower() if node.tag == 'input' else ''
+            ua_border_width = (
+                0 if input_type == 'range' and not appearance_none
+                else 2 if node.tag == 'input'
+                else 1
+            )
             for side in ('top', 'right', 'bottom', 'left'):
-                lines.append(f"{ws}doc.node_mut({var}).style.border_{side}_width = 1;")
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.border_{side}_width = "
+                    f"{ua_border_width};"
+                )
                 lines.append(
                     f"{ws}doc.node_mut({var}).style.border_{side}_style = BorderStyle::Inset;"
                 )
@@ -9185,16 +9434,48 @@ def generate_rust_fn(
             )
         elif node.tag == 'iframe':
             # HTML iframe elements have a 300x150 default object size but no
-            # natural aspect ratio. Package srcdoc/local documents so sizing
-            # and passive paint never depend on a live browsing context.
+            # natural aspect ratio. Package srcdoc/local documents so their
+            # source identity never depends on a live browsing context. A
+            # deterministic srcdoc is additionally lowered into an isolated
+            # child viewport below; scripts and handlers remain rejected.
             srcdoc = node.attrs.get('srcdoc')
             source = node.attrs.get('src', '').strip()
+            embedded_parser = None
             if srcdoc is not None:
                 data = srcdoc.encode('utf-8')
                 document_source = f'inline:srcdoc;sha256={hashlib.sha256(data).hexdigest()}'
                 document_mime = 'text/html'
                 document_sha = hashlib.sha256(data).hexdigest()
                 document_bytes = f'vec![{", ".join(str(byte) for byte in data)}]'
+                embedded_parser = _parse_wpt_markup(
+                    srcdoc,
+                    str(_ACTIVE_RESOURCE_BASE or Path.cwd()),
+                    root_aware=True,
+                    harness_rules=EMBEDDED_DOCUMENT_RULES,
+                )
+                embedded_portable, embedded_reason = analyze_portability(embedded_parser)
+                if not embedded_portable:
+                    raise ValueError(
+                        f'unsupported embedded srcdoc behavior: {embedded_reason}'
+                    )
+                embedded_root = embedded_parser.root
+                embedded_root.tag = 'div'
+                # The body of a nested browsing context forms the embedded
+                # canvas boundary. Descendant margins do not collapse through
+                # that boundary into the iframe's own inline box.
+                if embedded_root.styles.get('display', '').strip() in ('', 'block'):
+                    embedded_root.styles['display'] = 'flow-root'
+                leading_margin = _embedded_multicol_leading_margin(embedded_root)
+                if leading_margin:
+                    margin_boundary = DomNode(
+                        'div',
+                        {'data-openui-embedded-margin-boundary': ''},
+                        CssDeclarations(),
+                    )
+                    margin_boundary.styles['display'] = 'block'
+                    margin_boundary.styles['height'] = f'{leading_margin}px'
+                    embedded_root.children.insert(0, margin_boundary)
+                render_children = [embedded_root]
             else:
                 packaged_document = _packaged_resource(source) if source else None
                 if packaged_document is not None and packaged_document[2] in ('text/html', 'application/xhtml+xml'):
@@ -9210,12 +9491,14 @@ def generate_rust_fn(
                 f'{json.dumps(document_source)}, {json.dumps(document_mime)}, '
                 f'{json.dumps(document_sha)}, {document_bytes});'
             )
-            lines.append(
-                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
-                f"resource: openui_dom::ReplacedResourceKind::PackagedDocument({var}_document), "
-                "intrinsic_width: Some(300.0), intrinsic_height: Some(150.0), "
-                "intrinsic_ratio: None });"
-            )
+            lines.append(f"{ws}doc.node_mut({var}).embedded_document = Some({var}_document);")
+            if embedded_parser is None:
+                lines.append(
+                    f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                    f"resource: openui_dom::ReplacedResourceKind::PackagedDocument({var}_document), "
+                    "intrinsic_width: Some(300.0), intrinsic_height: Some(150.0), "
+                    "intrinsic_ratio: None });"
+                )
             # Blink's iframe UA rule is a 2px inset border.
             lines.append(f"{ws}doc.node_mut({var}).style.border_top_width = 2;")
             lines.append(f"{ws}doc.node_mut({var}).style.border_right_width = 2;")
@@ -9250,11 +9533,60 @@ def generate_rust_fn(
                 "intrinsic_width: Some(80.0), intrinsic_height: Some(16.0), "
                 "intrinsic_ratio: None });"
             )
+        elif node.tag == 'button' and not node.children:
+            # With the comparison reset removing UA padding, an empty native
+            # button has a zero-sized content area surrounded only by its 2px
+            # theme border. Non-empty buttons continue through normal
+            # text-driven intrinsic sizing.
+            lines.append(
+                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                "intrinsic_width: Some(0.0), intrinsic_height: Some(0.0), "
+                "intrinsic_ratio: None });"
+            )
+        elif node.tag in {'input', 'textarea', 'select'}:
+            # Text-like controls are atomic/monolithic replaced boxes even
+            # when their authored background and border are ordinary CSS.
+            # Their preferred dimensions above remain author-overridable.
+            if node.tag == 'input':
+                intrinsic_width, intrinsic_height = 169.0, 20.0
+            elif node.tag == 'textarea':
+                try:
+                    rows_value = max(1, int(node.attrs.get('rows', '2')))
+                    cols_value = max(1, int(node.attrs.get('cols', '20')))
+                except ValueError:
+                    rows_value, cols_value = 2, 20
+                intrinsic_width = cols_value * 8.5 + 6.0
+                intrinsic_height = rows_value * 11.0 + 6.0
+            else:
+                size = node.attrs.get('size', '')
+                multiple = 'multiple' in node.attrs
+                try:
+                    visible_rows = max(1, int(size)) if size else (4 if multiple else 1)
+                except ValueError:
+                    visible_rows = 4 if multiple else 1
+                intrinsic_width = 20.0 if visible_rows == 1 else 2.0
+                select_font_size = parent_font_size
+                if 'font-size' in node.styles:
+                    try:
+                        select_font_size = _computed_font_size(
+                            node.styles['font-size'], parent_font_size
+                        )
+                    except (UnsupportedFontShorthand, ValueError):
+                        pass
+                select_row_height = max(3.0, round(select_font_size * 1.125 + 2.0))
+                intrinsic_height = visible_rows * select_row_height
+            lines.append(
+                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                f"intrinsic_width: Some({intrinsic_width}), "
+                f"intrinsic_height: Some({intrinsic_height}), intrinsic_ratio: None }});"
+            )
 
         # Set display:block for block-level HTML elements (our engine defaults to inline)
         block_tags = {'div', 'p', 'section', 'article', 'header', 'footer', 'nav', 'main',
                       'aside', 'figure', 'figcaption', 'blockquote', 'pre', 'address',
-                      'details', 'summary', 'fieldset', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                      'details', 'summary', 'fieldset', 'legend', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
                       'dl', 'dt', 'dd', 'ol', 'ul', 'menu', 'li', 'hr'}
         supported_display_values = {
             'block', 'inline', 'inline-block', 'none', 'flow-root',
@@ -9268,6 +9600,14 @@ def generate_rust_fn(
         if not RETAIN_TEXT and node.tag == 'li' and (
             'display' not in node.styles or display_value not in supported_display_values
         ):
+            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::ListItem;")
+        elif node.tag == 'summary' and (
+            'display' not in node.styles or display_value not in supported_display_values
+        ):
+            # The HTML UA sheet gives an authored summary a list-item
+            # principal box.  The comparison stylesheet may suppress its
+            # marker, but it does not change that display type; preserving it
+            # is observable when inline summary content fragments in columns.
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::ListItem;")
         elif node.tag in block_tags and (
             'display' not in node.styles or display_value not in supported_display_values
@@ -9301,6 +9641,38 @@ def generate_rust_fn(
 
         # Resolve explicit CSS-wide `inherit` before generating style code.
         effective_styles = _copy_declarations(node.styles)
+
+        if RETAIN_TEXT and node.tag in {'button', 'input', 'textarea', 'select'}:
+            # The deterministic font override changes the family but not the
+            # HTML form-control UA size. Chromium's Linux UA sheet specifies
+            # 13.3333px controls; materialize that computed value so their
+            # anonymous text and multicol contents inherit the same metrics.
+            if 'font-size' not in effective_styles and 'font' not in effective_styles:
+                effective_styles['font-size'] = '13.333333px'
+            if node.tag == 'button' and 'text-align' not in effective_styles:
+                effective_styles['text-align'] = 'center'
+        if node.tag == 'button':
+            # Passive Linux button appearance. The comparison harness resets
+            # margin/padding/box-sizing as author CSS, but leaves these UA
+            # paint declarations in force unless the test overrides them.
+            if (
+                'background' not in effective_styles
+                and 'background-color' not in effective_styles
+            ):
+                effective_styles['background-color'] = 'rgb(239, 239, 239)'
+            if not any(
+                name == 'border' or name.startswith('border-')
+                for name in effective_styles
+            ):
+                effective_styles['border-width'] = '2px'
+                # The pinned Linux native button theme exposes its passive
+                # `buttonborder` edge as a uniform #767676 rounded stroke.
+                # This is appearance geometry, not CSS `outset` color
+                # shading, even though Blink's UA declaration uses that
+                # legacy keyword.
+                effective_styles['border-style'] = 'solid'
+                effective_styles['border-color'] = '#767676'
+                effective_styles['border-radius'] = '2px'
 
         # A floated semantic table remains a table formatting context after
         # display blockification (only `inline-table` blockifies to `table`).
@@ -9495,10 +9867,7 @@ def generate_rust_fn(
             if isinstance(val, str) and not prop.startswith('--'):
                 effective_styles[prop] = _resolve_css_vars(val, node_custom_props)
 
-        if (
-            node.tag == 'input'
-            and node.attrs.get('type', 'text').lower() == 'range'
-        ):
+        if node.tag in {'input', 'textarea', 'select'}:
             # `appearance` and its vendor aliases are one cascaded control
             # property in Chromium. Select the winning alias by the preserved
             # declaration priority instead of depending on dictionary order.
@@ -9520,6 +9889,20 @@ def generate_rust_fn(
                     lines.append(
                         f"{ws}doc.node_mut({var}).form_control_native_appearance = false;"
                     )
+                    if (
+                        node.tag == 'input'
+                        and not any(
+                            name == 'border-color'
+                            or (name.startswith('border-') and name.endswith('-color'))
+                            or name == 'border'
+                            for name in effective_styles
+                        )
+                    ):
+                        # Blink's non-native text-field UA inset border has
+                        # an explicit ButtonBorder base rather than black
+                        # currentColor. Its CSS 3D shading yields #212121 on
+                        # the recessed edges and #767676 on the raised edges.
+                        effective_styles['border-color'] = '#767676'
 
         # Generate style code
         node_zoom = _effective_css_zoom(effective_styles, parent_zoom)
@@ -10216,7 +10599,22 @@ def generate_rust_fn(
             # principal box, so classify their flattened children here while
             # retaining the inheritance boundary in `gen_node` itself.
             anonymous_table = None
-            for child in node.children:
+            ordered_children = render_children
+            if node.tag == 'details':
+                first_summary = next((
+                    child for child in node.children
+                    if not child.is_text and child.tag == 'summary'
+                ), None)
+                if first_summary is not None:
+                    # The HTML details shadow tree slots its first authored
+                    # summary before the details-content slot, independent of
+                    # the summary's DOM position. Preserve that rendered order
+                    # even when no explicit ::details-content rule generated a
+                    # structural wrapper above.
+                    ordered_children = [first_summary] + [
+                        child for child in node.children if child is not first_summary
+                    ]
+            for child in ordered_children:
                 child_parent = var
                 child_indent = indent + 1
                 if _flattens_only_to_table_internal(child):
@@ -10248,7 +10646,7 @@ def generate_rust_fn(
                     html_table_border,
                 )
         else:
-            for child in node.children:
+            for child in render_children:
                 gen_node(
                     child, var, indent + 1, node_font_size,
                     child_inherited, node_custom_props, node_zoom,
@@ -10402,6 +10800,81 @@ def generate_rust_fn(
     return '\n'.join(lines)
 
 
+def _outer_html_sections(source: str):
+    """Return outer-document style blocks, body markup, and body attributes.
+
+    Unlike a regular expression, this small tokenizer does not interpret tag
+    text inside a quoted ``srcdoc`` attribute as part of the outer document.
+    It is intentionally used only for documents that carry embedded markup so
+    historical templates remain byte-identical.
+    """
+    tokens = []
+    index = 0
+    while index < len(source):
+        if source.startswith('<!--', index):
+            end = source.find('-->', index + 4)
+            index = len(source) if end < 0 else end + 3
+            continue
+        if source[index] != '<':
+            index += 1
+            continue
+        match = re.match(r'<\s*(/?)\s*([a-zA-Z][-_a-zA-Z0-9]*)\b', source[index:])
+        if match is None:
+            index += 1
+            continue
+        quote = None
+        cursor = index + match.end()
+        while cursor < len(source):
+            char = source[cursor]
+            if quote is not None:
+                if char == quote:
+                    quote = None
+            elif char in ('"', "'"):
+                quote = char
+            elif char == '>':
+                break
+            cursor += 1
+        if cursor >= len(source):
+            break
+        tokens.append((
+            index,
+            cursor + 1,
+            match.group(2).lower(),
+            bool(match.group(1)),
+            source[index:cursor + 1],
+        ))
+        index = cursor + 1
+
+    styles = []
+    body_markup = None
+    body_attrs = None
+    for token_index, token in enumerate(tokens):
+        start, end, name, closing, raw = token
+        if name == 'style' and not closing:
+            for candidate in tokens[token_index + 1:]:
+                if candidate[2] == 'style' and candidate[3]:
+                    styles.append(source[start:candidate[1]])
+                    break
+        if name == 'body' and not closing and body_markup is None:
+            body_attrs = raw[raw.lower().find('body') + 4:-1]
+            for candidate in tokens[token_index + 1:]:
+                if candidate[2] == 'body' and candidate[3]:
+                    body_markup = source[end:candidate[0]]
+                    break
+    return styles, body_markup, body_attrs
+
+
+def _embedded_text_override(markup: str) -> str:
+    """Inject the deterministic text harness into a nested document."""
+    override = TEXT_TEMPLATE_OVERRIDE.replace(
+        'body, body *', 'html, body, body *', 1
+    )
+    head_end = re.search(r'</head\s*>', markup, re.IGNORECASE)
+    if head_end:
+        return markup[:head_end.start()] + override + markup[head_end.start():]
+    return override + markup
+
+
 def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     """Read an HTML file and extract body content + style blocks for Chrome rendering.
     The template must include <style> blocks so Chrome applies the same CSS rules
@@ -10420,8 +10893,16 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
 
     html_dir = os.path.dirname(os.path.abspath(html_path))
 
-    # Extract <style> blocks from anywhere in the document (head or body)
-    style_blocks = re.findall(r'<style[^>]*>.*?</style>', content, re.DOTALL | re.IGNORECASE)
+    has_embedded_markup = bool(re.search(r'\bsrcdoc\s*=', content, re.IGNORECASE))
+    embedded_body = None
+    embedded_body_attrs = None
+    if has_embedded_markup:
+        style_blocks, embedded_body, embedded_body_attrs = _outer_html_sections(content)
+    else:
+        # Extract <style> blocks from anywhere in the document (head or body)
+        style_blocks = re.findall(
+            r'<style[^>]*>.*?</style>', content, re.DOTALL | re.IGNORECASE
+        )
 
     # Preserve inline <body style="..."> declarations in the Chrome template.
     # The Rust generator applies parsed body styles to `vp`; without this,
@@ -10432,13 +10913,16 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     # visible body text in the comparison template.
     body_tag = r'<body\b((?:[^>"\']+|"[^"]*"|\'[^\']*\')*)>'
     body_open = re.search(body_tag, markup_content, re.IGNORECASE)
-    if body_open:
-        style_attr = re.search(r'\bstyle=["\']([^"\']*)["\']', body_open.group(1), re.IGNORECASE)
+    body_attrs = embedded_body_attrs if has_embedded_markup else (
+        body_open.group(1) if body_open else None
+    )
+    if body_attrs is not None:
+        style_attr = re.search(r'\bstyle=["\']([^"\']*)["\']', body_attrs, re.IGNORECASE)
         if style_attr:
             style_blocks.append(f"<style>body {{{style_attr.group(1)}}}</style>")
         onload_attr = re.search(
             r'''\bonload\s*=\s*(["'])(.*?)\1''',
-            body_open.group(1), re.IGNORECASE | re.DOTALL,
+            body_attrs, re.IGNORECASE | re.DOTALL,
         )
         if onload_attr:
             class_add = re.fullmatch(
@@ -10479,12 +10963,14 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     style_prefix = '\n'.join(style_blocks)
 
     # Extract body content
-    body_match = re.search(
+    body_match = None if has_embedded_markup else re.search(
         body_tag + r'(.*?)</body>',
         markup_content,
         re.DOTALL | re.IGNORECASE,
     )
-    if body_match:
+    if embedded_body is not None:
+        body = embedded_body
+    elif body_match:
         body = body_match.group(2)
     else:
         # No explicit body — use content after meta/link tags
@@ -10611,6 +11097,8 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
                 if v is None:
                     attr_str += f' {k}'
                 else:
+                    if tag == 'iframe' and k == 'srcdoc' and RETAIN_TEXT:
+                        v = _embedded_text_override(v)
                     attr_str += f' {k}="{html_module.escape(v, quote=True)}"'
             self.out.write(f'<{tag}{attr_str}>')
             if tag == 'style':

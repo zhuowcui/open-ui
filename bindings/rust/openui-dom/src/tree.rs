@@ -222,6 +222,10 @@ pub struct NodeData {
 
     /// Optional deterministic intrinsic/replaced element state.
     pub replaced: Option<ReplacedContent>,
+    /// Original encoded HTML for a statically lowered embedded document.
+    /// Its generated child viewport supplies layout and paint without a live
+    /// browsing context or script runtime.
+    pub embedded_document: Option<ImageResourceId>,
     pub form_control: Option<FormControlRole>,
     /// Whether the platform-native form-control appearance remains enabled
     /// after the authored `appearance` cascade.
@@ -262,6 +266,7 @@ impl NodeData {
             table_col_span: 1,
             table_row_span: 1,
             replaced: None,
+            embedded_document: None,
             form_control: None,
             form_control_native_appearance: true,
             scroll_marker_inactive_background: None,

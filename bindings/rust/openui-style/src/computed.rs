@@ -360,6 +360,10 @@ pub struct ComputedStyle {
     /// positioned descendants. Set for `will-change: transform` in ported WPTs.
     pub establishes_transform_containing_block: bool,
 
+    /// Whether `will-change: transform` requested a pre-promoted compositing
+    /// layer, independently of an authored non-identity transform.
+    pub will_change_transform: bool,
+
     /// CSS `float`. Initial: `none`.
     pub float: Float,
 
@@ -963,6 +967,7 @@ impl ComputedStyle {
             list_style_type: ListStyleType::Disc,
             position: Position::INITIAL, // static
             establishes_transform_containing_block: false,
+            will_change_transform: false,
             float: Float::INITIAL,         // none
             clear: Clear::INITIAL,         // none
             overflow_x: Overflow::INITIAL, // visible

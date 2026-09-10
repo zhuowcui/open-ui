@@ -1102,6 +1102,8 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
         inline_containing_block_node: candidate.inline_containing_block_node,
         block_in_inline_static_advance: LayoutUnit::zero(),
         visual_offset: PhysicalOffset::zero(),
+        continuation_visual_offset: PhysicalOffset::zero(),
+        transform_containing_block_source_offset: None,
         fragmentainer_index: None,
         split_containing_block_source_offset: None,
     });

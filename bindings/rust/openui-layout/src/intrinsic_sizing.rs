@@ -997,7 +997,15 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         } else {
             multicol_columnar_min_inline
         };
-        let max_column_width = specified_column_width.max_of(multicol_columnar_max_inline);
+        // Max-content measurement keeps an uninterrupted row of floats
+        // side-by-side even when final layout will place them into a narrow
+        // authored column. This is observable when an auto-width floated
+        // multicol is itself shrink-to-fit: its minimum contribution remains
+        // the column measure, while its preferred contribution includes the
+        // complete float row.
+        let max_column_width = specified_column_width
+            .max_of(multicol_columnar_max_inline)
+            .max_of(widest_float_inline_line);
         min_inline = multicol_spanner_min_inline.max_of(min_column_width * count + gaps);
         max_inline = multicol_spanner_max_inline.max_of(max_column_width * count + gaps);
 
@@ -1793,6 +1801,13 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
     let child_style = &doc.node(child_id).style;
     let child_tag = doc.node(child_id).tag;
 
+    // HTML's WBR is a soft wrap opportunity, not a principal CSS box. Even
+    // when float blockification changes its computed display, it contributes
+    // no intrinsic width or height of its own.
+    if child_tag == ElementTag::WordBreak {
+        return IntrinsicSizes::zero();
+    }
+
     // Resolve child margins (percentages resolve to zero for intrinsic sizing).
     let margin = resolve_margins(child_style, LayoutUnit::zero());
     let margin_inline = margin.inline_sum();
@@ -2570,9 +2585,22 @@ pub fn compute_replaced_intrinsic_sizes_for_node(
     let node = doc.node(node_id);
     let replaced = node.replaced;
     let missing_image = node.tag == ElementTag::Image && replaced.is_none();
+    let source_less_alt_width = (missing_image && doc.attribute(node_id, "src").is_none())
+        .then(|| doc.attribute(node_id, "alt"))
+        .flatten()
+        .filter(|alt| !alt.is_empty())
+        .map(|alt| {
+            let font = Font::new(style_to_font_description(&node.style));
+            font.width(alt)
+        })
+        .unwrap_or(0.0);
     let natural_width = replaced
         .and_then(|content| content.intrinsic_width)
-        .unwrap_or(if missing_image { 16.0 } else { 300.0 });
+        .unwrap_or(if missing_image {
+            16.0 + source_less_alt_width
+        } else {
+            300.0
+        });
     let natural_height = replaced
         .and_then(|content| content.intrinsic_height)
         .unwrap_or(if missing_image { 16.0 } else { 150.0 });
@@ -2717,7 +2745,6 @@ fn is_replaced_element(tag: ElementTag) -> bool {
         ElementTag::Image
             | ElementTag::Canvas
             | ElementTag::Svg
-            | ElementTag::IFrame
             | ElementTag::Object
             | ElementTag::Audio
             | ElementTag::Video

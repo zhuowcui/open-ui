@@ -138,6 +138,14 @@ pub struct PositionedFragmentationData {
     /// It is applied after logical fragmentation so paint movement never
     /// changes the selected fragmentainer.
     pub visual_offset: PhysicalOffset,
+    /// Physical reconstruction applied only after continuation selection.
+    /// Nested fragmentation uses this when an inner mapper has consumed a
+    /// source block-end coordinate that an outer mapper must retain as an
+    /// equivalent inline-row advance.
+    pub continuation_visual_offset: PhysicalOffset,
+    /// Source-space origin of the transformed containing block, when that
+    /// ancestor was elided while promoting this positioned fragment.
+    pub transform_containing_block_source_offset: Option<PhysicalOffset>,
     /// Logical fragmentainer selected by the owning multicol. This is set on
     /// continuations and lets an ancestor resume nested rows without deriving
     /// flow order from a translated paint offset.
@@ -146,6 +154,19 @@ pub struct PositionedFragmentationData {
     /// Such positioned boxes are deliberately materialized in each portion;
     /// the portion clip, rather than ancestor promotion, selects their ink.
     pub split_containing_block_source_offset: Option<LayoutUnit>,
+}
+
+/// A transformed ancestor removed when a positioned descendant is promoted
+/// into an owning multicol's continuation list.  `source_*` describes the
+/// unfragmented box in multicol coordinates; `fragment_*` is resolved for
+/// each generated continuation. Paint reapplies these boxes outer-to-inner.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PromotedTransformAncestor {
+    pub node_id: NodeId,
+    pub source_offset: PhysicalOffset,
+    pub source_size: PhysicalSize,
+    pub fragment_offset: PhysicalOffset,
+    pub fragment_size: PhysicalSize,
 }
 
 /// Authoritative geometry of a multicol fragment. Nested fragmentation uses
@@ -263,6 +284,16 @@ pub struct Fragment {
 
     /// The positioning inputs used to create an out-of-flow fragment.
     pub positioned_fragmentation: Option<PositionedFragmentationData>,
+
+    /// Transformed containing-block ancestors elided by positioned
+    /// fragmentation promotion.
+    pub promoted_transform_ancestors: Vec<PromotedTransformAncestor>,
+
+    /// Whether promoted transform replay paints this continuation's own
+    /// decoration box instead of reconstructing the complete unsliced source
+    /// decoration. Rotation/shear fragments use their local box; axis-aligned
+    /// transforms retain the source decoration positioning area.
+    pub promoted_transform_uses_fragment_decoration: bool,
 
     /// Resolved column geometry when this fragment is a multicol container.
     pub multicol_fragmentation: Option<MulticolFragmentationData>,
@@ -458,6 +489,8 @@ impl Fragment {
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
             positioned_fragmentation: None,
+            promoted_transform_ancestors: Vec::new(),
+            promoted_transform_uses_fragment_decoration: false,
             multicol_fragmentation: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
@@ -519,6 +552,8 @@ impl Fragment {
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
             positioned_fragmentation: None,
+            promoted_transform_ancestors: Vec::new(),
+            promoted_transform_uses_fragment_decoration: false,
             multicol_fragmentation: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
