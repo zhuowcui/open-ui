@@ -146,6 +146,28 @@ impl FontPlatformData {
         oblique_angle: f32,
         requested_weight: skia_safe::font_style::Weight,
     ) -> Self {
+        Self::with_synthetic_styles_and_native_metrics(
+            typeface,
+            size,
+            oblique_angle,
+            requested_weight,
+            false,
+            false,
+        )
+    }
+
+    /// Create platform data with an optional native-control raster policy.
+    /// Native widget labels are rendered by Chromium's platform theme and do
+    /// not inherit the alias/no-hint profile used for deterministic author
+    /// text in pixel comparisons.
+    pub fn with_synthetic_styles_and_native_metrics(
+        typeface: Typeface,
+        size: f32,
+        oblique_angle: f32,
+        requested_weight: skia_safe::font_style::Weight,
+        native_control_text: bool,
+        native_button_text_metrics: bool,
+    ) -> Self {
         // Font matching may return a regular face when a family has no bold
         // member (Ahem is the canonical example). CSS font synthesis requires
         // a synthetic bold face in that case; SkFont does not infer it from
@@ -153,15 +175,29 @@ impl FontPlatformData {
         let synthetic_bold = requested_weight >= skia_safe::font_style::Weight::SEMI_BOLD
             && typeface.font_style().weight() < skia_safe::font_style::Weight::SEMI_BOLD;
         let mut sk_font = SkFont::from_typeface(&typeface, size);
+        let _ = native_button_text_metrics;
         sk_font.set_embolden(synthetic_bold);
         // SP14 parity experiment: allow overriding rasterization settings via env
         // vars so we can match headless Chromium without recompiling per combo.
         // OPENUI_SUBPIXEL=0/1, OPENUI_HINTING=none/slight/normal/full,
         // OPENUI_EDGING=alias/aa/subpixel, OPENUI_AUTOHINT=0/1, OPENUI_FORCE_AA=0/1.
-        let subpixel = std::env::var("OPENUI_SUBPIXEL").ok().as_deref() != Some("0");
+        let subpixel =
+            native_control_text || std::env::var("OPENUI_SUBPIXEL").ok().as_deref() != Some("0");
         sk_font.set_subpixel(subpixel);
-        let requested_hinting = std::env::var("OPENUI_HINTING").ok();
-        let requested_edging = std::env::var("OPENUI_EDGING").ok();
+        let requested_hinting = if native_control_text {
+            std::env::var("OPENUI_NATIVE_HINTING")
+                .ok()
+                .or_else(|| Some("slight".to_string()))
+        } else {
+            std::env::var("OPENUI_HINTING").ok()
+        };
+        let requested_edging = if native_control_text {
+            std::env::var("OPENUI_NATIVE_EDGING")
+                .ok()
+                .or_else(|| Some("subpixel".to_string()))
+        } else {
+            std::env::var("OPENUI_EDGING").ok()
+        };
         let is_ahem = typeface.family_name().eq_ignore_ascii_case("Ahem");
         let hinting = resolve_hinting(
             requested_hinting.as_deref(),
@@ -186,6 +222,11 @@ impl FontPlatformData {
         }
         if std::env::var("OPENUI_AUTOHINT").ok().as_deref() == Some("1") {
             sk_font.set_force_auto_hinting(true);
+        }
+        if native_control_text {
+            sk_font.set_force_auto_hinting(
+                std::env::var("OPENUI_NATIVE_AUTOHINT").ok().as_deref() == Some("1"),
+            );
         }
 
         // Apply synthetic oblique via skew if angle is non-zero.

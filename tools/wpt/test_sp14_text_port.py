@@ -191,8 +191,12 @@ class TextPorterTests(unittest.TestCase):
         )
         parser = port_wpt.parse_wpt_html(str(shorthand))
         rust = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
-        self.assertIn("border_top_left_radius = (20.0_f32, 20.0_f32)", rust)
-        self.assertIn("border_top_left_radius = (20.0_f32, 10.0_f32)", rust)
+        self.assertGreaterEqual(
+            rust.count("border_top_left_radius = (20.0_f32, 20.0_f32)"), 2
+        )
+        self.assertGreaterEqual(
+            rust.count("border_radius_percent[0] = (true, true)"), 1
+        )
 
     def test_display_contents_reparents_text_without_painting_a_box(self):
         path = self.html(

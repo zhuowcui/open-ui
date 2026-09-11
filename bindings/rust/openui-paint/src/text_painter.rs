@@ -25,7 +25,7 @@ use skia_safe::{
 use openui_layout::inline::text_combine::TextCombineLayout;
 use openui_style::{Color, ComputedStyle, FontFamily};
 use openui_text::font::FontMetrics;
-use openui_text::shaping::ShapeResult;
+use openui_text::shaping::{ShapeResult, TextRasterPolicy};
 
 /// Paint shaped text glyphs onto a canvas.
 ///
@@ -51,11 +51,39 @@ pub fn paint_text(
     origin: (f32, f32),
     style: &ComputedStyle,
 ) {
+    let raster_policy = if style.native_control_text {
+        TextRasterPolicy::ChromiumNativeControl
+    } else {
+        TextRasterPolicy::Skia
+    };
+    paint_text_with_raster_policy(canvas, shape_result, origin, style, raster_policy);
+}
+
+/// Paint shaped glyphs with an explicit platform outline raster policy.
+pub fn paint_text_with_raster_policy(
+    canvas: &Canvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+    raster_policy: TextRasterPolicy,
+) {
     // Build a Skia TextBlob from the shaped glyph runs.
     // Blink: TextPainter::Paint → DrawBlob → canvas->drawTextBlob()
-    let lcd_origin =
-        (std::env::var("OPENUI_REAL_FONT_RASTER").ok().as_deref() == Some("1")).then_some(origin.0);
-    if let Some(text_blob) = shape_result.to_text_blob_with_lcd_origin(lcd_origin) {
+    let lcd_origin = (style.native_control_text
+        || std::env::var("OPENUI_REAL_FONT_RASTER").ok().as_deref() == Some("1"))
+    .then(|| {
+        origin.0
+            + if style.native_control_text {
+                std::env::var("OPENUI_NATIVE_LCD_PHASE")
+                    .ok()
+                    .and_then(|value| value.parse::<f32>().ok())
+                    .unwrap_or(0.0)
+            } else {
+                0.0
+            }
+    });
+    if let Some(text_blob) = shape_result.to_text_blob_with_raster_policy(lcd_origin, raster_policy)
+    {
         // Cull against the glyphs' logical ink bounds before Skia applies its
         // LCD coverage filter.  Skia's filter taps extend one device pixel
         // beyond those bounds; if a run begins exactly at a hard overflow

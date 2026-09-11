@@ -13,5 +13,7 @@ mod shape_result;
 mod shaper;
 
 pub use segmenter::{RunSegment, RunSegmenter, Script};
-pub use shape_result::{ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection};
+pub use shape_result::{
+    ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection, TextRasterPolicy,
+};
 pub use shaper::TextShaper;

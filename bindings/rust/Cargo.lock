@@ -74,6 +74,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5d20789868f4b01b2f2caec9f5c4e0213b41e3e5702a50157d699ae31ced2fcb"
 
 [[package]]
+name = "bytemuck"
+version = "1.25.0"
+dependencies = [
+ "bytemuck_derive",
+]
+
+[[package]]
+name = "bytemuck_derive"
+version = "1.10.2"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "cast"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -315,6 +331,13 @@ checksum = "843fba2746e448b37e26a819579957415c8cef339bf08564fe8b7ddbd959573c"
 dependencies = [
  "crc32fast",
  "miniz_oxide",
+]
+
+[[package]]
+name = "font-types"
+version = "0.11.0"
+dependencies = [
+ "bytemuck",
 ]
 
 [[package]]
@@ -581,6 +604,7 @@ dependencies = [
  "openui-geometry",
  "openui-style",
  "skia-safe",
+ "skrifa",
  "unicode-bidi",
  "unicode-script",
  "unicode-segmentation",
@@ -698,6 +722,14 @@ checksum = "22e18b0f0062d30d4230b2e85ff77fdfe4326feb054b9783a3460d8435c8ab91"
 dependencies = [
  "crossbeam-deque",
  "crossbeam-utils",
+]
+
+[[package]]
+name = "read-fonts"
+version = "0.37.0"
+dependencies = [
+ "bytemuck",
+ "font-types",
 ]
 
 [[package]]
@@ -859,6 +891,14 @@ source = "git+https://github.com/rust-skia/rust-skia.git?rev=c19a70ee1e5ea5a7790
 dependencies = [
  "bitflags 2.11.0",
  "skia-bindings",
+]
+
+[[package]]
+name = "skrifa"
+version = "0.40.0"
+dependencies = [
+ "bytemuck",
+ "read-fonts",
 ]
 
 [[package]]

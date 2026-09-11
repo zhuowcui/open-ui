@@ -23,8 +23,8 @@ use openui_geometry::{
 use openui_style::{
     BoxDecorationBreak, BoxSizing, BreakInside, BreakValue, Clear, ColumnSpan, ComputedStyle,
     ContentPosition, Direction, Display, Float, FontFamily, ItemPosition, LineHeight,
-    ListStylePosition, ListStyleType, Overflow, Position, ScrollSnapAlign, ScrollSnapAxis,
-    TextAlign, VerticalAlign, WhiteSpace,
+    ListStylePosition, ListStyleType, Overflow, Position, PositionArea, ScrollSnapAlign,
+    ScrollSnapAxis, TextAlign, VerticalAlign, WebkitBoxOrient, WhiteSpace,
 };
 use openui_text::Font;
 
@@ -34,6 +34,75 @@ use crate::exclusions::{ClearType, ExclusionArea, ExclusionSpace, ExclusionType}
 use crate::fragment::{Fragment, FragmentKind, PromotedTransformAncestor, TextRunOrientation};
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 use crate::out_of_flow::OutOfFlowCandidate;
+
+fn fragment_rect_for_node(
+    fragments: &[Fragment],
+    target: NodeId,
+    ancestor_offset: PhysicalOffset,
+) -> Option<(PhysicalOffset, PhysicalSize)> {
+    for fragment in fragments {
+        let offset = PhysicalOffset::new(
+            ancestor_offset.left + fragment.offset.left,
+            ancestor_offset.top + fragment.offset.top,
+        );
+        if fragment.node_id == target {
+            return Some((offset, fragment.size));
+        }
+        if let Some(found) = fragment_rect_for_node(&fragment.children, target, offset) {
+            return Some(found);
+        }
+    }
+    None
+}
+
+/// Resolve an automatic static-position rectangle from a named anchor that
+/// has already participated in the current containing block's in-flow pass.
+/// The ordinary out-of-flow solver then performs shrink-to-fit sizing and
+/// margin handling around the selected static edges.
+fn apply_anchor_position_area(
+    doc: &Document,
+    candidate: &mut OutOfFlowCandidate,
+    in_flow_fragments: &[Fragment],
+) {
+    let Some(anchor_name) = candidate.style.position_anchor.as_deref() else {
+        return;
+    };
+    if candidate.style.position_area == PositionArea::None {
+        return;
+    }
+    let Some(anchor_id) = doc.find_anchor_named(anchor_name) else {
+        return;
+    };
+    let Some((offset, size)) =
+        fragment_rect_for_node(in_flow_fragments, anchor_id, PhysicalOffset::zero())
+    else {
+        return;
+    };
+
+    use crate::out_of_flow::StaticPositionEdge::{Center, End, Start};
+    let left = offset.left;
+    let center_x = offset.left + size.width / 2;
+    let right = offset.left + size.width;
+    let top = offset.top;
+    let center_y = offset.top + size.height / 2;
+    let bottom = offset.top + size.height;
+
+    let (x, horizontal_edge, y, vertical_edge) = match candidate.style.position_area {
+        PositionArea::None => return,
+        PositionArea::TopLeft => (left, End, top, End),
+        PositionArea::TopCenter => (center_x, Center, top, End),
+        PositionArea::TopRight => (right, Start, top, End),
+        PositionArea::LeftCenter => (left, End, center_y, Center),
+        PositionArea::Center => (center_x, Center, center_y, Center),
+        PositionArea::RightCenter => (right, Start, center_y, Center),
+        PositionArea::BottomLeft => (left, End, bottom, Start),
+        PositionArea::BottomCenter => (center_x, Center, bottom, Start),
+        PositionArea::BottomRight => (right, Start, bottom, Start),
+    };
+    candidate.static_position = PhysicalOffset::new(x, y);
+    candidate.static_position_horizontal_edge = horizontal_edge;
+    candidate.static_position_vertical_edge = vertical_edge;
+}
 
 fn style_with_logical_dimensions(
     style: &ComputedStyle,
@@ -557,6 +626,7 @@ fn missing_image_layout(
         && (!node.style.width.is_auto() || !node.style.height.is_auto());
     if node.tag != ElementTag::Image
         || node.replaced.is_some()
+        || doc.children(node_id).next().is_some()
         || (doc.attribute(node_id, "src").is_none() && !source_less_alt && !source_less_sized)
     {
         return None;
@@ -603,7 +673,10 @@ fn missing_image_layout(
         && style.height.is_auto()
         && style.aspect_ratio.is_none())
     .then(|| {
-        let alt_width = if source_less_alt {
+        let alt_width = if doc
+            .attribute(node_id, "alt")
+            .is_some_and(|alt| !alt.is_empty())
+        {
             let font = Font::new(crate::inline::items_builder::style_to_font_description(
                 style,
             ));
@@ -628,7 +701,24 @@ fn missing_image_layout(
     fragment.border = border;
     fragment.padding = padding;
     fragment.margin = resolve_margins(style, space.percentage_resolution_inline_size);
-    let baseline = fragment.size.height - fragment.margin.bottom;
+    let has_unsized_alt_fallback = unsized_icon.is_some()
+        && doc
+            .attribute(node_id, "alt")
+            .is_some_and(|alt| !alt.is_empty());
+    let baseline = if has_unsized_alt_fallback {
+        // A failed image's anonymous alternative-text run owns its baseline.
+        // Export that text baseline instead of the bottom margin edge so the
+        // 16px fallback slot does not add an extra font descent to the line.
+        let font = Font::new(crate::inline::items_builder::style_to_font_description(
+            style,
+        ));
+        let ascent = font
+            .font_metrics()
+            .map_or(style.font_size * 0.8, |metrics| metrics.ascent);
+        border.top + padding.top + LayoutUnit::from_f32(ascent)
+    } else {
+        fragment.size.height - fragment.margin.bottom
+    };
     fragment.first_baseline = Some(baseline);
     fragment.last_baseline = Some(baseline);
     Some(fragment)
@@ -1401,7 +1491,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // remains on the block-flow compatibility path so its line descendants
     // can be counted and clipped by the clamp implementation.
     let active_legacy_flex = physical_style.legacy_webkit_box
-        && physical_style.line_clamp == openui_style::LineClamp::None;
+        && !(physical_style.legacy_webkit_line_clamp
+            && physical_style.webkit_box_orient == WebkitBoxOrient::Vertical);
     if physical_style.display.is_flex() || active_legacy_flex {
         return crate::flex::flex_layout(doc, node_id, space);
     }
@@ -1905,7 +1996,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         || style.has_layout_containment()
         || style.opacity < 1.0
         || is_root;
-    let captures_fixed_pos_descendants = is_root || style.establishes_transform_containing_block;
+    let captures_fixed_pos_descendants =
+        is_root || style.establishes_transform_containing_block || style.has_layout_containment();
     let mut oof_candidates: Vec<OutOfFlowCandidate> = Vec::new();
     let mut bubbled_oof_candidates: Vec<OutOfFlowCandidate> = Vec::new();
     // Per CSS 2.1 §10.1, the containing block for absolute positioning is the
@@ -1920,12 +2012,43 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // or mixed content (CSS 2.2 §9.2.1.1 — anonymous block boxes). A
     // scroll-marker group owns virtual marker children sourced from its
     // originating scroller rather than DOM children of the pseudo box.
-    let virtual_marker_children =
+    let mut virtual_marker_children =
         (doc.node(node_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup)).then(|| {
             let mut markers = Vec::new();
             collect_scroll_marker_group_items(doc, doc.node(node_id).pseudo_origin, &mut markers);
             markers
         });
+    if let Some(markers) = virtual_marker_children.as_mut() {
+        if markers.iter().any(|&child_id| {
+            doc.node(child_id).pseudo_kind == Some(PseudoElementKind::ColumnScrollMarker)
+        }) {
+            let origin = doc.node(node_id).pseudo_origin;
+            if !origin.is_none() {
+                let origin_fragment = block_layout(doc, origin, space);
+                let column_count = origin_fragment
+                    .children
+                    .iter()
+                    .filter(|fragment| fragment.kind == FragmentKind::ColumnBox)
+                    .count()
+                    .max(1);
+                if column_count > 1 {
+                    *markers = markers
+                        .iter()
+                        .flat_map(|&child_id| {
+                            let count = if doc.node(child_id).pseudo_kind
+                                == Some(PseudoElementKind::ColumnScrollMarker)
+                            {
+                                column_count
+                            } else {
+                                1
+                            };
+                            std::iter::repeat_n(child_id, count)
+                        })
+                        .collect();
+                }
+            }
+        }
+    }
     let has_inline = virtual_marker_children.as_ref().map_or_else(
         || crate::inline::algorithm::has_inline_children(doc, node_id),
         |children| {
@@ -2313,6 +2436,9 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             let mut is_first_segment = true;
             let mut interrupted_block_advances = Vec::new();
             let mut formatted_zero_atomic_after_clamp = false;
+            let legacy_inline_box_block_after_clamp = style.legacy_webkit_box
+                && style.legacy_webkit_line_clamp
+                && style.display == Display::InlineBlock;
             for (block_index, bi_info) in block_in_inline_sorted.iter().enumerate() {
                 let block_child_is_zero_atomic = {
                     let block_style = &doc.node(bi_info.node_id).style;
@@ -2323,6 +2449,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     .as_ref()
                     .is_some_and(|context| context.is_exhausted())
                     && !block_child_is_zero_atomic
+                    && !legacy_inline_box_block_after_clamp
                 {
                     segment_start_item = items_data.items.len();
                     break;
@@ -2394,6 +2521,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     .as_ref()
                     .is_some_and(|context| context.is_exhausted())
                     && !block_child_is_zero_atomic
+                    && !legacy_inline_box_block_after_clamp
                 {
                     segment_start_item = items_data.items.len();
                     break;
@@ -2422,6 +2550,17 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     // and may become the last visible continuation.
                     block_child_space.line_clamp_context = None;
                     formatted_zero_atomic_after_clamp = true;
+                }
+                if legacy_inline_box_block_after_clamp
+                    && space
+                        .line_clamp_context
+                        .as_ref()
+                        .is_some_and(|context| context.is_exhausted())
+                {
+                    // Legacy -webkit-inline-box clamps its anonymous inline
+                    // line, but a block-in-inline descendant is reconstructed
+                    // outside that anonymous line and remains formatted.
+                    block_child_space.line_clamp_context = None;
                 }
                 let mut block_child_frag = block_layout(doc, block_child_id, &block_child_space);
                 normalize_multicol_child_outer_box(
@@ -2875,6 +3014,9 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         let mut exclusion_space_mixed = initial_exclusion_space(space);
         let mut boundary_clamp_marker_placed = false;
         let mut physical_clamp_marker_suppressed = false;
+        let legacy_inline_box_block_after_clamp = style.legacy_webkit_box
+            && style.legacy_webkit_line_clamp
+            && style.display == Display::InlineBlock;
 
         while i < children_ids.len() {
             let child_id = children_ids[i];
@@ -2975,6 +3117,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     && !child_is_zero_clamp_overflow
                     && !child_is_boundary_clamp_float
                     && !child_is_boundary_oof_wrapper
+                    && !legacy_inline_box_block_after_clamp
                 {
                     i += 1;
                     continue;
@@ -3015,7 +3158,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     inline_containing_block_node: None,
                 };
                 let captures = if child_style.position == Position::Fixed {
-                    is_root || style.establishes_transform_containing_block
+                    captures_fixed_pos_descendants
                 } else {
                     establishes_cb_for_abspos
                 };
@@ -3583,10 +3726,23 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 let oof_count_before = oof_candidates.len();
                 let bubbled_count_before = bubbled_oof_candidates.len();
 
+                let unclamped_legacy_space = if legacy_inline_box_block_after_clamp
+                    && space
+                        .line_clamp_context
+                        .as_ref()
+                        .is_some_and(|context| context.is_exhausted())
+                {
+                    let mut unclamped = (*space).clone();
+                    unclamped.line_clamp_context = None;
+                    Some(unclamped)
+                } else {
+                    None
+                };
+                let child_parent_space = unclamped_legacy_space.as_ref().unwrap_or(space);
                 layout_block_child(
                     doc,
                     child_id,
-                    space,
+                    child_parent_space,
                     adjusted_available,
                     child_percentage_block_size,
                     children_available_block_size,
@@ -3820,7 +3976,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     inline_containing_block_node: None,
                 };
                 let captures = if child_style.position == Position::Fixed {
-                    is_root || style.establishes_transform_containing_block
+                    captures_fixed_pos_descendants
                 } else {
                     establishes_cb_for_abspos
                 };
@@ -4530,10 +4686,23 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     // ── Step 5: Resolve height ───────────────────────────────────────
     // Blink: ComputeBlockSizeForFragment (length_utils.h:314)
     let is_viewport = doc.node(node_id).tag == openui_dom::ElementTag::Viewport;
-    let sizing_intrinsic_block_size = crate::containment::logical_block_fallback(physical_style)
-        .map_or(intrinsic_block_size, |fallback| {
-            fallback + border_padding_block
-        });
+    // A scroll-marker group whose own scrollport has two forced scrollbar
+    // axes resolves an automatic block size from its empty scrollport, not
+    // from the virtual marker contents. The contents remain laid out as
+    // scrollable overflow and are clipped by the zero-sized content box.
+    let marker_group_forced_scrollport = doc.node(node_id).pseudo_kind
+        == Some(PseudoElementKind::ScrollMarkerGroup)
+        && style.height.is_auto()
+        && style.overflow_x == Overflow::Scroll
+        && style.overflow_y == Overflow::Scroll;
+    let sizing_intrinsic_block_size = if marker_group_forced_scrollport {
+        border_padding_block
+    } else {
+        crate::containment::logical_block_fallback(physical_style)
+            .map_or(intrinsic_block_size, |fallback| {
+                fallback + border_padding_block
+            })
+    };
     let resolved_block_size = resolve_block_size(
         doc,
         node_id,
@@ -4548,8 +4717,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
     let first_child_is_fieldset_legend = doc.node(node_id).tag == ElementTag::Fieldset
         && doc
             .children(node_id)
-            .next()
-            .is_some_and(|child| doc.node(child).tag == ElementTag::Legend);
+            .any(|child| doc.node(child).tag == ElementTag::Legend);
     // The first legend consumes the fieldset's block-start border area. For
     // an auto-height fieldset that edge is not an additional row below the
     // legend/content union; Blink's used border box is therefore shorter by
@@ -4777,6 +4945,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 c.containing_block_direction = style.direction;
                 c.containing_block_node = node_id;
             }
+            apply_anchor_position_area(doc, c, &child_fragments);
         }
 
         // Iteratively process OOF candidates. Each pass may produce nested OOF
@@ -4794,7 +4963,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                     c.static_position.left = c.static_position.left + frag.offset.left;
                     c.static_position.top = c.static_position.top + frag.offset.top;
                     let captures = if c.style.position == Position::Fixed {
-                        is_root || style.establishes_transform_containing_block
+                        captures_fixed_pos_descendants
                     } else {
                         establishes_cb_for_abspos
                     };
@@ -5292,6 +5461,15 @@ fn collect_scroll_marker_group_descendants(
     parent: NodeId,
     output: &mut Vec<NodeId>,
 ) {
+    if parent != scroller
+        && (doc.node(parent).replaced.is_some()
+            || doc.node(parent).form_control == Some(openui_dom::FormControlRole::Select))
+    {
+        // Fallback DOM below replaced content and native select internals is
+        // not part of the rendered flat tree and cannot supply markers to an
+        // ancestor scroll-marker group.
+        return;
+    }
     for child_id in doc.children(parent) {
         if doc.node(child_id).pseudo_kind.is_none()
             && doc.node(child_id).style.scroll_marker_group != openui_style::ScrollMarkerGroup::None
@@ -6220,6 +6398,10 @@ fn layout_block_child(
         .direction
         .writing_direction(child_style.writing_mode);
     let child_is_new_fc = establishes_new_fc(child_style)
+        // The HTML fieldset's anonymous content box establishes an
+        // independent formatting context. In particular, legacy WebKit line
+        // clamping skips its internal line boxes and resumes after it.
+        || doc.node(child_id).tag == ElementTag::Fieldset
         || doc.node(child_id).tag == ElementTag::Html
         || child_direction.is_horizontal() != space.writing_direction.is_horizontal();
     let mut child_space = crate::block_child_constraint_space(

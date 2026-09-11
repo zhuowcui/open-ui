@@ -584,11 +584,6 @@ fn fragment_text_ink_bounds(
         })
 }
 
-fn fragment_text_ink_height(fragment: &Fragment) -> LayoutUnit {
-    fragment_text_ink_bounds(fragment, LayoutUnit::zero())
-        .map_or(LayoutUnit::zero(), |(start, end)| end - start)
-}
-
 fn fragment_descendant_text_ink_end(fragment: &Fragment) -> Option<LayoutUnit> {
     fragment
         .children
@@ -598,12 +593,27 @@ fn fragment_descendant_text_ink_end(fragment: &Fragment) -> Option<LayoutUnit> {
         .max()
 }
 
-fn fragment_contains_tag(doc: &Document, fragment: &Fragment, tag: ElementTag) -> bool {
-    (!fragment.node_id.is_none() && doc.node(fragment.node_id).tag == tag)
-        || fragment
-            .children
-            .iter()
-            .any(|child| fragment_contains_tag(doc, child, tag))
+fn nested_ruby_annotation_extent(doc: &Document, ruby_id: NodeId) -> LayoutUnit {
+    fn nested_extent(doc: &Document, node_id: NodeId) -> f32 {
+        doc.children(node_id).fold(0.0_f32, |extent, child_id| {
+            if doc.node(child_id).tag == ElementTag::Ruby {
+                let annotation_size = doc
+                    .children(child_id)
+                    .find(|nested_id| doc.node(*nested_id).tag == ElementTag::RubyText)
+                    .map_or(0.0, |nested_id| doc.node(nested_id).style.font_size);
+                extent.max(annotation_size + nested_extent(doc, child_id))
+            } else {
+                extent.max(nested_extent(doc, child_id))
+            }
+        })
+    }
+
+    let extent = doc
+        .children(ruby_id)
+        .filter(|child_id| doc.node(*child_id).tag == ElementTag::RubyText)
+        .map(|annotation_id| nested_extent(doc, annotation_id))
+        .fold(0.0_f32, f32::max);
+    LayoutUnit::from_f32(extent)
 }
 
 /// CSS 2.1 exposes an inline-block's last in-flow line-box baseline. A block
@@ -680,8 +690,29 @@ fn form_control_atomic_baseline(doc: &Document, fragment: &Fragment) -> Option<L
     }
 }
 
-fn align_ruby_internal_content(fragment: &mut Fragment, inline_size: LayoutUnit) {
+fn align_ruby_internal_content(doc: &Document, fragment: &mut Fragment, inline_size: LayoutUnit) {
     for line in &mut fragment.children {
+        for child in &mut line.children {
+            if child.node_id.is_none() || doc.node(child.node_id).tag != ElementTag::Ruby {
+                continue;
+            }
+            let extra = (inline_size - child.size.width).clamp_negative_to_zero();
+            if extra == LayoutUnit::zero() {
+                continue;
+            }
+            // A nested ruby shares the outer annotation column. Expand its
+            // atomic column, center the nested base, and leave its own
+            // annotation at the common inline-start edge.
+            child.size.width = child.size.width + extra;
+            for ruby_level in &mut child.children {
+                if ruby_level.node_id.is_none()
+                    || doc.node(ruby_level.node_id).tag != ElementTag::RubyText
+                {
+                    ruby_level.offset.left =
+                        ruby_level.offset.left + extra / LayoutUnit::from_i32(2);
+                }
+            }
+        }
         let Some(start) = line.children.iter().map(|child| child.offset.left).min() else {
             continue;
         };
@@ -738,9 +769,9 @@ fn layout_ruby_atomic(
             openui_style::RubyAlign::SpaceAround | openui_style::RubyAlign::Center
         )
     {
-        align_ruby_internal_content(&mut base, inline_size);
+        align_ruby_internal_content(doc, &mut base, inline_size);
         if let Some(annotation) = annotation.as_mut() {
-            align_ruby_internal_content(annotation, inline_size);
+            align_ruby_internal_content(doc, annotation, inline_size);
         }
     }
 
@@ -806,10 +837,16 @@ fn layout_ruby_atomic(
         annotation_leading_start
     };
     let annotation_position_trim = annotation_leading_trim;
+    let nested_in_annotation = !doc.node(node_id).parent.is_none()
+        && doc.node(doc.node(node_id).parent).tag == ElementTag::RubyText;
     let over_annotation_offset = if annotation_parent
         .is_some_and(|parent| doc.node(parent).style.font_size < doc.node(node_id).style.font_size)
     {
-        (base_leading_start - LayoutUnit::from_i32(1)).clamp_negative_to_zero()
+        if nested_in_annotation {
+            base_leading_start + LayoutUnit::from_i32(1)
+        } else {
+            (base_leading_start - LayoutUnit::from_i32(1)).clamp_negative_to_zero()
+        }
     } else {
         base_leading_start
     };
@@ -1832,7 +1869,10 @@ pub fn inline_layout_from_items(
 
             // Apply text-overflow: ellipsis if configured on the block style.
             if style.text_overflow == openui_style::TextOverflow::Ellipsis
-                && style.overflow_x == openui_style::Overflow::Hidden
+                && matches!(
+                    style.overflow_x,
+                    openui_style::Overflow::Hidden | openui_style::Overflow::Clip
+                )
             {
                 apply_text_overflow_ellipsis(
                     &mut line_info,
@@ -3269,7 +3309,10 @@ pub fn inline_layout_for_children(
             bidi_reorder_line(&mut line_info.items, &items_data);
 
             if style.text_overflow == openui_style::TextOverflow::Ellipsis
-                && style.overflow_x == openui_style::Overflow::Hidden
+                && matches!(
+                    style.overflow_x,
+                    openui_style::Overflow::Hidden | openui_style::Overflow::Clip
+                )
             {
                 apply_text_overflow_ellipsis(&mut line_info, line_available, &items_data, style);
             }
@@ -3734,7 +3777,8 @@ fn create_line_box(
                         item.node_id,
                         item_width,
                         percentage_block,
-                        block_style.line_clamp != openui_style::LineClamp::None,
+                        block_style.line_clamp != openui_style::LineClamp::None
+                            || style.line_height != LineHeight::Normal,
                     )
                 } else {
                     crate::block::block_layout(doc, item.node_id, &child_space)
@@ -3825,10 +3869,7 @@ fn create_line_box(
 
                 let ruby_base_metrics = atomic_layout_results[step2_idx]
                     .as_ref()
-                    .filter(|_| {
-                        doc.node(item.node_id).tag == ElementTag::Ruby
-                            && block_style.line_clamp != openui_style::LineClamp::None
-                    })
+                    .filter(|_| doc.node(item.node_id).tag == ElementTag::Ruby)
                     .and_then(|result| {
                         let (base, annotation) = if style.ruby_position.is_over() {
                             (result.children.last()?, result.children.first())
@@ -3836,30 +3877,16 @@ fn create_line_box(
                             (result.children.first()?, result.children.get(1))
                         };
                         let base_line = base.children.first()?;
-                        let base_ink = fragment_text_ink_height(base_line);
-                        let mut annotation_ink = annotation
-                            .map(fragment_text_ink_height)
-                            .unwrap_or(LayoutUnit::zero());
-                        if annotation.is_some_and(|fragment| {
-                            fragment_contains_tag(doc, fragment, ElementTag::Ruby)
-                        }) {
-                            annotation_ink += LayoutUnit::from_f32(
-                                doc.children(item.node_id)
-                                    .find(|child_id| {
-                                        doc.node(*child_id).tag == ElementTag::RubyText
-                                    })
-                                    .map(|child_id| doc.node(child_id).style.font_size)
-                                    .unwrap_or(0.0),
-                            );
-                        }
-                        let over_expansion = if style.ruby_position.is_over() {
-                            (annotation_ink - base_ink).clamp_negative_to_zero()
-                        } else {
-                            LayoutUnit::zero()
-                        };
+                        // Ruby annotations are ink overflow. Even nested ruby
+                        // must not enlarge the originating line box: CSS Ruby
+                        // keeps line-height and its baseline tied to the base
+                        // container while annotations paint outside it.
+                        let _ = annotation;
+                        let nested_annotation_extent =
+                            nested_ruby_annotation_extent(doc, item.node_id);
                         Some((
-                            (base_line.size.height + over_expansion).to_f32(),
-                            base_line.baseline_offset + over_expansion.to_f32(),
+                            (base_line.size.height + nested_annotation_extent).to_f32(),
+                            base_line.baseline_offset + nested_annotation_extent.to_f32(),
                         ))
                     });
                 let item_height = if let Some((base_height, _)) = ruby_base_metrics {
@@ -3924,12 +3951,22 @@ fn create_line_box(
                                 {
                                     // CSS 2.1 §10.8.1: an inline-block exports the
                                     // baseline of its last in-flow line box.
-                                    inline_block_last_line_baseline(doc, result).or_else(|| {
-                                        // Replaced form controls have their own
-                                        // synthesized baseline even though they
-                                        // contain no author-visible line box.
-                                        form_control_atomic_baseline(doc, result)
-                                    })
+                                    inline_block_last_line_baseline(doc, result)
+                                        .or_else(|| {
+                                            // A failed image exports the
+                                            // baseline of its anonymous
+                                            // alternative-text run.
+                                            (doc.node(result.node_id).tag == ElementTag::Image
+                                                && doc.node(result.node_id).replaced.is_none())
+                                            .then_some(result.first_baseline)
+                                            .flatten()
+                                        })
+                                        .or_else(|| {
+                                            // Replaced form controls have their own
+                                            // synthesized baseline even though they
+                                            // contain no author-visible line box.
+                                            form_control_atomic_baseline(doc, result)
+                                        })
                                 } else {
                                     result.first_baseline
                                 }
@@ -4781,12 +4818,14 @@ fn create_line_box(
                             } else if style.display == Display::InlineBlock
                                 && uses_deterministic_text_profile(style)
                             {
-                                inline_block_last_line_baseline(doc, result).or_else(|| {
-                                    // Replaced form controls have their own
-                                    // synthesized baseline even though they
-                                    // contain no author-visible line box.
-                                    form_control_atomic_baseline(doc, result)
-                                })
+                                inline_block_last_line_baseline(doc, result)
+                                    .or_else(|| {
+                                        (doc.node(result.node_id).tag == ElementTag::Image
+                                            && doc.node(result.node_id).replaced.is_none())
+                                        .then_some(result.first_baseline)
+                                        .flatten()
+                                    })
+                                    .or_else(|| form_control_atomic_baseline(doc, result))
                             } else {
                                 result.first_baseline
                             }
@@ -4965,7 +5004,15 @@ fn create_line_box(
             inline_offset =
                 inline_offset + resolve_margin_or_padding(&style.margin_right, percentage_base);
         } else {
-            inline_boxes[index].border_end = inline_offset;
+            // text-overflow hides descendant ink, not the decoration of an
+            // inline box whose remaining contents continue beyond the clip.
+            // The decoration is therefore clipped at the line's inline-end
+            // edge rather than shortened to the last retained item.
+            inline_boxes[index].border_end = if line_info.has_ellipsis {
+                inline_offset.max_of(available_width)
+            } else {
+                inline_offset
+            };
         }
     }
 

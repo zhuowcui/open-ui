@@ -62,7 +62,11 @@ impl Font {
     pub fn width(&self, text: &str) -> f32 {
         if let Some(font_data) = self.primary_font() {
             let (width, _) = font_data.sk_font().measure_str(text, None);
-            width
+            if self.description.native_button_text_metrics {
+                width * (13.0 / 13.328_125)
+            } else {
+                width
+            }
         } else {
             0.0
         }

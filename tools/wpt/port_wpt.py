@@ -2376,6 +2376,134 @@ def parse_simple_css_rules(css_text: str) -> list:
     return rules
 
 
+def parse_static_keyframes(css_text: str) -> dict[str, list[tuple[float, CssDeclarations]]]:
+    """Extract deterministic keyframe declarations without treating them as selectors."""
+    result = {}
+    source = re.sub(r'/\*.*?\*/', '', css_text, flags=re.DOTALL)
+    cursor = 0
+    pattern = re.compile(r'@(?:-webkit-)?keyframes\s+([-_a-zA-Z][-_a-zA-Z0-9]*)\s*\{', re.I)
+    while match := pattern.search(source, cursor):
+        depth = 1
+        end = match.end()
+        while end < len(source) and depth:
+            if source[end] == '{':
+                depth += 1
+            elif source[end] == '}':
+                depth -= 1
+            end += 1
+        if depth:
+            break
+        frames = []
+        for selector, declarations in _flatten_css_rules(source[match.end():end - 1]):
+            parsed = parse_inline_styles(declarations)
+            for component in selector.split(','):
+                token = component.strip().lower()
+                if token == 'from':
+                    offset = 0.0
+                elif token == 'to':
+                    offset = 1.0
+                elif token.endswith('%'):
+                    try:
+                        offset = float(token[:-1]) / 100.0
+                    except ValueError:
+                        continue
+                else:
+                    continue
+                frames.append((min(1.0, max(0.0, offset)), parsed))
+        if frames:
+            result[match.group(1)] = sorted(frames, key=lambda item: item[0])
+        cursor = end
+    return result
+
+
+def _css_rgba8(value: str) -> tuple[int, int, int, int] | None:
+    functional = re.fullmatch(
+        r'rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)'
+        r'(?:\s*,\s*([\d.]+))?\s*\)',
+        value.strip(),
+        re.I,
+    )
+    if functional:
+        alpha = round(float(functional.group(4) or '1') * 255.0)
+        return tuple(map(int, functional.groups()[:3])) + (alpha,)
+    rust = parse_color(value)
+    constants = {
+        'Color::RED': (255, 0, 0, 255),
+        'Color::GREEN': (0, 128, 0, 255),
+        'Color::BLUE': (0, 0, 255, 255),
+        'Color::BLACK': (0, 0, 0, 255),
+        'Color::WHITE': (255, 255, 255, 255),
+        'Color::TRANSPARENT': (0, 0, 0, 0),
+    }
+    if rust in constants:
+        return constants[rust]
+    match = re.fullmatch(
+        r'Color::from_rgba8\((\d+),\s*(\d+),\s*(\d+),\s*(\d+)\)',
+        rust or '',
+    )
+    return tuple(map(int, match.groups())) if match else None
+
+
+def _keyframe_background_color(declarations: CssDeclarations) -> tuple[int, int, int, int] | None:
+    if 'background-color' in declarations:
+        return _css_rgba8(declarations['background-color'])
+    background = declarations.get('background', '').strip()
+    return _css_rgba8(background) if background else None
+
+
+def _cubic_bezier_progress(progress: float, values: tuple[float, float, float, float]) -> float:
+    x1, y1, x2, y2 = values
+    def sample(t, first, second):
+        return 3.0 * (1.0 - t) ** 2 * t * first + 3.0 * (1.0 - t) * t ** 2 * second + t ** 3
+    low, high = 0.0, 1.0
+    for _ in range(24):
+        middle = (low + high) * 0.5
+        if sample(middle, x1, x2) < progress:
+            low = middle
+        else:
+            high = middle
+    return sample((low + high) * 0.5, y1, y2)
+
+
+def apply_static_animation_snapshot(
+    styles: CssDeclarations,
+    keyframes: dict[str, list[tuple[float, CssDeclarations]]],
+) -> None:
+    shorthand = styles.get('animation', '').strip()
+    if not shorthand:
+        return
+    name = next((candidate for candidate in keyframes if re.search(
+        rf'(?<![-_a-zA-Z0-9]){re.escape(candidate)}(?![-_a-zA-Z0-9])', shorthand
+    )), None)
+    if name is None:
+        return
+    times = re.findall(r'(?<![-_a-zA-Z0-9])(-?(?:\d+(?:\.\d*)?|\.\d+))(ms|s)\b', shorthand, re.I)
+    if not times:
+        return
+    to_ms = lambda item: float(item[0]) * (1000.0 if item[1].lower() == 's' else 1.0)
+    duration = max(0.0, to_ms(times[0]))
+    delay = to_ms(times[1]) if len(times) > 1 else 0.0
+    progress = 0.0 if duration == 0.0 else min(1.0, max(0.0, -delay / duration))
+    timing = re.search(
+        r'cubic-bezier\(\s*([+-]?[\d.]+)\s*,\s*([+-]?[\d.]+)\s*,\s*'
+        r'([+-]?[\d.]+)\s*,\s*([+-]?[\d.]+)\s*\)',
+        shorthand,
+        re.I,
+    )
+    if timing:
+        progress = _cubic_bezier_progress(progress, tuple(map(float, timing.groups())))
+    frames = keyframes[name]
+    before = max((frame for frame in frames if frame[0] <= progress), default=frames[0], key=lambda item: item[0])
+    after = min((frame for frame in frames if frame[0] >= progress), default=frames[-1], key=lambda item: item[0])
+    before_color = _keyframe_background_color(before[1])
+    after_color = _keyframe_background_color(after[1])
+    if before_color is None or after_color is None:
+        return
+    fraction = 0.0 if after[0] == before[0] else (progress - before[0]) / (after[0] - before[0])
+    rgba = tuple(round(start + (end - start) * fraction) for start, end in zip(before_color, after_color))
+    styles['background-color'] = f'rgba({rgba[0]}, {rgba[1]}, {rgba[2]}, {rgba[3] / 255.0})'
+
+
 def compute_specificity(selector: str) -> tuple:
     """Compute CSS specificity as (ids, classes, elements) tuple.
 
@@ -2860,14 +2988,17 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
                           node.attrs, sibling_type_index, sibling_type_count):
             spec = compute_specificity(selector)
             if pseudo_match:
+                wildcard_scroll_button = pseudo_match[1] == 'scroll-button-*'
                 pseudo_names = [pseudo_match[1]]
-                if pseudo_names == ['scroll-button-*']:
-                    # The wildcard creates/styles one button for each physical
-                    # direction. Logical spellings remain distinct pseudos and
-                    # are only materialized when explicitly authored.
+                if wildcard_scroll_button:
+                    # The wildcard styles every scroll-button pseudo. It does
+                    # not create a box by itself: directions without authored
+                    # `content` remain unmaterialized below.
                     pseudo_names = [
                         'scroll-button-up', 'scroll-button-right',
                         'scroll-button-down', 'scroll-button-left',
+                        'scroll-button-block-start', 'scroll-button-block-end',
+                        'scroll-button-inline-start', 'scroll-button-inline-end',
                     ]
                 for pseudo_name in pseudo_names:
                     if pseudo_match[2] == 'target-current':
@@ -2877,6 +3008,14 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
                     pseudo_cascade = node.pseudo_styles[pseudo_name]
                     pseudo_priorities = node.pseudo_priorities[pseudo_name]
                     for declaration_index, (prop, val) in enumerate(styles.items()):
+                        if wildcard_scroll_button and prop == 'content' and pseudo_name in {
+                            'scroll-button-block-start', 'scroll-button-block-end',
+                            'scroll-button-inline-start', 'scroll-button-inline-end',
+                        }:
+                            # A wildcard-only rule generates the four physical
+                            # buttons. Its non-content declarations still
+                            # cascade onto separately-created logical buttons.
+                            continue
                         important = (
                             styles.important.get(prop, False)
                             if isinstance(styles, CssDeclarations) else False
@@ -3129,12 +3268,14 @@ class WptHtmlParser(HTMLParser):
         self.has_style_block = False
         self.css_rules = []  # Parsed CSS rules from <style>
         self.external_css_rules = []  # Parsed CSS rules from external stylesheets
+        self.keyframes = {}
         self.external_stylesheet_hrefs = []  # hrefs of <link rel="stylesheet">
         self.all_styles = []  # all style dicts encountered
         self.ref_path = None
         self.html_dir = ''  # Set by parse_wpt_html for resolving relative paths
         self.html_styles = CssDeclarations()  # styles applied to <html> (root element)
         self.html_attrs = {}
+        self.html_pseudo_styles = DomNode('html', {}, {}).pseudo_styles
 
     # Void elements that never have closing tags
     VOID_TAGS = {'link', 'meta', 'br', 'hr', 'img', 'input', 'col', 'area',
@@ -3350,6 +3491,7 @@ class WptHtmlParser(HTMLParser):
         if tag == 'style':
             self.in_style = False
             self.css_rules.extend(parse_simple_css_rules(self.style_content))
+            self.keyframes.update(parse_static_keyframes(self.style_content))
             self.author_style_blocks.append(
                 (
                     dict(self.current_style_attrs),
@@ -3492,6 +3634,14 @@ class WptHtmlParser(HTMLParser):
                 leading_element_siblings=leading_author_styles,
                 trailing_element_siblings=trailing_harness_style,
             )
+            def sample_animations(node):
+                if node.is_text:
+                    return
+                apply_static_animation_snapshot(node.styles, self.keyframes)
+                for child in node.children:
+                    sample_animations(child)
+
+            sample_animations(self.root)
             # Apply html-targeted rules to self.html_styles for body-bg propagation logic.
             html_cascade = CssDeclarations()
             html_cascade_priority = {}
@@ -3565,6 +3715,22 @@ class WptHtmlParser(HTMLParser):
                     html_cascade_priority[prop] = priority
             self.html_styles = html_cascade
 
+            # Generated boxes whose originating element is the document
+            # element are not descendants of the parsed synthetic body.
+            # Cascade them against a detached, real ``html`` element so
+            # selectors such as ``:root::scroll-button(*)`` retain their
+            # proper origin even in the historical two-node builder shape.
+            html_pseudo_source = DomNode('html', self.html_attrs, CssDeclarations())
+            apply_css_rules(
+                all_rules,
+                html_pseudo_source,
+                ancestors=[],
+                sibling_index=1,
+                sibling_count=1,
+                preceding_siblings=[],
+            )
+            self.html_pseudo_styles = html_pseudo_source.pseudo_styles
+
             # A style element normally has UA ``display:none``.  If author CSS
             # changes that computed display, its raw stylesheet text becomes
             # ordinary renderable text.  Retain it in source order ahead of
@@ -3637,6 +3803,7 @@ class WptHtmlParser(HTMLParser):
                     # A CSSOM style assignment is an author inline declaration
                     # and therefore wins the stylesheet cascade.
                     node.styles[name] = value
+        self.root.html_pseudo_styles = self.html_pseudo_styles
 
 
 def _parse_wpt_markup(
@@ -3663,6 +3830,7 @@ def _parse_wpt_markup(
                 css_text = f.read()
             rules = parse_simple_css_rules(css_text)
             parser.external_css_rules.extend(rules)
+            parser.keyframes.update(parse_static_keyframes(css_text))
 
     parser.finalize()
     return parser
@@ -6546,6 +6714,35 @@ def generate_single_style(
             return f"{s}.list_style_position = {mapping[val]};"
 
     # ── position ──
+    if prop == 'anchor-name':
+        if val == 'none':
+            return f"{s}.anchor_name = None;"
+        names = [token for token in val.split() if token.startswith('--')]
+        if names:
+            return f'{s}.anchor_name = Some("{_rust_escape_string(names[0])}".to_string());'
+
+    if prop == 'position-anchor':
+        if val in {'auto', 'none'}:
+            return f"{s}.position_anchor = None;"
+        if val.startswith('--') and len(val.split()) == 1:
+            return f'{s}.position_anchor = Some("{_rust_escape_string(val)}".to_string());'
+
+    if prop == 'position-area':
+        normalized = ' '.join(val.lower().split())
+        mapping = {
+            'top left': 'TopLeft',
+            'top center': 'TopCenter',
+            'top right': 'TopRight',
+            'left center': 'LeftCenter',
+            'center': 'Center',
+            'right center': 'RightCenter',
+            'bottom left': 'BottomLeft',
+            'bottom center': 'BottomCenter',
+            'bottom right': 'BottomRight',
+        }
+        if normalized in mapping:
+            return f"{s}.position_area = PositionArea::{mapping[normalized]};"
+
     if prop == 'position':
         mapping = {
             'static': 'Position::Static',
@@ -6565,9 +6762,27 @@ def generate_single_style(
             )
 
     if prop == 'filter' and val != 'none':
-        # The SP19 filter cohort uses identity-valued filters for their
-        # containing-block/stacking-context side effect.
-        return f"{s}.establishes_transform_containing_block = true;"
+        emitted = [f"{s}.establishes_transform_containing_block = true;"]
+        blur = re.search(r'blur\(\s*([^)]*?)\s*\)', val, re.IGNORECASE)
+        if blur:
+            blur_px = _css_length_px(blur.group(1), font_size)
+            if blur_px is not None:
+                emitted.append(f"{s}.filter_blur = {max(0.0, blur_px)};")
+        grayscale = re.search(r'grayscale\(\s*([^)]*?)\s*\)', val, re.IGNORECASE)
+        if grayscale:
+            token = grayscale.group(1).strip()
+            try:
+                amount = (
+                    float(token[:-1]) / 100.0
+                    if token.endswith('%') else float(token)
+                )
+            except ValueError:
+                amount = None
+            if amount is not None:
+                emitted.append(
+                    f"{s}.filter_grayscale = {min(1.0, max(0.0, amount))};"
+                )
+        return emitted
 
     if prop.startswith('animation'):
         # SP19 comparisons freeze the document timeline at 0 ms. The layout
@@ -6757,9 +6972,9 @@ def generate_single_style(
         if unit in ('em', 'rem'):
             num = num * fs
         elif unit == '%':
-            if radius_basis is not None:
-                basis = radius_basis[0] if axis == 'x' else radius_basis[1]
-                num = num / 100.0 * basis
+            # Keep percentages unresolved until paint, when the used border
+            # box is available (notably for auto-height boxes).
+            pass
         elif unit in _UNIT_TO_PX and _UNIT_TO_PX[unit] is not None:
             num = num * _UNIT_TO_PX[unit]
         return num
@@ -6778,6 +6993,8 @@ def generate_single_style(
 
     if prop == 'border-radius':
         slash_parts = val.strip().split('/')
+        if len(slash_parts) > 2:
+            return None
         horiz_tokens = slash_parts[0].strip().split()
         h_vals = [_parse_radius_component(p, 'x') for p in horiz_tokens]
         if all(v is not None for v in h_vals):
@@ -6790,18 +7007,32 @@ def generate_single_style(
                     if all(v is not None for v in v_vals):
                         vtl, vtr, vbr, vbl = _expand_shorthand(v_vals)
                     else:
-                        vtl, vtr, vbr, vbl = [_parse_radius_component(p, 'y') for p in horiz_tokens]
+                        return None
                 else:
                     v_vals = [_parse_radius_component(p, 'y') for p in horiz_tokens]
                     if all(v is not None for v in v_vals):
                         vtl, vtr, vbr, vbl = _expand_shorthand(v_vals)
                     else:
                         vtl, vtr, vbr, vbl = htl, htr, hbr, hbl
+                ht = _expand_shorthand(horiz_tokens)
+                vt = _expand_shorthand(
+                    slash_parts[1].strip().split()
+                    if len(slash_parts) > 1 else horiz_tokens
+                )
+                percentage_flags = [
+                    (ht[index].strip().endswith('%'), vt[index].strip().endswith('%'))
+                    for index in range(4)
+                ]
+                percentage_flags_rust = '[' + ', '.join(
+                    f"({str(x).lower()}, {str(y).lower()})"
+                    for x, y in percentage_flags
+                ) + ']'
                 return [
                     f"{s}.border_top_left_radius = ({htl}_f32, {vtl}_f32);",
                     f"{s}.border_top_right_radius = ({htr}_f32, {vtr}_f32);",
                     f"{s}.border_bottom_right_radius = ({hbr}_f32, {vbr}_f32);",
                     f"{s}.border_bottom_left_radius = ({hbl}_f32, {vbl}_f32);",
+                    f"{s}.border_radius_percent = {percentage_flags_rust};",
                 ]
 
     if prop in ('border-top-left-radius', 'border-top-right-radius',
@@ -6812,13 +7043,32 @@ def generate_single_style(
             vy = _parse_radius_component(parts[0], 'y')
             if vx is not None and vy is not None:
                 rust_prop = prop.replace('-', '_')
-                return f"{s}.{rust_prop} = ({vx}_f32, {vy}_f32);"
+                corner = {
+                    'border-top-left-radius': 0,
+                    'border-top-right-radius': 1,
+                    'border-bottom-right-radius': 2,
+                    'border-bottom-left-radius': 3,
+                }[prop]
+                flag = parts[0].endswith('%')
+                return [
+                    f"{s}.{rust_prop} = ({vx}_f32, {vy}_f32);",
+                    f"{s}.border_radius_percent[{corner}] = ({str(flag).lower()}, {str(flag).lower()});",
+                ]
         elif len(parts) == 2:
             vx = _parse_radius_component(parts[0], 'x')
             vy = _parse_radius_component(parts[1], 'y')
             if vx is not None and vy is not None:
                 rust_prop = prop.replace('-', '_')
-                return f"{s}.{rust_prop} = ({vx}_f32, {vy}_f32);"
+                corner = {
+                    'border-top-left-radius': 0,
+                    'border-top-right-radius': 1,
+                    'border-bottom-right-radius': 2,
+                    'border-bottom-left-radius': 3,
+                }[prop]
+                return [
+                    f"{s}.{rust_prop} = ({vx}_f32, {vy}_f32);",
+                    f"{s}.border_radius_percent[{corner}] = ({str(parts[0].endswith('%')).lower()}, {str(parts[1].endswith('%')).lower()});",
+                ]
 
     # ── box-sizing ──
     if prop == 'box-sizing':
@@ -7561,6 +7811,14 @@ def generate_single_style(
         }
         if val in mapping:
             return f"{s}.vertical_align = {mapping[val]};"
+        if val.endswith('%'):
+            try:
+                return f"{s}.vertical_align = VerticalAlign::Percentage({float(val[:-1])});"
+            except ValueError:
+                return None
+        px = _css_length_px(val, font_size)
+        if px is not None:
+            return f"{s}.vertical_align = VerticalAlign::Length({float(px)});"
 
     # ── SP14 text-mode-only properties ──
     # These affect layout only when text is present. Emitted exclusively for
@@ -8857,6 +9115,89 @@ def generate_rust_fn(
         ratio = dimensions if dimensions and dimensions[0] > 0 and dimensions[1] > 0 else None
         return source_label, mime, sha, dimensions, ratio, byte_expr
 
+    def emit_passive_scroll_button_defaults(
+        pseudo_var: str, ws: str, *, disabled: bool, system_font: bool
+    ) -> None:
+        """Emit Chromium's stable Linux passive scroll-button appearance."""
+        color = (
+            "Color::from_rgba8(16, 16, 16, 77)"
+            if disabled else "Color::BLACK"
+        )
+        border_width = 1 if disabled else 2
+        border_color = 208 if disabled else 118
+        background = 238 if disabled else 239
+        inline_padding = 7 if disabled else 6
+        lines.extend([
+            f"{ws}doc.node_mut({pseudo_var}).form_control = "
+            "Some(openui_dom::FormControlRole::Button);",
+            f"{ws}doc.node_mut({pseudo_var}).style.width = Length::fit_content();",
+            f"{ws}doc.node_mut({pseudo_var}).style.min_width = Length::px(27.0);",
+            f"{ws}doc.node_mut({pseudo_var}).style.height = Length::px(21.0);",
+            f"{ws}doc.node_mut({pseudo_var}).style.display = Display::InlineBlock;",
+            f"{ws}doc.node_mut({pseudo_var}).style.box_sizing = BoxSizing::BorderBox;",
+            f"{ws}if doc.node({pseudo_var}).style.writing_mode.is_horizontal() {{",
+            f"{ws}    doc.node_mut({pseudo_var}).style.padding_top = Length::px(1.0);",
+            f"{ws}    doc.node_mut({pseudo_var}).style.padding_right = Length::px({inline_padding}.0);",
+            f"{ws}    doc.node_mut({pseudo_var}).style.padding_bottom = Length::px(1.0);",
+            f"{ws}    doc.node_mut({pseudo_var}).style.padding_left = Length::px({inline_padding}.0);",
+            f"{ws}}} else {{",
+            f"{ws}    doc.node_mut({pseudo_var}).style.padding_top = Length::px({inline_padding}.0);",
+            f"{ws}    doc.node_mut({pseudo_var}).style.padding_right = Length::px(1.0);",
+            f"{ws}    doc.node_mut({pseudo_var}).style.padding_bottom = Length::px({inline_padding}.0);",
+            f"{ws}    doc.node_mut({pseudo_var}).style.padding_left = Length::px(1.0);",
+            f"{ws}}}",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_top_width = {border_width};",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_right_width = {border_width};",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_width = {border_width};",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_left_width = {border_width};",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_top_style = BorderStyle::Solid;",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_right_style = BorderStyle::Solid;",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_style = BorderStyle::Solid;",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_left_style = BorderStyle::Solid;",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_top_color = StyleColor::Resolved(Color::from_rgba8({border_color}, {border_color}, {border_color}, 255));",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_right_color = StyleColor::Resolved(Color::from_rgba8({border_color}, {border_color}, {border_color}, 255));",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8({border_color}, {border_color}, {border_color}, 255));",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_left_color = StyleColor::Resolved(Color::from_rgba8({border_color}, {border_color}, {border_color}, 255));",
+            f"{ws}doc.node_mut({pseudo_var}).style.background_color = Color::from_rgba8({background}, {background}, {background}, 255);",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_top_left_radius = (2.0, 2.0);",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_top_right_radius = (2.0, 2.0);",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_right_radius = (2.0, 2.0);",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_left_radius = (2.0, 2.0);",
+            f"{ws}doc.node_mut({pseudo_var}).style.color = {color};",
+            f"{ws}doc.node_mut({pseudo_var}).style.font_size = 13.333333;",
+            f"{ws}doc.node_mut({pseudo_var}).style.vertical_align = VerticalAlign::Top;",
+            f"{ws}doc.node_mut({pseudo_var}).form_control_disabled = "
+            f"{'true' if disabled else 'false'};",
+        ])
+        if system_font:
+            lines.extend([
+                f"{ws}doc.node_mut({pseudo_var}).style.font_family = "
+                "FontFamilyList { families: vec![FontFamily::Generic("
+                "GenericFontFamily::SansSerif)] };",
+                f"{ws}doc.node_mut({pseudo_var}).style.native_control_text = true;",
+            ])
+
+    def emit_appearance_none_button_defaults(pseudo_var: str, ws: str) -> None:
+        """Replace native button decoration after a winning appearance:none."""
+        lines.extend([
+            f"{ws}doc.node_mut({pseudo_var}).form_control_native_appearance = false;",
+            f"{ws}doc.node_mut({pseudo_var}).style.background_color = Color::from_rgba8(250, 250, 250, 255);",
+            f"{ws}doc.node_mut({pseudo_var}).style.padding_right = Length::px(6.0);",
+            f"{ws}doc.node_mut({pseudo_var}).style.padding_left = Length::px(6.0);",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_top_width = 2;",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_right_width = 2;",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_width = 2;",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_left_width = 2;",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(209, 209, 209, 255));",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(209, 209, 209, 255));",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(183, 183, 183, 255));",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(183, 183, 183, 255));",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_top_left_radius = (0.0, 0.0);",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_top_right_radius = (0.0, 0.0);",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_right_radius = (0.0, 0.0);",
+            f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_left_radius = (0.0, 0.0);",
+        ])
+
     def gen_node(node: DomNode, parent_var: str, indent: int,
                  parent_font_size: float = 16.0, inherited: dict | None = None,
                  custom_props: dict[str, str] | None = None,
@@ -8887,6 +9228,14 @@ def generate_rust_fn(
                     tvar = f"n{counter[0]}"
                     ws = "    " * indent
                     lines.append(f"{ws}let {tvar} = doc.create_node(ElementTag::Text);")
+                    if inherited.get('__native_control_text'):
+                        lines.append(
+                            f"{ws}doc.node_mut({tvar}).style.native_control_text = true;"
+                        )
+                    if inherited.get('__native_button_text_metrics'):
+                        lines.append(
+                            f"{ws}doc.node_mut({tvar}).style.native_button_text_metrics = true;"
+                        )
                     # SP14: our inline layout shapes text using the Text node's
                     # OWN computed style (font is not inherited to the Text child
                     # in the builder path), so set the effective inherited font
@@ -9175,6 +9524,14 @@ def generate_rust_fn(
             )
         if node.tag == 'br':
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Inline;")
+        elif node.tag == 'foreignobject':
+            # SVG foreignObject is an atomic graphics element; CSS width and
+            # height apply even though its HTML fallback tag maps to Div in
+            # the compact DOM vocabulary. Within its SVG viewport it starts a
+            # block formatting context at the graphics origin rather than
+            # aligning to an HTML inline baseline.
+            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
+            lines.append(f"{ws}doc.node_mut({var}).is_svg_foreign_object = true;")
 
         if node.tag == 'svg':
             # An outermost inline SVG viewport is a replaced element with the
@@ -9202,12 +9559,11 @@ def generate_rust_fn(
                             # `100%` would incorrectly overflow that margin box.
                             return 'Length::stretch()'
                         return None
-                    # Empty outer SVGs without a viewBox retain the 300x150
-                    # default object size as intrinsic metadata below.
-                    return (
-                        f'Length::px({_zoomed_px(default)})'
-                        if node.children else None
-                    )
+                    # The 300x150 fallback is an intrinsic replaced size, not
+                    # a specified width/height. Child-bearing SVG viewports
+                    # keep their descendants in the formatting tree, so leave
+                    # these axes auto and let flex/block sizing resolve them.
+                    return None
                 token = token.strip()
                 if re.fullmatch(r'[-+]?(?:\d+(?:\.\d*)?|\.\d+)', token):
                     return f'Length::px({_zoomed_px(float(token))})'
@@ -9219,6 +9575,88 @@ def generate_rust_fn(
                 lines.append(f"{ws}doc.node_mut({var}).style.width = {svg_width};")
             if svg_height:
                 lines.append(f"{ws}doc.node_mut({var}).style.height = {svg_height};")
+
+        if node.tag == 'g':
+            # SVG container elements do not generate CSS layout boxes. Keep
+            # their presentation color available to vector descendants while
+            # letting those descendants position against the SVG viewport.
+            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Contents;")
+            svg_fill = parse_color(node.attrs.get('fill', 'black'))
+            if svg_fill:
+                lines.append(f"{ws}doc.node_mut({var}).style.color = {svg_fill};")
+
+        if node.tag == 'path':
+            # Lower deterministic rectilinear SVG paths to vector-painted
+            # boxes. This covers the common WPT reference idiom that spells a
+            # rectangle as M/H/V/h/v/z while preserving inherited SVG fill.
+            tokens = re.findall(
+                r'[MmHhVvZz]|[-+]?(?:\d+(?:\.\d*)?|\.\d+)',
+                node.attrs.get('d', ''),
+            )
+            cursor = 0
+            command = None
+            x = y = 0.0
+            points = []
+            valid = True
+            while cursor < len(tokens):
+                if re.fullmatch(r'[MmHhVvZz]', tokens[cursor]):
+                    command = tokens[cursor]
+                    cursor += 1
+                    if command in 'Zz':
+                        break
+                if command in ('M', 'm'):
+                    if cursor + 1 >= len(tokens):
+                        break
+                    nx, ny = float(tokens[cursor]), float(tokens[cursor + 1])
+                    cursor += 2
+                    if command == 'm':
+                        x += nx
+                        y += ny
+                    else:
+                        x, y = nx, ny
+                    points.append((x, y))
+                    command = 'l' if command == 'm' else 'L'
+                elif command in ('H', 'h'):
+                    if cursor >= len(tokens):
+                        break
+                    value = float(tokens[cursor])
+                    cursor += 1
+                    x = x + value if command == 'h' else value
+                    points.append((x, y))
+                elif command in ('V', 'v'):
+                    if cursor >= len(tokens):
+                        break
+                    value = float(tokens[cursor])
+                    cursor += 1
+                    y = y + value if command == 'v' else value
+                    points.append((x, y))
+                else:
+                    valid = False
+                    break
+            if valid and len(points) >= 3:
+                min_x = min(point[0] for point in points)
+                max_x = max(point[0] for point in points)
+                min_y = min(point[1] for point in points)
+                max_y = max(point[1] for point in points)
+                if max_x > min_x and max_y > min_y:
+                    lines.extend([
+                        f"{ws}doc.node_mut({var}).style.display = Display::Block;",
+                        f"{ws}doc.node_mut({var}).style.position = Position::Absolute;",
+                        f"{ws}doc.node_mut({var}).style.left = Length::px({_zoomed_px(min_x)});",
+                        f"{ws}doc.node_mut({var}).style.top = Length::px({_zoomed_px(min_y)});",
+                        f"{ws}doc.node_mut({var}).style.width = Length::px({_zoomed_px(max_x - min_x)});",
+                        f"{ws}doc.node_mut({var}).style.height = Length::px({_zoomed_px(max_y - min_y)});",
+                    ])
+                    explicit_fill = parse_color(node.attrs.get('fill', ''))
+                    if explicit_fill:
+                        lines.append(
+                            f"{ws}doc.node_mut({var}).style.background_color = {explicit_fill};"
+                        )
+                    else:
+                        lines.append(
+                            f"{ws}doc.node_mut({var}).style.background_color = "
+                            f"doc.node({parent_var}).style.color;"
+                        )
 
         if node.tag == 'rect':
             # Inline SVG rectangles are deterministic vector primitives, not
@@ -9316,6 +9754,22 @@ def generate_rust_fn(
         }:
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::InlineBlock;")
 
+        if node.tag in {'img', 'iframe', 'video', 'embed', 'svg'}:
+            # HTML's replaced-element UA rules use an `overflow: clip`
+            # content-box edge. Author declarations are emitted below and
+            # therefore retain normal precedence over this default.
+            ua_overflow = 'Hidden' if node.tag == 'svg' else 'Clip'
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.overflow_x = Overflow::{ua_overflow};"
+            )
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.overflow_y = Overflow::{ua_overflow};"
+            )
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.overflow_clip_box = "
+                "OverflowClipBox::ContentBox;"
+            )
+
         if node.tag in ('td', 'th'):
             try:
                 col_span = max(1, int(node.attrs.get('colspan', '1')))
@@ -9362,6 +9816,11 @@ def generate_rust_fn(
             lines.append(
                 f"{ws}doc.node_mut({var}).form_control = Some({control_roles[node.tag]});"
             )
+        if node.tag in control_roles or node.tag == 'input':
+            lines.append(
+                f"{ws}doc.node_mut({var}).form_control_disabled = "
+                f"{'true' if 'disabled' in node.attrs else 'false'};"
+            )
 
         if node.tag in {'input', 'textarea', 'select'}:
             # Pinned Linux Chromium UA appearance. Intrinsic control metrics
@@ -9371,12 +9830,16 @@ def generate_rust_fn(
                 node.styles.get(prop, '').strip().lower() == 'none'
                 for prop in ('appearance', '-webkit-appearance', '-moz-appearance')
             )
-            lines.append(f"{ws}doc.node_mut({var}).style.box_sizing = BoxSizing::BorderBox;")
+            control_all_initial = node.styles.get('all', '').strip().lower() == 'initial'
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.box_sizing = "
+                f"BoxSizing::{'ContentBox' if control_all_initial else 'BorderBox'};"
+            )
             if node.tag == 'textarea':
                 lines.append(f"{ws}doc.node_mut({var}).style.overflow_x = Overflow::Auto;")
                 lines.append(f"{ws}doc.node_mut({var}).style.overflow_y = Overflow::Auto;")
             input_type = node.attrs.get('type', 'text').lower() if node.tag == 'input' else ''
-            ua_border_width = (
+            ua_border_width = 0 if control_all_initial else (
                 0 if input_type in {'checkbox', 'radio'}
                 or (input_type == 'range' and not appearance_none)
                 else 2 if node.tag == 'input'
@@ -9388,7 +9851,8 @@ def generate_rust_fn(
                     f"{ua_border_width};"
                 )
                 lines.append(
-                    f"{ws}doc.node_mut({var}).style.border_{side}_style = BorderStyle::Inset;"
+                    f"{ws}doc.node_mut({var}).style.border_{side}_style = "
+                    f"BorderStyle::{'None' if control_all_initial else 'Inset'};"
                 )
 
         if node.tag == 'fieldset':
@@ -9461,6 +9925,30 @@ def generate_rust_fn(
                     "intrinsic_width: Some(300.0), intrinsic_height: Some(150.0), "
                     "intrinsic_ratio: None });"
                 )
+            elif (
+                RETAIN_TEXT
+                and node.tag == 'img'
+                and source
+                and node.attrs.get('alt', '')
+                and node.styles.get('display', '').strip().lower()
+                in {'block', 'flow-root', 'flex', 'grid'}
+            ):
+                # A failed image with block-container display is non-replaced.
+                # Materialize its deterministic UA shadow fallback as a 16px
+                # icon slot followed by the alternative text. The principal
+                # image still paints the packaged broken-resource glyph over
+                # that transparent slot, while ordinary inline layout owns
+                # wrapping, height, padding, and scrollable overflow.
+                icon = DomNode('canvas', {'width': '16', 'height': '16'}, CssDeclarations())
+                # Blink's anonymous broken-resource icon sits three pixels
+                # below the alternative text baseline at the pinned 16px UA
+                # font size; expose that baseline through ordinary inline
+                # vertical alignment rather than enlarging the first line.
+                icon.styles['vertical-align'] = '-3px'
+                text_node = DomNode('#text', {}, CssDeclarations())
+                text_node.is_text = True
+                text_node.text_content = node.attrs['alt']
+                render_children = [icon, text_node]
         elif node.tag == 'video':
             poster = node.attrs.get('poster', '').strip()
             resource = _node_resource(poster) if poster else None
@@ -9568,13 +10056,35 @@ def generate_rust_fn(
             intrinsic_height_rust = (
                 f"Some({intrinsic_height})" if intrinsic_height is not None else "None"
             )
-            lines.append(
-                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
-                "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
-                f"intrinsic_width: {intrinsic_width_rust}, "
-                f"intrinsic_height: {intrinsic_height_rust}, "
-                f"intrinsic_ratio: {ratio_rust} }});"
-            )
+            if visual_children:
+                # Keep vector descendants in the compact formatting tree so
+                # they can paint through mixed-axis overflow and
+                # overflow-clip-margin. The SVG viewport itself establishes
+                # their positioning context; authored position declarations
+                # emitted below retain precedence.
+                lines.append(
+                    f"{ws}doc.node_mut({var}).style.position = Position::Relative;"
+                )
+                if (
+                    intrinsic_width is None
+                    and 'width' not in node.styles
+                    and 'max-width' not in node.styles
+                ):
+                    lines.append(f"{ws}doc.node_mut({var}).style.width = Length::px(300.0);")
+                if (
+                    intrinsic_height is None
+                    and 'height' not in node.styles
+                    and 'max-height' not in node.styles
+                ):
+                    lines.append(f"{ws}doc.node_mut({var}).style.height = Length::px(150.0);")
+            else:
+                lines.append(
+                    f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                    "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                    f"intrinsic_width: {intrinsic_width_rust}, "
+                    f"intrinsic_height: {intrinsic_height_rust}, "
+                    f"intrinsic_ratio: {ratio_rust} }});"
+                )
             if (
                 viewbox_ratio is not None
                 and 'width' not in node.attrs
@@ -9644,8 +10154,29 @@ def generate_rust_fn(
                 document_mime = 'text/html'
                 document_sha = hashlib.sha256(data).hexdigest()
                 document_bytes = f'vec![{", ".join(str(byte) for byte in data)}]'
+                embedded_markup = srcdoc
+                style_starts = list(re.finditer(
+                    r'<style\b[^>]*>', embedded_markup, re.IGNORECASE
+                ))
+                style_ends = list(re.finditer(
+                    r'</style\s*>', embedded_markup, re.IGNORECASE
+                ))
+                if style_starts and not style_ends:
+                    # HTML raw-text recovery treats a second `<style>` in
+                    # legacy srcdoc fixtures as the intended closing token.
+                    # Normalize that deterministic typo for the compact DOM
+                    # parser while retaining the authored bytes above.
+                    if len(style_starts) > 1:
+                        closing = style_starts[-1]
+                        embedded_markup = (
+                            embedded_markup[:closing.start()]
+                            + '</style>'
+                            + embedded_markup[closing.end():]
+                        )
+                    else:
+                        embedded_markup += '</style>'
                 embedded_parser = _parse_wpt_markup(
-                    srcdoc,
+                    embedded_markup,
                     str(_ACTIVE_RESOURCE_BASE or Path.cwd()),
                     root_aware=True,
                     harness_rules=EMBEDDED_DOCUMENT_RULES,
@@ -9657,6 +10188,13 @@ def generate_rust_fn(
                     )
                 embedded_root = embedded_parser.root
                 embedded_root.tag = 'div'
+                # Keep the nested document as real child layout while giving
+                # its atomic iframe box the HTML default object size. A
+                # packaged document without lowered children gets this size
+                # from ReplacedContent instead; deterministic srcdoc needs the
+                # equivalent used dimensions on its containing viewport.
+                lines.append(f"{ws}doc.node_mut({var}).style.width = Length::px(300.0);")
+                lines.append(f"{ws}doc.node_mut({var}).style.height = Length::px(150.0);")
                 # The body of a nested browsing context forms the embedded
                 # canvas boundary. Descendant margins do not collapse through
                 # that boundary into the iframe's own inline box.
@@ -9673,6 +10211,21 @@ def generate_rust_fn(
                     margin_boundary.styles['height'] = f'{leading_margin}px'
                     embedded_root.children.insert(0, margin_boundary)
                 render_children = [embedded_root]
+                # A nested browsing context owns an isolated viewport: its
+                # positioned descendants resolve within the iframe and its
+                # canvas is clipped to the replaced content edge.
+                lines.append(f"{ws}doc.node_mut({var}).style.position = Position::Relative;")
+                embedded_canvas_color = (
+                    embedded_parser.html_styles.get('background-color')
+                    or embedded_root.styles.get('background-color')
+                )
+                if embedded_canvas_color:
+                    canvas_color = parse_color(embedded_canvas_color)
+                    if canvas_color:
+                        lines.append(
+                            f"{ws}doc.node_mut({var}).embedded_canvas_color = "
+                            f"Some({canvas_color});"
+                        )
             else:
                 packaged_document = _packaged_resource(source) if source else None
                 if packaged_document is not None and packaged_document[2] in ('text/html', 'application/xhtml+xml'):
@@ -9785,7 +10338,8 @@ def generate_rust_fn(
                     )
                     intrinsic_height = (
                         authored_font_size
-                        if authored_font_size is not None else 14.0
+                        if authored_font_size is not None else
+                        16.0 if control_all_initial else 14.0
                     )
             elif node.tag == 'textarea':
                 try:
@@ -9894,16 +10448,29 @@ def generate_rust_fn(
             node.tag == 'input'
             and node.attrs.get('type', 'text').lower() in {'button', 'submit', 'reset'}
         )
+        uses_native_button_ahem_metrics = False
 
         if RETAIN_TEXT and node.tag in {'button', 'input', 'textarea', 'select'}:
             # The deterministic font override changes the family but not the
             # HTML form-control UA size. Chromium's Linux UA sheet specifies
             # 13.3333px controls; materialize that computed value so their
             # anonymous text and multicol contents inherit the same metrics.
-            if 'font-size' not in effective_styles and 'font' not in effective_styles:
+            if (
+                'font-size' not in effective_styles
+                and 'font' not in effective_styles
+                and not (
+                    node.tag in {'input', 'textarea', 'select'}
+                    and control_all_initial
+                )
+            ):
                 effective_styles['font-size'] = '13.333333px'
+                uses_native_button_ahem_metrics = node.tag == 'button'
             if (node.tag == 'button' or is_input_button) and 'text-align' not in effective_styles:
                 effective_styles['text-align'] = 'center'
+        authored_button_background = any(
+            prop in effective_styles
+            for prop in {'background', 'background-color', 'background-image'}
+        )
         if node.tag == 'button' or is_input_button:
             # Passive Linux button appearance. The comparison harness resets
             # margin/padding/box-sizing as author CSS, but leaves these UA
@@ -9918,14 +10485,28 @@ def generate_rust_fn(
                 for name in effective_styles
             ):
                 effective_styles['border-width'] = '2px'
-                # The pinned Linux native button theme exposes its passive
-                # `buttonborder` edge as a uniform #767676 rounded stroke.
-                # This is appearance geometry, not CSS `outset` color
-                # shading, even though Blink's UA declaration uses that
-                # legacy keyword.
-                effective_styles['border-style'] = 'solid'
-                effective_styles['border-color'] = '#767676'
-                effective_styles['border-radius'] = '2px'
+                if authored_button_background:
+                    # Painting an authored button face suppresses the native
+                    # rounded widget decoration but retains the legacy Linux
+                    # outset edge. Resolve the pinned platform ButtonBorder
+                    # palette into its computed physical side colors. Keeping
+                    # solid sides here also lets the ordinary border painter
+                    # form Chromium's #2a corner miters deterministically.
+                    effective_styles['border-style'] = 'solid'
+                    effective_styles['border-top-color'] = '#545454'
+                    effective_styles['border-left-color'] = '#545454'
+                    effective_styles['border-right-color'] = 'black'
+                    effective_styles['border-bottom-color'] = 'black'
+                    effective_styles['border-radius'] = '0'
+                else:
+                    # The pinned Linux native button theme exposes its passive
+                    # `buttonborder` edge as a uniform #767676 rounded stroke.
+                    # This is appearance geometry, not CSS `outset` color
+                    # shading, even though Blink's UA declaration uses that
+                    # legacy keyword.
+                    effective_styles['border-style'] = 'solid'
+                    effective_styles['border-color'] = '#767676'
+                    effective_styles['border-radius'] = '2px'
 
         # A floated semantic table remains a table formatting context after
         # display blockification (only `inline-table` blockifies to `table`).
@@ -10120,7 +10701,7 @@ def generate_rust_fn(
             if isinstance(val, str) and not prop.startswith('--'):
                 effective_styles[prop] = _resolve_css_vars(val, node_custom_props)
 
-        if node.tag in {'input', 'textarea', 'select'}:
+        if node.tag in {'button', 'input', 'textarea', 'select'}:
             # `appearance` and its vendor aliases are one cascaded control
             # property in Chromium. Select the winning alias by the preserved
             # declaration priority instead of depending on dictionary order.
@@ -10142,6 +10723,23 @@ def generate_rust_fn(
                     lines.append(
                         f"{ws}doc.node_mut({var}).form_control_native_appearance = false;"
                     )
+                    if node.tag == 'button':
+                        if not any(
+                            name in node.styles
+                            for name in {'background', 'background-color'}
+                        ):
+                            effective_styles['background-color'] = 'rgb(250, 250, 250)'
+                        if not any(
+                            name == 'border' or name.startswith('border-')
+                            for name in node.styles
+                        ):
+                            effective_styles['border-width'] = '2px'
+                            effective_styles['border-style'] = 'solid'
+                            effective_styles['border-top-color'] = '#d1d1d1'
+                            effective_styles['border-left-color'] = '#d1d1d1'
+                            effective_styles['border-right-color'] = '#b7b7b7'
+                            effective_styles['border-bottom-color'] = '#b7b7b7'
+                            effective_styles['border-radius'] = '0'
                     if (
                         node.tag == 'input'
                         and not any(
@@ -10157,6 +10755,16 @@ def generate_rust_fn(
                         # the recessed edges and #767676 on the raised edges.
                         effective_styles['border-color'] = '#767676'
 
+        if (
+            node.tag == 'button'
+            and 'disabled' in node.attrs
+            and 'color' not in effective_styles
+        ):
+            # HTML's disabled button system color is a translucent near-black.
+            # Keeping its alpha is observable over both the native #eee face
+            # and the #fafafa non-native appearance-none face.
+            effective_styles['color'] = 'rgba(16, 16, 16, 0.3)'
+
         # Generate style code
         node_zoom = _effective_css_zoom(effective_styles, parent_zoom)
         style_lines, node_font_size = generate_style_code(
@@ -10164,6 +10772,10 @@ def generate_rust_fn(
         )
         for sl in style_lines:
             lines.append(f"{ws}{sl}")
+        if uses_native_button_ahem_metrics:
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.native_button_text_metrics = true;"
+            )
 
         if RETAIN_TEXT and not is_real_font_profile():
             # TEXT_TEMPLATE_OVERRIDE is author-important and therefore wins
@@ -10234,6 +10846,11 @@ def generate_rust_fn(
 
         # Build inherited props for children: parent inherited + this node's own
         child_inherited = _computed_child_boundary(inherited)
+        if uses_native_button_ahem_metrics:
+            # This is an internal builder contract, not a CSS property. Carry
+            # it through arbitrary inline descendants so only text belonging
+            # to the native button receives the platform advance metrics.
+            child_inherited['__native_button_text_metrics'] = True
         child_inherit_props = EXPLICIT_INHERIT_PROPS | (
             TEXT_EXTRA_INHERITED if RETAIN_TEXT else set()
         )
@@ -10283,6 +10900,14 @@ def generate_rust_fn(
                     pseudo[prop] = _resolve_css_vars(value, node_custom_props)
             return pseudo
 
+        def establishes_scroll_container() -> bool:
+            shorthand = effective_styles.get('overflow', 'visible').strip().lower()
+            overflow_x = effective_styles.get('overflow-x', shorthand).strip().lower()
+            overflow_y = effective_styles.get('overflow-y', shorthand).strip().lower()
+            return overflow_x in {'auto', 'scroll', 'hidden'} or overflow_y in {
+                'auto', 'scroll', 'hidden'
+            }
+
         def emit_generated_pseudo(
             name: str, *, structural: bool = False
         ) -> str | None:
@@ -10329,52 +10954,102 @@ def generate_rust_fn(
                 # platform button role. Preserve its stable minimum geometry
                 # and native-looking initial decoration; authored pseudo
                 # declarations below retain normal precedence.
-                lines.extend([
-                    f"{ws}doc.node_mut({pseudo_var}).form_control = "
-                    "Some(openui_dom::FormControlRole::Button);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.width = Length::fit_content();",
-                    f"{ws}doc.node_mut({pseudo_var}).style.min_width = Length::px(27.0);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.height = Length::px(21.0);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.box_sizing = BoxSizing::BorderBox;",
-                    f"{ws}doc.node_mut({pseudo_var}).style.padding_top = Length::px(1.0);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.padding_right = Length::px(6.0);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.padding_bottom = Length::px(1.0);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.padding_left = Length::px(6.0);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_top_width = 1;",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_right_width = 1;",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_width = 1;",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_left_width = 1;",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_top_style = BorderStyle::Solid;",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_right_style = BorderStyle::Solid;",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_style = BorderStyle::Solid;",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_left_style = BorderStyle::Solid;",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_top_color = StyleColor::Resolved(Color::from_rgba8(208, 208, 208, 255));",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_right_color = StyleColor::Resolved(Color::from_rgba8(208, 208, 208, 255));",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_color = StyleColor::Resolved(Color::from_rgba8(208, 208, 208, 255));",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_left_color = StyleColor::Resolved(Color::from_rgba8(208, 208, 208, 255));",
-                    f"{ws}doc.node_mut({pseudo_var}).style.background_color = Color::from_rgba8(238, 238, 238, 255);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_top_left_radius = (2.0, 2.0);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_top_right_radius = (2.0, 2.0);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_right_radius = (2.0, 2.0);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.border_bottom_left_radius = (2.0, 2.0);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.color = Color::from_rgba8(59, 59, 59, 255);",
-                    f"{ws}doc.node_mut({pseudo_var}).style.font_size = 13.333333;",
-                    f"{ws}doc.node_mut({pseudo_var}).style.font_family = "
-                    "FontFamilyList { families: vec![FontFamily::Generic("
-                    "GenericFontFamily::SansSerif)] };",
-                ])
+                emit_passive_scroll_button_defaults(
+                    pseudo_var,
+                    ws,
+                    disabled=not establishes_scroll_container(),
+                    system_font=not any(
+                        prop in pseudo_styles for prop in {'font', 'font-family'}
+                    ),
+                )
             pseudo_lines, _ = generate_style_code(
                 pseudo_styles, pseudo_var, node_font_size, node_zoom
             )
             for pseudo_line in pseudo_lines:
                 lines.append(f"{ws}{pseudo_line}")
+            if (
+                name.startswith('scroll-button-')
+                and pseudo_styles.get('appearance', '').strip().lower() == 'none'
+            ):
+                emit_appearance_none_button_defaults(pseudo_var, ws)
+            if (
+                name.startswith('scroll-button-')
+                and 'width' in pseudo_styles
+                and 'min-width' not in pseudo_styles
+            ):
+                lines.append(
+                    f"{ws}doc.node_mut({pseudo_var}).style.min_width = Length::auto();"
+                )
+                # The platform's ordinary six-pixel inline padding determines
+                # generated-content alignment inside a fixed author width.
+                # The one-pixel fit-content compensation above applies only
+                # when native text metrics determine the outer width.
+                lines.extend([
+                    f"{ws}if doc.node({pseudo_var}).style.writing_mode.is_horizontal() {{",
+                    f"{ws}    doc.node_mut({pseudo_var}).style.padding_top = Length::px(1.0);",
+                    f"{ws}    doc.node_mut({pseudo_var}).style.padding_right = Length::px(6.0);",
+                    f"{ws}    doc.node_mut({pseudo_var}).style.padding_bottom = Length::px(1.0);",
+                    f"{ws}    doc.node_mut({pseudo_var}).style.padding_left = Length::px(6.0);",
+                    f"{ws}}} else {{",
+                    f"{ws}    doc.node_mut({pseudo_var}).style.padding_top = Length::px(6.0);",
+                    f"{ws}    doc.node_mut({pseudo_var}).style.padding_right = Length::px(1.0);",
+                    f"{ws}    doc.node_mut({pseudo_var}).style.padding_bottom = Length::px(6.0);",
+                    f"{ws}    doc.node_mut({pseudo_var}).style.padding_left = Length::px(1.0);",
+                    f"{ws}}}",
+                ])
+            if (
+                name.startswith('scroll-button-')
+                and not any(
+                    prop == 'border' or prop.startswith('border-')
+                    for prop in pseudo_styles
+                )
+                and any(
+                    prop in {'background', 'background-color', 'background-image'}
+                    for prop in pseudo_styles
+                )
+            ):
+                for side in ('top', 'right', 'bottom', 'left'):
+                    channel = 84 if side in ('top', 'left') else 0
+                    lines.append(
+                        f"{ws}doc.node_mut({pseudo_var}).style.border_{side}_width = 2;"
+                    )
+                    lines.append(
+                        f"{ws}doc.node_mut({pseudo_var}).style.border_{side}_color = "
+                        f"StyleColor::Resolved(Color::from_rgba8({channel}, {channel}, {channel}, 255));"
+                    )
+                if establishes_scroll_container():
+                    lines.append(
+                        f"{ws}doc.node_mut({pseudo_var}).style.color = "
+                        f"doc.node({var}).style.color;"
+                    )
+            if name.startswith('scroll-button-') and any(
+                prop == 'border'
+                or prop.startswith('border-')
+                or prop in {'background', 'background-color', 'background-image'}
+                for prop in pseudo_styles
+            ):
+                # Author-painted scroll buttons leave the native theme path;
+                # CSS's initial corner radii are square even when the
+                # platform control default above is rounded.
+                for corner in (
+                    'top_left', 'top_right', 'bottom_right', 'bottom_left'
+                ):
+                    lines.append(
+                        f"{ws}doc.node_mut({pseudo_var}).style.border_{corner}_radius = "
+                        "(0.0, 0.0);"
+                    )
             if name == 'scroll-marker-group':
-                # Scroll marker groups establish layout containment as part
-                # of their UA-defined box contract; authored `contain:none`
-                # cannot disable it.
+                # The pseudo's initial display is block and it establishes
+                # layout containment. It deliberately does not imply size
+                # containment: floats and other marker contents determine an
+                # automatic group size.
+                if 'display' not in pseudo_styles:
+                    lines.append(
+                        f"{ws}doc.node_mut({pseudo_var}).style.display = Display::Block;"
+                    )
                 lines.append(
                     f"{ws}doc.node_mut({pseudo_var}).style.contain |= "
-                    "Containment::SIZE | Containment::LAYOUT;"
+                    "Containment::LAYOUT;"
                 )
             if name in ('scroll-marker', 'column-scroll-marker') and 'color' not in pseudo_styles:
                 # Scroll markers have link-like activation semantics and use
@@ -10476,7 +11151,14 @@ def generate_rust_fn(
         emit_generated_pseudo('before')
         emit_generated_pseudo('marker')
         if effective_styles.get('scroll-marker-group', '').strip().lower() == 'before':
-            emit_generated_pseudo('scroll-marker-group', structural=True)
+            marker_group = emit_generated_pseudo('scroll-marker-group', structural=True)
+            if marker_group is not None and not establishes_scroll_container():
+                # The pseudo exists in the computed pseudo tree, but CSS
+                # Overflow 5 suppresses its box unless the origin establishes
+                # a scroll container.
+                lines.append(
+                    f"{ws}doc.node_mut({marker_group}).style.display = Display::None;"
+                )
         if node.pseudo_styles.get('column'):
             emit_generated_pseudo('column', structural=True)
 
@@ -10588,7 +11270,11 @@ def generate_rust_fn(
                 f"ComputedStyle::for_anonymous_box(&doc.node({var}).style);",
                 f"{ws}    doc.node_mut({default_summary}).style.display = Display::ListItem;",
                 f"{ws}    doc.node_mut({default_summary}).style.list_style_type = "
-                "ListStyleType::DisclosureOpen;",
+                + (
+                    "ListStyleType::DisclosureOpen;"
+                    if 'open' in node.attrs
+                    else "ListStyleType::DisclosureClosed;"
+                ),
                 f"{ws}    doc.node_mut({default_summary}).style.list_style_position = "
                 "ListStylePosition::Inside;",
                 f"{ws}    doc.node_mut({default_summary}).style.padding_left = Length::px(17.0);",
@@ -10858,7 +11544,11 @@ def generate_rust_fn(
                     child for child in node.children
                     if not child.is_text and child.tag == 'summary'
                 ), None)
-                if first_summary is not None:
+                if 'open' not in node.attrs:
+                    # Closed details exposes only its first summary; all other
+                    # children remain in the DOM but generate no boxes.
+                    ordered_children = [first_summary] if first_summary is not None else []
+                elif first_summary is not None:
                     # The HTML details shadow tree slots its first authored
                     # summary before the details-content slot, independent of
                     # the summary's DOM position. Preserve that rendered order
@@ -10910,16 +11600,23 @@ def generate_rust_fn(
 
         emit_generated_pseudo('column-scroll-marker')
         emit_generated_pseudo('scroll-marker')
+        # `insert_after_sibling` reverses creation order. Emit each directional
+        # pair end-before-start so the resulting CSS tree order is
+        # start-before-end for both physical and logical axes.
         for button_name in (
-            'scroll-button-up', 'scroll-button-right',
-            'scroll-button-down', 'scroll-button-left',
-            'scroll-button-block-start', 'scroll-button-block-end',
-            'scroll-button-inline-start', 'scroll-button-inline-end',
+            'scroll-button-down', 'scroll-button-up',
+            'scroll-button-right', 'scroll-button-left',
+            'scroll-button-block-end', 'scroll-button-block-start',
+            'scroll-button-inline-end', 'scroll-button-inline-start',
         ):
             emit_generated_pseudo(button_name)
         apply_current_scroll_marker_state()
         if effective_styles.get('scroll-marker-group', '').strip().lower() == 'after':
-            emit_generated_pseudo('scroll-marker-group', structural=True)
+            marker_group = emit_generated_pseudo('scroll-marker-group', structural=True)
+            if marker_group is not None and not establishes_scroll_container():
+                lines.append(
+                    f"{ws}doc.node_mut({marker_group}).style.display = Display::None;"
+                )
         emit_generated_pseudo('after')
 
     # Process body children
@@ -11075,6 +11772,118 @@ def generate_rust_fn(
         gen_node(
             child, body_parent, 1, root_font_size,
             body_inherited, body_custom_props, body_zoom,
+        )
+
+    # The parser's synthetic body is not the origin of ``:root`` generated
+    # boxes. Materialize document-element pseudos separately after descendants
+    # exist, so root marker groups can collect their complete marker cohort.
+    root_pseudo_styles = getattr(root, 'html_pseudo_styles', {})
+    root_origin = 'html' if root_aware else 'doc.root()'
+    # In the compact document shape `vp` is the synthetic body. Root pseudos
+    # inherit from the document element, not from body declarations (including
+    # the deterministic body font override used by the comparison harness).
+    root_style_source = 'html' if root_aware else 'doc.root()'
+    if not root_aware and html_styles.get('scroll-marker-group', '').strip().lower() in {
+        'before', 'after'
+    }:
+        lines.append(
+            "    let root_scroll_marker_group = "
+            "doc.node(vp).style.scroll_marker_group;"
+        )
+        lines.append(
+            "    doc.node_mut(doc.root()).style.scroll_marker_group = "
+            "root_scroll_marker_group;"
+        )
+        lines.append(
+            "    doc.node_mut(vp).style.scroll_marker_group = ScrollMarkerGroup::None;"
+        )
+
+    def emit_root_generated_pseudo(
+        name: str, kind: str, *, structural: bool = False
+    ) -> str | None:
+        pseudo_styles = _copy_declarations(root_pseudo_styles.get(name, {}))
+        root_custom_props = {
+            prop: value for prop, value in html_styles.items()
+            if prop.startswith('--')
+        }
+        for prop, value in list(pseudo_styles.items()):
+            if isinstance(value, str):
+                pseudo_styles[prop] = _resolve_css_vars(value, root_custom_props)
+        content_value = pseudo_styles.get('content')
+        if not structural and (
+            content_value is None
+            or content_value.strip().lower() in ('normal', 'none')
+        ):
+            return None
+        materialization_required[0] = True
+        counter[0] += 1
+        pseudo_var = f"n{counter[0]}"
+        lines.append(
+            f"    let {pseudo_var} = doc.insert_pseudo_element("
+            f"{root_origin}, openui_dom::PseudoElementKind::{kind});"
+        )
+        lines.append(
+            f"    let {pseudo_var}_style = "
+            f"ComputedStyle::for_pseudo(&doc.node({root_style_source}).style);"
+        )
+        lines.append(f"    doc.node_mut({pseudo_var}).style = {pseudo_var}_style;")
+        if name.startswith('scroll-button-'):
+            emit_passive_scroll_button_defaults(
+                pseudo_var,
+                '    ',
+                disabled=False,
+                system_font=not any(
+                    prop in pseudo_styles for prop in {'font', 'font-family'}
+                ),
+            )
+        pseudo_lines, _ = generate_style_code(
+            pseudo_styles, pseudo_var, root_font_size, html_zoom
+        )
+        for pseudo_line in pseudo_lines:
+            lines.append(f"    {pseudo_line}")
+        if (
+            name.startswith('scroll-button-')
+            and pseudo_styles.get('appearance', '').strip().lower() == 'none'
+        ):
+            emit_appearance_none_button_defaults(pseudo_var, '    ')
+        if name.startswith('scroll-button-') and any(
+            prop == 'border'
+            or prop.startswith('border-')
+            or prop in {'background', 'background-color', 'background-image'}
+            for prop in pseudo_styles
+        ):
+            for corner in ('top_left', 'top_right', 'bottom_right', 'bottom_left'):
+                lines.append(
+                    f"    doc.node_mut({pseudo_var}).style.border_{corner}_radius = "
+                    "(0.0, 0.0);"
+                )
+        if name == 'scroll-marker-group':
+            if 'display' not in pseudo_styles:
+                lines.append(
+                    f"    doc.node_mut({pseudo_var}).style.display = Display::Block;"
+                )
+            lines.append(
+                f"    doc.node_mut({pseudo_var}).style.contain |= Containment::LAYOUT;"
+            )
+        return pseudo_var
+
+    for button_name, direction in (
+        ('scroll-button-down', 'Down'),
+        ('scroll-button-up', 'Up'),
+        ('scroll-button-right', 'Right'),
+        ('scroll-button-left', 'Left'),
+        ('scroll-button-block-end', 'BlockEnd'),
+        ('scroll-button-block-start', 'BlockStart'),
+        ('scroll-button-inline-end', 'InlineEnd'),
+        ('scroll-button-inline-start', 'InlineStart'),
+    ):
+        emit_root_generated_pseudo(
+            button_name,
+            f"ScrollButton(openui_dom::ScrollButtonDirection::{direction})",
+        )
+    if html_styles.get('scroll-marker-group', '').strip().lower() in {'before', 'after'}:
+        emit_root_generated_pseudo(
+            'scroll-marker-group', 'ScrollMarkerGroup', structural=True
         )
 
     if materialization_required[0]:
@@ -11249,7 +12058,11 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
 
     # Extract body content
     body_match = None if has_embedded_markup else re.search(
-        body_tag + r'(.*?)</body>',
+        # Use the last body end tag. The HTML parser ignores an early stray
+        # `</body>` when later body content follows, so stopping at the first
+        # token would make the Chromium harness render a different document
+        # from both the browser's source parse and the generated DOM.
+        body_tag + r'(.*)</body\s*>',
         markup_content,
         re.DOTALL | re.IGNORECASE,
     )
@@ -11277,15 +12090,25 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
         )
         body = re.sub(r'<title[^>]*>.*?</title>', '', body, flags=re.DOTALL | re.IGNORECASE)
         body = re.sub(r'<script[^>]*>.*?</script>', '', body, flags=re.DOTALL | re.IGNORECASE)
-        # Remove style blocks from body (they're already in style_prefix)
-        body = re.sub(r'<style[^>]*>.*?</style>', '', body, flags=re.DOTALL | re.IGNORECASE)
+        # Remove outer style blocks from body (they're already extracted
+        # above), while preserving literal style markup inside a quoted
+        # `srcdoc` attribute.
+        if has_embedded_markup:
+            for style_block in style_blocks:
+                body = body.replace(style_block, '', 1)
+        else:
+            body = re.sub(
+                r'<style[^>]*>.*?</style>', '', body,
+                flags=re.DOTALL | re.IGNORECASE,
+            )
 
     # Strip instructional paragraphs before the text-preserving template pass.
     # HTML permits their end tag to be omitted before block content, so accept
     # either an explicit </p> or the first paragraph-closing start tag.
     paragraph_end = '|'.join(sorted(WptHtmlParser.P_IMPLICIT_END_TAGS))
     body = re.sub(
-        rf'<p\b[^>]*>.*?Test passes.*?(?:</p\s*>|(?=<(?:{paragraph_end})\b))',
+        rf'<p\b[^>]*>(?:(?!</?p\b).)*?Test passes(?:(?!</?p\b).)*?'
+        rf'(?:</p\s*>|(?=<(?:{paragraph_end})\b))',
         '',
         body,
         flags=re.DOTALL | re.IGNORECASE,

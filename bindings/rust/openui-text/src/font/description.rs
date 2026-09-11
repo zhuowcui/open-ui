@@ -67,6 +67,10 @@ pub struct FontDescription {
     /// glyphs are rendered upright, rotated, or in mixed mode. Defaults to
     /// `Horizontal` (standard left-to-right flow).
     pub orientation: FontOrientation,
+    /// Whether this text belongs to a platform-native control label.
+    pub native_control_text: bool,
+    /// Whether native HTML-button Ahem advance compatibility is active.
+    pub native_button_text_metrics: bool,
 }
 
 impl FontDescription {
@@ -96,6 +100,8 @@ impl FontDescription {
             font_synthesis_style: FontSynthesis::Auto,
             font_optical_sizing: FontOpticalSizing::Auto,
             orientation: FontOrientation::Horizontal,
+            native_control_text: false,
+            native_button_text_metrics: false,
         }
     }
 
@@ -137,6 +143,8 @@ impl FontDescription {
             font_synthesis_style: style.font_synthesis_style,
             font_optical_sizing: style.font_optical_sizing,
             orientation: openui_style::font_orientation(style.writing_mode, style.text_orientation),
+            native_control_text: style.native_control_text,
+            native_button_text_metrics: style.native_button_text_metrics,
         }
     }
 }

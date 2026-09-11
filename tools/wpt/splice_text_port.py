@@ -602,10 +602,6 @@ def prepare_changes(
                 (
                     port_wpt.PorterProfile.REAL_FONT
                     if test_id in real_font_ids
-                    else port_wpt.PorterProfile.DETERMINISTIC_AHEM
-                    if paint_layers and test_id in text_manifest
-                    else port_wpt.PorterProfile.LEGACY_BOX_ONLY
-                    if paint_layers
                     else profile
                 ),
                 text_manifest,
@@ -713,7 +709,10 @@ def prepare_changes(
     for path in sorted(template_paths):
         changes[path] = json.dumps(template_data[path], indent=2) + "\n"
 
-    if not paint_layers and profile is port_wpt.PorterProfile.DETERMINISTIC_AHEM:
+    # Paint-layer emission is orthogonal to the authored-content profile.  In
+    # particular, SP20 background/overflow rows still retain their text while
+    # opting into generated background, border-image, and pseudo paint data.
+    if profile is port_wpt.PorterProfile.DETERMINISTIC_AHEM:
         ported = sorted(set(ported).union(test_ids))
         originals[TEXT_PORTED_LIST] = original_manifest
         changes[TEXT_PORTED_LIST] = json.dumps(ported, indent=2) + "\n"

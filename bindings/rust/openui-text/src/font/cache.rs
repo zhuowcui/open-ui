@@ -73,6 +73,9 @@ struct FontCacheKey {
     /// Oblique angle as raw f32 bits (0 for normal/italic).
     /// Different oblique angles produce different synthetic skew transforms.
     oblique_angle_bits: u32,
+    /// Platform-native control labels retain native raster metrics.
+    native_control_text: bool,
+    native_button_text_metrics: bool,
 }
 
 /// Wrapper to assert Send+Sync for FontMgr.
@@ -184,11 +187,13 @@ impl FontCache {
             }
             _ => 0.0,
         };
-        let data = Arc::new(FontPlatformData::with_synthetic_styles(
+        let data = Arc::new(FontPlatformData::with_synthetic_styles_and_native_metrics(
             typeface,
             description.size,
             oblique_angle,
             skia_safe::font_style::Weight::from(description.weight.0 as i32),
+            description.native_control_text,
+            description.native_button_text_metrics,
         ));
         self.cache.insert(key, Arc::clone(&data));
         Some(data)
@@ -226,6 +231,8 @@ impl FontCache {
             stretch_tenths: (desc.stretch.0 * 10.0) as i32,
             style_tag,
             oblique_angle_bits,
+            native_control_text: desc.native_control_text,
+            native_button_text_metrics: desc.native_button_text_metrics,
         }
     }
 
@@ -290,11 +297,13 @@ impl FontCache {
             }
             _ => 0.0,
         };
-        let data = Arc::new(FontPlatformData::with_synthetic_styles(
+        let data = Arc::new(FontPlatformData::with_synthetic_styles_and_native_metrics(
             typeface,
             description.size,
             oblique_angle,
             skia_safe::font_style::Weight::from(description.weight.0 as i32),
+            description.native_control_text,
+            description.native_button_text_metrics,
         ));
         Some(data)
     }

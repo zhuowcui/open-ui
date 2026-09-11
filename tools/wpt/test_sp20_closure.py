@@ -199,6 +199,17 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
     def test_21_deterministic_unicode_spaces_are_accepted(self):
         parser = self.parse("", "<div>\u1680\u2002\u2060</div>")
         self.assertEqual(port_wpt.analyze_portability(parser), (True, ""))
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "malformed-body.html"
+            path.write_text(
+                "<body><div>&ensp;B</div></body>"
+                "<div>&emsp;C</div><div>&thinsp;D</div></body>",
+                encoding="utf-8",
+            )
+            template = port_wpt.generate_html_template(str(path))
+            self.assertIn("&ensp;B", template)
+            self.assertIn("&emsp;C", template)
+            self.assertIn("&thinsp;D", template)
 
     def test_22_inset_clip_path_emits_public_style_contract(self):
         rust = self.generate("#x{clip-path:inset(1px 2px 3px 4px)}")
@@ -230,6 +241,22 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         )
         self.assertIn("ReplacedResourceKind::Image", picture)
         self.assertIn("intrinsic_width: Some(20.0)", picture)
+        with tempfile.TemporaryDirectory() as temp:
+            iframe_path = Path(temp) / "iframe.html"
+            iframe_path.write_text(
+                '<iframe srcdoc="<style>html { background-color: red; } <style>"></iframe>',
+                encoding="utf-8",
+            )
+            iframe_template = port_wpt.generate_html_template(str(iframe_path))
+            self.assertIn("html { background-color: red; }", iframe_template)
+            iframe_parser = port_wpt.parse_wpt_html(str(iframe_path), root_aware=True)
+            iframe_rust = port_wpt.generate_rust_fn(
+                "sp20_iframe", iframe_parser.root, iframe_parser.html_styles,
+                root_aware=True,
+            )
+            self.assertIn("style.width = Length::px(300.0)", iframe_rust)
+            self.assertIn("style.height = Length::px(150.0)", iframe_rust)
+            self.assertIn("embedded_canvas_color = Some(Color::RED)", iframe_rust)
 
     def test_25_packaged_local_resource_matches_manifest(self):
         resource = port_wpt._packaged_resource("/media/1x1-green.png", closure.WPT_BASE)

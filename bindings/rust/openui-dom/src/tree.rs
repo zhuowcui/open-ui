@@ -7,8 +7,8 @@
 use std::collections::{BTreeMap, HashMap};
 
 use openui_style::{
-    ComputedStyle, ContainerCondition, Containment, CounterStyle, Display, GeneratedContentItem,
-    ImageResourceId, Overflow, QuotePair, ScrollMarkerGroup,
+    Color, ComputedStyle, ContainerCondition, Containment, CounterStyle, Display,
+    GeneratedContentItem, ImageResourceId, Overflow, QuotePair, ScrollMarkerGroup,
 };
 
 /// Encoded raster or static-SVG bytes owned by a document.
@@ -229,10 +229,22 @@ pub struct NodeData {
     /// Its generated child viewport supplies layout and paint without a live
     /// browsing context or script runtime.
     pub embedded_document: Option<ImageResourceId>,
+    /// Propagated canvas color of a statically lowered nested document. This
+    /// paints inside the iframe content viewport, independently of the host
+    /// element's own CSS background layers.
+    pub embedded_canvas_color: Option<Color>,
     pub form_control: Option<FormControlRole>,
     /// Whether the platform-native form-control appearance remains enabled
     /// after the authored `appearance` cascade.
     pub form_control_native_appearance: bool,
+    /// Whether the HTML control is disabled. Native appearance and text
+    /// colors consume this state without a script/event runtime.
+    pub form_control_disabled: bool,
+
+    /// Whether this node is an SVG `foreignObject` graphics element. Its CSS
+    /// box participates in block layout, while SVG viewport clipping remains
+    /// observable during decoration paint.
+    pub is_svg_foreign_object: bool,
 
     /// Base marker color retained when a generated column marker's single
     /// pseudo node is expanded into multiple virtual marker boxes. The first
@@ -270,8 +282,11 @@ impl NodeData {
             table_row_span: 1,
             replaced: None,
             embedded_document: None,
+            embedded_canvas_color: None,
             form_control: None,
             form_control_native_appearance: true,
+            form_control_disabled: false,
+            is_svg_foreign_object: false,
             scroll_marker_inactive_background: None,
             container_query_rules: Vec::new(),
             parent: NodeId::NONE,
@@ -447,9 +462,32 @@ impl Document {
                 self.insert_before_sibling(origin, pseudo)
             }
             PseudoElementKind::ScrollMarkerGroup
+                if self.nodes[origin.index()].parent.is_none()
+                    && self.nodes[origin.index()].style.scroll_marker_group
+                        == ScrollMarkerGroup::Before =>
+            {
+                self.prepend_child(origin, pseudo)
+            }
+            PseudoElementKind::ScrollMarkerGroup
                 if !self.nodes[origin.index()].parent.is_none() =>
             {
-                self.insert_after_sibling(origin, pseudo)
+                // In the external pseudo tree, scroll buttons precede an
+                // `after` marker group. Generation may discover the group
+                // after its buttons, so insert beyond the complete button
+                // run rather than immediately after the principal box.
+                let mut sibling = origin;
+                let mut next = self.nodes[sibling.index()].next_sibling;
+                while !next.is_none()
+                    && matches!(
+                        self.nodes[next.index()].pseudo_kind,
+                        Some(PseudoElementKind::ScrollButton(_))
+                    )
+                    && self.nodes[next.index()].pseudo_origin == origin
+                {
+                    sibling = next;
+                    next = self.nodes[sibling.index()].next_sibling;
+                }
+                self.insert_after_sibling(sibling, pseudo)
             }
             // Scroll buttons are siblings of the scroll container's
             // principal box. Size containment and overflow clipping on the
@@ -589,6 +627,25 @@ impl Document {
     /// Count of all nodes in the document.
     pub fn node_count(&self) -> usize {
         self.nodes.len()
+    }
+
+    /// Whether any attached/generated node requires the platform native text
+    /// raster surface. This remains a document-level surface capability;
+    /// individual fonts still select aliased versus LCD glyph masks.
+    pub fn uses_native_control_text(&self) -> bool {
+        self.nodes.iter().any(|node| node.style.native_control_text)
+    }
+
+    /// Find the first element exposing a given CSS anchor name.
+    ///
+    /// Generated documents retain computed anchor names directly in style;
+    /// the arena order is document order, which supplies deterministic tie
+    /// breaking for the compact anchor-positioning model.
+    pub fn find_anchor_named(&self, name: &str) -> Option<NodeId> {
+        self.nodes
+            .iter()
+            .position(|node| node.style.anchor_name.as_deref() == Some(name))
+            .map(|index| NodeId(index as u32))
     }
 
     /// Register deterministic encoded image bytes and return their stable

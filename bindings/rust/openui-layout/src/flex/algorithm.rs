@@ -1464,6 +1464,17 @@ fn flex_box_children(doc: &Document, parent_id: NodeId) -> Vec<NodeId> {
         if child_style.display == openui_style::Display::None {
             continue;
         }
+        // A marker pseudo belongs to its originating scroller's external
+        // scroll-marker group. It does not also generate a flex item in the
+        // origin's principal box.
+        if doc.node(parent_id).pseudo_kind != Some(PseudoElementKind::ScrollMarkerGroup)
+            && matches!(
+                doc.node(child_id).pseudo_kind,
+                Some(PseudoElementKind::ScrollMarker) | Some(PseudoElementKind::ColumnScrollMarker)
+            )
+        {
+            continue;
+        }
         if matches!(doc.node(child_id).tag, ElementTag::Text | ElementTag::Break) {
             // A contiguous text/<br> sequence generates one anonymous flex
             // item whose contents establish an inline formatting context.

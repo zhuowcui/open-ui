@@ -60,6 +60,9 @@ pub enum ListStyleType {
     /// The open-state disclosure marker used by a generated `<details>`
     /// summary in the deterministic HTML surface.
     DisclosureOpen,
+    /// The closed-state disclosure marker used by a generated `<details>`
+    /// summary in the deterministic HTML surface.
+    DisclosureClosed,
 }
 
 impl Display {

@@ -113,6 +113,24 @@ pub enum WebkitBoxOrient {
     Vertical,
 }
 
+/// The subset of CSS `position-area` alignment areas represented by layout.
+/// Each value identifies an edge/corner outside the anchor's border box, or
+/// its center area. `None` is the initial value and disables anchor-area
+/// positioning.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PositionArea {
+    None,
+    TopLeft,
+    TopCenter,
+    TopRight,
+    LeftCenter,
+    Center,
+    RightCenter,
+    BottomLeft,
+    BottomCenter,
+    BottomRight,
+}
+
 /// A resolved color stop in a CSS linear gradient.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum GradientStopPosition {
@@ -356,6 +374,15 @@ pub struct ComputedStyle {
     /// CSS `position`. Initial: `static`.
     pub position: Position,
 
+    /// CSS `anchor-name`. Initial: `none`.
+    pub anchor_name: Option<String>,
+
+    /// CSS `position-anchor`. Initial: `auto`.
+    pub position_anchor: Option<String>,
+
+    /// CSS `position-area`. Initial: `none`.
+    pub position_area: PositionArea,
+
     /// Whether transform-like properties establish a containing block for
     /// positioned descendants. Set for `will-change: transform` in ported WPTs.
     pub establishes_transform_containing_block: bool,
@@ -496,7 +523,9 @@ pub struct ComputedStyle {
     pub outline_offset: i32,
 
     // ── Border radii (Blink: LengthSize stored in SurroundData) ─────
-    // Each corner stores horizontal and vertical radii as `f32` pixels.
+    // Each corner stores horizontal and vertical radii as `f32` values. A
+    // corresponding flag below records percentage components so paint can
+    // resolve them against the used border-box dimensions after layout.
     // Initial value: `0.0` (no rounding).
     /// CSS `border-top-left-radius`. Initial: `0.0`.
     pub border_top_left_radius: (f32, f32),
@@ -506,6 +535,9 @@ pub struct ComputedStyle {
     pub border_bottom_right_radius: (f32, f32),
     /// CSS `border-bottom-left-radius`. Initial: `0.0`.
     pub border_bottom_left_radius: (f32, f32),
+    /// Whether each stored radius component is a percentage rather than px.
+    /// Corner order: top-left, top-right, bottom-right, bottom-left.
+    pub border_radius_percent: [(bool, bool); 4],
 
     // ── Colors ───────────────────────────────────────────────────────
     /// CSS `background-color`. Initial: `transparent`.
@@ -633,6 +665,9 @@ pub struct ComputedStyle {
     pub object_position: ObjectPosition,
     pub transform: Transform2D,
     pub transform_origin: (Length, Length),
+    /// Deterministic CSS filter functions represented by the paint backend.
+    pub filter_blur: f32,
+    pub filter_grayscale: f32,
     /// CSS basic-shape `clip-path: inset(top right bottom left)`.
     pub clip_path_inset: Option<[Length; 4]>,
     pub shape_outside: ShapeOutside,
@@ -662,6 +697,17 @@ pub struct ComputedStyle {
 
     /// CSS `font-stretch`. Initial: `normal` (100%). Inherited.
     pub font_stretch: FontStretch,
+
+    /// Internal marker for text supplied by a platform-native control.
+    ///
+    /// Native widget labels use the platform font raster/advance policy even
+    /// when the deterministic WPT harness selects aliased author text.
+    pub native_control_text: bool,
+
+    /// Internal compatibility metric for authored HTML button labels. The
+    /// Linux native control keeps 13.333px vertical metrics while rounding a
+    /// deterministic Ahem advance cell to 13px.
+    pub native_button_text_metrics: bool,
 
     /// CSS `font-variant-caps`. Initial: `normal`. Inherited.
     pub font_variant_caps: FontVariantCaps,
@@ -966,6 +1012,9 @@ impl ComputedStyle {
             list_style_position: ListStylePosition::Outside,
             list_style_type: ListStyleType::Disc,
             position: Position::INITIAL, // static
+            anchor_name: None,
+            position_anchor: None,
+            position_area: PositionArea::None,
             establishes_transform_containing_block: false,
             will_change_transform: false,
             float: Float::INITIAL,         // none
@@ -1032,6 +1081,7 @@ impl ComputedStyle {
             border_top_right_radius: (0.0, 0.0),
             border_bottom_right_radius: (0.0, 0.0),
             border_bottom_left_radius: (0.0, 0.0),
+            border_radius_percent: [(false, false); 4],
 
             background_color: Color::TRANSPARENT,
             background_linear_gradient: None,
@@ -1100,6 +1150,8 @@ impl ComputedStyle {
             object_position: ObjectPosition::default(),
             transform: Transform2D::IDENTITY,
             transform_origin: (Length::percent(50.0), Length::percent(50.0)),
+            filter_blur: 0.0,
+            filter_grayscale: 0.0,
             clip_path_inset: None,
             shape_outside: ShapeOutside::None,
             shape_margin: Length::zero(),
@@ -1116,6 +1168,8 @@ impl ComputedStyle {
             font_weight: FontWeight::NORMAL,        // 400
             font_style: FontStyleEnum::Normal,
             font_stretch: FontStretch::NORMAL, // 100%
+            native_control_text: false,
+            native_button_text_metrics: false,
             font_variant_caps: FontVariantCaps::Normal,
             font_variant_ligatures: FontVariantLigatures::NORMAL,
             font_variant_numeric: FontVariantNumeric::NORMAL,
@@ -1255,6 +1309,8 @@ impl ComputedStyle {
         style.font_weight = origin.font_weight;
         style.font_style = origin.font_style;
         style.font_stretch = origin.font_stretch;
+        style.native_control_text = origin.native_control_text;
+        style.native_button_text_metrics = origin.native_button_text_metrics;
         style.font_variant_caps = origin.font_variant_caps;
         style.font_variant_ligatures = origin.font_variant_ligatures;
         style.font_variant_numeric = origin.font_variant_numeric;

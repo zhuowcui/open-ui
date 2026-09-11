@@ -17,14 +17,14 @@ animations_background-color-animation-fallback-missing-100-percent,not_portable,
 animations_background-color-animation-fallback-missing-100-percent-ref,not_portable,,uses_javascript
 animations_background-color-animation-fallback-replace,not_portable,,uses_javascript
 animations_background-color-animation-fallback-replace-ref,not_portable,,uses_javascript
-animations_background-color-animation-field-crash,not_portable,,style_block_unsupported property: animation
+animations_background-color-animation-field-crash,ported,css_backgrounds_animations_background_color_animation_field_crash,
 animations_background-color-animation-fragmented,not_portable,,uses_javascript
 animations_background-color-animation-fragmented-ref,ported,css_backgrounds_animations_background_color_animation_fragmented_ref,
 animations_background-color-animation-half-opaque,not_portable,,uses_javascript
 animations_background-color-animation-half-opaque-ref,ported,css_backgrounds_animations_background_color_animation_half_opaque_ref,
-animations_background-color-animation-in-body,not_portable,,style_block_unsupported property: animation
+animations_background-color-animation-in-body,ported,css_backgrounds_animations_background_color_animation_in_body,
 animations_background-color-animation-in-body-ref,ported,css_backgrounds_animations_background_color_animation_in_body_ref,
-animations_background-color-animation-non-empty-no-draw-crash,not_portable,,style_block_unsupported property: animation
+animations_background-color-animation-non-empty-no-draw-crash,ported,css_backgrounds_animations_background_color_animation_non_empty_no_draw_crash,
 animations_background-color-animation-non-zero-size-element-change-to-zero,not_portable,,uses_javascript
 animations_background-color-animation-non-zero-size-element-change-to-zero-ref,ported,css_backgrounds_animations_background_color_animation_non_zero_size_element_change_to_zero_ref,
 animations_background-color-animation-offset-position-not-stuck,not_portable,,uses_javascript
@@ -41,8 +41,8 @@ animations_background-color-animation-three-keyframes3,not_portable,,uses_javasc
 animations_background-color-animation-will-change-contents,not_portable,,uses_javascript
 animations_background-color-animation-will-change-contents-ref,ported,css_backgrounds_animations_background_color_animation_will_change_contents_ref,
 animations_background-color-animation-with-blur,not_portable,,uses_javascript
-animations_background-color-animation-with-blur-ref,not_portable,,style_block_unsupported property: filter
-animations_background-color-animation-with-images,not_portable,,style_block_unsupported property: animation
+animations_background-color-animation-with-blur-ref,ported,css_backgrounds_animations_background_color_animation_with_blur_ref,
+animations_background-color-animation-with-images,ported,css_backgrounds_animations_background_color_animation_with_images,
 animations_background-color-animation-with-images-ref,ported,css_backgrounds_animations_background_color_animation_with_images_ref,
 animations_background-color-animation-with-mask,not_portable,,uses_javascript
 animations_background-color-animation-with-mask-ref,ported,css_backgrounds_animations_background_color_animation_with_mask_ref,
@@ -64,7 +64,7 @@ animations_background-color-transition,not_portable,,uses_javascript
 animations_background-color-transition-colormix,not_portable,,uses_javascript
 animations_background-color-transition-currentcolor,not_portable,,uses_javascript
 animations_background-color-transition-currentcolor-ref,ported,css_backgrounds_animations_background_color_transition_currentcolor_ref,
-animations_background-color-transparent-animation-in-body,not_portable,,style_block_unsupported property: animation
+animations_background-color-transparent-animation-in-body,ported,css_backgrounds_animations_background_color_transparent_animation_in_body,
 animations_background-color-transparent-animation-in-body-ref,ported,css_backgrounds_animations_background_color_transparent_animation_in_body_ref,
 animations_background-image-interpolation,not_portable,,uses_javascript
 animations_background-position-composition,not_portable,,uses_javascript
@@ -97,7 +97,7 @@ animations_border-width-transition-with-style-change,not_portable,,uses_javascri
 animations_box-shadow-composition,not_portable,,uses_javascript
 animations_box-shadow-interpolation,not_portable,,uses_javascript
 animations_discrete-no-interpolation,not_portable,,uses_javascript
-animations_invalidation_background-color-animation-with-zero-alpha,not_portable,,style_block_unsupported property: animation
+animations_invalidation_background-color-animation-with-zero-alpha,ported,css_backgrounds_animations_invalidation_background_color_animation_with_zero_alpha,
 animations_invalidation_background-color-animation-with-zero-alpha-ref,ported,css_backgrounds_animations_invalidation_background_color_animation_with_zero_alpha_ref,
 animations_invalidation_background-color-transition-obscured,not_portable,,uses_javascript
 animations_invalidation_background-color-transition-obscured-ref,ported,css_backgrounds_animations_invalidation_background_color_transition_obscured_ref,
@@ -121,13 +121,13 @@ background-attachment-350,ported,css_backgrounds_background_attachment_350,
 background-attachment-353,not_portable,,uses_javascript
 background-attachment-fixed,ported,css_backgrounds_background_attachment_fixed,
 background-attachment-fixed-block-002,not_portable,,uses_javascript
-background-attachment-fixed-border-radius-offset,not_portable,,style_block_unsupported property: clip-path
-background-attachment-fixed-border-radius-offset-ref,not_portable,,style_block_unsupported property: clip-path
+background-attachment-fixed-border-radius-offset,ported,css_backgrounds_background_attachment_fixed_border_radius_offset,
+background-attachment-fixed-border-radius-offset-ref,ported,css_backgrounds_background_attachment_fixed_border_radius_offset_ref,
 background-attachment-fixed-inline-002,not_portable,,uses_javascript
 background-attachment-fixed-inline-scrolled,not_portable,,uses_javascript
 background-attachment-fixed-inline-scrolled-ref,ported,css_backgrounds_background_attachment_fixed_inline_scrolled_ref,
-background-attachment-fixed-inside-transform-1,not_portable,,style_block_unsupported property: transform
-background-attachment-fixed-inside-transform-1-ref,not_portable,,style_block_unsupported property: transform
+background-attachment-fixed-inside-transform-1,ported,css_backgrounds_background_attachment_fixed_inside_transform_1,
+background-attachment-fixed-inside-transform-1-ref,ported,css_backgrounds_background_attachment_fixed_inside_transform_1_ref,
 background-attachment-local,ported,css_backgrounds_background_attachment_local,
 background-attachment-local-block-002,not_portable,,uses_javascript
 background-attachment-local-hidden,ported,css_backgrounds_background_attachment_local_hidden,
@@ -293,7 +293,7 @@ background-image-table-cells-straddling-no-repeat,ported,css_backgrounds_backgro
 background-image-table-cells-zoomed,ported,css_backgrounds_background_image_table_cells_zoomed,
 background-image-with-border-radius-fidelity,ported,css_backgrounds_background_image_with_border_radius_fidelity,
 background-margin-iframe-root,not_portable,,unsupported element: <iframe>
-background-margin-iframe-root-ref,not_portable,,unsupported element: <iframe>
+background-margin-iframe-root-ref,ported,css_backgrounds_background_margin_iframe_root_ref,
 background-margin-root,ported,css_backgrounds_background_margin_root,
 background-margin-root-ref,ported,css_backgrounds_background_margin_root_ref,
 background-margin-transformed-root,not_portable,,style_block_unsupported property: transform
@@ -370,15 +370,15 @@ background-repeat-space-8-ref,ported,css_backgrounds_background_repeat_space_8_r
 background-repeat-space-9,ported,css_backgrounds_background_repeat_space_9,
 background-repeat-space-9-ref,ported,css_backgrounds_background_repeat_space_9_ref,
 background-repeat_background-repeat-image-larger-than-positioning-area-crash,ported,css_backgrounds_background_repeat_background_repeat_image_larger_than_positioning_area_crash,
-background-repeat_background-repeat-no-repeat,not_portable,,unsupported element: <img>
-background-repeat_background-repeat-repeat-x,not_portable,,unsupported element: <img>
-background-repeat_background-repeat-repeat-y,not_portable,,unsupported element: <img>
-background-repeat_background-repeat-round,not_portable,,unsupported element: <img>
-background-repeat_background-repeat-round-roundup,not_portable,,unsupported element: <img>
-background-repeat_background-repeat-space,not_portable,,unsupported element: <img>
+background-repeat_background-repeat-no-repeat,ported,css_backgrounds_background_repeat_background_repeat_no_repeat,
+background-repeat_background-repeat-repeat-x,ported,css_backgrounds_background_repeat_background_repeat_repeat_x,
+background-repeat_background-repeat-repeat-y,ported,css_backgrounds_background_repeat_background_repeat_repeat_y,
+background-repeat_background-repeat-round,ported,css_backgrounds_background_repeat_background_repeat_round,
+background-repeat_background-repeat-round-roundup,ported,css_backgrounds_background_repeat_background_repeat_round_roundup,
+background-repeat_background-repeat-space,ported,css_backgrounds_background_repeat_background_repeat_space,
 background-repeat_gradient-repeat-spaced-with-borders,ported,css_backgrounds_background_repeat_gradient_repeat_spaced_with_borders,
 background-rounded-image-clip-001,ported,css_backgrounds_background_rounded_image_clip_001,
-background-rounded-image-clip-002,not_portable,,style_block_unsupported property: transform
+background-rounded-image-clip-002,ported,css_backgrounds_background_rounded_image_clip_002,
 background-size-001,not_portable,,uses_javascript
 background-size-002,ported,css_backgrounds_background_size_002,
 background-size-003,ported,css_backgrounds_background_size_003,
@@ -426,9 +426,9 @@ background-size-one-value-1x1-image,ported,css_backgrounds_background_size_one_v
 background-size-percentage-root,ported,css_backgrounds_background_size_percentage_root,
 background-size-percentage-root-ref,ported,css_backgrounds_background_size_percentage_root_ref,
 background-size-with-negative-value,ported,css_backgrounds_background_size_with_negative_value,
-background-size_background-size-contain,not_portable,,unsupported element: <img>
+background-size_background-size-contain,ported,css_backgrounds_background_size_background_size_contain,
 background-size_background-size-contain-svg-view,ported,css_backgrounds_background_size_background_size_contain_svg_view,
-background-size_background-size-cover,not_portable,,unsupported element: <img>
+background-size_background-size-cover,ported,css_backgrounds_background_size_background_size_cover,
 background-size_background-size-cover-contain-001,ported,css_backgrounds_background_size_background_size_cover_contain_001,
 background-size_background-size-cover-contain-002,ported,css_backgrounds_background_size_background_size_cover_contain_002,
 background-size_background-size-cover-svg,ported,css_backgrounds_background_size_background_size_cover_svg,
@@ -679,10 +679,10 @@ border-image-007,ported,css_backgrounds_border_image_007,
 border-image-011,ported,css_backgrounds_border_image_011,
 border-image-012,ported,css_backgrounds_border_image_012,
 border-image-013,ported,css_backgrounds_border_image_013,
-border-image-017,not_portable,,unsupported element: <img>
-border-image-018,not_portable,,unsupported element: <img>
-border-image-019,not_portable,,unsupported element: <img>
-border-image-020,not_portable,,unsupported element: <img>
+border-image-017,ported,css_backgrounds_border_image_017,
+border-image-018,ported,css_backgrounds_border_image_018,
+border-image-019,ported,css_backgrounds_border_image_019,
+border-image-020,ported,css_backgrounds_border_image_020,
 border-image-021,ported,css_backgrounds_border_image_021,
 border-image-calc,ported,css_backgrounds_border_image_calc,
 border-image-calc-ref,ported,css_backgrounds_border_image_calc_ref,
@@ -690,10 +690,10 @@ border-image-displayed-with-transparent-border-color,ported,css_backgrounds_bord
 border-image-displayed-with-transparent-border-color-ref,ported,css_backgrounds_border_image_displayed_with_transparent_border_color_ref,
 border-image-outset-003,ported,css_backgrounds_border_image_outset_003,
 border-image-outset-003-ref,ported,css_backgrounds_border_image_outset_003_ref,
-border-image-outset-004,not_portable,,unsupported element: <img>
+border-image-outset-004,ported,css_backgrounds_border_image_outset_004,
 border-image-repeat-005,ported,css_backgrounds_border_image_repeat_005,
 border-image-repeat-1,ported,css_backgrounds_border_image_repeat_1,
-border-image-repeat-1-ref,not_portable,,unsupported element: <svg>
+border-image-repeat-1-ref,ported,css_backgrounds_border_image_repeat_1_ref,
 border-image-repeat-repeat-001,ported,css_backgrounds_border_image_repeat_repeat_001,
 border-image-repeat-round,ported,css_backgrounds_border_image_repeat_round,
 border-image-repeat-round-003,ported,css_backgrounds_border_image_repeat_round_003,
@@ -727,8 +727,8 @@ border-image-repeat-space-9,ported,css_backgrounds_border_image_repeat_space_9,
 border-image-repeat-stretch-round-001,ported,css_backgrounds_border_image_repeat_stretch_round_001,
 border-image-repeat_repeatnegx_none_50px,not_portable,,uses_javascript
 border-image-round-and-stretch,ported,css_backgrounds_border_image_round_and_stretch,
-border-image-slice-001,not_portable,,unsupported element: <img>
-border-image-slice-002,not_portable,,unsupported element: <img>
+border-image-slice-001,ported,css_backgrounds_border_image_slice_001,
+border-image-slice-002,ported,css_backgrounds_border_image_slice_002,
 border-image-slice-003,ported,css_backgrounds_border_image_slice_003,
 border-image-slice-fill-001,ported,css_backgrounds_border_image_slice_fill_001,
 border-image-slice-fill-002,ported,css_backgrounds_border_image_slice_fill_002,
@@ -771,11 +771,11 @@ border-radius-011,ported,css_backgrounds_border_radius_011,
 border-radius-011-ref,ported,css_backgrounds_border_radius_011_ref,
 border-radius-012,ported,css_backgrounds_border_radius_012,
 border-radius-012-ref,ported,css_backgrounds_border_radius_012_ref,
-border-radius-013,not_portable,,unsupported element: <img>
-border-radius-clip-001,not_portable,,unsupported element: <img>
+border-radius-013,ported,css_backgrounds_border_radius_013,
+border-radius-clip-001,ported,css_backgrounds_border_radius_clip_001,
 border-radius-clipping-002,ported,css_backgrounds_border_radius_clipping_002,
-border-radius-clipping-with-transform-001,not_portable,,style_block_unsupported property: transform
-border-radius-clipping-with-transform-001-ref,not_portable,,style_block_unsupported property: filter
+border-radius-clipping-with-transform-001,ported,css_backgrounds_border_radius_clipping_with_transform_001,
+border-radius-clipping-with-transform-001-ref,ported,css_backgrounds_border_radius_clipping_with_transform_001_ref,
 border-radius-css-text,not_portable,,uses_javascript
 border-radius-dynamic-from-no-radius,not_portable,,uses_javascript
 border-radius-dynamic-from-no-radius-ref,ported,css_backgrounds_border_radius_dynamic_from_no_radius_ref,
@@ -846,7 +846,7 @@ box-shadow-radius-001-ref,ported,css_backgrounds_box_shadow_radius_001_ref,
 box-shadow-radius-generated,not_portable,,uses_javascript
 box-shadow-radius-generated-ref,not_portable,,uses_javascript
 box-shadow-table-border-collapse-001,ported,css_backgrounds_box_shadow_table_border_collapse_001,
-box-shadow_box-shadow-blur-definition-001,not_portable,,unsupported element: <img>
+box-shadow_box-shadow-blur-definition-001,ported,css_backgrounds_box_shadow_box_shadow_blur_definition_001,
 box-shadow_slice-block-fragmentation-001,ported,css_backgrounds_box_shadow_slice_block_fragmentation_001,
 box-shadow_slice-block-fragmentation-001-ref,ported,css_backgrounds_box_shadow_slice_block_fragmentation_001_ref,
 box-shadow_slice-block-fragmentation-002,ported,css_backgrounds_box_shadow_slice_block_fragmentation_002,
@@ -889,13 +889,13 @@ document-canvas-remove-body,not_portable,,uses_javascript
 document-canvas-remove-body-ref,ported,css_backgrounds_document_canvas_remove_body_ref,
 fieldset-inset-shadow,not_portable,,unsupported element: <fieldset>
 fieldset-inset-shadow-ref,ported,css_backgrounds_fieldset_inset_shadow_ref,
-first-letter-space-not-selected,not_portable,,complex_css_selector: .test::first-letter
+first-letter-space-not-selected,ported,css_backgrounds_first_letter_space_not_selected,
 gradient-wrong-interpolation-crash,ported,css_backgrounds_gradient_wrong_interpolation_crash,
 hidpi_simple-bg-color,ported,css_backgrounds_hidpi_simple_bg_color,
 hidpi_simple-bg-color-ref,not_portable,,uses_javascript
 inheritance.sub,not_portable,,uses_javascript
 inline-background-rtl-001,ported,css_backgrounds_inline_background_rtl_001,
-inner-border-non-renderable,not_portable,,style_block_unsupported property: clip-path
+inner-border-non-renderable,ported,css_backgrounds_inner_border_non_renderable,
 inner-border-non-renderable-ref,ported,css_backgrounds_inner_border_non_renderable_ref,
 inset-box-shadow-scroll,ported,css_backgrounds_inset_box_shadow_scroll,
 inset-box-shadow-scroll-ref,ported,css_backgrounds_inset_box_shadow_scroll_ref,
@@ -994,7 +994,7 @@ table-cell-background-local,not_portable,,uses_javascript
 table-cell-background-local-002,ported,css_backgrounds_table_cell_background_local_002,
 table-cell-background-local-003,ported,css_backgrounds_table_cell_background_local_003,
 table-cell-background-local-ref,not_portable,,uses_javascript
-tiny-foreignObject-double-border-radius-crash,not_portable,,unsupported element: <svg>
+tiny-foreignObject-double-border-radius-crash,ported,css_backgrounds_tiny_foreignobject_double_border_radius_crash,
 ttwf-reftest-borderRadius,ported,css_backgrounds_ttwf_reftest_borderradius,
 background-attachment-local-scrolling,ported,css_backgrounds_background_attachment_local_scrolling,
 border-image-image-type-001,ported,css_backgrounds_border_image_image_type_001,
@@ -1039,3 +1039,4 @@ border-top-left-radius-values-003,ported,css_backgrounds_border_top_left_radius_
 border-top-left-radius-values-004,ported,css_backgrounds_border_top_left_radius_values_004,
 border-top-right-radius-values-004,ported,css_backgrounds_border_top_right_radius_values_004,
 none-as-image-layer,ported,css_backgrounds_none_as_image_layer,
+border-radius-content-edge-001,ported,css_backgrounds_border_radius_content_edge_001,

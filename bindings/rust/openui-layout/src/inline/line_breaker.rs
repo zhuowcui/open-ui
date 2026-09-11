@@ -993,13 +993,14 @@ impl<'a> LineBreaker<'a> {
                             line.used_width = line.used_width + width;
                             self.current_text_offset = break_byte;
                         } else {
-                            // No later opportunity exists; force the whole
-                            // unbreakable item to guarantee progress. Continue
-                            // through following inline tags and a forced break;
-                            // another paintable item will still end the
-                            // already-overfull line normally.
-                            self.force_text_on_line(
-                                item_index, text_start, text_end, text_width, line,
+                            // Shaping may split one logical word at a script,
+                            // orientation, or fallback-font boundary. Those
+                            // item boundaries are not CSS soft-wrap
+                            // opportunities. Force the complete logical unit
+                            // through its next Unicode break while retaining
+                            // the independently shaped item results.
+                            self.force_text_through_next_logical_break(
+                                item_index, text_start, text_width, line, style,
                             );
                             return;
                         }
@@ -1618,6 +1619,90 @@ impl<'a> LineBreaker<'a> {
         self.current_text_offset = 0;
     }
 
+    /// Force an overflowing logical text unit onto an empty line.
+    ///
+    /// Deterministic fallback shaping represents a single DOM text node as
+    /// adjacent homogeneous items. CSS line breaking still operates on the
+    /// original text, so a fallback boundary inside a contraction or another
+    /// unbreakable word must not become an invented wrap point.
+    fn force_text_through_next_logical_break(
+        &mut self,
+        item_index: usize,
+        text_start: usize,
+        first_width: LayoutUnit,
+        line: &mut LineInfo,
+        style: &ComputedStyle,
+    ) {
+        let first = &self.items_data.items[item_index];
+        let mut logical_end = first.text_range.end;
+        let mut last_item = item_index;
+
+        for (candidate_index, candidate) in self.items_data.items[item_index + 1..]
+            .iter()
+            .enumerate()
+            .map(|(offset, candidate)| (item_index + 1 + offset, candidate))
+        {
+            if candidate.item_type != InlineItemType::Text
+                || candidate.node_id != first.node_id
+                || candidate.style_index != first.style_index
+                || candidate.bidi_level != first.bidi_level
+                || candidate.text_range.start != logical_end
+            {
+                break;
+            }
+            logical_end = candidate.text_range.end;
+            last_item = candidate_index;
+        }
+
+        let logical_text = &self.items_data.text[text_start..logical_end];
+        let break_end = find_break_opportunities(
+            logical_text,
+            style.word_break,
+            style.overflow_wrap,
+            style.line_break,
+        )
+        .into_iter()
+        .next()
+        .map_or(logical_end, |offset| text_start + offset);
+
+        for candidate_index in item_index..=last_item {
+            let candidate = &self.items_data.items[candidate_index];
+            let range_start = text_start.max(candidate.text_range.start);
+            let range_end = break_end.min(candidate.text_range.end);
+            if range_start >= range_end {
+                continue;
+            }
+            let width = if candidate_index == item_index && range_end == candidate.text_range.end {
+                first_width
+            } else {
+                self.measure_text_range(candidate_index, range_start, range_end)
+            };
+            line.items.push(InlineItemResult {
+                item_index: candidate_index,
+                text_range: range_start..range_end,
+                inline_size: width,
+                shape_result: candidate.shape_result.clone(),
+                has_forced_break: false,
+                item_type: InlineItemType::Text,
+            });
+            line.used_width = line.used_width + width;
+
+            if break_end <= candidate.text_range.end {
+                if break_end == candidate.text_range.end {
+                    self.current_item = candidate_index + 1;
+                    self.current_text_offset = 0;
+                } else {
+                    self.current_item = candidate_index;
+                    self.current_text_offset = break_end;
+                }
+                return;
+            }
+        }
+
+        self.current_item = last_item + 1;
+        self.current_text_offset = 0;
+    }
+
     /// Measure the width of a byte range within a text item.
     fn measure_text_range(&self, item_index: usize, start: usize, end: usize) -> LayoutUnit {
         let item = &self.items_data.items[item_index];
@@ -1894,7 +1979,10 @@ fn find_uax14_breaks(text: &str) -> Vec<usize> {
         match break_opp {
             BreakOpportunity::Mandatory | BreakOpportunity::Allowed => {
                 // Don't include break at position 0 or at the very end (after last char)
-                if byte_offset > 0 && byte_offset < text.len() {
+                if byte_offset > 0
+                    && byte_offset < text.len()
+                    && !break_splits_apostrophe_word(text, byte_offset)
+                {
                     breaks.push(byte_offset);
                 }
             }
@@ -1915,6 +2003,31 @@ fn find_uax14_breaks(text: &str) -> Vec<usize> {
     breaks.sort_unstable();
     breaks.dedup();
     breaks
+}
+
+fn break_splits_apostrophe_word(text: &str, byte_offset: usize) -> bool {
+    if !text.is_char_boundary(byte_offset) {
+        return false;
+    }
+    let before = text[..byte_offset].chars().next_back();
+    let after = text[byte_offset..].chars().next();
+    let is_apostrophe = |character| matches!(character, '\'' | '\u{2019}');
+
+    if before.is_some_and(is_apostrophe) && after.is_some_and(char::is_alphanumeric) {
+        let apostrophe_start = byte_offset - before.unwrap().len_utf8();
+        return text[..apostrophe_start]
+            .chars()
+            .next_back()
+            .is_some_and(char::is_alphanumeric);
+    }
+    if before.is_some_and(char::is_alphanumeric) && after.is_some_and(is_apostrophe) {
+        let after_apostrophe = byte_offset + after.unwrap().len_utf8();
+        return text[after_apostrophe..]
+            .chars()
+            .next()
+            .is_some_and(char::is_alphanumeric);
+    }
+    false
 }
 
 /// Find break opportunities only at spaces (used by tests).
@@ -2841,6 +2954,40 @@ mod tests {
             breaks.contains(&5),
             "keep-all should allow break after hyphen in Latin text, got: {:?}",
             breaks,
+        );
+    }
+
+    #[test]
+    fn normal_line_break_keeps_apostrophe_contractions_together() {
+        for contraction in ["shouldn't be", "browser\u{2019}s behavior"] {
+            let breaks = find_break_opportunities(
+                contraction,
+                WordBreak::Normal,
+                OverflowWrap::Normal,
+                LineBreak::Auto,
+            );
+            let apostrophe = contraction
+                .char_indices()
+                .find(|(_, character)| matches!(character, '\'' | '\u{2019}'))
+                .map(|(offset, character)| (offset, offset + character.len_utf8()))
+                .unwrap();
+            assert!(
+                !breaks.contains(&apostrophe.0),
+                "break before apostrophe: {breaks:?}"
+            );
+            assert!(
+                !breaks.contains(&apostrophe.1),
+                "break after apostrophe: {breaks:?}"
+            );
+        }
+        assert_eq!(
+            find_break_opportunities(
+                "shouldn't be visible",
+                WordBreak::Normal,
+                OverflowWrap::Normal,
+                LineBreak::Auto,
+            ),
+            vec![10, 13],
         );
     }
 

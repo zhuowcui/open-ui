@@ -70,7 +70,8 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
     // by the comparison runner to SP16 IDs so historical Ahem and box-only
     // snapshots retain the default unknown pixel geometry.
     let real_font_raster = std::env::var("OPENUI_REAL_FONT_RASTER").ok().as_deref() == Some("1");
-    let mut surface = create_raster_surface(width, height, real_font_raster)
+    let lcd_surface = real_font_raster || doc.uses_native_control_text();
+    let mut surface = create_raster_surface(width, height, lcd_surface)
         .ok_or_else(|| "Failed to create Skia surface".to_string())?;
 
     // The browser canvas starts white; the complete selected html/body
@@ -121,7 +122,7 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
     const TILE_STEP: i32 = TILE_SIZE - 2;
     for tile_y in (0..height).step_by(TILE_STEP as usize) {
         for tile_x in (0..width).step_by(TILE_STEP as usize) {
-            let mut tile = create_raster_surface(TILE_SIZE, TILE_SIZE, real_font_raster)
+            let mut tile = create_raster_surface(TILE_SIZE, TILE_SIZE, lcd_surface)
                 .ok_or_else(|| "Failed to create raster tile".to_string())?;
             tile.canvas().clear(canvas_color);
             tile.canvas().translate((-tile_x as f32, -tile_y as f32));

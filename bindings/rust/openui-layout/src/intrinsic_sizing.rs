@@ -783,6 +783,19 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         output: &mut Vec<(usize, NodeId, i32)>,
         source_index: &mut usize,
     ) {
+        if doc.node(parent).pseudo_kind == Some(openui_dom::PseudoElementKind::ScrollMarkerGroup) {
+            let mut markers = Vec::new();
+            crate::block::collect_scroll_marker_group_items(
+                doc,
+                doc.node(parent).pseudo_origin,
+                &mut markers,
+            );
+            for child_id in markers {
+                output.push((*source_index, child_id, doc.node(child_id).style.order));
+                *source_index += 1;
+            }
+            return;
+        }
         for child_id in doc.children(parent) {
             let child = doc.node(child_id);
             if child.style.display == openui_style::Display::Contents
@@ -3037,7 +3050,7 @@ pub fn compute_replaced_intrinsic_sizes_for_node(
     let node = doc.node(node_id);
     let replaced = node.replaced;
     let missing_image = node.tag == ElementTag::Image && replaced.is_none();
-    let source_less_alt_width = (missing_image && doc.attribute(node_id, "src").is_none())
+    let source_less_alt_width = missing_image
         .then(|| doc.attribute(node_id, "alt"))
         .flatten()
         .filter(|alt| !alt.is_empty())

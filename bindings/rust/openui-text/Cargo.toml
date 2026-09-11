@@ -11,3 +11,4 @@ skia-safe = { version = "0.94", features = ["textlayout"] }
 unicode-script = "0.5"
 unicode-bidi = "0.3"
 unicode-segmentation = "1.10"
+skrifa = { version = "0.40.0" }
