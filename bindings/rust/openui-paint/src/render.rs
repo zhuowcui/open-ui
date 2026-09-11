@@ -5,14 +5,29 @@
 
 use openui_dom::Document;
 use openui_geometry::LayoutUnit;
-use openui_layout::{block_layout, ConstraintSpace};
+use openui_layout::{block_layout, ConstraintSpace, Fragment};
 use skia_safe::canvas::SrcRectConstraint;
 use skia_safe::{
-    surfaces, Color as SkColor, EncodedImageFormat, FilterMode, ImageInfo, Paint, PictureRecorder,
-    PixelGeometry, Rect, SamplingOptions, Surface, SurfaceProps, SurfacePropsFlags,
+    surfaces, Color as SkColor, ColorSpace, EncodedImageFormat, FilterMode, ImageInfo, Paint,
+    PictureRecorder, PixelGeometry, Rect, SamplingOptions, Surface, SurfaceProps,
+    SurfacePropsFlags,
 };
 
 use crate::painter::paint_fragment;
+
+fn has_promoted_non_axis_transform(fragment: &Fragment, doc: &Document) -> bool {
+    let is_promoted = !fragment.node_id.is_none() && {
+        let style = &doc.node(fragment.node_id).style;
+        style.will_change_transform
+            && style.transform != openui_style::Transform2D::IDENTITY
+            && (style.transform.b != 0.0 || style.transform.c != 0.0)
+    };
+    is_promoted
+        || fragment
+            .children
+            .iter()
+            .any(|child| has_promoted_non_axis_transform(child, doc))
+}
 
 fn root_constraint_space(doc: &Document, width: i32, height: i32) -> ConstraintSpace {
     let root_style = &doc.node(doc.root()).style;
@@ -92,6 +107,16 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
         .ok_or_else(|| "Failed to record paint commands".to_string())?;
 
     surface.canvas().clear(canvas_color);
+    if has_promoted_non_axis_transform(&fragment, doc) {
+        // Chromium rasterizes the root picture into tiles, then composites
+        // will-change transform surfaces as independent quads. Replaying our
+        // currently unified picture once preserves that compositor coverage;
+        // replaying shader-bearing promoted surfaces independently inside
+        // every root tile introduces a second, tile-origin-dependent raster
+        // pass that Chromium never performs.
+        surface.canvas().draw_picture(&picture, None, None);
+        return Ok(surface);
+    }
     const TILE_SIZE: i32 = 256;
     const TILE_STEP: i32 = TILE_SIZE - 2;
     for tile_y in (0..height).step_by(TILE_STEP as usize) {
@@ -140,6 +165,11 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
 }
 
 fn create_raster_surface(width: i32, height: i32, real_font_raster: bool) -> Option<Surface> {
+    // Chromium composites CSS colors and color-managed replaced images into an
+    // sRGB destination. An untagged Skia surface skips conversion for images
+    // carrying an embedded ICC profile, leaving their encoded source samples
+    // in the output bitmap.
+    let image_info = ImageInfo::new_n32_premul((width, height), Some(ColorSpace::new_srgb()));
     if real_font_raster {
         // Chromium's Linux Skia build pins these in //skia/BUILD.gn. Passing
         // them explicitly avoids inheriting the independently-built skia-safe
@@ -150,13 +180,9 @@ fn create_raster_surface(width: i32, height: i32, real_font_raster: bool) -> Opt
             0.2,
             1.2,
         );
-        surfaces::raster(
-            &ImageInfo::new_n32_premul((width, height), None),
-            None,
-            Some(&props),
-        )
+        surfaces::raster(&image_info, None, Some(&props))
     } else {
-        surfaces::raster_n32_premul((width, height))
+        surfaces::raster(&image_info, None, None)
     }
 }
 

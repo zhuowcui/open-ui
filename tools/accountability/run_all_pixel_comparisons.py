@@ -55,8 +55,9 @@ CHROME_DIRS = [
     os.path.join(PROJECT_ROOT, "chrome"),
 ]
 
-BODY_STYLE = "* { margin: 0; padding: 0; box-sizing: content-box; } ::-webkit-scrollbar { display: none; } html { overflow: hidden; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; color: black; background-color: white; }"
-ROOT_BODY_STYLE = "* { margin: 0; padding: 0; box-sizing: content-box; } ::-webkit-scrollbar { display: none; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; }"
+ANIMATION_FREEZE_STYLE = "*, *::before, *::after { animation-play-state: paused !important; }"
+BODY_STYLE = f"* {{ margin: 0; padding: 0; box-sizing: content-box; }} {ANIMATION_FREEZE_STYLE} ::-webkit-scrollbar {{ display: none; }} html {{ overflow: hidden; }} body {{ margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; color: black; background-color: white; }}"
+ROOT_BODY_STYLE = f"* {{ margin: 0; padding: 0; box-sizing: content-box; }} {ANIMATION_FREEZE_STYLE} ::-webkit-scrollbar {{ display: none; }} body {{ margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; }}"
 
 
 def build_html_document(template):

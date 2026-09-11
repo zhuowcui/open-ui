@@ -13,8 +13,13 @@
 //! Source: CSS Sizing 3 §4-5, CSS 2.1 §10.3.5-7, §10.6.7.
 
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_geometry::{LayoutUnit, Length, LengthType, MinMaxSizes, WritingDirectionMode};
-use openui_style::{BoxSizing, ColumnSpan, ComputedStyle, FontFamily, WhiteSpace, WordBreak};
+use openui_geometry::{
+    LayoutUnit, Length, LengthType, MinMaxSizes, PhysicalSize, WritingDirectionMode,
+    WritingModeConverter,
+};
+use openui_style::{
+    BoxSizing, Clear, ColumnSpan, ComputedStyle, FontFamily, WhiteSpace, WordBreak,
+};
 use openui_text::Font;
 
 use crate::block::{resolve_border, resolve_margins, resolve_padding};
@@ -811,6 +816,80 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         }
 
         let mut child_sizes = compute_child_intrinsic_contribution(doc, child_id);
+
+        // A percentage-sized replaced child can acquire a definite block size
+        // from this container while the container's auto inline size is being
+        // measured. Transfer that resolved block size through the replaced
+        // element's preferred ratio. Treating the percentage as indefinite
+        // here leaves shrink-to-fit floats at the resource's natural width
+        // even though their definite height makes the used width larger.
+        let child_node = doc.node(child_id);
+        if IntrinsicAxisMapping::for_style(style)
+            .writing_direction
+            .is_horizontal()
+            && IntrinsicAxisMapping::for_style(child_style)
+                .writing_direction
+                .is_horizontal()
+            && child_node.replaced.is_some()
+            && child_style.width.is_auto()
+            && tag != ElementTag::Fieldset
+            && matches!(
+                child_style.height.length_type(),
+                LengthType::Percent | LengthType::Calculated
+            )
+            && style.height.is_fixed()
+        {
+            let parent_content_height = if style.box_sizing == BoxSizing::BorderBox {
+                (LayoutUnit::from_f32(style.height.value()) - bp_block).clamp_negative_to_zero()
+            } else {
+                LayoutUnit::from_f32(style.height.value())
+            };
+            let resolved_height = resolve_length(
+                &child_style.height,
+                parent_content_height,
+                parent_content_height,
+                parent_content_height,
+            );
+            let natural_ratio = child_node
+                .replaced
+                .and_then(|content| content.intrinsic_ratio);
+            let effective_ratio = child_style
+                .aspect_ratio
+                .as_ref()
+                .and_then(|ratio| {
+                    if ratio.auto_flag {
+                        natural_ratio.or_else(|| {
+                            (ratio.ratio.0 > 0.0 && ratio.ratio.1 > 0.0).then_some(ratio.ratio)
+                        })
+                    } else {
+                        (ratio.ratio.0 > 0.0 && ratio.ratio.1 > 0.0).then_some(ratio.ratio)
+                    }
+                })
+                .or(natural_ratio)
+                .filter(|(width, height)| *width > 0.0 && *height > 0.0);
+            if let Some((ratio_width, ratio_height)) = effective_ratio {
+                let child_border = resolve_border(child_style);
+                let child_padding = resolve_padding(child_style, LayoutUnit::zero());
+                let child_inline_edges = child_border.inline_sum() + child_padding.inline_sum();
+                let child_block_edges = child_border.block_sum() + child_padding.block_sum();
+                let content_height = if child_style.box_sizing == BoxSizing::BorderBox {
+                    (resolved_height - child_block_edges).clamp_negative_to_zero()
+                } else {
+                    resolved_height
+                };
+                let content_width =
+                    LayoutUnit::from_f32(content_height.to_f32() * ratio_width / ratio_height);
+                let child_margin = resolve_margins(child_style, LayoutUnit::zero());
+                let transferred_inline =
+                    content_width + child_inline_edges + child_margin.inline_sum();
+                let transferred_block =
+                    content_height + child_block_edges + child_margin.block_sum();
+                child_sizes.min_content_inline_size = transferred_inline;
+                child_sizes.max_content_inline_size = transferred_inline;
+                child_sizes.min_content_block_size = transferred_block;
+                child_sizes.max_content_block_size = transferred_block;
+            }
+        }
         if is_interior_collapsible_whitespace(doc, &ordered_child_ids, ordered_index) {
             let text = doc
                 .node(child_id)
@@ -841,6 +920,15 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         }
 
         if child_style.float != openui_style::Float::None {
+            // Clearance forces this float below the preceding float row.  A
+            // shrink-to-fit ancestor therefore needs the widest row, not the
+            // sum of floats that can never be side by side.
+            if child_style.clear != Clear::None && float_max_inline_sum > LayoutUnit::zero() {
+                widest_float_inline_line =
+                    widest_float_inline_line.max_of(float_max_inline_sum + inline_children_max_sum);
+                float_max_inline_sum = LayoutUnit::zero();
+                inline_children_max_sum = LayoutUnit::zero();
+            }
             min_inline = min_inline.max_of(child_sizes.min_content_inline_size);
             float_max_inline_sum = float_max_inline_sum + child_sizes.max_content_inline_size;
             float_block_sum = float_block_sum + child_sizes.min_content_block_size;
@@ -1158,6 +1246,7 @@ fn compute_flex_intrinsic_sizes(
 
     let is_column = style.flex_direction == openui_style::FlexDirection::Column
         || style.flex_direction == openui_style::FlexDirection::ColumnReverse;
+    let main_axis_is_horizontal = writing_direction.is_horizontal() ^ is_column;
     let is_wrap = style.flex_wrap != openui_style::FlexWrap::Nowrap;
 
     // Resolve gaps
@@ -1252,6 +1341,24 @@ fn compute_flex_intrinsic_sizes(
                 val
             };
             content_val
+        } else {
+            LayoutUnit::zero()
+        }
+    };
+    let container_definite_main = {
+        let main_prop = axes.main_size(style, is_column);
+        if main_prop.is_fixed() {
+            let value = resolve_length(
+                main_prop,
+                LayoutUnit::zero(),
+                LayoutUnit::zero(),
+                LayoutUnit::zero(),
+            );
+            if style.box_sizing == BoxSizing::BorderBox {
+                (value - if is_column { bp_block } else { bp_inline }).clamp_negative_to_zero()
+            } else {
+                value
+            }
         } else {
             LayoutUnit::zero()
         }
@@ -1418,6 +1525,117 @@ fn compute_flex_intrinsic_sizes(
             }
         }
 
+        // A row flex item's used cross size can be definite while the
+        // container is being intrinsically measured: from its own percentage
+        // height, a percentage min/max constraint, or stretch. Propagate that
+        // border-box size through the item's descendant chain so percentage-
+        // sized replaced content contributes its transferred ratio width
+        // instead of its unrelated natural width.
+        let resolved_alignment = {
+            let mut position = child_style.align_self.position;
+            if position == openui_style::ItemPosition::Auto {
+                position = style.align_items.position;
+            }
+            if position == openui_style::ItemPosition::Normal {
+                position = openui_style::ItemPosition::Stretch;
+            }
+            position
+        };
+        let has_cross_auto_margin = if is_column {
+            child_style.margin_left.is_auto() || child_style.margin_right.is_auto()
+        } else {
+            child_style.margin_top.is_auto() || child_style.margin_bottom.is_auto()
+        };
+        if !is_column
+            && writing_direction.is_horizontal()
+            && container_definite_cross > LayoutUnit::zero()
+            && has_block_dependent_replaced_descendant(doc, child_id)
+        {
+            let child_block_edges = child_border.block_sum() + child_padding.block_sum();
+            let to_border_box = |raw: LayoutUnit| {
+                if child_style.box_sizing == BoxSizing::BorderBox {
+                    raw.max_of(child_block_edges)
+                } else {
+                    raw + child_block_edges
+                }
+            };
+            let resolve_cross_bound = |length: &Length| {
+                (!length.is_auto() && !length.is_none() && !length.is_content_or_intrinsic())
+                    .then(|| {
+                        resolve_length(
+                            length,
+                            container_definite_cross,
+                            openui_geometry::INDEFINITE_SIZE,
+                            openui_geometry::INDEFINITE_SIZE,
+                        )
+                    })
+                    .filter(|value| !value.is_indefinite())
+                    .map(to_border_box)
+            };
+            let specified = resolve_cross_bound(&child_style.height);
+            let stretched = (specified.is_none()
+                && child_style.height.is_auto()
+                && resolved_alignment == openui_style::ItemPosition::Stretch
+                && !has_cross_auto_margin)
+                .then(|| {
+                    (container_definite_cross - child_margin.block_sum()).clamp_negative_to_zero()
+                });
+            let constrained = if specified.is_none() && stretched.is_none() {
+                let natural = (child_sizes.max_content_block_size - child_margin.block_sum())
+                    .clamp_negative_to_zero();
+                let min =
+                    resolve_cross_bound(&child_style.min_height).unwrap_or(LayoutUnit::zero());
+                let max = resolve_cross_bound(&child_style.max_height).unwrap_or(LayoutUnit::max());
+                (min > LayoutUnit::zero() || max < LayoutUnit::max())
+                    .then(|| natural.clamp(min, max))
+            } else {
+                None
+            };
+            if let Some(item_border_box) = specified.or(stretched).or(constrained) {
+                let measured = compute_intrinsic_inline_sizes_with_block_size(
+                    doc,
+                    child_id,
+                    item_border_box,
+                    LayoutUnit::zero(),
+                );
+                child_sizes.min_content_inline_size = measured.min + child_margin.inline_sum();
+                child_sizes.max_content_inline_size = measured.max + child_margin.inline_sum();
+            }
+        }
+        if is_column
+            && writing_direction.is_horizontal()
+            && container_definite_main > LayoutUnit::zero()
+            && crate::intrinsic_sizing::has_block_dependent_replaced_descendant(doc, child_id)
+        {
+            let child_block_edges = child_border.block_sum() + child_padding.block_sum();
+            let child_block_margin = child_margin.block_sum();
+            let child_block_size = if child_style.height.is_percent()
+                || child_style.height.length_type() == LengthType::Calculated
+            {
+                let resolved = resolve_length(
+                    &child_style.height,
+                    container_definite_main,
+                    LayoutUnit::zero(),
+                    container_definite_main,
+                );
+                if child_style.box_sizing == BoxSizing::BorderBox {
+                    resolved.max_of(child_block_edges)
+                } else {
+                    resolved + child_block_edges
+                }
+            } else {
+                (container_definite_main - child_block_margin).clamp_negative_to_zero()
+            };
+            let measured = compute_intrinsic_inline_sizes_with_block_size(
+                doc,
+                child_id,
+                child_block_size,
+                LayoutUnit::zero(),
+            );
+            child_sizes.min_content_inline_size = measured.min + child_margin.inline_sum();
+            child_sizes.max_content_inline_size = measured.max + child_margin.inline_sum();
+        }
+
         // Determine main-axis and cross-axis contributions
         let (mut main_min, mut main_max, cross_min, cross_max) = if is_column {
             (
@@ -1439,8 +1657,26 @@ fn compute_flex_intrinsic_sizes(
         // and a child has aspect-ratio with auto main size, the child's main-axis
         // contribution should be derived from the definite cross size via AR.
         // This handles cases like `inline-flex; height:100px` with child `aspect-ratio:1/1`.
-        if let Some(ref ar) = child_style.aspect_ratio {
-            if ar.ratio.0 != 0.0 && ar.ratio.1 != 0.0 {
+        let natural_ratio = doc
+            .node(child_id)
+            .replaced
+            .and_then(|content| content.intrinsic_ratio)
+            .filter(|(width, height)| *width > 0.0 && *height > 0.0);
+        let effective_ratio = child_style
+            .aspect_ratio
+            .as_ref()
+            .and_then(|ratio| {
+                if ratio.auto_flag {
+                    natural_ratio.or_else(|| {
+                        (ratio.ratio.0 > 0.0 && ratio.ratio.1 > 0.0).then_some(ratio.ratio)
+                    })
+                } else {
+                    (ratio.ratio.0 > 0.0 && ratio.ratio.1 > 0.0).then_some(ratio.ratio)
+                }
+            })
+            .or(natural_ratio);
+        if let Some(ratio) = effective_ratio {
+            if ratio.0 != 0.0 && ratio.1 != 0.0 {
                 let cross_size_prop = axes.cross_size(child_style, is_column);
                 let main_size_prop = axes.main_size(child_style, is_column);
                 // Only apply when cross size is definite (from container or child)
@@ -1464,25 +1700,23 @@ fn compute_flex_intrinsic_sizes(
                         let child_bp = {
                             let b = resolve_border(child_style);
                             let p = resolve_padding(child_style, LayoutUnit::zero());
-                            if is_column {
+                            if main_axis_is_horizontal {
                                 (
-                                    b.left + b.right + p.left + p.right,
                                     b.top + b.bottom + p.top + p.bottom,
+                                    b.left + b.right + p.left + p.right,
                                 )
                             } else {
                                 (
-                                    b.top + b.bottom + p.top + p.bottom,
                                     b.left + b.right + p.left + p.right,
+                                    b.top + b.bottom + p.top + p.bottom,
                                 )
                             }
                         };
                         let content_cross = (cross_val - child_bp.0).clamp_negative_to_zero();
-                        let transferred = if is_column {
-                            // Column: cross=inline(width), main=block(height)
-                            LayoutUnit::from_f32(content_cross.to_f32() * ar.ratio.1 / ar.ratio.0)
+                        let transferred = if main_axis_is_horizontal {
+                            LayoutUnit::from_f32(content_cross.to_f32() * ratio.0 / ratio.1)
                         } else {
-                            // Row: cross=block(height), main=inline(width)
-                            LayoutUnit::from_f32(content_cross.to_f32() * ar.ratio.0 / ar.ratio.1)
+                            LayoutUnit::from_f32(content_cross.to_f32() * ratio.1 / ratio.0)
                         };
                         let ar_main = transferred + child_bp.1;
                         main_min = main_min.max_of(ar_main);
@@ -1535,6 +1769,12 @@ fn compute_flex_intrinsic_sizes(
             // contents before the child's preferred size is applied. A
             // definite preferred main size replaces that axis's content
             // contribution; otherwise the raw content contribution is used.
+            let replaced_with_cyclic_max = doc.node(child_id).replaced.is_some()
+                && !is_column
+                && child_style.width.is_auto()
+                && child_style.min_width.is_auto()
+                && (child_style.max_width.is_percent()
+                    || child_style.max_width.length_type() == LengthType::Calculated);
             let (raw_min, raw_max) = if doc.node(child_id).tag == ElementTag::Text {
                 // Anonymous flex text already has its correct min/max-content
                 // pair in `child_sizes`. Re-entering block intrinsic sizing
@@ -1549,7 +1789,15 @@ fn compute_flex_intrinsic_sizes(
                     )
                 } else {
                     (
-                        raw.min_content_inline_size + main_margin,
+                        if replaced_with_cyclic_max {
+                            // The percentage maximum is cyclic while the flex
+                            // container is intrinsically sized. Preserve the
+                            // zero min-content endpoint computed above instead
+                            // of replacing it with the resource's natural width.
+                            main_min
+                        } else {
+                            raw.min_content_inline_size + main_margin
+                        },
                         raw.max_content_inline_size + main_margin,
                     )
                 }
@@ -2019,7 +2267,24 @@ pub fn compute_child_intrinsic_contribution(doc: &Document, child_id: NodeId) ->
         (min_inline, max_inline)
     };
 
-    let min_inline = if child_style.width.is_auto()
+    let min_inline = if doc.node(child_id).replaced.is_some()
+        && doc.node(child_id).form_control != Some(openui_dom::FormControlRole::Range)
+        && child_style
+            .direction
+            .writing_direction(child_style.writing_mode)
+            .is_horizontal()
+        && child_style.width.is_auto()
+        && child_style.min_width.is_auto()
+        && (child_style.max_width.is_percent()
+            || child_style.max_width.length_type() == LengthType::Calculated)
+    {
+        // A percentage maximum is cyclic in the inline intrinsic axis. The
+        // replaced content therefore contributes only its decorations to the
+        // min-content endpoint, while its natural size remains max-content.
+        let border = resolve_border(child_style);
+        let padding = resolve_padding(child_style, LayoutUnit::zero());
+        border.inline_sum() + padding.inline_sum()
+    } else if child_style.width.is_auto()
         && child_style.min_width.is_auto()
         && child_style.aspect_ratio.is_some()
         && child_style.is_scroll_container()
@@ -2078,6 +2343,64 @@ pub(crate) fn compute_logical_intrinsic_inline_sizes(
     doc: &Document,
     node_id: NodeId,
 ) -> MinMaxSizes {
+    compute_logical_intrinsic_inline_sizes_impl(doc, node_id, None)
+}
+
+/// Compute an element's intrinsic inline contribution when its own logical
+/// block-size is already definite. This is the orthogonal counterpart of
+/// `compute_intrinsic_inline_sizes_with_block_size`: percentage-sized
+/// replaced children can resolve in the block axis and transfer that used
+/// size through their natural ratio into the container's inline contribution.
+pub(crate) fn compute_logical_intrinsic_inline_sizes_with_block_size(
+    doc: &Document,
+    node_id: NodeId,
+    border_box_block_size: LayoutUnit,
+) -> MinMaxSizes {
+    compute_logical_intrinsic_inline_sizes_impl(doc, node_id, Some(border_box_block_size))
+}
+
+/// Whether a descendant replaced box has a percentage/calc constraint in its
+/// logical block axis. Only these subtrees need a definite-block intrinsic
+/// probe; applying that probe to ordinary inline content would collapse a
+/// max-content row into the maximum single child contribution.
+pub(crate) fn has_block_dependent_replaced_descendant(doc: &Document, node_id: NodeId) -> bool {
+    doc.children(node_id).any(|child_id| {
+        let child = doc.node(child_id);
+        if child.style.display == openui_style::Display::None
+            || child.style.position.is_absolutely_positioned()
+        {
+            return false;
+        }
+        let direction = child
+            .style
+            .direction
+            .writing_direction(child.style.writing_mode);
+        let block_lengths = if direction.is_horizontal() {
+            [
+                &child.style.height,
+                &child.style.min_height,
+                &child.style.max_height,
+            ]
+        } else {
+            [
+                &child.style.width,
+                &child.style.min_width,
+                &child.style.max_width,
+            ]
+        };
+        let depends_on_block = block_lengths
+            .iter()
+            .any(|length| length.is_percent() || length.length_type() == LengthType::Calculated);
+        ((child.replaced.is_some() || is_replaced_element(child.tag)) && depends_on_block)
+            || has_block_dependent_replaced_descendant(doc, child_id)
+    })
+}
+
+fn compute_logical_intrinsic_inline_sizes_impl(
+    doc: &Document,
+    node_id: NodeId,
+    definite_border_box_block_size: Option<LayoutUnit>,
+) -> MinMaxSizes {
     let node = doc.node(node_id);
     let logical_contained_size = || {
         crate::containment::logical_inline_fallback(&node.style).map(|fallback| {
@@ -2129,6 +2452,9 @@ pub(crate) fn compute_logical_intrinsic_inline_sizes(
     let border = resolve_border(&node.style).to_logical(direction);
     let padding = resolve_padding(&node.style, LayoutUnit::zero()).to_logical(direction);
     let container_edges = border.inline_sum() + padding.inline_sum();
+    let container_block_edges = border.block_sum() + padding.block_sum();
+    let definite_content_block_size = definite_border_box_block_size
+        .map(|size| (size - container_block_edges).clamp_negative_to_zero());
 
     let mut min_inline = LayoutUnit::zero();
     let mut max_inline = LayoutUnit::zero();
@@ -2181,6 +2507,35 @@ pub(crate) fn compute_logical_intrinsic_inline_sizes(
                     )
                 })
                 .unwrap_or_else(MinMaxSizes::zero)
+        } else if let Some(content_block_size) = definite_content_block_size
+            .filter(|_| child.replaced.is_some() || is_replaced_element(child.tag))
+        {
+            // The intrinsic walk normally measures a replaced child without a
+            // containing-block opportunity. Once this vertical container's
+            // physical width (logical block-size) is definite, a percentage
+            // physical width on the child resolves and its natural ratio can
+            // change the physical height (the parent's logical inline-size).
+            let parent_space = crate::ConstraintSpace::for_block_child_with_writing_direction(
+                openui_geometry::INDEFINITE_SIZE,
+                content_block_size,
+                openui_geometry::INDEFINITE_SIZE,
+                content_block_size,
+                true,
+                direction,
+            );
+            let child_space = crate::block_child_constraint_space(
+                &parent_space,
+                child_style,
+                openui_geometry::INDEFINITE_SIZE,
+                content_block_size,
+                openui_geometry::INDEFINITE_SIZE,
+                content_block_size,
+                true,
+            );
+            let fragment = crate::block::block_layout(doc, child_id, &child_space);
+            let logical = WritingModeConverter::new(direction, PhysicalSize::zero())
+                .to_logical_size(fragment.size);
+            MinMaxSizes::new(logical.inline_size, logical.inline_size)
         } else if child_style.height.is_fixed() {
             let specified = resolve_length(
                 &child_style.height,
@@ -2228,20 +2583,55 @@ pub(crate) fn compute_logical_intrinsic_inline_sizes(
     MinMaxSizes::new(min_inline + container_edges, max_inline + container_edges)
 }
 
-/// Compute intrinsic inline sizes when the element has a definite content
+/// Compute intrinsic inline sizes when the element has a definite border-box
 /// block-size. This lets percentage-height descendants with aspect-ratio
 /// contribute their transferred inline size to a min/max-content ancestor.
 pub fn compute_intrinsic_inline_sizes_with_block_size(
     doc: &Document,
     node_id: NodeId,
-    content_block_size: LayoutUnit,
+    border_box_block_size: LayoutUnit,
+    containing_inline_size: LayoutUnit,
 ) -> MinMaxSizes {
     let style = &doc.node(node_id).style;
+    if doc.node(node_id).replaced.is_some() {
+        // Replaced boxes have no descendant contribution to walk. Measure the
+        // principal box itself with the definite block percentage basis so a
+        // percentage height can transfer through its natural aspect ratio.
+        let has_ratio = doc
+            .node(node_id)
+            .replaced
+            .and_then(|content| content.intrinsic_ratio)
+            .is_some_and(|(width, height)| width > 0.0 && height > 0.0)
+            || style
+                .aspect_ratio
+                .as_ref()
+                .is_some_and(|ratio| ratio.ratio.0 > 0.0 && ratio.ratio.1 > 0.0);
+        if !has_ratio {
+            let intrinsic = compute_replaced_intrinsic_sizes_for_node(doc, node_id);
+            return MinMaxSizes::new(
+                intrinsic.min_content_inline_size,
+                intrinsic.max_content_inline_size,
+            );
+        }
+        let direction = style.direction.writing_direction(style.writing_mode);
+        let probe_space = crate::ConstraintSpace::for_block_child_with_writing_direction(
+            openui_geometry::INDEFINITE_SIZE,
+            border_box_block_size,
+            containing_inline_size,
+            border_box_block_size,
+            true,
+            direction,
+        );
+        let fragment = crate::block::block_layout(doc, node_id, &probe_space);
+        let logical = WritingModeConverter::new(direction, PhysicalSize::zero())
+            .to_logical_size(fragment.size);
+        return MinMaxSizes::new(logical.inline_size, logical.inline_size);
+    }
     let border = resolve_border(style);
-    let padding = resolve_padding(style, LayoutUnit::zero());
+    let padding = resolve_padding(style, containing_inline_size);
     let bp_inline = border.inline_sum() + padding.inline_sum();
     let bp_block = border.block_sum() + padding.block_sum();
-    let child_block_size = (content_block_size - bp_block).clamp_negative_to_zero();
+    let child_block_size = (border_box_block_size - bp_block).clamp_negative_to_zero();
 
     let mut min_inline = LayoutUnit::zero();
     let mut max_inline = LayoutUnit::zero();
@@ -2275,7 +2665,7 @@ fn compute_child_intrinsic_contribution_with_block_size(
     let child_bp_inline = child_border.inline_sum() + child_padding.inline_sum();
     let child_bp_block = child_border.block_sum() + child_padding.block_sum();
 
-    let known_child_block_bb = if child_style.height.is_percent()
+    let specified_child_block_bb = if child_style.height.is_percent()
         || child_style.height.is_fixed()
         || child_style.height.length_type() == LengthType::Calculated
     {
@@ -2295,20 +2685,79 @@ fn compute_child_intrinsic_contribution_with_block_size(
     } else {
         None
     };
+    let resolve_block_bound = |length: &Length| {
+        (!length.is_auto() && !length.is_none() && !length.is_content_or_intrinsic())
+            .then(|| {
+                resolve_length(
+                    length,
+                    parent_content_block_size,
+                    openui_geometry::INDEFINITE_SIZE,
+                    openui_geometry::INDEFINITE_SIZE,
+                )
+            })
+            .filter(|value| !value.is_indefinite())
+            .map(|raw| {
+                if child_style.box_sizing == BoxSizing::BorderBox {
+                    raw.max_of(child_bp_block)
+                } else {
+                    raw + child_bp_block
+                }
+            })
+    };
+    let block_min = resolve_block_bound(&child_style.min_height).unwrap_or(LayoutUnit::zero());
+    let block_max = resolve_block_bound(&child_style.max_height).unwrap_or(LayoutUnit::max());
+    let known_child_block_bb = if let Some(specified) = specified_child_block_bb {
+        // A preferred block size still participates in min/max sizing before
+        // its used value transfers through a replaced aspect ratio.
+        Some(specified.clamp(block_min, block_max))
+    } else if block_min > LayoutUnit::zero() || block_max < LayoutUnit::max() {
+        let natural = (compute_child_intrinsic_contribution(doc, child_id).max_content_block_size
+            - resolve_margins(child_style, LayoutUnit::zero()).block_sum())
+        .clamp_negative_to_zero();
+        Some(natural.clamp(block_min, block_max))
+    } else {
+        None
+    };
 
     if let Some(block_bb) = known_child_block_bb {
-        if let Some(ref ar) = child_style.aspect_ratio {
-            if ar.ratio.0 != 0.0
-                && ar.ratio.1 != 0.0
-                && (child_style.width.is_auto() || child_style.width.is_content_or_intrinsic())
+        let natural_ratio = doc
+            .node(child_id)
+            .replaced
+            .and_then(|content| content.intrinsic_ratio)
+            .filter(|(width, height)| *width > 0.0 && *height > 0.0);
+        let effective_ratio = child_style
+            .aspect_ratio
+            .as_ref()
+            .and_then(|ratio| {
+                if ratio.auto_flag {
+                    natural_ratio.or_else(|| {
+                        (ratio.ratio.0 > 0.0 && ratio.ratio.1 > 0.0).then_some(ratio.ratio)
+                    })
+                } else {
+                    (ratio.ratio.0 > 0.0 && ratio.ratio.1 > 0.0).then_some(ratio.ratio)
+                }
+            })
+            .or(natural_ratio);
+        if let Some((ratio_width, ratio_height)) = effective_ratio {
+            if child_style.width.is_auto()
+                || child_style.width.is_content_or_intrinsic()
+                || child_style.width.is_percent()
+                || child_style.width.length_type() == LengthType::Calculated
             {
-                let ar_uses_border_box =
-                    !ar.auto_flag && child_style.box_sizing == BoxSizing::BorderBox;
+                // A percentage inline size is cyclic while computing the
+                // parent's intrinsic inline contribution. When the opposite
+                // axis is definite, the replaced element's preferred ratio
+                // supplies that contribution just like an auto inline size.
+                let ar_uses_border_box = child_style
+                    .aspect_ratio
+                    .as_ref()
+                    .is_some_and(|ratio| !ratio.auto_flag)
+                    && child_style.box_sizing == BoxSizing::BorderBox;
                 let transferred = if ar_uses_border_box {
-                    LayoutUnit::from_f32(block_bb.to_f32() * ar.ratio.0 / ar.ratio.1)
+                    LayoutUnit::from_f32(block_bb.to_f32() * ratio_width / ratio_height)
                 } else {
                     let content_h = (block_bb - child_bp_block).clamp_negative_to_zero();
-                    LayoutUnit::from_f32(content_h.to_f32() * ar.ratio.0 / ar.ratio.1)
+                    LayoutUnit::from_f32(content_h.to_f32() * ratio_width / ratio_height)
                         + child_bp_inline
                 };
                 let clamped = apply_min_max_inline(
@@ -2322,9 +2771,12 @@ fn compute_child_intrinsic_contribution_with_block_size(
         }
 
         if doc.children(child_id).next().is_some() {
-            let child_content_block = (block_bb - child_bp_block).clamp_negative_to_zero();
-            let nested =
-                compute_intrinsic_inline_sizes_with_block_size(doc, child_id, child_content_block);
+            let nested = compute_intrinsic_inline_sizes_with_block_size(
+                doc,
+                child_id,
+                block_bb,
+                LayoutUnit::zero(),
+            );
             let min =
                 apply_min_max_inline(child_style, nested.min, (nested.min, nested.max), false);
             let max = apply_min_max_inline(child_style, nested.max, (nested.min, nested.max), true);
@@ -2605,12 +3057,162 @@ pub fn compute_replaced_intrinsic_sizes_for_node(
         .and_then(|content| content.intrinsic_height)
         .unwrap_or(if missing_image { 16.0 } else { 150.0 });
     let natural_ratio = replaced.and_then(|content| content.intrinsic_ratio);
+    let svg_ratio_only = node.tag == ElementTag::Svg
+        && replaced.is_some_and(|content| {
+            !content
+                .intrinsic_width
+                .is_some_and(|dimension| dimension > 0.0)
+                && !content
+                    .intrinsic_height
+                    .is_some_and(|dimension| dimension > 0.0)
+        })
+        && (node.style.width.is_stretch()
+            || (node.style.width.is_auto()
+                && node
+                    .style
+                    .aspect_ratio
+                    .as_ref()
+                    .is_some_and(|ratio| ratio.ratio.0 > 0.0 && ratio.ratio.1 > 0.0)));
     let mut sizes = compute_replaced_intrinsic_sizes_with_natural(
         &node.style,
-        natural_width,
-        natural_height,
+        if svg_ratio_only { 0.0 } else { natural_width },
+        if svg_ratio_only { 0.0 } else { natural_height },
         natural_ratio,
     );
+    let style = &node.style;
+    let border = resolve_border(style);
+    let padding = resolve_padding(style, LayoutUnit::zero());
+    let inline_edges = border.inline_sum() + padding.inline_sum();
+    let block_edges = border.block_sum() + padding.block_sum();
+    let svg_cyclic_percentage = node.tag == ElementTag::Svg
+        && replaced.is_some_and(|content| {
+            !content
+                .intrinsic_width
+                .is_some_and(|dimension| dimension > 0.0)
+                && !content
+                    .intrinsic_height
+                    .is_some_and(|dimension| dimension > 0.0)
+        })
+        && (node.style.width.is_percent()
+            || node.style.width.length_type() == LengthType::Calculated
+            || node.style.height.is_percent()
+            || node.style.height.length_type() == LengthType::Calculated);
+    if svg_cyclic_percentage {
+        // Cyclic percentages do not contribute a minimum, but retain the
+        // resource's default maximum contribution. This lets a ratio-only SVG
+        // establish a flex base size and subsequently shrink to the available
+        // space instead of either overflowing at 300px or disappearing at 0px.
+        sizes.min_content_inline_size = inline_edges;
+        sizes.min_content_block_size = block_edges;
+    }
+    let intrinsic_bound = |length: &Length,
+                           min_content: LayoutUnit,
+                           max_content: LayoutUnit,
+                           edges: LayoutUnit,
+                           is_minimum: bool| {
+        if length.is_auto() || length.is_none() || length.is_percent() {
+            return None;
+        }
+        let raw = match length.length_type() {
+            LengthType::MinContent => min_content,
+            LengthType::MaxContent | LengthType::FitContent | LengthType::Content => max_content,
+            LengthType::Calculated => LayoutUnit::from_f32(length.calc_offset()),
+            LengthType::Fixed => LayoutUnit::from_f32(length.value()),
+            _ => return None,
+        };
+        Some(if length.is_content_or_intrinsic() {
+            raw
+        } else if style.box_sizing == BoxSizing::ContentBox {
+            raw + edges
+        } else if is_minimum {
+            raw.max_of(edges)
+        } else {
+            raw.max_of(edges)
+        })
+    };
+    let min_inline = intrinsic_bound(
+        &style.min_width,
+        sizes.min_content_inline_size,
+        sizes.max_content_inline_size,
+        inline_edges,
+        true,
+    )
+    .unwrap_or(LayoutUnit::zero());
+    let mut max_inline = intrinsic_bound(
+        &style.max_width,
+        sizes.min_content_inline_size,
+        sizes.max_content_inline_size,
+        inline_edges,
+        false,
+    )
+    .unwrap_or(LayoutUnit::max());
+    let min_block = intrinsic_bound(
+        &style.min_height,
+        sizes.min_content_block_size,
+        sizes.max_content_block_size,
+        block_edges,
+        true,
+    )
+    .unwrap_or(LayoutUnit::zero());
+    let mut max_block = intrinsic_bound(
+        &style.max_height,
+        sizes.min_content_block_size,
+        sizes.max_content_block_size,
+        block_edges,
+        false,
+    )
+    .unwrap_or(LayoutUnit::max());
+    max_inline = max_inline.max_of(min_inline);
+    max_block = max_block.max_of(min_block);
+
+    let preserves_ratio = style
+        .aspect_ratio
+        .as_ref()
+        .is_some_and(|ratio| ratio.ratio.0 > 0.0 && ratio.ratio.1 > 0.0)
+        || natural_ratio.is_some_and(|(width, height)| width > 0.0 && height > 0.0);
+    let independently_sized = style.width.is_fixed() && style.height.is_fixed();
+    let constrain_pair = |mut inline: LayoutUnit, mut block: LayoutUnit| {
+        if preserves_ratio && !independently_sized {
+            let inline_float = inline.to_f32();
+            let block_float = block.to_f32();
+            let mut downscale = 1.0_f32;
+            if inline_float > 0.0 && inline > max_inline {
+                downscale = downscale.min(max_inline.to_f32() / inline_float);
+            }
+            if block_float > 0.0 && block > max_block {
+                downscale = downscale.min(max_block.to_f32() / block_float);
+            }
+            if downscale < 1.0 {
+                inline = LayoutUnit::from_f32(inline_float * downscale);
+                block = LayoutUnit::from_f32(block_float * downscale);
+            }
+
+            let inline_float = inline.to_f32();
+            let block_float = block.to_f32();
+            let mut upscale = 1.0_f32;
+            if inline_float > 0.0 && inline < min_inline {
+                upscale = upscale.max(min_inline.to_f32() / inline_float);
+            }
+            if block_float > 0.0 && block < min_block {
+                upscale = upscale.max(min_block.to_f32() / block_float);
+            }
+            if upscale > 1.0 {
+                inline = LayoutUnit::from_f32(inline_float * upscale);
+                block = LayoutUnit::from_f32(block_float * upscale);
+            }
+        }
+        (
+            inline.clamp(min_inline, max_inline),
+            block.clamp(min_block, max_block),
+        )
+    };
+    let min_pair = constrain_pair(sizes.min_content_inline_size, sizes.min_content_block_size);
+    let max_pair = constrain_pair(sizes.max_content_inline_size, sizes.max_content_block_size);
+    sizes.min_content_inline_size = min_pair.0;
+    sizes.min_content_block_size = min_pair.1;
+    sizes.max_content_inline_size = max_pair.0;
+    sizes.max_content_block_size = max_pair.1;
+
     if node.form_control == Some(openui_dom::FormControlRole::Range) {
         // CSS Sizing 3 §5.2.1: a cyclic percentage preferred size contributes
         // zero to min-content while the control's natural size remains its
@@ -2620,8 +3222,6 @@ pub fn compute_replaced_intrinsic_sizes_for_node(
             node.style.width.length_type(),
             openui_geometry::LengthType::Percent | openui_geometry::LengthType::Calculated
         ) {
-            let border = resolve_border(&node.style);
-            let padding = resolve_padding(&node.style, LayoutUnit::zero());
             sizes.min_content_inline_size = border.inline_sum() + padding.inline_sum();
         }
         if matches!(
@@ -2633,8 +3233,6 @@ pub fn compute_replaced_intrinsic_sizes_for_node(
                 openui_geometry::LengthType::Percent | openui_geometry::LengthType::Calculated
             ))
         {
-            let border = resolve_border(&node.style);
-            let padding = resolve_padding(&node.style, LayoutUnit::zero());
             sizes.min_content_block_size = border.block_sum() + padding.block_sum();
         }
     }
@@ -2676,7 +3274,9 @@ fn compute_replaced_intrinsic_sizes_with_natural(
                 LayoutUnit::from_f32(ar.ratio.1),
             ))
         } else {
-            None
+            natural_ratio
+                .filter(|(width, height)| *width > 0.0 && *height > 0.0)
+                .map(|(width, height)| (LayoutUnit::from_f32(width), LayoutUnit::from_f32(height)))
         }
     } else {
         natural_ratio
@@ -2745,7 +3345,6 @@ fn is_replaced_element(tag: ElementTag) -> bool {
         ElementTag::Image
             | ElementTag::Canvas
             | ElementTag::Svg
-            | ElementTag::Object
             | ElementTag::Audio
             | ElementTag::Video
     )
@@ -3180,6 +3779,21 @@ mod tests {
     use super::*;
 
     #[test]
+    fn degenerate_preferred_ratio_preserves_replaced_natural_ratio() {
+        let mut style = ComputedStyle::default();
+        style.width = Length::px(100.0);
+        style.aspect_ratio = Some(openui_style::AspectRatio {
+            ratio: (0.0, 1.0),
+            auto_flag: false,
+        });
+
+        let sizes =
+            compute_replaced_intrinsic_sizes_with_natural(&style, 1.0, 1.0, Some((1.0, 1.0)));
+        assert_eq!(sizes.max_content_inline_size, LayoutUnit::from_i32(100));
+        assert_eq!(sizes.max_content_block_size, LayoutUnit::from_i32(100));
+    }
+
+    #[test]
     fn intrinsic_sizes_zero_default() {
         let sizes = IntrinsicSizes::zero();
         assert_eq!(sizes.min_content_inline_size, LayoutUnit::zero());
@@ -3390,6 +4004,29 @@ mod tests {
         let sizes = compute_intrinsic_block_sizes(&doc, container);
         assert_eq!(sizes.min_content_inline_size, LayoutUnit::from_i32(100));
         assert_eq!(sizes.max_content_inline_size, LayoutUnit::from_i32(100));
+    }
+
+    #[test]
+    fn cleared_float_starts_a_new_intrinsic_row() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.append_child(doc.root(), container);
+
+        let first = doc.create_node(ElementTag::Div);
+        let first_style = doc.node_mut(first).style_mut();
+        first_style.float = openui_style::Float::Left;
+        first_style.width = Length::px(68.0);
+        doc.append_child(container, first);
+
+        let second = doc.create_node(ElementTag::Div);
+        let second_style = doc.node_mut(second).style_mut();
+        second_style.float = openui_style::Float::Left;
+        second_style.clear = Clear::Both;
+        second_style.width = Length::px(44.0);
+        doc.append_child(container, second);
+
+        let sizes = compute_intrinsic_block_sizes(&doc, container);
+        assert_eq!(sizes.max_content_inline_size, LayoutUnit::from_i32(68));
     }
 
     #[test]

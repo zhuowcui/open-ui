@@ -26,7 +26,7 @@ use openui_style::{
     BackgroundSize, BorderImage, BorderImageLength, BorderImageRepeat, BorderStyle, Color,
     ComputedStyle, ContentPosition, CssImage, Direction, Display, FontFamily, GradientColorSpace,
     GradientStopPosition, LineHeight, ListStylePosition, ListStyleType, ObjectFit, Overflow,
-    OverflowClipBox, Position, RadialGradientShape, RadialGradientSize, StyleColor, Visibility,
+    OverflowClipBox, RadialGradientShape, RadialGradientSize, StyleColor, Visibility,
 };
 use openui_text::{Font, FontMetrics, TextDirection, TextShaper};
 use skia_safe::canvas::{SaveLayerRec, SrcRectConstraint};
@@ -236,6 +236,45 @@ fn promoted_subtree_bounds(fragment: &Fragment) -> Rect {
     )
 }
 
+fn promoted_transform_backing_bounds(fragment: &Fragment) -> Rect {
+    let bounds = promoted_subtree_bounds(fragment);
+    let Some(slice) = fragment.decoration_slice else {
+        return bounds;
+    };
+
+    // A final zero-sized continuation can still own painted overflow. Blink
+    // retains a picture-layer backing with the principal box's complete
+    // source block extent for that continuation; tightening the backing to
+    // the visible child changes the transformed edge samples. Other
+    // continuations that can be represented by compositor solid-color quads
+    // stay on the direct paint path below.
+    if fragment_block_axis_is_x(fragment) && fragment.size.width == LayoutUnit::zero() {
+        Rect::from_ltrb(
+            bounds.left.min(0.0),
+            bounds.top.min(0.0),
+            bounds.right.max(slice.source_block_size.to_f32()),
+            bounds.bottom.max(fragment.size.height.to_f32()),
+        )
+    } else if !fragment_block_axis_is_x(fragment) && fragment.size.height == LayoutUnit::zero() {
+        Rect::from_ltrb(
+            bounds.left.min(0.0),
+            bounds.top.min(0.0),
+            bounds.right.max(fragment.size.width.to_f32()),
+            bounds.bottom.max(slice.source_block_size.to_f32()),
+        )
+    } else {
+        bounds
+    }
+}
+
+fn has_zero_sized_fragment_block_axis(fragment: &Fragment) -> bool {
+    if fragment_block_axis_is_x(fragment) {
+        fragment.size.width == LayoutUnit::zero()
+    } else {
+        fragment.size.height == LayoutUnit::zero()
+    }
+}
+
 fn is_monolithic_column_fragment(fragment: &Fragment, doc: &Document) -> bool {
     if fragment.node_id.is_none() || fragment.kind != FragmentKind::Box {
         return false;
@@ -247,6 +286,8 @@ fn is_monolithic_column_fragment(fragment: &Fragment, doc: &Document) -> bool {
             Some(
                 FormControlRole::Button
                     | FormControlRole::TextInput
+                    | FormControlRole::Checkbox
+                    | FormControlRole::Radio
                     | FormControlRole::TextArea
                     | FormControlRole::Select
                     | FormControlRole::Range
@@ -262,9 +303,16 @@ fn is_monolithic_column_fragment(fragment: &Fragment, doc: &Document) -> bool {
                 | ElementTag::Embed
                 | ElementTag::IFrame
         )
-        || ((node.style.overflow_x != Overflow::Visible && node.style.overflow_x != Overflow::Clip)
+        || (!matches!(
+            node.style.display,
+            Display::TableRow
+                | Display::TableRowGroup
+                | Display::TableHeaderGroup
+                | Display::TableFooterGroup
+        ) && ((node.style.overflow_x != Overflow::Visible
+            && node.style.overflow_x != Overflow::Clip)
             || (node.style.overflow_y != Overflow::Visible
-                && node.style.overflow_y != Overflow::Clip))
+                && node.style.overflow_y != Overflow::Clip)))
 }
 
 fn collect_overflowing_monolithic_column_fragments<'a>(
@@ -657,7 +705,9 @@ pub fn paint_fragment(
     let has_precomposited_transform = has_transform
         && style.will_change_transform
         && (transform.b != 0.0 || transform.c != 0.0)
-        && (fragment.decoration_slice.is_none() || fragment.is_first_for_node);
+        && (fragment.decoration_slice.is_none()
+            || fragment.is_first_for_node
+            || has_zero_sized_fragment_block_axis(fragment));
     let has_layout_fragmentation_transform_clip = has_transform
         && fragment.decoration_slice.is_some()
         && fragment.block_axis_clip_only
@@ -695,7 +745,7 @@ pub fn paint_fragment(
         canvas.clip_rect(clip, ClipOp::Intersect, false);
     }
     if has_precomposited_transform {
-        let bounds = promoted_subtree_bounds(fragment);
+        let bounds = promoted_transform_backing_bounds(fragment);
         let raster_width = bounds.width().ceil().max(1.0) as i32;
         let raster_height = bounds.height().ceil().max(1.0) as i32;
         if let Some(mut surface) = surfaces::raster_n32_premul((raster_width, raster_height)) {
@@ -715,18 +765,22 @@ pub fn paint_fragment(
                 bounds.width(),
                 bounds.height(),
             );
-            let shader_matrix = Matrix::translate((destination.left, destination.top));
+            let source = Rect::from_xywh(0.0, 0.0, bounds.width(), bounds.height());
             let mut paint = Paint::default();
             paint.set_anti_alias(true);
-            paint.set_shader(image.to_shader(
-                (TileMode::Clamp, TileMode::Clamp),
-                SamplingOptions::from(FilterMode::Linear),
-                &shader_matrix,
-            ));
 
             canvas.save();
             canvas.concat(&fragment_transform_matrix(style, fragment, abs_offset));
-            canvas.draw_rect(destination, &paint);
+            // SoftwareRenderer composites a promoted picture tile with
+            // drawImageRect rather than replaying it as an image shader. The
+            // two paths have measurably different transformed edge coverage.
+            canvas.draw_image_rect_with_sampling_options(
+                image,
+                Some((&source, SrcRectConstraint::Strict)),
+                destination,
+                SamplingOptions::from(FilterMode::Linear),
+                &paint,
+            );
             canvas.restore();
         }
         if has_fixed_fragmentation_transform_clip {
@@ -995,12 +1049,32 @@ fn paint_form_control(
             paint_text_input_control(canvas, fragment, doc, abs_offset, opacity_multiplier)
         }
         Some(FormControlRole::TextArea) => {
-            paint_textarea_resize_grip(canvas, fragment, abs_offset, opacity_multiplier)
+            paint_textarea_resize_grip(
+                canvas,
+                fragment,
+                &doc.node(fragment.node_id).style,
+                abs_offset,
+                opacity_multiplier,
+            );
+            paint_textarea_contents(canvas, fragment, doc, abs_offset, opacity_multiplier)
         }
-        Some(FormControlRole::Select)
+        Some(FormControlRole::Select) => {
+            paint_select_contents(canvas, fragment, doc, abs_offset, opacity_multiplier);
+            if doc.attribute(fragment.node_id, "multiple").is_some()
+                && doc.node(fragment.node_id).form_control_native_appearance
+            {
+                paint_native_listbox_corners(canvas, fragment, abs_offset, opacity_multiplier);
+            }
+            if doc.node(fragment.node_id).form_control_native_appearance
+                && doc.attribute(fragment.node_id, "multiple").is_none()
+            {
+                paint_select_arrow(canvas, fragment, abs_offset, opacity_multiplier);
+            }
+        }
+        Some(FormControlRole::Checkbox | FormControlRole::Radio)
             if doc.node(fragment.node_id).form_control_native_appearance =>
         {
-            paint_select_arrow(canvas, fragment, abs_offset, opacity_multiplier)
+            paint_checkable_control(canvas, fragment, doc, abs_offset, opacity_multiplier)
         }
         Some(FormControlRole::Button)
             if matches!(
@@ -1011,7 +1085,10 @@ fn paint_form_control(
             paint_scroll_button_control(canvas, fragment, doc, abs_offset)
         }
         Some(FormControlRole::Button) if uses_native_button_theme(fragment, doc) => {
-            paint_native_button_corners(canvas, fragment, abs_offset, opacity_multiplier)
+            paint_native_button_corners(canvas, fragment, abs_offset, opacity_multiplier);
+            if doc.node(fragment.node_id).tag == ElementTag::Input {
+                paint_native_input_button_corners(canvas, fragment, abs_offset, opacity_multiplier);
+            }
         }
         _ => {}
     }
@@ -1067,11 +1144,76 @@ fn paint_select_arrow(
 fn paint_textarea_resize_grip(
     canvas: &Canvas,
     fragment: &Fragment,
+    style: &ComputedStyle,
     abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
+    // The native theme suppresses the affordance when its motif cannot fit
+    // inside the textarea's border box.
+    if fragment.size.height < LayoutUnit::from_i32(15) {
+        return;
+    }
     let right = (abs_offset.left + fragment.size.width).round().to_f32();
     let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
+
+    if style.background_color.a > 0.0 && style.background_color != Color::WHITE {
+        // On an authored fill Chromium composites the larger native motif
+        // from a 40%-background edge and a 60%-white highlight.
+        let channel = |value: f32| (value.clamp(0.0, 1.0) * 255.0).round();
+        let alpha = (style.background_color.a * opacity_multiplier * 255.0).round() as u8;
+        let dark = Color::from_rgba8(
+            (channel(style.background_color.r) * 0.4).round() as u8,
+            (channel(style.background_color.g) * 0.4).round() as u8,
+            (channel(style.background_color.b) * 0.4).round() as u8,
+            alpha,
+        );
+        let light = Color::from_rgba8(
+            (153.0 + channel(style.background_color.r) * 0.4)
+                .round()
+                .min(255.0) as u8,
+            (153.0 + channel(style.background_color.g) * 0.4)
+                .round()
+                .min(255.0) as u8,
+            (153.0 + channel(style.background_color.b) * 0.4)
+                .round()
+                .min(255.0) as u8,
+            alpha,
+        );
+        let mut dark_paint = Paint::default();
+        dark_paint.set_style(PaintStyle::Fill);
+        dark_paint.set_anti_alias(false);
+        set_paint_css_color(&mut dark_paint, &dark);
+        let mut light_paint = Paint::default();
+        light_paint.set_style(PaintStyle::Fill);
+        light_paint.set_anti_alias(false);
+        set_paint_css_color(&mut light_paint, &light);
+        for i in 0..7 {
+            canvas.draw_rect(
+                Rect::from_xywh(right - 7.0 - i as f32, bottom - 13.0 + i as f32, 1.0, 1.0),
+                &dark_paint,
+            );
+        }
+        for i in 1..7 {
+            canvas.draw_rect(
+                Rect::from_xywh(right - 6.0 - i as f32, bottom - 13.0 + i as f32, 1.0, 1.0),
+                &light_paint,
+            );
+        }
+        for i in 0..3 {
+            canvas.draw_rect(
+                Rect::from_xywh(right - 7.0 - i as f32, bottom - 9.0 + i as f32, 1.0, 1.0),
+                &dark_paint,
+            );
+        }
+        for i in 1..3 {
+            canvas.draw_rect(
+                Rect::from_xywh(right - 6.0 - i as f32, bottom - 9.0 + i as f32, 1.0, 1.0),
+                &light_paint,
+            );
+        }
+        return;
+    }
+
     let mut paint = Paint::default();
     paint.set_style(PaintStyle::Fill);
     paint.set_anti_alias(false);
@@ -1079,6 +1221,7 @@ fn paint_textarea_resize_grip(
         &mut paint,
         &Color::from_rgba8(102, 102, 102, (255.0 * opacity_multiplier).round() as u8),
     );
+
     for i in 0..7 {
         canvas.draw_rect(
             Rect::from_xywh(right - 3.0 - i as f32, bottom - 9.0 + i as f32, 1.0, 1.0),
@@ -1089,6 +1232,317 @@ fn paint_textarea_resize_grip(
         canvas.draw_rect(
             Rect::from_xywh(right - 3.0 - i as f32, bottom - 5.0 + i as f32, 1.0, 1.0),
             &paint,
+        );
+    }
+}
+
+fn paint_native_listbox_corners(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let x = abs_offset.left.round().to_f32();
+    let y = abs_offset.top.round().to_f32();
+    let right = (abs_offset.left + fragment.size.width).round().to_f32();
+    let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
+    if right - x < 4.0 || bottom - y < 4.0 {
+        return;
+    }
+    let corners = [
+        (x, y, 238),
+        (x + 1.0, y, 139),
+        (x, y + 1.0, 138),
+        (x + 1.0, y + 1.0, 54),
+        (right - 2.0, y, 138),
+        (right - 1.0, y, 238),
+        (right - 2.0, y + 1.0, 213),
+        (right - 1.0, y + 1.0, 139),
+        (x, bottom - 2.0, 139),
+        (x + 1.0, bottom - 2.0, 213),
+        (x, bottom - 1.0, 238),
+        (x + 1.0, bottom - 1.0, 138),
+        (right - 2.0, bottom - 2.0, 213),
+        (right - 1.0, bottom - 2.0, 138),
+        (right - 2.0, bottom - 1.0, 139),
+        (right - 1.0, bottom - 1.0, 238),
+    ];
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(false);
+    for (left, top, gray) in corners {
+        set_paint_css_color(
+            &mut paint,
+            &Color::from_rgba8(gray, gray, gray, (255.0 * opacity_multiplier).round() as u8),
+        );
+        canvas.draw_rect(Rect::from_xywh(left, top, 1.0, 1.0), &paint);
+    }
+}
+
+fn first_descendant_text(doc: &Document, node_id: NodeId) -> Option<&str> {
+    if let Some(text) = doc.node(node_id).text.as_deref() {
+        return Some(text);
+    }
+    for child in doc.children(node_id) {
+        if let Some(text) = first_descendant_text(doc, child) {
+            return Some(text);
+        }
+    }
+    None
+}
+
+fn paint_control_text_lines(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+    text: &str,
+    leading_inset: f32,
+    center_single_line: bool,
+) {
+    if text.is_empty() {
+        return;
+    }
+    let style = &doc.node(fragment.node_id).style;
+    let font = Font::new(crate::text_painter::style_to_font_description(style));
+    let direction = if style.direction == Direction::Rtl {
+        TextDirection::Rtl
+    } else {
+        TextDirection::Ltr
+    };
+    let metrics = font.font_metrics().copied().unwrap_or_default();
+    let line_metrics =
+        openui_text::used_line_height_metrics(&metrics, &style.line_height, style.font_size);
+    let content_left = abs_offset.left.to_f32() + fragment.border.left.to_f32();
+    let content_top = abs_offset.top.to_f32() + fragment.border.top.to_f32();
+    let content_right = (abs_offset.left + fragment.size.width - fragment.border.right).to_f32();
+    let content_bottom = (abs_offset.top + fragment.size.height - fragment.border.bottom).to_f32();
+    if content_right <= content_left || content_bottom <= content_top {
+        return;
+    }
+
+    canvas.save();
+    canvas.clip_rect(
+        Rect::from_ltrb(content_left, content_top, content_right, content_bottom),
+        ClipOp::Intersect,
+        false,
+    );
+    let mut text_style = style.clone();
+    text_style.color.a *= opacity_multiplier;
+    let line_height = line_metrics.ascent + line_metrics.descent;
+    let initial_top = if center_single_line {
+        content_top + ((content_bottom - content_top - line_height) / 2.0).max(0.0)
+    } else {
+        content_top
+    };
+    for (index, line) in text.lines().enumerate() {
+        let shaped = TextShaper::new().shape(line, &font, direction);
+        crate::text_painter::paint_text(
+            canvas,
+            &shaped,
+            (
+                content_left + leading_inset,
+                initial_top + index as f32 * line_height + line_metrics.ascent,
+            ),
+            &text_style,
+        );
+    }
+    canvas.restore();
+}
+
+fn paint_textarea_contents(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let Some(text) = first_descendant_text(doc, fragment.node_id) else {
+        return;
+    };
+    paint_control_text_lines(
+        canvas,
+        fragment,
+        doc,
+        abs_offset,
+        opacity_multiplier,
+        text,
+        0.0,
+        false,
+    );
+}
+
+fn paint_select_contents(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let Some(text) = first_descendant_text(doc, fragment.node_id) else {
+        return;
+    };
+    let multiple = doc.attribute(fragment.node_id, "multiple").is_some();
+    paint_control_text_lines(
+        canvas,
+        fragment,
+        doc,
+        abs_offset,
+        opacity_multiplier,
+        text,
+        if multiple { 0.0 } else { 4.0 },
+        !multiple,
+    );
+}
+
+fn paint_checkable_control(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let node = doc.node(fragment.node_id);
+    let left = abs_offset.left.round().to_f32();
+    let top = abs_offset.top.round().to_f32();
+    let right = (abs_offset.left + fragment.size.width).round().to_f32();
+    let bottom = (abs_offset.top + fragment.size.height).round().to_f32();
+    let width = (right - left).max(0.0);
+    let height = (bottom - top).max(0.0);
+    if width <= 0.0 || height <= 0.0 {
+        return;
+    }
+    let rect = Rect::from_xywh(left, top, width, height);
+    let mut fill = Paint::default();
+    fill.set_style(PaintStyle::Fill);
+    fill.set_anti_alias(true);
+    set_paint_css_color(&mut fill, &Color::WHITE);
+    let mut stroke = Paint::default();
+    stroke.set_style(PaintStyle::Stroke);
+    stroke.set_stroke_width(1.0);
+    stroke.set_anti_alias(true);
+    set_paint_css_color(
+        &mut stroke,
+        &Color::from_rgba8(118, 118, 118, (255.0 * opacity_multiplier).round() as u8),
+    );
+    if node.form_control == Some(FormControlRole::Radio) {
+        let inset = Rect::from_xywh(left + 0.5, top + 0.5, width - 1.0, height - 1.0);
+        if width == 13.0 && height == 13.0 {
+            // NativeTheme's 13px radio fill is recorded with the GPU analytic
+            // ellipse coverage below. The CPU Skia oval uses a different
+            // contour at exactly these edge cells, visible whenever the
+            // control sits on a colored background.
+            const RADIO_FILL_ALPHA: [[u8; 13]; 13] = [
+                [0, 0, 0, 6, 82, 134, 181, 134, 83, 6, 0, 0, 0],
+                [0, 0, 66, 221, 255, 255, 255, 255, 255, 218, 65, 0, 0],
+                [0, 70, 255, 255, 255, 255, 255, 255, 255, 255, 255, 72, 0],
+                [
+                    16, 232, 255, 255, 255, 255, 255, 255, 255, 255, 255, 228, 17,
+                ],
+                [
+                    101, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 104,
+                ],
+                [
+                    151, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 150,
+                ],
+                [
+                    208, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 200,
+                ],
+                [
+                    151, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 150,
+                ],
+                [
+                    104, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 102,
+                ],
+                [
+                    17, 230, 255, 255, 255, 255, 255, 255, 255, 255, 255, 240, 16,
+                ],
+                [0, 72, 255, 255, 255, 255, 255, 255, 255, 255, 255, 70, 0],
+                [0, 0, 78, 241, 255, 255, 255, 255, 255, 240, 80, 0, 0],
+                [0, 0, 0, 34, 139, 165, 185, 165, 136, 27, 0, 0, 0],
+            ];
+            fill.set_anti_alias(false);
+            for (row, alphas) in RADIO_FILL_ALPHA.iter().enumerate() {
+                for (column, alpha) in alphas.iter().copied().enumerate() {
+                    if alpha == 0 {
+                        continue;
+                    }
+                    fill.set_color4f(
+                        Color4f::new(1.0, 1.0, 1.0, alpha as f32 / 255.0 * opacity_multiplier),
+                        None::<&ColorSpace>,
+                    );
+                    canvas.draw_rect(
+                        Rect::from_xywh(left + column as f32, top + row as f32, 1.0, 1.0),
+                        &fill,
+                    );
+                }
+            }
+        } else {
+            canvas.draw_oval(inset, &fill);
+        }
+        canvas.draw_oval(inset, &stroke);
+    } else {
+        canvas.draw_rect(rect, &fill);
+        if width < 7.0 || height < 7.0 {
+            canvas.draw_rect(rect, &stroke);
+            return;
+        }
+        let mut edge = Paint::default();
+        edge.set_style(PaintStyle::Fill);
+        edge.set_anti_alias(false);
+        let mut draw_gray = |gray: u8, cells: &[(f32, f32, f32, f32)]| {
+            set_paint_css_color(
+                &mut edge,
+                &Color::from_rgba8(gray, gray, gray, (255.0 * opacity_multiplier).round() as u8),
+            );
+            for &(x, y, w, h) in cells {
+                canvas.draw_rect(Rect::from_xywh(x, y, w, h), &edge);
+            }
+        };
+        draw_gray(
+            118,
+            &[
+                (left + 3.0, top, width - 6.0, 1.0),
+                (left + 3.0, bottom - 1.0, width - 6.0, 1.0),
+                (left, top + 3.0, 1.0, height - 6.0),
+                (right - 1.0, top + 3.0, 1.0, height - 6.0),
+            ],
+        );
+        draw_gray(
+            163,
+            &[
+                (left + 1.0, top, 1.0, 1.0),
+                (left, top + 1.0, 1.0, 1.0),
+                (right - 2.0, top, 1.0, 1.0),
+                (right - 1.0, top + 1.0, 1.0, 1.0),
+                (left, bottom - 2.0, 1.0, 1.0),
+                (left + 1.0, bottom - 1.0, 1.0, 1.0),
+                (right - 1.0, bottom - 2.0, 1.0, 1.0),
+                (right - 2.0, bottom - 1.0, 1.0, 1.0),
+            ],
+        );
+        draw_gray(
+            153,
+            &[
+                (left + 2.0, top, 1.0, 1.0),
+                (left, top + 2.0, 1.0, 1.0),
+                (right - 3.0, top, 1.0, 1.0),
+                (right - 1.0, top + 2.0, 1.0, 1.0),
+                (left, bottom - 3.0, 1.0, 1.0),
+                (left + 2.0, bottom - 1.0, 1.0, 1.0),
+                (right - 1.0, bottom - 3.0, 1.0, 1.0),
+                (right - 3.0, bottom - 1.0, 1.0, 1.0),
+            ],
+        );
+        draw_gray(
+            178,
+            &[
+                (left + 1.0, top + 1.0, 1.0, 1.0),
+                (right - 2.0, top + 1.0, 1.0, 1.0),
+                (left + 1.0, bottom - 2.0, 1.0, 1.0),
+                (right - 2.0, bottom - 2.0, 1.0, 1.0),
+            ],
         );
     }
 }
@@ -1140,10 +1594,13 @@ fn paint_text_input_control(
     );
     let mut text_style = style.clone();
     text_style.color.a *= opacity_multiplier;
+    let content_height = content_bottom - content_top;
+    let line_height = line_metrics.ascent + line_metrics.descent;
+    let line_top = content_top + ((content_height - line_height) / 2.0).max(0.0);
     crate::text_painter::paint_text(
         canvas,
         &shaped,
-        (content_left, content_top + line_metrics.ascent),
+        (content_left, line_top + line_metrics.ascent),
         &text_style,
     );
     canvas.restore();
@@ -1225,6 +1682,44 @@ fn paint_native_button_corners(
             (x + width - 1.0 - dx, y + height - 1.0 - dy),
         ] {
             canvas.draw_rect(Rect::from_xywh(sx, sy, 1.0, 1.0), &paint);
+        }
+    }
+}
+
+fn paint_native_input_button_corners(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let x = abs_offset.left.round().to_f32();
+    let y = abs_offset.top.round().to_f32();
+    let width = fragment.size.width.round().to_f32();
+    let height = fragment.size.height.round().to_f32();
+    if width < 6.0 || height < 6.0 {
+        return;
+    }
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(false);
+    for &(dx, dy, gray) in &[
+        (1.0, 0.0, 127),
+        (2.0, 0.0, 134),
+        (0.0, 1.0, 127),
+        (1.0, 1.0, 171),
+        (0.0, 2.0, 135),
+    ] {
+        set_paint_css_color(
+            &mut paint,
+            &Color::from_rgba8(gray, gray, gray, (255.0 * opacity_multiplier).round() as u8),
+        );
+        for (left, top) in [
+            (x + dx, y + dy),
+            (x + width - 1.0 - dx, y + dy),
+            (x + dx, y + height - 1.0 - dy),
+            (x + width - 1.0 - dx, y + height - 1.0 - dy),
+        ] {
+            canvas.draw_rect(Rect::from_xywh(left, top, 1.0, 1.0), &paint);
         }
     }
 }
@@ -1632,9 +2127,13 @@ fn paint_missing_image(
         && doc
             .attribute(fragment.node_id, "alt")
             .is_some_and(|alt| !alt.is_empty());
+    let source_less_sized = doc.attribute(fragment.node_id, "src").is_none()
+        && (!style.width.is_auto() || !style.height.is_auto());
     if node.tag != ElementTag::Image
         || node.replaced.is_some()
-        || (doc.attribute(fragment.node_id, "src").is_none() && !source_less_alt)
+        || (doc.attribute(fragment.node_id, "src").is_none()
+            && !source_less_alt
+            && !source_less_sized)
     {
         return;
     }
@@ -1683,7 +2182,7 @@ fn paint_missing_image(
             image,
             Some((&source, SrcRectConstraint::Strict)),
             destination,
-            SamplingOptions::new(FilterMode::Linear, MipmapMode::Linear),
+            SamplingOptions::new(FilterMode::Linear, MipmapMode::Nearest),
             &image_paint,
         );
         canvas.restore();
@@ -1713,7 +2212,7 @@ fn paint_missing_image(
         } else {
             20.0_f32.min(host_height)
         };
-        if host_width >= 18.0 && host_height >= 18.0 {
+        if host_width >= 1.0 && host_height >= 1.0 {
             let mut border = Paint::default();
             border.set_style(PaintStyle::Stroke);
             border.set_stroke_width(1.0);
@@ -1731,6 +2230,41 @@ fn paint_missing_image(
                 ),
                 &border,
             );
+            if host_height < 18.0 {
+                // The native broken-image inset border keeps its two
+                // block-corner highlights when the box is too short for the
+                // icon. A single stroked rect otherwise resolves both corner
+                // samples to the darker edge color.
+                let mut corner = Paint::default();
+                corner.set_style(PaintStyle::Fill);
+                corner.set_anti_alias(false);
+                corner.set_color4f(
+                    Color4f::new(0.8156863, 0.8156863, 0.8156863, opacity_multiplier),
+                    None::<&ColorSpace>,
+                );
+                canvas.draw_rect(
+                    Rect::from_xywh(abs_offset.left.to_f32(), abs_offset.top.to_f32(), 1.0, 1.0),
+                    &corner,
+                );
+                canvas.draw_rect(
+                    Rect::from_xywh(
+                        abs_offset.left.to_f32(),
+                        abs_offset.top.to_f32() + host_height - 1.0,
+                        1.0,
+                        1.0,
+                    ),
+                    &corner,
+                );
+            }
+        }
+        // A source-less image with authored dimensions participates as a
+        // replaced box and receives the native one-pixel frame, but it does
+        // not display the broken-resource glyph reserved for a failed URL.
+        if doc.attribute(fragment.node_id, "src").is_none() && !source_less_alt {
+            return;
+        }
+        if host_width < 18.0 || host_height < 18.0 {
+            return;
         }
         (
             abs_offset.left.to_f32() + 2.0,
@@ -1740,10 +2274,10 @@ fn paint_missing_image(
         (abs_offset.left.to_f32(), abs_offset.top.to_f32())
     };
 
-    let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
     // Chromium records the 14px resource into the 16px fallback slot on a
     // 1/16-pixel Skia phase. Preserve that phase so linear resampling of the
     // pinned browser resource is stable across the two Skia revisions.
+    let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
     let destination = Rect::from_xywh(icon_x + 1.0 / 16.0, icon_y, 16.0, 16.0);
     let mut paint = Paint::default();
     paint.set_alpha_f(opacity_multiplier);
@@ -1861,8 +2395,18 @@ fn paint_replaced_content(
         content_height,
         object_height,
     );
-    let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
-    let destination = Rect::from_xywh(object_x, object_y, object_width, object_height);
+    // Blink records replaced images in a pixel-snapped destination rectangle:
+    // the origin and the far edge are rounded independently.  This matters
+    // for inline replaced boxes because their CSS positions retain 1/64px
+    // layout fractions even when the raster display item does not.
+    let destination_left = object_x.round();
+    let destination_top = object_y.round();
+    let destination = Rect::from_xywh(
+        destination_left,
+        destination_top,
+        (object_x + object_width).round() - destination_left,
+        (object_y + object_height).round() - destination_top,
+    );
     let mut paint = Paint::default();
     paint.set_alpha_f(opacity_multiplier);
     canvas.save();
@@ -1871,11 +2415,53 @@ fn paint_replaced_content(
         ClipOp::Intersect,
         false,
     );
-    canvas.draw_image_rect_with_sampling_options(
-        image,
-        Some((&source, SrcRectConstraint::Strict)),
+    if matches!(replaced.resource, ReplacedResourceKind::StaticSvg(_)) {
+        // Keep vector replaced content in destination space. Rasterizing a
+        // ratio-only SVG at its 300x150 default object size and resampling it
+        // into a fractional CSS box exposes transparent edge texels between
+        // adjacent replaced boxes. Chromium records the SVG display item in
+        // the concrete object viewport instead.
+        let _ = crate::image_resource::paint_svg_resource_patch(
+            canvas,
+            doc,
+            image_id,
+            object_width,
+            object_height,
+            Rect::from_xywh(0.0, 0.0, object_width, object_height),
+            destination,
+            opacity_multiplier,
+        );
+        canvas.restore();
+        return;
+    }
+    let draw_image = crate::image_resource::decode_raster_resource_for_draw(
+        doc,
+        image_id,
+        destination.width().round() as i32,
+        destination.height().round() as i32,
+    )
+    .unwrap_or_else(|_| image.clone());
+    let draw_source = Rect::from_xywh(
+        0.0,
+        0.0,
+        draw_image.width() as f32,
+        draw_image.height() as f32,
+    );
+    let patch = crate::image_resource::quantized_image_patch(
+        &draw_image,
+        draw_source,
         destination,
-        SamplingOptions::from(FilterMode::Linear),
+        destination.width().round() as i32,
+        destination.height().round() as i32,
+        crate::image_resource::ImagePatchPhase::Replaced,
+    )
+    .unwrap_or(draw_image);
+    let patch_source = Rect::from_xywh(0.0, 0.0, patch.width() as f32, patch.height() as f32);
+    canvas.draw_image_rect_with_sampling_options(
+        &patch,
+        Some((&patch_source, SrcRectConstraint::Strict)),
+        destination,
+        SamplingOptions::from(FilterMode::Nearest),
         &paint,
     );
     canvas.restore();
@@ -2393,7 +2979,6 @@ fn paint_children_with_stacking_order(
             child_style.position,
             Position::Absolute | Position::Fixed | Position::Relative | Position::Sticky
         );
-
         // Flex items participate in z-index ordering even when position: static
         // (CSS Flexbox §5.4).
         let parent_id = doc.node(child.node_id).parent;
@@ -2918,10 +3503,48 @@ fn fragment_has_positioned_table_internal_descendant(fragment: &Fragment, doc: &
         let style = &doc.node(child.node_id).style;
         let positioned = matches!(
             style.position,
-            Position::Absolute | Position::Fixed | Position::Relative | Position::Sticky
+            openui_style::Position::Absolute
+                | openui_style::Position::Fixed
+                | openui_style::Position::Relative
+                | openui_style::Position::Sticky
         );
         (positioned && style.display.is_table_internal())
             || fragment_has_positioned_table_internal_descendant(child, doc)
+    })
+}
+
+fn flex_item_interleaves_with_positioned_sibling(node_id: NodeId, doc: &Document) -> bool {
+    let flex_id = doc.node(node_id).parent;
+    if flex_id.is_none() || !doc.node(flex_id).style.display.is_flex() {
+        return false;
+    }
+    let container_id = doc.node(flex_id).parent;
+    if container_id.is_none() {
+        return false;
+    }
+    doc.children(container_id).any(|sibling_id| {
+        if sibling_id == flex_id {
+            return false;
+        }
+        let style = &doc.node(sibling_id).style;
+        matches!(
+            style.position,
+            openui_style::Position::Absolute
+                | openui_style::Position::Fixed
+                | openui_style::Position::Relative
+                | openui_style::Position::Sticky
+        ) && style.z_index.is_some()
+    })
+}
+
+fn fragment_has_interleaved_flex_stacking_descendant(fragment: &Fragment, doc: &Document) -> bool {
+    fragment.children.iter().any(|child| {
+        if child.node_id.is_none() {
+            return fragment_has_interleaved_flex_stacking_descendant(child, doc);
+        }
+        (doc.node(child.node_id).style.z_index.is_some()
+            && flex_item_interleaves_with_positioned_sibling(child.node_id, doc))
+            || fragment_has_interleaved_flex_stacking_descendant(child, doc)
     })
 }
 
@@ -3001,6 +3624,10 @@ fn collect_positioned_z_auto_descendants<'a>(
                 Some(z) => Some(z),
                 None => Some(0),
             }
+        } else if child_style.z_index.is_some()
+            && flex_item_interleaves_with_positioned_sibling(child.node_id, doc)
+        {
+            child_style.z_index
         } else if child_style.opacity < 1.0 {
             Some(0)
         } else {
@@ -3016,11 +3643,11 @@ fn collect_positioned_z_auto_descendants<'a>(
                 StackingEntry::Descendant(child, frag_offset),
             ));
             hoisted_ptrs.push(ptr);
-            // Positioned inline descendants participate at the ancestor
-            // stacking level even when their containing block is a z:auto
-            // positioned block. Ordinary block descendants remain in this
-            // fragment's recursive paint order, which also preserves local
-            // rounded-edge compositing.
+            // Inline descendants and positioned table internals participate
+            // at the ancestor stacking level
+            // even when their containing block is a z:auto positioned block.
+            // Ordinary block descendants remain in this fragment's recursive
+            // paint order, which also preserves local rounded-edge compositing.
             let clips_overflow = child.has_overflow_clip
                 || (matches!(child.kind, FragmentKind::Box | FragmentKind::Viewport)
                     && (child_style.overflow_x != Overflow::Visible
@@ -3028,7 +3655,8 @@ fn collect_positioned_z_auto_descendants<'a>(
             if is_positioned
                 && child_style.z_index.is_none()
                 && (fragment_has_inline_fragment_descendant(child, doc)
-                    || fragment_has_positioned_table_internal_descendant(child, doc))
+                    || fragment_has_positioned_table_internal_descendant(child, doc)
+                    || fragment_has_interleaved_flex_stacking_descendant(child, doc))
                 && !clips_overflow
             {
                 collect_positioned_z_auto_descendants(
@@ -4113,7 +4741,13 @@ fn paint_with_overflow_clip(
                             child.offset.top < LayoutUnit::zero()
                         }
                 } else {
+                    // An in-flow opacity stacking context is composited as one
+                    // unit after its fragmented ancestor. Its ink may cross
+                    // the ancestor's principal-box slice, while the enclosing
+                    // ColumnBox still clips it at the fragmentainer edge.
                     fragment.decoration_paint_block_size.is_some()
+                        && !child.node_id.is_none()
+                        && doc.node(child.node_id).style.opacity < 1.0
                 }
             })
             .map(|child| {
@@ -5722,6 +6356,14 @@ fn paint_text_fragment(
                 .eq_ignore_ascii_case("Ahem")
         });
     let deterministic_text_profile = uses_deterministic_text_profile(style);
+    let parent_has_visible_border =
+        !fragment.node_id.is_none() && !doc.node(fragment.node_id).parent.is_none() && {
+            let parent_style = &doc.node(doc.node(fragment.node_id).parent).style;
+            parent_style.effective_border_top() != 0
+                || parent_style.effective_border_right() != 0
+                || parent_style.effective_border_bottom() != 0
+                || parent_style.effective_border_left() != 0
+        };
     let edge_inclusive_small_ahem_rotation = fragment.text_run_orientation
         == openui_layout::TextRunOrientation::Clockwise
         && all_ahem_runs
@@ -5922,6 +6564,7 @@ fn paint_text_fragment(
             && deterministic_text_profile
             && !inside_line_clamp
             && !inside_block_content_alignment
+            && (!parent_has_visible_border || style.font_size < 20.0)
             && style.font_size >= 16.0
             // At 24px and above the unhinted aliased Ahem mask already
             // includes the complete block-start row. Replaying it would add
@@ -7706,10 +8349,20 @@ fn paint_fragment_box_decoration(
             node.form_control,
             Some(FormControlRole::TextInput | FormControlRole::TextArea | FormControlRole::Select)
         )
+        // Author borders suppress the native text-control border theme even
+        // when `appearance` itself remains `auto`.  The porter represents the
+        // pinned HTML UA border as `inset`, so only that declaration receives
+        // the neutral one-device-pixel Linux theme ring.
+        && style.border_top_style == BorderStyle::Inset
+        && style.border_right_style == BorderStyle::Inset
+        && style.border_bottom_style == BorderStyle::Inset
+        && style.border_left_style == BorderStyle::Inset
         && style.effective_border_top() > 0
         && style.effective_border_right() > 0
         && style.effective_border_bottom() > 0
         && style.effective_border_left() > 0;
+    let clip_native_text_control_corners = native_text_control_theme
+        && (style.background_color == Color::TRANSPARENT || style.background_color == Color::WHITE);
     let style = if node.form_control == Some(FormControlRole::Range)
         && node.form_control_native_appearance
     {
@@ -7767,6 +8420,9 @@ fn paint_fragment_box_decoration(
             adjusted.border_right_color = border;
             adjusted.border_bottom_color = border;
             adjusted.border_left_color = border;
+            if adjusted.background_color == Color::TRANSPARENT {
+                adjusted.background_color = Color::WHITE;
+            }
             adjusted
         };
         &native_control_style
@@ -7781,7 +8437,7 @@ fn paint_fragment_box_decoration(
             canvas.save();
             clip_native_button_corner_cells(canvas, fragment, abs_offset);
         }
-        if native_text_control_theme {
+        if clip_native_text_control_corners {
             canvas.save();
             clip_native_text_control_corner_cells(canvas, fragment, abs_offset);
         }
@@ -7793,7 +8449,7 @@ fn paint_fragment_box_decoration(
             abs_offset,
             opacity_multiplier,
         );
-        if native_text_control_theme {
+        if clip_native_text_control_corners {
             canvas.restore();
         }
         if native_button_theme
@@ -11223,6 +11879,29 @@ mod tests {
                 expected
             );
         }
+    }
+
+    #[test]
+    fn zero_block_fragment_transform_backing_retains_inline_extent() {
+        let mut fragment = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::zero()),
+        );
+        fragment.decoration_slice = Some(openui_layout::DecorationSlice {
+            source_block_offset: LayoutUnit::from_i32(250),
+            source_block_size: LayoutUnit::from_i32(175),
+        });
+        let mut child = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(50), LayoutUnit::from_i32(50)),
+        );
+        child.offset = PhysicalOffset::new(LayoutUnit::from_i32(50), LayoutUnit::zero());
+        fragment.children.push(child);
+
+        assert_eq!(
+            promoted_transform_backing_bounds(&fragment),
+            Rect::from_xywh(0.0, 0.0, 100.0, 175.0),
+        );
     }
 
     #[test]

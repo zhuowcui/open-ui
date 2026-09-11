@@ -928,7 +928,7 @@ align-content-wrap-001,not_portable,,uses_javascript
 align-content-wrap-002,not_portable,,uses_javascript
 align-content-wrap-003,not_portable,,uses_javascript
 align-content-wrap-005,not_portable,,uses_javascript
-align-items-007,not_portable,,unsupported element: <img>
+align-items-007,ported,css_flexbox_align_items_007,
 align-items-008,not_portable,,uses_javascript
 align-items-baseline-column-horz,not_portable,,uses_javascript
 align-items-baseline-column-vert-lr-flexbox-item,not_portable,,uses_javascript
@@ -956,17 +956,17 @@ anonymous-flex-item-003,not_portable,,uses_javascript
 anonymous-flex-item-005,not_portable,,uses_javascript
 anonymous-flex-item-006,not_portable,,uses_javascript
 anonymous-flex-item-restyle,not_portable,,uses_javascript
-aspect-ratio-intrinsic-size-001,not_portable,,unsupported element: <canvas>
+aspect-ratio-intrinsic-size-001,ported,css_flexbox_aspect_ratio_intrinsic_size_001,
 aspect-ratio-intrinsic-size-002,not_portable,,uses_javascript
 aspect-ratio-intrinsic-size-004,not_portable,,uses_javascript
 aspect-ratio-intrinsic-size-005,not_portable,,uses_javascript
-aspect-ratio-intrinsic-size-006,not_portable,,unsupported element: <img>
-aspect-ratio-intrinsic-size-007-ref,not_portable,,unsupported element: <svg>
-aspect-ratio-intrinsic-size-007,not_portable,,unsupported element: <img>
+aspect-ratio-intrinsic-size-006,ported,css_flexbox_aspect_ratio_intrinsic_size_006,
+aspect-ratio-intrinsic-size-007-ref,ported,css_flexbox_aspect_ratio_intrinsic_size_007_ref,
+aspect-ratio-intrinsic-size-007,ported,css_flexbox_aspect_ratio_intrinsic_size_007,
 aspect-ratio-intrinsic-size-009,ported,css_flexbox_aspect_ratio_intrinsic_size_009,
 auto-margins-001-ref,ported,css_flexbox_auto_margins_001_ref,
 auto-margins-001,not_portable,,uses_javascript
-auto-margins-002,not_portable,,unsupported element: <img>
+auto-margins-002,ported,css_flexbox_auto_margins_002,
 auto-margins-003,ported,css_flexbox_auto_margins_003,
 baseline-synthesis-001,ported,css_flexbox_baseline_synthesis_001,
 baseline-synthesis-002,ported,css_flexbox_baseline_synthesis_002,
@@ -975,7 +975,7 @@ baseline-synthesis-004,ported,css_flexbox_baseline_synthesis_004,
 baseline-synthesis-vert-lr-line-under,ported,css_flexbox_baseline_synthesis_vert_lr_line_under,
 box-sizing-001,not_portable,,uses_javascript
 box-sizing-min-max-sizes-001,not_portable,,uses_javascript
-button-column-wrap-crash,not_portable,,unsupported element: <button>
+button-column-wrap-crash,ported,css_flexbox_button_column_wrap_crash,
 canvas-contain-size,ported,css_flexbox_canvas_contain_size,
 canvas-dynamic-change-001,not_portable,,uses_javascript
 change-column-flex-width,not_portable,,uses_javascript
@@ -984,9 +984,9 @@ column-reverse-gap,not_portable,,uses_javascript
 columns-height-set-via-top-bottom,not_portable,,uses_javascript
 contain-size-layout-abspos-flex-container-crash,not_portable,,uses_javascript
 cross-axis-scrollbar,ported,css_flexbox_cross_axis_scrollbar,
-css-flexbox-height-animation-stretch-ref,not_portable,,style_block_unsupported property: animation
-css-flexbox-height-animation-stretch,not_portable,,style_block_unsupported property: animation
-css-flexbox-img-expand-evenly,not_portable,,unsupported element: <img>
+css-flexbox-height-animation-stretch-ref,ported,css_flexbox_css_flexbox_height_animation_stretch_ref,
+css-flexbox-height-animation-stretch,ported,css_flexbox_css_flexbox_height_animation_stretch,
+css-flexbox-img-expand-evenly,ported,css_flexbox_css_flexbox_img_expand_evenly,
 css-flexbox-row-reverse-wrap-reverse,ported,css_flexbox_css_flexbox_row_reverse_wrap_reverse,
 css-flexbox-row-reverse-wrap,ported,css_flexbox_css_flexbox_row_reverse_wrap,
 css-flexbox-row-reverse,ported,css_flexbox_css_flexbox_row_reverse,
@@ -996,7 +996,7 @@ css-flexbox-row,ported,css_flexbox_css_flexbox_row,
 css-flexbox-test1-ref,ported,css_flexbox_css_flexbox_test1_ref,
 css-flexbox-test1,ported,css_flexbox_css_flexbox_test1,
 dynamic-baseline-change-nested,not_portable,,uses_javascript
-dynamic-baseline-change-ref,not_portable,,unsupported element: <canvas>
+dynamic-baseline-change-ref,ported,css_flexbox_dynamic_baseline_change_ref,
 dynamic-baseline-change,not_portable,,uses_javascript
 dynamic-bsize-change,not_portable,,uses_javascript
 dynamic-change-simplified-layout-002,not_portable,,uses_javascript
@@ -1011,50 +1011,50 @@ dynamic-stretch-change,not_portable,,uses_javascript
 empty-flex-box-and-margin-collapsing,ported,css_flexbox_empty_flex_box_and_margin_collapsing,
 fieldset-as-container-justify-center.tentative,not_portable,,uses_javascript
 fieldset-as-item-dynamic,not_portable,,uses_javascript
-fieldset-as-item-overflow,not_portable,,unsupported element: <fieldset>
-fieldset-baseline-alignment-ref,not_portable,,unsupported element: <fieldset>
-fieldset-baseline-alignment,not_portable,,unsupported element: <fieldset>
+fieldset-as-item-overflow,ported,css_flexbox_fieldset_as_item_overflow,
+fieldset-baseline-alignment-ref,ported,css_flexbox_fieldset_baseline_alignment_ref,
+fieldset-baseline-alignment,ported,css_flexbox_fieldset_baseline_alignment,
 fit-content-item-002,ported,css_flexbox_fit_content_item_002,
 fit-content-item-003,ported,css_flexbox_fit_content_item_003,
 fit-content-item-004,ported,css_flexbox_fit_content_item_004,
 fixed-table-layout-with-percentage-width-in-flex-item,ported,css_flexbox_fixed_table_layout_with_percentage_width_in_flex_item,
-fixedpos-video-in-abspos-quirk-crash,not_portable,,unsupported element: <video>
-flex-aspect-ratio-img-column-001,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-002,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-003,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-004,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-005,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-006,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-007,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-008,not_portable,,style_block_unsupported property: writing-mode
-flex-aspect-ratio-img-column-009,not_portable,,unsupported element: <img>
+fixedpos-video-in-abspos-quirk-crash,ported,css_flexbox_fixedpos_video_in_abspos_quirk_crash,
+flex-aspect-ratio-img-column-001,ported,css_flexbox_flex_aspect_ratio_img_column_001,
+flex-aspect-ratio-img-column-002,ported,css_flexbox_flex_aspect_ratio_img_column_002,
+flex-aspect-ratio-img-column-003,ported,css_flexbox_flex_aspect_ratio_img_column_003,
+flex-aspect-ratio-img-column-004,ported,css_flexbox_flex_aspect_ratio_img_column_004,
+flex-aspect-ratio-img-column-005,ported,css_flexbox_flex_aspect_ratio_img_column_005,
+flex-aspect-ratio-img-column-006,ported,css_flexbox_flex_aspect_ratio_img_column_006,
+flex-aspect-ratio-img-column-007,ported,css_flexbox_flex_aspect_ratio_img_column_007,
+flex-aspect-ratio-img-column-008,ported,css_flexbox_flex_aspect_ratio_img_column_008,
+flex-aspect-ratio-img-column-009,ported,css_flexbox_flex_aspect_ratio_img_column_009,
 flex-aspect-ratio-img-column-010,not_portable,,uses_javascript
 flex-aspect-ratio-img-column-011,not_portable,,uses_javascript
-flex-aspect-ratio-img-column-012,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-013,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-014,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-015,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-016,not_portable,,unsupported element: <img>
+flex-aspect-ratio-img-column-012,ported,css_flexbox_flex_aspect_ratio_img_column_012,
+flex-aspect-ratio-img-column-013,ported,css_flexbox_flex_aspect_ratio_img_column_013,
+flex-aspect-ratio-img-column-014,ported,css_flexbox_flex_aspect_ratio_img_column_014,
+flex-aspect-ratio-img-column-015,ported,css_flexbox_flex_aspect_ratio_img_column_015,
+flex-aspect-ratio-img-column-016,ported,css_flexbox_flex_aspect_ratio_img_column_016,
 flex-aspect-ratio-img-column-017,not_portable,,uses_javascript
-flex-aspect-ratio-img-column-018,not_portable,,unsupported element: <svg>
-flex-aspect-ratio-img-row-001,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-002,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-003,not_portable,,unsupported element: <img>
+flex-aspect-ratio-img-column-018,ported,css_flexbox_flex_aspect_ratio_img_column_018,
+flex-aspect-ratio-img-row-001,ported,css_flexbox_flex_aspect_ratio_img_row_001,
+flex-aspect-ratio-img-row-002,ported,css_flexbox_flex_aspect_ratio_img_row_002,
+flex-aspect-ratio-img-row-003,ported,css_flexbox_flex_aspect_ratio_img_row_003,
 flex-aspect-ratio-img-row-004,not_portable,,uses_javascript
 flex-aspect-ratio-img-row-005,not_portable,,uses_javascript
-flex-aspect-ratio-img-row-006,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-007,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-008,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-009,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-010,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-011,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-012,not_portable,,unsupported element: <img>
+flex-aspect-ratio-img-row-006,ported,css_flexbox_flex_aspect_ratio_img_row_006,
+flex-aspect-ratio-img-row-007,ported,css_flexbox_flex_aspect_ratio_img_row_007,
+flex-aspect-ratio-img-row-008,ported,css_flexbox_flex_aspect_ratio_img_row_008,
+flex-aspect-ratio-img-row-009,ported,css_flexbox_flex_aspect_ratio_img_row_009,
+flex-aspect-ratio-img-row-010,ported,css_flexbox_flex_aspect_ratio_img_row_010,
+flex-aspect-ratio-img-row-011,ported,css_flexbox_flex_aspect_ratio_img_row_011,
+flex-aspect-ratio-img-row-012,ported,css_flexbox_flex_aspect_ratio_img_row_012,
 flex-aspect-ratio-img-row-013,not_portable,,uses_javascript
-flex-aspect-ratio-img-row-014,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-015,not_portable,,unsupported element: <svg>
+flex-aspect-ratio-img-row-014,ported,css_flexbox_flex_aspect_ratio_img_row_014,
+flex-aspect-ratio-img-row-015,ported,css_flexbox_flex_aspect_ratio_img_row_015,
 flex-aspect-ratio-img-row-016,not_portable,,uses_javascript
-flex-aspect-ratio-img-row-017,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-vert-lr,not_portable,,style_block_unsupported property: writing-mode
+flex-aspect-ratio-img-row-017,ported,css_flexbox_flex_aspect_ratio_img_row_017,
+flex-aspect-ratio-img-vert-lr,ported,css_flexbox_flex_aspect_ratio_img_vert_lr,
 flex-basis-009,not_portable,,uses_javascript
 flex-basis-013,not_portable,,uses_javascript
 flex-basis-intrinsics-001,not_portable,,uses_javascript
@@ -1078,44 +1078,44 @@ flex-item-contains-size-layout-001,not_portable,,uses_javascript
 flex-item-contains-strict,not_portable,,uses_javascript
 flex-item-max-width-min-content,ported,css_flexbox_flex_item_max_width_min_content,
 flex-item-min-width-min-content,ported,css_flexbox_flex_item_min_width_min_content,
-flex-item-z-ordering-001,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-004,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-005,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-006,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-007,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-008,not_portable,,unsupported element: <img>
+flex-item-z-ordering-001,ported,css_flexbox_flex_item_z_ordering_001,
+flex-minimum-height-flex-items-004,ported,css_flexbox_flex_minimum_height_flex_items_004,
+flex-minimum-height-flex-items-005,ported,css_flexbox_flex_minimum_height_flex_items_005,
+flex-minimum-height-flex-items-006,ported,css_flexbox_flex_minimum_height_flex_items_006,
+flex-minimum-height-flex-items-007,ported,css_flexbox_flex_minimum_height_flex_items_007,
+flex-minimum-height-flex-items-008,ported,css_flexbox_flex_minimum_height_flex_items_008,
 flex-minimum-height-flex-items-009,not_portable,,uses_javascript
 flex-minimum-height-flex-items-010,not_portable,,uses_javascript
 flex-minimum-height-flex-items-012,not_portable,,uses_javascript
 flex-minimum-height-flex-items-019,not_portable,,uses_javascript
-flex-minimum-height-flex-items-020,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-021,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-022,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-023,not_portable,,unsupported element: <img>
+flex-minimum-height-flex-items-020,ported,css_flexbox_flex_minimum_height_flex_items_020,
+flex-minimum-height-flex-items-021,ported,css_flexbox_flex_minimum_height_flex_items_021,
+flex-minimum-height-flex-items-022,ported,css_flexbox_flex_minimum_height_flex_items_022,
+flex-minimum-height-flex-items-023,ported,css_flexbox_flex_minimum_height_flex_items_023,
 flex-minimum-height-flex-items-025,not_portable,,uses_javascript
 flex-minimum-height-flex-items-031,not_portable,,uses_javascript
 flex-minimum-size-001,not_portable,,uses_javascript
 flex-minimum-size-002,not_portable,,uses_javascript
 flex-minimum-size-003,not_portable,,uses_javascript
-flex-minimum-width-flex-items-004,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-005,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-006,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-007,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-008,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-009,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-010,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-011,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-012,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-013,not_portable,,unsupported element: <img>
+flex-minimum-width-flex-items-004,ported,css_flexbox_flex_minimum_width_flex_items_004,
+flex-minimum-width-flex-items-005,ported,css_flexbox_flex_minimum_width_flex_items_005,
+flex-minimum-width-flex-items-006,ported,css_flexbox_flex_minimum_width_flex_items_006,
+flex-minimum-width-flex-items-007,ported,css_flexbox_flex_minimum_width_flex_items_007,
+flex-minimum-width-flex-items-008,ported,css_flexbox_flex_minimum_width_flex_items_008,
+flex-minimum-width-flex-items-009,ported,css_flexbox_flex_minimum_width_flex_items_009,
+flex-minimum-width-flex-items-010,ported,css_flexbox_flex_minimum_width_flex_items_010,
+flex-minimum-width-flex-items-011,ported,css_flexbox_flex_minimum_width_flex_items_011,
+flex-minimum-width-flex-items-012,ported,css_flexbox_flex_minimum_width_flex_items_012,
+flex-minimum-width-flex-items-013,ported,css_flexbox_flex_minimum_width_flex_items_013,
 flex-minimum-width-flex-items-014,not_portable,,uses_javascript
-flex-minimum-width-flex-items-015,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-016,not_portable,,unsupported element: <img>
+flex-minimum-width-flex-items-015,ported,css_flexbox_flex_minimum_width_flex_items_015,
+flex-minimum-width-flex-items-016,ported,css_flexbox_flex_minimum_width_flex_items_016,
 flex-one-sets-flex-basis-to-zero-px,not_portable,,uses_javascript
 flex-outer-flexbox-column-recalculate-height-on-resize-001,not_portable,,uses_javascript
 flex-rounding,not_portable,,uses_javascript
 flex-shorthand-calc,not_portable,,uses_javascript
 flex-shorthand-flex-basis-middle,not_portable,,uses_javascript
-flex-vertical-align-effect,not_portable,,unsupported element: <input>
+flex-vertical-align-effect,ported,css_flexbox_flex_vertical_align_effect,
 flex-wrap-006,not_portable,,uses_javascript
 flexbox-align-self-baseline-horiz-001-ref,ported,css_flexbox_flexbox_align_self_baseline_horiz_001_ref,
 flexbox-align-self-baseline-horiz-006-ref,ported,css_flexbox_flexbox_align_self_baseline_horiz_006_ref,
@@ -1125,89 +1125,66 @@ flexbox-align-self-baseline-horiz-008,ported,css_flexbox_flexbox_align_self_base
 flexbox-align-self-horiz-001-table,ported,css_flexbox_flexbox_align_self_horiz_001_table,
 flexbox-align-self-horiz-002-ref,ported,css_flexbox_flexbox_align_self_horiz_002_ref,
 flexbox-align-self-horiz-002,ported,css_flexbox_flexbox_align_self_horiz_002,
-flexbox-align-self-vert-001-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. -->
-      .centerParent"
-flexbox-align-self-vert-002-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. -->
-      .centerParent"
-flexbox-align-self-vert-003-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. For this to work"
-flexbox-align-self-vert-004-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. For this to work"
-flexbox-align-self-vert-rtl-001-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. -->
-      .centerParent"
-flexbox-align-self-vert-rtl-002-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. -->
-      .centerParent"
-flexbox-align-self-vert-rtl-003-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. For this to work"
-flexbox-align-self-vert-rtl-004-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. For this to work"
-flexbox-align-self-vert-rtl-005-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. -->
-      .centerParent"
-flexbox-baseline-nested-001-ref,not_portable,,unsupported element: <input>
-flexbox-baseline-nested-001,not_portable,,unsupported element: <input>
+flexbox-align-self-vert-001-ref,ported,css_flexbox_flexbox_align_self_vert_001_ref,
+flexbox-align-self-vert-002-ref,ported,css_flexbox_flexbox_align_self_vert_002_ref,
+flexbox-align-self-vert-003-ref,ported,css_flexbox_flexbox_align_self_vert_003_ref,
+flexbox-align-self-vert-004-ref,ported,css_flexbox_flexbox_align_self_vert_004_ref,
+flexbox-align-self-vert-rtl-001-ref,ported,css_flexbox_flexbox_align_self_vert_rtl_001_ref,
+flexbox-align-self-vert-rtl-002-ref,ported,css_flexbox_flexbox_align_self_vert_rtl_002_ref,
+flexbox-align-self-vert-rtl-003-ref,ported,css_flexbox_flexbox_align_self_vert_rtl_003_ref,
+flexbox-align-self-vert-rtl-004-ref,ported,css_flexbox_flexbox_align_self_vert_rtl_004_ref,
+flexbox-align-self-vert-rtl-005-ref,ported,css_flexbox_flexbox_align_self_vert_rtl_005_ref,
+flexbox-baseline-nested-001-ref,ported,css_flexbox_flexbox_baseline_nested_001_ref,
+flexbox-baseline-nested-001,ported,css_flexbox_flexbox_baseline_nested_001,
 flexbox-basic-block-horiz-001v,ported,css_flexbox_flexbox_basic_block_horiz_001v,
 flexbox-basic-block-vert-001v,ported,css_flexbox_flexbox_basic_block_vert_001v,
-flexbox-basic-canvas-horiz-001-ref,not_portable,,unsupported element: <canvas>
-flexbox-basic-canvas-horiz-001,not_portable,,unsupported element: <canvas>
-flexbox-basic-canvas-horiz-001v,not_portable,,style_block_unsupported property: writing-mode
-flexbox-basic-canvas-vert-001-ref,not_portable,,unsupported element: <canvas>
-flexbox-basic-canvas-vert-001,not_portable,,unsupported element: <canvas>
-flexbox-basic-canvas-vert-001v,not_portable,,style_block_unsupported property: writing-mode
-flexbox-basic-fieldset-horiz-001-ref,not_portable,,unsupported element: <fieldset>
-flexbox-basic-fieldset-horiz-001,not_portable,,unsupported element: <fieldset>
-flexbox-basic-fieldset-vert-001-ref,not_portable,,unsupported element: <fieldset>
-flexbox-basic-fieldset-vert-001,not_portable,,unsupported element: <fieldset>
-flexbox-basic-iframe-horiz-001-ref,not_portable,,unsupported element: <iframe>
-flexbox-basic-iframe-horiz-001,not_portable,,unsupported element: <iframe>
-flexbox-basic-iframe-vert-001-ref,not_portable,,unsupported element: <iframe>
-flexbox-basic-iframe-vert-001,not_portable,,unsupported element: <iframe>
-flexbox-basic-img-horiz-001-ref,not_portable,,unsupported element: <img>
-flexbox-basic-img-horiz-001,not_portable,,unsupported element: <img>
-flexbox-basic-img-vert-001-ref,not_portable,,unsupported element: <img>
-flexbox-basic-img-vert-001,not_portable,,unsupported element: <img>
-flexbox-basic-textarea-horiz-001-ref,not_portable,,unsupported element: <textarea>
-flexbox-basic-textarea-horiz-001,not_portable,,unsupported element: <textarea>
-flexbox-basic-textarea-vert-001-ref,not_portable,,unsupported element: <textarea>
-flexbox-basic-textarea-vert-001,not_portable,,unsupported element: <textarea>
-flexbox-basic-video-horiz-001-ref,not_portable,,unsupported element: <video>
-flexbox-basic-video-horiz-001,not_portable,,unsupported element: <video>
-flexbox-basic-video-vert-001-ref,not_portable,,unsupported element: <video>
-flexbox-basic-video-vert-001,not_portable,,unsupported element: <video>
+flexbox-basic-canvas-horiz-001-ref,ported,css_flexbox_flexbox_basic_canvas_horiz_001_ref,
+flexbox-basic-canvas-horiz-001,ported,css_flexbox_flexbox_basic_canvas_horiz_001,
+flexbox-basic-canvas-horiz-001v,ported,css_flexbox_flexbox_basic_canvas_horiz_001v,
+flexbox-basic-canvas-vert-001-ref,ported,css_flexbox_flexbox_basic_canvas_vert_001_ref,
+flexbox-basic-canvas-vert-001,ported,css_flexbox_flexbox_basic_canvas_vert_001,
+flexbox-basic-canvas-vert-001v,ported,css_flexbox_flexbox_basic_canvas_vert_001v,
+flexbox-basic-fieldset-horiz-001-ref,ported,css_flexbox_flexbox_basic_fieldset_horiz_001_ref,
+flexbox-basic-fieldset-horiz-001,ported,css_flexbox_flexbox_basic_fieldset_horiz_001,
+flexbox-basic-fieldset-vert-001-ref,ported,css_flexbox_flexbox_basic_fieldset_vert_001_ref,
+flexbox-basic-fieldset-vert-001,ported,css_flexbox_flexbox_basic_fieldset_vert_001,
+flexbox-basic-iframe-horiz-001-ref,ported,css_flexbox_flexbox_basic_iframe_horiz_001_ref,
+flexbox-basic-iframe-horiz-001,ported,css_flexbox_flexbox_basic_iframe_horiz_001,
+flexbox-basic-iframe-vert-001-ref,ported,css_flexbox_flexbox_basic_iframe_vert_001_ref,
+flexbox-basic-iframe-vert-001,ported,css_flexbox_flexbox_basic_iframe_vert_001,
+flexbox-basic-img-horiz-001-ref,ported,css_flexbox_flexbox_basic_img_horiz_001_ref,
+flexbox-basic-img-horiz-001,ported,css_flexbox_flexbox_basic_img_horiz_001,
+flexbox-basic-img-vert-001-ref,ported,css_flexbox_flexbox_basic_img_vert_001_ref,
+flexbox-basic-img-vert-001,ported,css_flexbox_flexbox_basic_img_vert_001,
+flexbox-basic-textarea-horiz-001-ref,ported,css_flexbox_flexbox_basic_textarea_horiz_001_ref,
+flexbox-basic-textarea-horiz-001,ported,css_flexbox_flexbox_basic_textarea_horiz_001,
+flexbox-basic-textarea-vert-001-ref,ported,css_flexbox_flexbox_basic_textarea_vert_001_ref,
+flexbox-basic-textarea-vert-001,ported,css_flexbox_flexbox_basic_textarea_vert_001,
+flexbox-basic-video-horiz-001-ref,ported,css_flexbox_flexbox_basic_video_horiz_001_ref,
+flexbox-basic-video-horiz-001,ported,css_flexbox_flexbox_basic_video_horiz_001,
+flexbox-basic-video-vert-001-ref,ported,css_flexbox_flexbox_basic_video_vert_001_ref,
+flexbox-basic-video-vert-001,ported,css_flexbox_flexbox_basic_video_vert_001,
 flexbox-column-row-gap-002-ref,ported,css_flexbox_flexbox_column_row_gap_002_ref,
 flexbox-column-row-gap-002,ported,css_flexbox_flexbox_column_row_gap_002,
 flexbox-column-row-gap-004-ref,ported,css_flexbox_flexbox_column_row_gap_004_ref,
 flexbox-column-row-gap-004,ported,css_flexbox_flexbox_column_row_gap_004,
-flexbox-definite-cross-size-constrained-percentage-ref,not_portable,,unsupported element: <img>
-flexbox-definite-cross-size-constrained-percentage,not_portable,,unsupported element: <img>
+flexbox-definite-cross-size-constrained-percentage-ref,ported,css_flexbox_flexbox_definite_cross_size_constrained_percentage_ref,
+flexbox-definite-cross-size-constrained-percentage,ported,css_flexbox_flexbox_definite_cross_size_constrained_percentage,
 flexbox-dyn-resize-001,not_portable,,uses_javascript
-flexbox-flex-basis-content-001-ref,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-001a,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-001b,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-002-ref,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-002a,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-002b,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-003-ref,not_portable,,unsupported element: <canvas>
-flexbox-flex-basis-content-003a,not_portable,,unsupported element: <canvas>
-flexbox-flex-basis-content-003b,not_portable,,unsupported element: <canvas>
-flexbox-flex-basis-content-004-ref,not_portable,,unsupported element: <canvas>
-flexbox-flex-basis-content-004a,not_portable,,unsupported element: <canvas>
-flexbox-flex-basis-content-004b,not_portable,,unsupported element: <canvas>
+flexbox-flex-basis-content-001-ref,ported,css_flexbox_flexbox_flex_basis_content_001_ref,
+flexbox-flex-basis-content-001a,ported,css_flexbox_flexbox_flex_basis_content_001a,
+flexbox-flex-basis-content-001b,ported,css_flexbox_flexbox_flex_basis_content_001b,
+flexbox-flex-basis-content-002-ref,ported,css_flexbox_flexbox_flex_basis_content_002_ref,
+flexbox-flex-basis-content-002a,ported,css_flexbox_flexbox_flex_basis_content_002a,
+flexbox-flex-basis-content-002b,ported,css_flexbox_flexbox_flex_basis_content_002b,
+flexbox-flex-basis-content-003-ref,ported,css_flexbox_flexbox_flex_basis_content_003_ref,
+flexbox-flex-basis-content-003a,ported,css_flexbox_flexbox_flex_basis_content_003a,
+flexbox-flex-basis-content-003b,ported,css_flexbox_flexbox_flex_basis_content_003b,
+flexbox-flex-basis-content-004-ref,ported,css_flexbox_flexbox_flex_basis_content_004_ref,
+flexbox-flex-basis-content-004a,ported,css_flexbox_flexbox_flex_basis_content_004a,
+flexbox-flex-basis-content-004b,ported,css_flexbox_flexbox_flex_basis_content_004b,
 flexbox-flex-wrap-flexing-003,ported,css_flexbox_flexbox_flex_wrap_flexing_003,
-flexbox-iframe-intrinsic-size-001,not_portable,,unsupported element: <iframe>
+flexbox-iframe-intrinsic-size-001,ported,css_flexbox_flexbox_iframe_intrinsic_size_001,
 flexbox-ignores-first-letter,ported,css_flexbox_flexbox_ignores_first_letter,
 flexbox-justify-content-wmvert-001,ported,css_flexbox_flexbox_justify_content_wmvert_001,
 flexbox-justify-content-wmvert-002,not_portable,,uses_javascript
@@ -1215,26 +1192,26 @@ flexbox-justify-content-wmvert-003,not_portable,,uses_javascript
 flexbox-lines-must-be-stretched-by-default,not_portable,,uses_javascript
 flexbox-mbp-horiz-002v,ported,css_flexbox_flexbox_mbp_horiz_002v,
 flexbox-mbp-horiz-003v,ported,css_flexbox_flexbox_mbp_horiz_003v,
-flexbox-min-height-auto-002-ref,not_portable,,unsupported element: <img>
-flexbox-min-height-auto-002a,not_portable,,unsupported element: <img>
-flexbox-min-height-auto-002b,not_portable,,unsupported element: <img>
-flexbox-min-height-auto-002c,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-002-ref,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-002a,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-002b,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-002c,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-005,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-006,not_portable,,unsupported element: <img>
+flexbox-min-height-auto-002-ref,ported,css_flexbox_flexbox_min_height_auto_002_ref,
+flexbox-min-height-auto-002a,ported,css_flexbox_flexbox_min_height_auto_002a,
+flexbox-min-height-auto-002b,ported,css_flexbox_flexbox_min_height_auto_002b,
+flexbox-min-height-auto-002c,ported,css_flexbox_flexbox_min_height_auto_002c,
+flexbox-min-width-auto-002-ref,ported,css_flexbox_flexbox_min_width_auto_002_ref,
+flexbox-min-width-auto-002a,ported,css_flexbox_flexbox_min_width_auto_002a,
+flexbox-min-width-auto-002b,ported,css_flexbox_flexbox_min_width_auto_002b,
+flexbox-min-width-auto-002c,ported,css_flexbox_flexbox_min_width_auto_002c,
+flexbox-min-width-auto-005,ported,css_flexbox_flexbox_min_width_auto_005,
+flexbox-min-width-auto-006,ported,css_flexbox_flexbox_min_width_auto_006,
 flexbox-overflow-padding-002,ported,css_flexbox_flexbox_overflow_padding_002,
 flexbox-root-node-001a,ported,css_flexbox_flexbox_root_node_001a,
 flexbox-root-node-001b,ported,css_flexbox_flexbox_root_node_001b,
 flexbox-safe-overflow-position-005,ported,css_flexbox_flexbox_safe_overflow_position_005,
-flexbox-safe-overflow-position-006,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-align
+flexbox-safe-overflow-position-006,ported,css_flexbox_flexbox_safe_overflow_position_006,
 flexbox-table-fixup-001,ported,css_flexbox_flexbox_table_fixup_001,
-flexbox-vert-lr-with-img,not_portable,,unsupported property: writing-mode
-flexbox-whitespace-handling-001-ref,not_portable,,unsupported element: <img>
-flexbox-whitespace-handling-001a,not_portable,,unsupported element: <img>
-flexbox-whitespace-handling-001b,not_portable,,unsupported element: <img>
+flexbox-vert-lr-with-img,ported,css_flexbox_flexbox_vert_lr_with_img,
+flexbox-whitespace-handling-001-ref,ported,css_flexbox_flexbox_whitespace_handling_001_ref,
+flexbox-whitespace-handling-001a,ported,css_flexbox_flexbox_whitespace_handling_001a,
+flexbox-whitespace-handling-001b,ported,css_flexbox_flexbox_whitespace_handling_001b,
 flexbox-with-pseudo-elements-001-ref,ported,css_flexbox_flexbox_with_pseudo_elements_001_ref,
 flexbox-with-pseudo-elements-001,ported,css_flexbox_flexbox_with_pseudo_elements_001,
 flexbox-with-pseudo-elements-002,ported,css_flexbox_flexbox_with_pseudo_elements_002,
@@ -1298,7 +1275,7 @@ flexbox_justifycontent-start-ref,ported,css_flexbox_flexbox_justifycontent_start
 flexbox_justifycontent-start-rtl-ref,ported,css_flexbox_flexbox_justifycontent_start_rtl_ref,
 flexbox_justifycontent-start-rtl,ported,css_flexbox_flexbox_justifycontent_start_rtl,
 flexbox_justifycontent-start,ported,css_flexbox_flexbox_justifycontent_start,
-flexbox_object,not_portable,,unsupported element: <object>
+flexbox_object,ported,css_flexbox_flexbox_object,
 flexbox_quirks_body,ported,css_flexbox_flexbox_quirks_body,
 flexbox_rowspan-overflow-automatic,ported,css_flexbox_flexbox_rowspan_overflow_automatic,
 flexbox_rowspan-overflow,ported,css_flexbox_flexbox_rowspan_overflow,
@@ -1324,7 +1301,7 @@ flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom,ported,css_fl
 flexible-box-float,not_portable,,uses_javascript
 flexitem-no-margin-collapsing,not_portable,,uses_javascript
 flexitem-stretch-image,not_portable,,uses_javascript
-flexitem-stretch-range,not_portable,,unsupported element: <input>
+flexitem-stretch-range,ported,css_flexbox_flexitem_stretch_range,
 frame-flex-item-crash,not_portable,,uses_javascript
 frameset-crash,not_portable,,uses_javascript
 gap-001-lr-ref,ported,css_flexbox_gap_001_lr_ref,
@@ -1385,7 +1362,7 @@ image-as-flexitem-size-006v,not_portable,,uses_javascript
 image-as-flexitem-size-007,not_portable,,uses_javascript
 image-as-flexitem-size-007v,not_portable,,uses_javascript
 image-items-flake-001,not_portable,,uses_javascript
-image-nested-within-definite-column-flexbox,not_portable,,unsupported element: <img>
+image-nested-within-definite-column-flexbox,ported,css_flexbox_image_nested_within_definite_column_flexbox,
 inheritance,not_portable,,uses_javascript
 inline-flex-editing-crash,not_portable,,uses_javascript
 inline-flex-editing-with-updating-text-crash,not_portable,,uses_javascript
@@ -1402,13 +1379,13 @@ justify-content_space-between-002,not_portable,,uses_javascript
 layout-with-inline-svg-001,not_portable,,uses_javascript
 main-axis-margin-rounding,not_portable,,uses_javascript
 max-width-violation,not_portable,,uses_javascript
-mixed-containing-blocks-crash,not_portable,,unsupported property: transform
+mixed-containing-blocks-crash,ported,css_flexbox_mixed_containing_blocks_crash,
 multiline-min-max,not_portable,,uses_javascript
 multiline-min-preferred-width,not_portable,,uses_javascript
 negative-overflow-002,not_portable,,uses_javascript
 negative-overflow-003,not_portable,,uses_javascript
 negative-overflow,not_portable,,uses_javascript
-nested-flex-image-loading-invalidates-intrinsic-sizes,not_portable,,unsupported element: <img>
+nested-flex-image-loading-invalidates-intrinsic-sizes,ported,css_flexbox_nested_flex_image_loading_invalidates_intrinsic_sizes,
 nested-orthogonal-flexbox-relayout,not_portable,,uses_javascript
 order_value,not_portable,,uses_javascript
 ortho-table-item-001,ported,css_flexbox_ortho_table_item_001,
@@ -1425,7 +1402,7 @@ overflow-auto-008,not_portable,,uses_javascript
 overflow-top-left-ref,ported,css_flexbox_overflow_top_left_ref,
 overflow-top-left,ported,css_flexbox_overflow_top_left,
 percent-height-flex-items-cross-sizes-with-mutations,not_portable,,uses_javascript
-percentage-descendant-of-anonymous-flex-item,not_portable,,unsupported element: <button>
+percentage-descendant-of-anonymous-flex-item,ported,css_flexbox_percentage_descendant_of_anonymous_flex_item,
 percentage-heights-000,not_portable,,uses_javascript
 percentage-heights-001,not_portable,,uses_javascript
 percentage-heights-003,not_portable,,uses_javascript
@@ -1433,14 +1410,14 @@ percentage-heights-011,not_portable,,uses_javascript
 percentage-heights-012,not_portable,,uses_javascript
 percentage-heights-013,not_portable,,uses_javascript
 percentage-heights-014,not_portable,,uses_javascript
-percentage-heights-020,not_portable,,unsupported element: <canvas>
-percentage-heights-022,not_portable,,unsupported element: <canvas>
-percentage-heights-023,not_portable,,unsupported element: <canvas>
+percentage-heights-020,ported,css_flexbox_percentage_heights_020,
+percentage-heights-022,ported,css_flexbox_percentage_heights_022,
+percentage-heights-023,ported,css_flexbox_percentage_heights_023,
 percentage-margins-001,not_portable,,uses_javascript
-percentage-max-height-001,not_portable,,unsupported element: <img>
-percentage-max-height-002,not_portable,,unsupported element: <img>
-percentage-max-height-003,not_portable,,unsupported element: <img>
-percentage-max-height-004,not_portable,,unsupported element: <img>
+percentage-max-height-001,ported,css_flexbox_percentage_max_height_001,
+percentage-max-height-002,ported,css_flexbox_percentage_max_height_002,
+percentage-max-height-003,ported,css_flexbox_percentage_max_height_003,
+percentage-max-height-004,ported,css_flexbox_percentage_max_height_004,
 percentage-max-width-cross-axis,not_portable,,uses_javascript
 percentage-padding-001,not_portable,,uses_javascript
 percentage-padding-003,not_portable,,uses_javascript
@@ -1456,7 +1433,7 @@ radiobutton-min-size,not_portable,,uses_javascript
 relayout-align-items,not_portable,,uses_javascript
 relayout-image-load,not_portable,,uses_javascript
 relayout-input,not_portable,,uses_javascript
-relayout-intrinsic-block-size,not_portable,,unsupported element: <canvas>
+relayout-intrinsic-block-size,ported,css_flexbox_relayout_intrinsic_block_size,
 remove-out-of-flow-child-crash,not_portable,,uses_javascript
 remove-wrapped-001,not_portable,,uses_javascript
 remove-wrapped-002,not_portable,,uses_javascript
@@ -1469,28 +1446,28 @@ scrollbars-ref,not_portable,,uses_javascript
 scrollbars,not_portable,,uses_javascript
 select-as-flex-item-child-with-overflow,not_portable,,uses_javascript
 select-as-flex-item-with-overflow,not_portable,,uses_javascript
-select-element-multiple-ref,not_portable,,unsupported element: <select>
-select-element-multiple,not_portable,,unsupported element: <select>
-select-element-zero-height-001-ref,not_portable,,unsupported element: <select>
-select-element-zero-height-001,not_portable,,unsupported element: <select>
-select-element-zero-height-002-ref,not_portable,,unsupported element: <select>
-select-element-zero-height-002,not_portable,,unsupported element: <select>
+select-element-multiple-ref,ported,css_flexbox_select_element_multiple_ref,
+select-element-multiple,ported,css_flexbox_select_element_multiple,
+select-element-zero-height-001-ref,ported,css_flexbox_select_element_zero_height_001_ref,
+select-element-zero-height-001,ported,css_flexbox_select_element_zero_height_001,
+select-element-zero-height-002-ref,ported,css_flexbox_select_element_zero_height_002_ref,
+select-element-zero-height-002,ported,css_flexbox_select_element_zero_height_002,
 shrinking-column-flexbox,not_portable,,uses_javascript
 stretch-after-sibling-size-change,not_portable,,uses_javascript
-stretch-flex-item-checkbox-input-ref,not_portable,,unsupported element: <input>
-stretch-flex-item-checkbox-input,not_portable,,unsupported element: <input>
-stretch-flex-item-radio-input-ref,not_portable,,unsupported element: <input>
-stretch-flex-item-radio-input,not_portable,,unsupported element: <input>
-stretch-input-in-column,not_portable,,unsupported element: <input>
+stretch-flex-item-checkbox-input-ref,ported,css_flexbox_stretch_flex_item_checkbox_input_ref,
+stretch-flex-item-checkbox-input,ported,css_flexbox_stretch_flex_item_checkbox_input,
+stretch-flex-item-radio-input-ref,ported,css_flexbox_stretch_flex_item_radio_input_ref,
+stretch-flex-item-radio-input,ported,css_flexbox_stretch_flex_item_radio_input,
+stretch-input-in-column,ported,css_flexbox_stretch_input_in_column,
 stretch-obeys-min-max-002,ported,css_flexbox_stretch_obeys_min_max_002,
 stretched-child-shrink-on-relayout,not_portable,,uses_javascript
 stretching-orthogonal-flows,ported,css_flexbox_stretching_orthogonal_flows,
-svg-no-natural-size-grandchild,not_portable,,unsupported element: <svg>
-svg-root-as-flex-item-001,not_portable,,unsupported element: <svg>
-svg-root-as-flex-item-002,not_portable,,unsupported element: <svg>
-svg-root-as-flex-item-003,not_portable,,unsupported element: <svg>
-svg-root-as-flex-item-004,not_portable,,unsupported element: <svg>
-svg-root-as-flex-item-005,not_portable,,unsupported element: <svg>
+svg-no-natural-size-grandchild,ported,css_flexbox_svg_no_natural_size_grandchild,
+svg-root-as-flex-item-001,ported,css_flexbox_svg_root_as_flex_item_001,
+svg-root-as-flex-item-002,ported,css_flexbox_svg_root_as_flex_item_002,
+svg-root-as-flex-item-003,ported,css_flexbox_svg_root_as_flex_item_003,
+svg-root-as-flex-item-004,ported,css_flexbox_svg_root_as_flex_item_004,
+svg-root-as-flex-item-005,ported,css_flexbox_svg_root_as_flex_item_005,
 svg-root-as-flex-item-006,not_portable,,uses_javascript
 synthesize-vrl-baseline,ported,css_flexbox_synthesize_vrl_baseline,
 table-as-flex-item-max-content,ported,css_flexbox_table_as_flex_item_max_content,
@@ -1690,7 +1667,7 @@ parsing_order-computed,not_portable,,uses_javascript
 parsing_order-invalid,not_portable,,uses_javascript
 parsing_order-valid,not_portable,,uses_javascript
 parsing_webkit-aliases,not_portable,,uses_javascript
-intrinsic-size_auto-min-size-001,not_portable,,unsupported element: <img>
+intrinsic-size_auto-min-size-001,ported,css_flexbox_intrinsic_size_auto_min_size_001,
 intrinsic-size_col-wrap-004,not_portable,,uses_javascript
 intrinsic-size_col-wrap-005,not_portable,,uses_javascript
 intrinsic-size_col-wrap-009,not_portable,,uses_javascript
@@ -1703,13 +1680,13 @@ intrinsic-size_row-008,not_portable,,uses_javascript
 intrinsic-size_row-compat-001,not_portable,,uses_javascript
 intrinsic-size_row-use-cases-001,not_portable,,uses_javascript
 intrinsic-size_row-wrap-001,not_portable,,uses_javascript
-interactive_flexbox_interactive_flex-basis-transitions,not_portable,,complex_css_selector: div:hover #test
-interactive_flexbox_interactive_flex-grow-transitions,not_portable,,complex_css_selector: div:hover #test
-interactive_flexbox_interactive_flex-shrink-transitions-invalid,not_portable,,complex_css_selector: div:hover #test
-interactive_flexbox_interactive_flex-shrink-transitions,not_portable,,complex_css_selector: div:hover #test
-interactive_flexbox_interactive_flex-transitions,not_portable,,complex_css_selector: div:hover #test
-interactive_flexbox_interactive_order-transitions-2,not_portable,,complex_css_selector: div:hover .test
-interactive_flexbox_interactive_order-transitions,not_portable,,complex_css_selector: div:hover .one
+interactive_flexbox_interactive_flex-basis-transitions,ported,css_flexbox_interactive_flexbox_interactive_flex_basis_transitions,
+interactive_flexbox_interactive_flex-grow-transitions,ported,css_flexbox_interactive_flexbox_interactive_flex_grow_transitions,
+interactive_flexbox_interactive_flex-shrink-transitions-invalid,ported,css_flexbox_interactive_flexbox_interactive_flex_shrink_transitions_invalid,
+interactive_flexbox_interactive_flex-shrink-transitions,ported,css_flexbox_interactive_flexbox_interactive_flex_shrink_transitions,
+interactive_flexbox_interactive_flex-transitions,ported,css_flexbox_interactive_flexbox_interactive_flex_transitions,
+interactive_flexbox_interactive_order-transitions-2,ported,css_flexbox_interactive_flexbox_interactive_order_transitions_2,
+interactive_flexbox_interactive_order-transitions,ported,css_flexbox_interactive_flexbox_interactive_order_transitions,
 animation_discrete-no-interpolation,not_portable,,uses_javascript
 animation_flex-basis-composition,not_portable,,uses_javascript
 animation_flex-basis-content-crash,not_portable,,uses_javascript

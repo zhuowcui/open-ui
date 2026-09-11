@@ -321,6 +321,32 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
 
     let border_padding_h = border.left + border.right + padding.left + padding.right;
     let border_padding_v = border.top + border.bottom + padding.top + padding.bottom;
+    let natural_ratio = doc
+        .node(candidate.node_id)
+        .replaced
+        .and_then(|replaced| replaced.intrinsic_ratio)
+        .filter(|(width, height)| *width > 0.0 && *height > 0.0);
+    let effective_aspect_ratio = style
+        .aspect_ratio
+        .as_ref()
+        .and_then(|ratio| {
+            if ratio.auto_flag {
+                natural_ratio
+                    .map(|natural| openui_style::AspectRatio {
+                        ratio: natural,
+                        auto_flag: true,
+                    })
+                    .or(Some(*ratio))
+            } else {
+                Some(*ratio)
+            }
+        })
+        .or_else(|| {
+            natural_ratio.map(|natural| openui_style::AspectRatio {
+                ratio: natural,
+                auto_flag: true,
+            })
+        });
 
     // CSS Sizing 4 §5.1: For abspos elements with width:auto + aspect-ratio +
     // definite height, compute width from height × ratio instead of shrink-to-fit.
@@ -332,7 +358,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     // then apply max-height, and potentially re-derive width — not pre-compute
     // width from the constraint-equation height (which may be 0 when CB has no height).
     let both_horizontal_insets = !style.left.is_auto() && !style.right.is_auto();
-    let ar_width_from_height = if style.width.is_auto() && style.aspect_ratio.is_some() {
+    let ar_width_from_height = if style.width.is_auto() && effective_aspect_ratio.is_some() {
         // CSS Sizing 4 §5.1: AR applies to the box specified by box-sizing.
         let ar_uses_border_box = style.box_sizing == BoxSizing::BorderBox;
 
@@ -386,7 +412,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
         };
 
         if let Some(h_input) = ar_input_h {
-            let ar = style.aspect_ratio.as_ref().unwrap();
+            let ar = effective_aspect_ratio.as_ref().unwrap();
             let (w, _) = crate::css_sizing::apply_aspect_ratio_with_auto(
                 openui_geometry::INDEFINITE_SIZE,
                 h_input,
@@ -414,7 +440,37 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     // Compute shrink-to-fit width from intrinsic sizes (CSS 2.1 §10.3.7).
     // shrink-to-fit = min(max-content, max(min-content, available))
     // intrinsic sizes include border+padding, so convert to content-box.
-    let intrinsic = compute_intrinsic_block_sizes(doc, candidate.node_id);
+    let mut intrinsic = compute_intrinsic_block_sizes(doc, candidate.node_id);
+    // A shrink-to-fit positioned box can have a definite block size before
+    // its auto inline size is known (an authored height, or opposing block
+    // insets). Percentage-height replaced descendants resolve against that
+    // block size and transfer their natural ratio into the box's intrinsic
+    // inline contribution.
+    if axes.child.is_horizontal()
+        && crate::intrinsic_sizing::has_block_dependent_replaced_descendant(doc, candidate.node_id)
+        && ((!style.height.is_auto() && !style.height.is_content_or_intrinsic())
+            || (style.height.is_auto() && !style.top.is_auto() && !style.bottom.is_auto()))
+    {
+        let (_, known_block_size, _, _) = resolve_vertical(
+            style,
+            cb_width,
+            cb_height,
+            static_top,
+            candidate.static_position_vertical_edge,
+            &border,
+            &padding,
+            axes.containing_vertical_start_is_top(),
+            axes.static_vertical_start_is_top(),
+        );
+        let inline = crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+            doc,
+            candidate.node_id,
+            known_block_size,
+            cb_width,
+        );
+        intrinsic.min_content_inline_size = inline.min;
+        intrinsic.max_content_inline_size = inline.max;
+    }
     let vertical_inline_formatting_context = !axes.child.is_horizontal()
         && crate::inline::algorithm::has_inline_children(doc, candidate.node_id)
         && !crate::block::has_block_children(doc, candidate.node_id);
@@ -661,8 +717,8 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     // CSS Sizing 4 §5.1: When height is auto and aspect-ratio is set,
     // compute height from the resolved width using the aspect ratio.
     // AR applies to the box specified by box-sizing.
-    let resolved_height_raw = if style.height.is_auto() && style.aspect_ratio.is_some() {
-        let ar = style.aspect_ratio.as_ref().unwrap();
+    let resolved_height_raw = if style.height.is_auto() && effective_aspect_ratio.is_some() {
+        let ar = effective_aspect_ratio.as_ref().unwrap();
         let ar_uses_border_box = style.box_sizing == BoxSizing::BorderBox;
         let w_input = if ar_uses_border_box {
             resolved_width_raw // AR applies to border-box
@@ -693,7 +749,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     // If that tentative value violates min/max, re-resolve the full constraint
     // equation with the clamped value treated as specified (not auto).
     let width_from_ar = style.width.is_auto() || style.width.is_stretch();
-    let height_from_ar = style.height.is_auto() && style.aspect_ratio.is_some();
+    let height_from_ar = style.height.is_auto() && effective_aspect_ratio.is_some();
     let resolved_width = apply_min_max_inline(
         doc,
         candidate.node_id,
@@ -725,7 +781,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
         && width_from_ar
         && ar_width_from_height.is_none()
     {
-        if let Some(ref ar) = style.aspect_ratio {
+        if let Some(ref ar) = effective_aspect_ratio {
             let ar_uses_border_box = style.box_sizing == BoxSizing::BorderBox;
             let h_input = if ar_uses_border_box {
                 resolved_height // AR applies to border-box
@@ -890,7 +946,7 @@ fn layout_out_of_flow_child(doc: &Document, candidate: &OutOfFlowCandidate) -> F
     // Exception: when width comes from AR and min-width is auto, content width
     // acts as a floor (CSS Sizing 4 §5.1 for non-replaced elements).
     let ar_content_floor_inline =
-        width_from_ar && style.min_width.is_auto() && style.aspect_ratio.is_some();
+        width_from_ar && style.min_width.is_auto() && effective_aspect_ratio.is_some();
     let final_width = if ar_content_floor_inline && style.width.is_auto() {
         // Compute content extent from children's border-box positions.
         // Don't include margin-right: it can be negative due to CSS 2.1 §10.3.3
@@ -1193,7 +1249,7 @@ fn resolve_horizontal(
 
     // CSS 2.1 §10.3.7: Determine which values are auto and solve the equation.
 
-    if !left_auto && !width_auto && !right_auto {
+    if !left_auto && !width_auto && !width_stretch && !right_auto {
         // ── Case 1: None are auto — possibly over-constrained ────────
         let border_box_width = border_box_from_specified;
 
@@ -1429,7 +1485,7 @@ fn resolve_vertical(
         resolve_margin_or_padding(&style.margin_bottom, cb_width)
     };
 
-    if !top_auto && !height_auto && !bottom_auto {
+    if !top_auto && !height_auto && !height_stretch && !bottom_auto {
         // ── Case 1: None are auto — possibly over-constrained ────────
         let border_box_height = height_val_bb;
 
@@ -2093,7 +2149,20 @@ pub fn compute_shrink_to_fit_width(
     available: LayoutUnit,
 ) -> LayoutUnit {
     let intrinsic = compute_intrinsic_block_sizes(doc, node_id);
-    let preferred = intrinsic.max_content_inline_size;
+    let style = &doc.node(node_id).style;
+    let preferred = if style.float != openui_style::Float::None
+        && crate::multicol::ColumnLayoutAlgorithm::from_style(style).is_some()
+        && (style.margin_left.is_percent() || style.margin_right.is_percent())
+    {
+        // Percentage inline margins are cyclic while an auto-width floated
+        // multicol is intrinsically sized. Resolve that cycle against the
+        // float's actual placement opportunity: its columnar preferred
+        // contribution must not make the float narrower than the space left
+        // after those margins have resolved.
+        intrinsic.max_content_inline_size.max_of(available)
+    } else {
+        intrinsic.max_content_inline_size
+    };
     let minimum = intrinsic.min_content_inline_size;
     // shrink-to-fit = min(preferred, max(minimum, available))
     preferred

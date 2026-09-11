@@ -28,6 +28,66 @@ use super::items::{CollapseType, InlineItem, InlineItemType};
 use crate::fragment::{resolve_text_run_orientation, TextRunOrientation};
 use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
 
+/// Resolve a horizontal-writing element's definite content-box height from
+/// authored fixed/percentage sizes. Absolutely positioned percentage heights
+/// use the positioned ancestor's padding box, while normal-flow percentages
+/// use the parent's content box.
+fn definite_content_block_size(
+    doc: &Document,
+    node_id: NodeId,
+    depth: usize,
+) -> Option<openui_geometry::LayoutUnit> {
+    if depth > 32 || node_id.is_none() {
+        return None;
+    }
+    let node = doc.node(node_id);
+    let style = &node.style;
+    if !style
+        .direction
+        .writing_direction(style.writing_mode)
+        .is_horizontal()
+    {
+        return None;
+    }
+    let padding = crate::block::resolve_padding(style, openui_geometry::LayoutUnit::zero());
+    let border = crate::block::resolve_border(style);
+    let raw = if style.height.is_fixed() {
+        openui_geometry::LayoutUnit::from_f32(style.height.value())
+    } else if style.height.is_percent()
+        || style.height.length_type() == openui_geometry::LengthType::Calculated
+    {
+        let parent_id = node.parent;
+        if parent_id.is_none() {
+            return None;
+        }
+        let parent_content = definite_content_block_size(doc, parent_id, depth + 1)?;
+        let percentage_base = if style.position.is_absolutely_positioned() {
+            let parent_style = &doc.node(parent_id).style;
+            let parent_padding =
+                crate::block::resolve_padding(parent_style, openui_geometry::LayoutUnit::zero());
+            parent_content + parent_padding.block_sum()
+        } else {
+            parent_content
+        };
+        resolve_length(
+            &style.height,
+            percentage_base,
+            openui_geometry::INDEFINITE_SIZE,
+            openui_geometry::INDEFINITE_SIZE,
+        )
+    } else {
+        return None;
+    };
+    if raw.is_indefinite() {
+        return None;
+    }
+    Some(if style.box_sizing == openui_style::BoxSizing::BorderBox {
+        (raw - border.block_sum() - padding.block_sum()).clamp_negative_to_zero()
+    } else {
+        raw
+    })
+}
+
 /// The collected inline items data — output of the builder.
 #[derive(Clone, Debug)]
 pub struct InlineItemsData {
@@ -1278,6 +1338,125 @@ impl<'a> InlineItemsBuilder<'a> {
             .to_f32();
             (border_box - own_inline_edges).max(0.0)
         });
+        // Atomic line measurement must reserve the same border box that the
+        // replaced layout algorithm will produce. In particular, `auto
+        // <ratio>` needs the resource's natural ratio (which is unavailable
+        // to the style-only transfer above), and a bare ratio with
+        // `box-sizing:border-box` maps through the element's edges.
+        let replaced_intrinsic = (!is_orthogonal
+            && self.doc.node(node_id).replaced.is_some()
+            && (style.width.is_auto() || style.width.is_content_or_intrinsic()))
+        .then(|| {
+            let node = self.doc.node(node_id);
+            let ratio_only_replaced = node.replaced.is_some_and(|content| {
+                !content
+                    .intrinsic_width
+                    .is_some_and(|dimension| dimension > 0.0)
+                    && !content
+                        .intrinsic_height
+                        .is_some_and(|dimension| dimension > 0.0)
+            }) && style.width.is_auto()
+                && (node
+                    .replaced
+                    .and_then(|content| content.intrinsic_ratio)
+                    .or_else(|| style.aspect_ratio.as_ref().map(|ratio| ratio.ratio)))
+                .is_some_and(|ratio| ratio.0 > 0.0 && ratio.1 > 0.0);
+            if ratio_only_replaced {
+                let parent_id = node.parent;
+                if !parent_id.is_none() {
+                    let parent_style = &self.doc.node(parent_id).style;
+                    if parent_style.width.is_fixed() {
+                        let parent_border = crate::block::resolve_border(parent_style);
+                        let parent_padding = crate::block::resolve_padding(
+                            parent_style,
+                            openui_geometry::LayoutUnit::zero(),
+                        );
+                        let raw_parent =
+                            openui_geometry::LayoutUnit::from_f32(parent_style.width.value());
+                        let parent_content = if parent_style.box_sizing
+                            == openui_style::BoxSizing::BorderBox
+                        {
+                            (raw_parent - parent_border.inline_sum() - parent_padding.inline_sum())
+                                .clamp_negative_to_zero()
+                        } else {
+                            raw_parent
+                        };
+                        let margin = crate::block::resolve_margins(style, parent_content);
+                        return (parent_content.to_f32()
+                            - margin.inline_sum().to_f32()
+                            - own_inline_edges)
+                            .max(0.0);
+                    }
+                }
+                return 0.0;
+            }
+            let probe_space = crate::ConstraintSpace::for_block_child_with_writing_direction(
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                true,
+                child_direction,
+            );
+            let probe = crate::block::block_layout(self.doc, node_id, &probe_space);
+            let border_box = if self.inline_writing_direction.is_horizontal() {
+                probe.size.width
+            } else {
+                probe.size.height
+            }
+            .to_f32();
+            (border_box - own_inline_edges).max(0.0)
+        });
+        let definite_block_intrinsic = (!is_orthogonal
+            && child_direction.is_horizontal()
+            && (style.width.is_auto() || style.width.is_content_or_intrinsic()))
+        .then(|| {
+            let parent_id = self.doc.node(node_id).parent;
+            if parent_id.is_none() {
+                return None;
+            }
+            let parent_style = &self.doc.node(parent_id).style;
+            let parent_border = crate::block::resolve_border(parent_style);
+            let parent_padding =
+                crate::block::resolve_padding(parent_style, openui_geometry::LayoutUnit::zero());
+            let parent_content_block = definite_content_block_size(self.doc, parent_id, 0)?;
+            let parent_content_inline = if parent_style.width.is_fixed() {
+                let width = openui_geometry::LayoutUnit::from_f32(parent_style.width.value());
+                if parent_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                    (width - parent_border.inline_sum() - parent_padding.inline_sum())
+                        .clamp_negative_to_zero()
+                } else {
+                    width
+                }
+            } else {
+                openui_geometry::LayoutUnit::zero()
+            };
+            let raw_height = resolve_length(
+                &style.height,
+                parent_content_block,
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+            );
+            if raw_height.is_indefinite() {
+                return None;
+            }
+            let own_border = crate::block::resolve_border(style);
+            let own_padding = crate::block::resolve_padding(style, parent_content_inline);
+            let border_box_height = if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                raw_height.max_of(own_border.block_sum() + own_padding.block_sum())
+            } else {
+                raw_height + own_border.block_sum() + own_padding.block_sum()
+            };
+            Some(
+                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+                    self.doc,
+                    node_id,
+                    border_box_height,
+                    parent_content_inline,
+                ),
+            )
+        })
+        .flatten();
         let has_consecutive_floats = deterministic_text_profile
             && self
                 .doc
@@ -1288,6 +1467,10 @@ impl<'a> InlineItemsBuilder<'a> {
                 >= 2;
         let intrinsic_max = if specified_intrinsic.is_some() {
             specified_intrinsic
+        } else if let Some(sizes) = definite_block_intrinsic {
+            Some((sizes.max.to_f32() - own_inline_edges).max(0.0))
+        } else if replaced_intrinsic.is_some() {
+            replaced_intrinsic
         } else if aspect_ratio_intrinsic.is_some() {
             aspect_ratio_intrinsic
         } else if self.doc.node(node_id).tag == ElementTag::Ruby {
@@ -1365,6 +1548,8 @@ impl<'a> InlineItemsBuilder<'a> {
         let intrinsic = intrinsic_max.map(|max| {
             let min = if specified_intrinsic.is_some() {
                 max
+            } else if let Some(sizes) = definite_block_intrinsic {
+                (sizes.min.to_f32() - own_inline_edges).max(0.0)
             } else if !deterministic_text_profile {
                 // Builders outside the pinned fallback profile retain the
                 // legacy single intrinsic measure, which was capped directly

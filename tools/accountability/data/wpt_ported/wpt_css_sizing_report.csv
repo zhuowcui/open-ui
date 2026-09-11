@@ -289,9 +289,9 @@ contain-intrinsic-size_contain-intrinsic-size-019-ref,ported,css_sizing_contain_
 contain-intrinsic-size_contain-intrinsic-size-021-ref,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_021_ref,
 aspect-ratio-affects-container-width-when-height-changes,not_portable,,uses_javascript
 available-height-for-replaced-content-001,not_portable,,uses_javascript
-block-fit-content-as-initial-ref,not_portable,,unsupported element: <img>
-block-fit-content-as-initial,not_portable,,unsupported element: <img>
-block-image-percentage-max-height-inside-inline,not_portable,,unsupported element: <img>
+block-fit-content-as-initial-ref,ported,css_sizing_block_fit_content_as_initial_ref,
+block-fit-content-as-initial,ported,css_sizing_block_fit_content_as_initial,
+block-image-percentage-max-height-inside-inline,ported,css_sizing_block_image_percentage_max_height_inside_inline,
 block-size-with-min-or-max-content-1-ref,ported,css_sizing_block_size_with_min_or_max_content_1_ref,
 block-size-with-min-or-max-content-1a,ported,css_sizing_block_size_with_min_or_max_content_1a,
 block-size-with-min-or-max-content-1b,ported,css_sizing_block_size_with_min_or_max_content_1b,
@@ -300,15 +300,15 @@ block-size-with-min-or-max-content-5,ported,css_sizing_block_size_with_min_or_ma
 block-size-with-min-or-max-content-table-1-ref,ported,css_sizing_block_size_with_min_or_max_content_table_1_ref,
 block-size-with-min-or-max-content-table-1a,ported,css_sizing_block_size_with_min_or_max_content_table_1a,
 block-size-with-min-or-max-content-table-1b,ported,css_sizing_block_size_with_min_or_max_content_table_1b,
-box-sizing-replaced-001-ref,not_portable,,unsupported element: <img>
-box-sizing-replaced-001,not_portable,,unsupported element: <img>
-box-sizing-replaced-002-ref,not_portable,,unsupported element: <img>
-box-sizing-replaced-002,not_portable,,unsupported element: <img>
-box-sizing-replaced-003-ref,not_portable,,unsupported element: <img>
-box-sizing-replaced-003,not_portable,,unsupported element: <img>
+box-sizing-replaced-001-ref,ported,css_sizing_box_sizing_replaced_001_ref,
+box-sizing-replaced-001,ported,css_sizing_box_sizing_replaced_001,
+box-sizing-replaced-002-ref,ported,css_sizing_box_sizing_replaced_002_ref,
+box-sizing-replaced-002,ported,css_sizing_box_sizing_replaced_002,
+box-sizing-replaced-003-ref,ported,css_sizing_box_sizing_replaced_003_ref,
+box-sizing-replaced-003,ported,css_sizing_box_sizing_replaced_003,
 button-min-width,not_portable,,uses_javascript
-calc-margins-fieldset-content,not_portable,,unsupported element: <fieldset>
-calc-margins-fieldset-legend,not_portable,,unsupported element: <fieldset>
+calc-margins-fieldset-content,ported,css_sizing_calc_margins_fieldset_content,
+calc-margins-fieldset-legend,ported,css_sizing_calc_margins_fieldset_legend,
 calc-margins-table-caption,ported,css_sizing_calc_margins_table_caption,
 canvas-intrinsic-dynamic,not_portable,,uses_javascript
 div-fit-content-orthogonal-auto-margin-left.tentative,ported,css_sizing_div_fit_content_orthogonal_auto_margin_left_tentative,
@@ -341,63 +341,63 @@ fit-content-length-percentage-007,not_portable,,no_layout_content
 fit-content-length-percentage-009,not_portable,,no_layout_content
 fit-content-percentage-padding,not_portable,,uses_javascript
 frameset-intrinsic-crash,not_portable,,uses_javascript
-grid-item-image-percentage-min-height-computes-as-0-ref,not_portable,,unsupported element: <img>
+grid-item-image-percentage-min-height-computes-as-0-ref,ported,css_sizing_grid_item_image_percentage_min_height_computes_as_0_ref,
 grid-item-image-percentage-min-height-computes-as-0,ported,css_sizing_grid_item_image_percentage_min_height_computes_as_0,
-image-fractional-height-with-wide-aspect-ratio,not_portable,,unsupported element: <img>
-image-max-width-and-height-behaves-as-auto,not_portable,,unsupported element: <img>
-image-min-max-content-intrinsic-size-change-001-ref,not_portable,,unsupported element: <img>
+image-fractional-height-with-wide-aspect-ratio,ported,css_sizing_image_fractional_height_with_wide_aspect_ratio,
+image-max-width-and-height-behaves-as-auto,ported,css_sizing_image_max_width_and_height_behaves_as_auto,
+image-min-max-content-intrinsic-size-change-001-ref,ported,css_sizing_image_min_max_content_intrinsic_size_change_001_ref,
 image-min-max-content-intrinsic-size-change-001,not_portable,,uses_javascript
 image-min-max-content-intrinsic-size-change-002,not_portable,,uses_javascript
-image-min-max-content-intrinsic-size-change-003-ref,not_portable,,unsupported element: <img>
+image-min-max-content-intrinsic-size-change-003-ref,ported,css_sizing_image_min_max_content_intrinsic_size_change_003_ref,
 image-min-max-content-intrinsic-size-change-003,not_portable,,uses_javascript
 image-min-max-content-intrinsic-size-change-004,not_portable,,uses_javascript
 image-min-max-content-intrinsic-size-change-005,not_portable,,uses_javascript
 image-min-max-content-intrinsic-size-change-006,not_portable,,uses_javascript
 image-min-max-content-intrinsic-size-change-007,not_portable,,uses_javascript
 image-min-max-content-intrinsic-size-change-008,not_portable,,uses_javascript
-image-percentage-max-height-in-anonymous-block,not_portable,,unsupported element: <img>
+image-percentage-max-height-in-anonymous-block,ported,css_sizing_image_percentage_max_height_in_anonymous_block,
 inheritance-001,not_portable,,uses_javascript
 inheritance-002,not_portable,,uses_javascript
-intrinsic-fixed-width-with-max-content-height,not_portable,,unsupported element: <img>
-intrinsic-fixed-width-with-min-content-height,not_portable,,unsupported element: <img>
+intrinsic-fixed-width-with-max-content-height,ported,css_sizing_intrinsic_fixed_width_with_max_content_height,
+intrinsic-fixed-width-with-min-content-height,ported,css_sizing_intrinsic_fixed_width_with_min_content_height,
 intrinsic-percent-non-replaced-004-ref,ported,css_sizing_intrinsic_percent_non_replaced_004_ref,
 intrinsic-percent-non-replaced-004,ported,css_sizing_intrinsic_percent_non_replaced_004,
 intrinsic-percent-non-replaced-005-ref,ported,css_sizing_intrinsic_percent_non_replaced_005_ref,
 intrinsic-percent-non-replaced-005,ported,css_sizing_intrinsic_percent_non_replaced_005,
 intrinsic-percent-non-replaced-006,not_portable,,uses_javascript
-intrinsic-percent-replaced-001,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-002,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-003,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-004,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-005,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-006,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-007,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-008,not_portable,,style_block_unsupported property: writing-mode
-intrinsic-percent-replaced-009-ref,not_portable,,unsupported element: <img>
-intrinsic-percent-replaced-009,not_portable,,unsupported element: <img>
-intrinsic-percent-replaced-010-ref,not_portable,,unsupported element: <img>
-intrinsic-percent-replaced-010,not_portable,,unsupported element: <img>
-intrinsic-percent-replaced-011-ref,not_portable,,unsupported property: writing-mode
-intrinsic-percent-replaced-011,not_portable,,style_block_unsupported property: writing-mode
-intrinsic-percent-replaced-012,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-013,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-014,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-015,not_portable,,unsupported element: <img>
-intrinsic-percent-replaced-016,not_portable,,unsupported element: <img>
-intrinsic-percent-replaced-017,not_portable,,unsupported element: <img>
+intrinsic-percent-replaced-001,ported,css_sizing_intrinsic_percent_replaced_001,
+intrinsic-percent-replaced-002,ported,css_sizing_intrinsic_percent_replaced_002,
+intrinsic-percent-replaced-003,ported,css_sizing_intrinsic_percent_replaced_003,
+intrinsic-percent-replaced-004,ported,css_sizing_intrinsic_percent_replaced_004,
+intrinsic-percent-replaced-005,ported,css_sizing_intrinsic_percent_replaced_005,
+intrinsic-percent-replaced-006,ported,css_sizing_intrinsic_percent_replaced_006,
+intrinsic-percent-replaced-007,ported,css_sizing_intrinsic_percent_replaced_007,
+intrinsic-percent-replaced-008,ported,css_sizing_intrinsic_percent_replaced_008,
+intrinsic-percent-replaced-009-ref,ported,css_sizing_intrinsic_percent_replaced_009_ref,
+intrinsic-percent-replaced-009,ported,css_sizing_intrinsic_percent_replaced_009,
+intrinsic-percent-replaced-010-ref,ported,css_sizing_intrinsic_percent_replaced_010_ref,
+intrinsic-percent-replaced-010,ported,css_sizing_intrinsic_percent_replaced_010,
+intrinsic-percent-replaced-011-ref,ported,css_sizing_intrinsic_percent_replaced_011_ref,
+intrinsic-percent-replaced-011,ported,css_sizing_intrinsic_percent_replaced_011,
+intrinsic-percent-replaced-012,ported,css_sizing_intrinsic_percent_replaced_012,
+intrinsic-percent-replaced-013,ported,css_sizing_intrinsic_percent_replaced_013,
+intrinsic-percent-replaced-014,ported,css_sizing_intrinsic_percent_replaced_014,
+intrinsic-percent-replaced-015,ported,css_sizing_intrinsic_percent_replaced_015,
+intrinsic-percent-replaced-016,ported,css_sizing_intrinsic_percent_replaced_016,
+intrinsic-percent-replaced-017,ported,css_sizing_intrinsic_percent_replaced_017,
 intrinsic-percent-replaced-018,ported,css_sizing_intrinsic_percent_replaced_018,
-intrinsic-percent-replaced-019,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-020,not_portable,,unsupported element: <svg>
-intrinsic-percent-replaced-021,not_portable,,unsupported element: <button>
-intrinsic-percent-replaced-022,not_portable,,unsupported element: <fieldset>
-intrinsic-percent-replaced-023,not_portable,,unsupported element: <fieldset>
-intrinsic-percent-replaced-024,not_portable,,unsupported element: <img>
-intrinsic-percent-replaced-025,not_portable,,unsupported element: <canvas>
-intrinsic-percent-replaced-026,not_portable,,unsupported element: <img>
-intrinsic-percent-replaced-027,not_portable,,unsupported element: <canvas>
+intrinsic-percent-replaced-019,ported,css_sizing_intrinsic_percent_replaced_019,
+intrinsic-percent-replaced-020,ported,css_sizing_intrinsic_percent_replaced_020,
+intrinsic-percent-replaced-021,ported,css_sizing_intrinsic_percent_replaced_021,
+intrinsic-percent-replaced-022,ported,css_sizing_intrinsic_percent_replaced_022,
+intrinsic-percent-replaced-023,ported,css_sizing_intrinsic_percent_replaced_023,
+intrinsic-percent-replaced-024,ported,css_sizing_intrinsic_percent_replaced_024,
+intrinsic-percent-replaced-025,ported,css_sizing_intrinsic_percent_replaced_025,
+intrinsic-percent-replaced-026,ported,css_sizing_intrinsic_percent_replaced_026,
+intrinsic-percent-replaced-027,ported,css_sizing_intrinsic_percent_replaced_027,
 intrinsic-percent-replaced-028,not_portable,,uses_javascript
-intrinsic-percent-replaced-029.tentative,not_portable,,unsupported property: writing-mode
-intrinsic-percent-replaced-030.tentative,not_portable,,unsupported property: writing-mode
+intrinsic-percent-replaced-029.tentative,ported,css_sizing_intrinsic_percent_replaced_029_tentative,
+intrinsic-percent-replaced-030.tentative,ported,css_sizing_intrinsic_percent_replaced_030_tentative,
 intrinsic-percent-replaced-dynamic-001,not_portable,,uses_javascript
 intrinsic-percent-replaced-dynamic-002,not_portable,,uses_javascript
 intrinsic-percent-replaced-dynamic-003,not_portable,,uses_javascript
@@ -410,7 +410,7 @@ intrinsic-percent-replaced-dynamic-009,not_portable,,uses_javascript
 intrinsic-percent-replaced-dynamic-010,not_portable,,uses_javascript
 intrinsic-percent-replaced-dynamic-011,not_portable,,uses_javascript
 intrinsic-percent-replaced-dynamic-012,not_portable,,uses_javascript
-intrinsic-ratio-replaced-box-sizing,not_portable,,unsupported element: <img>
+intrinsic-ratio-replaced-box-sizing,ported,css_sizing_intrinsic_ratio_replaced_box_sizing,
 intrinsic-size-fallback-replaced,not_portable,,uses_javascript
 intrinsic-size-fallback-video,not_portable,,uses_javascript
 keyword-sizes-for-intrinsic-contributions-002,not_portable,,uses_javascript
@@ -421,11 +421,11 @@ keyword-sizes-on-flex-item-002,not_portable,,uses_javascript
 keyword-sizes-on-floated-element,not_portable,,uses_javascript
 keyword-sizes-on-inline-block,not_portable,,uses_javascript
 keyword-sizes-on-replaced-element,not_portable,,uses_javascript
-max-content-input-001-ref,not_portable,,unsupported element: <input>
-max-content-input-001,not_portable,,unsupported element: <input>
+max-content-input-001-ref,ported,css_sizing_max_content_input_001_ref,
+max-content-input-001,ported,css_sizing_max_content_input_001,
 min-max-content-orthogonal-flow-crash-001,not_portable,,uses_javascript
 min-width-max-width-precedence,not_portable,,uses_javascript
-nested-flexbox-image-percentage-max-height-computes-as-none-ref,not_portable,,unsupported element: <img>
+nested-flexbox-image-percentage-max-height-computes-as-none-ref,ported,css_sizing_nested_flexbox_image_percentage_max_height_computes_as_none_ref,
 nested-flexbox-image-percentage-max-height-computes-as-none,ported,css_sizing_nested_flexbox_image_percentage_max_height_computes_as_none,
 ortho-writing-mode-001,ported,css_sizing_ortho_writing_mode_001,
 orthogonal-writing-mode-float-in-inline,ported,css_sizing_orthogonal_writing_mode_float_in_inline,
@@ -438,28 +438,28 @@ range-percent-intrinsic-size-2-ref,ported,css_sizing_range_percent_intrinsic_siz
 range-percent-intrinsic-size-2,ported,css_sizing_range_percent_intrinsic_size_2,
 range-percent-intrinsic-size-2a-ref,ported,css_sizing_range_percent_intrinsic_size_2a_ref,
 range-percent-intrinsic-size-2a,ported,css_sizing_range_percent_intrinsic_size_2a,
-replaced-aspect-ratio-intrinsic-size-001,not_portable,,unsupported element: <img>
-replaced-aspect-ratio-intrinsic-size-002,not_portable,,unsupported element: <img>
-replaced-aspect-ratio-stretch-fit-001,not_portable,,unsupported element: <svg>
-replaced-aspect-ratio-stretch-fit-002,not_portable,,unsupported element: <svg>
-replaced-aspect-ratio-stretch-fit-003,not_portable,,unsupported element: <svg>
+replaced-aspect-ratio-intrinsic-size-001,ported,css_sizing_replaced_aspect_ratio_intrinsic_size_001,
+replaced-aspect-ratio-intrinsic-size-002,ported,css_sizing_replaced_aspect_ratio_intrinsic_size_002,
+replaced-aspect-ratio-stretch-fit-001,ported,css_sizing_replaced_aspect_ratio_stretch_fit_001,
+replaced-aspect-ratio-stretch-fit-002,ported,css_sizing_replaced_aspect_ratio_stretch_fit_002,
+replaced-aspect-ratio-stretch-fit-003,ported,css_sizing_replaced_aspect_ratio_stretch_fit_003,
 replaced-fractional-height-from-aspect-ratio-2,not_portable,,uses_javascript
 replaced-fractional-height-from-aspect-ratio,not_portable,,uses_javascript
-replaced-max-height-min-content,not_portable,,unsupported element: <canvas>
-replaced-max-size-saturation,not_portable,,unsupported element: <canvas>
-replaced-max-width-min-content,not_portable,,unsupported element: <canvas>
-replaced-min-height-min-content,not_portable,,unsupported element: <canvas>
-replaced-min-width-min-content,not_portable,,unsupported element: <canvas>
+replaced-max-height-min-content,ported,css_sizing_replaced_max_height_min_content,
+replaced-max-size-saturation,ported,css_sizing_replaced_max_size_saturation,
+replaced-max-width-min-content,ported,css_sizing_replaced_max_width_min_content,
+replaced-min-height-min-content,ported,css_sizing_replaced_min_height_min_content,
+replaced-min-width-min-content,ported,css_sizing_replaced_min_width_min_content,
 svg-intrinsic-size-001,not_portable,,uses_javascript
 svg-intrinsic-size-002,not_portable,,uses_javascript
 svg-intrinsic-size-003,not_portable,,uses_javascript
 svg-intrinsic-size-004,not_portable,,uses_javascript
-svg-intrinsic-size-005-ref,not_portable,,unsupported element: <svg>
-svg-intrinsic-size-005,not_portable,,unsupported element: <svg>
-svg-intrinsic-size-006,not_portable,,unsupported element: <svg>
-svg-intrinsic-size-007.tentative,not_portable,,unsupported element: <svg>
-svg-no-ar-max-height-min-content,not_portable,,unsupported element: <svg>
-svg-no-ar-min-height-min-content,not_portable,,unsupported element: <svg>
+svg-intrinsic-size-005-ref,ported,css_sizing_svg_intrinsic_size_005_ref,
+svg-intrinsic-size-005,ported,css_sizing_svg_intrinsic_size_005,
+svg-intrinsic-size-006,ported,css_sizing_svg_intrinsic_size_006,
+svg-intrinsic-size-007.tentative,ported,css_sizing_svg_intrinsic_size_007_tentative,
+svg-no-ar-max-height-min-content,ported,css_sizing_svg_no_ar_max_height_min_content,
+svg-no-ar-min-height-min-content,ported,css_sizing_svg_no_ar_min_height_min_content,
 table-child-percentage-height-with-border-box,ported,css_sizing_table_child_percentage_height_with_border_box,
 table-percentage-max-width-beside-float,not_portable,,uses_javascript
 table-percentage-min-width-below-float,not_portable,,uses_javascript
@@ -490,20 +490,20 @@ stretch_flex-line-003,not_portable,,uses_javascript
 stretch_flex-line-004,not_portable,,uses_javascript
 stretch_flex-line-005,not_portable,,uses_javascript
 stretch_flex-stretch-min-max-cross-001,not_portable,,uses_javascript
-stretch_flexbox-auto-minimum-001,not_portable,,unsupported element: <canvas>
-stretch_flexbox-auto-minimum-002,not_portable,,unsupported element: <canvas>
-stretch_flexbox-flex-base-size-001,not_portable,,unsupported element: <canvas>
-stretch_flexbox-flex-base-size-002,not_portable,,unsupported element: <canvas>
+stretch_flexbox-auto-minimum-001,ported,css_sizing_stretch_flexbox_auto_minimum_001,
+stretch_flexbox-auto-minimum-002,ported,css_sizing_stretch_flexbox_auto_minimum_002,
+stretch_flexbox-flex-base-size-001,ported,css_sizing_stretch_flexbox_flex_base_size_001,
+stretch_flexbox-flex-base-size-002,ported,css_sizing_stretch_flexbox_flex_base_size_002,
 stretch_indefinite-1,not_portable,,uses_javascript
 stretch_indefinite-2,not_portable,,uses_javascript
 stretch_indefinite-3,not_portable,,uses_javascript
 stretch_indefinite-4,not_portable,,uses_javascript
 stretch_parsing,not_portable,,uses_javascript
-stretch_positioned-replaced-1,not_portable,,unsupported element: <canvas>
-stretch_positioned-replaced-2,not_portable,,unsupported element: <canvas>
-stretch_positioned-replaced-3,not_portable,,unsupported element: <canvas>
-stretch_replaced-next-to-float-1,not_portable,,unsupported element: <canvas>
-stretch_replaced-next-to-float-2,not_portable,,unsupported element: <canvas>
+stretch_positioned-replaced-1,ported,css_sizing_stretch_positioned_replaced_1,
+stretch_positioned-replaced-2,ported,css_sizing_stretch_positioned_replaced_2,
+stretch_positioned-replaced-3,ported,css_sizing_stretch_positioned_replaced_3,
+stretch_replaced-next-to-float-1,ported,css_sizing_stretch_replaced_next_to_float_1,
+stretch_replaced-next-to-float-2,ported,css_sizing_stretch_replaced_next_to_float_2,
 stretch_replaced-stretch-height-001,not_portable,,uses_javascript
 stretch_stretch-alias-block-size-001.tentative,not_portable,,uses_javascript
 stretch_stretch-alias-inline-size-001.tentative,not_portable,,uses_javascript
@@ -521,8 +521,8 @@ stretch_stretch-max-block-size-001,not_portable,,uses_javascript
 stretch_stretch-max-inline-size-001,not_portable,,uses_javascript
 stretch_stretch-min-block-size-001,not_portable,,uses_javascript
 stretch_stretch-min-inline-size-001,not_portable,,uses_javascript
-stretch_stretch-quirk-001-ref,not_portable,,unsupported element: <canvas>
-stretch_stretch-quirk-001,not_portable,,unsupported element: <canvas>
+stretch_stretch-quirk-001-ref,ported,css_sizing_stretch_stretch_quirk_001_ref,
+stretch_stretch-quirk-001,ported,css_sizing_stretch_stretch_quirk_001,
 stretch_stretch-table-001,not_portable,,uses_javascript
 parsing_box-sizing-computed,not_portable,,uses_javascript
 parsing_box-sizing-invalid,not_portable,,uses_javascript
@@ -561,7 +561,7 @@ animation_width-interpolation,not_portable,,uses_javascript
 aspect-ratio_abspos-004,ported,css_sizing_aspect_ratio_abspos_004,
 aspect-ratio_abspos-014,ported,css_sizing_aspect_ratio_abspos_014,
 aspect-ratio_abspos-015,ported,css_sizing_aspect_ratio_abspos_015,
-aspect-ratio_abspos-016,not_portable,,unsupported element: <img>
+aspect-ratio_abspos-016,ported,css_sizing_aspect_ratio_abspos_016,
 aspect-ratio_abspos-020,ported,css_sizing_aspect_ratio_abspos_020,
 aspect-ratio_block-aspect-ratio-003,ported,css_sizing_aspect_ratio_block_aspect_ratio_003,
 aspect-ratio_block-aspect-ratio-014,ported,css_sizing_aspect_ratio_block_aspect_ratio_014,
@@ -572,23 +572,23 @@ aspect-ratio_block-aspect-ratio-031,not_portable,,uses_javascript
 aspect-ratio_box-sizing-aspect-ratio-positioned,not_portable,,uses_javascript
 aspect-ratio_box-sizing-dimensions,not_portable,,uses_javascript
 aspect-ratio_box-sizing-squashed,not_portable,,uses_javascript
-aspect-ratio_fieldset-element-001-ref,not_portable,,unsupported element: <form>
-aspect-ratio_fieldset-element-001,not_portable,,unsupported element: <form>
-aspect-ratio_fieldset-element-002-ref,not_portable,,unsupported element: <form>
-aspect-ratio_fieldset-element-002,not_portable,,unsupported element: <form>
+aspect-ratio_fieldset-element-001-ref,ported,css_sizing_aspect_ratio_fieldset_element_001_ref,
+aspect-ratio_fieldset-element-001,ported,css_sizing_aspect_ratio_fieldset_element_001,
+aspect-ratio_fieldset-element-002-ref,ported,css_sizing_aspect_ratio_fieldset_element_002_ref,
+aspect-ratio_fieldset-element-002,ported,css_sizing_aspect_ratio_fieldset_element_002,
 aspect-ratio_flex-aspect-ratio-006,ported,css_sizing_aspect_ratio_flex_aspect_ratio_006,
-aspect-ratio_flex-aspect-ratio-015,not_portable,,unsupported element: <img>
-aspect-ratio_flex-aspect-ratio-016,not_portable,,unsupported element: <img>
-aspect-ratio_flex-aspect-ratio-017,not_portable,,unsupported element: <img>
-aspect-ratio_flex-aspect-ratio-018,not_portable,,unsupported element: <img>
-aspect-ratio_flex-aspect-ratio-023,not_portable,,unsupported element: <img>
-aspect-ratio_flex-aspect-ratio-024,not_portable,,unsupported element: <img>
-aspect-ratio_flex-aspect-ratio-027,not_portable,,unsupported element: <img>
-aspect-ratio_flex-aspect-ratio-028,not_portable,,unsupported element: <img>
-aspect-ratio_flex-aspect-ratio-029,not_portable,,unsupported element: <img>
-aspect-ratio_flex-aspect-ratio-030,not_portable,,unsupported element: <img>
+aspect-ratio_flex-aspect-ratio-015,ported,css_sizing_aspect_ratio_flex_aspect_ratio_015,
+aspect-ratio_flex-aspect-ratio-016,ported,css_sizing_aspect_ratio_flex_aspect_ratio_016,
+aspect-ratio_flex-aspect-ratio-017,ported,css_sizing_aspect_ratio_flex_aspect_ratio_017,
+aspect-ratio_flex-aspect-ratio-018,ported,css_sizing_aspect_ratio_flex_aspect_ratio_018,
+aspect-ratio_flex-aspect-ratio-023,ported,css_sizing_aspect_ratio_flex_aspect_ratio_023,
+aspect-ratio_flex-aspect-ratio-024,ported,css_sizing_aspect_ratio_flex_aspect_ratio_024,
+aspect-ratio_flex-aspect-ratio-027,ported,css_sizing_aspect_ratio_flex_aspect_ratio_027,
+aspect-ratio_flex-aspect-ratio-028,ported,css_sizing_aspect_ratio_flex_aspect_ratio_028,
+aspect-ratio_flex-aspect-ratio-029,ported,css_sizing_aspect_ratio_flex_aspect_ratio_029,
+aspect-ratio_flex-aspect-ratio-030,ported,css_sizing_aspect_ratio_flex_aspect_ratio_030,
 aspect-ratio_flex-aspect-ratio-042,not_portable,,uses_javascript
-aspect-ratio_flex-aspect-ratio-055,not_portable,,unsupported element: <img>
+aspect-ratio_flex-aspect-ratio-055,ported,css_sizing_aspect_ratio_flex_aspect_ratio_055,
 aspect-ratio_fractional-aspect-ratio,not_portable,,uses_javascript
 aspect-ratio_grid-aspect-ratio-001,ported,css_sizing_aspect_ratio_grid_aspect_ratio_001,
 aspect-ratio_grid-aspect-ratio-002,ported,css_sizing_aspect_ratio_grid_aspect_ratio_002,
@@ -635,83 +635,83 @@ aspect-ratio_grid-aspect-ratio-align-items-center,ported,css_sizing_aspect_ratio
 aspect-ratio_inheritance,not_portable,,uses_javascript
 aspect-ratio_intrinsic-size-005,ported,css_sizing_aspect_ratio_intrinsic_size_005,
 aspect-ratio_intrinsic-size-008,not_portable,,uses_javascript
-aspect-ratio_intrinsic-size-009,not_portable,,unsupported element: <img>
-aspect-ratio_intrinsic-size-017,not_portable,,unsupported element: <img>
-aspect-ratio_intrinsic-size-018,not_portable,,unsupported element: <img>
-aspect-ratio_intrinsic-size-019,not_portable,,unsupported element: <img>
-aspect-ratio_intrinsic-size-020,not_portable,,unsupported element: <img>
-aspect-ratio_intrinsic-size-021,not_portable,,unsupported element: <img>
-aspect-ratio_intrinsic-size-022,not_portable,,unsupported element: <img>
-aspect-ratio_intrinsic-size-023,not_portable,,unsupported element: <img>
-aspect-ratio_intrinsic-size-024,not_portable,,unsupported element: <img>
-aspect-ratio_intrinsic-size-025,not_portable,,unsupported element: <img>
-aspect-ratio_large-aspect-ratio-crash,not_portable,,unsupported property: writing-mode
+aspect-ratio_intrinsic-size-009,ported,css_sizing_aspect_ratio_intrinsic_size_009,
+aspect-ratio_intrinsic-size-017,ported,css_sizing_aspect_ratio_intrinsic_size_017,
+aspect-ratio_intrinsic-size-018,ported,css_sizing_aspect_ratio_intrinsic_size_018,
+aspect-ratio_intrinsic-size-019,ported,css_sizing_aspect_ratio_intrinsic_size_019,
+aspect-ratio_intrinsic-size-020,ported,css_sizing_aspect_ratio_intrinsic_size_020,
+aspect-ratio_intrinsic-size-021,ported,css_sizing_aspect_ratio_intrinsic_size_021,
+aspect-ratio_intrinsic-size-022,ported,css_sizing_aspect_ratio_intrinsic_size_022,
+aspect-ratio_intrinsic-size-023,ported,css_sizing_aspect_ratio_intrinsic_size_023,
+aspect-ratio_intrinsic-size-024,ported,css_sizing_aspect_ratio_intrinsic_size_024,
+aspect-ratio_intrinsic-size-025,ported,css_sizing_aspect_ratio_intrinsic_size_025,
+aspect-ratio_large-aspect-ratio-crash,ported,css_sizing_aspect_ratio_large_aspect_ratio_crash,
 aspect-ratio_percentage-resolution-002,ported,css_sizing_aspect_ratio_percentage_resolution_002,
 aspect-ratio_percentage-resolution-003,ported,css_sizing_aspect_ratio_percentage_resolution_003,
 aspect-ratio_quirks-mode-001,not_portable,,uses_javascript
 aspect-ratio_quirks-mode-002,not_portable,,uses_javascript
 aspect-ratio_quirks-mode-003,not_portable,,uses_javascript
-aspect-ratio_replaced-element-001,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-002,not_portable,,unsupported element: <iframe>
-aspect-ratio_replaced-element-003,not_portable,,unsupported element: <video>
-aspect-ratio_replaced-element-004,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-005,not_portable,,unsupported element: <object>
-aspect-ratio_replaced-element-006,not_portable,,unsupported element: <object>
-aspect-ratio_replaced-element-007,not_portable,,unsupported element: <svg>
-aspect-ratio_replaced-element-008,not_portable,,unsupported element: <svg>
-aspect-ratio_replaced-element-009,not_portable,,unsupported property: writing-mode
-aspect-ratio_replaced-element-010,not_portable,,unsupported property: writing-mode
-aspect-ratio_replaced-element-011,not_portable,,unsupported property: writing-mode
-aspect-ratio_replaced-element-012,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-013,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-014,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-015,not_portable,,unsupported element: <svg>
-aspect-ratio_replaced-element-016,not_portable,,unsupported element: <svg>
+aspect-ratio_replaced-element-001,ported,css_sizing_aspect_ratio_replaced_element_001,
+aspect-ratio_replaced-element-002,ported,css_sizing_aspect_ratio_replaced_element_002,
+aspect-ratio_replaced-element-003,ported,css_sizing_aspect_ratio_replaced_element_003,
+aspect-ratio_replaced-element-004,ported,css_sizing_aspect_ratio_replaced_element_004,
+aspect-ratio_replaced-element-005,ported,css_sizing_aspect_ratio_replaced_element_005,
+aspect-ratio_replaced-element-006,ported,css_sizing_aspect_ratio_replaced_element_006,
+aspect-ratio_replaced-element-007,ported,css_sizing_aspect_ratio_replaced_element_007,
+aspect-ratio_replaced-element-008,ported,css_sizing_aspect_ratio_replaced_element_008,
+aspect-ratio_replaced-element-009,ported,css_sizing_aspect_ratio_replaced_element_009,
+aspect-ratio_replaced-element-010,ported,css_sizing_aspect_ratio_replaced_element_010,
+aspect-ratio_replaced-element-011,ported,css_sizing_aspect_ratio_replaced_element_011,
+aspect-ratio_replaced-element-012,ported,css_sizing_aspect_ratio_replaced_element_012,
+aspect-ratio_replaced-element-013,ported,css_sizing_aspect_ratio_replaced_element_013,
+aspect-ratio_replaced-element-014,ported,css_sizing_aspect_ratio_replaced_element_014,
+aspect-ratio_replaced-element-015,ported,css_sizing_aspect_ratio_replaced_element_015,
+aspect-ratio_replaced-element-016,ported,css_sizing_aspect_ratio_replaced_element_016,
 aspect-ratio_replaced-element-017,not_portable,,uses_javascript
-aspect-ratio_replaced-element-018,not_portable,,unsupported element: <embed>
+aspect-ratio_replaced-element-018,ported,css_sizing_aspect_ratio_replaced_element_018,
 aspect-ratio_replaced-element-019,not_portable,,unsupported element: <embed>
-aspect-ratio_replaced-element-020,not_portable,,unsupported element: <object>
-aspect-ratio_replaced-element-021,not_portable,,unsupported element: <object>
+aspect-ratio_replaced-element-020,ported,css_sizing_aspect_ratio_replaced_element_020,
+aspect-ratio_replaced-element-021,ported,css_sizing_aspect_ratio_replaced_element_021,
 aspect-ratio_replaced-element-022,not_portable,,uses_javascript
 aspect-ratio_replaced-element-023,not_portable,,uses_javascript
-aspect-ratio_replaced-element-024,not_portable,,unsupported element: <img>
+aspect-ratio_replaced-element-024,ported,css_sizing_aspect_ratio_replaced_element_024,
 aspect-ratio_replaced-element-025,ported,css_sizing_aspect_ratio_replaced_element_025,
-aspect-ratio_replaced-element-026,not_portable,,unsupported element: <video>
+aspect-ratio_replaced-element-026,ported,css_sizing_aspect_ratio_replaced_element_026,
 aspect-ratio_replaced-element-027,ported,css_sizing_aspect_ratio_replaced_element_027,
 aspect-ratio_replaced-element-028,not_portable,,uses_javascript
-aspect-ratio_replaced-element-029,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-030,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-031,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-032,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-033,not_portable,,style_block_unsupported property: writing-mode
-aspect-ratio_replaced-element-034,not_portable,,unsupported element: <img>
+aspect-ratio_replaced-element-029,ported,css_sizing_aspect_ratio_replaced_element_029,
+aspect-ratio_replaced-element-030,ported,css_sizing_aspect_ratio_replaced_element_030,
+aspect-ratio_replaced-element-031,ported,css_sizing_aspect_ratio_replaced_element_031,
+aspect-ratio_replaced-element-032,ported,css_sizing_aspect_ratio_replaced_element_032,
+aspect-ratio_replaced-element-033,ported,css_sizing_aspect_ratio_replaced_element_033,
+aspect-ratio_replaced-element-034,ported,css_sizing_aspect_ratio_replaced_element_034,
 aspect-ratio_replaced-element-035-ref,not_portable,,unsupported element: <audio>
 aspect-ratio_replaced-element-035,not_portable,,unsupported element: <audio>
 aspect-ratio_replaced-element-036,not_portable,,uses_javascript
-aspect-ratio_replaced-element-037-ref,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-037,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-039,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-040,not_portable,,unsupported element: <img>
-aspect-ratio_replaced-element-041,not_portable,,unsupported element: <img>
+aspect-ratio_replaced-element-037-ref,ported,css_sizing_aspect_ratio_replaced_element_037_ref,
+aspect-ratio_replaced-element-037,ported,css_sizing_aspect_ratio_replaced_element_037,
+aspect-ratio_replaced-element-039,ported,css_sizing_aspect_ratio_replaced_element_039,
+aspect-ratio_replaced-element-040,ported,css_sizing_aspect_ratio_replaced_element_040,
+aspect-ratio_replaced-element-041,ported,css_sizing_aspect_ratio_replaced_element_041,
 aspect-ratio_replaced-element-042,not_portable,,uses_javascript
 aspect-ratio_replaced-element-043,not_portable,,uses_javascript
 aspect-ratio_replaced-element-044,not_portable,,uses_javascript
-aspect-ratio_replaced-element-045,not_portable,,unsupported element: <canvas>
-aspect-ratio_replaced-element-046,not_portable,,unsupported element: <canvas>
-aspect-ratio_replaced-element-047.tentative,not_portable,,unsupported element: <canvas>
-aspect-ratio_replaced-element-048.tentative,not_portable,,unsupported element: <canvas>
+aspect-ratio_replaced-element-045,ported,css_sizing_aspect_ratio_replaced_element_045,
+aspect-ratio_replaced-element-046,ported,css_sizing_aspect_ratio_replaced_element_046,
+aspect-ratio_replaced-element-047.tentative,ported,css_sizing_aspect_ratio_replaced_element_047_tentative,
+aspect-ratio_replaced-element-048.tentative,ported,css_sizing_aspect_ratio_replaced_element_048_tentative,
 aspect-ratio_replaced-element-049-ref,not_portable,,unsupported element: <video>
 aspect-ratio_replaced-element-049,not_portable,,unsupported element: <video>
-aspect-ratio_replaced-element-dynamic-aspect-ratio,not_portable,,unsupported element: <img>
+aspect-ratio_replaced-element-dynamic-aspect-ratio,ported,css_sizing_aspect_ratio_replaced_element_dynamic_aspect_ratio,
 aspect-ratio_select-element-001-ref,not_portable,,unsupported element: <select>
 aspect-ratio_select-element-001,not_portable,,unsupported element: <select>
 aspect-ratio_sign-function-aspect-ratio,not_portable,,uses_javascript
 aspect-ratio_table-element-001,ported,css_sizing_aspect_ratio_table_element_001,
-aspect-ratio_zero-or-infinity-006,not_portable,,unsupported element: <img>
-aspect-ratio_zero-or-infinity-007,not_portable,,unsupported element: <img>
-aspect-ratio_zero-or-infinity-008,not_portable,,unsupported element: <img>
-aspect-ratio_zero-or-infinity-009,not_portable,,unsupported element: <img>
-aspect-ratio_zero-or-infinity-010,not_portable,,unsupported element: <img>
+aspect-ratio_zero-or-infinity-006,ported,css_sizing_aspect_ratio_zero_or_infinity_006,
+aspect-ratio_zero-or-infinity-007,ported,css_sizing_aspect_ratio_zero_or_infinity_007,
+aspect-ratio_zero-or-infinity-008,ported,css_sizing_aspect_ratio_zero_or_infinity_008,
+aspect-ratio_zero-or-infinity-009,ported,css_sizing_aspect_ratio_zero_or_infinity_009,
+aspect-ratio_zero-or-infinity-010,ported,css_sizing_aspect_ratio_zero_or_infinity_010,
 aspect-ratio_parsing_aspect-ratio-computed,not_portable,,uses_javascript
 aspect-ratio_parsing_aspect-ratio-invalid,not_portable,,uses_javascript
 aspect-ratio_parsing_aspect-ratio-valid,not_portable,,uses_javascript
@@ -766,18 +766,18 @@ contain-intrinsic-size_contain-intrinsic-size-008,ported,css_sizing_contain_intr
 contain-intrinsic-size_contain-intrinsic-size-009,not_portable,,uses_javascript
 contain-intrinsic-size_contain-intrinsic-size-010,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_010,
 contain-intrinsic-size_contain-intrinsic-size-011,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_011,
-contain-intrinsic-size_contain-intrinsic-size-012-ref,not_portable,,unsupported element: <img>
+contain-intrinsic-size_contain-intrinsic-size-012-ref,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_012_ref,
 contain-intrinsic-size_contain-intrinsic-size-012,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_012,
 contain-intrinsic-size_contain-intrinsic-size-013,not_portable,,uses_javascript
 contain-intrinsic-size_contain-intrinsic-size-014-ref,not_portable,,unsupported element: <fieldset>
 contain-intrinsic-size_contain-intrinsic-size-014,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_014,
 contain-intrinsic-size_contain-intrinsic-size-015,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_015,
 contain-intrinsic-size_contain-intrinsic-size-016,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_016,
-contain-intrinsic-size_contain-intrinsic-size-017-ref,not_portable,,style_block_unsupported property: writing-mode
+contain-intrinsic-size_contain-intrinsic-size-017-ref,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_017_ref,
 contain-intrinsic-size_contain-intrinsic-size-017,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_017,
 contain-intrinsic-size_contain-intrinsic-size-018,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_018,
 contain-intrinsic-size_contain-intrinsic-size-019,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_019,
-contain-intrinsic-size_contain-intrinsic-size-020-ref,not_portable,,unsupported element: <img>
+contain-intrinsic-size_contain-intrinsic-size-020-ref,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_020_ref,
 contain-intrinsic-size_contain-intrinsic-size-020,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_020,
 contain-intrinsic-size_contain-intrinsic-size-021,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_021,
 contain-intrinsic-size_contain-intrinsic-size-022-ref,ported,css_sizing_contain_intrinsic_size_contain_intrinsic_size_022_ref,

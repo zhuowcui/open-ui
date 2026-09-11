@@ -20,6 +20,7 @@ BASELINE_JSON = PORTED_DIR / "sp13r_baseline_exact.json"
 TARGETS_JSON = PORTED_DIR / "sp13r_multicol_targets.json"
 RESIDUALS_JSON = PORTED_DIR / "sp13r_multicol_residuals.json"
 SP19_LAYOUT_TARGETS_JSON = SCRIPT_DIR / "sp19_layout_targets.json"
+SP20_TARGETS_JSON = SCRIPT_DIR / "sp20_targets.json"
 
 OWNER = "sp13_multicol"
 FALLBACK_CATEGORIES = {"sp12_layout_bug", "not_ported"}
@@ -115,10 +116,17 @@ LATER_EXACT_PROMOTIONS = frozenset({
 
 
 def sp19_live_promotions(mapping: dict[str, dict[str, str]]) -> set[str]:
-    """Return only SP19 targets installed by the current completed wave."""
-    if not SP19_LAYOUT_TARGETS_JSON.is_file():
-        return set()
-    targets = set(json.loads(SP19_LAYOUT_TARGETS_JSON.read_text(encoding="utf-8")))
+    """Return later closure targets installed by the current completed wave.
+
+    The historical function name remains part of the accountability audit's
+    public contract. SP20 can legitimately promote rows frozen as SP13-R
+    residuals, so include its pinned target manifest as another source of
+    live, exact promotions.
+    """
+    targets = set()
+    for path in (SP19_LAYOUT_TARGETS_JSON, SP20_TARGETS_JSON):
+        if path.is_file():
+            targets.update(json.loads(path.read_text(encoding="utf-8")))
     return {
         test_id
         for test_id in targets

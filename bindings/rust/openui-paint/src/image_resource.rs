@@ -10,9 +10,141 @@ use skia_safe::{surfaces, Canvas, ClipOp, Data, Image, ImageInfo, Paint, PaintSt
 
 thread_local! {
     static IMAGE_CACHE: RefCell<HashMap<String, Image>> = RefCell::new(HashMap::new());
+    static MIP_DECODE_CACHE: RefCell<HashMap<(String, i32, i32), Image>> =
+        RefCell::new(HashMap::new());
     static QUANTIZED_REPEAT_CACHE: RefCell<HashMap<(String, i32, i32), Image>> =
         RefCell::new(HashMap::new());
     static SVG_CACHE: RefCell<HashMap<String, StaticSvg>> = RefCell::new(HashMap::new());
+}
+
+/// Return the software-raster decode selected for a raster image draw.
+///
+/// Chromium's software image cache decodes at the largest power-of-two mip
+/// whose dimensions are no smaller than the requested draw. PNG cannot decode
+/// natively at that size, so the cache creates it with Skia's medium-quality
+/// `scalePixels` path before the final image draw.
+///
+/// Chromium builds Skia with `SK_SUPPORT_LEGACY_ANISOTROPIC_MIPMAP_SCALE`,
+/// which selects a mip from the geometric mean of the two scales. rust-skia
+/// uses the smaller scale instead. Reproduce Chromium's selected level first,
+/// then perform the remaining bilinear scale explicitly. Keeping this as a
+/// document-resource operation also gives repeated draws deterministic cache
+/// identity without making painting depend on a test or source filename.
+pub fn decode_raster_resource_for_draw(
+    doc: &Document,
+    id: ImageResourceId,
+    requested_width: i32,
+    requested_height: i32,
+) -> Result<Image, String> {
+    let resource = doc
+        .image_resource(id)
+        .ok_or_else(|| format!("missing image resource {}", id.0))?;
+    let image = decode_image_resource(doc, id)?;
+    if !matches!(resource.mime_type.as_str(), "image/png" | "image/jpeg")
+        || requested_width <= 0
+        || requested_height <= 0
+    {
+        return Ok(image);
+    }
+
+    let source_width = image.width();
+    let source_height = image.height();
+    let mut level = 0_u32;
+    loop {
+        let next_level = level + 1;
+        let round = (1_i64 << next_level) - 1;
+        let next_width = ((source_width as i64 + round) >> next_level).max(1) as i32;
+        let next_height = ((source_height as i64 + round) >> next_level).max(1) as i32;
+        if next_width < requested_width || next_height < requested_height {
+            break;
+        }
+        level = next_level;
+        if next_width == 1 && next_height == 1 {
+            break;
+        }
+    }
+    if level == 0 {
+        return Ok(image);
+    }
+
+    let round = (1_i64 << level) - 1;
+    let width = ((source_width as i64 + round) >> level).max(1) as i32;
+    let height = ((source_height as i64 + round) >> level).max(1) as i32;
+    let key = (resource.sha256.clone(), width, height);
+    if let Some(decoded) = MIP_DECODE_CACHE.with(|cache| cache.borrow().get(&key).cloned()) {
+        return Ok(decoded);
+    }
+
+    // Retain the encoded image's color space through the intermediate cache.
+    // Tagging profiled source pixels as sRGB here would bypass the color
+    // conversion that occurs when the cached image reaches the sRGB canvas.
+    let resource_color_space = image.color_space();
+    let source_info =
+        ImageInfo::new_n32_premul((source_width, source_height), resource_color_space.clone());
+    let source_row_bytes = source_width as usize * 4;
+    let mut source_pixels = vec![0_u8; source_row_bytes * source_height as usize];
+    if !image.read_pixels(
+        &source_info,
+        &mut source_pixels,
+        source_row_bytes,
+        (0, 0),
+        CachingHint::Allow,
+    ) {
+        return Err(format!("failed to read image resource {}", id.0));
+    }
+    let source_pixmap = skia_safe::Pixmap::new(&source_info, &mut source_pixels, source_row_bytes)
+        .ok_or_else(|| "failed to create raster source pixmap".to_string())?;
+
+    let info = ImageInfo::new_n32_premul((width, height), resource_color_space.clone());
+    let row_bytes = width as usize * 4;
+    let mut pixels = vec![0_u8; row_bytes * height as usize];
+    let mut pixmap = skia_safe::Pixmap::new(&info, &mut pixels, row_bytes)
+        .ok_or_else(|| "failed to allocate raster decode pixmap".to_string())?;
+    let scale =
+        ((width as f32 / source_width as f32) * (height as f32 / source_height as f32)).sqrt();
+    let selected_level = ((-scale.log2() - 0.5).max(0.0) + 0.5).floor() as u32;
+    let scaled = if selected_level == 0 {
+        source_pixmap.scale_pixels(
+            &mut pixmap,
+            skia_safe::SamplingOptions::new(
+                skia_safe::FilterMode::Linear,
+                skia_safe::MipmapMode::None,
+            ),
+        )
+    } else {
+        let mip_width = (source_width >> selected_level).max(1);
+        let mip_height = (source_height >> selected_level).max(1);
+        let mip_info = ImageInfo::new_n32_premul((mip_width, mip_height), resource_color_space);
+        let mip_row_bytes = mip_width as usize * 4;
+        let mut mip_pixels = vec![0_u8; mip_row_bytes * mip_height as usize];
+        let mut mip_pixmap = skia_safe::Pixmap::new(&mip_info, &mut mip_pixels, mip_row_bytes)
+            .ok_or_else(|| "failed to allocate raster mip pixmap".to_string())?;
+        if !source_pixmap.scale_pixels(
+            &mut mip_pixmap,
+            skia_safe::SamplingOptions::new(
+                skia_safe::FilterMode::Linear,
+                skia_safe::MipmapMode::Nearest,
+            ),
+        ) {
+            return Err(format!("failed to build image mip for resource {}", id.0));
+        }
+        mip_pixmap.scale_pixels(
+            &mut pixmap,
+            skia_safe::SamplingOptions::new(
+                skia_safe::FilterMode::Linear,
+                skia_safe::MipmapMode::None,
+            ),
+        )
+    };
+    if !scaled {
+        return Err(format!("failed to scale image resource {}", id.0));
+    }
+    let decoded = skia_safe::images::raster_from_data(&info, Data::new_copy(&pixels), row_bytes)
+        .ok_or_else(|| format!("failed to retain scaled image resource {}", id.0))?;
+    MIP_DECODE_CACHE.with(|cache| {
+        cache.borrow_mut().insert(key, decoded.clone());
+    });
+    Ok(decoded)
 }
 
 #[derive(Clone, Debug)]
@@ -20,6 +152,7 @@ struct StaticSvg {
     width: Option<f32>,
     height: Option<f32>,
     view_box: Option<Rect>,
+    background: Option<skia_safe::Color>,
     shapes: Vec<StaticSvgShape>,
 }
 
@@ -27,6 +160,8 @@ struct StaticSvg {
 struct StaticSvgShape {
     rect: Rect,
     color: skia_safe::Color,
+    stroke_color: Option<skia_safe::Color>,
+    stroke_width: f32,
 }
 
 /// Decode one registered PNG or limited static SVG resource.
@@ -240,6 +375,49 @@ pub enum ImagePatchPhase {
     /// Nine-slice patches retain the absolute device origin used by Skia's
     /// inverse image matrix.
     Device,
+    /// Replaced raster content retains the pixel-snapped inverse matrix and
+    /// Chromium's historical packed-pixel interpolation arithmetic.
+    Replaced,
+}
+
+fn compositor_raster_tile_origin(device_pixel: i32) -> i32 {
+    // Chromium's 256px software-raster tiles overlap their predecessor by two
+    // texels.  Coverage switches to the next tile after the first 255 pixels,
+    // so later tile origins advance by 254px.
+    if device_pixel < 255 {
+        0
+    } else {
+        ((device_pixel - 1) / 254) * 254
+    }
+}
+
+fn replaced_sample_fixed(
+    source_start: f32,
+    source_extent: f32,
+    destination_start: f32,
+    destination_extent: f32,
+    target_index: i32,
+    accumulate_scanline: bool,
+) -> i64 {
+    const FIXED_ONE: f32 = 4_294_967_296.0;
+    const FILTER_BIAS: i64 = 1_i64 << 31;
+
+    let destination_pixel = destination_start.round() as i32 + target_index;
+    let tile_origin = compositor_raster_tile_origin(destination_pixel);
+    let coverage_start = if tile_origin == 0 { 0 } else { tile_origin + 1 };
+    let segment_start = if accumulate_scanline {
+        (destination_start.round() as i32).max(coverage_start)
+    } else {
+        destination_pixel
+    };
+    let local_destination = destination_start - tile_origin as f32;
+    let inverse_scale = 1.0_f32 / (destination_extent / source_extent);
+    let inverse_translate = source_start - local_destination * inverse_scale;
+    let mapped_start = (segment_start - tile_origin) as f32 + 0.5;
+    let mapped_start = mapped_start * inverse_scale + inverse_translate;
+    let fixed_start = (mapped_start * FIXED_ONE) as i64 - FILTER_BIAS;
+    let fixed_step = (inverse_scale * FIXED_ONE) as i64;
+    fixed_start + fixed_step * (destination_pixel - segment_start) as i64
 }
 
 /// Resize a strict source patch with Chromium's four-bit bilinear phase.
@@ -256,7 +434,17 @@ pub fn quantized_image_patch(
     }
     let image_width = image.width();
     let image_height = image.height();
-    let source_info = ImageInfo::new_n32_premul((image_width, image_height), None);
+    // Nine-slice border patches follow the canvas-device conversion path.
+    // Reading those pixels in the encoded profile applies the profile twice
+    // when the patch is drawn back to the sRGB surface. Replaced/background
+    // resources retain their source profile through their dedicated paths.
+    let patch_color_space = if phase == ImagePatchPhase::Device {
+        None
+    } else {
+        image.color_space()
+    };
+    let source_info =
+        ImageInfo::new_n32_premul((image_width, image_height), patch_color_space.clone());
     let source_row_bytes = image_width as usize * 4;
     let mut source_pixels = vec![0_u8; source_row_bytes * image_height as usize];
     if !image.read_pixels(
@@ -273,7 +461,7 @@ pub fn quantized_image_patch(
     let max_x = (source.right.ceil() as i32 - 1).min(image_width - 1);
     let min_y = source.top.floor().max(0.0) as i32;
     let max_y = (source.bottom.ceil() as i32 - 1).min(image_height - 1);
-    let target_info = ImageInfo::new_n32_premul((width, height), None);
+    let target_info = ImageInfo::new_n32_premul((width, height), patch_color_space);
     let target_row_bytes = width as usize * 4;
     let mut target_pixels = vec![0_u8; target_row_bytes * height as usize];
     let forward_scale_y = destination.height() / source.height();
@@ -318,9 +506,27 @@ pub fn quantized_image_patch(
                 let device_y = destination.top + target_y as f32 + 0.5 - device_bias_y;
                 device_y * inverse_scale_y + inverse_translate_y - 0.5
             }
+            ImagePatchPhase::Replaced => 0.0,
         };
-        let raw_y0 = source_y.floor() as i32;
-        let fy = ((source_y - raw_y0 as f32) * 16.0).floor() / 16.0;
+        let replaced_fixed_y = (phase == ImagePatchPhase::Replaced).then(|| {
+            replaced_sample_fixed(
+                source.top,
+                source.height(),
+                destination.top,
+                destination.height(),
+                target_y,
+                false,
+            )
+        });
+        let raw_y0 = replaced_fixed_y
+            .map(|fixed| (fixed >> 32) as i32)
+            .unwrap_or_else(|| source_y.floor() as i32);
+        let fy = replaced_fixed_y
+            .map(|fixed| ((fixed >> 28) & 0xf) as f32 / 16.0)
+            .unwrap_or_else(|| {
+                let fraction_y = source_y - raw_y0 as f32;
+                (fraction_y * 16.0).floor() / 16.0
+            });
         let wrap_y = matches!(phase, ImagePatchPhase::Tile { wrap_y: true, .. });
         let y0 = if wrap_y {
             raw_y0.rem_euclid(image_height) as usize
@@ -356,9 +562,27 @@ pub fn quantized_image_patch(
                     let device_x = destination.left + target_x as f32 + 0.5 - device_bias_x;
                     device_x * inverse_scale_x + inverse_translate_x - 0.5
                 }
+                ImagePatchPhase::Replaced => 0.0,
             };
-            let raw_x0 = source_x.floor() as i32;
-            let fx = ((source_x - raw_x0 as f32) * 16.0).floor() / 16.0;
+            let replaced_fixed_x = (phase == ImagePatchPhase::Replaced).then(|| {
+                replaced_sample_fixed(
+                    source.left,
+                    source.width(),
+                    destination.left,
+                    destination.width(),
+                    target_x,
+                    true,
+                )
+            });
+            let raw_x0 = replaced_fixed_x
+                .map(|fixed| (fixed >> 32) as i32)
+                .unwrap_or_else(|| source_x.floor() as i32);
+            let fx = replaced_fixed_x
+                .map(|fixed| ((fixed >> 28) & 0xf) as f32 / 16.0)
+                .unwrap_or_else(|| {
+                    let fraction_x = source_x - raw_x0 as f32;
+                    (fraction_x * 16.0).floor() / 16.0
+                });
             let wrap_x = matches!(phase, ImagePatchPhase::Tile { wrap_x: true, .. });
             let x0 = if wrap_x {
                 raw_x0.rem_euclid(image_width) as usize
@@ -374,24 +598,33 @@ pub fn quantized_image_patch(
                 let at = |x: usize, y: usize| {
                     source_pixels[y * source_row_bytes + x * 4 + channel] as f32
                 };
-                let top = at(x0, y0) * (1.0 - fx) + at(x1, y0) * fx;
-                let bottom = at(x0, y1) * (1.0 - fx) + at(x1, y1) * fx;
+                let value = if phase == ImagePatchPhase::Replaced {
+                    let wx = (fx * 16.0) as u32;
+                    let wy = (fy * 16.0) as u32;
+                    let at_u32 = |x: usize, y: usize| at(x, y) as u32;
+                    ((at_u32(x0, y0) * (16 - wx) * (16 - wy)
+                        + at_u32(x1, y0) * wx * (16 - wy)
+                        + at_u32(x0, y1) * (16 - wx) * wy
+                        + at_u32(x1, y1) * wx * wy)
+                        >> 8) as u8
+                } else {
+                    let top = at(x0, y0) * (1.0 - fx) + at(x1, y0) * fx;
+                    let bottom = at(x0, y1) * (1.0 - fx) + at(x1, y1) * fx;
+                    (top * (1.0 - fy) + bottom * fy).round() as u8
+                };
                 target_pixels
                     [target_y as usize * target_row_bytes + target_x as usize * 4 + channel] =
-                    (top * (1.0 - fy) + bottom * fy).round() as u8;
+                    value;
             }
         }
     }
 
-    let mut surface = surfaces::raster_n32_premul((width, height))
-        .ok_or_else(|| "failed to allocate image patch surface".to_string())?;
-    if !surface
-        .canvas()
-        .write_pixels(&target_info, &target_pixels, target_row_bytes, (0, 0))
-    {
-        return Err("failed to write image patch pixels".to_string());
-    }
-    Ok(surface.image_snapshot())
+    skia_safe::images::raster_from_data(
+        &target_info,
+        Data::new_copy(&target_pixels),
+        target_row_bytes,
+    )
+    .ok_or_else(|| "failed to retain image patch pixels".to_string())
 }
 
 fn parsed_svg_resource(resource: &EncodedImageResource) -> Result<StaticSvg, String> {
@@ -454,6 +687,16 @@ fn static_svg_intrinsic_size(svg: &StaticSvg) -> (f32, f32) {
 }
 
 fn paint_static_svg(canvas: &Canvas, svg: &StaticSvg, viewport_width: f32, viewport_height: f32) {
+    if let Some(color) = svg.background {
+        let mut paint = Paint::default();
+        paint.set_style(PaintStyle::Fill);
+        paint.set_color(color);
+        canvas.draw_rect(
+            Rect::from_xywh(0.0, 0.0, viewport_width, viewport_height),
+            &paint,
+        );
+    }
+
     let user_viewport = svg.view_box.unwrap_or_else(|| {
         let (width, height) = static_svg_intrinsic_size(svg);
         Rect::from_xywh(0.0, 0.0, width, height)
@@ -471,9 +714,26 @@ fn paint_static_svg(canvas: &Canvas, svg: &StaticSvg, viewport_width: f32, viewp
     for shape in &svg.shapes {
         let mut paint = Paint::default();
         paint.set_style(PaintStyle::Fill);
-        paint.set_anti_alias(true);
+        // A viewport-covering SVG rectangle is the replaced object's opaque
+        // backing, not an interior vector edge. Chromium rasterizes it through
+        // the object clip without fractional edge coverage; doing the same
+        // also keeps adjacent half-pixel-height SVG boxes seamless.
+        let covers_viewport = (shape.rect.left - user_viewport.left).abs() < 0.001
+            && (shape.rect.top - user_viewport.top).abs() < 0.001
+            && (shape.rect.right - user_viewport.right).abs() < 0.001
+            && (shape.rect.bottom - user_viewport.bottom).abs() < 0.001;
+        paint.set_anti_alias(!covers_viewport);
         paint.set_color(shape.color);
         canvas.draw_rect(shape.rect, &paint);
+        if let Some(stroke_color) = shape.stroke_color {
+            if shape.stroke_width > 0.0 {
+                paint.set_style(PaintStyle::Stroke);
+                paint.set_stroke_width(shape.stroke_width);
+                paint.set_anti_alias(false);
+                paint.set_color(stroke_color);
+                canvas.draw_rect(shape.rect, &paint);
+            }
+        }
     }
     canvas.restore();
 }
@@ -489,10 +749,21 @@ fn parse_static_svg(bytes: &[u8]) -> Result<StaticSvg, String> {
     let width = svg_attribute(root, "width").and_then(parse_svg_number);
     let height = svg_attribute(root, "height").and_then(parse_svg_number);
     let view_box = svg_attribute(root, "viewBox").and_then(parse_svg_view_box);
+    let background = svg_attribute(root, "style")
+        .and_then(|style| svg_style_property(style, "background-color"))
+        .or_else(|| {
+            svg_attribute(root, "style").and_then(|style| svg_style_property(style, "background"))
+        })
+        .and_then(parse_svg_color);
 
     let root_fill = svg_attribute(root, "fill")
         .and_then(parse_svg_color)
         .or(Some(skia_safe::Color::BLACK));
+    let percentage_width = view_box.map(|rect| rect.width()).or(width).unwrap_or(300.0);
+    let percentage_height = view_box
+        .map(|rect| rect.height())
+        .or(height)
+        .unwrap_or(150.0);
     let mut fill_stack = vec![root_fill];
     let mut shapes = Vec::new();
     let mut rest = &text[root_end + 1..];
@@ -525,6 +796,9 @@ fn parse_static_svg(bytes: &[u8]) -> Result<StaticSvg, String> {
         let name = &tag[..name_end];
         let inherited_fill = fill_stack.last().copied().flatten();
         let fill = svg_attribute(tag, "fill")
+            .or_else(|| {
+                svg_attribute(tag, "style").and_then(|style| svg_style_property(style, "fill"))
+            })
             .map(parse_svg_color)
             .unwrap_or(inherited_fill);
         match name {
@@ -534,21 +808,40 @@ fn parse_static_svg(bytes: &[u8]) -> Result<StaticSvg, String> {
                     continue;
                 };
                 let x = svg_attribute(tag, "x")
-                    .and_then(parse_svg_number)
+                    .and_then(|value| parse_svg_number_or_percent(value, percentage_width))
                     .unwrap_or(0.0);
                 let y = svg_attribute(tag, "y")
-                    .and_then(parse_svg_number)
+                    .and_then(|value| parse_svg_number_or_percent(value, percentage_height))
                     .unwrap_or(0.0);
-                let Some(width) = svg_attribute(tag, "width").and_then(parse_svg_number) else {
+                let Some(width) = svg_attribute(tag, "width")
+                    .and_then(|value| parse_svg_number_or_percent(value, percentage_width))
+                else {
                     continue;
                 };
-                let Some(height) = svg_attribute(tag, "height").and_then(parse_svg_number) else {
+                let Some(height) = svg_attribute(tag, "height")
+                    .and_then(|value| parse_svg_number_or_percent(value, percentage_height))
+                else {
                     continue;
                 };
                 if width > 0.0 && height > 0.0 {
+                    let stroke_color = svg_attribute(tag, "stroke")
+                        .or_else(|| {
+                            svg_attribute(tag, "style")
+                                .and_then(|style| svg_style_property(style, "stroke"))
+                        })
+                        .and_then(parse_svg_color);
+                    let stroke_width = svg_attribute(tag, "stroke-width")
+                        .or_else(|| {
+                            svg_attribute(tag, "style")
+                                .and_then(|style| svg_style_property(style, "stroke-width"))
+                        })
+                        .and_then(parse_svg_number)
+                        .unwrap_or(1.0);
                     shapes.push(StaticSvgShape {
                         rect: Rect::from_xywh(x, y, width, height),
                         color,
+                        stroke_color,
+                        stroke_width,
                     });
                 }
             }
@@ -556,23 +849,36 @@ fn parse_static_svg(bytes: &[u8]) -> Result<StaticSvg, String> {
                 let (Some(color), Some(path)) = (fill, svg_attribute(tag, "d")) else {
                     continue;
                 };
-                shapes.extend(
-                    parse_axis_aligned_svg_path(path)
-                        .into_iter()
-                        .map(|rect| StaticSvgShape { rect, color }),
-                );
+                shapes.extend(parse_axis_aligned_svg_path(path).into_iter().map(|rect| {
+                    StaticSvgShape {
+                        rect,
+                        color,
+                        stroke_color: None,
+                        stroke_width: 0.0,
+                    }
+                }));
             }
             _ => {}
         }
     }
-    if shapes.is_empty() {
+    if shapes.is_empty() && background.is_none() {
         return Err("no supported static shapes".to_string());
     }
     Ok(StaticSvg {
         width,
         height,
         view_box,
+        background,
         shapes,
+    })
+}
+
+fn svg_style_property<'a>(style: &'a str, requested: &str) -> Option<&'a str> {
+    style.split(';').find_map(|declaration| {
+        let (name, value) = declaration.split_once(':')?;
+        name.trim()
+            .eq_ignore_ascii_case(requested)
+            .then_some(value.trim())
     })
 }
 
@@ -635,6 +941,18 @@ fn parse_svg_number(value: &str) -> Option<f32> {
         .ok()
 }
 
+fn parse_svg_number_or_percent(value: &str, percentage_base: f32) -> Option<f32> {
+    let value = value.trim();
+    if let Some(percentage) = value.strip_suffix('%') {
+        return percentage
+            .trim()
+            .parse::<f32>()
+            .ok()
+            .map(|number| number * percentage_base / 100.0);
+    }
+    parse_svg_number(value)
+}
+
 fn parse_svg_view_box(value: &str) -> Option<Rect> {
     let numbers: Vec<f32> = value
         .split(|character: char| character.is_ascii_whitespace() || character == ',')
@@ -658,10 +976,16 @@ fn parse_svg_color(value: &str) -> Option<skia_safe::Color> {
         "blue" => (0, 0, 255),
         "aqua" => (0, 255, 255),
         "fuchsia" => (255, 0, 255),
+        "lime" => (0, 255, 0),
         "green" => (0, 128, 0),
+        "gray" | "grey" => (128, 128, 128),
+        "maroon" => (128, 0, 0),
+        "navy" => (0, 0, 128),
+        "olive" => (128, 128, 0),
         "orange" => (255, 165, 0),
         "purple" => (128, 0, 128),
         "red" => (255, 0, 0),
+        "silver" => (192, 192, 192),
         "teal" => (0, 128, 128),
         "white" => (255, 255, 255),
         "yellow" => (255, 255, 0),

@@ -47,6 +47,8 @@ pub struct ReplacedContent {
 pub enum FormControlRole {
     Button,
     TextInput,
+    Checkbox,
+    Radio,
     TextArea,
     Select,
     Option,
@@ -197,6 +199,7 @@ pub enum PseudoElementKind {
 }
 
 /// Data stored for each node in the tree.
+#[derive(Clone)]
 pub struct NodeData {
     pub tag: ElementTag,
     pub style: ComputedStyle,
@@ -292,6 +295,7 @@ impl NodeData {
 ///
 /// This is the native equivalent of Blink's `Document` + DOM tree, but
 /// without any parsing, events, or script execution. It's just a tree.
+#[derive(Clone)]
 pub struct Document {
     nodes: Vec<NodeData>,
     root: NodeId,

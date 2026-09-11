@@ -2296,10 +2296,22 @@ def parse_simple_css_rules(css_text: str) -> list:
     rules = []
     # Remove comments
     css_text = re.sub(r'/\*.*?\*/', '', css_text, flags=re.DOTALL)
-    # XHTML-era WPT style blocks use HTML CDO/CDC comments.  In CSS syntax
-    # those wrappers and their prose are inert; feeding the prose to the
-    # balanced-rule parser turns its final words into a bogus selector.
-    css_text = re.sub(r'<!--.*?-->', '', css_text, flags=re.DOTALL)
+    # CSS tokenizes the legacy HTML wrappers as top-level CDO/CDC tokens; it
+    # does not turn everything between them into a CSS comment.  Prose between
+    # the tokens becomes an invalid qualified-rule prelude and consumes the
+    # first following declaration block.  Mark that prelude so the compact
+    # parser can discard the same block without mistaking prose for a complex
+    # selector.  A traditional ``<!-- .x{} -->`` wrapper exposes its enclosed
+    # CSS rule normally.
+    invalid_cdo_prelude = '__OPENUI_INVALID_CDO_PRELUDE__'
+
+    def lower_cdo(match):
+        content = match.group(1)
+        if '{' in content or '}' in content:
+            return f' {content} '
+        return f' {invalid_cdo_prelude} '
+
+    css_text = re.sub(r'<!--(.*?)-->', lower_cdo, css_text, flags=re.DOTALL)
     # Remove CDATA wrapper
     css_text = re.sub(r'<!\[CDATA\[|\]\]>', '', css_text)
     css_text = _strip_top_level_statement_at_rules(css_text)
@@ -2339,6 +2351,8 @@ def parse_simple_css_rules(css_text: str) -> list:
     blocks = _flatten_css_rules(css_text)
     for selector_text, declarations in blocks:
         selector_text = selector_text.strip()
+        if invalid_cdo_prelude in selector_text:
+            continue
         styles = parse_inline_styles(declarations)
 
         # Handle comma-separated selectors without splitting inside :is(),
@@ -2547,7 +2561,8 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
     # tuples while allowing SP19 attribute selectors to carry a fourth field.
     # Normalizing once also keeps recursive selector matching consistent.
     ancestors = [
-        (*entry, {}) if len(entry) == 3 else entry
+        (*entry, {}, []) if len(entry) == 3 else
+        (*entry, []) if len(entry) == 4 else entry
         for entry in (ancestors or [])
     ]
     preceding_siblings = [
@@ -2635,7 +2650,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
         prefix = re.sub(r'>\s*$', '', stripped_with_combinators).strip()
         if not prefix or not ancestors:
             return False
-        parent_tag, parent_classes, parent_id, parent_attrs = ancestors[-1]
+        parent_tag, parent_classes, parent_id, parent_attrs, parent_preceding = ancestors[-1]
         return match_selector(
             prefix,
             parent_tag,
@@ -2644,7 +2659,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
             ancestors[:-1],
             1,
             1,
-            [],
+            parent_preceding,
             parent_attrs,
         )
 
@@ -2657,9 +2672,10 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
         if not prefix or not ancestors:
             return False
         for idx in range(len(ancestors) - 1, -1, -1):
-            anc_tag, anc_classes, anc_id, anc_attrs = ancestors[idx]
+            anc_tag, anc_classes, anc_id, anc_attrs, anc_preceding = ancestors[idx]
             if match_selector(
-                prefix, anc_tag, anc_classes, anc_id, ancestors[:idx], 1, 1, [], anc_attrs
+                prefix, anc_tag, anc_classes, anc_id, ancestors[:idx], 1, 1,
+                anc_preceding, anc_attrs
             ):
                 return True
         return False
@@ -2746,7 +2762,7 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
         return ri < 0
 
     # Walk ancestor list matching remaining tokens with descendant/child combinators
-    for anc_tag, anc_classes, anc_id, anc_attrs in reversed(ancestors):
+    for anc_tag, anc_classes, anc_id, anc_attrs, anc_preceding in reversed(ancestors):
         if ri < 0:
             break
         comb = combinators[ri] if ri < len(combinators) else 'descendant'
@@ -2754,6 +2770,36 @@ def match_selector(selector: str, tag: str, classes: list, id_val: str,
             remaining_tokens[ri], anc_tag, anc_classes, anc_id, anc_attrs
         ):
             ri -= 1
+            # A sibling combinator may connect the matched ancestor to the
+            # next token on the left (for example ``p ~ div span``).  The
+            # sibling list belongs to that ancestor, not to the current
+            # element, so consume the complete chain here before continuing
+            # upward through common ancestors.
+            sibling_cursor = len(anc_preceding) - 1
+            while ri >= 0 and combinators[ri] in ('adjacent', 'general'):
+                if sibling_cursor < 0:
+                    return False
+                sibling_comb = combinators[ri]
+                if sibling_comb == 'adjacent':
+                    prev = anc_preceding[sibling_cursor]
+                    if not _match_simple_selector(
+                        remaining_tokens[ri], prev[0], prev[1], prev[2], prev[3]
+                    ):
+                        return False
+                    sibling_cursor -= 1
+                else:
+                    matched_at = None
+                    for index in range(sibling_cursor, -1, -1):
+                        prev = anc_preceding[index]
+                        if _match_simple_selector(
+                            remaining_tokens[ri], prev[0], prev[1], prev[2], prev[3]
+                        ):
+                            matched_at = index
+                            break
+                    if matched_at is None:
+                        return False
+                    sibling_cursor = matched_at - 1
+                ri -= 1
         elif comb == 'child':
             return False
 
@@ -2885,7 +2931,9 @@ def apply_css_rules(rules: list, node: 'DomNode', ancestors: list = None,
             cascade_priority[prop] = priority
     node.styles = cascade
 
-    child_ancestors = ancestors + [(node.tag, classes, id_val, node.attrs)]
+    child_ancestors = ancestors + [(
+        node.tag, classes, id_val, node.attrs, list(preceding_siblings or [])
+    )]
     # Compute sibling indices and preceding siblings for element children
     element_children = [c for c in node.children if not c.is_text]
     total_elements = (
@@ -4089,22 +4137,45 @@ def _resource_dimensions(path: Path, data: bytes, mime: str) -> tuple[float, flo
             parts = re.split(r'[\s,]+', viewbox.group(1).strip())
             try:
                 view_width, view_height = float(parts[2]), float(parts[3])
-                if width is None and height is None:
-                    scale = min(300.0 / view_width, 150.0 / view_height)
-                    width, height = view_width * scale, view_height * scale
-                elif width is None and height is not None:
+                if width is None and height is not None:
                     width = height * view_width / view_height
                 elif height is None and width is not None:
                     height = width * view_height / view_width
             except (IndexError, ValueError, ZeroDivisionError):
                 pass
-        width = 300.0 if width is None else width
-        height = 150.0 if height is None else height
     elif mime.startswith('video/'):
         named = re.search(r'(?:^|[^0-9])(\d+)x(\d+)(?:[^0-9]|$)', path.name)
         if named:
             width, height = float(named.group(1)), float(named.group(2))
     return (width, height) if width is not None and height is not None else None
+
+
+def _resource_intrinsic_ratio(
+    data: bytes, mime: str, dimensions: tuple[float, float] | None,
+) -> tuple[float, float] | None:
+    if mime != 'image/svg+xml':
+        return (
+            dimensions
+            if dimensions is not None and dimensions[0] > 0.0 and dimensions[1] > 0.0
+            else None
+        )
+    text = data.decode('utf-8', errors='ignore')
+    root = re.search(r'<svg\b([^>]*)>', text, re.IGNORECASE)
+    attrs = root.group(1) if root else ''
+    viewbox = re.search(r'\bviewBox\s*=\s*[\'\"]([^\'\"]+)', attrs, re.IGNORECASE)
+    if viewbox:
+        parts = re.split(r'[\s,]+', viewbox.group(1).strip())
+        try:
+            width, height = float(parts[2]), float(parts[3])
+            if width > 0.0 and height > 0.0:
+                return width, height
+        except (IndexError, ValueError):
+            pass
+    width_match = re.search(r'\bwidth\s*=\s*[\'\"]([^\'\"]+)', attrs, re.IGNORECASE)
+    height_match = re.search(r'\bheight\s*=\s*[\'\"]([^\'\"]+)', attrs, re.IGNORECASE)
+    width = _svg_number(width_match.group(1)) if width_match else None
+    height = _svg_number(height_match.group(1)) if height_match else None
+    return (width, height) if width and height else None
 
 
 def _resolve_local_resource(source: str, base: Path | None = None) -> Path | None:
@@ -4264,7 +4335,29 @@ def _embed_paint_asset_urls(template: str, html_dir: str | None = None) -> str:
         mime, payload = encoded
         return f'{match.group(1)}{match.group(2)}data:{mime};base64,{payload}{match.group(2)}'
 
+    def replace_srcset(match: re.Match) -> str:
+        candidates = []
+        for raw_candidate in match.group(3).split(','):
+            parts = raw_candidate.strip().split()
+            if len(parts) not in (1, 2):
+                return match.group(0)
+            encoded = encoded_asset(parts[0])
+            if encoded is None:
+                return match.group(0)
+            mime, payload = encoded
+            candidate = f'data:{mime};base64,{payload}'
+            if len(parts) == 2:
+                candidate += f' {parts[1]}'
+            candidates.append(candidate)
+        return (
+            f'{match.group(1)}{match.group(2)}'
+            f'{", ".join(candidates)}{match.group(2)}'
+        )
+
     template = re.sub(r'(?is)url\(\s*([^)]*?)\s*\)', replace_url, template)
+    template = re.sub(
+        r'(?is)(\bsrcset\s*=\s*)(["\'])([^"\']+)\2', replace_srcset, template
+    )
     template = re.sub(
         r'(?is)(\b(?:src|poster|data)\s*=\s*)(["\'])([^"\']+)\2', replace_src, template
     )
@@ -6516,13 +6609,17 @@ def generate_single_style(
 
     if prop == '-webkit-box-orient':
         mapping = {
-            'horizontal': 'WebkitBoxOrient::Horizontal',
-            'vertical': 'WebkitBoxOrient::Vertical',
-            'inline-axis': 'WebkitBoxOrient::Horizontal',
-            'block-axis': 'WebkitBoxOrient::Vertical',
+            'horizontal': ('WebkitBoxOrient::Horizontal', 'FlexDirection::Row'),
+            'vertical': ('WebkitBoxOrient::Vertical', 'FlexDirection::Column'),
+            'inline-axis': ('WebkitBoxOrient::Horizontal', 'FlexDirection::Row'),
+            'block-axis': ('WebkitBoxOrient::Vertical', 'FlexDirection::Column'),
         }
         if val.lower() in mapping:
-            return f"{s}.webkit_box_orient = {mapping[val.lower()]};"
+            orient, direction = mapping[val.lower()]
+            return [
+                f"{s}.webkit_box_orient = {orient};",
+                f"{s}.flex_direction = {direction};",
+            ]
 
     if prop == 'text-shadow':
         return generate_text_shadow_style(val, s, font_size)
@@ -8412,6 +8509,7 @@ def _computed_border_radius(styles: dict[str, str]) -> dict[str, str] | None:
 _INLINE_LEVEL_TAGS = {'span', 'a', 'em', 'strong', 'b', 'i', 'u', 'small',
                       'big', 'sub', 'sup', 'abbr', 'cite', 'code', 'mark',
                       'q', 's', 'del', 'ins', 'var', 'kbd', 'samp', 'br', 'wbr',
+                      'label',
                       'img', 'canvas', 'svg', 'iframe', 'object', 'audio', 'video',
                       'input', 'button', 'meter', 'textarea', 'select', 'embed'}
 _CSS_COLLAPSIBLE_WHITESPACE = ' \t\n\r\f'
@@ -8728,13 +8826,18 @@ def generate_rust_fn(
         inline = _data_url_resource(source)
         if inline is not None:
             source_label, mime, sha, dimensions, data = inline
-            return source_label, mime, sha, dimensions, (
+            return source_label, mime, sha, dimensions, _resource_intrinsic_ratio(
+                data, mime, dimensions,
+            ), (
                 f'vec![{", ".join(str(byte) for byte in data)}]'
             )
         packaged = _packaged_resource(source)
         if packaged is not None:
             filename, source_label, mime, sha, dimensions = packaged
-            return source_label, mime, sha, dimensions, _packaged_bytes_expr(filename)
+            data = (SP20_ASSET_DIR / filename).read_bytes()
+            return source_label, mime, sha, dimensions, _resource_intrinsic_ratio(
+                data, mime, dimensions,
+            ), _packaged_bytes_expr(filename)
         name = source.rsplit('/', 1)[-1]
         asset = _PAINT_ASSETS.get(name)
         dimensions = _REPLACED_ASSET_DIMENSIONS.get(name)
@@ -8751,7 +8854,8 @@ def generate_rust_fn(
                 f'"/../../../tools/accountability/data/wpt_assets/sp13p/{filename}"))'
                 '.as_slice().to_vec()'
             )
-        return source_label, mime, sha, dimensions, byte_expr
+        ratio = dimensions if dimensions and dimensions[0] > 0 and dimensions[1] > 0 else None
+        return source_label, mime, sha, dimensions, ratio, byte_expr
 
     def gen_node(node: DomNode, parent_var: str, indent: int,
                  parent_font_size: float = 16.0, inherited: dict | None = None,
@@ -9010,7 +9114,7 @@ def generate_rust_fn(
         render_children = node.children
 
         # Map HTML tag to ElementTag
-        inline_tags = {'span', 'a', 'em', 'strong', 'b', 'i', 'u', 'small', 'big', 'sub', 'sup', 'abbr', 'cite', 'code', 'mark', 'q', 's', 'del', 'ins', 'var', 'kbd', 'samp'}
+        inline_tags = {'span', 'a', 'em', 'strong', 'b', 'i', 'u', 'small', 'big', 'sub', 'sup', 'abbr', 'cite', 'code', 'mark', 'q', 's', 'del', 'ins', 'var', 'kbd', 'samp', 'label'}
         semantic_tags = {
             'ruby': 'ElementTag::Ruby',
             'rt': 'ElementTag::RubyText',
@@ -9075,21 +9179,46 @@ def generate_rust_fn(
         if node.tag == 'svg':
             # An outermost inline SVG viewport is a replaced element with the
             # HTML default object size when neither dimension is authored.
-            # CSS declarations emitted below remain authoritative and can
-            # override these intrinsic-equivalent defaults.
-            def svg_viewport_number(name, default):
-                token = node.attrs.get(name, str(default)).strip()
-                match = re.fullmatch(r'[-+]?(?:\d+(?:\.\d*)?|\.\d+)', token)
-                return float(token) if match else float(default)
+            # Width/height presentation attributes accept both CSS lengths
+            # and percentages; CSS declarations emitted below remain
+            # authoritative and can override them through normal cascade.
+            def svg_viewport_length(name, default):
+                token = node.attrs.get(name)
+                if token is None:
+                    # Missing SVG viewport dimensions remain `auto`. Replaced
+                    # sizing resolves that value from the available space,
+                    # intrinsic dimensions, and viewBox ratio; materializing a
+                    # percentage here changes flex base-size semantics.
+                    if node.attrs.get('viewbox'):
+                        if (
+                            name == 'width'
+                            and 'height' not in node.styles
+                            and 'max-height' not in node.styles
+                            and 'height' not in node.attrs
+                        ):
+                            # An outer SVG with only a viewBox uses stretch-fit
+                            # inline sizing. Keep this as the sizing keyword so
+                            # flex main-axis sizing can subtract item margins;
+                            # `100%` would incorrectly overflow that margin box.
+                            return 'Length::stretch()'
+                        return None
+                    # Empty outer SVGs without a viewBox retain the 300x150
+                    # default object size as intrinsic metadata below.
+                    return (
+                        f'Length::px({_zoomed_px(default)})'
+                        if node.children else None
+                    )
+                token = token.strip()
+                if re.fullmatch(r'[-+]?(?:\d+(?:\.\d*)?|\.\d+)', token):
+                    return f'Length::px({_zoomed_px(float(token))})'
+                return parse_length(token, parent_font_size)
 
-            lines.append(
-                f"{ws}doc.node_mut({var}).style.width = "
-                f"Length::px({_zoomed_px(svg_viewport_number('width', 300.0))});"
-            )
-            lines.append(
-                f"{ws}doc.node_mut({var}).style.height = "
-                f"Length::px({_zoomed_px(svg_viewport_number('height', 150.0))});"
-            )
+            svg_width = svg_viewport_length('width', 300.0)
+            svg_height = svg_viewport_length('height', 150.0)
+            if svg_width:
+                lines.append(f"{ws}doc.node_mut({var}).style.width = {svg_width};")
+            if svg_height:
+                lines.append(f"{ws}doc.node_mut({var}).style.height = {svg_height};")
 
         if node.tag == 'rect':
             # Inline SVG rectangles are deterministic vector primitives, not
@@ -9216,11 +9345,16 @@ def generate_rust_fn(
             'legend': 'openui_dom::FormControlRole::Legend',
         }
         if node.tag == 'input':
+            input_type = node.attrs.get('type', 'text').lower()
             role = (
                 'openui_dom::FormControlRole::Range'
-                if node.attrs.get('type', 'text').lower() == 'range'
+                if input_type == 'range'
+                else 'openui_dom::FormControlRole::Checkbox'
+                if input_type == 'checkbox'
+                else 'openui_dom::FormControlRole::Radio'
+                if input_type == 'radio'
                 else 'openui_dom::FormControlRole::Button'
-                if node.attrs.get('type', '').lower() in ('button', 'submit', 'reset')
+                if input_type in ('button', 'submit', 'reset')
                 else 'openui_dom::FormControlRole::TextInput'
             )
             lines.append(f"{ws}doc.node_mut({var}).form_control = Some({role});")
@@ -9230,74 +9364,21 @@ def generate_rust_fn(
             )
 
         if node.tag in {'input', 'textarea', 'select'}:
-            # Pinned Linux Chromium UA metrics. Author declarations are
-            # emitted later and therefore retain normal cascade precedence.
+            # Pinned Linux Chromium UA appearance. Intrinsic control metrics
+            # are carried by ReplacedContent below, leaving computed width
+            # and height `auto` so flex/grid stretch can participate.
             appearance_none = any(
                 node.styles.get(prop, '').strip().lower() == 'none'
                 for prop in ('appearance', '-webkit-appearance', '-moz-appearance')
             )
             lines.append(f"{ws}doc.node_mut({var}).style.box_sizing = BoxSizing::BorderBox;")
-            if node.tag == 'input':
-                # With native appearance disabled, Blink sizes the default
-                # text field from its 20-character editing host in the
-                # control's deterministic 13.333px Ahem font.  The reset
-                # stylesheet makes this a content-box, so the 2px UA inset
-                # border is outside these dimensions.
-                input_type = node.attrs.get('type', 'text').lower()
-                if input_type == 'range' and not appearance_none:
-                    input_width, input_height = 129.0, 16.0
-                else:
-                    input_width = 262.0
-                    input_height = 26.0 if not appearance_none else 14.0
-                lines.append(
-                    f"{ws}doc.node_mut({var}).style.width = Length::px({input_width});"
-                )
-                lines.append(
-                    f"{ws}doc.node_mut({var}).style.height = Length::px({input_height});"
-                )
-            elif node.tag == 'textarea':
-                rows = node.attrs.get('rows', '2')
-                cols = node.attrs.get('cols', '20')
-                try:
-                    rows_value = max(1, int(rows))
-                    cols_value = max(1, int(cols))
-                except ValueError:
-                    rows_value, cols_value = 2, 20
-                lines.append(
-                    f"{ws}doc.node_mut({var}).style.width = Length::px({cols_value * 8.5 + 6.0});"
-                )
-                lines.append(
-                    f"{ws}doc.node_mut({var}).style.height = Length::px({rows_value * 11.0 + 6.0});"
-                )
+            if node.tag == 'textarea':
                 lines.append(f"{ws}doc.node_mut({var}).style.overflow_x = Overflow::Auto;")
                 lines.append(f"{ws}doc.node_mut({var}).style.overflow_y = Overflow::Auto;")
-            else:
-                size = node.attrs.get('size', '')
-                multiple = 'multiple' in node.attrs
-                try:
-                    visible_rows = max(1, int(size)) if size else (4 if multiple else 1)
-                except ValueError:
-                    visible_rows = 4 if multiple else 1
-                select_width = 20.0 if visible_rows == 1 else 2.0
-                select_font_size = parent_font_size
-                if 'font-size' in node.styles:
-                    try:
-                        select_font_size = _computed_font_size(
-                            node.styles['font-size'], parent_font_size
-                        )
-                    except (UnsupportedFontShorthand, ValueError):
-                        pass
-                select_row_height = max(3.0, round(select_font_size * 1.125 + 2.0))
-                lines.append(
-                    f"{ws}doc.node_mut({var}).style.width = Length::px({select_width});"
-                )
-                lines.append(
-                    f"{ws}doc.node_mut({var}).style.height = "
-                    f"Length::px({visible_rows * select_row_height});"
-                )
             input_type = node.attrs.get('type', 'text').lower() if node.tag == 'input' else ''
             ua_border_width = (
-                0 if input_type == 'range' and not appearance_none
+                0 if input_type in {'checkbox', 'radio'}
+                or (input_type == 'range' and not appearance_none)
                 else 2 if node.tag == 'input'
                 else 1
             )
@@ -9330,8 +9411,14 @@ def generate_rust_fn(
             source = node.attrs.get(attribute, '').strip()
             resource = _node_resource(source) if source else None
             if resource is not None:
-                source_label, mime, sha, dimensions, byte_expr = resource
-                intrinsic_width, intrinsic_height = dimensions or (300.0, 150.0)
+                source_label, mime, sha, dimensions, intrinsic_ratio, byte_expr = resource
+                intrinsic_width, intrinsic_height = dimensions or (None, None)
+                intrinsic_width_expr = (
+                    f'Some({intrinsic_width})' if intrinsic_width is not None else 'None'
+                )
+                intrinsic_height_expr = (
+                    f'Some({intrinsic_height})' if intrinsic_height is not None else 'None'
+                )
                 resource_var = f'{var}_image'
                 kind = (
                     'openui_dom::ReplacedResourceKind::StaticSvg'
@@ -9346,11 +9433,28 @@ def generate_rust_fn(
                 lines.append(
                     f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
                     f"resource: {kind}({resource_var}), "
-                    f"intrinsic_width: Some({intrinsic_width}), "
-                    f"intrinsic_height: Some({intrinsic_height}), "
-                    f"intrinsic_ratio: Some(({intrinsic_width}, {intrinsic_height})) }});"
+                    f"intrinsic_width: {intrinsic_width_expr}, "
+                    f"intrinsic_height: {intrinsic_height_expr}, "
+                    "intrinsic_ratio: "
+                    f"{'Some((' + str(intrinsic_ratio[0]) + ', ' + str(intrinsic_ratio[1]) + '))' if intrinsic_ratio else 'None'} }});"
                 )
-            elif node.tag in {'embed', 'object'}:
+                if (
+                    node.tag == 'img'
+                    and mime == 'image/svg+xml'
+                    and dimensions is None
+                    and intrinsic_ratio is not None
+                    and 'display' not in node.styles
+                ):
+                    # A ratio-only SVG image uses the containing block's
+                    # stretch-fit opportunity. Represent its anonymous atomic
+                    # viewport as a block so its margins and border are
+                    # removed exactly once and its containing inline-block
+                    # exports the same synthesized baseline as Blink.
+                    lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
+            elif node.tag == 'embed' or (node.tag == 'object' and not node.children):
+                # An object without a usable data resource renders its fallback
+                # descendants. Only an actually empty object has the default
+                # 300x150 replaced-element dimensions.
                 lines.append(
                     f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
                     "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
@@ -9361,7 +9465,7 @@ def generate_rust_fn(
             poster = node.attrs.get('poster', '').strip()
             resource = _node_resource(poster) if poster else None
             if resource is not None:
-                source_label, mime, sha, dimensions, byte_expr = resource
+                source_label, mime, sha, dimensions, intrinsic_ratio, byte_expr = resource
                 intrinsic_width, intrinsic_height = dimensions or (300.0, 150.0)
                 lines.append(
                     f'{ws}let {var}_poster = doc.register_image_resource('
@@ -9371,7 +9475,8 @@ def generate_rust_fn(
                     f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
                     f"resource: openui_dom::ReplacedResourceKind::MediaPoster({var}_poster), "
                     f"intrinsic_width: Some({intrinsic_width}), intrinsic_height: Some({intrinsic_height}), "
-                    f"intrinsic_ratio: Some(({intrinsic_width}, {intrinsic_height})) }});"
+                    "intrinsic_ratio: "
+                    f"{'Some((' + str(intrinsic_ratio[0]) + ', ' + str(intrinsic_ratio[1]) + '))' if intrinsic_ratio else 'None'} }});"
                 )
             else:
                 source = node.attrs.get('src', '').strip()
@@ -9388,14 +9493,46 @@ def generate_rust_fn(
                     f"intrinsic_width: Some({intrinsic_width}), intrinsic_height: Some({intrinsic_height}), "
                     f"intrinsic_ratio: {ratio} }});"
                 )
-        elif node.tag == 'svg' and not node.children:
-            # An outer empty SVG viewport is an atomic replaced element even
-            # though it has no raster resource. Preserve the HTML/SVG default
-            # object size and viewBox ratio; CSS size containment can then
-            # substitute its intrinsic fallback through the normal replaced
-            # sizing algorithm.
-            intrinsic_width = 300.0
-            intrinsic_height = 150.0
+        elif node.tag == 'svg':
+            # An outer SVG viewport is atomic replaced content. Child-bearing
+            # roots remain represented by the same viewport fragment; simple
+            # full-viewport rectangles are lowered to its background paint.
+            # Preserve the HTML/SVG default object size and viewBox ratio so
+            # CSS sizing and flex layout see the native replaced contract.
+            intrinsic_width = _svg_number(node.attrs.get('width'))
+            intrinsic_height = _svg_number(node.attrs.get('height'))
+            svg_bounds_inferred = False
+            visual_children = [
+                child for child in node.children
+                if not child.is_text or (child.text_content or '').strip()
+            ]
+            if (
+                intrinsic_width is None
+                and intrinsic_height is None
+                and not node.attrs.get('viewbox')
+                and len(visual_children) == 1
+                and visual_children[0].tag == 'rect'
+            ):
+                # A child-bearing outer SVG whose percentage viewport is
+                # cyclic under max-content sizing exposes the numeric graphics
+                # bounds as its natural dimensions. This is distinct from an
+                # empty SVG, which keeps the HTML 300x150 default object size.
+                rect = visual_children[0]
+                rect_width = _svg_number(rect.attrs.get('width'))
+                rect_height = _svg_number(rect.attrs.get('height'))
+                rect_x = _svg_number(rect.attrs.get('x')) or 0.0
+                rect_y = _svg_number(rect.attrs.get('y')) or 0.0
+                if (
+                    rect_x == 0.0
+                    and rect_y == 0.0
+                    and rect_width is not None
+                    and rect_height is not None
+                    and rect_width > 0.0
+                    and rect_height > 0.0
+                ):
+                    intrinsic_width = rect_width
+                    intrinsic_height = rect_height
+                    svg_bounds_inferred = True
             viewbox_ratio = None
             viewbox = node.attrs.get('viewbox', '').replace(',', ' ').split()
             if len(viewbox) == 4:
@@ -9406,18 +9543,78 @@ def generate_rust_fn(
                         viewbox_ratio = (viewbox_width, viewbox_height)
                 except ValueError:
                     pass
+            intrinsic_ratio = viewbox_ratio
+            if (
+                intrinsic_ratio is None
+                and not svg_bounds_inferred
+                and intrinsic_width is not None
+                and intrinsic_height is not None
+                and intrinsic_width > 0.0
+                and intrinsic_height > 0.0
+            ):
+                # An outer SVG with definite width/height attributes has a
+                # natural aspect ratio even without a viewBox. CSS can replace
+                # one preferred axis while max-sizing the other, so retaining
+                # only the two natural dimensions is insufficient.
+                intrinsic_ratio = (intrinsic_width, intrinsic_height)
             ratio_rust = (
-                f"Some(({viewbox_ratio[0]}, {viewbox_ratio[1]}))"
-                if viewbox_ratio is not None
+                f"Some(({intrinsic_ratio[0]}, {intrinsic_ratio[1]}))"
+                if intrinsic_ratio is not None
                 else "None"
+            )
+            intrinsic_width_rust = (
+                f"Some({intrinsic_width})" if intrinsic_width is not None else "None"
+            )
+            intrinsic_height_rust = (
+                f"Some({intrinsic_height})" if intrinsic_height is not None else "None"
             )
             lines.append(
                 f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
                 "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
-                f"intrinsic_width: Some({intrinsic_width}), "
-                f"intrinsic_height: Some({intrinsic_height}), "
+                f"intrinsic_width: {intrinsic_width_rust}, "
+                f"intrinsic_height: {intrinsic_height_rust}, "
                 f"intrinsic_ratio: {ratio_rust} }});"
             )
+            if (
+                viewbox_ratio is not None
+                and 'width' not in node.attrs
+                and 'height' not in node.attrs
+                and 'height' not in node.styles
+                and 'max-height' not in node.styles
+            ):
+                # A ratio-only outer SVG participates as a stretch-fit block
+                # in HTML flow. Flex layout blockifies the same atomic item.
+                lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
+            if len(visual_children) == 1 and visual_children[0].tag == 'rect':
+                rect = visual_children[0]
+                viewbox_width = (
+                    viewbox_ratio[0] if viewbox_ratio else (intrinsic_width or 300.0)
+                )
+                viewbox_height = (
+                    viewbox_ratio[1] if viewbox_ratio else (intrinsic_height or 150.0)
+                )
+
+                def covers_svg_axis(name, expected):
+                    token = rect.attrs.get(name, '').strip()
+                    if token == '100%':
+                        return True
+                    try:
+                        return float(token) == expected
+                    except ValueError:
+                        return False
+
+                x = _svg_number(rect.attrs.get('x')) or 0.0
+                y = _svg_number(rect.attrs.get('y')) or 0.0
+                if (
+                    x == 0.0 and y == 0.0
+                    and covers_svg_axis('width', viewbox_width)
+                    and covers_svg_axis('height', viewbox_height)
+                ):
+                    fill = parse_color(rect.attrs.get('fill', 'black'))
+                    if fill:
+                        lines.append(
+                            f"{ws}doc.node_mut({var}).style.background_color = {fill};"
+                        )
         elif node.tag == 'canvas':
             try:
                 intrinsic_width = max(0, int(node.attrs.get('width', '300')))
@@ -9522,6 +9719,19 @@ def generate_rust_fn(
                 "intrinsic_width: Some(129.0), intrinsic_height: Some(16.0), "
                 "intrinsic_ratio: None });"
             )
+        elif (
+            node.tag == 'input'
+            and node.attrs.get('type', 'text').lower() in {'checkbox', 'radio'}
+        ):
+            # Linux native checkable controls are 13px square. Their theme
+            # border is appearance paint rather than a CSS border, so authored
+            # percentage dimensions retain their exact border-box measure.
+            lines.append(
+                f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                "intrinsic_width: Some(13.0), intrinsic_height: Some(13.0), "
+                "intrinsic_ratio: Some((1.0, 1.0)) });"
+            )
         elif node.tag == 'meter':
             # Chromium's Linux meter control is an 80x16 atomic widget.  Its
             # passive track is painted by the form-control role; transparent
@@ -9547,17 +9757,56 @@ def generate_rust_fn(
         elif node.tag in {'input', 'textarea', 'select'}:
             # Text-like controls are atomic/monolithic replaced boxes even
             # when their authored background and border are ordinary CSS.
-            # Their preferred dimensions above remain author-overridable.
+            # Keep their UA size intrinsic rather than authored so an auto
+            # cross size remains eligible for flex/grid stretch.
+            authored_font_token = node.styles.get('font-size')
+            if authored_font_token is None and 'font' in node.styles:
+                authored_font_token = parse_font_shorthand(
+                    node.styles['font']
+                ).get('font-size')
+
             if node.tag == 'input':
-                intrinsic_width, intrinsic_height = 169.0, 20.0
+                input_type = node.attrs.get('type', 'text').lower()
+                authored_font_size = None
+                if authored_font_token is not None:
+                    try:
+                        authored_font_size = _computed_font_size(
+                            authored_font_token, parent_font_size
+                        )
+                    except (UnsupportedFontShorthand, ValueError):
+                        pass
+                if input_type in {'button', 'submit', 'reset'}:
+                    intrinsic_width = 0.0
+                    intrinsic_height = 14.0
+                else:
+                    intrinsic_width = (
+                        authored_font_size * 20.0
+                        if authored_font_size is not None else 262.0
+                    )
+                    intrinsic_height = (
+                        authored_font_size
+                        if authored_font_size is not None else 14.0
+                    )
             elif node.tag == 'textarea':
                 try:
                     rows_value = max(1, int(node.attrs.get('rows', '2')))
                     cols_value = max(1, int(node.attrs.get('cols', '20')))
                 except ValueError:
                     rows_value, cols_value = 2, 20
-                intrinsic_width = cols_value * 8.5 + 6.0
-                intrinsic_height = rows_value * 11.0 + 6.0
+                authored_font_size = None
+                if authored_font_token is not None:
+                    try:
+                        authored_font_size = _computed_font_size(
+                            authored_font_token, parent_font_size
+                        )
+                    except (UnsupportedFontShorthand, ValueError):
+                        pass
+                if authored_font_size is None:
+                    intrinsic_width = cols_value * 8.5 + 6.0
+                    intrinsic_height = rows_value * 11.0 + 6.0
+                else:
+                    intrinsic_width = cols_value * authored_font_size + 15.0
+                    intrinsic_height = rows_value * authored_font_size
             else:
                 size = node.attrs.get('size', '')
                 multiple = 'multiple' in node.attrs
@@ -9567,15 +9816,15 @@ def generate_rust_fn(
                     visible_rows = 4 if multiple else 1
                 intrinsic_width = 20.0 if visible_rows == 1 else 2.0
                 select_font_size = parent_font_size
-                if 'font-size' in node.styles:
+                if authored_font_token is not None:
                     try:
                         select_font_size = _computed_font_size(
-                            node.styles['font-size'], parent_font_size
+                            authored_font_token, parent_font_size
                         )
                     except (UnsupportedFontShorthand, ValueError):
                         pass
-                select_row_height = max(3.0, round(select_font_size * 1.125 + 2.0))
-                intrinsic_height = visible_rows * select_row_height
+                select_row_height = float(max(3.0, round(select_font_size)))
+                intrinsic_height = float(visible_rows * select_row_height)
             lines.append(
                 f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
                 "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
@@ -9641,6 +9890,10 @@ def generate_rust_fn(
 
         # Resolve explicit CSS-wide `inherit` before generating style code.
         effective_styles = _copy_declarations(node.styles)
+        is_input_button = (
+            node.tag == 'input'
+            and node.attrs.get('type', 'text').lower() in {'button', 'submit', 'reset'}
+        )
 
         if RETAIN_TEXT and node.tag in {'button', 'input', 'textarea', 'select'}:
             # The deterministic font override changes the family but not the
@@ -9649,9 +9902,9 @@ def generate_rust_fn(
             # anonymous text and multicol contents inherit the same metrics.
             if 'font-size' not in effective_styles and 'font' not in effective_styles:
                 effective_styles['font-size'] = '13.333333px'
-            if node.tag == 'button' and 'text-align' not in effective_styles:
+            if (node.tag == 'button' or is_input_button) and 'text-align' not in effective_styles:
                 effective_styles['text-align'] = 'center'
-        if node.tag == 'button':
+        if node.tag == 'button' or is_input_button:
             # Passive Linux button appearance. The comparison harness resets
             # margin/padding/box-sizing as author CSS, but leaves these UA
             # paint declarations in force unless the test overrides them.
@@ -10786,6 +11039,38 @@ def generate_rust_fn(
         else 'doc.root()' if body_is_contents
         else 'vp'
     )
+
+    def lower_static_picture_sources(node: DomNode):
+        """Select unconditional single-candidate ``picture`` resources.
+
+        Responsive source selection needs media, type, sizes, and device-pixel
+        evaluation.  A source without those conditions and with one literal
+        candidate is deterministic at generation time, however, and supplies
+        the nested image's replaced resource exactly like a literal ``src``.
+        """
+        if node.tag == 'picture':
+            selected = None
+            for child in node.children:
+                if (
+                    child.tag == 'source'
+                    and not child.attrs.get('media', '').strip()
+                    and not child.attrs.get('type', '').strip()
+                ):
+                    srcset = child.attrs.get('srcset', '').strip()
+                    if ',' not in srcset:
+                        parts = srcset.split()
+                        if len(parts) == 1 or (len(parts) == 2 and parts[1] == '1x'):
+                            selected = parts[0]
+                            break
+            if selected:
+                for child in node.children:
+                    if child.tag == 'img' and not child.attrs.get('src', '').strip():
+                        child.attrs['src'] = selected
+        for child in node.children:
+            if not child.is_text:
+                lower_static_picture_sources(child)
+
+    lower_static_picture_sources(root)
     for child in root.children:
         gen_node(
             child, body_parent, 1, root_font_size,

@@ -99,6 +99,8 @@ fn native_controls_have_explicit_semantic_roles() {
         (ElementTag::Select, FormControlRole::Select),
         (ElementTag::Option, FormControlRole::Option),
         (ElementTag::OptGroup, FormControlRole::OptGroup),
+        (ElementTag::Input, FormControlRole::Checkbox),
+        (ElementTag::Input, FormControlRole::Radio),
     ];
     let mut doc = Document::new();
     for (tag, role) in cases {

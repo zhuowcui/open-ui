@@ -140,8 +140,9 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         self.assertEqual(parser.root.children[0].styles["height"], "7px")
 
     def test_11_xhtml_comment_tokens_are_not_selectors(self):
-        parser = self.parse("<!-- prose --> #x { width: 19px }")
-        self.assertEqual(parser.root.children[0].styles["width"], "19px")
+        parser = self.parse("<!-- prose --> #x { width: 19px } #x { height: 7px }")
+        self.assertNotIn("width", parser.root.children[0].styles)
+        self.assertEqual(parser.root.children[0].styles["height"], "7px")
         self.assertEqual(port_wpt.analyze_portability(parser), (True, ""))
 
     def test_12_invalid_declarations_do_not_break_cascade(self):
@@ -153,8 +154,12 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         self.assertEqual(parser.root.children[0].children[0].styles["height"], "30px")
 
     def test_14_structural_and_attribute_selectors_match(self):
-        parser = self.parse("div[data-v='yes']:only-child{width:29px}", "<section><div data-v=yes></div></section>")
+        parser = self.parse(
+            "div[data-v='yes']:only-child{width:29px} p~div span{height:31px}",
+            "<section><div data-v=yes></div></section><p></p><div><span></span></div>",
+        )
         self.assertEqual(parser.root.children[0].children[0].styles["width"], "29px")
+        self.assertEqual(parser.root.children[2].children[0].styles["height"], "31px")
 
     def test_15_details_content_pseudo_emits(self):
         rust = self.generate("details::details-content{display:block;background:green}", "<details><summary>x</summary>y</details>")
@@ -166,9 +171,14 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
             self.assertIn(f"ScrollButtonDirection::{direction}", rust)
 
     def test_17_textarea_role_and_intrinsic_metrics_emit(self):
-        rust = self.generate("", "<textarea rows=3 cols=4>v</textarea>")
+        rust = self.generate(
+            "textarea{font-size:20px;width:max-content}",
+            "<textarea rows=3 cols=4>abcdef</textarea><input type=checkbox>",
+        )
         self.assertIn("ElementTag::TextArea", rust)
         self.assertIn("FormControlRole::TextArea", rust)
+        self.assertIn("FormControlRole::Checkbox", rust)
+        self.assertIn("intrinsic_width: Some(95.0)", rust)
         self.assertIn("style.box_sizing = BoxSizing::BorderBox", rust)
 
     def test_18_select_option_optgroup_roles_emit(self):
@@ -205,7 +215,21 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         png = port_wpt._data_url_resource("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==")
         svg = port_wpt._data_url_resource("data:image/svg+xml,%3Csvg%20viewBox='0%200%204%202'%3E%3C/svg%3E")
         self.assertEqual(png[3], (1.0, 1.0))
-        self.assertEqual(svg[3], (300.0, 150.0))
+        self.assertIsNone(svg[3])
+        self.assertEqual(
+            port_wpt._resource_intrinsic_ratio(svg[4], svg[1], svg[3]),
+            (4.0, 2.0),
+        )
+        picture_path = (
+            port_wpt.WPT_SOURCE_ROOT
+            / "css/css-sizing/aspect-ratio/replaced-element-012.html"
+        )
+        parser = port_wpt.parse_wpt_html(str(picture_path), root_aware=True)
+        picture = port_wpt.generate_rust_fn(
+            "sp20_picture", parser.root, parser.html_styles, root_aware=True
+        )
+        self.assertIn("ReplacedResourceKind::Image", picture)
+        self.assertIn("intrinsic_width: Some(20.0)", picture)
 
     def test_25_packaged_local_resource_matches_manifest(self):
         resource = port_wpt._packaged_resource("/media/1x1-green.png", closure.WPT_BASE)
@@ -216,6 +240,12 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         self.assertEqual(dimensions, (1.0, 1.0))
         self.assertTrue((port_wpt.SP20_ASSET_DIR / filename).is_file())
         self.assertEqual(len(sha), 64)
+        template = port_wpt._embed_paint_asset_urls(
+            '<picture><source srcset="support/black20x20.png 1x">'
+            '<img></picture>'
+        )
+        self.assertIn('srcset="data:image/png;base64,', template)
+        self.assertIn(' 1x"', template)
 
     def test_26_transaction_rolls_back_on_install_failure(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -259,6 +289,11 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         )
         self.assertEqual(selected, partitions["w2_break_multicol"])
         self.assertFalse(resume)
+        document = pixel_runner.build_html_document(
+            "<style>@keyframes resize{from{height:100px}to{height:50px}}"
+            ".target{animation:resize 1s}</style><div class=target></div>"
+        )
+        self.assertIn("animation-play-state: paused !important", document)
 
     def test_30_final_projection_is_complete_and_read_only(self):
         focused = set(json.loads(closure.FOCUSED.read_text()))
@@ -266,7 +301,11 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         rows = closure.parse_mapping(closure.KICKOFF_MAPPING.read_bytes())
         self.assertEqual(focused | unported, {closure.canonical_id(row) for row in rows})
         before = {path: (path.stat().st_mtime_ns, path.read_bytes()) for path in closure.build_outputs(*closure._historical_bytes())}
-        self.assertEqual(closure.check(), "w0")
+        current_wave = closure.validate_live_snapshot(
+            closure.parse_mapping(closure.LIVE_MAPPING.read_bytes()),
+            json.loads(closure.LIVE_SUMMARY.read_text(encoding="utf-8")),
+        )
+        self.assertEqual(closure.check(), current_wave)
         after = {path: (path.stat().st_mtime_ns, path.read_bytes()) for path in before}
         self.assertEqual(before, after)
 

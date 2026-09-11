@@ -610,7 +610,7 @@ fn fragment_contains_tag(doc: &Document, fragment: &Fragment, tag: ElementTag) -
 /// child's synthesized baseline (for example a table row baseline) is useful
 /// to flex/grid alignment, but it must not turn a line-less inline-block into
 /// one with a line baseline.
-fn inline_block_last_line_baseline(fragment: &Fragment) -> Option<LayoutUnit> {
+fn inline_block_last_line_baseline(doc: &Document, fragment: &Fragment) -> Option<LayoutUnit> {
     fn contains_anonymous_line(fragment: &Fragment) -> bool {
         fragment.children.iter().any(|child| {
             (child.node_id.is_none()
@@ -621,15 +621,32 @@ fn inline_block_last_line_baseline(fragment: &Fragment) -> Option<LayoutUnit> {
         })
     }
 
-    if !contains_anonymous_line(fragment) {
+    fn contains_flex_baseline(doc: &Document, fragment: &Fragment) -> bool {
+        fragment.children.iter().any(|child| {
+            (!child.node_id.is_none()
+                && doc.node(child.node_id).style.display.is_flex()
+                && (child.first_baseline.is_some() || child.last_baseline.is_some()))
+                || contains_flex_baseline(doc, child)
+        })
+    }
+
+    if !contains_anonymous_line(fragment) && !contains_flex_baseline(doc, fragment) {
         return None;
     }
     // The formatting context's exported baseline is already projected onto
     // the parent's physical baseline axis. This matters for vertical writing,
     // where summing a descendant line's top offset reconstructs the wrong
     // physical coordinate.
-    if let Some(baseline) = fragment.last_baseline.or(fragment.first_baseline) {
-        return Some(baseline);
+    // A fieldset's formatting-context baseline is its first legend baseline,
+    // which is useful to flex/grid alignment.  An inline-block fieldset,
+    // however, exports the baseline of its last in-flow line just like every
+    // other inline-block, so descend through its contents instead.
+    let is_fieldset =
+        !fragment.node_id.is_none() && doc.node(fragment.node_id).tag == ElementTag::Fieldset;
+    if !is_fieldset {
+        if let Some(baseline) = fragment.last_baseline.or(fragment.first_baseline) {
+            return Some(baseline);
+        }
     }
     for child in fragment.children.iter().rev() {
         if child.node_id.is_none() {
@@ -643,11 +660,24 @@ fn inline_block_last_line_baseline(fragment: &Fragment) -> Option<LayoutUnit> {
                 return Some(child.offset.top + LayoutUnit::from_f32(child.baseline_offset));
             }
         }
-        if let Some(baseline) = inline_block_last_line_baseline(child) {
+        if let Some(baseline) = inline_block_last_line_baseline(doc, child) {
             return Some(child.offset.top + baseline);
         }
     }
     None
+}
+
+fn form_control_atomic_baseline(doc: &Document, fragment: &Fragment) -> Option<LayoutUnit> {
+    if fragment.node_id.is_none() {
+        return None;
+    }
+    match doc.node(fragment.node_id).form_control {
+        Some(openui_dom::FormControlRole::Button) => fragment.first_baseline.or_else(|| {
+            Some((fragment.size.height - fragment.border.bottom).max_of(LayoutUnit::zero()))
+        }),
+        Some(_) => fragment.first_baseline,
+        None => None,
+    }
 }
 
 fn align_ruby_internal_content(fragment: &mut Fragment, inline_size: LayoutUnit) {
@@ -2327,7 +2357,7 @@ fn append_positioned_inline_candidates(
                         InlineItemType::Text => !items_data.text[item.text_range.clone()]
                             .trim_matches(char::is_whitespace)
                             .is_empty(),
-                        InlineItemType::AtomicInline => true,
+                        InlineItemType::AtomicInline | InlineItemType::Control => true,
                         _ => false,
                     }),
         );
@@ -2717,7 +2747,16 @@ fn find_static_block_for_item_index(
         return intrinsic_block_size;
     }
     if line_fragments.len() == 1 {
-        return line_fragments[0].offset.top;
+        let has_preceding_item = line_item_bounds
+            .first()
+            .and_then(|bounds| *bounds)
+            .is_some_and(|(first, _)| first < item_index);
+        return line_fragments[0].offset.top
+            + if block_level_after_inline_content && has_preceding_item {
+                line_fragments[0].size.height
+            } else {
+                LayoutUnit::zero()
+            };
     }
     let mut preceding_line = None;
     for (line_index, bounds) in line_item_bounds.iter().enumerate() {
@@ -3885,14 +3924,11 @@ fn create_line_box(
                                 {
                                     // CSS 2.1 §10.8.1: an inline-block exports the
                                     // baseline of its last in-flow line box.
-                                    inline_block_last_line_baseline(result).or_else(|| {
+                                    inline_block_last_line_baseline(doc, result).or_else(|| {
                                         // Replaced form controls have their own
                                         // synthesized baseline even though they
                                         // contain no author-visible line box.
-                                        (!result.node_id.is_none()
-                                            && doc.node(result.node_id).form_control.is_some())
-                                        .then_some(result.first_baseline)
-                                        .flatten()
+                                        form_control_atomic_baseline(doc, result)
                                     })
                                 } else {
                                     result.first_baseline
@@ -4168,11 +4204,26 @@ fn create_line_box(
     // the line's block start. A normal line-height retains the font metric's
     // device-pixel ceiling; flooring that case moves tiny Ahem glyphs one row
     // above their line box after fragmentation.
-    let baseline = snap_line_baseline(
-        line_ascent,
-        &block_style.line_height,
-        space.writing_direction.is_horizontal(),
-    );
+    let contains_replaced_atomic = atomic_only_explicit_line
+        && line_info.items.iter().any(|item| {
+            if item.item_type != InlineItemType::AtomicInline {
+                return false;
+            }
+            let node = doc.node(items_data.items[item.item_index].node_id);
+            node.replaced.is_some() || node.form_control.is_some()
+        });
+    let baseline = if contains_replaced_atomic {
+        // Replaced boxes on zero/explicit-height lines are snapped with their
+        // used device-pixel extent.  Keeping this narrowly on native/replaced
+        // atomics avoids changing ordinary synthesized inline-block baselines.
+        LayoutUnit::from_f32(line_ascent.round())
+    } else {
+        snap_line_baseline(
+            line_ascent,
+            &block_style.line_height,
+            space.writing_direction.is_horizontal(),
+        )
+    };
 
     // Pre-shape hyphen to include its width in alignment calculations.
     let hyphen_shape_data = if line_info.has_forced_hyphen && !line_info.has_ellipsis {
@@ -4730,14 +4781,11 @@ fn create_line_box(
                             } else if style.display == Display::InlineBlock
                                 && uses_deterministic_text_profile(style)
                             {
-                                inline_block_last_line_baseline(result).or_else(|| {
+                                inline_block_last_line_baseline(doc, result).or_else(|| {
                                     // Replaced form controls have their own
                                     // synthesized baseline even though they
                                     // contain no author-visible line box.
-                                    (!result.node_id.is_none()
-                                        && doc.node(result.node_id).form_control.is_some())
-                                    .then_some(result.first_baseline)
-                                    .flatten()
+                                    form_control_atomic_baseline(doc, result)
                                 })
                             } else {
                                 result.first_baseline

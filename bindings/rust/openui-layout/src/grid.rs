@@ -1627,6 +1627,7 @@ fn layout_grid_child(
                 doc,
                 child_id,
                 available_block,
+                percentage_inline,
             )
         } else {
             crate::intrinsic_sizing::compute_intrinsic_inline_sizes(doc, child_id)
