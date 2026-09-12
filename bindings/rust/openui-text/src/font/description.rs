@@ -69,6 +69,10 @@ pub struct FontDescription {
     pub orientation: FontOrientation,
     /// Whether this text belongs to a platform-native control label.
     pub native_control_text: bool,
+    /// Whether this run belongs to an independently styled embedded document.
+    /// Chromium retains linear/subpixel advances for a fallback face in that
+    /// context even when the outer deterministic author profile is aliased.
+    pub embedded_document_text: bool,
     /// Whether native HTML-button Ahem advance compatibility is active.
     pub native_button_text_metrics: bool,
 }
@@ -101,6 +105,7 @@ impl FontDescription {
             font_optical_sizing: FontOpticalSizing::Auto,
             orientation: FontOrientation::Horizontal,
             native_control_text: false,
+            embedded_document_text: false,
             native_button_text_metrics: false,
         }
     }
@@ -144,6 +149,7 @@ impl FontDescription {
             font_optical_sizing: style.font_optical_sizing,
             orientation: openui_style::font_orientation(style.writing_mode, style.text_orientation),
             native_control_text: style.native_control_text,
+            embedded_document_text: style.embedded_document_text,
             native_button_text_metrics: style.native_button_text_metrics,
         }
     }

@@ -704,6 +704,11 @@ pub struct ComputedStyle {
     /// when the deterministic WPT harness selects aliased author text.
     pub native_control_text: bool,
 
+    /// Internal marker for text inside a statically lowered nested browsing
+    /// context. Such text uses Chromium's regular Fontations outline policy
+    /// and does not inherit the outer deterministic Ahem harness.
+    pub embedded_document_text: bool,
+
     /// Internal compatibility metric for authored HTML button labels. The
     /// Linux native control keeps 13.333px vertical metrics while rounding a
     /// deterministic Ahem advance cell to 13px.
@@ -1169,6 +1174,7 @@ impl ComputedStyle {
             font_style: FontStyleEnum::Normal,
             font_stretch: FontStretch::NORMAL, // 100%
             native_control_text: false,
+            embedded_document_text: false,
             native_button_text_metrics: false,
             font_variant_caps: FontVariantCaps::Normal,
             font_variant_ligatures: FontVariantLigatures::NORMAL,
@@ -1310,6 +1316,7 @@ impl ComputedStyle {
         style.font_style = origin.font_style;
         style.font_stretch = origin.font_stretch;
         style.native_control_text = origin.native_control_text;
+        style.embedded_document_text = origin.embedded_document_text;
         style.native_button_text_metrics = origin.native_button_text_metrics;
         style.font_variant_caps = origin.font_variant_caps;
         style.font_variant_ligatures = origin.font_variant_ligatures;

@@ -23,7 +23,7 @@ use skia_safe::{
 };
 
 use openui_layout::inline::text_combine::TextCombineLayout;
-use openui_style::{Color, ComputedStyle, FontFamily};
+use openui_style::{Color, ComputedStyle, FontFamily, GenericFontFamily};
 use openui_text::font::FontMetrics;
 use openui_text::shaping::{ShapeResult, TextRasterPolicy};
 
@@ -51,8 +51,13 @@ pub fn paint_text(
     origin: (f32, f32),
     style: &ComputedStyle,
 ) {
+    let author_lcd = uses_chromium_author_lcd(style);
     let raster_policy = if style.native_control_text {
         TextRasterPolicy::ChromiumNativeControl
+    } else if style.embedded_document_text {
+        TextRasterPolicy::ChromiumEmbeddedDocument
+    } else if author_lcd {
+        TextRasterPolicy::ChromiumAuthorLcd
     } else {
         TextRasterPolicy::Skia
     };
@@ -70,6 +75,7 @@ pub fn paint_text_with_raster_policy(
     // Build a Skia TextBlob from the shaped glyph runs.
     // Blink: TextPainter::Paint → DrawBlob → canvas->drawTextBlob()
     let lcd_origin = (style.native_control_text
+        || raster_policy == TextRasterPolicy::ChromiumAuthorLcd
         || std::env::var("OPENUI_REAL_FONT_RASTER").ok().as_deref() == Some("1"))
     .then(|| {
         origin.0
@@ -114,6 +120,34 @@ pub fn paint_text_with_raster_policy(
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
         canvas.draw_text_blob(&text_blob, Point::new(origin.0, origin.1), &paint);
+    }
+}
+
+fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {
+    if style.native_control_text
+        || style.embedded_document_text
+        || std::env::var("OPENUI_EDGING").ok().as_deref() != Some("alias")
+    {
+        return false;
+    }
+    match style.font_family.families.first() {
+        Some(FontFamily::Named(name)) => ![
+            "Ahem",
+            "Droid Sans Fallback",
+            "Noto Sans Devanagari",
+            "Noto Color Emoji",
+            "DejaVu Sans",
+        ]
+        .iter()
+        .any(|family| name.eq_ignore_ascii_case(family)),
+        Some(FontFamily::Generic(family)) => !matches!(
+            family,
+            GenericFontFamily::None
+                | GenericFontFamily::SansSerif
+                | GenericFontFamily::Emoji
+                | GenericFontFamily::UiSansSerif
+        ),
+        None => false,
     }
 }
 

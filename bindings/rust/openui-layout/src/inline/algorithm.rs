@@ -39,6 +39,10 @@ use super::line_width::{
     compute_line_availability, compute_line_availability_for_block_size, next_float_bottom,
 };
 
+/// Blink sizes text-emphasis marks to one half of the originating font em.
+/// Keep layout's reserved extent paired with the paint-side mark size.
+const TEXT_EMPHASIS_FONT_SIZE_RATIO: f32 = 0.5;
+
 fn uses_deterministic_text_profile(style: &ComputedStyle) -> bool {
     style.font_family.families.iter().any(|family| {
         matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
@@ -584,6 +588,11 @@ fn fragment_text_ink_bounds(
         })
 }
 
+fn fragment_text_ink_height(fragment: &Fragment) -> LayoutUnit {
+    fragment_text_ink_bounds(fragment, LayoutUnit::zero())
+        .map_or(LayoutUnit::zero(), |(start, end)| end - start)
+}
+
 fn fragment_descendant_text_ink_end(fragment: &Fragment) -> Option<LayoutUnit> {
     fragment
         .children
@@ -614,6 +623,14 @@ fn nested_ruby_annotation_extent(doc: &Document, ruby_id: NodeId) -> LayoutUnit 
         .map(|annotation_id| nested_extent(doc, annotation_id))
         .fold(0.0_f32, f32::max);
     LayoutUnit::from_f32(extent)
+}
+
+fn fragment_contains_tag(doc: &Document, fragment: &Fragment, tag: ElementTag) -> bool {
+    (!fragment.node_id.is_none() && doc.node(fragment.node_id).tag == tag)
+        || fragment
+            .children
+            .iter()
+            .any(|child| fragment_contains_tag(doc, child, tag))
 }
 
 /// CSS 2.1 exposes an inline-block's last in-flow line-box baseline. A block
@@ -3821,6 +3838,25 @@ fn create_line_box(
                     text_line_metrics(primary_metrics, style, item, item_result, items_data);
                 let item_lh =
                     compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
+                let emphasis_extent = if style.writing_mode.is_horizontal()
+                    && style.text_emphasis_mark != openui_style::TextEmphasisMark::None
+                {
+                    style.font_size * TEXT_EMPHASIS_FONT_SIZE_RATIO
+                } else {
+                    0.0
+                };
+                let item_ascent = item_lh.ascent
+                    + if style.text_emphasis_position.over {
+                        emphasis_extent
+                    } else {
+                        0.0
+                    };
+                let item_descent = item_lh.descent
+                    + if style.text_emphasis_position.over {
+                        0.0
+                    } else {
+                        emphasis_extent
+                    };
 
                 let element_line_height =
                     used_line_height(&metrics, &style.line_height, style.font_size);
@@ -3843,21 +3879,21 @@ fn create_line_box(
                 match effective_vertical_align {
                     VerticalAlign::Top => {
                         deferred_items.push(DeferredItem {
-                            item_ascent: item_lh.ascent,
-                            item_descent: item_lh.descent,
+                            item_ascent,
+                            item_descent,
                             is_top: true,
                         });
                     }
                     VerticalAlign::Bottom => {
                         deferred_items.push(DeferredItem {
-                            item_ascent: item_lh.ascent,
-                            item_descent: item_lh.descent,
+                            item_ascent,
+                            item_descent,
                             is_top: false,
                         });
                     }
                     _ => {
-                        line_ascent = line_ascent.max(item_lh.ascent - baseline_shift);
-                        line_descent = line_descent.max(item_lh.descent + baseline_shift);
+                        line_ascent = line_ascent.max(item_ascent - baseline_shift);
+                        line_descent = line_descent.max(item_descent + baseline_shift);
                     }
                 }
             }
@@ -3877,16 +3913,51 @@ fn create_line_box(
                             (result.children.first()?, result.children.get(1))
                         };
                         let base_line = base.children.first()?;
-                        // Ruby annotations are ink overflow. Even nested ruby
-                        // must not enlarge the originating line box: CSS Ruby
-                        // keeps line-height and its baseline tied to the base
-                        // container while annotations paint outside it.
-                        let _ = annotation;
-                        let nested_annotation_extent =
-                            nested_ruby_annotation_extent(doc, item.node_id);
+                        let base_ink = fragment_text_ink_height(base_line);
+                        let annotation_ink = annotation
+                            .map(fragment_text_ink_height)
+                            .unwrap_or(LayoutUnit::zero());
+                        let active_clamp = block_style.line_clamp != openui_style::LineClamp::None
+                            || space.line_clamp_context.is_some();
+                        if !active_clamp
+                            && base_ink == LayoutUnit::zero()
+                            && annotation_ink == LayoutUnit::zero()
+                        {
+                            return None;
+                        }
+                        let auto_block_size_clamp =
+                            block_style.line_clamp == openui_style::LineClamp::Auto
+                                || space.line_clamp_context.as_ref().is_some_and(|context| {
+                                    context.remaining_block_size().is_some()
+                                });
+                        let metric_expansion = if auto_block_size_clamp {
+                            let mut annotation_ink = annotation_ink;
+                            if annotation.is_some_and(|fragment| {
+                                fragment_contains_tag(doc, fragment, ElementTag::Ruby)
+                            }) {
+                                annotation_ink += LayoutUnit::from_f32(
+                                    doc.children(item.node_id)
+                                        .find(|child_id| {
+                                            doc.node(*child_id).tag == ElementTag::RubyText
+                                        })
+                                        .map(|child_id| doc.node(child_id).style.font_size)
+                                        .unwrap_or(0.0),
+                                );
+                            }
+                            if style.ruby_position.is_over() {
+                                (annotation_ink - base_ink).clamp_negative_to_zero()
+                            } else {
+                                LayoutUnit::zero()
+                            }
+                        } else {
+                            // A counted clamp lays out a fixed number of ruby
+                            // lines. Only nested annotations expand the base
+                            // metric; ordinary annotations remain ink overflow.
+                            nested_ruby_annotation_extent(doc, item.node_id)
+                        };
                         Some((
-                            (base_line.size.height + nested_annotation_extent).to_f32(),
-                            base_line.baseline_offset + nested_annotation_extent.to_f32(),
+                            (base_line.size.height + metric_expansion).to_f32(),
+                            base_line.baseline_offset + metric_expansion.to_f32(),
                         ))
                     });
                 let item_height = if let Some((base_height, _)) = ruby_base_metrics {
@@ -3948,6 +4019,8 @@ fn create_line_box(
                                     Some(result.size.height)
                                 } else if style.display == Display::InlineBlock
                                     && uses_deterministic_text_profile(style)
+                                    && style.overflow_x == openui_style::Overflow::Visible
+                                    && style.overflow_y == openui_style::Overflow::Visible
                                 {
                                     // CSS 2.1 §10.8.1: an inline-block exports the
                                     // baseline of its last in-flow line box.
@@ -4078,6 +4151,25 @@ fn create_line_box(
                 let metrics = font.font_metrics().copied().unwrap_or_default();
                 let item_lh =
                     compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
+                let emphasis_extent = if style.writing_mode.is_horizontal()
+                    && style.text_emphasis_mark != openui_style::TextEmphasisMark::None
+                {
+                    style.font_size * TEXT_EMPHASIS_FONT_SIZE_RATIO
+                } else {
+                    0.0
+                };
+                let item_ascent = item_lh.ascent
+                    + if style.text_emphasis_position.over {
+                        emphasis_extent
+                    } else {
+                        0.0
+                    };
+                let item_descent = item_lh.descent
+                    + if style.text_emphasis_position.over {
+                        0.0
+                    } else {
+                        emphasis_extent
+                    };
                 let element_line_height =
                     used_line_height(&metrics, &style.line_height, style.font_size);
                 let parent_metrics = inline_metrics_stack.last().unwrap_or(block_metrics);
@@ -4101,18 +4193,18 @@ fn create_line_box(
                 if line_has_content {
                     match style.vertical_align {
                         VerticalAlign::Top => deferred_items.push(DeferredItem {
-                            item_ascent: item_lh.ascent,
-                            item_descent: item_lh.descent,
+                            item_ascent,
+                            item_descent,
                             is_top: true,
                         }),
                         VerticalAlign::Bottom => deferred_items.push(DeferredItem {
-                            item_ascent: item_lh.ascent,
-                            item_descent: item_lh.descent,
+                            item_ascent,
+                            item_descent,
                             is_top: false,
                         }),
                         _ => {
-                            line_ascent = line_ascent.max(item_lh.ascent - baseline_shift);
-                            line_descent = line_descent.max(item_lh.descent + baseline_shift);
+                            line_ascent = line_ascent.max(item_ascent - baseline_shift);
+                            line_descent = line_descent.max(item_descent + baseline_shift);
                         }
                     }
                 }
@@ -4817,6 +4909,8 @@ fn create_line_box(
                                 Some(result.size.height)
                             } else if style.display == Display::InlineBlock
                                 && uses_deterministic_text_profile(style)
+                                && style.overflow_x == openui_style::Overflow::Visible
+                                && style.overflow_y == openui_style::Overflow::Visible
                             {
                                 inline_block_last_line_baseline(doc, result)
                                     .or_else(|| {
@@ -5008,7 +5102,9 @@ fn create_line_box(
             // inline box whose remaining contents continue beyond the clip.
             // The decoration is therefore clipped at the line's inline-end
             // edge rather than shortened to the last retained item.
-            inline_boxes[index].border_end = if line_info.has_ellipsis {
+            inline_boxes[index].border_end = if line_info.has_ellipsis
+                && block_style.text_overflow == openui_style::TextOverflow::Ellipsis
+            {
                 inline_offset.max_of(available_width)
             } else {
                 inline_offset

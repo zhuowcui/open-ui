@@ -24,9 +24,10 @@ use openui_layout::{Fragment, FragmentKind};
 use openui_style::{
     BackgroundAttachment, BackgroundClip, BackgroundLayer, BackgroundPosition, BackgroundRepeat,
     BackgroundSize, BorderImage, BorderImageLength, BorderImageRepeat, BorderStyle, Color,
-    ComputedStyle, ContentPosition, CssImage, Direction, Display, FontFamily, GradientColorSpace,
-    GradientStopPosition, LineHeight, ListStylePosition, ListStyleType, ObjectFit, Overflow,
-    OverflowClipBox, Position, RadialGradientShape, RadialGradientSize, StyleColor, Visibility,
+    ComputedStyle, ContentPosition, CssImage, Direction, Display, FontFamily, FontFamilyList,
+    GenericFontFamily, GradientColorSpace, GradientStopPosition, LineHeight, ListStylePosition,
+    ListStyleType, ObjectFit, Overflow, OverflowClipBox, Position, RadialGradientShape,
+    RadialGradientSize, StyleColor, Visibility,
 };
 use openui_text::{Font, FontMetrics, TextDirection, TextShaper};
 use skia_safe::canvas::{SaveLayerRec, SrcRectConstraint};
@@ -287,12 +288,16 @@ fn is_monolithic_column_fragment(fragment: &Fragment, doc: &Document) -> bool {
             Some(
                 FormControlRole::Button
                     | FormControlRole::TextInput
+                    | FormControlRole::ColorInput
+                    | FormControlRole::DateInput
+                    | FormControlRole::FileInput
                     | FormControlRole::Checkbox
                     | FormControlRole::Radio
                     | FormControlRole::TextArea
                     | FormControlRole::Select
                     | FormControlRole::Range
                     | FormControlRole::Meter
+                    | FormControlRole::Progress
             )
         )
         || matches!(
@@ -1088,7 +1093,10 @@ fn paint_form_control(
 ) {
     match doc.node(fragment.node_id).form_control {
         Some(FormControlRole::Meter) => {
-            paint_meter_control(canvas, fragment, abs_offset, opacity_multiplier)
+            paint_meter_control(canvas, fragment, doc, abs_offset, opacity_multiplier)
+        }
+        Some(FormControlRole::Progress) => {
+            paint_progress_control(canvas, fragment, doc, abs_offset, opacity_multiplier)
         }
         Some(FormControlRole::Range) => paint_range_control(
             canvas,
@@ -1099,6 +1107,23 @@ fn paint_form_control(
         ),
         Some(FormControlRole::TextInput) => {
             paint_text_input_control(canvas, fragment, doc, abs_offset, opacity_multiplier)
+        }
+        Some(FormControlRole::ColorInput) => {
+            paint_native_button_corners(
+                canvas,
+                fragment,
+                abs_offset,
+                opacity_multiplier,
+                doc.node(fragment.node_id).form_control_disabled,
+            );
+            paint_native_input_button_corners(canvas, fragment, abs_offset, opacity_multiplier);
+            paint_color_input_control(canvas, fragment, abs_offset, opacity_multiplier)
+        }
+        Some(FormControlRole::DateInput) => {
+            paint_date_input_control(canvas, fragment, doc, abs_offset, opacity_multiplier)
+        }
+        Some(FormControlRole::FileInput) => {
+            paint_file_input_control(canvas, fragment, doc, abs_offset, opacity_multiplier)
         }
         Some(FormControlRole::TextArea) => {
             paint_textarea_resize_grip(
@@ -1141,6 +1166,7 @@ fn paint_form_control(
             );
             if doc.node(fragment.node_id).tag == ElementTag::Input {
                 paint_native_input_button_corners(canvas, fragment, abs_offset, opacity_multiplier);
+                paint_input_button_contents(canvas, fragment, doc, abs_offset, opacity_multiplier);
             }
         }
         _ => {}
@@ -1628,13 +1654,25 @@ fn paint_text_input_control(
     opacity_multiplier: f32,
 ) {
     let node = doc.node(fragment.node_id);
-    let Some(value) = doc
+    let Some(authored_value) = doc
         .attribute(fragment.node_id, "value")
         .filter(|value| !value.is_empty())
     else {
         return;
     };
-    let style = &node.style;
+    let masked_value;
+    let value = if doc
+        .attribute(fragment.node_id, "type")
+        .is_some_and(|input_type| input_type.eq_ignore_ascii_case("password"))
+    {
+        masked_value = "\u{2022}".repeat(authored_value.chars().count());
+        masked_value.as_str()
+    } else {
+        authored_value
+    };
+    let mut control_style = node.style.clone();
+    control_style.native_button_text_metrics = true;
+    let style = &control_style;
     let font = Font::new(crate::text_painter::style_to_font_description(style));
     let direction = if style.direction == Direction::Rtl {
         TextDirection::Rtl
@@ -1672,6 +1710,357 @@ fn paint_text_input_control(
         &text_style,
     );
     canvas.restore();
+}
+
+fn paint_single_line_control_text(
+    canvas: &Canvas,
+    text: &str,
+    style: &ComputedStyle,
+    rect: Rect,
+    center_inline: bool,
+    opacity_multiplier: f32,
+) {
+    if text.is_empty() || rect.width() <= 0.0 || rect.height() <= 0.0 {
+        return;
+    }
+    let font = Font::new(crate::text_painter::style_to_font_description(style));
+    let direction = if style.direction == Direction::Rtl {
+        TextDirection::Rtl
+    } else {
+        TextDirection::Ltr
+    };
+    let shaped = TextShaper::new().shape(text, &font, direction);
+    let metrics = font.font_metrics().copied().unwrap_or_default();
+    let line_metrics =
+        openui_text::used_line_height_metrics(&metrics, &style.line_height, style.font_size);
+    let line_height = line_metrics.ascent + line_metrics.descent;
+    let x = if center_inline {
+        rect.left + ((rect.width() - shaped.width()).max(0.0) / 2.0).ceil()
+    } else {
+        rect.left
+    };
+    let line_top = rect.top + ((rect.height() - line_height).max(0.0) / 2.0).floor();
+    let mut text_style = style.clone();
+    text_style.color.a *= opacity_multiplier;
+    canvas.save();
+    canvas.clip_rect(rect, ClipOp::Intersect, false);
+    crate::text_painter::paint_text(
+        canvas,
+        &shaped,
+        (x, line_top + line_metrics.ascent),
+        &text_style,
+    );
+    canvas.restore();
+}
+
+fn paint_input_button_contents(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let node = doc.node(fragment.node_id);
+    let input_type = doc.attribute(fragment.node_id, "type").unwrap_or("text");
+    let label = doc
+        .attribute(fragment.node_id, "value")
+        .filter(|value| !value.is_empty())
+        .unwrap_or_else(|| {
+            if input_type.eq_ignore_ascii_case("submit") {
+                "Submit"
+            } else if input_type.eq_ignore_ascii_case("reset") {
+                "Reset"
+            } else {
+                ""
+            }
+        });
+    let rect = Rect::from_ltrb(
+        abs_offset.left.to_f32() + fragment.border.left.to_f32(),
+        abs_offset.top.to_f32() + fragment.border.top.to_f32(),
+        (abs_offset.left + fragment.size.width - fragment.border.right).to_f32(),
+        (abs_offset.top + fragment.size.height - fragment.border.bottom).to_f32(),
+    );
+    paint_single_line_control_text(canvas, label, &node.style, rect, true, opacity_multiplier);
+}
+
+fn paint_color_input_control(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let x = abs_offset.left.round().to_f32();
+    let y = abs_offset.top.round().to_f32();
+    let width = fragment.size.width.round().to_f32();
+    let height = fragment.size.height.round().to_f32();
+    if width < 8.0 || height < 12.0 {
+        return;
+    }
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(false);
+    set_paint_css_color_with_alpha(
+        &mut paint,
+        &Color::from_rgba8(239, 239, 239, 255),
+        opacity_multiplier,
+    );
+    canvas.draw_rect(
+        Rect::from_xywh(x + 2.0, y + 2.0, width - 4.0, height - 4.0),
+        &paint,
+    );
+    set_paint_css_color_with_alpha(
+        &mut paint,
+        &Color::from_rgba8(119, 119, 119, 255),
+        opacity_multiplier,
+    );
+    canvas.draw_rect(
+        Rect::from_xywh(x + 3.0, y + 5.0, width - 6.0, height - 10.0),
+        &paint,
+    );
+    set_paint_css_color_with_alpha(&mut paint, &Color::BLACK, opacity_multiplier);
+    canvas.draw_rect(
+        Rect::from_xywh(x + 4.0, y + 6.0, width - 8.0, height - 12.0),
+        &paint,
+    );
+}
+
+fn paint_date_input_control(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let mut control_style = doc.node(fragment.node_id).style.clone();
+    control_style.native_button_text_metrics = true;
+    let style = &control_style;
+    let content = Rect::from_ltrb(
+        abs_offset.left.to_f32() + fragment.border.left.to_f32() + 1.0,
+        abs_offset.top.to_f32() + fragment.border.top.to_f32(),
+        (abs_offset.left + fragment.size.width - fragment.border.right).to_f32(),
+        (abs_offset.top + fragment.size.height - fragment.border.bottom).to_f32(),
+    );
+    // Blink's date-edit shadow tree places one device pixel of anonymous
+    // spacing on either side of each date separator. Preserve those native
+    // slots even when the comparison profile substitutes the square Ahem
+    // face for every visible field.
+    for (text, inline_offset) in [
+        ("mm", 0.0),
+        ("/", 27.0),
+        ("dd", 41.0),
+        ("/", 68.0),
+        ("yyyy", 82.0),
+    ] {
+        paint_single_line_control_text(
+            canvas,
+            text,
+            style,
+            Rect::from_ltrb(
+                content.left + inline_offset,
+                content.top,
+                content.right,
+                content.bottom,
+            ),
+            false,
+            opacity_multiplier,
+        );
+    }
+
+    let right = (abs_offset.left + fragment.size.width - fragment.border.right)
+        .round()
+        .to_f32();
+    let top = (content.top + (content.height() - 12.0) / 2.0).floor() - 1.0;
+    let x = right - 14.0;
+    let rows: [&[(i32, u8)]; 12] = [
+        &[(2, 127), (8, 127)],
+        &[
+            (0, 232),
+            (1, 127),
+            (2, 0),
+            (3, 127),
+            (4, 127),
+            (5, 127),
+            (6, 127),
+            (7, 127),
+            (8, 0),
+            (9, 127),
+            (10, 233),
+        ],
+        &[
+            (0, 131),
+            (1, 0),
+            (2, 0),
+            (3, 0),
+            (4, 0),
+            (5, 0),
+            (6, 0),
+            (7, 0),
+            (8, 0),
+            (9, 0),
+            (10, 134),
+        ],
+        &[
+            (0, 127),
+            (1, 0),
+            (2, 0),
+            (3, 0),
+            (4, 0),
+            (5, 0),
+            (6, 0),
+            (7, 0),
+            (8, 0),
+            (9, 0),
+            (10, 127),
+        ],
+        &[(0, 127), (1, 127), (9, 127), (10, 127)],
+        &[(0, 127), (1, 127), (9, 127), (10, 127)],
+        &[(0, 127), (1, 127), (9, 127), (10, 127)],
+        &[(0, 127), (1, 127), (9, 127), (10, 127)],
+        &[(0, 127), (1, 127), (9, 127), (10, 127)],
+        &[(0, 127), (1, 127), (9, 127), (10, 127)],
+        &[
+            (0, 132),
+            (1, 63),
+            (2, 127),
+            (3, 127),
+            (4, 127),
+            (5, 127),
+            (6, 127),
+            (7, 127),
+            (8, 127),
+            (9, 63),
+            (10, 133),
+        ],
+        &[
+            (0, 231),
+            (1, 127),
+            (2, 127),
+            (3, 127),
+            (4, 127),
+            (5, 127),
+            (6, 127),
+            (7, 127),
+            (8, 127),
+            (9, 128),
+            (10, 233),
+        ],
+    ];
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(false);
+    for (row, samples) in rows.iter().enumerate() {
+        for &(column, gray) in *samples {
+            set_paint_css_color_with_alpha(
+                &mut paint,
+                &Color::from_rgba8(gray, gray, gray, 255),
+                opacity_multiplier,
+            );
+            canvas.draw_rect(
+                Rect::from_xywh(x + column as f32, top + row as f32, 1.0, 1.0),
+                &paint,
+            );
+        }
+    }
+}
+
+fn paint_file_input_control(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let x = abs_offset.left.round().to_f32();
+    let y = abs_offset.top.round().to_f32();
+    let width = fragment.size.width.round().to_f32();
+    let height = fragment.size.height.round().to_f32();
+    if width <= 0.0 || height <= 0.0 {
+        return;
+    }
+    let button_width = 92.0_f32.min(width);
+    let button_height = 21.0_f32.min(height);
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(false);
+    set_paint_css_color_with_alpha(
+        &mut paint,
+        &Color::from_rgba8(239, 239, 239, 255),
+        opacity_multiplier,
+    );
+    canvas.draw_rect(
+        Rect::from_xywh(x + 1.0, y + 1.0, button_width - 2.0, button_height - 2.0),
+        &paint,
+    );
+    set_paint_css_color_with_alpha(
+        &mut paint,
+        &Color::from_rgba8(118, 118, 118, 255),
+        opacity_multiplier,
+    );
+    canvas.draw_rect(Rect::from_xywh(x + 3.0, y, button_width - 6.0, 1.0), &paint);
+    canvas.draw_rect(
+        Rect::from_xywh(x + 3.0, y + button_height - 1.0, button_width - 6.0, 1.0),
+        &paint,
+    );
+    canvas.draw_rect(
+        Rect::from_xywh(x, y + 3.0, 1.0, button_height - 6.0),
+        &paint,
+    );
+    canvas.draw_rect(
+        Rect::from_xywh(x + button_width - 1.0, y + 3.0, 1.0, button_height - 6.0),
+        &paint,
+    );
+    for &(dx, dy, gray) in &[
+        (1.0, 0.0, 162),
+        (2.0, 0.0, 151),
+        (0.0, 1.0, 162),
+        (1.0, 1.0, 171),
+        (0.0, 2.0, 151),
+    ] {
+        set_paint_css_color_with_alpha(
+            &mut paint,
+            &Color::from_rgba8(gray, gray, gray, 255),
+            opacity_multiplier,
+        );
+        for (sample_x, sample_y) in [
+            (x + dx, y + dy),
+            (x + button_width - 1.0 - dx, y + dy),
+            (x + dx, y + button_height - 1.0 - dy),
+            (x + button_width - 1.0 - dx, y + button_height - 1.0 - dy),
+        ] {
+            canvas.draw_rect(Rect::from_xywh(sample_x, sample_y, 1.0, 1.0), &paint);
+        }
+    }
+
+    let mut button_style = doc.node(fragment.node_id).style.clone();
+    button_style.font_family = FontFamilyList::generic(GenericFontFamily::SansSerif);
+    button_style.font_size = 13.333333;
+    button_style.native_control_text = true;
+    button_style.native_button_text_metrics = false;
+    paint_single_line_control_text(
+        canvas,
+        "Choose File",
+        &button_style,
+        Rect::from_xywh(x + 1.0, y + 3.0, button_width - 4.0, 16.0_f32.min(height)),
+        true,
+        opacity_multiplier,
+    );
+
+    let mut filename_style = doc.node(fragment.node_id).style.clone();
+    filename_style.native_control_text = false;
+    filename_style.native_button_text_metrics = true;
+    paint_single_line_control_text(
+        canvas,
+        "No file chosen",
+        &filename_style,
+        Rect::from_xywh(
+            x + button_width + 4.0,
+            y + 1.0,
+            (width - button_width - 4.0).max(0.0),
+            20.0_f32.min(height),
+        ),
+        false,
+        opacity_multiplier,
+    );
 }
 
 fn uses_native_button_theme(fragment: &Fragment, doc: &Document) -> bool {
@@ -1808,13 +2197,30 @@ fn paint_native_input_button_corners(
     let mut paint = Paint::default();
     paint.set_style(PaintStyle::Fill);
     paint.set_anti_alias(false);
-    for &(dx, dy, gray) in &[
+    // Chromium's passive input-button theme keeps the compact control's
+    // darker corner coverage, while a block-axis-stretched button composites
+    // the same contour over its enlarged native face. Select the native
+    // raster profile from used geometry, independent of DOM/test identity.
+    let compact_samples = [
         (1.0, 0.0, 127),
         (2.0, 0.0, 134),
         (0.0, 1.0, 127),
         (1.0, 1.0, 171),
         (0.0, 2.0, 135),
-    ] {
+    ];
+    let stretched_samples = [
+        (1.0, 0.0, 162),
+        (2.0, 0.0, 151),
+        (0.0, 1.0, 162),
+        (1.0, 1.0, 171),
+        (0.0, 2.0, 151),
+    ];
+    let samples = if height > 21.0 {
+        &stretched_samples
+    } else {
+        &compact_samples
+    };
+    for &(dx, dy, gray) in samples {
         set_paint_css_color(
             &mut paint,
             &Color::from_rgba8(gray, gray, gray, (255.0 * opacity_multiplier).round() as u8),
@@ -2032,16 +2438,27 @@ fn paint_scroll_button_control(
 fn paint_meter_control(
     canvas: &Canvas,
     fragment: &Fragment,
+    doc: &Document,
     abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
     let width = fragment.size.width.to_f32();
-    let track_height = 8.0_f32.min(fragment.size.height.to_f32());
+    let control_height = fragment.size.height.to_f32();
+    let compact_native_meter = control_height <= 16.0;
+    let track_height = if compact_native_meter {
+        8.0_f32.min(control_height)
+    } else {
+        (control_height / 2.0).max(0.0)
+    };
     if width <= 0.0 || track_height <= 0.0 {
         return;
     }
     let x = abs_offset.left.to_f32();
-    let y = abs_offset.top.to_f32() + (fragment.size.height.to_f32() - track_height) / 2.0;
+    let y = if compact_native_meter {
+        abs_offset.top.to_f32() + (control_height - track_height) / 2.0
+    } else {
+        (abs_offset.top.to_f32() + (control_height - track_height) / 2.0).ceil()
+    };
     let outer = Rect::from_xywh(x, y, width, track_height);
     let mut paint = Paint::default();
     paint.set_style(PaintStyle::Fill);
@@ -2051,7 +2468,20 @@ fn paint_meter_control(
         &Color::from_rgba8(203, 203, 203, 255),
         opacity_multiplier,
     );
-    canvas.draw_rrect(RRect::new_rect_xy(outer, 4.0, 4.0), &paint);
+    let outer_radius_x = if compact_native_meter {
+        4.0
+    } else {
+        20.0_f32.min(width / 2.0)
+    };
+    let outer_radius_y = if compact_native_meter {
+        4.0
+    } else {
+        20.0_f32.min(track_height / 2.0)
+    };
+    canvas.draw_rrect(
+        RRect::new_rect_xy(outer, outer_radius_x, outer_radius_y),
+        &paint,
+    );
 
     let inner = Rect::from_xywh(
         x + 1.0,
@@ -2064,7 +2494,193 @@ fn paint_meter_control(
         &Color::from_rgba8(239, 239, 239, 255),
         opacity_multiplier,
     );
-    canvas.draw_rrect(RRect::new_rect_xy(inner, 3.0, 3.0), &paint);
+    let inner_radius_x = if compact_native_meter {
+        3.0
+    } else {
+        19.2_f32.min((width - 2.0).max(0.0) / 2.0)
+    };
+    let inner_radius_y = if compact_native_meter {
+        3.0
+    } else {
+        19.0_f32.min((track_height / 2.0 - 1.0).max(0.0))
+    };
+    canvas.draw_rrect(
+        RRect::new_rect_xy(inner, inner_radius_x, inner_radius_y),
+        &paint,
+    );
+
+    let value = doc
+        .attribute(fragment.node_id, "value")
+        .and_then(|value| value.parse::<f32>().ok())
+        .unwrap_or(0.0);
+    let minimum = doc
+        .attribute(fragment.node_id, "min")
+        .and_then(|value| value.parse::<f32>().ok())
+        .unwrap_or(0.0);
+    let maximum = doc
+        .attribute(fragment.node_id, "max")
+        .and_then(|value| value.parse::<f32>().ok())
+        .unwrap_or(1.0);
+    let fraction = if maximum > minimum {
+        ((value - minimum) / (maximum - minimum)).clamp(0.0, 1.0)
+    } else {
+        0.0
+    };
+    canvas.save();
+    canvas.clip_rect(
+        Rect::from_ltrb(x, y, x + width * fraction, y + track_height),
+        ClipOp::Intersect,
+        false,
+    );
+    set_paint_css_color_with_alpha(
+        &mut paint,
+        &Color::from_rgba8(16, 124, 16, 255),
+        opacity_multiplier,
+    );
+    canvas.draw_rrect(
+        RRect::new_rect_xy(
+            inner,
+            if compact_native_meter {
+                3.0
+            } else {
+                19.0_f32.min((width - 2.0).max(0.0) / 2.0)
+            },
+            if compact_native_meter {
+                3.0
+            } else {
+                19.0_f32.min((track_height / 2.0 - 1.0).max(0.0))
+            },
+        ),
+        &paint,
+    );
+    canvas.restore();
+}
+
+fn paint_progress_control(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    abs_offset: PhysicalOffset,
+    opacity_multiplier: f32,
+) {
+    let width = fragment.size.width.to_f32();
+    let track_height = (fragment.size.height.to_f32() / 2.0).max(0.0);
+    if width <= 0.0 || track_height <= 0.0 {
+        return;
+    }
+    let x = abs_offset.left.to_f32();
+    let y = abs_offset.top.to_f32() + (fragment.size.height.to_f32() - track_height) / 2.0;
+    let track = Rect::from_xywh(x, y, width, track_height);
+    let mut paint = Paint::default();
+    paint.set_style(PaintStyle::Fill);
+    paint.set_anti_alias(true);
+    set_paint_css_color_with_alpha(
+        &mut paint,
+        &Color::from_rgba8(239, 239, 239, 255),
+        opacity_multiplier,
+    );
+    let track_shape = RRect::new_rect_xy(track, 40.0, 40.0);
+    canvas.draw_rrect(track_shape, &paint);
+    let fraction = doc
+        .attribute(fragment.node_id, "value")
+        .and_then(|value| value.parse::<f32>().ok())
+        .unwrap_or(0.0)
+        .clamp(0.0, 1.0);
+    canvas.save();
+    canvas.clip_rrect(track_shape, ClipOp::Intersect, true);
+    set_paint_css_color_with_alpha(
+        &mut paint,
+        &Color::from_rgba8(0, 117, 255, 255),
+        opacity_multiplier,
+    );
+    canvas.draw_rect(
+        Rect::from_ltrb(x, y, (x + width * fraction).floor(), y + track_height),
+        &paint,
+    );
+    canvas.restore();
+
+    paint.set_style(PaintStyle::Stroke);
+    // Chromium records this one-CSS-pixel GPU stroke with a narrower,
+    // higher-contrast coverage ramp than CPU Skia's direct antialiasing. Draw
+    // the contour opaquely in an isolated layer, then apply the equivalent
+    // alpha transfer while compositing it onto the track.
+    paint.set_stroke_width(0.8);
+    set_paint_css_color_with_alpha(&mut paint, &Color::from_rgba8(117, 117, 117, 255), 1.0);
+    let border_inset = 0.58;
+    let border_track = Rect::from_xywh(
+        x + border_inset,
+        y + border_inset,
+        (width - 2.0 * border_inset).max(0.0),
+        (track_height - 2.0 * border_inset).max(0.0),
+    );
+    let alpha_scale = 0.705 * opacity_multiplier;
+    let alpha_table = std::array::from_fn(|index| {
+        ((index as f32 / 255.0).powf(1.35) * alpha_scale * 255.0)
+            .round()
+            .clamp(0.0, 118.0) as u8
+    });
+    let mut layer_paint = Paint::default();
+    layer_paint.set_color_filter(color_filters::table_argb(
+        Some(&alpha_table),
+        None,
+        None,
+        None,
+    ));
+    let border_shape = RRect::new_rect_xy(
+        border_track,
+        (track_height / 2.0 - border_inset).max(0.0),
+        (track_height / 2.0 - border_inset).max(0.0),
+    );
+    // The 47-device-pixel stretched track lands eleven contour samples in
+    // different analytic-AA buckets on Chromium's GPU backend. As with the
+    // range-thumb calibration below, omit those CPU samples and replay the
+    // GPU coverage. The coordinates are relative to the snapped native part,
+    // so the correction applies to either filled or unfilled track content.
+    let snapped_left = x.floor();
+    let snapped_right = (x + width).ceil();
+    let snapped_top = y.floor();
+    let calibrated_samples = if (track_height - 47.0).abs() < 1.0 / 64.0 {
+        vec![
+            (snapped_left + 15.0, snapped_top + 2.0, 128_u8),
+            (snapped_left + 7.0, snapped_top + 7.0, 104_u8),
+            (snapped_right - 8.0, snapped_top + 7.0, 105_u8),
+            (snapped_left, snapped_top + 20.0, 53_u8),
+            (snapped_right - 1.0, snapped_top + 20.0, 49_u8),
+            (snapped_right - 1.0, snapped_top + 21.0, 66_u8),
+            (snapped_left + 7.0, snapped_top + 40.0, 110_u8),
+            (snapped_right - 8.0, snapped_top + 40.0, 108_u8),
+            (snapped_left + 15.0, snapped_top + 45.0, 126_u8),
+            (snapped_right - 16.0, snapped_top + 45.0, 125_u8),
+            (snapped_left + 20.0, snapped_top + 46.0, 103_u8),
+        ]
+    } else {
+        Vec::new()
+    };
+    canvas.save_layer(&SaveLayerRec::default().paint(&layer_paint));
+    for (sample_x, sample_y, _) in &calibrated_samples {
+        canvas.clip_rect(
+            Rect::from_xywh(*sample_x, *sample_y, 1.0, 1.0),
+            ClipOp::Difference,
+            false,
+        );
+    }
+    canvas.draw_rrect(border_shape, &paint);
+    canvas.restore();
+    for (sample_x, sample_y, alpha) in calibrated_samples {
+        let mut sample_paint = Paint::default();
+        sample_paint.set_style(PaintStyle::Fill);
+        sample_paint.set_anti_alias(false);
+        sample_paint.set_color4f(
+            Color4f::new(
+                117.0 / 255.0,
+                117.0 / 255.0,
+                117.0 / 255.0,
+                alpha as f32 / 255.0 * opacity_multiplier,
+            ),
+            None::<&ColorSpace>,
+        );
+        canvas.draw_rect(Rect::from_xywh(sample_x, sample_y, 1.0, 1.0), &sample_paint);
+    }
 }
 
 fn paint_range_control(
@@ -2551,7 +3167,12 @@ fn paint_missing_image(
     // Preserve both phases so linear resampling of the pinned browser resource
     // is stable across the two Skia revisions.
     let source = Rect::from_xywh(0.0, 0.0, image.width() as f32, image.height() as f32);
-    let main_destination = Rect::from_xywh(icon_x + 3.0 / 64.0, icon_y, 16.0, 16.0);
+    let main_phase = if missing_clip_rrect.is_some() {
+        3.0 / 64.0
+    } else {
+        1.0 / 16.0
+    };
+    let main_destination = Rect::from_xywh(icon_x + main_phase, icon_y, 16.0, 16.0);
     let device_destination = Rect::from_xywh(icon_x, icon_y, 16.0, 16.0);
     let mut paint = Paint::default();
     paint.set_alpha_f(opacity_multiplier);
@@ -8855,10 +9476,21 @@ fn paint_fragment_box_decoration(
     let node = doc.node(fragment.node_id);
     let native_button_theme = uses_native_button_theme(fragment, doc);
     let native_scroll_button_theme = uses_native_scroll_button_theme(fragment, doc);
+    let native_color_theme = node.form_control_native_appearance
+        && node.form_control == Some(FormControlRole::ColorInput)
+        && style.border_top_style == BorderStyle::Solid
+        && style.border_right_style == BorderStyle::Solid
+        && style.border_bottom_style == BorderStyle::Solid
+        && style.border_left_style == BorderStyle::Solid;
     let native_text_control_theme = node.form_control_native_appearance
         && matches!(
             node.form_control,
-            Some(FormControlRole::TextInput | FormControlRole::TextArea | FormControlRole::Select)
+            Some(
+                FormControlRole::TextInput
+                    | FormControlRole::DateInput
+                    | FormControlRole::TextArea
+                    | FormControlRole::Select
+            )
         )
         // Author borders suppress the native text-control border theme even
         // when `appearance` itself remains `auto`.  The porter represents the
@@ -8888,7 +9520,7 @@ fn paint_fragment_box_decoration(
             adjusted
         };
         &native_control_style
-    } else if native_button_theme || native_scroll_button_theme {
+    } else if native_button_theme || native_scroll_button_theme || native_color_theme {
         // Blink reserves a 2px CSS border for native button geometry, while
         // the passive Linux theme paints only its outer device-pixel ring;
         // the inner pixel is button-face background. Preserve the layout
@@ -8903,7 +9535,7 @@ fn paint_fragment_box_decoration(
             adjusted.border_right_width = painted_border;
             adjusted.border_bottom_width = painted_border;
             adjusted.border_left_width = painted_border;
-            if native_button_theme && node.form_control_disabled {
+            if (native_button_theme || native_color_theme) && node.form_control_disabled {
                 adjusted.background_color = Color::from_rgba8(238, 238, 238, 255);
                 let border =
                     openui_style::StyleColor::Resolved(Color::from_rgba8(208, 208, 208, 255));
@@ -9003,7 +9635,7 @@ fn paint_fragment_box_decoration(
             // of the covered source sample at the doubly-clipped corner.
             canvas.save_layer_alpha_f(border_box, 49.0 / 50.0);
         }
-        if (native_button_theme || native_scroll_button_theme)
+        if (native_button_theme || native_scroll_button_theme || native_color_theme)
             && fragment.size.width >= LayoutUnit::from_i32(6)
             && fragment.size.height >= LayoutUnit::from_i32(6)
         {
@@ -9030,7 +9662,7 @@ fn paint_fragment_box_decoration(
         if clip_native_text_control_corners {
             canvas.restore();
         }
-        if (native_button_theme || native_scroll_button_theme)
+        if (native_button_theme || native_scroll_button_theme || native_color_theme)
             && fragment.size.width >= LayoutUnit::from_i32(6)
             && fragment.size.height >= LayoutUnit::from_i32(6)
         {
@@ -9050,7 +9682,7 @@ fn paint_fragment_box_decoration(
             ClipOp::Intersect,
             false,
         );
-        if native_button_theme || native_scroll_button_theme {
+        if native_button_theme || native_scroll_button_theme || native_color_theme {
             clip_native_button_corner_cells(canvas, fragment, abs_offset);
         }
         paint_box_decoration_background(
@@ -10043,9 +10675,44 @@ fn paint_fieldset_borders(
         maximum
     }
 
+    fn first_direct_legend<'a>(
+        fragment: &'a Fragment,
+        doc: &Document,
+        fieldset_id: NodeId,
+        offset: PhysicalOffset,
+    ) -> Option<(&'a Fragment, PhysicalOffset)> {
+        for child in &fragment.children {
+            let child_offset = PhysicalOffset::new(
+                offset.left + child.offset.left,
+                offset.top + child.offset.top,
+            );
+            if !child.node_id.is_none()
+                && doc.node(child.node_id).tag == ElementTag::Legend
+                && doc.node(child.node_id).parent == fieldset_id
+            {
+                return Some((child, child_offset));
+            }
+            if let Some(legend) = first_direct_legend(child, doc, fieldset_id, child_offset) {
+                return Some(legend);
+            }
+        }
+        None
+    }
+
+    // Anonymous line/layout fragments may wrap the first DOM-direct legend.
+    // Follow the fragment tree while checking DOM ownership, so a genuinely
+    // nested legend cannot interrupt this fieldset's border.
+    let Some((legend, _)) =
+        first_direct_legend(fragment, doc, fragment.node_id, PhysicalOffset::zero())
+    else {
+        paint_borders(canvas, fragment, style, x, y, w, h, use_layer, true);
+        return;
+    };
+    let legend_id = legend.node_id;
     fn collect_legend_geometry(
         current: &Fragment,
         doc: &Document,
+        legend_id: NodeId,
         offset: PhysicalOffset,
         geometry: &mut Option<(LayoutUnit, LayoutUnit, LayoutUnit, LayoutUnit)>,
     ) {
@@ -10053,33 +10720,30 @@ fn paint_fieldset_borders(
             offset.left + current.offset.left,
             offset.top + current.offset.top,
         );
-        if !current.node_id.is_none() && doc.node(current.node_id).tag == ElementTag::Legend {
-            let left = current_offset.left;
-            let top = current_offset.top;
-            let bottom = top + current.size.height;
-            let legend_extent = if doc.node(current.node_id).style.width.is_auto() {
+        if current.node_id == legend_id {
+            let extent = if doc.node(legend_id).style.width.is_auto() {
                 legend_auto_inline_extent(current, doc)
             } else {
                 current.size.width
             };
-            if let Some((min_left, min_top, max_bottom, accumulated_extent)) = geometry {
-                *min_left = (*min_left).min_of(left);
-                *min_top = (*min_top).min_of(top);
-                *max_bottom = (*max_bottom).max_of(bottom);
-                *accumulated_extent = *accumulated_extent + legend_extent;
+            let bottom = current_offset.top + current.size.height;
+            if let Some((left, top, existing_bottom, accumulated_extent)) = geometry {
+                *left = (*left).min_of(current_offset.left);
+                *top = (*top).min_of(current_offset.top);
+                *existing_bottom = (*existing_bottom).max_of(bottom);
+                *accumulated_extent = *accumulated_extent + extent;
             } else {
-                *geometry = Some((left, top, bottom, legend_extent));
+                *geometry = Some((current_offset.left, current_offset.top, bottom, extent));
             }
             return;
         }
         for child in &current.children {
-            collect_legend_geometry(child, doc, current_offset, geometry);
+            collect_legend_geometry(child, doc, legend_id, current_offset, geometry);
         }
     }
-
     let mut geometry = None;
     for child in &fragment.children {
-        collect_legend_geometry(child, doc, PhysicalOffset::zero(), &mut geometry);
+        collect_legend_geometry(child, doc, legend_id, PhysicalOffset::zero(), &mut geometry);
     }
     let Some((legend_left, legend_top, legend_bottom, legend_inline_extent)) = geometry else {
         paint_borders(canvas, fragment, style, x, y, w, h, use_layer, true);

@@ -221,6 +221,10 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         self.assertIn("Transform2D", rust)
         self.assertIn("e: 10.0", rust)
         self.assertIn("f: 20.0", rust)
+        percentage = self.generate(
+            "#x{width:50px;height:20px;transform:translateX(-50%)}"
+        )
+        self.assertIn("e: -25.0", percentage)
 
     def test_24_inline_raster_and_svg_dimensions_are_deterministic(self):
         png = port_wpt._data_url_resource("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==")

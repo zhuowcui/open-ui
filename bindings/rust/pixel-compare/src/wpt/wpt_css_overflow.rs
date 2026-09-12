@@ -196518,6 +196518,7 @@ fn css_overflow_scroll_markers_scroll_buttons_container_query_crash() -> Documen
     doc.node_mut(n2).style.border_bottom_left_radius = (2.0, 2.0);
     doc.node_mut(n2).style.color = Color::from_rgba8(59, 59, 59, 255);
     doc.node_mut(n2).style.font_size = 13.333333;
+    doc.node_mut(n2).form_control_disabled = true;
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::SansSerif)],
     };

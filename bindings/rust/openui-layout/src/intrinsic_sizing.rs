@@ -18,7 +18,7 @@ use openui_geometry::{
     WritingModeConverter,
 };
 use openui_style::{
-    BoxSizing, Clear, ColumnSpan, ComputedStyle, FontFamily, WhiteSpace, WordBreak,
+    BoxSizing, Clear, ColumnSpan, ComputedStyle, FontFamily, LineBreak, WhiteSpace, WordBreak,
 };
 use openui_text::Font;
 
@@ -533,8 +533,11 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                     let byte_end = byte_index + ch.len_utf8();
                     let is_forced = forces_newlines && ch == '\n';
                     let is_space = ch.is_whitespace() && !is_forced;
-                    let is_break_all_character =
-                        wraps && style.word_break == WordBreak::BreakAll && !is_space && !is_forced;
+                    let is_break_all_character = wraps
+                        && (style.word_break == WordBreak::BreakAll
+                            || style.line_break == LineBreak::Anywhere)
+                        && !is_space
+                        && !is_forced;
                     if !is_space && !is_forced && !is_break_all_character {
                         continue;
                     }
@@ -1081,6 +1084,17 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
             LayoutUnit::zero()
         };
         let specified_column_width = algo.column_width.unwrap_or(LayoutUnit::zero());
+        let min_content_gaps =
+            if algo.column_width.is_some() && specified_column_width == LayoutUnit::zero() {
+                // A zero authored column measure contributes no hypothetical
+                // columns to min-content sizing. The used layout measure still
+                // receives its 1px progress floor and paints gaps between columns
+                // that are actually generated, but those gaps cannot force an
+                // auto-width float wider than its zero-width containing block.
+                LayoutUnit::zero()
+            } else {
+                gaps
+            };
         // CSS Multicol §3: a specified column-width is the preferred
         // fragmentainer measure and therefore the columnar contribution to
         // the multicol min-content size. Oversized descendants may visibly
@@ -1107,7 +1121,8 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
         let max_column_width = specified_column_width
             .max_of(multicol_columnar_max_inline)
             .max_of(widest_float_inline_line);
-        min_inline = multicol_spanner_min_inline.max_of(min_column_width * count + gaps);
+        min_inline =
+            multicol_spanner_min_inline.max_of(min_column_width * count + min_content_gaps);
         max_inline = multicol_spanner_max_inline.max_of(max_column_width * count + gaps);
 
         // An unconstrained balanced multicol's intrinsic block contribution is
@@ -2853,11 +2868,14 @@ fn compute_text_intrinsic_sizes_impl(
         .fold(LayoutUnit::zero(), |acc, width| acc.max_of(width));
 
     let permits_soft_wrap = !matches!(style.white_space, WhiteSpace::Nowrap | WhiteSpace::Pre);
-    let min_content = if permits_soft_wrap && style.word_break == WordBreak::BreakAll {
-        // `break-all` introduces a soft wrap opportunity between typographic
-        // character units. For the text handled by this engine, measuring
-        // each scalar through the same font path gives the min-content width
-        // needed by shrink-to-fit floats and inline blocks.
+    let min_content = if permits_soft_wrap
+        && (style.word_break == WordBreak::BreakAll || style.line_break == LineBreak::Anywhere)
+    {
+        // `break-all` and `line-break: anywhere` introduce a soft wrap
+        // opportunity between typographic character units. For the text
+        // handled by this engine, measuring each scalar through the same font
+        // path gives the min-content width needed by shrink-to-fit floats and
+        // inline blocks.
         forced_lines
             .flat_map(|line| line.chars())
             .map(|ch| {
@@ -4093,5 +4111,37 @@ mod tests {
             sizes,
             MinMaxSizes::new(LayoutUnit::from_i32(48), LayoutUnit::from_i32(48))
         );
+    }
+
+    #[test]
+    fn line_break_anywhere_uses_character_min_content_opportunities() {
+        let mut style = ComputedStyle::default();
+        style.font_family.families = vec![FontFamily::Named("Droid Sans Fallback".into())];
+        let normal = compute_text_intrinsic_sizes("fragmentation", &style);
+
+        style.line_break = LineBreak::Anywhere;
+        let anywhere = compute_text_intrinsic_sizes("fragmentation", &style);
+
+        assert!(anywhere.min < normal.min);
+        assert_eq!(anywhere.max, normal.max);
+    }
+
+    #[test]
+    fn zero_column_width_does_not_add_hypothetical_min_content_gaps() {
+        let mut doc = Document::new();
+        let multicol = doc.create_node(ElementTag::Div);
+        let multicol_style = doc.node_mut(multicol).style_mut();
+        multicol_style.column_count = Some(3);
+        multicol_style.column_width = Some(Length::px(0.0));
+        multicol_style.column_gap = Some(Length::px(20.0));
+        doc.append_child(doc.root(), multicol);
+
+        let child = doc.create_node(ElementTag::Div);
+        doc.node_mut(child).style.width = Length::px(100.0);
+        doc.append_child(multicol, child);
+
+        let sizes = compute_intrinsic_block_sizes(&doc, multicol);
+        assert_eq!(sizes.min_content_inline_size, LayoutUnit::zero());
+        assert!(sizes.max_content_inline_size >= LayoutUnit::from_i32(100));
     }
 }

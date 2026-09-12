@@ -9,8 +9,8 @@ use openui_layout::inline::items::InlineItemType;
 use openui_layout::inline::items_builder::InlineItemsBuilder;
 use openui_layout::{block_layout, ConstraintSpace, Fragment};
 use openui_style::{
-    BlockEllipsis, BorderStyle, Color, ColumnFill, Direction, Display, LineClamp, MarginTrim,
-    Position, StyleColor, Transform2D, WhiteSpace, WritingMode,
+    BlockEllipsis, BorderStyle, Color, ColumnFill, Containment, Direction, Display, LineClamp,
+    MarginTrim, Position, StyleColor, Transform2D, WhiteSpace, WritingMode,
 };
 
 fn lu(value: i32) -> LayoutUnit {
@@ -31,6 +31,23 @@ fn descendants<'a>(fragment: &'a Fragment, node: openui_dom::NodeId, out: &mut V
     }
     for child in &fragment.children {
         descendants(child, node, out);
+    }
+}
+
+fn descendant_positions(
+    fragment: &Fragment,
+    node: openui_dom::NodeId,
+    parent_left: LayoutUnit,
+    parent_top: LayoutUnit,
+    out: &mut Vec<(LayoutUnit, LayoutUnit)>,
+) {
+    let left = parent_left + fragment.offset.left;
+    let top = parent_top + fragment.offset.top;
+    if fragment.node_id == node {
+        out.push((left, top));
+    }
+    for child in &fragment.children {
+        descendant_positions(child, node, left, top, out);
     }
 }
 
@@ -64,6 +81,79 @@ fn fragmented_multicol_keeps_nested_flex_replaced_content() {
     let mut found = Vec::new();
     descendants(&fragment, image, &mut found);
     assert!(!found.is_empty());
+}
+
+#[test]
+fn captioned_bordered_table_places_contained_body_in_next_column() {
+    let mut doc = Document::new();
+    let multicol = doc.create_node(ElementTag::Div);
+    {
+        let style = &mut doc.node_mut(multicol).style;
+        style.display = Display::Block;
+        style.width = Length::px(100.0);
+        style.height = Length::px(150.0);
+        style.column_count = Some(2);
+        style.column_fill = ColumnFill::Auto;
+        style.column_gap = Some(Length::zero());
+    }
+    doc.append_child(doc.root(), multicol);
+
+    let table = doc.create_node(ElementTag::Div);
+    {
+        let style = &mut doc.node_mut(table).style;
+        style.display = Display::Table;
+        style.width = Length::percent(100.0);
+        style.border_top_width = 30;
+        style.border_top_style = BorderStyle::Solid;
+    }
+    doc.append_child(multicol, table);
+
+    let caption = doc.create_node(ElementTag::Div);
+    doc.node_mut(caption).style.display = Display::TableCaption;
+    doc.append_child(table, caption);
+    let caption_content = doc.create_node(ElementTag::Div);
+    doc.node_mut(caption_content).style.display = Display::Block;
+    doc.node_mut(caption_content).style.height = Length::px(100.0);
+    doc.append_child(caption, caption_content);
+
+    let body = doc.create_node(ElementTag::Div);
+    doc.node_mut(body).style.display = Display::Block;
+    doc.node_mut(body).style.contain = Containment::SIZE;
+    doc.node_mut(body).style.height = Length::px(70.0);
+    doc.append_child(table, body);
+    let body_content = doc.create_node(ElementTag::Div);
+    doc.node_mut(body_content).style.display = Display::Block;
+    doc.node_mut(body_content).style.margin_top = Length::px(-30.0);
+    doc.node_mut(body_content).style.height = Length::px(100.0);
+    doc.append_child(body, body_content);
+
+    let fragment = layout(&doc);
+    let mut caption_fragments = Vec::new();
+    descendants(&fragment, caption_content, &mut caption_fragments);
+    assert_eq!(caption_fragments.len(), 1);
+    assert_eq!(caption_fragments[0].width(), lu(50));
+    assert_eq!(caption_fragments[0].height(), lu(100));
+    let mut caption_positions = Vec::new();
+    let mut body_positions = Vec::new();
+    descendant_positions(
+        &fragment,
+        caption_content,
+        LayoutUnit::zero(),
+        LayoutUnit::zero(),
+        &mut caption_positions,
+    );
+    descendant_positions(
+        &fragment,
+        body_content,
+        LayoutUnit::zero(),
+        LayoutUnit::zero(),
+        &mut body_positions,
+    );
+    assert_eq!(
+        caption_positions,
+        [(LayoutUnit::zero(), LayoutUnit::zero())]
+    );
+    assert_eq!(body_positions, [(lu(50), lu(-30))]);
 }
 
 #[test]
@@ -230,6 +320,29 @@ fn display_contents_does_not_erase_form_descendants() {
     descendants(&fragment, select, &mut select_fragments);
     assert!(form_fragments.is_empty());
     assert_eq!(select_fragments.len(), 1);
+}
+
+#[test]
+fn display_contents_is_flattened_in_a_pure_block_context() {
+    let mut doc = Document::new();
+    let contents = doc.create_node(ElementTag::Div);
+    doc.node_mut(contents).style.display = Display::Contents;
+    doc.node_mut(contents).style.border_top_width = 10;
+    doc.append_child(doc.root(), contents);
+
+    let absolute = doc.create_node(ElementTag::Div);
+    doc.node_mut(absolute).style.position = Position::Absolute;
+    doc.node_mut(absolute).style.width = Length::px(10.0);
+    doc.node_mut(absolute).style.height = Length::px(10.0);
+    doc.append_child(contents, absolute);
+
+    let fragment = layout(&doc);
+    let mut contents_fragments = Vec::new();
+    let mut absolute_fragments = Vec::new();
+    descendants(&fragment, contents, &mut contents_fragments);
+    descendants(&fragment, absolute, &mut absolute_fragments);
+    assert!(contents_fragments.is_empty());
+    assert_eq!(absolute_fragments.len(), 1);
 }
 
 #[test]

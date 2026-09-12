@@ -153,6 +153,7 @@ impl FontPlatformData {
             requested_weight,
             false,
             false,
+            false,
         )
     }
 
@@ -166,6 +167,7 @@ impl FontPlatformData {
         oblique_angle: f32,
         requested_weight: skia_safe::font_style::Weight,
         native_control_text: bool,
+        embedded_document_text: bool,
         native_button_text_metrics: bool,
     ) -> Self {
         // Font matching may return a regular face when a family has no bold
@@ -175,19 +177,41 @@ impl FontPlatformData {
         let synthetic_bold = requested_weight >= skia_safe::font_style::Weight::SEMI_BOLD
             && typeface.font_style().weight() < skia_safe::font_style::Weight::SEMI_BOLD;
         let mut sk_font = SkFont::from_typeface(&typeface, size);
-        let _ = native_button_text_metrics;
         sk_font.set_embolden(synthetic_bold);
         // SP14 parity experiment: allow overriding rasterization settings via env
         // vars so we can match headless Chromium without recompiling per combo.
         // OPENUI_SUBPIXEL=0/1, OPENUI_HINTING=none/slight/normal/full,
         // OPENUI_EDGING=alias/aa/subpixel, OPENUI_AUTOHINT=0/1, OPENUI_FORCE_AA=0/1.
-        let subpixel =
-            native_control_text || std::env::var("OPENUI_SUBPIXEL").ok().as_deref() != Some("0");
+        let family_name = typeface.family_name();
+        let deterministic_aliased_face = [
+            "Ahem",
+            "Droid Sans Fallback",
+            "Noto Sans Devanagari",
+            "Noto Color Emoji",
+            "DejaVu Sans",
+        ]
+        .iter()
+        .any(|family| family_name.eq_ignore_ascii_case(family));
+        // The comparison Fontconfig profile disables antialiasing only for
+        // its explicitly pinned deterministic faces.  A CSS family outside
+        // that set (for example the monospace face used by ::first-line)
+        // still receives Chromium's ordinary LCD/subpixel raster policy.
+        let escapes_aliased_profile = !native_control_text
+            && !embedded_document_text
+            && std::env::var("OPENUI_EDGING").ok().as_deref() == Some("alias")
+            && !deterministic_aliased_face;
+        let subpixel = native_control_text
+            || embedded_document_text
+            || escapes_aliased_profile
+            || (!native_button_text_metrics
+                && std::env::var("OPENUI_SUBPIXEL").ok().as_deref() != Some("0"));
         sk_font.set_subpixel(subpixel);
         let requested_hinting = if native_control_text {
             std::env::var("OPENUI_NATIVE_HINTING")
                 .ok()
                 .or_else(|| Some("slight".to_string()))
+        } else if escapes_aliased_profile {
+            Some("slight".to_string())
         } else {
             std::env::var("OPENUI_HINTING").ok()
         };
@@ -195,10 +219,12 @@ impl FontPlatformData {
             std::env::var("OPENUI_NATIVE_EDGING")
                 .ok()
                 .or_else(|| Some("subpixel".to_string()))
+        } else if escapes_aliased_profile {
+            Some("subpixel".to_string())
         } else {
             std::env::var("OPENUI_EDGING").ok()
         };
-        let is_ahem = typeface.family_name().eq_ignore_ascii_case("Ahem");
+        let is_ahem = family_name.eq_ignore_ascii_case("Ahem");
         let hinting = resolve_hinting(
             requested_hinting.as_deref(),
             requested_edging.as_deref(),

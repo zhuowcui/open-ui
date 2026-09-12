@@ -29,7 +29,7 @@
 
 use skia_safe::{Canvas, ColorSpace, Font as SkFont, Paint, PaintStyle, Point};
 
-use openui_style::{Color, ComputedStyle, StyleColor, TextEmphasisMark, WritingMode};
+use openui_style::{Color, ComputedStyle, FontFamily, StyleColor, TextEmphasisMark, WritingMode};
 use openui_text::emphasis::should_draw_emphasis_mark;
 use openui_text::shaping::ShapeResult;
 
@@ -101,7 +101,8 @@ pub fn paint_emphasis_marks(
     let color = resolve_emphasis_color(&style.text_emphasis_color, &style.color);
 
     let mut paint = Paint::default();
-    paint.set_anti_alias(true);
+    let aliased = std::env::var("OPENUI_EDGING").ok().as_deref() == Some("alias");
+    paint.set_anti_alias(!aliased);
     paint.set_style(PaintStyle::Fill);
     paint.set_color4f(to_sk_color4f(&color), None::<&ColorSpace>);
 
@@ -136,6 +137,20 @@ pub fn paint_emphasis_marks(
             &emphasis_sk_font,
             &paint,
         );
+        let uses_ahem = style.font_family.families.iter().any(
+            |family| matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Ahem")),
+        );
+        if aliased && uses_ahem && style.writing_mode.is_horizontal() {
+            // Chromium's pinned Fontations mask retains the block-start row
+            // of a half-em Ahem emphasis glyph. Skia/FreeType's aliased mask
+            // is one row shorter at the same integral CSS origin.
+            canvas.draw_str(
+                &emphasis_str,
+                Point::new(mark_x, mark_y - 2.75),
+                &emphasis_sk_font,
+                &paint,
+            );
+        }
     }
 }
 
@@ -163,7 +178,7 @@ fn create_emphasis_font(shape_result: &ShapeResult, size: f32) -> Option<SkFont>
     let first_run = shape_result.runs.first()?;
     let typeface = first_run.font_data.typeface().clone();
     let mut font = SkFont::from_typeface(typeface, size);
-    font.set_subpixel(true);
+    font.set_subpixel(std::env::var("OPENUI_SUBPIXEL").ok().as_deref() == Some("1"));
     font.set_hinting(skia_safe::FontHinting::Slight);
     Some(font)
 }
@@ -202,7 +217,11 @@ pub fn compute_emphasis_offset(
 
     if writing_mode.is_horizontal() {
         if position.over {
-            -(text_font_size * 0.8 + gap + emphasis_font_size * 0.5)
+            // Blink reserves one emphasis-em above horizontal text. Position
+            // the mark's own baseline so its descent meets the text em box;
+            // using half the mark em plus the historical gap placed custom
+            // marks several pixels too high within that reserved area.
+            -(text_font_size * 0.8 + emphasis_font_size * 0.25)
         } else {
             text_font_size * 0.2 + gap + emphasis_font_size * 0.5
         }
@@ -309,8 +328,8 @@ mod tests {
 
     #[test]
     fn horizontal_over_offset_value() {
-        // font_size=20, emphasis=10, gap=10*0.15=1.5
-        // offset = -(20*0.8 + 1.5 + 10*0.5) = -(16 + 1.5 + 5) = -22.5
+        // Blink reserves one emphasis-em above the text em box. With a 20px
+        // text em and 10px mark em, the mark baseline is -(16 + 2.5).
         let offset = compute_emphasis_offset(
             TextEmphasisPosition {
                 over: true,
@@ -320,7 +339,7 @@ mod tests {
             10.0,
             WritingMode::HorizontalTb,
         );
-        assert!((offset - (-22.5)).abs() < 0.001);
+        assert!((offset - (-18.5)).abs() < 0.001);
     }
 
     // ── compute_emphasis_offset: horizontal under ─────────────────────

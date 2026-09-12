@@ -103,8 +103,8 @@ floats-wrap-bfc-006-ref,ported,css2_floats_floats_wrap_bfc_006_ref,
 floats-wrap-bfc-007,ported,css2_floats_floats_wrap_bfc_007,
 floats-wrap-bfc-007-ref,ported,css2_floats_floats_wrap_bfc_007_ref,
 floats-wrap-bfc-008,ported,css2_floats_floats_wrap_bfc_008,
-floats-wrap-bfc-outside-001,not_portable,,unsupported element: <textarea>
-floats-wrap-bfc-outside-001-ref,not_portable,,unsupported element: <textarea>
+floats-wrap-bfc-outside-001,ported,css2_floats_floats_wrap_bfc_outside_001,
+floats-wrap-bfc-outside-001-ref,ported,css2_floats_floats_wrap_bfc_outside_001_ref,
 floats-wrap-bfc-with-margin-001,not_portable,,uses_javascript
 floats-wrap-bfc-with-margin-001-ref,not_portable,,uses_javascript
 floats-wrap-bfc-with-margin-001a.tentative,not_portable,,uses_javascript
@@ -181,3 +181,7 @@ zero-width-floats,ported,css2_floats_zero_width_floats,
 zero-width-floats-positioning.tentative,ported,css2_floats_zero_width_floats_positioning_tentative,
 crashtests_firefox-bug-1904428,ported,css2_floats_crashtests_firefox_bug_1904428,
 crashtests_firefox-bug-1904419,ported,css2_floats_crashtests_firefox_bug_1904419,
+crashtests_firefox-bug-1904409,ported,css2_floats_crashtests_firefox_bug_1904409,
+crashtests_firefox-bug-1906768,ported,css2_floats_crashtests_firefox_bug_1906768,
+crashtests_float-rewind-parallel-flow-3-crash,ported,css2_floats_crashtests_float_rewind_parallel_flow_3_crash,
+crashtests_huge-width-after-float,ported,css2_floats_crashtests_huge_width_after_float,

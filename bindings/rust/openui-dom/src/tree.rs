@@ -7,8 +7,9 @@
 use std::collections::{BTreeMap, HashMap};
 
 use openui_style::{
-    Color, ComputedStyle, ContainerCondition, Containment, CounterStyle, Display,
-    GeneratedContentItem, ImageResourceId, Overflow, QuotePair, ScrollMarkerGroup,
+    Color, ComputedStyle, ContainerCondition, Containment, CounterStyle, Display, FontFamily,
+    GeneratedContentItem, GenericFontFamily, ImageResourceId, Overflow, QuotePair,
+    ScrollMarkerGroup,
 };
 
 /// Encoded raster or static-SVG bytes owned by a document.
@@ -47,6 +48,9 @@ pub struct ReplacedContent {
 pub enum FormControlRole {
     Button,
     TextInput,
+    ColorInput,
+    DateInput,
+    FileInput,
     Checkbox,
     Radio,
     TextArea,
@@ -55,6 +59,7 @@ pub enum FormControlRole {
     OptGroup,
     Range,
     Meter,
+    Progress,
     Fieldset,
     Legend,
 }
@@ -158,6 +163,7 @@ pub enum ElementTag {
     Input,
     Button,
     Meter,
+    Progress,
     Fieldset,
     Legend,
     Details,
@@ -634,6 +640,48 @@ impl Document {
     /// individual fonts still select aliased versus LCD glyph masks.
     pub fn uses_native_control_text(&self) -> bool {
         self.nodes.iter().any(|node| node.style.native_control_text)
+    }
+
+    /// Whether an author-selected face escapes the deterministic aliased
+    /// Fontconfig family set and therefore needs an LCD-capable raster surface.
+    /// Pseudo styles live on their originating element rather than as attached
+    /// arena nodes, so include `::first-line` explicitly.
+    pub fn uses_lcd_author_text(&self) -> bool {
+        fn style_uses_lcd(style: &ComputedStyle) -> bool {
+            if style.native_control_text || style.embedded_document_text {
+                return false;
+            }
+            let Some(primary) = style.font_family.families.first() else {
+                return false;
+            };
+            match primary {
+                FontFamily::Named(name) => ![
+                    "Ahem",
+                    "Droid Sans Fallback",
+                    "Noto Sans Devanagari",
+                    "Noto Color Emoji",
+                    "DejaVu Sans",
+                ]
+                .iter()
+                .any(|family| name.eq_ignore_ascii_case(family)),
+                FontFamily::Generic(family) => !matches!(
+                    family,
+                    GenericFontFamily::None
+                        | GenericFontFamily::SansSerif
+                        | GenericFontFamily::Emoji
+                        | GenericFontFamily::UiSansSerif
+                ),
+            }
+        }
+
+        self.nodes.iter().any(|node| {
+            style_uses_lcd(&node.style)
+                || node
+                    .style
+                    .first_line_style
+                    .as_deref()
+                    .is_some_and(style_uses_lcd)
+        })
     }
 
     /// Find the first element exposing a given CSS anchor name.

@@ -1020,6 +1020,7 @@ impl<'a> InlineItemsBuilder<'a> {
             | ElementTag::Form
             | ElementTag::Embed
             | ElementTag::Meter
+            | ElementTag::Progress
             | ElementTag::Fieldset
             | ElementTag::Legend
             | ElementTag::Details

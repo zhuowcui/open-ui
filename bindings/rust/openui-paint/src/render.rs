@@ -70,7 +70,10 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
     // by the comparison runner to SP16 IDs so historical Ahem and box-only
     // snapshots retain the default unknown pixel geometry.
     let real_font_raster = std::env::var("OPENUI_REAL_FONT_RASTER").ok().as_deref() == Some("1");
-    let lcd_surface = real_font_raster || doc.uses_native_control_text();
+    let lcd_surface = real_font_raster
+        || doc.uses_native_control_text()
+        || (std::env::var("OPENUI_EDGING").ok().as_deref() == Some("alias")
+            && doc.uses_lcd_author_text());
     let mut surface = create_raster_surface(width, height, lcd_surface)
         .ok_or_else(|| "Failed to create Skia surface".to_string())?;
 

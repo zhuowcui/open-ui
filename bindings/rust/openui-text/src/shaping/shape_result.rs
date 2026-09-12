@@ -29,6 +29,8 @@ pub enum TextRasterPolicy {
     #[default]
     Skia,
     ChromiumNativeControl,
+    ChromiumEmbeddedDocument,
+    ChromiumAuthorLcd,
     ChromiumAliased,
 }
 
@@ -85,7 +87,9 @@ fn fontations_compatible_font(
     let size = source_font.size();
     let location = LocationRef::default();
     let hinting = match raster_policy {
-        TextRasterPolicy::ChromiumNativeControl => {
+        TextRasterPolicy::ChromiumNativeControl
+        | TextRasterPolicy::ChromiumAuthorLcd
+        | TextRasterPolicy::ChromiumEmbeddedDocument => {
             let glyph_styles = GlyphStyles::new(&outlines);
             HintingInstance::new(
                 &outlines,
@@ -127,11 +131,17 @@ fn fontations_compatible_font(
     let mut font = source_font.with_size(1.0)?;
     font.set_typeface(typeface);
     font.set_hinting(FontHinting::None);
-    let native_control = raster_policy == TextRasterPolicy::ChromiumNativeControl;
+    let native_control = matches!(
+        raster_policy,
+        TextRasterPolicy::ChromiumNativeControl | TextRasterPolicy::ChromiumAuthorLcd
+    );
+    let embedded_document = raster_policy == TextRasterPolicy::ChromiumEmbeddedDocument;
     font.set_subpixel(true);
     font.set_linear_metrics(native_control);
     font.set_edging(if native_control {
         Edging::SubpixelAntiAlias
+    } else if embedded_document {
+        Edging::AntiAlias
     } else {
         Edging::Alias
     });
@@ -451,7 +461,11 @@ impl ShapeResult {
                 let local_x = x + run.offsets[i].0;
                 let raster_x = device_origin_x.map_or(local_x, |origin| {
                     let mut device_x = origin + local_x;
-                    if raster_policy == TextRasterPolicy::ChromiumNativeControl {
+                    if matches!(
+                        raster_policy,
+                        TextRasterPolicy::ChromiumNativeControl
+                            | TextRasterPolicy::ChromiumAuthorLcd
+                    ) {
                         // Blink hands native-control glyph origins to Skia in
                         // LayoutUnit coordinates. Preserve that 1/64-device-
                         // pixel boundary before Skia selects its LCD phase.

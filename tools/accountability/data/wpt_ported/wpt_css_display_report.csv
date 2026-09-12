@@ -54,14 +54,14 @@ display-contents-before-after-001,ported,css_display_display_contents_before_aft
 display-contents-before-after-002,ported,css_display_display_contents_before_after_002,
 display-contents-before-after-003,ported,css_display_display_contents_before_after_003,
 display-contents-blockify-dynamic,not_portable,,uses_javascript
-display-contents-button,not_portable,,unsupported element: <button>
+display-contents-button,ported,css_display_display_contents_button,
 display-contents-computed-style,not_portable,,uses_javascript
-display-contents-details-001-ref,not_portable,,unsupported element: <details>
-display-contents-details-001,not_portable,,unsupported element: <details>
-display-contents-details,not_portable,,complex_css_selector: details::details-content
+display-contents-details-001-ref,ported,css_display_display_contents_details_001_ref,
+display-contents-details-001,ported,css_display_display_contents_details_001,
+display-contents-details,ported,css_display_display_contents_details,
 display-contents-dynamic-before-after-001,not_portable,,uses_javascript
 display-contents-dynamic-before-after-first-letter-001,not_portable,,uses_javascript
-display-contents-dynamic-fieldset-legend-001-ref,not_portable,,unsupported element: <fieldset>
+display-contents-dynamic-fieldset-legend-001-ref,ported,css_display_display_contents_dynamic_fieldset_legend_001_ref,
 display-contents-dynamic-fieldset-legend-001,not_portable,,uses_javascript
 display-contents-dynamic-flex-001-inline,not_portable,,uses_javascript
 display-contents-dynamic-flex-001-none,not_portable,,uses_javascript
@@ -69,7 +69,7 @@ display-contents-dynamic-flex-002-inline,not_portable,,uses_javascript
 display-contents-dynamic-flex-002-none,not_portable,,uses_javascript
 display-contents-dynamic-flex-003-inline,not_portable,,uses_javascript
 display-contents-dynamic-flex-003-none,not_portable,,uses_javascript
-display-contents-dynamic-generated-content-fieldset-001-ref,not_portable,,unsupported element: <fieldset>
+display-contents-dynamic-generated-content-fieldset-001-ref,ported,css_display_display_contents_dynamic_generated_content_fieldset_001_ref,
 display-contents-dynamic-generated-content-fieldset-001,not_portable,,uses_javascript
 display-contents-dynamic-inline-flex-001-inline,not_portable,,uses_javascript
 display-contents-dynamic-inline-flex-001-none,not_portable,,uses_javascript
@@ -86,7 +86,7 @@ display-contents-fieldset-002-ref,not_portable,,uses_javascript
 display-contents-fieldset-002,not_portable,,uses_javascript
 display-contents-fieldset-nested-legend-ref,not_portable,,unsupported element: <fieldset>
 display-contents-fieldset-nested-legend,not_portable,,style_block_unsupported property: unicode-bidi
-display-contents-fieldset,not_portable,,unsupported element: <fieldset>
+display-contents-fieldset,ported,css_display_display_contents_fieldset,
 display-contents-first-letter-001,ported,css_display_display_contents_first_letter_001,
 display-contents-first-letter-002,ported,css_display_display_contents_first_letter_002,
 display-contents-first-line-001,ported,css_display_display_contents_first_line_001,
@@ -100,8 +100,8 @@ display-contents-slot-attach-whitespace,not_portable,,uses_javascript
 display-contents-state-change-001,not_portable,,uses_javascript
 display-contents-suppression-dynamic-001,not_portable,,uses_javascript
 display-contents-svg-anchor-child,not_portable,,uses_javascript
-display-contents-svg-elements-ref,not_portable,,unsupported element: <svg>
-display-contents-svg-elements,not_portable,,unsupported element: <svg>
+display-contents-svg-elements-ref,ported,css_display_display_contents_svg_elements_ref,
+display-contents-svg-elements,ported,css_display_display_contents_svg_elements,
 display-contents-svg-switch-child,not_portable,,uses_javascript
 display-contents-table-001-ref,ported,css_display_display_contents_table_001_ref,
 display-contents-table-001,ported,css_display_display_contents_table_001,
@@ -111,14 +111,14 @@ display-contents-td-001,ported,css_display_display_contents_td_001,
 display-contents-text-inherit-002,not_portable,,uses_javascript
 display-contents-tr-001-ref,ported,css_display_display_contents_tr_001_ref,
 display-contents-tr-001,ported,css_display_display_contents_tr_001,
-display-contents-unusual-html-elements-none,not_portable,,unsupported element: <canvas>
+display-contents-unusual-html-elements-none,ported,css_display_display_contents_unusual_html_elements_none,
 display-first-letter-001,not_portable,,uses_javascript
 display-first-line-001,not_portable,,uses_javascript
 display-first-line-002,not_portable,,uses_javascript
 display-flow-root-001-ref,ported,css_display_display_flow_root_001_ref,
 display-flow-root-dynamic,not_portable,,uses_javascript
 display-flow-root-list-item-001-ref,ported,css_display_display_flow_root_list_item_001_ref,
-display-inline-dynamic-001-ref,not_portable,,complex_css_selector: div::first-line
+display-inline-dynamic-001-ref,ported,css_display_display_inline_dynamic_001_ref,
 display-inline-dynamic-001,not_portable,,uses_javascript
 display-list-item-height-after-dom-change,not_portable,,uses_javascript
 display-math-on-non-mathml-elements,not_portable,,uses_javascript
@@ -134,8 +134,8 @@ empty-text-baseline-001,not_portable,,uses_javascript
 empty-text-baseline-002,not_portable,,uses_javascript
 inheritance,not_portable,,uses_javascript
 order-dynamic,not_portable,,uses_javascript
-select-4-option-optgroup-display-none-ref,not_portable,,style_block_vendor/unsupported prefix: -webkit-appearance
-select-4-option-optgroup-display-none,not_portable,,style_block_vendor/unsupported prefix: -webkit-appearance
+select-4-option-optgroup-display-none-ref,ported,css_display_select_4_option_optgroup_display_none_ref,
+select-4-option-optgroup-display-none,ported,css_display_select_4_option_optgroup_display_none,
 textarea-display,not_portable,,uses_javascript
 accessibility_display-contents-role-and-label,not_portable,,uses_javascript
 focus_display-contents-focus,not_portable,,uses_javascript

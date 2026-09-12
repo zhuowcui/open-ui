@@ -1,12 +1,12 @@
 {
-  "total": 5623,
-  "passed": 5623,
+  "total": 5731,
+  "passed": 5731,
   "failed": 0,
   "errors": 0,
   "near_miss_aa": 0,
   "aa_threshold_pct": 0.5,
-  "reference_tests": 1278,
-  "reference_tests_pass": 1278,
+  "reference_tests": 1297,
+  "reference_tests_pass": 1297,
   "tests": [
     {
       "id": "wpt/css2_floats/float-after-block-with-collapsed-margin-inside-inline",
@@ -769,6 +769,36 @@
       "mismatch_pct": 0.0
     },
     {
+      "id": "wpt/css2_floats/crashtests_firefox-bug-1904409",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/crashtests_firefox-bug-1906768",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/crashtests_float-rewind-parallel-flow-3-crash",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/crashtests_huge-width-after-float",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-outside-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css2_floats/floats-wrap-bfc-outside-001-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
       "id": "wpt/css_position/absolute-pos-box-inside-fixed-pos-box-with-changing-height-ref",
       "status": "pass",
       "mismatch_pct": 0.0
@@ -1435,6 +1465,151 @@
     },
     {
       "id": "wpt/css_position/sticky_position-sticky-scroll-reposition-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/containing-block-change-button-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/overlay_overlay-button-appearance-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-fieldset",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-iframe-print-001.sub",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-iframe-print-002.sub",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-replaced-intrinsic-size.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-replaced-no-intrinsic-size.tentative",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-semi-replaced-stretch-button",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-semi-replaced-stretch-button-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-semi-replaced-stretch-input-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/position-absolute-semi-replaced-stretch-other-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/resources_position-absolute-iframe-child-002.sub",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/resources_position-sticky-fixed-ancestor-iframe-child",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-008",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-009",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-010",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-011",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/static-position_inline-level-absolute-in-block-level-context-012",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/sticky_position-sticky-in-fixed-container",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_position/sticky_position-sticky-in-fixed-container-ref",
       "status": "pass",
       "mismatch_pct": 0.0
     },
@@ -23764,6 +23939,71 @@
       "mismatch_pct": 0.0
     },
     {
+      "id": "wpt/css_display/display-contents-button",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/display-contents-details",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/display-contents-details-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/display-contents-details-001-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/display-contents-dynamic-fieldset-legend-001-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/display-contents-dynamic-generated-content-fieldset-001-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/display-contents-fieldset",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/display-contents-svg-elements",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/display-contents-svg-elements-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/display-contents-unusual-html-elements-none",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/display-inline-dynamic-001-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/select-4-option-optgroup-display-none",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_display/select-4-option-optgroup-display-none-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
       "id": "wpt/css_box/margin-trim_block-container-non-adjoining-item-ref",
       "status": "pass",
       "mismatch_pct": 0.0
@@ -23895,6 +24135,306 @@
     },
     {
       "id": "wpt/css_box/margin-trim_grid-trim-ignores-collapsed-tracks",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-collapsed-margins",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-collapsed-margins-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-self-collapsing-and-border",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-self-collapsing-block-start-margin",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-self-collapsing-block-start-margin-nested",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-end",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-end-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-start",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-self-collapsing-item-has-larger-block-start-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-end-start-margin",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-in-inline-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-in-inline-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-in-inline-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-in-inline-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-in-inline-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-in-inline-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-in-inline-007",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-start-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-start-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-start-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-start-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-start-collapsed-margins",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-start-collapsed-margins-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-start-self-collapsing-item-has-larger-block-end",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-start-self-collapsing-item-has-larger-block-end-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-start-self-collapsing-item-larger-block-start",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-block-start-self-collapsing-item-larger-block-start-ref",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-inline-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-non-adjoining-item",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-replaced-block",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-replaced-block-end",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_block-container-replaced-block-start",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-block-end-trimmed-only",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-block-start-trimmed-only",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-block-trimmed-only",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-column-block-multiline",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-column-grow",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-column-inline-multiline",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-column-orthogonal-item",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-column-shrink",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-inline-end-trimmed-only",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-inline-start-trimmed-only",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-inline-trimmed-only",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-row-block-multiline",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-row-grow",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-row-inline-multiline",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-row-orthogonal-item",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-row-shrink",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_flex-trim-all-margins",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_multicol-spanner-001",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_multicol-spanner-002",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_multicol-spanner-003",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_multicol-spanner-004",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_multicol-spanner-005",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_multicol-spanner-006",
+      "status": "pass",
+      "mismatch_pct": 0.0
+    },
+    {
+      "id": "wpt/css_box/margin-trim_multicol-spanner-007",
       "status": "pass",
       "mismatch_pct": 0.0
     },

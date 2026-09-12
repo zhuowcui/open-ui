@@ -75,6 +75,7 @@ struct FontCacheKey {
     oblique_angle_bits: u32,
     /// Platform-native control labels retain native raster metrics.
     native_control_text: bool,
+    embedded_document_text: bool,
     native_button_text_metrics: bool,
 }
 
@@ -193,6 +194,7 @@ impl FontCache {
             oblique_angle,
             skia_safe::font_style::Weight::from(description.weight.0 as i32),
             description.native_control_text,
+            description.embedded_document_text,
             description.native_button_text_metrics,
         ));
         self.cache.insert(key, Arc::clone(&data));
@@ -232,6 +234,7 @@ impl FontCache {
             style_tag,
             oblique_angle_bits,
             native_control_text: desc.native_control_text,
+            embedded_document_text: desc.embedded_document_text,
             native_button_text_metrics: desc.native_button_text_metrics,
         }
     }
@@ -303,6 +306,7 @@ impl FontCache {
             oblique_angle,
             skia_safe::font_style::Weight::from(description.weight.0 as i32),
             description.native_control_text,
+            description.embedded_document_text,
             description.native_button_text_metrics,
         ));
         Some(data)

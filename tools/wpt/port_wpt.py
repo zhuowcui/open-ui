@@ -206,6 +206,7 @@ SUPPORTED_PROPERTIES = {
     # Text (basic)
     'line-height', 'vertical-align', 'text-align', 'white-space', 'text-wrap',
     'ruby-position', 'text-overflow', 'text-shadow',
+    'text-emphasis-style', 'text-emphasis-position', 'text-emphasis-color',
     # Generated content and line clamping (SP18)
     'content', 'counter-reset', 'counter-set', 'counter-increment', 'quotes',
     'line-clamp', 'block-ellipsis', '-webkit-line-clamp',
@@ -238,7 +239,7 @@ IGNORED_PROPERTIES = {
     'font-family', 'font-weight', 'font-style',
     'font-variant', 'font-kerning', 'font-feature-settings',
     'letter-spacing', 'word-spacing',
-    'word-break', 'overflow-wrap', 'hyphens',
+    'word-break', 'overflow-wrap', 'line-break', 'hyphens',
     'list-style', 'list-style-type', 'list-style-position',
     'cursor', 'pointer-events', 'user-select',
     # `scroll-snap-stop` only changes traversal through intermediate snap
@@ -1004,7 +1005,11 @@ def _contain_intrinsic_length_rust(value: str, font_size: float) -> str | None:
     return None
 
 
-def _transform_2d_rust(value: str, font_size: float) -> str | None:
+def _transform_2d_rust(
+    value: str,
+    font_size: float,
+    reference_box: tuple[float, float] | None = None,
+) -> str | None:
     value = value.strip().lower()
     if value == 'none':
         return 'Transform2D::IDENTITY'
@@ -1018,10 +1023,18 @@ def _transform_2d_rust(value: str, font_size: float) -> str | None:
         except ValueError:
             return None
 
-    def length(token: str) -> float | None:
+    def length(token: str, percentage_basis: float | None = None) -> float | None:
         token = token.strip()
         if token == '0':
             return 0.0
+        percentage = re.fullmatch(r'(-?[\d.]+)%', token)
+        if percentage:
+            amount = float(percentage.group(1))
+            if amount == 0.0:
+                return 0.0
+            if percentage_basis is None:
+                return None
+            return amount / 100.0 * percentage_basis
         match = re.fullmatch(r'(-?[\d.]+)(px|em|rem|vw|vh|vmin|vmax)', token)
         if not match:
             return None
@@ -1067,14 +1080,21 @@ def _transform_2d_rust(value: str, font_size: float) -> str | None:
             if all(part is not None for part in values):
                 operation = tuple(values)
         elif name in ('translate', 'translatex', 'translatey'):
-            values = [length(part) for part in args]
-            if all(part is not None for part in values):
-                if name == 'translate' and len(values) in (1, 2):
-                    operation = (1.0, 0.0, 0.0, 1.0, values[0], values[-1] if len(values) == 2 else 0.0)
-                elif name == 'translatex' and len(values) == 1:
-                    operation = (1.0, 0.0, 0.0, 1.0, values[0], 0.0)
-                elif name == 'translatey' and len(values) == 1:
-                    operation = (1.0, 0.0, 0.0, 1.0, 0.0, values[0])
+            reference_width = reference_box[0] if reference_box else None
+            reference_height = reference_box[1] if reference_box else None
+            if name == 'translate' and len(args) in (1, 2):
+                x = length(args[0], reference_width)
+                y = length(args[1], reference_height) if len(args) == 2 else 0.0
+                if x is not None and y is not None:
+                    operation = (1.0, 0.0, 0.0, 1.0, x, y)
+            elif name == 'translatex' and len(args) == 1:
+                x = length(args[0], reference_width)
+                if x is not None:
+                    operation = (1.0, 0.0, 0.0, 1.0, x, 0.0)
+            elif name == 'translatey' and len(args) == 1:
+                y = length(args[0], reference_height)
+                if y is not None:
+                    operation = (1.0, 0.0, 0.0, 1.0, 0.0, y)
         elif name in ('scale', 'scalex', 'scaley'):
             values = [number(part) for part in args]
             if all(part is not None for part in values):
@@ -1603,6 +1623,7 @@ _SP17_INITIAL_VALUES = {
 }
 _SP17_INHERITED_PROPERTIES = {
     'writing-mode', 'direction', 'text-orientation', 'text-combine-upright',
+    'text-emphasis-style', 'text-emphasis-position', 'text-emphasis-color',
 }
 
 
@@ -2566,7 +2587,8 @@ ROOT_BODY_STYLE_RULES = parse_simple_css_rules(
 EMBEDDED_DOCUMENT_RULES = parse_simple_css_rules(
     'body { margin: 8px; padding: 0; box-sizing: content-box; '
     'color: black; font-size: 16px; line-height: normal; direction: ltr; '
-    'writing-mode: horizontal-tb; visibility: visible; }'
+    'writing-mode: horizontal-tb; visibility: visible; '
+    'font-family: DejaVu Sans, sans-serif; }'
 )
 
 
@@ -3276,6 +3298,7 @@ class WptHtmlParser(HTMLParser):
         self.html_styles = CssDeclarations()  # styles applied to <html> (root element)
         self.html_attrs = {}
         self.html_pseudo_styles = DomNode('html', {}, {}).pseudo_styles
+        self.document_closed = False
 
     # Void elements that never have closing tags
     VOID_TAGS = {'link', 'meta', 'br', 'hr', 'img', 'input', 'col', 'area',
@@ -3371,6 +3394,8 @@ class WptHtmlParser(HTMLParser):
             self._insert_implied_table_element('colgroup')
 
     def handle_starttag(self, tag, attrs):
+        if self.document_closed:
+            return
         # The HTML tokenizer keeps the first occurrence of a duplicate
         # attribute and drops later occurrences. ``dict(attrs)`` did the
         # reverse, which changes selector matching and generated pseudo boxes.
@@ -3488,6 +3513,8 @@ class WptHtmlParser(HTMLParser):
             self.handle_endtag(tag)
 
     def handle_endtag(self, tag):
+        if self.document_closed:
+            return
         if tag == 'style':
             self.in_style = False
             self.css_rules.extend(parse_simple_css_rules(self.style_content))
@@ -3507,7 +3534,10 @@ class WptHtmlParser(HTMLParser):
             if self.skip_depth > 0:
                 self.skip_depth -= 1
             return
-        if tag in ('head', 'html', 'body'):
+        if tag == 'html':
+            self.document_closed = True
+            return
+        if tag in ('head', 'body'):
             return
         if self.skip_depth > 0:
             self.skip_depth -= 1
@@ -3527,6 +3557,8 @@ class WptHtmlParser(HTMLParser):
                 break
 
     def handle_data(self, data):
+        if self.document_closed:
+            return
         if self.in_style:
             self.style_content += data
             return
@@ -6629,7 +6661,7 @@ def generate_single_style(
             )
 
     if prop == 'transform':
-        transform = _transform_2d_rust(val, font_size)
+        transform = _transform_2d_rust(val, font_size, radius_basis)
         if transform:
             return [
                 f"{s}.transform = {transform};",
@@ -7422,6 +7454,53 @@ def generate_single_style(
         if val in mapping:
             return f"{s}.text_combine_upright = {mapping[val]};"
 
+    if prop == 'text-emphasis-style':
+        token = val.strip()
+        if token == 'none':
+            return f"{s}.text_emphasis_mark = TextEmphasisMark::None;"
+        if len(token) >= 2 and token[0] == token[-1] and token[0] in {'\"', "'"}:
+            custom = token[1:-1]
+            if len(custom) == 1:
+                return (
+                    f"{s}.text_emphasis_mark = TextEmphasisMark::Custom("
+                    f"'\\u{{{ord(custom):x}}}');"
+                )
+        pieces = token.split()
+        lines = []
+        if 'open' in pieces:
+            lines.append(f"{s}.text_emphasis_fill = TextEmphasisFill::Open;")
+        elif 'filled' in pieces:
+            lines.append(f"{s}.text_emphasis_fill = TextEmphasisFill::Filled;")
+        mark_names = {
+            'dot': 'Dot',
+            'circle': 'Circle',
+            'double-circle': 'DoubleCircle',
+            'triangle': 'Triangle',
+            'sesame': 'Sesame',
+        }
+        for piece in pieces:
+            if piece in mark_names:
+                lines.append(
+                    f"{s}.text_emphasis_mark = TextEmphasisMark::{mark_names[piece]};"
+                )
+                break
+        return lines or None
+
+    if prop == 'text-emphasis-position':
+        pieces = val.strip().split()
+        if any(piece in {'over', 'under'} for piece in pieces):
+            over = 'false' if 'under' in pieces else 'true'
+            right = 'false' if 'left' in pieces else 'true'
+            return (
+                f"{s}.text_emphasis_position = TextEmphasisPosition {{ "
+                f"over: {over}, right: {right} }};"
+            )
+
+    if prop == 'text-emphasis-color':
+        color = parse_color(val)
+        if color:
+            return f"{s}.text_emphasis_color = StyleColor::Resolved({color});"
+
     # ── flex properties ──
     if prop == 'flex-direction':
         mapping = {
@@ -7792,6 +7871,15 @@ def generate_single_style(
         }
         if val in mapping:
             return f"{s}.overflow_wrap = {mapping[val]};"
+
+    if prop == 'line-break':
+        mapping = {
+            'auto': 'LineBreak::Auto', 'loose': 'LineBreak::Loose',
+            'normal': 'LineBreak::Normal', 'strict': 'LineBreak::Strict',
+            'anywhere': 'LineBreak::Anywhere',
+        }
+        if val in mapping:
+            return f"{s}.line_break = {mapping[val]};"
 
     if prop == 'hyphens':
         mapping = {
@@ -8705,6 +8793,7 @@ def _line_height_from_font_shorthand(val: str) -> str:
 # the standing INHERITED_PROPS set (kept unchanged for box-mode stability).
 TEXT_EXTRA_INHERITED = {
     'text-transform', 'letter-spacing', 'word-spacing', 'text-shadow', 'quotes',
+    'text-emphasis-style', 'text-emphasis-position', 'text-emphasis-color',
 }
 
 _BORDER_RADIUS_CORNERS = (
@@ -8940,6 +9029,29 @@ def generate_rust_fn(
                 root.children[-1].text_content = root.children[-1].text_content.rstrip(
                     _CSS_COLLAPSIBLE_WHITESPACE
                 )
+
+    def annotate_parent_tags(parent):
+        fieldset_legend_index = 0
+        for child in parent.children:
+            child.parent_tag = parent.tag
+            if parent.tag == 'fieldset' and child.tag == 'legend':
+                child.fieldset_legend_index = fieldset_legend_index
+                fieldset_legend_index += 1
+            if not child.is_text:
+                annotate_parent_tags(child)
+
+    annotate_parent_tags(root)
+    svg_definitions = {}
+
+    def collect_svg_definitions(node):
+        node_id = node.attrs.get('id', '') if not node.is_text else ''
+        if node_id:
+            svg_definitions[node_id] = node
+        if not node.is_text:
+            for child in node.children:
+                collect_svg_definitions(child)
+
+    collect_svg_definitions(root)
     lines = []
     lines.append(f"fn {fn_name}() -> Document {{")
     if root_aware:
@@ -9009,9 +9121,12 @@ def generate_rust_fn(
     INHERITED_PROPS = {'direction', 'writing-mode', 'text-orientation',
                        'text-combine-upright',
                        'color', 'white-space', 'word-break', 'overflow-wrap',
+                       'line-break',
                        'hyphens', 'text-wrap', 'text-align',
                        'font-size', 'line-height', 'visibility',
                        'orphans', 'widows', 'ruby-position', 'text-shadow',
+                       'text-emphasis-style', 'text-emphasis-position',
+                       'text-emphasis-color',
                        'quotes', 'border-collapse', 'border-spacing',
                        'caption-side', 'empty-cells'}
     if is_real_font_profile():
@@ -9208,6 +9323,8 @@ def generate_rust_fn(
         if custom_props is None:
             custom_props = {}
 
+        isolated_document = bool(getattr(node, 'isolated_document', False))
+
         if node.is_text:
             # SP14: emit a real Text node when text emission is enabled; otherwise
             # skip (legacy box-only behavior, default — keeps the passing corpus
@@ -9245,7 +9362,13 @@ def generate_rust_fn(
                         f"{ws}{ts}.font_size = "
                         f"{round(float(parent_font_size) * parent_zoom, 12)};"
                     )
-                    if RETAIN_TEXT and not is_real_font_profile():
+                    if isolated_document:
+                        lines.append(f"{ws}{ts}.embedded_document_text = true;")
+                    if (
+                        RETAIN_TEXT
+                        and not is_real_font_profile()
+                        and not isolated_document
+                    ):
                         # Deterministic-font mode: every glyph renders as Ahem on
                         # both sides (TEXT_TEMPLATE_OVERRIDE forces it in Chrome).
                         lines.append(
@@ -9268,12 +9391,14 @@ def generate_rust_fn(
                         for prop in (
                             'font-weight', 'font-style', 'font-stretch',
                             'font-variant-caps', 'white-space', 'word-break',
-                            'overflow-wrap', 'hyphens', 'text-wrap',
+                            'overflow-wrap', 'line-break', 'hyphens', 'text-wrap',
                             'line-height',
                             'text-transform', 'letter-spacing', 'word-spacing',
                             'direction', 'writing-mode',
                             'text-orientation', 'text-combine-upright',
                             'text-shadow', 'quotes', 'visibility',
+                            'text-emphasis-style', 'text-emphasis-position',
+                            'text-emphasis-color',
                         ):
                             if prop in inherited:
                                 code = generate_single_style(prop, inherited[prop], ts, parent_font_size)
@@ -9356,6 +9481,36 @@ def generate_rust_fn(
                     )
                 return
 
+        is_display_contents = node.styles.get('display', '').strip() == 'contents'
+        if node.tag == 'defs':
+            # SVG definitions contribute only when referenced by a graphics
+            # element; they never generate their own painted subtree.
+            return
+        if (
+            is_display_contents
+            and node.tag == 'svg'
+            and getattr(node, 'parent_tag', '') not in {
+                'svg', 'g', 'defs', 'text', 'tspan',
+            }
+        ):
+            # An outer SVG participates in HTML as a replaced element, so the
+            # unusual-element rule computes `display:contents` to no box.
+            return
+        if is_display_contents and node.tag == 'use':
+            href = node.attrs.get('xlink:href', node.attrs.get('href', ''))
+            referenced = svg_definitions.get(href.removeprefix('#'))
+            if referenced is not None:
+                gen_node(
+                    referenced, parent_var, indent, parent_font_size,
+                    inherited, custom_props, parent_zoom, html_table_border,
+                )
+            return
+        if is_display_contents and node.tag == 'text':
+            # SVG text is a graphics element, not an HTML-style transparent
+            # formatting wrapper. The unusual-element rule suppresses its
+            # own character data when its principal box computes to
+            # `display:contents`.
+            return
         if (
             node.tag == 'br'
             and node.styles.get('display', '').strip() in ('none', 'contents')
@@ -9363,6 +9518,16 @@ def generate_rust_fn(
             # CSS Display's unusual-element rules suppress a <br> whose
             # computed display is none/contents; it does not generate a forced
             # line break or a principal box.
+            return
+
+        if is_display_contents and node.tag in {
+            'wbr', 'meter', 'progress', 'canvas', 'embed', 'object', 'audio',
+            'iframe', 'img', 'video', 'input', 'textarea', 'select',
+        }:
+            # CSS Display's unusual-element appendix computes `contents` to
+            # no generated box/content for replaced elements and native form
+            # controls. In particular, an object's fallback children do not
+            # escape when its principal replaced box is suppressed.
             return
 
         if (
@@ -9444,7 +9609,31 @@ def generate_rust_fn(
                 child_inherited['line-height'] = _line_height_from_font_shorthand(
                     effective_styles['font']
                 )
-            for child in node.children:
+            contents_children = list(node.children)
+            if (
+                node.tag == 'optgroup'
+                and node.attrs.get('label', '')
+                and getattr(node, 'parent_tag', '') != 'select'
+            ):
+                # The native optgroup label survives when the host principal
+                # box is `display:contents`. Represent its anonymous label
+                # block explicitly so inherited font/color still apply.
+                label_box = DomNode('span', {}, CssDeclarations())
+                label_box.styles['display'] = 'block'
+                label_box.styles['margin-top'] = '19px'
+                label_box.styles['padding-left'] = '2px'
+                label_box.styles['padding-bottom'] = '2px'
+                label_box.styles['line-height'] = '20.1875px'
+                label_box.styles['position'] = 'relative'
+                label_box.styles['top'] = '-1px'
+                label_text = DomNode('#text', {}, CssDeclarations())
+                label_text.is_text = True
+                label_text.text_content = node.attrs['label']
+                label_box.children = [label_text]
+                label_box.parent_tag = node.tag
+                label_text.parent_tag = label_box.tag
+                contents_children.insert(0, label_box)
+            for child in contents_children:
                 gen_node(
                     child,
                     parent_var,
@@ -9461,6 +9650,31 @@ def generate_rust_fn(
         var = f"n{counter[0]}"
         ws = "    " * indent
         render_children = node.children
+        if (
+            node.tag == 'optgroup'
+            and node.attrs.get('label', '')
+            and getattr(node, 'parent_tag', '') != 'select'
+            and node.styles.get('display', '').strip().lower() == 'contents'
+        ):
+            # The standalone optgroup's native anonymous label survives when
+            # the principal box is `display:contents`. Keep it as a child of
+            # the unboxed style boundary; layout flattens that boundary into
+            # the surrounding formatting context.
+            label_box = DomNode('span', {}, CssDeclarations())
+            label_box.styles['display'] = 'block'
+            label_box.styles['margin-top'] = '19px'
+            label_box.styles['padding-left'] = '2px'
+            label_box.styles['padding-bottom'] = '2px'
+            label_box.styles['line-height'] = '20.1875px'
+            label_box.styles['position'] = 'relative'
+            label_box.styles['top'] = '-1px'
+            label_text = DomNode('#text', {}, CssDeclarations())
+            label_text.is_text = True
+            label_text.text_content = node.attrs['label']
+            label_box.children = [label_text]
+            label_box.parent_tag = node.tag
+            label_text.parent_tag = label_box.tag
+            render_children = [label_box, *node.children]
 
         # Map HTML tag to ElementTag
         inline_tags = {'span', 'a', 'em', 'strong', 'b', 'i', 'u', 'small', 'big', 'sub', 'sup', 'abbr', 'cite', 'code', 'mark', 'q', 's', 'del', 'ins', 'var', 'kbd', 'samp', 'label'}
@@ -9489,6 +9703,7 @@ def generate_rust_fn(
             'input': 'ElementTag::Input',
             'button': 'ElementTag::Button',
             'meter': 'ElementTag::Meter',
+            'progress': 'ElementTag::Progress',
             'fieldset': 'ElementTag::Fieldset',
             'legend': 'ElementTag::Legend',
             'details': 'ElementTag::Details',
@@ -9511,7 +9726,11 @@ def generate_rust_fn(
             lines.append(f"{ws}doc.node_mut({var}).scroll_left = {scroll_left};")
         if scroll_top:
             lines.append(f"{ws}doc.node_mut({var}).scroll_top = {scroll_top};")
-        if RETAIN_TEXT and not is_real_font_profile():
+        if (
+            RETAIN_TEXT
+            and not is_real_font_profile()
+            and not isolated_document
+        ):
             lines.append(
                 f'{ws}doc.node_mut({var}).style.font_family = '
                 f'{DETERMINISTIC_FONT_FAMILY_RUST};'
@@ -9575,6 +9794,25 @@ def generate_rust_fn(
                 lines.append(f"{ws}doc.node_mut({var}).style.width = {svg_width};")
             if svg_height:
                 lines.append(f"{ws}doc.node_mut({var}).style.height = {svg_height};")
+            if node.children:
+                lines.append(f"{ws}doc.node_mut({var}).style.position = Position::Relative;")
+
+        if node.tag == 'text':
+            # SVG text uses its x/y presentation coordinates, where y is the
+            # typographic baseline. Lower the graphics leaf to an absolutely
+            # positioned shrink-to-fit text box inside its SVG viewport.
+            def svg_text_number(name, default):
+                token = node.attrs.get(name, str(default)).strip()
+                return float(token) if re.fullmatch(
+                    r'[-+]?(?:\d+(?:\.\d*)?|\.\d+)', token
+                ) else float(default)
+
+            text_x = _zoomed_px(svg_text_number('x', 0.0))
+            text_y = _zoomed_px(svg_text_number('y', 0.0) - 13.0)
+            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::Block;")
+            lines.append(f"{ws}doc.node_mut({var}).style.position = Position::Absolute;")
+            lines.append(f"{ws}doc.node_mut({var}).style.left = Length::px({text_x});")
+            lines.append(f"{ws}doc.node_mut({var}).style.top = Length::px({text_y});")
 
         if node.tag == 'g':
             # SVG container elements do not generate CSS layout boxes. Keep
@@ -9750,9 +9988,17 @@ def generate_rust_fn(
                 )
         elif node.tag in {
             'img', 'canvas', 'svg', 'iframe', 'object', 'audio', 'video',
-            'input', 'button', 'meter', 'textarea', 'select', 'embed',
+            'input', 'button', 'meter', 'progress', 'textarea', 'select', 'embed',
+            'marquee',
         }:
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::InlineBlock;")
+
+        if node.tag == 'marquee':
+            # The legacy scrolling host clips its anonymous scrolling box.
+            # Static startup lowering keeps the initial layout state, so the
+            # clip remains observable even though no animation is executed.
+            lines.append(f"{ws}doc.node_mut({var}).style.overflow_x = Overflow::Hidden;")
+            lines.append(f"{ws}doc.node_mut({var}).style.overflow_y = Overflow::Hidden;")
 
         if node.tag in {'img', 'iframe', 'video', 'embed', 'svg'}:
             # HTML's replaced-element UA rules use an `overflow: clip`
@@ -9795,6 +10041,7 @@ def generate_rust_fn(
             'option': 'openui_dom::FormControlRole::Option',
             'optgroup': 'openui_dom::FormControlRole::OptGroup',
             'meter': 'openui_dom::FormControlRole::Meter',
+            'progress': 'openui_dom::FormControlRole::Progress',
             'fieldset': 'openui_dom::FormControlRole::Fieldset',
             'legend': 'openui_dom::FormControlRole::Legend',
         }
@@ -9803,6 +10050,12 @@ def generate_rust_fn(
             role = (
                 'openui_dom::FormControlRole::Range'
                 if input_type == 'range'
+                else 'openui_dom::FormControlRole::ColorInput'
+                if input_type == 'color'
+                else 'openui_dom::FormControlRole::DateInput'
+                if input_type == 'date'
+                else 'openui_dom::FormControlRole::FileInput'
+                if input_type == 'file'
                 else 'openui_dom::FormControlRole::Checkbox'
                 if input_type == 'checkbox'
                 else 'openui_dom::FormControlRole::Radio'
@@ -9821,7 +10074,12 @@ def generate_rust_fn(
                 f"{ws}doc.node_mut({var}).form_control_disabled = "
                 f"{'true' if 'disabled' in node.attrs else 'false'};"
             )
+        if node.tag == 'input' and node.attrs.get('type', 'text').lower() == 'file':
+            # The file-selector shadow button uses the platform small-control
+            # font even though the filename label inherits the host font.
+            lines.append(f"{ws}doc.node_mut({var}).style.native_control_text = true;")
 
+        control_all_initial = node.styles.get('all', '').strip().lower() == 'initial'
         if node.tag in {'input', 'textarea', 'select'}:
             # Pinned Linux Chromium UA appearance. Intrinsic control metrics
             # are carried by ReplacedContent below, leaving computed width
@@ -9830,7 +10088,6 @@ def generate_rust_fn(
                 node.styles.get(prop, '').strip().lower() == 'none'
                 for prop in ('appearance', '-webkit-appearance', '-moz-appearance')
             )
-            control_all_initial = node.styles.get('all', '').strip().lower() == 'initial'
             lines.append(
                 f"{ws}doc.node_mut({var}).style.box_sizing = "
                 f"BoxSizing::{'ContentBox' if control_all_initial else 'BorderBox'};"
@@ -9840,7 +10097,7 @@ def generate_rust_fn(
                 lines.append(f"{ws}doc.node_mut({var}).style.overflow_y = Overflow::Auto;")
             input_type = node.attrs.get('type', 'text').lower() if node.tag == 'input' else ''
             ua_border_width = 0 if control_all_initial else (
-                0 if input_type in {'checkbox', 'radio'}
+                0 if input_type in {'checkbox', 'radio', 'file'}
                 or (input_type == 'range' and not appearance_none)
                 else 2 if node.tag == 'input'
                 else 1
@@ -9854,6 +10111,22 @@ def generate_rust_fn(
                     f"{ws}doc.node_mut({var}).style.border_{side}_style = "
                     f"BorderStyle::{'None' if control_all_initial else 'Inset'};"
                 )
+                if node.tag == 'select' and appearance_none:
+                    lines.append(
+                        f"{ws}doc.node_mut({var}).style.border_{side}_style = "
+                        "BorderStyle::Solid;"
+                    )
+                    lines.append(
+                        f"{ws}doc.node_mut({var}).style.border_{side}_color = "
+                        "StyleColor::Resolved(Color::from_rgba8(118, 118, 118, 255));"
+                    )
+            if node.tag == 'select' and appearance_none:
+                for corner in (
+                    'top_left', 'top_right', 'bottom_right', 'bottom_left'
+                ):
+                    lines.append(
+                        f"{ws}doc.node_mut({var}).style.border_{corner}_radius = (2.0, 2.0);"
+                    )
 
         if node.tag == 'fieldset':
             # Chromium's HTML UA rule supplies a 2px groove border. The
@@ -10148,6 +10421,12 @@ def generate_rust_fn(
             srcdoc = node.attrs.get('srcdoc')
             source = node.attrs.get('src', '').strip()
             embedded_parser = None
+            packaged_document_context = bool(
+                getattr(node, 'packaged_document_context', False)
+            )
+            embedded_resource_base = Path(
+                getattr(node, 'resource_base', _ACTIVE_RESOURCE_BASE or Path.cwd())
+            )
             if srcdoc is not None:
                 data = srcdoc.encode('utf-8')
                 document_source = f'inline:srcdoc;sha256={hashlib.sha256(data).hexdigest()}'
@@ -10177,7 +10456,7 @@ def generate_rust_fn(
                         embedded_markup += '</style>'
                 embedded_parser = _parse_wpt_markup(
                     embedded_markup,
-                    str(_ACTIVE_RESOURCE_BASE or Path.cwd()),
+                    str(embedded_resource_base),
                     root_aware=True,
                     harness_rules=EMBEDDED_DOCUMENT_RULES,
                 )
@@ -10188,6 +10467,13 @@ def generate_rust_fn(
                     )
                 embedded_root = embedded_parser.root
                 embedded_root.tag = 'div'
+
+                def mark_isolated_document(embedded_node):
+                    embedded_node.isolated_document = True
+                    for embedded_child in embedded_node.children:
+                        mark_isolated_document(embedded_child)
+
+                mark_isolated_document(embedded_root)
                 # Keep the nested document as real child layout while giving
                 # its atomic iframe box the HTML default object size. A
                 # packaged document without lowered children gets this size
@@ -10227,10 +10513,58 @@ def generate_rust_fn(
                             f"Some({canvas_color});"
                         )
             else:
-                packaged_document = _packaged_resource(source) if source else None
+                local_document = (
+                    _resolve_local_resource(source, embedded_resource_base)
+                    if source and not packaged_document_context else None
+                )
+                packaged_document = (
+                    _packaged_resource(source, embedded_resource_base)
+                    if source and not packaged_document_context else None
+                )
                 if packaged_document is not None and packaged_document[2] in ('text/html', 'application/xhtml+xml'):
                     filename, document_source, document_mime, document_sha, _ = packaged_document
                     document_bytes = _packaged_bytes_expr(filename)
+                    if local_document is not None:
+                        embedded_markup = local_document.read_text(
+                            encoding='utf-8-sig', errors='replace'
+                        )
+                        embedded_parser = _parse_wpt_markup(
+                            embedded_markup,
+                            str(local_document.parent),
+                            root_aware=True,
+                            harness_rules=EMBEDDED_DOCUMENT_RULES,
+                        )
+                        embedded_portable, embedded_reason = analyze_portability(
+                            embedded_parser
+                        )
+                        if not embedded_portable:
+                            raise ValueError(
+                                'unsupported packaged document behavior: '
+                                f'{embedded_reason}'
+                            )
+                        embedded_root = embedded_parser.root
+                        embedded_root.tag = 'div'
+                        if embedded_root.styles.get('display', '').strip() in ('', 'block'):
+                            embedded_root.styles['display'] = 'flow-root'
+
+                        def attach_resource_base(embedded_node):
+                            embedded_node.resource_base = local_document.parent
+                            embedded_node.isolated_document = True
+                            embedded_node.packaged_document_context = True
+                            for embedded_child in embedded_node.children:
+                                attach_resource_base(embedded_child)
+
+                        attach_resource_base(embedded_root)
+                        render_children = [embedded_root]
+                        lines.append(
+                            f"{ws}doc.node_mut({var}).style.width = Length::px(300.0);"
+                        )
+                        lines.append(
+                            f"{ws}doc.node_mut({var}).style.height = Length::px(150.0);"
+                        )
+                        lines.append(
+                            f"{ws}doc.node_mut({var}).style.position = Position::Relative;"
+                        )
                 else:
                     document_source = 'about:blank'
                     document_mime = 'text/html'
@@ -10249,15 +10583,26 @@ def generate_rust_fn(
                     "intrinsic_width: Some(300.0), intrinsic_height: Some(150.0), "
                     "intrinsic_ratio: None });"
                 )
-            # Blink's iframe UA rule is a 2px inset border.
-            lines.append(f"{ws}doc.node_mut({var}).style.border_top_width = 2;")
-            lines.append(f"{ws}doc.node_mut({var}).style.border_right_width = 2;")
-            lines.append(f"{ws}doc.node_mut({var}).style.border_bottom_width = 2;")
-            lines.append(f"{ws}doc.node_mut({var}).style.border_left_width = 2;")
-            lines.append(f"{ws}doc.node_mut({var}).style.border_top_style = BorderStyle::Inset;")
-            lines.append(f"{ws}doc.node_mut({var}).style.border_right_style = BorderStyle::Inset;")
-            lines.append(f"{ws}doc.node_mut({var}).style.border_bottom_style = BorderStyle::Inset;")
-            lines.append(f"{ws}doc.node_mut({var}).style.border_left_style = BorderStyle::Inset;")
+            # Blink's iframe UA rule is a 2px inset border; the legacy
+            # frameborder=0 presentation hint suppresses it.
+            frame_border = 0 if node.attrs.get('frameborder', '').strip() == '0' else 2
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.border_top_width = {frame_border};"
+            )
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.border_right_width = {frame_border};"
+            )
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.border_bottom_width = {frame_border};"
+            )
+            lines.append(
+                f"{ws}doc.node_mut({var}).style.border_left_width = {frame_border};"
+            )
+            if frame_border:
+                lines.append(f"{ws}doc.node_mut({var}).style.border_top_style = BorderStyle::Inset;")
+                lines.append(f"{ws}doc.node_mut({var}).style.border_right_style = BorderStyle::Inset;")
+                lines.append(f"{ws}doc.node_mut({var}).style.border_bottom_style = BorderStyle::Inset;")
+                lines.append(f"{ws}doc.node_mut({var}).style.border_left_style = BorderStyle::Inset;")
         elif (
             node.tag == 'input'
             and node.attrs.get('type', 'text').lower() == 'range'
@@ -10285,7 +10630,7 @@ def generate_rust_fn(
                 "intrinsic_width: Some(13.0), intrinsic_height: Some(13.0), "
                 "intrinsic_ratio: Some((1.0, 1.0)) });"
             )
-        elif node.tag == 'meter':
+        elif node.tag in {'meter', 'progress'}:
             # Chromium's Linux meter control is an 80x16 atomic widget.  Its
             # passive track is painted by the form-control role; transparent
             # canvas metadata supplies deterministic replaced sizing without
@@ -10368,7 +10713,15 @@ def generate_rust_fn(
                     visible_rows = max(1, int(size)) if size else (4 if multiple else 1)
                 except ValueError:
                     visible_rows = 4 if multiple else 1
-                intrinsic_width = 20.0 if visible_rows == 1 else 2.0
+                visible_optgroup = any(
+                    child.tag == 'optgroup'
+                    and child.styles.get('display', '').strip().lower() != 'none'
+                    for child in node.children
+                    if not child.is_text
+                )
+                intrinsic_width = (
+                    20.0 if visible_rows == 1 else 4.0 if visible_optgroup else 0.0
+                )
                 select_font_size = parent_font_size
                 if authored_font_token is not None:
                     try:
@@ -10377,7 +10730,11 @@ def generate_rust_fn(
                         )
                     except (UnsupportedFontShorthand, ValueError):
                         pass
-                select_row_height = float(max(3.0, round(select_font_size)))
+                select_row_height = (
+                    17.0 if visible_optgroup else
+                    15.0 if authored_font_token is None else
+                    float(max(3.0, round(select_font_size)))
+                )
                 intrinsic_height = float(visible_rows * select_row_height)
             lines.append(
                 f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
@@ -10390,7 +10747,8 @@ def generate_rust_fn(
         block_tags = {'div', 'p', 'section', 'article', 'header', 'footer', 'nav', 'main',
                       'aside', 'figure', 'figcaption', 'blockquote', 'pre', 'address',
                       'details', 'summary', 'fieldset', 'legend', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-                      'dl', 'dt', 'dd', 'ol', 'ul', 'menu', 'li', 'hr'}
+                      'dl', 'dt', 'dd', 'ol', 'ul', 'menu', 'li', 'hr',
+                      'option', 'optgroup'}
         supported_display_values = {
             'block', 'inline', 'inline-block', 'none', 'flow-root',
             'contents', 'list-item', 'flow-root list-item',
@@ -10400,7 +10758,7 @@ def generate_rust_fn(
             'table-cell', 'table-column-group', 'table-column', 'table-caption',
         }
         display_value = node.styles.get('display', '').strip()
-        if not RETAIN_TEXT and node.tag == 'li' and (
+        if node.tag == 'li' and (
             'display' not in node.styles or display_value not in supported_display_values
         ):
             lines.append(f"{ws}doc.node_mut({var}).style.display = Display::ListItem;")
@@ -10444,6 +10802,39 @@ def generate_rust_fn(
 
         # Resolve explicit CSS-wide `inherit` before generating style code.
         effective_styles = _copy_declarations(node.styles)
+        if node.tag == 'marquee':
+            # Chromium exposes column properties on the legacy host, but its
+            # anonymous scrolling block remains a single vertical formatting
+            # context. Lower that anonymous structure by keeping columns off
+            # the principal layout box.
+            for prop in ('columns', 'column-count', 'column-width'):
+                effective_styles.pop(prop, None)
+        if (
+            node.tag == 'legend'
+            and getattr(node, 'fieldset_legend_index', 0) > 0
+            and 'position' not in effective_styles
+            and 'top' not in effective_styles
+        ):
+            # Only the first direct legend is the fieldset's special legend.
+            # Subsequent legends are normal flow children below the fieldset's
+            # block-start padding edge; pin that one-device-pixel UA offset as
+            # a relative visual displacement without changing flow height.
+            effective_styles['position'] = 'relative'
+            effective_styles['top'] = '1px'
+        if (
+            node.tag == 'optgroup'
+            and getattr(node, 'parent_tag', '') != 'select'
+            and effective_styles.get('display', '').strip().lower() != 'contents'
+        ):
+            # A standalone optgroup reserves one native label-row before its
+            # authored contents. Padding, rather than a fixed height, lets
+            # visible text contribute its own line box below that row. The
+            # native anonymous label is not itself a CSS multicol container,
+            # even though the host's computed column properties are visible.
+            for prop in ('columns', 'column-count', 'column-width'):
+                effective_styles.pop(prop, None)
+            if 'padding-top' not in effective_styles:
+                effective_styles['padding-top'] = '20.1875px'
         is_input_button = (
             node.tag == 'input'
             and node.attrs.get('type', 'text').lower() in {'button', 'submit', 'reset'}
@@ -10459,14 +10850,22 @@ def generate_rust_fn(
                 'font-size' not in effective_styles
                 and 'font' not in effective_styles
                 and not (
-                    node.tag in {'input', 'textarea', 'select'}
+                    node.tag in {'button', 'input', 'textarea', 'select'}
                     and control_all_initial
                 )
             ):
                 effective_styles['font-size'] = '13.333333px'
-                uses_native_button_ahem_metrics = node.tag == 'button'
+                uses_native_button_ahem_metrics = node.tag == 'button' or is_input_button
             if (node.tag == 'button' or is_input_button) and 'text-align' not in effective_styles:
                 effective_styles['text-align'] = 'center'
+            if (
+                (node.tag == 'button' or is_input_button)
+                and 'white-space' not in effective_styles
+            ):
+                # Form buttons use a non-wrapping anonymous label box. This is
+                # observable when deterministic Ahem makes the label exactly
+                # as wide as the native control's shrink-to-fit width.
+                effective_styles['white-space'] = 'pre'
         authored_button_background = any(
             prop in effective_styles
             for prop in {'background', 'background-color', 'background-image'}
@@ -10475,6 +10874,11 @@ def generate_rust_fn(
             # Passive Linux button appearance. The comparison harness resets
             # margin/padding/box-sizing as author CSS, but leaves these UA
             # paint declarations in force unless the test overrides them.
+            if not any(
+                name in effective_styles
+                for name in {'overflow', 'overflow-x', 'overflow-y'}
+            ):
+                effective_styles['overflow'] = 'clip'
             if (
                 'background' not in effective_styles
                 and 'background-color' not in effective_styles
@@ -10507,6 +10911,26 @@ def generate_rust_fn(
                     effective_styles['border-style'] = 'solid'
                     effective_styles['border-color'] = '#767676'
                     effective_styles['border-radius'] = '2px'
+        elif (
+            node.tag == 'input'
+            and node.attrs.get('type', 'text').lower() == 'color'
+        ):
+            # Linux Chromium paints the passive color well with the same
+            # rounded ButtonFace/ButtonBorder shell as an input button. The
+            # black color swatch is overlaid by the public control painter.
+            if (
+                'background' not in effective_styles
+                and 'background-color' not in effective_styles
+            ):
+                effective_styles['background-color'] = 'rgb(239, 239, 239)'
+            if not any(
+                name == 'border' or name.startswith('border-')
+                for name in effective_styles
+            ):
+                effective_styles['border-width'] = '2px'
+                effective_styles['border-style'] = 'solid'
+                effective_styles['border-color'] = '#767676'
+                effective_styles['border-radius'] = '2px'
 
         # A floated semantic table remains a table formatting context after
         # display blockification (only `inline-table` blockifies to `table`).
@@ -10777,7 +11201,11 @@ def generate_rust_fn(
                 f"{ws}doc.node_mut({var}).style.native_button_text_metrics = true;"
             )
 
-        if RETAIN_TEXT and not is_real_font_profile():
+        if (
+            RETAIN_TEXT
+            and not is_real_font_profile()
+            and not isolated_document
+        ):
             # TEXT_TEMPLATE_OVERRIDE is author-important and therefore wins
             # over every declaration in the source test. Materialize those
             # computed values after authored style emission on the Rust side.
@@ -11182,7 +11610,11 @@ def generate_rust_fn(
                 f"{ws}    {quote_style}.font_size = "
                 f"{round(float(node_font_size) * node_zoom, 12)};"
             )
-            if RETAIN_TEXT and not is_real_font_profile():
+            if (
+                RETAIN_TEXT
+                and not is_real_font_profile()
+                and not isolated_document
+            ):
                 # Generated quote text participates in the same deterministic
                 # Ahem runner override as author text. The override is added
                 # after CSS collection, so it is not present in
@@ -11203,12 +11635,14 @@ def generate_rust_fn(
             for prop in (
                 'font-weight', 'font-style', 'font-stretch',
                 'font-variant-caps', 'white-space', 'word-break',
-                'overflow-wrap', 'hyphens', 'text-wrap',
+                'overflow-wrap', 'line-break', 'hyphens', 'text-wrap',
                 'line-height',
                 'text-transform', 'letter-spacing', 'word-spacing',
                 'direction', 'writing-mode',
                 'text-orientation', 'text-combine-upright',
                 'text-shadow', 'quotes',
+                'text-emphasis-style', 'text-emphasis-position',
+                'text-emphasis-color',
             ):
                 if prop in child_inherited:
                     code = generate_single_style(
