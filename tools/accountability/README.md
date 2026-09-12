@@ -45,25 +45,25 @@ Current verified snapshot:
 | Metric | Value |
 |---|---:|
 | Chromium SP12-scope inventory rows | 7673 |
-| Ported/runnable WPT tests | 4962 |
-| Runnable passes | 4962 |
+| Ported/runnable WPT tests | 5731 |
+| Runnable passes | 5731 |
 | Runnable failures | 0 |
 | Runnable render/diff errors | 0 |
-| Unported but explicitly categorized rows | 2711 |
+| Unported but explicitly categorized rows | 1942 |
 | Generic `not_ported` bucket rows | 0 |
 | `sp12_layout_bug` rows | 0 |
 | `needs_text` rows | 0 |
 | `needs_font_metrics` rows | 0 |
-| Repaired SP19 runnable targets | 81 |
-| Verified SP19 static layout targets | 823 |
-| Verified SP19 combined targets | 904 |
-| Excluded SP19 JavaScript-dependent rows | 221 |
+| Verified SP20 exact baseline | 4962 |
+| Verified SP20 static-visual targets | 769 |
+| Excluded SP20 JavaScript-dependent rows | 1912 |
+| Excluded SP20 nonvisual/crash-harness rows | 30 |
 
-This is the verified SP19 snapshot: all 4,139 repaired baseline IDs and 823
-static table, Grid, containment, and intersection targets pass at 0.0%
-mismatch. The complete 4,962-test run has zero failures and zero render/diff
-errors. The remaining 2,711 rows retain explicit dependency ownership,
-including the 221 JavaScript-dependent layout rows excluded from SP19.
+This is the verified SP20 snapshot: all 4,962 baseline IDs and 769 static-visual
+targets pass at 0.0% mismatch. Both the focused manifest and the complete WPT
+run are 5,731/5,731 exact with zero failures and zero render/diff errors. The
+remaining 1,942 rows retain explicit ownership: 1,912 require JavaScript and 30
+are nonvisual or crash-harness rows.
 
 ## Data Files
 
