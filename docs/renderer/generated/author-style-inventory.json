@@ -124,7 +124,7 @@
       "rust_type": "Option<LinearGradient>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -738,7 +738,7 @@
       "rust_type": "Option<Vec<GeneratedContentItem>>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -969,7 +969,7 @@
       "rust_type": "f32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -980,7 +980,7 @@
       "rust_type": "FontStretch"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -992,7 +992,7 @@
       "rust_type": "FontStyleEnum"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs"
@@ -1120,7 +1120,7 @@
       "rust_type": "Length"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs"
@@ -1130,7 +1130,7 @@
       "rust_type": "(u8"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -1233,7 +1233,7 @@
       "rust_type": "bool"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/first_line.rs",
@@ -1244,7 +1244,7 @@
       "rust_type": "f32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -1256,7 +1256,7 @@
       "rust_type": "LineBreak"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -1269,7 +1269,7 @@
       "rust_type": "LineClamp"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -1609,7 +1609,7 @@
       "rust_type": "f32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -1816,7 +1816,7 @@
       "rust_type": "Option<Length>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs"
@@ -1826,7 +1826,7 @@
       "rust_type": "RubyAlign"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs"
@@ -1896,7 +1896,7 @@
       "rust_type": "ScrollbarWidth"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs"
@@ -1916,7 +1916,7 @@
       "rust_type": "TableLayout"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -1928,7 +1928,7 @@
       "rust_type": "TextAlign"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs"
@@ -1938,7 +1938,7 @@
       "rust_type": "TextAlignLast"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -1949,7 +1949,7 @@
       "rust_type": "StyleColor"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/first_line.rs",
@@ -1961,7 +1961,7 @@
       "rust_type": "TextDecorationLine"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/decoration_painter.rs"
@@ -1971,7 +1971,7 @@
       "rust_type": "TextDecorationSkipInk"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -1982,7 +1982,7 @@
       "rust_type": "TextDecorationStyle"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -1993,7 +1993,7 @@
       "rust_type": "TextDecorationThickness"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/emphasis_painter.rs"
@@ -2025,7 +2025,7 @@
       "rust_type": "TextEmphasisMark"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -2037,7 +2037,7 @@
       "rust_type": "TextEmphasisPosition"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs"
@@ -2047,7 +2047,7 @@
       "rust_type": "Length"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs"
@@ -2057,7 +2057,7 @@
       "rust_type": "TextJustify"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
@@ -2069,7 +2069,7 @@
       "rust_type": "TextOrientation"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs"
@@ -2079,7 +2079,7 @@
       "rust_type": "TextOverflow"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -2090,7 +2090,7 @@
       "rust_type": "Vec<TextShadow>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/first_line.rs",
@@ -2101,7 +2101,7 @@
       "rust_type": "TextTransform"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/decoration_painter.rs"
@@ -2111,7 +2111,7 @@
       "rust_type": "Length"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs"
@@ -2169,7 +2169,7 @@
       "rust_type": "(Length"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -2181,7 +2181,7 @@
       "rust_type": "UnicodeBidi"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -2218,7 +2218,7 @@
       "rust_type": "WebkitBoxOrient"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -2283,7 +2283,7 @@
       "rust_type": "bool"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -2295,7 +2295,7 @@
       "rust_type": "WordBreak"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/first_line.rs",
@@ -2306,7 +2306,7 @@
       "rust_type": "f32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",

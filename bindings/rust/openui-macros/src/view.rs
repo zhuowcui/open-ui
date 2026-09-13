@@ -15,154 +15,6 @@ fn property(prop: &str, span: Span) -> Result<openui_style::StyleProperty, Token
     })
 }
 
-fn enum_tokens<T: std::fmt::Debug>(prefix: TokenStream, value: T) -> TokenStream {
-    let variant = format_ident!("{}", format!("{value:?}"));
-    quote! { #prefix::#variant }
-}
-
-fn length_tokens(value: openui_style::LengthValue) -> TokenStream {
-    use openui_style::LengthValue;
-    match value {
-        LengthValue::Computed(value) if value.is_auto() => {
-            quote! { ::openui::typed_style::LengthValue::auto() }
-        }
-        LengthValue::Computed(value) if value.is_none() => {
-            quote! { ::openui::typed_style::LengthValue::none() }
-        }
-        LengthValue::Computed(value) if value.is_percent() => {
-            let v = value.value();
-            quote! { ::openui::typed_style::LengthValue::percent(#v) }
-        }
-        LengthValue::Computed(value) => {
-            let v = value.value();
-            quote! { ::openui::typed_style::LengthValue::px(#v) }
-        }
-        LengthValue::Em(v) => quote! { ::openui::typed_style::LengthValue::Em(#v) },
-        LengthValue::Rem(v) => quote! { ::openui::typed_style::LengthValue::Rem(#v) },
-        LengthValue::ViewportWidth(v) => {
-            quote! { ::openui::typed_style::LengthValue::ViewportWidth(#v) }
-        }
-        LengthValue::ViewportHeight(v) => {
-            quote! { ::openui::typed_style::LengthValue::ViewportHeight(#v) }
-        }
-    }
-}
-
-fn color_tokens(value: openui_style::Color) -> TokenStream {
-    let (r, g, b, a) = (value.r, value.g, value.b, value.a);
-    quote! { ::openui::typed_style::Color::from_rgba_f32(#r, #g, #b, #a) }
-}
-
-fn edges_tokens(value: openui_style::Edges<openui_style::LengthValue>) -> TokenStream {
-    let top = length_tokens(value.top);
-    let right = length_tokens(value.right);
-    let bottom = length_tokens(value.bottom);
-    let left = length_tokens(value.left);
-    quote! { ::openui::typed_style::Edges { top: #top, right: #right, bottom: #bottom, left: #left } }
-}
-
-fn style_value_tokens(value: openui_style::StyleValue) -> TokenStream {
-    use openui_style::StyleValue;
-    match value {
-        StyleValue::Display(v) => {
-            let v = enum_tokens(quote!(::openui::typed_style::Display), v);
-            quote!(::openui::typed_style::StyleValue::Display(#v))
-        }
-        StyleValue::Position(v) => {
-            let v = enum_tokens(quote!(::openui::typed_style::Position), v);
-            quote!(::openui::typed_style::StyleValue::Position(#v))
-        }
-        StyleValue::Overflow(v) => {
-            let v = enum_tokens(quote!(::openui::typed_style::Overflow), v);
-            quote!(::openui::typed_style::StyleValue::Overflow(#v))
-        }
-        StyleValue::Length(v) => {
-            let v = length_tokens(v);
-            quote!(::openui::typed_style::StyleValue::Length(#v))
-        }
-        StyleValue::Edges(v) => {
-            let v = edges_tokens(v);
-            quote!(::openui::typed_style::StyleValue::Edges(#v))
-        }
-        StyleValue::Color(v) => {
-            let v = color_tokens(v);
-            quote!(::openui::typed_style::StyleValue::Color(#v))
-        }
-        StyleValue::Number(v) => quote!(::openui::typed_style::StyleValue::Number(#v)),
-        StyleValue::Integer(v) => quote!(::openui::typed_style::StyleValue::Integer(#v)),
-        StyleValue::FlexDirection(v) => {
-            let v = enum_tokens(quote!(::openui::typed_style::FlexDirection), v);
-            quote!(::openui::typed_style::StyleValue::FlexDirection(#v))
-        }
-        StyleValue::FlexWrap(v) => {
-            let v = enum_tokens(quote!(::openui::typed_style::FlexWrap), v);
-            quote!(::openui::typed_style::StyleValue::FlexWrap(#v))
-        }
-        StyleValue::ItemAlignment(v) => {
-            let position = enum_tokens(quote!(::openui::typed_style::ItemPosition), v.position);
-            let overflow =
-                enum_tokens(quote!(::openui::typed_style::OverflowAlignment), v.overflow);
-            quote!(::openui::typed_style::StyleValue::ItemAlignment(::openui::typed_style::ItemAlignment { position: #position, overflow: #overflow }))
-        }
-        StyleValue::ContentAlignment(v) => {
-            let position = enum_tokens(quote!(::openui::typed_style::ContentPosition), v.position);
-            let distribution = enum_tokens(
-                quote!(::openui::typed_style::ContentDistribution),
-                v.distribution,
-            );
-            let overflow =
-                enum_tokens(quote!(::openui::typed_style::OverflowAlignment), v.overflow);
-            quote!(::openui::typed_style::StyleValue::ContentAlignment(::openui::typed_style::ContentAlignment { position: #position, distribution: #distribution, overflow: #overflow }))
-        }
-        StyleValue::Gap(v) => {
-            let row = length_tokens(v.row);
-            let column = length_tokens(v.column);
-            quote!(::openui::typed_style::StyleValue::Gap(::openui::typed_style::Gap { row: #row, column: #column }))
-        }
-        StyleValue::FontFamily(v) => {
-            use openui_style::FontFamily;
-            let families: Vec<_> = v.families.into_iter().map(|family| match family {
-                FontFamily::Named(name) => quote!(::openui::typed_style::FontFamily::Named(::std::string::String::from(#name))),
-                FontFamily::Generic(v) => { let v=enum_tokens(quote!(::openui::typed_style::GenericFontFamily),v); quote!(::openui::typed_style::FontFamily::Generic(#v)) }
-            }).collect();
-            quote!(::openui::typed_style::StyleValue::FontFamily(
-                ::openui::typed_style::FontFamilyList {
-                    families: ::std::vec![#(#families),*]
-                }
-            ))
-        }
-        StyleValue::FontWeight(v) => {
-            let v = v.0;
-            quote!(::openui::typed_style::StyleValue::FontWeight(::openui::typed_style::FontWeight(#v)))
-        }
-        StyleValue::Border(v) => {
-            let width = v.width;
-            let style = enum_tokens(quote!(::openui::typed_style::BorderStyle), v.style);
-            let color = color_tokens(v.color);
-            quote!(::openui::typed_style::StyleValue::Border(::openui::typed_style::Border { width: #width, style: #style, color: #color }))
-        }
-        StyleValue::CornerRadii(v) => {
-            let edges = edges_tokens(v.0);
-            quote!(::openui::typed_style::StyleValue::CornerRadii(::openui::typed_style::CornerRadii(#edges)))
-        }
-        StyleValue::Cursor(v) => {
-            let v = enum_tokens(quote!(::openui::typed_style::Cursor), v);
-            quote!(::openui::typed_style::StyleValue::Cursor(#v))
-        }
-        StyleValue::ListStyle(v) => {
-            let v = enum_tokens(quote!(::openui::typed_style::ListStyleType), v);
-            quote!(::openui::typed_style::StyleValue::ListStyle(#v))
-        }
-        StyleValue::Transform(_) => quote!(::openui::typed_style::StyleValue::Transform(
-            ::openui::typed_style::TransformList::default()
-        )),
-        StyleValue::PointerEvents(v) => {
-            let v = enum_tokens(quote!(::openui::typed_style::PointerEvents), v);
-            quote!(::openui::typed_style::StyleValue::PointerEvents(#v))
-        }
-    }
-}
-
 fn property_tokens(value: openui_style::StyleProperty) -> TokenStream {
     let variant = format_ident!("{}", format!("{value:?}"));
     quote! { ::openui::typed_style::StyleProperty::#variant }
@@ -652,15 +504,18 @@ fn gen_attr_stmt(attr: &Attr) -> TokenStream {
                 Ok(value) => value,
                 Err(error) => return error,
             };
-            let parsed = match openui_style::parse_literal(property, &value.value()) {
-                Ok(value) => value,
-                Err(error) => {
-                    return syn::Error::new(value.span(), error.to_string()).to_compile_error()
-                }
-            };
+            if let Err(error) = openui_style::parse_literal(property, &value.value()) {
+                return syn::Error::new(value.span(), error.to_string()).to_compile_error();
+            }
             let property = property_tokens(property);
-            let value = style_value_tokens(parsed);
-            quote_spanned! {*span=> __el.set_property(#property, #value).expect("set typed style"); }
+            let literal = value.value();
+            quote_spanned! {*span=>
+                __el.set_property(
+                    #property,
+                    ::openui::typed_style::parse_literal(#property, #literal)
+                        .expect("validated typed style literal")
+                ).expect("set typed style");
+            }
         }
         Attr::StyleDynamic { prop, expr, span } => {
             let property = match property(prop, *span) {
@@ -1153,12 +1008,13 @@ mod tests {
     }
 
     #[test]
-    fn codegen_static_style_is_typed_and_preparsed() {
+    fn codegen_static_style_is_typed_and_schema_validated() {
         let body = parse_ok(quote! { <div style:padding="8px 16px" /> });
         let output = generate(&body).to_string();
         assert!(output.contains("set_property"));
         assert!(output.contains("StyleProperty :: Padding"));
-        assert!(output.contains("LengthValue :: px"));
+        assert!(output.contains("parse_literal"));
+        assert!(output.contains("8px 16px"));
         assert!(!output.contains("set_style"));
     }
 

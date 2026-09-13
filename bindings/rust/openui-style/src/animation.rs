@@ -1,8 +1,10 @@
 //! Deterministic typed animation timing and property interpolation.
 
 use crate::{
-    Color, Edges, FontWeight, Gap, InterpolationKind, LengthValue, StyleProperty, StyleValue,
-    TransformList, TransformOperation,
+    apply_to_computed, Color, ComputedStyle, Edges, FontSizeAdjust, FontStretch, FontWeight, Gap,
+    InitialLetterValue, InterpolationKind, LengthValue, LineHeight, StyleColor, StyleProperty,
+    StyleValue, TextDecorationThickness, TextSizeAdjust, TransformList, TransformOperation,
+    TypographyValue, VerticalAlign,
 };
 use openui_geometry::{Length, LengthType};
 
@@ -533,31 +535,13 @@ impl PropertyKeyframes {
 }
 
 pub fn value_matches_property(property: StyleProperty, value: &StyleValue) -> bool {
-    use crate::ValueKind as K;
-    matches!(
-        (property.metadata().value_kind, value),
-        (K::Display, StyleValue::Display(_))
-            | (K::Position, StyleValue::Position(_))
-            | (K::Overflow, StyleValue::Overflow(_))
-            | (K::Length, StyleValue::Length(_))
-            | (K::Edges, StyleValue::Edges(_))
-            | (K::Color, StyleValue::Color(_))
-            | (K::Number, StyleValue::Number(_))
-            | (K::Integer, StyleValue::Integer(_))
-            | (K::FlexDirection, StyleValue::FlexDirection(_))
-            | (K::FlexWrap, StyleValue::FlexWrap(_))
-            | (K::ItemAlignment, StyleValue::ItemAlignment(_))
-            | (K::ContentAlignment, StyleValue::ContentAlignment(_))
-            | (K::Gap, StyleValue::Gap(_))
-            | (K::FontFamily, StyleValue::FontFamily(_))
-            | (K::FontWeight, StyleValue::FontWeight(_))
-            | (K::Border, StyleValue::Border(_))
-            | (K::CornerRadii, StyleValue::CornerRadii(_))
-            | (K::Cursor, StyleValue::Cursor(_))
-            | (K::ListStyle, StyleValue::ListStyle(_))
-            | (K::Transform, StyleValue::Transform(_))
-            | (K::PointerEvents, StyleValue::PointerEvents(_))
+    apply_to_computed(
+        &mut ComputedStyle::initial(),
+        property,
+        value,
+        (800.0, 600.0),
     )
+    .is_ok()
 }
 
 pub fn interpolate(
@@ -613,12 +597,97 @@ pub fn interpolate(
         (StyleValue::Transform(from), StyleValue::Transform(to)) => {
             interpolate_transform(from, to, progress).map(StyleValue::Transform)
         }
+        (StyleValue::Typography(from), StyleValue::Typography(to)) => {
+            interpolate_typography(from, to, progress).map(StyleValue::Typography)
+        }
         _ => Some(if progress < 0.5 {
             from.clone()
         } else {
             to.clone()
         }),
     }
+}
+
+fn interpolate_typography(
+    from: &TypographyValue,
+    to: &TypographyValue,
+    progress: f32,
+) -> Option<TypographyValue> {
+    Some(match (from, to) {
+        (TypographyValue::FontStretch(from), TypographyValue::FontStretch(to)) => {
+            TypographyValue::FontStretch(FontStretch(lerp(from.0, to.0, progress)))
+        }
+        (TypographyValue::FontSizeAdjust(from), TypographyValue::FontSizeAdjust(to)) => {
+            let value = match (from, to) {
+                (FontSizeAdjust::ExHeight(a), FontSizeAdjust::ExHeight(b)) => {
+                    FontSizeAdjust::ExHeight(lerp(*a, *b, progress))
+                }
+                (FontSizeAdjust::CapHeight(a), FontSizeAdjust::CapHeight(b)) => {
+                    FontSizeAdjust::CapHeight(lerp(*a, *b, progress))
+                }
+                (FontSizeAdjust::ChWidth(a), FontSizeAdjust::ChWidth(b)) => {
+                    FontSizeAdjust::ChWidth(lerp(*a, *b, progress))
+                }
+                (FontSizeAdjust::IcWidth(a), FontSizeAdjust::IcWidth(b)) => {
+                    FontSizeAdjust::IcWidth(lerp(*a, *b, progress))
+                }
+                (FontSizeAdjust::IcHeight(a), FontSizeAdjust::IcHeight(b)) => {
+                    FontSizeAdjust::IcHeight(lerp(*a, *b, progress))
+                }
+                _ => return None,
+            };
+            TypographyValue::FontSizeAdjust(value)
+        }
+        (TypographyValue::LineHeight(from), TypographyValue::LineHeight(to)) => {
+            let value = match (from, to) {
+                (LineHeight::Number(a), LineHeight::Number(b)) => {
+                    LineHeight::Number(lerp(*a, *b, progress))
+                }
+                (LineHeight::Length(a), LineHeight::Length(b)) => {
+                    LineHeight::Length(lerp(*a, *b, progress))
+                }
+                (LineHeight::Percentage(a), LineHeight::Percentage(b)) => {
+                    LineHeight::Percentage(lerp(*a, *b, progress))
+                }
+                _ => return None,
+            };
+            TypographyValue::LineHeight(value)
+        }
+        (
+            TypographyValue::TextDecorationThickness(TextDecorationThickness::Length(a)),
+            TypographyValue::TextDecorationThickness(TextDecorationThickness::Length(b)),
+        ) => TypographyValue::TextDecorationThickness(TextDecorationThickness::Length(lerp(
+            *a, *b, progress,
+        ))),
+        (
+            TypographyValue::VerticalAlign(VerticalAlign::Length(a)),
+            TypographyValue::VerticalAlign(VerticalAlign::Length(b)),
+        ) => TypographyValue::VerticalAlign(VerticalAlign::Length(lerp(*a, *b, progress))),
+        (
+            TypographyValue::VerticalAlign(VerticalAlign::Percentage(a)),
+            TypographyValue::VerticalAlign(VerticalAlign::Percentage(b)),
+        ) => TypographyValue::VerticalAlign(VerticalAlign::Percentage(lerp(*a, *b, progress))),
+        (
+            TypographyValue::TextSizeAdjust(TextSizeAdjust::Percentage(a)),
+            TypographyValue::TextSizeAdjust(TextSizeAdjust::Percentage(b)),
+        ) => TypographyValue::TextSizeAdjust(TextSizeAdjust::Percentage(lerp(*a, *b, progress))),
+        (
+            TypographyValue::InitialLetter(InitialLetterValue::Value(a)),
+            TypographyValue::InitialLetter(InitialLetterValue::Value(b)),
+        ) => TypographyValue::InitialLetter(InitialLetterValue::Value(crate::InitialLetter {
+            size: lerp(a.size, b.size, progress),
+            sink: match (a.sink, b.sink) {
+                (Some(a), Some(b)) => Some(lerp(a, b, progress)),
+                (None, None) => None,
+                _ => return None,
+            },
+        })),
+        (
+            TypographyValue::StyleColor(StyleColor::Resolved(a)),
+            TypographyValue::StyleColor(StyleColor::Resolved(b)),
+        ) => TypographyValue::StyleColor(StyleColor::Resolved(interpolate_color(*a, *b, progress))),
+        _ => return None,
+    })
 }
 
 fn lerp(from: f32, to: f32, progress: f32) -> f32 {

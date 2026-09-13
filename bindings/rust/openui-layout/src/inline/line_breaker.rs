@@ -1932,7 +1932,7 @@ pub fn find_break_opportunities(
     }
 
     let base_breaks = match word_break {
-        WordBreak::Normal => {
+        WordBreak::Normal | WordBreak::AutoPhrase => {
             // UAX#14 line break opportunities
             find_uax14_breaks(text)
         }
@@ -1968,6 +1968,15 @@ pub fn find_break_opportunities(
         LineBreak::Loose => apply_loose_line_break(text, base_breaks),
         // Auto and Normal use standard UAX#14 behavior unchanged.
         LineBreak::Auto | LineBreak::Normal | LineBreak::Anywhere => base_breaks,
+        LineBreak::AfterWhiteSpace => base_breaks
+            .into_iter()
+            .filter(|&offset| {
+                text[..offset]
+                    .chars()
+                    .next_back()
+                    .is_some_and(char::is_whitespace)
+            })
+            .collect(),
     }
 }
 

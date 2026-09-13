@@ -28,7 +28,8 @@ pub use openui_geometry::{ViewportAuthority, ViewportMetrics, ViewportMetricsErr
 use openui_layout::Fragment;
 use openui_paint::record_fragment;
 use openui_style::{
-    apply_to_computed, ImageResourceId, InvalidationClass, StyleProperty, StyleValue,
+    apply_to_computed, ImageResourceId, InvalidationClass, PseudoStyleTarget, Style, StyleProperty,
+    StyleValue,
 };
 pub use openui_text::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
@@ -709,6 +710,10 @@ impl Engine {
         }
         self.document
             .set_attribute(node, name.clone(), value.clone());
+        if name == "lang" {
+            self.document.node_mut(node).style.locale = Some(value.clone());
+            self.mark_dirty(InvalidationClass::Intrinsic);
+        }
         self.sync_control_attribute(handle, &name, &value);
         self.mark_dirty(InvalidationClass::Accessibility);
         Ok(())
@@ -732,6 +737,10 @@ impl Engine {
             .remove(&name.to_ascii_lowercase())
             .is_some();
         if removed {
+            if name.eq_ignore_ascii_case("lang") {
+                self.document.node_mut(node).style.locale = None;
+                self.mark_dirty(InvalidationClass::Intrinsic);
+            }
             self.remove_control_attribute(handle, &name.to_ascii_lowercase());
             self.mark_dirty(InvalidationClass::Accessibility);
         }
@@ -778,6 +787,44 @@ impl Engine {
         if has_animation {
             self.sample_animations()?;
         }
+        Ok(())
+    }
+
+    /// Atomically replace the declarations for a supported pseudo-element.
+    pub fn set_pseudo_style(
+        &mut self,
+        handle: NodeHandle,
+        target: PseudoStyleTarget,
+        declarations: &Style,
+    ) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        let origin = self.document.node(node).style.clone();
+        let mut pseudo = openui_style::ComputedStyle::for_pseudo(&origin);
+        let viewport = (
+            self.viewport.logical_width() as f32,
+            self.viewport.logical_height() as f32,
+        );
+        for declaration in declarations.declarations() {
+            apply_to_computed(
+                &mut pseudo,
+                declaration.property,
+                &declaration.value,
+                viewport,
+            )
+            .map_err(|_| EngineError::PropertyType {
+                property: declaration.property,
+            })?;
+        }
+        let style = &mut self.document.node_mut(node).style;
+        let destination = match target {
+            PseudoStyleTarget::FirstLine => &mut style.first_line_style,
+            PseudoStyleTarget::FirstLetter => &mut style.first_letter_style,
+            PseudoStyleTarget::Marker => &mut style.marker_style,
+            PseudoStyleTarget::Placeholder => &mut style.placeholder_style,
+        };
+        *destination = Some(Box::new(pseudo));
+        self.dirty.hit_test = true;
+        self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
     }
 
@@ -1584,5 +1631,41 @@ mod tests {
         assert_eq!(counts.semantic_overrides, 0);
         assert_eq!(counts.animations, 0);
         assert_eq!(counts.scroll_animations, 0);
+    }
+
+    #[test]
+    fn pseudo_styles_and_language_use_validated_public_paths() {
+        use openui_style::{FontWeight, LanguageTag, PseudoStyleTarget, TextDecorationLine};
+
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(80.0, 60.0, 1.0).unwrap()).unwrap();
+        let node = engine.create_element(ElementTag::Div).unwrap();
+        engine.append_child(engine.root(), node).unwrap();
+        let pseudo = Style::default()
+            .font_weight(FontWeight::BOLD)
+            .text_decoration_line(TextDecorationLine::UNDERLINE);
+        engine
+            .set_pseudo_style(node, PseudoStyleTarget::FirstLine, &pseudo)
+            .unwrap();
+        let id = engine.resolve(node).unwrap();
+        let first_line = engine
+            .document
+            .node(id)
+            .style
+            .first_line_style
+            .as_ref()
+            .unwrap();
+        assert_eq!(first_line.font_weight, FontWeight::BOLD);
+        assert!(first_line.text_decoration_line.has_underline());
+
+        let language = LanguageTag::parse("ar-EG").unwrap();
+        engine
+            .set_attribute(node, "lang", language.as_str())
+            .unwrap();
+        assert_eq!(
+            engine.document.node(id).style.locale.as_deref(),
+            Some("ar-EG")
+        );
+        assert!(LanguageTag::parse("not_a_tag").is_none());
     }
 }

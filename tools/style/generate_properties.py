@@ -17,6 +17,33 @@ C_OUT = ROOT / "include/openui_style_properties.h"
 DOC_OUT = ROOT / "docs/v02/generated/style-properties.md"
 FRAMEWORK_OUT = ROOT / "bindings/rust/openui/src/generated_style_setters.rs"
 
+# Frozen from Chromium 147.0.7727.24's css_properties.json5 after excluding
+# descriptors, SVG-only properties, and non-stable runtime flags. Keeping the
+# set here makes a missing public typography property a generator/CI failure.
+CHROMIUM_147_TYPOGRAPHY = frozenset(
+    """
+    -webkit-font-smoothing direction font font-family font-feature-settings
+    font-kerning font-language-override font-optical-sizing font-palette
+    font-size font-size-adjust font-stretch font-style font-synthesis
+    font-synthesis-small-caps font-synthesis-style font-synthesis-weight
+    font-variant font-variant-alternates font-variant-caps
+    font-variant-east-asian font-variant-emoji font-variant-ligatures
+    font-variant-numeric font-variant-position font-variation-settings
+    font-weight hyphenate-character hyphenate-limit-chars hyphens
+    initial-letter letter-spacing line-break line-height overflow-wrap
+    ruby-align ruby-position tab-size text-align text-align-last text-autospace
+    text-box text-box-edge text-box-trim text-combine-upright text-decoration
+    text-decoration-color text-decoration-line text-decoration-skip-ink
+    text-decoration-style text-decoration-thickness text-emphasis
+    text-emphasis-color text-emphasis-position text-emphasis-style text-indent
+    text-justify text-orientation text-overflow text-rendering text-shadow
+    text-size-adjust text-spacing-trim text-transform text-underline-offset
+    text-underline-position text-wrap text-wrap-mode text-wrap-style
+    unicode-bidi vertical-align white-space white-space-collapse word-break
+    word-spacing word-wrap writing-mode
+    """.split()
+)
+
 
 def rows() -> list[dict[str, str]]:
     parsed = list(csv.DictReader(SCHEMA.read_text().splitlines()))
@@ -24,6 +51,12 @@ def rows() -> list[dict[str, str]]:
     names = [row["css_name"] for row in parsed]
     if ids != sorted(ids) or len(ids) != len(set(ids)) or len(names) != len(set(names)):
         raise SystemExit("style schema IDs and names must be unique and ordered")
+    missing_typography = sorted(CHROMIUM_147_TYPOGRAPHY.difference(names))
+    if missing_typography:
+        raise SystemExit(
+            "style schema is missing Chromium 147 typography properties: "
+            + ", ".join(missing_typography)
+        )
     return parsed
 
 
@@ -33,6 +66,10 @@ def title(value: str) -> str:
 
 def screaming(value: str) -> str:
     return re.sub(r"[^A-Za-z0-9]", "_", value).upper()
+
+
+def rust_method(value: str) -> str:
+    return value.strip("-").replace("-", "_")
 
 
 def rust_output(schema: list[dict[str, str]]) -> bytes:
@@ -60,7 +97,7 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
     builders = "\n".join(
         "\n".join(
             (
-                f"    pub fn {row['css_name'].replace('-', '_')}(self, value: {row['rust_type']}) -> Self {{",
+                f"    pub fn {rust_method(row['css_name'])}(self, value: {row['rust_type']}) -> Self {{",
                 f"        self.with(StyleProperty::{row['rust_name']}, value)",
                 "    }",
             )
@@ -119,7 +156,7 @@ def c_output(schema: list[dict[str, str]]) -> bytes:
 
 #include <stdint.h>
 
-#define OUI_STYLE_SCHEMA_VERSION 1u
+#define OUI_STYLE_SCHEMA_VERSION 2u
 
 typedef enum OuiStyleProperty {{
 {enum_rows}
@@ -143,7 +180,7 @@ def framework_output(schema: list[dict[str, str]]) -> bytes:
     setters = "\n".join(
         "\n".join(
             (
-                f"    pub fn set_{row['css_name'].replace('-', '_')}(&self, value: {row['rust_type']}) -> Result<(), Error> {{",
+                f"    pub fn set_{rust_method(row['css_name'])}(&self, value: {row['rust_type']}) -> Result<(), Error> {{",
                 f"        self.set_property(StyleProperty::{row['rust_name']}, value.into())",
                 "    }",
             )

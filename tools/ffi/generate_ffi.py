@@ -45,6 +45,11 @@ TAG_BY_KIND = {
     "list-style": 5,
     "transform": 6,
     "pointer-events": 5,
+    # Typography enums are transported as immutable compound handles. This
+    # keeps the C ABI exhaustive as Chromium adds enum keywords while the
+    # property ID still enforces the concrete Rust type at application time.
+    "enum": 6,
+    "compound": 6,
 }
 
 

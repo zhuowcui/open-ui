@@ -24,10 +24,11 @@ use openui_engine::{
     NodeHandle, PointerEventKind, ViewportAuthority, ViewportMetrics,
 };
 use openui_style::{
-    AnimationOptions, AnimationPhase, Border, BorderStyle, Color, CompositeOperation, CornerRadii,
-    Easing, Edges, FillMode, FontFamilyList, Gap, GenericFontFamily, IterationCount, Keyframe,
-    Keyframes, LinearStop, PlayState, PlaybackDirection, PropertyKeyframes, StepPosition,
-    StyleValue, TimelineAxis, TimelineRange, Transform2D, TransformList, TransformOperation,
+    parse_literal, AnimationOptions, AnimationPhase, Border, BorderStyle, Color,
+    CompositeOperation, CornerRadii, Easing, Edges, FillMode, FontFamilyList, Gap,
+    GenericFontFamily, IterationCount, Keyframe, Keyframes, LengthValue, LinearStop, PlayState,
+    PlaybackDirection, PropertyKeyframes, StepPosition, StyleProperty, StyleValue, TimelineAxis,
+    TimelineRange, Transform2D, TransformList, TransformOperation,
 };
 use registry::{
     borrow_engine, borrow_engine_mut, bytes, destroy, document, element, element_document, ffi,
@@ -2511,6 +2512,130 @@ pub extern "C" fn oui_transform_create(
     })
 }
 
+fn c_length(value: LengthValue) -> OuiLength {
+    match value {
+        LengthValue::Computed(value) if value.is_auto() => OuiLength {
+            value: 0.0,
+            unit: 6,
+        },
+        LengthValue::Computed(value) if value.is_none() => OuiLength {
+            value: 0.0,
+            unit: 7,
+        },
+        LengthValue::Computed(value) if value.is_percent() => OuiLength {
+            value: value.value(),
+            unit: 1,
+        },
+        LengthValue::Computed(value) => OuiLength {
+            value: value.value(),
+            unit: 0,
+        },
+        LengthValue::Em(value) => OuiLength { value, unit: 2 },
+        LengthValue::Rem(value) => OuiLength { value, unit: 3 },
+        LengthValue::ViewportWidth(value) => OuiLength { value, unit: 4 },
+        LengthValue::ViewportHeight(value) => OuiLength { value, unit: 5 },
+    }
+}
+
+fn c_enum(value: &StyleValue) -> Option<i32> {
+    use openui_style::{ContentDistribution, ContentPosition, ItemPosition};
+    Some(match value {
+        StyleValue::Display(value) => *value as i32,
+        StyleValue::Position(value) => *value as i32,
+        StyleValue::Overflow(value) => *value as i32,
+        StyleValue::FlexDirection(value) => *value as i32,
+        StyleValue::FlexWrap(value) => *value as i32,
+        StyleValue::ItemAlignment(value) => match value.position {
+            ItemPosition::Normal => 0,
+            ItemPosition::Stretch => 1,
+            ItemPosition::Center => 2,
+            ItemPosition::Start => 3,
+            ItemPosition::End => 4,
+            ItemPosition::FlexStart => 5,
+            ItemPosition::FlexEnd => 6,
+            ItemPosition::Baseline => 7,
+            _ => return None,
+        },
+        StyleValue::ContentAlignment(value) => match (value.position, value.distribution) {
+            (ContentPosition::Normal, ContentDistribution::Default) => 0,
+            (ContentPosition::Start, _) => 1,
+            (ContentPosition::End, _) => 2,
+            (ContentPosition::Center, _) => 3,
+            (ContentPosition::FlexStart, _) => 4,
+            (ContentPosition::FlexEnd, _) => 5,
+            (_, ContentDistribution::SpaceBetween) => 6,
+            (_, ContentDistribution::SpaceAround) => 7,
+            (_, ContentDistribution::SpaceEvenly) => 8,
+            _ => return None,
+        },
+        StyleValue::Cursor(value) => *value as i32,
+        StyleValue::ListStyle(value) => *value as i32,
+        StyleValue::PointerEvents(value) => *value as i32,
+        _ => return None,
+    })
+}
+
+// SAFETY CONTRACT: `literal` is readable and `out_value` points to one
+// writable tagged-value record. A returned compound payload is caller-owned.
+#[no_mangle]
+pub extern "C" fn oui_style_value_parse(
+    property: i32,
+    literal: OuiUtf8,
+    out_value: *mut OuiStyleValue,
+) -> OuiStatus {
+    ffi(|| {
+        if out_value.is_null() {
+            return Err(invalid("style value output is null"));
+        }
+        let property: StyleProperty = property_from_raw(property)
+            .ok_or_else(|| invalid("unknown style property identifier"))?;
+        let literal = utf8(literal, "style literal")?;
+        let parsed =
+            parse_literal(property, &literal).map_err(|error| invalid(error.to_string()))?;
+        let tag = generated::expected_value_tag(property);
+        let data = match (tag, &parsed) {
+            (1, StyleValue::Length(value)) => OuiStylePayload {
+                length: c_length(*value),
+            },
+            (2, StyleValue::Number(value)) => OuiStylePayload { number: *value },
+            (2, StyleValue::FontWeight(value)) => OuiStylePayload { number: value.0 },
+            (3, StyleValue::Integer(value)) => OuiStylePayload { integer: *value },
+            (4, StyleValue::Color(value)) => OuiStylePayload {
+                color: OuiColor {
+                    red: (value.r * 255.0).round() as u8,
+                    green: (value.g * 255.0).round() as u8,
+                    blue: (value.b * 255.0).round() as u8,
+                    alpha: (value.a * 255.0).round() as u8,
+                },
+            },
+            (5, value) => OuiStylePayload {
+                enum_value: c_enum(value)
+                    .ok_or_else(|| invalid("literal has no C enum encoding"))?,
+            },
+            (6, _) => OuiStylePayload {
+                compound: register(LocalHandle::Compound(parsed))? as *const OuiStyleCompound,
+            },
+            _ => {
+                return Err(invalid(
+                    "literal does not match generated property value tag",
+                ))
+            }
+        };
+        // SAFETY: the caller promises writable storage and null was rejected.
+        unsafe {
+            ptr::write(
+                out_value,
+                OuiStyleValue {
+                    tag,
+                    reserved: 0,
+                    data,
+                },
+            )
+        };
+        Ok(())
+    })
+}
+
 // SAFETY CONTRACT: `compound` is a live immutable compound handle.
 #[no_mangle]
 pub extern "C" fn oui_style_compound_destroy(compound: *mut OuiStyleCompound) -> OuiStatus {
@@ -3941,5 +4066,52 @@ mod tests {
             registry::ffi(|| -> Result<(), ApiError> { panic!("contained") }),
             OuiStatus::Internal
         );
+    }
+
+    #[test]
+    fn c_typography_literal_values_are_typed_and_owned() {
+        let document = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+
+        let mut writing_mode = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+        assert_eq!(
+            oui_style_value_parse(
+                StyleProperty::WritingMode as i32,
+                text("vertical-rl"),
+                writing_mode.as_mut_ptr(),
+            ),
+            OuiStatus::Ok
+        );
+        // SAFETY: successful parsing initialized the output record.
+        let writing_mode = unsafe { writing_mode.assume_init() };
+        assert_eq!(writing_mode.tag, 6);
+        assert_eq!(
+            oui_element_set_property(root, StyleProperty::WritingMode as i32, &writing_mode),
+            OuiStatus::Ok
+        );
+        // The element stores an owned clone, so the transport handle may be
+        // destroyed immediately after submission.
+        assert_eq!(
+            oui_style_compound_destroy(unsafe { writing_mode.data.compound } as *mut _),
+            OuiStatus::Ok
+        );
+
+        let mut spacing = std::mem::MaybeUninit::<OuiStyleValue>::uninit();
+        assert_eq!(
+            oui_style_value_parse(
+                StyleProperty::LetterSpacing as i32,
+                text("2px"),
+                spacing.as_mut_ptr(),
+            ),
+            OuiStatus::Ok
+        );
+        // SAFETY: successful parsing initialized the output record.
+        let spacing = unsafe { spacing.assume_init() };
+        assert_eq!(spacing.tag, 2);
+        assert_eq!(unsafe { spacing.data.number }, 2.0);
+
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }
 }

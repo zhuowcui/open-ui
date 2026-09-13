@@ -167,6 +167,10 @@ impl Element {
             .with_engine_mut(|engine| engine.set_property(self.handle, property, value))
     }
 
+    pub fn set_language(&self, language: &openui_style::LanguageTag) -> Result<(), Error> {
+        self.set_attribute("lang", language.as_str())
+    }
+
     pub fn apply_style(&self, style: &Style) -> Result<(), Error> {
         self.document.transaction(|_| {
             for declaration in style.declarations() {
@@ -174,6 +178,16 @@ impl Element {
             }
             Ok(())
         })
+    }
+
+    /// Atomically replace a supported pseudo-element declaration list.
+    pub fn set_pseudo_style(
+        &self,
+        target: openui_style::PseudoStyleTarget,
+        style: &Style,
+    ) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_pseudo_style(self.handle, target, style))
     }
 
     pub fn animate<T>(

@@ -517,6 +517,12 @@ pub struct FontFamilyList {
 }
 
 impl FontFamilyList {
+    /// Create an ordered family fallback chain.
+    pub fn new(families: impl IntoIterator<Item = FontFamily>) -> Option<Self> {
+        let families: Vec<_> = families.into_iter().collect();
+        (!families.is_empty()).then_some(Self { families })
+    }
+
     /// Create a list with a single named family.
     pub fn single(name: impl Into<String>) -> Self {
         Self {
@@ -529,6 +535,16 @@ impl FontFamilyList {
         Self {
             families: vec![FontFamily::Generic(family)],
         }
+    }
+
+    pub fn push_named(mut self, name: impl Into<String>) -> Self {
+        self.families.push(FontFamily::Named(name.into()));
+        self
+    }
+
+    pub fn push_generic(mut self, family: GenericFontFamily) -> Self {
+        self.families.push(FontFamily::Generic(family));
+        self
     }
 
     /// The default font family list (sans-serif).

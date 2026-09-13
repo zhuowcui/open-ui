@@ -12,6 +12,7 @@ use crate::color::{Color, StyleColor};
 use crate::enums::*;
 use crate::font_types::*;
 use crate::layout_systems::*;
+use crate::typography::*;
 
 /// CSS `aspect-ratio` property — stores the ratio and optional auto flag.
 ///
@@ -701,6 +702,9 @@ pub struct ComputedStyle {
     /// CSS `font-stretch`. Initial: `normal` (100%). Inherited.
     pub font_stretch: FontStretch,
 
+    /// CSS `font-kerning`. Initial: `auto`. Inherited.
+    pub font_kerning: FontKerning,
+
     /// Internal marker for text supplied by a platform-native control.
     ///
     /// Native widget labels use the platform font raster/advance policy even
@@ -735,8 +739,11 @@ pub struct ComputedStyle {
     /// CSS `font-variant-alternates`. Initial: `normal`. Inherited.
     pub font_variant_alternates: FontVariantAlternates,
 
+    /// CSS `font-variant-emoji`. Initial: `normal`. Inherited.
+    pub font_variant_emoji: FontVariantEmoji,
+
     /// CSS `font-size-adjust`. Initial: `none`.
-    pub font_size_adjust: Option<f32>,
+    pub font_size_adjust: FontSizeAdjust,
 
     /// CSS `font-optical-sizing`. Initial: `auto`. Inherited.
     pub font_optical_sizing: FontOpticalSizing,
@@ -747,11 +754,20 @@ pub struct ComputedStyle {
     /// CSS `font-synthesis-style`. Initial: `auto`. Inherited.
     pub font_synthesis_style: FontSynthesis,
 
+    /// CSS `font-synthesis-small-caps`. Initial: `auto`. Inherited.
+    pub font_synthesis_small_caps: FontSynthesis,
+
+    /// CSS Fonts 4 `font-synthesis-position`. Initial: `auto`. Inherited.
+    pub font_synthesis_position: FontSynthesis,
+
     /// CSS `font-feature-settings`. Initial: `normal` (empty). Inherited.
     pub font_feature_settings: Vec<FontFeature>,
 
     /// CSS `font-variation-settings`. Initial: `normal` (empty). Inherited.
     pub font_variation_settings: Vec<FontVariation>,
+
+    /// CSS `font-language-override`. Initial: `normal`. Inherited.
+    pub font_language_override: FontLanguageOverride,
 
     // ── Line Height ──────────────────────────────────────────────────
     /// CSS `line-height`. Initial: `normal`. Inherited.
@@ -799,6 +815,17 @@ pub struct ComputedStyle {
     /// - min_suffix = 2 (minimum characters after hyphen)
     pub hyphenate_limit_chars: (u8, u8, u8),
 
+    /// CSS `hyphenate-character`. `None` is the UA-selected `auto` glyph.
+    pub hyphenate_character: Option<String>,
+
+    /// CSS Text 4 whitespace longhands. `white_space` is retained as the
+    /// renderer's normalized compatibility representation.
+    pub white_space_collapse: WhiteSpaceCollapse,
+    pub text_wrap_mode: TextWrapMode,
+    pub text_wrap_style: TextWrapStyle,
+    pub text_autospace: TextAutospace,
+    pub text_spacing_trim: TextSpacingTrim,
+
     // ── Text Decoration ──────────────────────────────────────────────
     /// CSS `text-decoration-line`. Initial: `none`.
     pub text_decoration_line: TextDecorationLine,
@@ -827,6 +854,9 @@ pub struct ComputedStyle {
 
     /// CSS `text-overflow`. Initial: `clip`.
     pub text_overflow: TextOverflow,
+
+    /// CSS `text-size-adjust`. Initial: `auto`. Inherited.
+    pub text_size_adjust: TextSizeAdjust,
 
     // ── Generated content and counters ──────────────────────────────
     /// Computed CSS `content`; `None` represents `normal`/`none`.
@@ -903,6 +933,9 @@ pub struct ComputedStyle {
     /// CSS `ruby-align`. Initial: `space-around`. Inherited.
     /// Controls how annotation content is distributed within its box.
     pub ruby_align: RubyAlign,
+
+    /// CSS Ruby `ruby-overhang`. Initial: `auto`. Inherited.
+    pub ruby_overhang: RubyOverhang,
 
     // ── Tab Size ─────────────────────────────────────────────────────
     /// CSS `tab-size`. Initial: `8`. Inherited.
@@ -996,6 +1029,10 @@ pub struct ComputedStyle {
     /// Alternate style for the `::first-letter` pseudo-element.
     pub first_letter_style: Option<Box<ComputedStyle>>,
 
+    /// Alternate styles for generated list markers and form placeholders.
+    pub marker_style: Option<Box<ComputedStyle>>,
+    pub placeholder_style: Option<Box<ComputedStyle>>,
+
     /// Internal computed-style marker carried by the extracted first-letter
     /// text fragment so paint can draw its pseudo box decorations.
     pub is_first_letter_pseudo: bool,
@@ -1009,6 +1046,10 @@ pub struct ComputedStyle {
     /// CSS `initial-letter`. Initial: `None` (normal).
     /// When `Some`, the first letter is sized/sunk as a drop-cap or raised cap.
     pub initial_letter: Option<InitialLetter>,
+
+    /// CSS Inline `text-box-edge` and `text-box-trim`.
+    pub text_box_edge: TextBoxEdge,
+    pub text_box_trim: TextBoxTrim,
 }
 
 impl ComputedStyle {
@@ -1177,6 +1218,7 @@ impl ComputedStyle {
             font_weight: FontWeight::NORMAL,        // 400
             font_style: FontStyleEnum::Normal,
             font_stretch: FontStretch::NORMAL, // 100%
+            font_kerning: FontKerning::Auto,
             native_control_text: false,
             embedded_document_text: false,
             native_button_text_metrics: false,
@@ -1186,12 +1228,16 @@ impl ComputedStyle {
             font_variant_east_asian: FontVariantEastAsian::NORMAL,
             font_variant_position: FontVariantPosition::Normal,
             font_variant_alternates: FontVariantAlternates::Normal,
-            font_size_adjust: None,
+            font_variant_emoji: FontVariantEmoji::Normal,
+            font_size_adjust: FontSizeAdjust::None,
             font_optical_sizing: FontOpticalSizing::Auto,
             font_synthesis_weight: FontSynthesis::Auto,
             font_synthesis_style: FontSynthesis::Auto,
+            font_synthesis_small_caps: FontSynthesis::Auto,
+            font_synthesis_position: FontSynthesis::Auto,
             font_feature_settings: Vec::new(),
             font_variation_settings: Vec::new(),
+            font_language_override: FontLanguageOverride::NORMAL,
 
             // Line height
             line_height: LineHeight::Normal,
@@ -1209,6 +1255,12 @@ impl ComputedStyle {
             line_break: LineBreak::INITIAL,          // auto
             hyphens: Hyphens::INITIAL,               // manual
             hyphenate_limit_chars: (5, 2, 2),        // Blink defaults
+            hyphenate_character: None,
+            white_space_collapse: WhiteSpaceCollapse::Collapse,
+            text_wrap_mode: TextWrapMode::Wrap,
+            text_wrap_style: TextWrapStyle::Auto,
+            text_autospace: TextAutospace::Normal,
+            text_spacing_trim: TextSpacingTrim::Normal,
 
             // Text decoration
             text_decoration_line: TextDecorationLine::NONE,
@@ -1222,6 +1274,7 @@ impl ComputedStyle {
             // Text transform
             text_transform: TextTransform::INITIAL, // none
             text_overflow: TextOverflow::INITIAL,   // clip
+            text_size_adjust: TextSizeAdjust::Auto,
             content: None,
             counter_reset: Vec::new(),
             counter_set: Vec::new(),
@@ -1261,6 +1314,7 @@ impl ComputedStyle {
             // Ruby annotation
             ruby_position: RubyPosition::INITIAL, // over
             ruby_align: RubyAlign::INITIAL,       // space-around
+            ruby_overhang: RubyOverhang::Auto,
 
             // Tab size
             tab_size: TabSize::Spaces(8),
@@ -1296,6 +1350,8 @@ impl ComputedStyle {
             // First-line pseudo
             first_line_style: None,   // no ::first-line
             first_letter_style: None, // no ::first-letter
+            marker_style: None,       // no ::marker
+            placeholder_style: None,  // no ::placeholder
             is_first_letter_pseudo: false,
 
             // Text wrap
@@ -1303,6 +1359,8 @@ impl ComputedStyle {
 
             // Initial letter
             initial_letter: None, // normal (no drop-cap)
+            text_box_edge: TextBoxEdge::default(),
+            text_box_trim: TextBoxTrim::None,
         }
     }
 
@@ -1320,6 +1378,7 @@ impl ComputedStyle {
         style.font_weight = origin.font_weight;
         style.font_style = origin.font_style;
         style.font_stretch = origin.font_stretch;
+        style.font_kerning = origin.font_kerning;
         style.native_control_text = origin.native_control_text;
         style.embedded_document_text = origin.embedded_document_text;
         style.native_button_text_metrics = origin.native_button_text_metrics;
@@ -1329,11 +1388,16 @@ impl ComputedStyle {
         style.font_variant_east_asian = origin.font_variant_east_asian;
         style.font_variant_position = origin.font_variant_position;
         style.font_variant_alternates = origin.font_variant_alternates;
+        style.font_variant_emoji = origin.font_variant_emoji;
+        style.font_size_adjust = origin.font_size_adjust;
         style.font_optical_sizing = origin.font_optical_sizing;
         style.font_synthesis_weight = origin.font_synthesis_weight;
         style.font_synthesis_style = origin.font_synthesis_style;
+        style.font_synthesis_small_caps = origin.font_synthesis_small_caps;
+        style.font_synthesis_position = origin.font_synthesis_position;
         style.font_feature_settings = origin.font_feature_settings.clone();
         style.font_variation_settings = origin.font_variation_settings.clone();
+        style.font_language_override = origin.font_language_override;
         style.line_height = origin.line_height;
         style.letter_spacing = origin.letter_spacing;
         style.word_spacing = origin.word_spacing;
@@ -1346,6 +1410,12 @@ impl ComputedStyle {
         style.line_break = origin.line_break;
         style.hyphens = origin.hyphens;
         style.hyphenate_limit_chars = origin.hyphenate_limit_chars;
+        style.hyphenate_character = origin.hyphenate_character.clone();
+        style.white_space_collapse = origin.white_space_collapse;
+        style.text_wrap_mode = origin.text_wrap_mode;
+        style.text_wrap_style = origin.text_wrap_style;
+        style.text_autospace = origin.text_autospace;
+        style.text_spacing_trim = origin.text_spacing_trim;
         style.text_transform = origin.text_transform;
         style.text_underline_position = origin.text_underline_position;
         style.text_decoration_skip_ink = origin.text_decoration_skip_ink;
@@ -1354,6 +1424,7 @@ impl ComputedStyle {
         style.text_orientation = origin.text_orientation;
         style.text_rendering = origin.text_rendering;
         style.font_smoothing = origin.font_smoothing;
+        style.text_size_adjust = origin.text_size_adjust;
         style.text_shadow = origin.text_shadow.clone();
         style.quotes = origin.quotes.clone();
         style.text_emphasis_mark = origin.text_emphasis_mark;
@@ -1363,6 +1434,7 @@ impl ComputedStyle {
         style.text_combine_upright = origin.text_combine_upright;
         style.ruby_position = origin.ruby_position;
         style.ruby_align = origin.ruby_align;
+        style.ruby_overhang = origin.ruby_overhang;
         style.tab_size = origin.tab_size;
         style.font_palette = origin.font_palette.clone();
         style.locale = origin.locale.clone();

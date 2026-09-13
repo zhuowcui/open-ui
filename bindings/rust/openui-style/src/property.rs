@@ -1,9 +1,23 @@
 //! Canonical public property schema and typed declaration values.
 
 use crate::{
-    BorderStyle, Color, ComputedStyle, ContentAlignment, ContentDistribution, ContentPosition,
-    Display, FlexDirection, FlexWrap, FontFamilyList, FontWeight, GenericFontFamily, ItemAlignment,
-    ItemPosition, ListStyleType, Overflow, Position, StyleColor, Transform2D,
+    BlockEllipsis, BorderStyle, Color, ComputedStyle, ContentAlignment, ContentDistribution,
+    ContentPosition, Direction, Display, FlexDirection, FlexWrap, FontFamilyList, FontKerning,
+    FontLanguageOverride, FontOpticalSizing, FontPalette, FontShorthand, FontSizeAdjust,
+    FontSmoothing, FontStretch, FontStyleEnum, FontSynthesis, FontSynthesisShorthand,
+    FontVariantAlternates, FontVariantCaps, FontVariantEastAsian, FontVariantEmoji,
+    FontVariantLigatures, FontVariantNumeric, FontVariantPosition, FontVariantShorthand,
+    FontVariationList, FontWeight, GenericFontFamily, HangingPunctuation, HyphenateCharacter,
+    HyphenationLimits, Hyphens, InitialLetterValue, ItemAlignment, ItemPosition, LineBreak,
+    LineClamp, LineHeight, ListStyleType, OpenTypeFeatureList, Overflow, OverflowWrap, Position,
+    RubyAlign, RubyOverhang, RubyPosition, StyleColor, TabSize, TextAlign, TextAlignLast,
+    TextAutospace, TextBoxEdge, TextBoxShorthand, TextBoxTrim, TextCombineUpright,
+    TextDecorationLine, TextDecorationShorthand, TextDecorationSkipInk, TextDecorationStyle,
+    TextDecorationThickness, TextEmphasisMark, TextEmphasisPosition, TextEmphasisShorthand,
+    TextEmphasisStyle, TextJustify, TextOrientation, TextOverflow, TextRendering, TextShadowList,
+    TextSizeAdjust, TextSpacingTrim, TextTransform, TextUnderlinePosition, TextWrapMode,
+    TextWrapShorthand, TextWrapStyle, Transform2D, TypographyValue, UnicodeBidi, VerticalAlign,
+    WhiteSpaceCollapse, WhiteSpaceShorthand, WordBreak, WritingMode,
 };
 use openui_geometry::{Length, LengthType};
 
@@ -30,6 +44,8 @@ pub enum ValueKind {
     ListStyle,
     Transform,
     PointerEvents,
+    Enum,
+    Compound,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
@@ -249,6 +265,7 @@ pub enum StyleValue {
     ListStyle(ListStyleType),
     Transform(TransformList),
     PointerEvents(PointerEvents),
+    Typography(TypographyValue),
 }
 
 macro_rules! impl_style_value {
@@ -282,6 +299,87 @@ impl_style_value!(Cursor, Cursor);
 impl_style_value!(ListStyleType, ListStyle);
 impl_style_value!(TransformList, Transform);
 impl_style_value!(PointerEvents, PointerEvents);
+
+macro_rules! impl_typography_value {
+    ($ty:ty, $variant:ident) => {
+        impl From<$ty> for StyleValue {
+            fn from(value: $ty) -> Self {
+                Self::Typography(TypographyValue::$variant(value))
+            }
+        }
+    };
+}
+
+impl_typography_value!(Direction, Direction);
+impl_typography_value!(FontKerning, FontKerning);
+impl_typography_value!(FontOpticalSizing, FontOpticalSizing);
+impl_typography_value!(FontPalette, FontPalette);
+impl_typography_value!(FontSizeAdjust, FontSizeAdjust);
+impl_typography_value!(FontStretch, FontStretch);
+impl_typography_value!(FontStyleEnum, FontStyle);
+impl_typography_value!(FontVariantLigatures, FontVariantLigatures);
+impl_typography_value!(FontVariantCaps, FontVariantCaps);
+impl_typography_value!(FontVariantEastAsian, FontVariantEastAsian);
+impl_typography_value!(FontVariantNumeric, FontVariantNumeric);
+impl_typography_value!(FontVariantAlternates, FontVariantAlternates);
+impl_typography_value!(FontVariantPosition, FontVariantPosition);
+impl_typography_value!(FontVariantEmoji, FontVariantEmoji);
+impl_typography_value!(FontSynthesis, FontSynthesis);
+impl_typography_value!(OpenTypeFeatureList, OpenTypeFeatures);
+impl_typography_value!(FontVariationList, FontVariations);
+impl_typography_value!(FontLanguageOverride, FontLanguageOverride);
+impl_typography_value!(LineHeight, LineHeight);
+impl_typography_value!(TextAlign, TextAlign);
+impl_typography_value!(TextAlignLast, TextAlignLast);
+impl_typography_value!(TextJustify, TextJustify);
+impl_typography_value!(WordBreak, WordBreak);
+impl_typography_value!(OverflowWrap, OverflowWrap);
+impl_typography_value!(LineBreak, LineBreak);
+impl_typography_value!(Hyphens, Hyphens);
+impl_typography_value!(HyphenationLimits, HyphenationLimits);
+impl_typography_value!(HyphenateCharacter, HyphenateCharacter);
+impl_typography_value!(WhiteSpaceCollapse, WhiteSpaceCollapse);
+impl_typography_value!(TextWrapMode, TextWrapMode);
+impl_typography_value!(TextWrapStyle, TextWrapStyle);
+impl_typography_value!(TextAutospace, TextAutospace);
+impl_typography_value!(TextSpacingTrim, TextSpacingTrim);
+impl_typography_value!(TabSize, TabSize);
+impl_typography_value!(TextTransform, TextTransform);
+impl_typography_value!(TextDecorationLine, TextDecorationLine);
+impl_typography_value!(TextDecorationStyle, TextDecorationStyle);
+impl_typography_value!(TextDecorationThickness, TextDecorationThickness);
+impl_typography_value!(StyleColor, StyleColor);
+impl_typography_value!(TextDecorationSkipInk, TextDecorationSkipInk);
+impl_typography_value!(TextUnderlinePosition, TextUnderlinePosition);
+impl_typography_value!(TextEmphasisStyle, TextEmphasisStyle);
+impl_typography_value!(TextEmphasisPosition, TextEmphasisPosition);
+impl_typography_value!(TextShadowList, TextShadows);
+impl_typography_value!(TextOverflow, TextOverflow);
+impl_typography_value!(TextSizeAdjust, TextSizeAdjust);
+impl_typography_value!(TextCombineUpright, TextCombineUpright);
+impl_typography_value!(WritingMode, WritingMode);
+impl_typography_value!(TextOrientation, TextOrientation);
+impl_typography_value!(UnicodeBidi, UnicodeBidi);
+impl_typography_value!(VerticalAlign, VerticalAlign);
+impl_typography_value!(RubyAlign, RubyAlign);
+impl_typography_value!(RubyPosition, RubyPosition);
+impl_typography_value!(RubyOverhang, RubyOverhang);
+impl_typography_value!(HangingPunctuation, HangingPunctuation);
+impl_typography_value!(InitialLetterValue, InitialLetter);
+impl_typography_value!(TextRendering, TextRendering);
+impl_typography_value!(FontSmoothing, FontSmoothing);
+impl_typography_value!(LineClamp, LineClamp);
+impl_typography_value!(BlockEllipsis, BlockEllipsis);
+impl_typography_value!(TextBoxEdge, TextBoxEdge);
+impl_typography_value!(TextBoxTrim, TextBoxTrim);
+impl_typography_value!(TextBoxShorthand, TextBox);
+impl_typography_value!(FontShorthand, Font);
+impl_typography_value!(FontVariantShorthand, FontVariant);
+impl_typography_value!(FontSynthesisShorthand, FontSynthesisShorthand);
+impl_typography_value!(WhiteSpaceShorthand, WhiteSpace);
+impl_typography_value!(TextWrapShorthand, TextWrap);
+impl_typography_value!(TextDecorationShorthand, TextDecoration);
+impl_typography_value!(TextEmphasisShorthand, TextEmphasis);
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Declaration {
@@ -430,6 +528,984 @@ fn border(input: &str) -> Option<Border> {
     })
 }
 
+fn font_family_list(input: &str) -> Option<FontFamilyList> {
+    let mut families = Vec::new();
+    for raw in input.split(',') {
+        let value = raw.trim();
+        if value.is_empty() {
+            return None;
+        }
+        let generic = match value.to_ascii_lowercase().as_str() {
+            "serif" => Some(GenericFontFamily::Serif),
+            "sans-serif" => Some(GenericFontFamily::SansSerif),
+            "monospace" => Some(GenericFontFamily::Monospace),
+            "cursive" => Some(GenericFontFamily::Cursive),
+            "fantasy" => Some(GenericFontFamily::Fantasy),
+            "system-ui" => Some(GenericFontFamily::SystemUi),
+            "math" => Some(GenericFontFamily::Math),
+            "emoji" => Some(GenericFontFamily::Emoji),
+            "fangsong" => Some(GenericFontFamily::FangSong),
+            "ui-serif" => Some(GenericFontFamily::UiSerif),
+            "ui-sans-serif" => Some(GenericFontFamily::UiSansSerif),
+            "ui-monospace" => Some(GenericFontFamily::UiMonospace),
+            "ui-rounded" => Some(GenericFontFamily::UiRounded),
+            _ => None,
+        };
+        families.push(match generic {
+            Some(value) => crate::FontFamily::Generic(value),
+            None => crate::FontFamily::Named(value.trim_matches(['\'', '"']).to_owned()),
+        });
+    }
+    (!families.is_empty()).then_some(FontFamilyList { families })
+}
+
+fn opentype_tag(input: &str) -> Option<[u8; 4]> {
+    let input = input.trim().trim_matches(['\'', '"']);
+    let tag: [u8; 4] = input.as_bytes().try_into().ok()?;
+    tag.iter()
+        .all(|byte| byte.is_ascii_graphic() || *byte == b' ')
+        .then_some(tag)
+}
+
+fn feature_settings(input: &str) -> Option<OpenTypeFeatureList> {
+    if input.trim() == "normal" {
+        return Some(OpenTypeFeatureList::default());
+    }
+    let mut result = OpenTypeFeatureList::default();
+    for item in input.split(',') {
+        let mut parts = item.split_whitespace();
+        let tag = opentype_tag(parts.next()?)?;
+        let value = match parts.next() {
+            None | Some("on") => 1,
+            Some("off") => 0,
+            Some(value) => value.parse().ok()?,
+        };
+        if parts.next().is_some() {
+            return None;
+        }
+        result = result.push(tag, value);
+    }
+    Some(result)
+}
+
+fn variation_settings(input: &str) -> Option<FontVariationList> {
+    if input.trim() == "normal" {
+        return Some(FontVariationList::default());
+    }
+    let mut result = FontVariationList::default();
+    for item in input.split(',') {
+        let mut parts = item.split_whitespace();
+        let tag = opentype_tag(parts.next()?)?;
+        let value = parts.next()?.parse().ok()?;
+        if parts.next().is_some() {
+            return None;
+        }
+        result = result.push(tag, value)?;
+    }
+    Some(result)
+}
+
+fn font_ligatures(input: &str) -> Option<FontVariantLigatures> {
+    use crate::LigatureState as S;
+    if input == "normal" {
+        return Some(FontVariantLigatures::NORMAL);
+    }
+    if input == "none" {
+        return Some(FontVariantLigatures::none());
+    }
+    let mut value = FontVariantLigatures::NORMAL;
+    for keyword in input.split_whitespace() {
+        match keyword {
+            "common-ligatures" => value.common = S::Enabled,
+            "no-common-ligatures" => value.common = S::Disabled,
+            "discretionary-ligatures" => value.discretionary = S::Enabled,
+            "no-discretionary-ligatures" => value.discretionary = S::Disabled,
+            "historical-ligatures" => value.historical = S::Enabled,
+            "no-historical-ligatures" => value.historical = S::Disabled,
+            "contextual" => value.contextual = S::Enabled,
+            "no-contextual" => value.contextual = S::Disabled,
+            _ => return None,
+        }
+    }
+    Some(value)
+}
+
+fn font_numeric(input: &str) -> Option<FontVariantNumeric> {
+    if input == "normal" {
+        return Some(FontVariantNumeric::NORMAL);
+    }
+    let mut value = FontVariantNumeric::NORMAL;
+    for keyword in input.split_whitespace() {
+        match keyword {
+            "lining-nums" => value.figure = crate::NumericFigure::LiningNums,
+            "oldstyle-nums" => value.figure = crate::NumericFigure::OldstyleNums,
+            "proportional-nums" => value.spacing = crate::NumericSpacing::ProportionalNums,
+            "tabular-nums" => value.spacing = crate::NumericSpacing::TabularNums,
+            "diagonal-fractions" => value.fraction = crate::NumericFraction::DiagonalFractions,
+            "stacked-fractions" => value.fraction = crate::NumericFraction::StackedFractions,
+            "ordinal" => value.ordinal = true,
+            "slashed-zero" => value.slashed_zero = true,
+            _ => return None,
+        }
+    }
+    Some(value)
+}
+
+fn font_east_asian(input: &str) -> Option<FontVariantEastAsian> {
+    if input == "normal" {
+        return Some(FontVariantEastAsian::NORMAL);
+    }
+    let mut value = FontVariantEastAsian::NORMAL;
+    for keyword in input.split_whitespace() {
+        match keyword {
+            "jis78" => value.form = crate::EastAsianForm::Jis78,
+            "jis83" => value.form = crate::EastAsianForm::Jis83,
+            "jis90" => value.form = crate::EastAsianForm::Jis90,
+            "jis04" => value.form = crate::EastAsianForm::Jis04,
+            "simplified" => value.form = crate::EastAsianForm::Simplified,
+            "traditional" => value.form = crate::EastAsianForm::Traditional,
+            "full-width" => value.width = crate::EastAsianWidth::FullWidth,
+            "proportional-width" => value.width = crate::EastAsianWidth::ProportionalWidth,
+            "ruby" => value.ruby = true,
+            _ => return None,
+        }
+    }
+    Some(value)
+}
+
+fn decoration_line(input: &str) -> Option<TextDecorationLine> {
+    if input == "none" {
+        return Some(TextDecorationLine::NONE);
+    }
+    let mut bits = 0;
+    for keyword in input.split_whitespace() {
+        bits |= match keyword {
+            "underline" => TextDecorationLine::UNDERLINE.0,
+            "overline" => TextDecorationLine::OVERLINE.0,
+            "line-through" => TextDecorationLine::LINE_THROUGH.0,
+            "blink" => 8,
+            "spelling-error" => 16,
+            "grammar-error" => 32,
+            _ => return None,
+        };
+    }
+    (bits != 0).then_some(TextDecorationLine(bits))
+}
+
+fn emphasis_style(input: &str) -> Option<TextEmphasisStyle> {
+    if input == "none" {
+        return Some(TextEmphasisStyle::default());
+    }
+    let mut result = TextEmphasisStyle {
+        mark: TextEmphasisMark::Dot,
+        fill: crate::TextEmphasisFill::Filled,
+    };
+    for keyword in input.split_whitespace() {
+        match keyword {
+            "filled" => result.fill = crate::TextEmphasisFill::Filled,
+            "open" => result.fill = crate::TextEmphasisFill::Open,
+            "dot" => result.mark = TextEmphasisMark::Dot,
+            "circle" => result.mark = TextEmphasisMark::Circle,
+            "double-circle" => result.mark = TextEmphasisMark::DoubleCircle,
+            "triangle" => result.mark = TextEmphasisMark::Triangle,
+            "sesame" => result.mark = TextEmphasisMark::Sesame,
+            value => {
+                let mut chars = value.trim_matches(['\'', '"']).chars();
+                result.mark = TextEmphasisMark::Custom(chars.next()?);
+                if chars.next().is_some() {
+                    return None;
+                }
+            }
+        }
+    }
+    Some(result)
+}
+
+fn text_shadows(input: &str) -> Option<TextShadowList> {
+    if input.trim() == "none" {
+        return Some(TextShadowList::default());
+    }
+    let mut result = TextShadowList::default();
+    for shadow in input.split(',') {
+        let mut lengths = Vec::new();
+        let mut shadow_color = Color::BLACK;
+        for token in shadow.split_whitespace() {
+            if let Some(value) = color(token) {
+                shadow_color = value;
+            } else {
+                let LengthValue::Computed(value) = length(token)? else {
+                    return None;
+                };
+                if value.length_type() != LengthType::Fixed {
+                    return None;
+                }
+                lengths.push(value.value());
+            }
+        }
+        let (x, y, blur) = match lengths.as_slice() {
+            [x, y] => (*x, *y, 0.0),
+            [x, y, blur] => (*x, *y, *blur),
+            _ => return None,
+        };
+        result = result.push(x, y, blur, shadow_color)?;
+    }
+    Some(result)
+}
+
+fn normalized_white_space(collapse: WhiteSpaceCollapse, wrap: TextWrapMode) -> crate::WhiteSpace {
+    use crate::WhiteSpace as W;
+    match (collapse, wrap) {
+        (WhiteSpaceCollapse::Collapse, TextWrapMode::Wrap) => W::Normal,
+        (WhiteSpaceCollapse::Collapse, TextWrapMode::Nowrap) => W::Nowrap,
+        (WhiteSpaceCollapse::Preserve, TextWrapMode::Nowrap) => W::Pre,
+        (WhiteSpaceCollapse::Preserve, TextWrapMode::Wrap) => W::PreWrap,
+        (WhiteSpaceCollapse::PreserveBreaks, _) => W::PreLine,
+        (WhiteSpaceCollapse::BreakSpaces, _) => W::BreakSpaces,
+    }
+}
+
+fn normalized_text_wrap(mode: TextWrapMode, style: TextWrapStyle) -> crate::TextWrap {
+    match mode {
+        TextWrapMode::Nowrap => crate::TextWrap::Nowrap,
+        TextWrapMode::Wrap => match style {
+            TextWrapStyle::Auto => crate::TextWrap::Wrap,
+            TextWrapStyle::Balance => crate::TextWrap::Balance,
+            TextWrapStyle::Pretty => crate::TextWrap::Pretty,
+            TextWrapStyle::Stable => crate::TextWrap::Stable,
+        },
+    }
+}
+
+fn parse_font_shorthand(input: &str) -> Option<FontShorthand> {
+    let tokens: Vec<_> = input.split_whitespace().collect();
+    let size_index = tokens.iter().position(|token| {
+        let size = token.split('/').next().unwrap_or(token);
+        length(size).is_some()
+    })?;
+    let (size_token, inline_line_height) = tokens[size_index]
+        .split_once('/')
+        .map_or((tokens[size_index], None), |(size, line)| {
+            (size, Some(line))
+        });
+    let LengthValue::Computed(size) = length(size_token)? else {
+        return None;
+    };
+    if size.length_type() != LengthType::Fixed || size.value() <= 0.0 {
+        return None;
+    }
+    let mut family_start = size_index + 1;
+    let mut line_height = inline_line_height.and_then(|value| {
+        if value == "normal" {
+            Some(LineHeight::Normal)
+        } else if let Ok(number) = value.parse() {
+            Some(LineHeight::Number(number))
+        } else {
+            length(value).and_then(|value| match value {
+                LengthValue::Computed(value) if value.is_percent() => {
+                    Some(LineHeight::Percentage(value.value()))
+                }
+                LengthValue::Computed(value) if value.length_type() == LengthType::Fixed => {
+                    Some(LineHeight::Length(value.value()))
+                }
+                _ => None,
+            })
+        }
+    });
+    if inline_line_height.is_none() && tokens.get(family_start) == Some(&"/") {
+        family_start += 1;
+        let token = *tokens.get(family_start)?;
+        line_height = if token == "normal" {
+            Some(LineHeight::Normal)
+        } else if let Ok(number) = token.parse() {
+            Some(LineHeight::Number(number))
+        } else {
+            length(token).and_then(|value| match value {
+                LengthValue::Computed(value) if value.is_percent() => {
+                    Some(LineHeight::Percentage(value.value()))
+                }
+                LengthValue::Computed(value) if value.length_type() == LengthType::Fixed => {
+                    Some(LineHeight::Length(value.value()))
+                }
+                _ => None,
+            })
+        };
+        line_height?;
+        family_start += 1;
+    }
+    let family = font_family_list(&tokens.get(family_start..)?.join(" "))?;
+    let mut shorthand = FontShorthand::new(size.value(), family)?;
+    shorthand.line_height = line_height.unwrap_or(LineHeight::Normal);
+    for token in &tokens[..size_index] {
+        match *token {
+            "normal" => {}
+            "italic" => shorthand.style = FontStyleEnum::Italic,
+            "oblique" => shorthand.style = FontStyleEnum::Oblique(14.0),
+            "small-caps" => shorthand.variant_caps = FontVariantCaps::SmallCaps,
+            "bold" => shorthand.weight = FontWeight::BOLD,
+            value if value.ends_with('%') => {
+                shorthand.stretch = FontStretch(value.trim_end_matches('%').parse().ok()?);
+            }
+            value => shorthand.weight = FontWeight(value.parse().ok()?),
+        }
+    }
+    Some(shorthand)
+}
+
+fn parse_typography_literal(property: StyleProperty, input: &str) -> Option<StyleValue> {
+    use StyleProperty as P;
+    let input = input.trim();
+    let value = match property {
+        P::Direction => TypographyValue::Direction(match input {
+            "ltr" => Direction::Ltr,
+            "rtl" => Direction::Rtl,
+            _ => return None,
+        }),
+        P::FontKerning => TypographyValue::FontKerning(match input {
+            "auto" => FontKerning::Auto,
+            "normal" => FontKerning::Normal,
+            "none" => FontKerning::None,
+            _ => return None,
+        }),
+        P::FontOpticalSizing => TypographyValue::FontOpticalSizing(match input {
+            "auto" => FontOpticalSizing::Auto,
+            "none" => FontOpticalSizing::None,
+            _ => return None,
+        }),
+        P::FontPalette => TypographyValue::FontPalette(match input {
+            "normal" => FontPalette::Normal,
+            "light" => FontPalette::Light,
+            "dark" => FontPalette::Dark,
+            value if value.starts_with("--") => FontPalette::Custom(value.to_owned()),
+            _ => return None,
+        }),
+        P::FontSizeAdjust => TypographyValue::FontSizeAdjust(match input {
+            "none" => FontSizeAdjust::None,
+            "from-font" => FontSizeAdjust::FromFont,
+            value => {
+                let mut parts = value.split_whitespace();
+                let first = parts.next()?;
+                let (basis, ratio) = if let Ok(ratio) = first.parse::<f32>() {
+                    ("ex-height", ratio)
+                } else {
+                    (first, parts.next()?.parse().ok()?)
+                };
+                if !ratio.is_finite() || ratio < 0.0 || parts.next().is_some() {
+                    return None;
+                }
+                match basis {
+                    "ex-height" => FontSizeAdjust::ExHeight(ratio),
+                    "cap-height" => FontSizeAdjust::CapHeight(ratio),
+                    "ch-width" => FontSizeAdjust::ChWidth(ratio),
+                    "ic-width" => FontSizeAdjust::IcWidth(ratio),
+                    "ic-height" => FontSizeAdjust::IcHeight(ratio),
+                    _ => return None,
+                }
+            }
+        }),
+        P::FontStretch => TypographyValue::FontStretch(FontStretch(match input {
+            "ultra-condensed" => 50.0,
+            "extra-condensed" => 62.5,
+            "condensed" => 75.0,
+            "semi-condensed" => 87.5,
+            "normal" => 100.0,
+            "semi-expanded" => 112.5,
+            "expanded" => 125.0,
+            "extra-expanded" => 150.0,
+            "ultra-expanded" => 200.0,
+            value => value.strip_suffix('%')?.parse().ok()?,
+        })),
+        P::FontStyle => TypographyValue::FontStyle(match input {
+            "normal" => FontStyleEnum::Normal,
+            "italic" => FontStyleEnum::Italic,
+            "oblique" => FontStyleEnum::Oblique(14.0),
+            value if value.starts_with("oblique ") => {
+                FontStyleEnum::Oblique(value[8..].trim().trim_end_matches("deg").parse().ok()?)
+            }
+            _ => return None,
+        }),
+        P::FontVariantLigatures => TypographyValue::FontVariantLigatures(font_ligatures(input)?),
+        P::FontVariantCaps => TypographyValue::FontVariantCaps(match input {
+            "normal" => FontVariantCaps::Normal,
+            "small-caps" => FontVariantCaps::SmallCaps,
+            "all-small-caps" => FontVariantCaps::AllSmallCaps,
+            "petite-caps" => FontVariantCaps::PetiteCaps,
+            "all-petite-caps" => FontVariantCaps::AllPetiteCaps,
+            "unicase" => FontVariantCaps::Unicase,
+            "titling-caps" => FontVariantCaps::TitlingCaps,
+            _ => return None,
+        }),
+        P::FontVariantEastAsian => TypographyValue::FontVariantEastAsian(font_east_asian(input)?),
+        P::FontVariantNumeric => TypographyValue::FontVariantNumeric(font_numeric(input)?),
+        P::FontVariantAlternates => TypographyValue::FontVariantAlternates(match input {
+            "normal" => FontVariantAlternates::Normal,
+            "historical-forms" => FontVariantAlternates::HistoricalForms,
+            _ => return None,
+        }),
+        P::FontVariantPosition => TypographyValue::FontVariantPosition(match input {
+            "normal" => FontVariantPosition::Normal,
+            "sub" => FontVariantPosition::Sub,
+            "super" => FontVariantPosition::Super,
+            _ => return None,
+        }),
+        P::FontVariantEmoji => TypographyValue::FontVariantEmoji(match input {
+            "normal" => FontVariantEmoji::Normal,
+            "text" => FontVariantEmoji::Text,
+            "emoji" => FontVariantEmoji::Emoji,
+            "unicode" => FontVariantEmoji::Unicode,
+            _ => return None,
+        }),
+        P::FontSynthesisWeight
+        | P::FontSynthesisStyle
+        | P::FontSynthesisSmallCaps
+        | P::FontSynthesisPosition => TypographyValue::FontSynthesis(match input {
+            "auto" => FontSynthesis::Auto,
+            "none" => FontSynthesis::None,
+            _ => return None,
+        }),
+        P::FontFeatureSettings => TypographyValue::OpenTypeFeatures(feature_settings(input)?),
+        P::FontVariationSettings => TypographyValue::FontVariations(variation_settings(input)?),
+        P::FontLanguageOverride => TypographyValue::FontLanguageOverride(if input == "normal" {
+            FontLanguageOverride::NORMAL
+        } else {
+            FontLanguageOverride::tag(input.trim_matches(['\'', '"']))?
+        }),
+        P::LineHeight => TypographyValue::LineHeight(if input == "normal" {
+            LineHeight::Normal
+        } else if let Ok(value) = input.parse::<f32>() {
+            LineHeight::Number(value)
+        } else {
+            match length(input)? {
+                LengthValue::Computed(value) if value.is_percent() => {
+                    LineHeight::Percentage(value.value())
+                }
+                LengthValue::Computed(value) if value.length_type() == LengthType::Fixed => {
+                    LineHeight::Length(value.value())
+                }
+                _ => return None,
+            }
+        }),
+        P::TextAlign => TypographyValue::TextAlign(match input {
+            "left" => TextAlign::Left,
+            "right" => TextAlign::Right,
+            "center" => TextAlign::Center,
+            "justify" => TextAlign::Justify,
+            "start" | "match-parent" => TextAlign::Start,
+            "end" => TextAlign::End,
+            _ => return None,
+        }),
+        P::TextAlignLast => TypographyValue::TextAlignLast(match input {
+            "auto" => TextAlignLast::Auto,
+            "start" | "match-parent" => TextAlignLast::Start,
+            "end" => TextAlignLast::End,
+            "left" => TextAlignLast::Left,
+            "right" => TextAlignLast::Right,
+            "center" => TextAlignLast::Center,
+            "justify" => TextAlignLast::Justify,
+            _ => return None,
+        }),
+        P::TextJustify => TypographyValue::TextJustify(match input {
+            "auto" => TextJustify::Auto,
+            "none" => TextJustify::None,
+            "inter-word" => TextJustify::InterWord,
+            "inter-character" => TextJustify::InterCharacter,
+            _ => return None,
+        }),
+        P::WordBreak => TypographyValue::WordBreak(match input {
+            "normal" => WordBreak::Normal,
+            "break-all" => WordBreak::BreakAll,
+            "keep-all" => WordBreak::KeepAll,
+            "break-word" => WordBreak::BreakWord,
+            "auto-phrase" => WordBreak::AutoPhrase,
+            _ => return None,
+        }),
+        P::OverflowWrap | P::WordWrap => TypographyValue::OverflowWrap(match input {
+            "normal" => OverflowWrap::Normal,
+            "break-word" => OverflowWrap::BreakWord,
+            "anywhere" => OverflowWrap::Anywhere,
+            _ => return None,
+        }),
+        P::LineBreak => TypographyValue::LineBreak(match input {
+            "auto" => LineBreak::Auto,
+            "loose" => LineBreak::Loose,
+            "normal" => LineBreak::Normal,
+            "strict" => LineBreak::Strict,
+            "anywhere" => LineBreak::Anywhere,
+            "after-white-space" => LineBreak::AfterWhiteSpace,
+            _ => return None,
+        }),
+        P::Hyphens => TypographyValue::Hyphens(match input {
+            "none" => Hyphens::None,
+            "manual" => Hyphens::Manual,
+            "auto" => Hyphens::Auto,
+            _ => return None,
+        }),
+        P::HyphenateLimitChars => {
+            let parts: Vec<_> = input.split_whitespace().collect();
+            let number = |value: &str, default| {
+                if value == "auto" {
+                    Some(default)
+                } else {
+                    value.parse().ok()
+                }
+            };
+            let value = match parts.as_slice() {
+                ["auto"] => HyphenationLimits::AUTO,
+                [word] => HyphenationLimits::new(number(word, 5)?, 2, 2),
+                [word, edge] => {
+                    HyphenationLimits::new(number(word, 5)?, number(edge, 2)?, number(edge, 2)?)
+                }
+                [word, before, after] => {
+                    HyphenationLimits::new(number(word, 5)?, number(before, 2)?, number(after, 2)?)
+                }
+                _ => return None,
+            };
+            TypographyValue::HyphenationLimits(value)
+        }
+        P::HyphenateCharacter => TypographyValue::HyphenateCharacter(if input == "auto" {
+            HyphenateCharacter::AUTO
+        } else {
+            HyphenateCharacter::character(input.trim_matches(['\'', '"']))?
+        }),
+        P::WhiteSpaceCollapse => TypographyValue::WhiteSpaceCollapse(match input {
+            "collapse" => WhiteSpaceCollapse::Collapse,
+            "preserve" => WhiteSpaceCollapse::Preserve,
+            "preserve-breaks" => WhiteSpaceCollapse::PreserveBreaks,
+            "break-spaces" => WhiteSpaceCollapse::BreakSpaces,
+            _ => return None,
+        }),
+        P::TextWrapMode => TypographyValue::TextWrapMode(match input {
+            "wrap" => TextWrapMode::Wrap,
+            "nowrap" => TextWrapMode::Nowrap,
+            _ => return None,
+        }),
+        P::TextWrapStyle => TypographyValue::TextWrapStyle(match input {
+            "auto" => TextWrapStyle::Auto,
+            "balance" => TextWrapStyle::Balance,
+            "pretty" => TextWrapStyle::Pretty,
+            "stable" => TextWrapStyle::Stable,
+            _ => return None,
+        }),
+        P::TextAutospace => TypographyValue::TextAutospace(match input {
+            "no-autospace" => TextAutospace::NoAutospace,
+            "normal" => TextAutospace::Normal,
+            _ => return None,
+        }),
+        P::TextSpacingTrim => TypographyValue::TextSpacingTrim(match input {
+            "normal" => TextSpacingTrim::Normal,
+            "space-all" => TextSpacingTrim::SpaceAll,
+            "space-first" => TextSpacingTrim::SpaceFirst,
+            "trim-start" => TextSpacingTrim::TrimStart,
+            _ => return None,
+        }),
+        P::TabSize => TypographyValue::TabSize(if let Ok(value) = input.parse::<u32>() {
+            TabSize::Spaces(value)
+        } else {
+            let LengthValue::Computed(value) = length(input)? else {
+                return None;
+            };
+            if value.length_type() != LengthType::Fixed {
+                return None;
+            }
+            TabSize::Length(value.value())
+        }),
+        P::TextTransform => TypographyValue::TextTransform(match input {
+            "none" => TextTransform::None,
+            "capitalize" => TextTransform::Capitalize,
+            "uppercase" => TextTransform::Uppercase,
+            "lowercase" => TextTransform::Lowercase,
+            "full-width" => TextTransform::FullWidth,
+            "full-size-kana" => TextTransform::FullSizeKana,
+            "math-auto" => TextTransform::MathAuto,
+            _ => return None,
+        }),
+        P::TextDecorationLine => TypographyValue::TextDecorationLine(decoration_line(input)?),
+        P::TextDecorationStyle => TypographyValue::TextDecorationStyle(match input {
+            "solid" => TextDecorationStyle::Solid,
+            "double" => TextDecorationStyle::Double,
+            "dotted" => TextDecorationStyle::Dotted,
+            "dashed" => TextDecorationStyle::Dashed,
+            "wavy" => TextDecorationStyle::Wavy,
+            _ => return None,
+        }),
+        P::TextDecorationColor | P::TextEmphasisColor => {
+            TypographyValue::StyleColor(if input.eq_ignore_ascii_case("currentcolor") {
+                StyleColor::CurrentColor
+            } else {
+                StyleColor::Resolved(color(input)?)
+            })
+        }
+        P::TextDecorationThickness => TypographyValue::TextDecorationThickness(match input {
+            "auto" => TextDecorationThickness::Auto,
+            "from-font" => TextDecorationThickness::FromFont,
+            value => {
+                let LengthValue::Computed(value) = length(value)? else {
+                    return None;
+                };
+                TextDecorationThickness::Length(value.value())
+            }
+        }),
+        P::TextDecorationSkipInk => TypographyValue::TextDecorationSkipInk(match input {
+            "none" => TextDecorationSkipInk::None,
+            "auto" => TextDecorationSkipInk::Auto,
+            "all" => TextDecorationSkipInk::All,
+            _ => return None,
+        }),
+        P::TextUnderlinePosition => TypographyValue::TextUnderlinePosition(match input {
+            "auto" | "from-font" => TextUnderlinePosition::Auto,
+            "under" => TextUnderlinePosition::Under,
+            "left" => TextUnderlinePosition::Left,
+            "right" => TextUnderlinePosition::Right,
+            _ => return None,
+        }),
+        P::TextEmphasisStyle => TypographyValue::TextEmphasisStyle(emphasis_style(input)?),
+        P::TextEmphasisPosition => {
+            let mut position = TextEmphasisPosition::INITIAL;
+            for token in input.split_whitespace() {
+                match token {
+                    "over" => position.over = true,
+                    "under" => position.over = false,
+                    "right" => position.right = true,
+                    "left" => position.right = false,
+                    _ => return None,
+                }
+            }
+            TypographyValue::TextEmphasisPosition(position)
+        }
+        P::TextShadow => TypographyValue::TextShadows(text_shadows(input)?),
+        P::TextOverflow => TypographyValue::TextOverflow(match input {
+            "clip" => TextOverflow::Clip,
+            "ellipsis" => TextOverflow::Ellipsis,
+            _ => return None,
+        }),
+        P::TextSizeAdjust => TypographyValue::TextSizeAdjust(match input {
+            "auto" => TextSizeAdjust::Auto,
+            "none" => TextSizeAdjust::None,
+            value => TextSizeAdjust::Percentage(value.strip_suffix('%')?.parse().ok()?),
+        }),
+        P::TextCombineUpright => TypographyValue::TextCombineUpright(match input {
+            "none" => TextCombineUpright::None,
+            "all" => TextCombineUpright::All,
+            _ => return None,
+        }),
+        P::WritingMode => TypographyValue::WritingMode(match input {
+            "horizontal-tb" => WritingMode::HorizontalTb,
+            "vertical-rl" => WritingMode::VerticalRl,
+            "vertical-lr" => WritingMode::VerticalLr,
+            "sideways-rl" => WritingMode::SidewaysRl,
+            "sideways-lr" => WritingMode::SidewaysLr,
+            _ => return None,
+        }),
+        P::TextOrientation => TypographyValue::TextOrientation(match input {
+            "mixed" => TextOrientation::Mixed,
+            "upright" => TextOrientation::Upright,
+            "sideways" => TextOrientation::Sideways,
+            _ => return None,
+        }),
+        P::UnicodeBidi => TypographyValue::UnicodeBidi(match input {
+            "normal" => UnicodeBidi::Normal,
+            "embed" => UnicodeBidi::Embed,
+            "bidi-override" => UnicodeBidi::Override,
+            "isolate" => UnicodeBidi::Isolate,
+            "isolate-override" => UnicodeBidi::IsolateOverride,
+            "plaintext" => UnicodeBidi::Plaintext,
+            _ => return None,
+        }),
+        P::VerticalAlign => TypographyValue::VerticalAlign(match input {
+            "baseline" => VerticalAlign::Baseline,
+            "sub" => VerticalAlign::Sub,
+            "super" => VerticalAlign::Super,
+            "text-top" => VerticalAlign::TextTop,
+            "text-bottom" => VerticalAlign::TextBottom,
+            "middle" => VerticalAlign::Middle,
+            "top" => VerticalAlign::Top,
+            "bottom" => VerticalAlign::Bottom,
+            value if value.ends_with('%') => {
+                VerticalAlign::Percentage(value.trim_end_matches('%').parse().ok()?)
+            }
+            value => {
+                let LengthValue::Computed(value) = length(value)? else {
+                    return None;
+                };
+                VerticalAlign::Length(value.value())
+            }
+        }),
+        P::RubyAlign => TypographyValue::RubyAlign(match input {
+            "space-around" => RubyAlign::SpaceAround,
+            "start" => RubyAlign::Start,
+            "center" => RubyAlign::Center,
+            "space-between" => RubyAlign::SpaceBetween,
+            _ => return None,
+        }),
+        P::RubyPosition => TypographyValue::RubyPosition(match input {
+            "over" => RubyPosition::Over,
+            "under" => RubyPosition::Under,
+            _ => return None,
+        }),
+        P::RubyOverhang => TypographyValue::RubyOverhang(match input {
+            "auto" => RubyOverhang::Auto,
+            "none" => RubyOverhang::None,
+            _ => return None,
+        }),
+        P::HangingPunctuation => {
+            if input == "none" {
+                TypographyValue::HangingPunctuation(HangingPunctuation::NONE)
+            } else {
+                let mut value = HangingPunctuation::NONE;
+                for token in input.split_whitespace() {
+                    match token {
+                        "first" => value.first = true,
+                        "last" => value.last = true,
+                        "force-end" if !value.allow_end => value.force_end = true,
+                        "allow-end" if !value.force_end => value.allow_end = true,
+                        _ => return None,
+                    }
+                }
+                TypographyValue::HangingPunctuation(value)
+            }
+        }
+        P::InitialLetter => TypographyValue::InitialLetter(if input == "normal" {
+            InitialLetterValue::Normal
+        } else {
+            let mut parts = input.split_whitespace();
+            let size = parts.next()?.parse().ok()?;
+            let sink = parts.next().map(str::parse).transpose().ok()?;
+            if parts.next().is_some() {
+                return None;
+            }
+            InitialLetterValue::Value(crate::InitialLetter { size, sink })
+        }),
+        P::TextRendering => {
+            TypographyValue::TextRendering(match input.to_ascii_lowercase().as_str() {
+                "auto" => TextRendering::Auto,
+                "optimizespeed" => TextRendering::OptimizeSpeed,
+                "optimizelegibility" => TextRendering::OptimizeLegibility,
+                "geometricprecision" => TextRendering::GeometricPrecision,
+                _ => return None,
+            })
+        }
+        P::WebkitFontSmoothing => TypographyValue::FontSmoothing(match input {
+            "auto" => FontSmoothing::Auto,
+            "none" => FontSmoothing::None,
+            "antialiased" => FontSmoothing::Antialiased,
+            "subpixel-antialiased" => FontSmoothing::SubpixelAntialiased,
+            _ => return None,
+        }),
+        P::LineClamp => TypographyValue::LineClamp(match input {
+            "none" => LineClamp::None,
+            "auto" => LineClamp::Auto,
+            value => LineClamp::Lines(value.parse().ok()?),
+        }),
+        P::BlockEllipsis => TypographyValue::BlockEllipsis(match input {
+            "auto" => BlockEllipsis::Auto,
+            "no-ellipsis" => BlockEllipsis::NoEllipsis,
+            value => BlockEllipsis::String(value.trim_matches(['\'', '"']).to_owned()),
+        }),
+        P::TextBoxEdge => {
+            let edge = |token| match token {
+                "auto" => Some(crate::TextBoxEdgeKeyword::Auto),
+                "text" => Some(crate::TextBoxEdgeKeyword::Text),
+                "cap" => Some(crate::TextBoxEdgeKeyword::Cap),
+                "ex" => Some(crate::TextBoxEdgeKeyword::Ex),
+                "ideographic" => Some(crate::TextBoxEdgeKeyword::Ideographic),
+                "ideographic-ink" => Some(crate::TextBoxEdgeKeyword::IdeographicInk),
+                "alphabetic" => Some(crate::TextBoxEdgeKeyword::Alphabetic),
+                _ => None,
+            };
+            let parts: Vec<_> = input.split_whitespace().collect();
+            TypographyValue::TextBoxEdge(match parts.as_slice() {
+                [one] => TextBoxEdge {
+                    over: edge(one)?,
+                    under: edge(one)?,
+                },
+                [over, under] => TextBoxEdge {
+                    over: edge(over)?,
+                    under: edge(under)?,
+                },
+                _ => return None,
+            })
+        }
+        P::TextBoxTrim => TypographyValue::TextBoxTrim(match input {
+            "none" => TextBoxTrim::None,
+            "trim-start" => TextBoxTrim::TrimStart,
+            "trim-end" => TextBoxTrim::TrimEnd,
+            "trim-both" => TextBoxTrim::TrimBoth,
+            _ => return None,
+        }),
+        P::TextBox => {
+            if input == "normal" {
+                TypographyValue::TextBox(TextBoxShorthand::default())
+            } else {
+                let mut tokens = input.split_whitespace();
+                let trim = match tokens.next()? {
+                    "none" => TextBoxTrim::None,
+                    "trim-start" => TextBoxTrim::TrimStart,
+                    "trim-end" => TextBoxTrim::TrimEnd,
+                    "trim-both" => TextBoxTrim::TrimBoth,
+                    _ => return None,
+                };
+                let edge_input = tokens.collect::<Vec<_>>().join(" ");
+                let StyleValue::Typography(TypographyValue::TextBoxEdge(edge)) =
+                    parse_typography_literal(P::TextBoxEdge, &edge_input)?
+                else {
+                    return None;
+                };
+                TypographyValue::TextBox(TextBoxShorthand { trim, edge })
+            }
+        }
+        P::Font => TypographyValue::Font(parse_font_shorthand(input)?),
+        P::FontVariant => {
+            if input == "normal" || input == "none" {
+                TypographyValue::FontVariant(FontVariantShorthand::default())
+            } else {
+                let mut value = FontVariantShorthand::default();
+                for token in input.split_whitespace() {
+                    if let Some(parsed) = font_ligatures(token) {
+                        value.ligatures = parsed;
+                        continue;
+                    }
+                    if let Some(parsed) = font_numeric(token) {
+                        value.numeric = parsed;
+                        continue;
+                    }
+                    if let Some(parsed) = font_east_asian(token) {
+                        value.east_asian = parsed;
+                        continue;
+                    }
+                    match token {
+                        "small-caps" => value.caps = FontVariantCaps::SmallCaps,
+                        "all-small-caps" => value.caps = FontVariantCaps::AllSmallCaps,
+                        "petite-caps" => value.caps = FontVariantCaps::PetiteCaps,
+                        "all-petite-caps" => value.caps = FontVariantCaps::AllPetiteCaps,
+                        "unicase" => value.caps = FontVariantCaps::Unicase,
+                        "titling-caps" => value.caps = FontVariantCaps::TitlingCaps,
+                        "sub" => value.position = FontVariantPosition::Sub,
+                        "super" => value.position = FontVariantPosition::Super,
+                        "historical-forms" => {
+                            value.alternates = FontVariantAlternates::HistoricalForms
+                        }
+                        "text" => value.emoji = FontVariantEmoji::Text,
+                        "emoji" => value.emoji = FontVariantEmoji::Emoji,
+                        "unicode" => value.emoji = FontVariantEmoji::Unicode,
+                        _ => return None,
+                    }
+                }
+                TypographyValue::FontVariant(value)
+            }
+        }
+        P::FontSynthesis => TypographyValue::FontSynthesisShorthand(match input {
+            "auto" => FontSynthesisShorthand::AUTO,
+            "none" => FontSynthesisShorthand::NONE,
+            value => {
+                let mut result = FontSynthesisShorthand::NONE;
+                for token in value.split_whitespace() {
+                    match token {
+                        "weight" => result.weight = FontSynthesis::Auto,
+                        "style" => result.style = FontSynthesis::Auto,
+                        "small-caps" => result.small_caps = FontSynthesis::Auto,
+                        "position" => result.position = FontSynthesis::Auto,
+                        _ => return None,
+                    }
+                }
+                result
+            }
+        }),
+        P::WhiteSpace => {
+            let value = match input {
+                "normal" => WhiteSpaceShorthand {
+                    collapse: WhiteSpaceCollapse::Collapse,
+                    wrap: TextWrapMode::Wrap,
+                },
+                "pre" => WhiteSpaceShorthand {
+                    collapse: WhiteSpaceCollapse::Preserve,
+                    wrap: TextWrapMode::Nowrap,
+                },
+                "pre-wrap" => WhiteSpaceShorthand {
+                    collapse: WhiteSpaceCollapse::Preserve,
+                    wrap: TextWrapMode::Wrap,
+                },
+                "pre-line" => WhiteSpaceShorthand {
+                    collapse: WhiteSpaceCollapse::PreserveBreaks,
+                    wrap: TextWrapMode::Wrap,
+                },
+                "nowrap" => WhiteSpaceShorthand {
+                    collapse: WhiteSpaceCollapse::Collapse,
+                    wrap: TextWrapMode::Nowrap,
+                },
+                "break-spaces" => WhiteSpaceShorthand {
+                    collapse: WhiteSpaceCollapse::BreakSpaces,
+                    wrap: TextWrapMode::Wrap,
+                },
+                _ => return None,
+            };
+            TypographyValue::WhiteSpace(value)
+        }
+        P::TextWrap => {
+            let (mode, style) = match input {
+                "wrap" => (TextWrapMode::Wrap, TextWrapStyle::Auto),
+                "nowrap" => (TextWrapMode::Nowrap, TextWrapStyle::Auto),
+                "balance" => (TextWrapMode::Wrap, TextWrapStyle::Balance),
+                "pretty" => (TextWrapMode::Wrap, TextWrapStyle::Pretty),
+                "stable" => (TextWrapMode::Wrap, TextWrapStyle::Stable),
+                _ => return None,
+            };
+            TypographyValue::TextWrap(TextWrapShorthand { mode, style })
+        }
+        P::TextDecoration => {
+            let mut value = TextDecorationShorthand::default();
+            for token in input.split_whitespace() {
+                if let Some(line) = decoration_line(token) {
+                    value.line = TextDecorationLine(value.line.0 | line.0);
+                    continue;
+                }
+                if token.eq_ignore_ascii_case("currentcolor") {
+                    value.color = StyleColor::CurrentColor;
+                    continue;
+                }
+                if let Some(parsed) = color(token) {
+                    value.color = StyleColor::Resolved(parsed);
+                    continue;
+                }
+                match token {
+                    "solid" => value.style = TextDecorationStyle::Solid,
+                    "double" => value.style = TextDecorationStyle::Double,
+                    "dotted" => value.style = TextDecorationStyle::Dotted,
+                    "dashed" => value.style = TextDecorationStyle::Dashed,
+                    "wavy" => value.style = TextDecorationStyle::Wavy,
+                    "auto" => value.thickness = TextDecorationThickness::Auto,
+                    "from-font" => value.thickness = TextDecorationThickness::FromFont,
+                    token => {
+                        let LengthValue::Computed(length) = length(token)? else {
+                            return None;
+                        };
+                        value.thickness = TextDecorationThickness::Length(length.value());
+                    }
+                }
+            }
+            TypographyValue::TextDecoration(value)
+        }
+        P::TextEmphasis => {
+            let mut tokens: Vec<_> = input.split_whitespace().collect();
+            let emphasis_color = tokens.last().and_then(|token| {
+                if token.eq_ignore_ascii_case("currentcolor") {
+                    Some(StyleColor::CurrentColor)
+                } else {
+                    color(token).map(StyleColor::Resolved)
+                }
+            });
+            if emphasis_color.is_some() {
+                tokens.pop();
+            }
+            TypographyValue::TextEmphasis(TextEmphasisShorthand {
+                style: emphasis_style(&tokens.join(" "))?,
+                color: emphasis_color.unwrap_or(StyleColor::CurrentColor),
+                position: TextEmphasisPosition::INITIAL,
+            })
+        }
+        _ => return None,
+    };
+    Some(StyleValue::Typography(value))
+}
+
 pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue, LiteralError> {
     use StyleProperty as P;
     let result = match property {
@@ -484,10 +1560,25 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
         | P::FlexBasis
         | P::RowGap
         | P::ColumnGap
-        | P::FontSize => length(input).map(StyleValue::Length),
+        | P::FontSize
+        | P::TextIndent
+        | P::TextUnderlineOffset => length(input).map(StyleValue::Length),
         P::Margin | P::Padding => edges(input).map(StyleValue::Edges),
         P::BackgroundColor | P::Color => color(input).map(StyleValue::Color),
-        P::Opacity | P::FlexGrow | P::FlexShrink => input.parse().ok().map(StyleValue::Number),
+        P::Opacity | P::FlexGrow | P::FlexShrink | P::LetterSpacing | P::WordSpacing => {
+            if input == "normal" {
+                Some(StyleValue::Number(0.0))
+            } else if matches!(property, P::LetterSpacing | P::WordSpacing) {
+                length(input).and_then(|value| match value {
+                    LengthValue::Computed(value) if value.length_type() == LengthType::Fixed => {
+                        Some(StyleValue::Number(value.value()))
+                    }
+                    _ => None,
+                })
+            } else {
+                input.parse().ok().map(StyleValue::Number)
+            }
+        }
         P::ZIndex => input.parse().ok().map(StyleValue::Integer),
         P::FlexDirection => match input {
             "row" => Some(FlexDirection::Row),
@@ -553,16 +1644,7 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
                 _ => None,
             }
         }
-        P::FontFamily => match input.trim() {
-            "sans-serif" => Some(FontFamilyList::generic(GenericFontFamily::SansSerif)),
-            "serif" => Some(FontFamilyList::generic(GenericFontFamily::Serif)),
-            "monospace" => Some(FontFamilyList::generic(GenericFontFamily::Monospace)),
-            value if !value.is_empty() => {
-                Some(FontFamilyList::single(value.trim_matches(['\'', '"'])))
-            }
-            _ => None,
-        }
-        .map(StyleValue::FontFamily),
+        P::FontFamily => font_family_list(input).map(StyleValue::FontFamily),
         P::FontWeight => match input {
             "normal" => Some(FontWeight::NORMAL),
             "bold" => Some(FontWeight::BOLD),
@@ -606,6 +1688,7 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
             _ => None,
         }
         .map(StyleValue::PointerEvents),
+        _ => parse_typography_literal(property, input),
     };
     result.ok_or_else(|| invalid(property, input))
 }
@@ -614,6 +1697,246 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
 pub struct PropertyTypeError {
     pub property: StyleProperty,
     pub expected: ValueKind,
+}
+
+fn apply_typography_to_computed(
+    style: &mut ComputedStyle,
+    property: StyleProperty,
+    value: &TypographyValue,
+) -> bool {
+    use StyleProperty as P;
+    match (property, value) {
+        (P::Direction, TypographyValue::Direction(value)) => style.direction = *value,
+        (P::FontKerning, TypographyValue::FontKerning(value)) => style.font_kerning = *value,
+        (P::FontOpticalSizing, TypographyValue::FontOpticalSizing(value)) => {
+            style.font_optical_sizing = *value
+        }
+        (P::FontPalette, TypographyValue::FontPalette(value)) => style.font_palette = value.clone(),
+        (P::FontSizeAdjust, TypographyValue::FontSizeAdjust(value)) => {
+            style.font_size_adjust = *value
+        }
+        (P::FontStretch, TypographyValue::FontStretch(value)) => {
+            style.font_stretch = FontStretch(value.0.clamp(50.0, 200.0))
+        }
+        (P::FontStyle, TypographyValue::FontStyle(value)) => {
+            style.font_style = match value {
+                FontStyleEnum::Oblique(angle) => FontStyleEnum::Oblique(angle.clamp(-90.0, 90.0)),
+                value => *value,
+            }
+        }
+        (P::FontVariantLigatures, TypographyValue::FontVariantLigatures(value)) => {
+            style.font_variant_ligatures = *value
+        }
+        (P::FontVariantCaps, TypographyValue::FontVariantCaps(value)) => {
+            style.font_variant_caps = *value
+        }
+        (P::FontVariantEastAsian, TypographyValue::FontVariantEastAsian(value)) => {
+            style.font_variant_east_asian = *value
+        }
+        (P::FontVariantNumeric, TypographyValue::FontVariantNumeric(value)) => {
+            style.font_variant_numeric = *value
+        }
+        (P::FontVariantAlternates, TypographyValue::FontVariantAlternates(value)) => {
+            style.font_variant_alternates = *value
+        }
+        (P::FontVariantPosition, TypographyValue::FontVariantPosition(value)) => {
+            style.font_variant_position = *value
+        }
+        (P::FontVariantEmoji, TypographyValue::FontVariantEmoji(value)) => {
+            style.font_variant_emoji = *value
+        }
+        (P::FontSynthesisWeight, TypographyValue::FontSynthesis(value)) => {
+            style.font_synthesis_weight = *value
+        }
+        (P::FontSynthesisStyle, TypographyValue::FontSynthesis(value)) => {
+            style.font_synthesis_style = *value
+        }
+        (P::FontSynthesisSmallCaps, TypographyValue::FontSynthesis(value)) => {
+            style.font_synthesis_small_caps = *value
+        }
+        (P::FontSynthesisPosition, TypographyValue::FontSynthesis(value)) => {
+            style.font_synthesis_position = *value
+        }
+        (P::FontFeatureSettings, TypographyValue::OpenTypeFeatures(value)) => {
+            style.font_feature_settings = value.0.clone()
+        }
+        (P::FontVariationSettings, TypographyValue::FontVariations(value)) => {
+            if !value.0.iter().all(|axis| axis.value.is_finite()) {
+                return false;
+            }
+            style.font_variation_settings = value.0.clone()
+        }
+        (P::FontLanguageOverride, TypographyValue::FontLanguageOverride(value)) => {
+            style.font_language_override = *value
+        }
+        (P::LineHeight, TypographyValue::LineHeight(value)) => style.line_height = *value,
+        (P::TextAlign, TypographyValue::TextAlign(value)) => style.text_align = *value,
+        (P::TextAlignLast, TypographyValue::TextAlignLast(value)) => style.text_align_last = *value,
+        (P::TextJustify, TypographyValue::TextJustify(value)) => style.text_justify = *value,
+        (P::WordBreak, TypographyValue::WordBreak(value)) => style.word_break = *value,
+        (P::OverflowWrap | P::WordWrap, TypographyValue::OverflowWrap(value)) => {
+            style.overflow_wrap = *value
+        }
+        (P::LineBreak, TypographyValue::LineBreak(value)) => style.line_break = *value,
+        (P::Hyphens, TypographyValue::Hyphens(value)) => style.hyphens = *value,
+        (P::HyphenateLimitChars, TypographyValue::HyphenationLimits(value)) => {
+            style.hyphenate_limit_chars = (value.word, value.before, value.after)
+        }
+        (P::HyphenateCharacter, TypographyValue::HyphenateCharacter(value)) => {
+            style.hyphenate_character = value.0.clone()
+        }
+        (P::WhiteSpaceCollapse, TypographyValue::WhiteSpaceCollapse(value)) => {
+            style.white_space_collapse = *value;
+            style.white_space = normalized_white_space(*value, style.text_wrap_mode);
+        }
+        (P::TextWrapMode, TypographyValue::TextWrapMode(value)) => {
+            style.text_wrap_mode = *value;
+            style.white_space = normalized_white_space(style.white_space_collapse, *value);
+            style.text_wrap = normalized_text_wrap(*value, style.text_wrap_style);
+        }
+        (P::TextWrapStyle, TypographyValue::TextWrapStyle(value)) => {
+            style.text_wrap_style = *value;
+            style.text_wrap = normalized_text_wrap(style.text_wrap_mode, *value);
+        }
+        (P::TextAutospace, TypographyValue::TextAutospace(value)) => style.text_autospace = *value,
+        (P::TextSpacingTrim, TypographyValue::TextSpacingTrim(value)) => {
+            style.text_spacing_trim = *value
+        }
+        (P::TabSize, TypographyValue::TabSize(value)) => style.tab_size = *value,
+        (P::TextTransform, TypographyValue::TextTransform(value)) => style.text_transform = *value,
+        (P::TextDecorationLine, TypographyValue::TextDecorationLine(value)) => {
+            style.text_decoration_line = *value
+        }
+        (P::TextDecorationStyle, TypographyValue::TextDecorationStyle(value)) => {
+            style.text_decoration_style = *value
+        }
+        (P::TextDecorationThickness, TypographyValue::TextDecorationThickness(value)) => {
+            style.text_decoration_thickness = *value
+        }
+        (P::TextDecorationColor, TypographyValue::StyleColor(value)) => {
+            style.text_decoration_color = *value
+        }
+        (P::TextEmphasisColor, TypographyValue::StyleColor(value)) => {
+            style.text_emphasis_color = *value
+        }
+        (P::TextDecorationSkipInk, TypographyValue::TextDecorationSkipInk(value)) => {
+            style.text_decoration_skip_ink = *value
+        }
+        (P::TextUnderlinePosition, TypographyValue::TextUnderlinePosition(value)) => {
+            style.text_underline_position = *value
+        }
+        (P::TextEmphasisStyle, TypographyValue::TextEmphasisStyle(value)) => {
+            style.text_emphasis_mark = value.mark;
+            style.text_emphasis_fill = value.fill;
+        }
+        (P::TextEmphasisPosition, TypographyValue::TextEmphasisPosition(value)) => {
+            style.text_emphasis_position = *value
+        }
+        (P::TextShadow, TypographyValue::TextShadows(value)) => style.text_shadow = value.0.clone(),
+        (P::TextOverflow, TypographyValue::TextOverflow(value)) => style.text_overflow = *value,
+        (P::TextSizeAdjust, TypographyValue::TextSizeAdjust(value)) => {
+            style.text_size_adjust = *value
+        }
+        (P::TextCombineUpright, TypographyValue::TextCombineUpright(value)) => {
+            style.text_combine_upright = *value
+        }
+        (P::WritingMode, TypographyValue::WritingMode(value)) => style.writing_mode = *value,
+        (P::TextOrientation, TypographyValue::TextOrientation(value)) => {
+            style.text_orientation = *value
+        }
+        (P::UnicodeBidi, TypographyValue::UnicodeBidi(value)) => style.unicode_bidi = *value,
+        (P::VerticalAlign, TypographyValue::VerticalAlign(value)) => style.vertical_align = *value,
+        (P::RubyAlign, TypographyValue::RubyAlign(value)) => style.ruby_align = *value,
+        (P::RubyPosition, TypographyValue::RubyPosition(value)) => style.ruby_position = *value,
+        (P::RubyOverhang, TypographyValue::RubyOverhang(value)) => style.ruby_overhang = *value,
+        (P::HangingPunctuation, TypographyValue::HangingPunctuation(value)) => {
+            style.hanging_punctuation = *value
+        }
+        (P::InitialLetter, TypographyValue::InitialLetter(value)) => {
+            style.initial_letter = match value {
+                InitialLetterValue::Normal => None,
+                InitialLetterValue::Value(value) => Some(*value),
+            }
+        }
+        (P::TextRendering, TypographyValue::TextRendering(value)) => style.text_rendering = *value,
+        (P::WebkitFontSmoothing, TypographyValue::FontSmoothing(value)) => {
+            style.font_smoothing = *value
+        }
+        (P::LineClamp, TypographyValue::LineClamp(value)) => style.line_clamp = *value,
+        (P::BlockEllipsis, TypographyValue::BlockEllipsis(value)) => {
+            style.block_ellipsis = value.clone()
+        }
+        (P::TextBoxEdge, TypographyValue::TextBoxEdge(value)) => style.text_box_edge = *value,
+        (P::TextBoxTrim, TypographyValue::TextBoxTrim(value)) => style.text_box_trim = *value,
+        (P::TextBox, TypographyValue::TextBox(value)) => {
+            style.text_box_trim = value.trim;
+            style.text_box_edge = value.edge;
+        }
+        (P::Font, TypographyValue::Font(value)) => {
+            style.font_style = value.style;
+            style.font_variant_caps = value.variant_caps;
+            style.font_weight = value.weight;
+            style.font_stretch = value.stretch;
+            style.font_size = value.size_px;
+            style.line_height = value.line_height;
+            style.font_family = value.family.clone();
+            // CSS Fonts requires omitted and non-shorthand font longhands to
+            // reset atomically when `font` is accepted.
+            style.font_variant_ligatures = FontVariantLigatures::default();
+            style.font_variant_numeric = FontVariantNumeric::default();
+            style.font_variant_east_asian = FontVariantEastAsian::default();
+            style.font_variant_alternates = FontVariantAlternates::default();
+            style.font_variant_position = FontVariantPosition::default();
+            style.font_variant_emoji = FontVariantEmoji::default();
+            style.font_optical_sizing = FontOpticalSizing::Auto;
+            style.font_size_adjust = FontSizeAdjust::None;
+            style.font_kerning = FontKerning::Auto;
+            style.font_feature_settings.clear();
+            style.font_variation_settings.clear();
+            style.font_language_override = FontLanguageOverride::NORMAL;
+        }
+        (P::FontVariant, TypographyValue::FontVariant(value)) => {
+            style.font_variant_ligatures = value.ligatures;
+            style.font_variant_caps = value.caps;
+            style.font_variant_alternates = value.alternates;
+            style.font_variant_numeric = value.numeric;
+            style.font_variant_east_asian = value.east_asian;
+            style.font_variant_position = value.position;
+            style.font_variant_emoji = value.emoji;
+        }
+        (P::FontSynthesis, TypographyValue::FontSynthesisShorthand(value)) => {
+            style.font_synthesis_weight = value.weight;
+            style.font_synthesis_style = value.style;
+            style.font_synthesis_small_caps = value.small_caps;
+            style.font_synthesis_position = value.position;
+        }
+        (P::WhiteSpace, TypographyValue::WhiteSpace(value)) => {
+            style.white_space_collapse = value.collapse;
+            style.text_wrap_mode = value.wrap;
+            style.white_space = normalized_white_space(value.collapse, value.wrap);
+            style.text_wrap = normalized_text_wrap(value.wrap, style.text_wrap_style);
+        }
+        (P::TextWrap, TypographyValue::TextWrap(value)) => {
+            style.text_wrap_mode = value.mode;
+            style.text_wrap_style = value.style;
+            style.text_wrap = normalized_text_wrap(value.mode, value.style);
+            style.white_space = normalized_white_space(style.white_space_collapse, value.mode);
+        }
+        (P::TextDecoration, TypographyValue::TextDecoration(value)) => {
+            style.text_decoration_line = value.line;
+            style.text_decoration_style = value.style;
+            style.text_decoration_color = value.color;
+            style.text_decoration_thickness = value.thickness;
+        }
+        (P::TextEmphasis, TypographyValue::TextEmphasis(value)) => {
+            style.text_emphasis_mark = value.style.mark;
+            style.text_emphasis_fill = value.style.fill;
+            style.text_emphasis_color = value.color;
+            style.text_emphasis_position = value.position;
+        }
+        _ => return false,
+    }
+    true
 }
 
 /// Apply a typed declaration to the renderer's computed style.
@@ -629,6 +1952,11 @@ pub fn apply_to_computed(
         property,
         expected: property.metadata().value_kind,
     };
+    if let StyleValue::Typography(value) = value {
+        return apply_typography_to_computed(style, property, value)
+            .then_some(property.metadata().invalidation)
+            .ok_or_else(mismatch);
+    }
     match (property, value) {
         (P::Display, StyleValue::Display(v)) => style.display = *v,
         (P::Position, StyleValue::Position(v)) => style.position = *v,
@@ -682,6 +2010,12 @@ pub fn apply_to_computed(
         (P::FontFamily, StyleValue::FontFamily(v)) => style.font_family = v.clone(),
         (P::FontSize, StyleValue::Length(v)) => style.font_size = resolve(*v).value(),
         (P::FontWeight, StyleValue::FontWeight(v)) => style.font_weight = *v,
+        (P::LetterSpacing, StyleValue::Number(v)) => style.letter_spacing = *v,
+        (P::WordSpacing, StyleValue::Number(v)) => style.word_spacing = *v,
+        (P::TextIndent, StyleValue::Length(v)) => style.text_indent = resolve(*v),
+        (P::TextUnderlineOffset, StyleValue::Length(v)) => {
+            style.text_underline_offset = resolve(*v)
+        }
         (
             P::Border | P::BorderTop | P::BorderRight | P::BorderBottom | P::BorderLeft,
             StyleValue::Border(v),
@@ -848,6 +2182,10 @@ pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> St
         P::FontFamily => StyleValue::FontFamily(style.font_family.clone()),
         P::FontSize => StyleValue::Length(LengthValue::px(style.font_size)),
         P::FontWeight => StyleValue::FontWeight(style.font_weight),
+        P::LetterSpacing => StyleValue::Number(style.letter_spacing),
+        P::WordSpacing => StyleValue::Number(style.word_spacing),
+        P::TextIndent => length(style.text_indent),
+        P::TextUnderlineOffset => length(style.text_underline_offset),
         P::Border => border(
             style.border_top_width,
             style.border_top_style,
@@ -885,7 +2223,170 @@ pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> St
             style.transform,
         )])),
         P::PointerEvents => StyleValue::PointerEvents(style.pointer_events),
+        _ => typography_from_computed(style, property),
     }
+}
+
+fn typography_from_computed(style: &ComputedStyle, property: StyleProperty) -> StyleValue {
+    use StyleProperty as P;
+    let value = match property {
+        P::Direction => TypographyValue::Direction(style.direction),
+        P::FontKerning => TypographyValue::FontKerning(style.font_kerning),
+        P::FontOpticalSizing => TypographyValue::FontOpticalSizing(style.font_optical_sizing),
+        P::FontPalette => TypographyValue::FontPalette(style.font_palette.clone()),
+        P::FontSizeAdjust => TypographyValue::FontSizeAdjust(style.font_size_adjust),
+        P::FontStretch => TypographyValue::FontStretch(style.font_stretch),
+        P::FontStyle => TypographyValue::FontStyle(style.font_style),
+        P::FontVariantLigatures => {
+            TypographyValue::FontVariantLigatures(style.font_variant_ligatures)
+        }
+        P::FontVariantCaps => TypographyValue::FontVariantCaps(style.font_variant_caps),
+        P::FontVariantEastAsian => {
+            TypographyValue::FontVariantEastAsian(style.font_variant_east_asian)
+        }
+        P::FontVariantNumeric => TypographyValue::FontVariantNumeric(style.font_variant_numeric),
+        P::FontVariantAlternates => {
+            TypographyValue::FontVariantAlternates(style.font_variant_alternates)
+        }
+        P::FontVariantPosition => TypographyValue::FontVariantPosition(style.font_variant_position),
+        P::FontVariantEmoji => TypographyValue::FontVariantEmoji(style.font_variant_emoji),
+        P::FontSynthesisWeight => TypographyValue::FontSynthesis(style.font_synthesis_weight),
+        P::FontSynthesisStyle => TypographyValue::FontSynthesis(style.font_synthesis_style),
+        P::FontSynthesisSmallCaps => {
+            TypographyValue::FontSynthesis(style.font_synthesis_small_caps)
+        }
+        P::FontSynthesisPosition => TypographyValue::FontSynthesis(style.font_synthesis_position),
+        P::FontFeatureSettings => TypographyValue::OpenTypeFeatures(OpenTypeFeatureList(
+            style.font_feature_settings.clone(),
+        )),
+        P::FontVariationSettings => TypographyValue::FontVariations(FontVariationList(
+            style.font_variation_settings.clone(),
+        )),
+        P::FontLanguageOverride => {
+            TypographyValue::FontLanguageOverride(style.font_language_override)
+        }
+        P::LineHeight => TypographyValue::LineHeight(style.line_height),
+        P::TextAlign => TypographyValue::TextAlign(style.text_align),
+        P::TextAlignLast => TypographyValue::TextAlignLast(style.text_align_last),
+        P::TextJustify => TypographyValue::TextJustify(style.text_justify),
+        P::WordBreak => TypographyValue::WordBreak(style.word_break),
+        P::OverflowWrap | P::WordWrap => TypographyValue::OverflowWrap(style.overflow_wrap),
+        P::LineBreak => TypographyValue::LineBreak(style.line_break),
+        P::Hyphens => TypographyValue::Hyphens(style.hyphens),
+        P::HyphenateLimitChars => {
+            let (word, before, after) = style.hyphenate_limit_chars;
+            TypographyValue::HyphenationLimits(HyphenationLimits {
+                word,
+                before,
+                after,
+            })
+        }
+        P::HyphenateCharacter => TypographyValue::HyphenateCharacter(HyphenateCharacter(
+            style.hyphenate_character.clone(),
+        )),
+        P::WhiteSpaceCollapse => TypographyValue::WhiteSpaceCollapse(style.white_space_collapse),
+        P::TextWrapMode => TypographyValue::TextWrapMode(style.text_wrap_mode),
+        P::TextWrapStyle => TypographyValue::TextWrapStyle(style.text_wrap_style),
+        P::TextAutospace => TypographyValue::TextAutospace(style.text_autospace),
+        P::TextSpacingTrim => TypographyValue::TextSpacingTrim(style.text_spacing_trim),
+        P::TabSize => TypographyValue::TabSize(style.tab_size),
+        P::TextTransform => TypographyValue::TextTransform(style.text_transform),
+        P::TextDecorationLine => TypographyValue::TextDecorationLine(style.text_decoration_line),
+        P::TextDecorationStyle => TypographyValue::TextDecorationStyle(style.text_decoration_style),
+        P::TextDecorationThickness => {
+            TypographyValue::TextDecorationThickness(style.text_decoration_thickness)
+        }
+        P::TextDecorationColor => TypographyValue::StyleColor(style.text_decoration_color),
+        P::TextEmphasisColor => TypographyValue::StyleColor(style.text_emphasis_color),
+        P::TextDecorationSkipInk => {
+            TypographyValue::TextDecorationSkipInk(style.text_decoration_skip_ink)
+        }
+        P::TextUnderlinePosition => {
+            TypographyValue::TextUnderlinePosition(style.text_underline_position)
+        }
+        P::TextEmphasisStyle => TypographyValue::TextEmphasisStyle(TextEmphasisStyle {
+            mark: style.text_emphasis_mark,
+            fill: style.text_emphasis_fill,
+        }),
+        P::TextEmphasisPosition => {
+            TypographyValue::TextEmphasisPosition(style.text_emphasis_position)
+        }
+        P::TextShadow => TypographyValue::TextShadows(TextShadowList(style.text_shadow.clone())),
+        P::TextOverflow => TypographyValue::TextOverflow(style.text_overflow),
+        P::TextSizeAdjust => TypographyValue::TextSizeAdjust(style.text_size_adjust),
+        P::TextCombineUpright => TypographyValue::TextCombineUpright(style.text_combine_upright),
+        P::WritingMode => TypographyValue::WritingMode(style.writing_mode),
+        P::TextOrientation => TypographyValue::TextOrientation(style.text_orientation),
+        P::UnicodeBidi => TypographyValue::UnicodeBidi(style.unicode_bidi),
+        P::VerticalAlign => TypographyValue::VerticalAlign(style.vertical_align),
+        P::RubyAlign => TypographyValue::RubyAlign(style.ruby_align),
+        P::RubyPosition => TypographyValue::RubyPosition(style.ruby_position),
+        P::RubyOverhang => TypographyValue::RubyOverhang(style.ruby_overhang),
+        P::HangingPunctuation => TypographyValue::HangingPunctuation(style.hanging_punctuation),
+        P::InitialLetter => TypographyValue::InitialLetter(
+            style
+                .initial_letter
+                .map_or(InitialLetterValue::Normal, InitialLetterValue::Value),
+        ),
+        P::TextRendering => TypographyValue::TextRendering(style.text_rendering),
+        P::WebkitFontSmoothing => TypographyValue::FontSmoothing(style.font_smoothing),
+        P::LineClamp => TypographyValue::LineClamp(style.line_clamp),
+        P::BlockEllipsis => TypographyValue::BlockEllipsis(style.block_ellipsis.clone()),
+        P::TextBoxEdge => TypographyValue::TextBoxEdge(style.text_box_edge),
+        P::TextBoxTrim => TypographyValue::TextBoxTrim(style.text_box_trim),
+        P::TextBox => TypographyValue::TextBox(TextBoxShorthand {
+            trim: style.text_box_trim,
+            edge: style.text_box_edge,
+        }),
+        P::Font => TypographyValue::Font(FontShorthand {
+            style: style.font_style,
+            variant_caps: style.font_variant_caps,
+            weight: style.font_weight,
+            stretch: style.font_stretch,
+            size_px: style.font_size,
+            line_height: style.line_height,
+            family: style.font_family.clone(),
+        }),
+        P::FontVariant => TypographyValue::FontVariant(FontVariantShorthand {
+            ligatures: style.font_variant_ligatures,
+            caps: style.font_variant_caps,
+            alternates: style.font_variant_alternates,
+            numeric: style.font_variant_numeric,
+            east_asian: style.font_variant_east_asian,
+            position: style.font_variant_position,
+            emoji: style.font_variant_emoji,
+        }),
+        P::FontSynthesis => TypographyValue::FontSynthesisShorthand(FontSynthesisShorthand {
+            weight: style.font_synthesis_weight,
+            style: style.font_synthesis_style,
+            small_caps: style.font_synthesis_small_caps,
+            position: style.font_synthesis_position,
+        }),
+        P::WhiteSpace => TypographyValue::WhiteSpace(WhiteSpaceShorthand {
+            collapse: style.white_space_collapse,
+            wrap: style.text_wrap_mode,
+        }),
+        P::TextWrap => TypographyValue::TextWrap(TextWrapShorthand {
+            mode: style.text_wrap_mode,
+            style: style.text_wrap_style,
+        }),
+        P::TextDecoration => TypographyValue::TextDecoration(TextDecorationShorthand {
+            line: style.text_decoration_line,
+            style: style.text_decoration_style,
+            color: style.text_decoration_color,
+            thickness: style.text_decoration_thickness,
+        }),
+        P::TextEmphasis => TypographyValue::TextEmphasis(TextEmphasisShorthand {
+            style: TextEmphasisStyle {
+                mark: style.text_emphasis_mark,
+                fill: style.text_emphasis_fill,
+            },
+            color: style.text_emphasis_color,
+            position: style.text_emphasis_position,
+        }),
+        _ => unreachable!("non-typography property routed to typography reader"),
+    };
+    StyleValue::Typography(value)
 }
 
 #[cfg(test)]
@@ -899,6 +2400,10 @@ mod tests {
             Some(StyleProperty::Padding)
         );
         assert_eq!(StyleProperty::Opacity as u16, 22);
+        assert_eq!(StyleProperty::Direction as u16, 47);
+        assert_eq!(StyleProperty::TextEmphasis as u16, 124);
+        assert_eq!(StyleProperty::TextBox as u16, 125);
+        assert_eq!(PROPERTY_METADATA.len(), 125);
         assert_eq!(
             StyleProperty::Opacity.metadata().invalidation,
             InvalidationClass::Composite
@@ -921,5 +2426,120 @@ mod tests {
             LengthValue::ViewportHeight(100.0).resolve((800.0, 600.0), 16.0, 16.0),
             Length::px(600.0)
         );
+    }
+
+    #[test]
+    fn every_public_typography_property_parses_applies_and_reads_back() {
+        let cases = [
+            ("direction", "rtl"),
+            ("font-kerning", "normal"),
+            ("font-optical-sizing", "none"),
+            ("font-palette", "dark"),
+            ("font-size-adjust", "cap-height 0.7"),
+            ("font-stretch", "condensed"),
+            ("font-style", "oblique 12deg"),
+            ("font-variant-ligatures", "none"),
+            ("font-variant-caps", "all-small-caps"),
+            ("font-variant-east-asian", "jis04 ruby"),
+            ("font-variant-numeric", "lining-nums tabular-nums"),
+            ("font-variant-alternates", "historical-forms"),
+            ("font-variant-position", "super"),
+            ("font-variant-emoji", "emoji"),
+            ("font-synthesis-weight", "none"),
+            ("font-synthesis-style", "none"),
+            ("font-synthesis-small-caps", "none"),
+            ("font-synthesis-position", "none"),
+            ("font-feature-settings", "\"liga\" 0, \"kern\" on"),
+            ("font-variation-settings", "\"wght\" 650"),
+            ("font-language-override", "\"TRK \""),
+            ("line-height", "1.5"),
+            ("letter-spacing", "2px"),
+            ("word-spacing", "normal"),
+            ("text-indent", "2em"),
+            ("text-align", "justify"),
+            ("text-align-last", "center"),
+            ("text-justify", "inter-character"),
+            ("word-break", "auto-phrase"),
+            ("overflow-wrap", "anywhere"),
+            ("word-wrap", "break-word"),
+            ("line-break", "after-white-space"),
+            ("hyphens", "auto"),
+            ("hyphenate-limit-chars", "6 2 3"),
+            ("hyphenate-character", "\"-\""),
+            ("white-space-collapse", "preserve-breaks"),
+            ("text-wrap-mode", "nowrap"),
+            ("text-wrap-style", "pretty"),
+            ("text-autospace", "no-autospace"),
+            ("text-spacing-trim", "trim-start"),
+            ("tab-size", "4"),
+            ("text-transform", "math-auto"),
+            ("text-decoration-line", "underline overline"),
+            ("text-decoration-style", "wavy"),
+            ("text-decoration-color", "red"),
+            ("text-decoration-thickness", "2px"),
+            ("text-decoration-skip-ink", "all"),
+            ("text-underline-offset", "3px"),
+            ("text-underline-position", "under"),
+            ("text-emphasis-style", "open sesame"),
+            ("text-emphasis-position", "under left"),
+            ("text-emphasis-color", "blue"),
+            ("text-shadow", "1px 2px 3px red"),
+            ("text-overflow", "ellipsis"),
+            ("text-size-adjust", "80%"),
+            ("text-combine-upright", "all"),
+            ("writing-mode", "vertical-rl"),
+            ("text-orientation", "upright"),
+            ("unicode-bidi", "isolate-override"),
+            ("vertical-align", "10%"),
+            ("ruby-align", "center"),
+            ("ruby-position", "under"),
+            ("ruby-overhang", "none"),
+            ("hanging-punctuation", "first force-end"),
+            ("initial-letter", "3 2"),
+            ("text-rendering", "geometricprecision"),
+            ("-webkit-font-smoothing", "antialiased"),
+            ("line-clamp", "3"),
+            ("block-ellipsis", "\"…\""),
+            ("text-box-edge", "cap alphabetic"),
+            ("text-box-trim", "trim-both"),
+            ("text-box", "trim-both cap alphabetic"),
+            (
+                "font",
+                "italic small-caps bold 18px/1.4 \"Noto Sans\", sans-serif",
+            ),
+            ("font-variant", "small-caps lining-nums"),
+            ("font-synthesis", "weight style"),
+            ("white-space", "pre-wrap"),
+            ("text-wrap", "balance"),
+            ("text-decoration", "underline wavy red 2px"),
+            ("text-emphasis", "open dot red"),
+        ];
+        assert_eq!(cases.len(), 79);
+        let mut style = ComputedStyle::initial();
+        for (name, literal) in cases {
+            let property = StyleProperty::from_css_name(name).unwrap();
+            let value =
+                parse_literal(property, literal).unwrap_or_else(|error| panic!("{name}: {error}"));
+            apply_to_computed(&mut style, property, &value, (800.0, 600.0))
+                .unwrap_or_else(|_| panic!("failed to apply {name}"));
+            let _ = value_from_computed(&style, property);
+        }
+    }
+
+    #[test]
+    fn font_shorthand_is_atomic_and_resets_omitted_font_longhands() {
+        let mut style = ComputedStyle::initial();
+        style.font_kerning = FontKerning::None;
+        style.font_feature_settings.push(crate::FontFeature {
+            tag: *b"liga",
+            value: 0,
+        });
+        let value = parse_literal(StyleProperty::Font, "italic bold 20px serif").unwrap();
+        apply_to_computed(&mut style, StyleProperty::Font, &value, (800.0, 600.0)).unwrap();
+        assert_eq!(style.font_style, FontStyleEnum::Italic);
+        assert_eq!(style.font_weight, FontWeight::BOLD);
+        assert_eq!(style.font_size, 20.0);
+        assert_eq!(style.font_kerning, FontKerning::Auto);
+        assert!(style.font_feature_settings.is_empty());
     }
 }

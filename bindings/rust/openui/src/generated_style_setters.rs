@@ -144,4 +144,241 @@ impl Element {
     pub fn set_pointer_events(&self, value: PointerEvents) -> Result<(), Error> {
         self.set_property(StyleProperty::PointerEvents, value.into())
     }
+    pub fn set_direction(&self, value: Direction) -> Result<(), Error> {
+        self.set_property(StyleProperty::Direction, value.into())
+    }
+    pub fn set_font_kerning(&self, value: FontKerning) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontKerning, value.into())
+    }
+    pub fn set_font_optical_sizing(&self, value: FontOpticalSizing) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontOpticalSizing, value.into())
+    }
+    pub fn set_font_palette(&self, value: FontPalette) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontPalette, value.into())
+    }
+    pub fn set_font_size_adjust(&self, value: FontSizeAdjust) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontSizeAdjust, value.into())
+    }
+    pub fn set_font_stretch(&self, value: FontStretch) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontStretch, value.into())
+    }
+    pub fn set_font_style(&self, value: FontStyleEnum) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontStyle, value.into())
+    }
+    pub fn set_font_variant_ligatures(&self, value: FontVariantLigatures) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontVariantLigatures, value.into())
+    }
+    pub fn set_font_variant_caps(&self, value: FontVariantCaps) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontVariantCaps, value.into())
+    }
+    pub fn set_font_variant_east_asian(&self, value: FontVariantEastAsian) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontVariantEastAsian, value.into())
+    }
+    pub fn set_font_variant_numeric(&self, value: FontVariantNumeric) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontVariantNumeric, value.into())
+    }
+    pub fn set_font_variant_alternates(&self, value: FontVariantAlternates) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontVariantAlternates, value.into())
+    }
+    pub fn set_font_variant_position(&self, value: FontVariantPosition) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontVariantPosition, value.into())
+    }
+    pub fn set_font_variant_emoji(&self, value: FontVariantEmoji) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontVariantEmoji, value.into())
+    }
+    pub fn set_font_synthesis_weight(&self, value: FontSynthesis) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontSynthesisWeight, value.into())
+    }
+    pub fn set_font_synthesis_style(&self, value: FontSynthesis) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontSynthesisStyle, value.into())
+    }
+    pub fn set_font_synthesis_small_caps(&self, value: FontSynthesis) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontSynthesisSmallCaps, value.into())
+    }
+    pub fn set_font_synthesis_position(&self, value: FontSynthesis) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontSynthesisPosition, value.into())
+    }
+    pub fn set_font_feature_settings(&self, value: OpenTypeFeatureList) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontFeatureSettings, value.into())
+    }
+    pub fn set_font_variation_settings(&self, value: FontVariationList) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontVariationSettings, value.into())
+    }
+    pub fn set_font_language_override(&self, value: FontLanguageOverride) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontLanguageOverride, value.into())
+    }
+    pub fn set_line_height(&self, value: LineHeight) -> Result<(), Error> {
+        self.set_property(StyleProperty::LineHeight, value.into())
+    }
+    pub fn set_letter_spacing(&self, value: f32) -> Result<(), Error> {
+        self.set_property(StyleProperty::LetterSpacing, value.into())
+    }
+    pub fn set_word_spacing(&self, value: f32) -> Result<(), Error> {
+        self.set_property(StyleProperty::WordSpacing, value.into())
+    }
+    pub fn set_text_indent(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextIndent, value.into())
+    }
+    pub fn set_text_align(&self, value: TextAlign) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextAlign, value.into())
+    }
+    pub fn set_text_align_last(&self, value: TextAlignLast) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextAlignLast, value.into())
+    }
+    pub fn set_text_justify(&self, value: TextJustify) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextJustify, value.into())
+    }
+    pub fn set_word_break(&self, value: WordBreak) -> Result<(), Error> {
+        self.set_property(StyleProperty::WordBreak, value.into())
+    }
+    pub fn set_overflow_wrap(&self, value: OverflowWrap) -> Result<(), Error> {
+        self.set_property(StyleProperty::OverflowWrap, value.into())
+    }
+    pub fn set_word_wrap(&self, value: OverflowWrap) -> Result<(), Error> {
+        self.set_property(StyleProperty::WordWrap, value.into())
+    }
+    pub fn set_line_break(&self, value: LineBreak) -> Result<(), Error> {
+        self.set_property(StyleProperty::LineBreak, value.into())
+    }
+    pub fn set_hyphens(&self, value: Hyphens) -> Result<(), Error> {
+        self.set_property(StyleProperty::Hyphens, value.into())
+    }
+    pub fn set_hyphenate_limit_chars(&self, value: HyphenationLimits) -> Result<(), Error> {
+        self.set_property(StyleProperty::HyphenateLimitChars, value.into())
+    }
+    pub fn set_hyphenate_character(&self, value: HyphenateCharacter) -> Result<(), Error> {
+        self.set_property(StyleProperty::HyphenateCharacter, value.into())
+    }
+    pub fn set_white_space_collapse(&self, value: WhiteSpaceCollapse) -> Result<(), Error> {
+        self.set_property(StyleProperty::WhiteSpaceCollapse, value.into())
+    }
+    pub fn set_text_wrap_mode(&self, value: TextWrapMode) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextWrapMode, value.into())
+    }
+    pub fn set_text_wrap_style(&self, value: TextWrapStyle) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextWrapStyle, value.into())
+    }
+    pub fn set_text_autospace(&self, value: TextAutospace) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextAutospace, value.into())
+    }
+    pub fn set_text_spacing_trim(&self, value: TextSpacingTrim) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextSpacingTrim, value.into())
+    }
+    pub fn set_tab_size(&self, value: TabSize) -> Result<(), Error> {
+        self.set_property(StyleProperty::TabSize, value.into())
+    }
+    pub fn set_text_transform(&self, value: TextTransform) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextTransform, value.into())
+    }
+    pub fn set_text_decoration_line(&self, value: TextDecorationLine) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextDecorationLine, value.into())
+    }
+    pub fn set_text_decoration_style(&self, value: TextDecorationStyle) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextDecorationStyle, value.into())
+    }
+    pub fn set_text_decoration_color(&self, value: StyleColor) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextDecorationColor, value.into())
+    }
+    pub fn set_text_decoration_thickness(&self, value: TextDecorationThickness) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextDecorationThickness, value.into())
+    }
+    pub fn set_text_decoration_skip_ink(&self, value: TextDecorationSkipInk) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextDecorationSkipInk, value.into())
+    }
+    pub fn set_text_underline_offset(&self, value: LengthValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextUnderlineOffset, value.into())
+    }
+    pub fn set_text_underline_position(&self, value: TextUnderlinePosition) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextUnderlinePosition, value.into())
+    }
+    pub fn set_text_emphasis_style(&self, value: TextEmphasisStyle) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextEmphasisStyle, value.into())
+    }
+    pub fn set_text_emphasis_position(&self, value: TextEmphasisPosition) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextEmphasisPosition, value.into())
+    }
+    pub fn set_text_emphasis_color(&self, value: StyleColor) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextEmphasisColor, value.into())
+    }
+    pub fn set_text_shadow(&self, value: TextShadowList) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextShadow, value.into())
+    }
+    pub fn set_text_overflow(&self, value: TextOverflow) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextOverflow, value.into())
+    }
+    pub fn set_text_size_adjust(&self, value: TextSizeAdjust) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextSizeAdjust, value.into())
+    }
+    pub fn set_text_combine_upright(&self, value: TextCombineUpright) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextCombineUpright, value.into())
+    }
+    pub fn set_writing_mode(&self, value: WritingMode) -> Result<(), Error> {
+        self.set_property(StyleProperty::WritingMode, value.into())
+    }
+    pub fn set_text_orientation(&self, value: TextOrientation) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextOrientation, value.into())
+    }
+    pub fn set_unicode_bidi(&self, value: UnicodeBidi) -> Result<(), Error> {
+        self.set_property(StyleProperty::UnicodeBidi, value.into())
+    }
+    pub fn set_vertical_align(&self, value: VerticalAlign) -> Result<(), Error> {
+        self.set_property(StyleProperty::VerticalAlign, value.into())
+    }
+    pub fn set_ruby_align(&self, value: RubyAlign) -> Result<(), Error> {
+        self.set_property(StyleProperty::RubyAlign, value.into())
+    }
+    pub fn set_ruby_position(&self, value: RubyPosition) -> Result<(), Error> {
+        self.set_property(StyleProperty::RubyPosition, value.into())
+    }
+    pub fn set_ruby_overhang(&self, value: RubyOverhang) -> Result<(), Error> {
+        self.set_property(StyleProperty::RubyOverhang, value.into())
+    }
+    pub fn set_hanging_punctuation(&self, value: HangingPunctuation) -> Result<(), Error> {
+        self.set_property(StyleProperty::HangingPunctuation, value.into())
+    }
+    pub fn set_initial_letter(&self, value: InitialLetterValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::InitialLetter, value.into())
+    }
+    pub fn set_text_rendering(&self, value: TextRendering) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextRendering, value.into())
+    }
+    pub fn set_webkit_font_smoothing(&self, value: FontSmoothing) -> Result<(), Error> {
+        self.set_property(StyleProperty::WebkitFontSmoothing, value.into())
+    }
+    pub fn set_line_clamp(&self, value: LineClamp) -> Result<(), Error> {
+        self.set_property(StyleProperty::LineClamp, value.into())
+    }
+    pub fn set_block_ellipsis(&self, value: BlockEllipsis) -> Result<(), Error> {
+        self.set_property(StyleProperty::BlockEllipsis, value.into())
+    }
+    pub fn set_text_box_edge(&self, value: TextBoxEdge) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextBoxEdge, value.into())
+    }
+    pub fn set_text_box_trim(&self, value: TextBoxTrim) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextBoxTrim, value.into())
+    }
+    pub fn set_font(&self, value: FontShorthand) -> Result<(), Error> {
+        self.set_property(StyleProperty::Font, value.into())
+    }
+    pub fn set_font_variant(&self, value: FontVariantShorthand) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontVariant, value.into())
+    }
+    pub fn set_font_synthesis(&self, value: FontSynthesisShorthand) -> Result<(), Error> {
+        self.set_property(StyleProperty::FontSynthesis, value.into())
+    }
+    pub fn set_white_space(&self, value: WhiteSpaceShorthand) -> Result<(), Error> {
+        self.set_property(StyleProperty::WhiteSpace, value.into())
+    }
+    pub fn set_text_wrap(&self, value: TextWrapShorthand) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextWrap, value.into())
+    }
+    pub fn set_text_decoration(&self, value: TextDecorationShorthand) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextDecoration, value.into())
+    }
+    pub fn set_text_emphasis(&self, value: TextEmphasisShorthand) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextEmphasis, value.into())
+    }
+    pub fn set_text_box(&self, value: TextBoxShorthand) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextBox, value.into())
+    }
 }

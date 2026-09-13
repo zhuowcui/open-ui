@@ -11,6 +11,7 @@ mod enums;
 mod font_types;
 mod layout_systems;
 mod property;
+mod typography;
 
 pub use animation::*;
 pub use color::{Color, StyleColor};
@@ -26,3 +27,4 @@ pub use enums::*;
 pub use font_types::*;
 pub use layout_systems::*;
 pub use property::*;
+pub use typography::*;

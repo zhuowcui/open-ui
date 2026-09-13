@@ -809,6 +809,8 @@ pub enum WordBreak {
     BreakAll = 1,
     KeepAll = 2,
     BreakWord = 3,
+    /// Chromium's phrase-aware segmentation mode.
+    AutoPhrase = 4,
 }
 
 impl WordBreak {
@@ -870,6 +872,8 @@ pub enum LineBreak {
     /// Blink maps this to character-level breaking (no ICU keyword — uses
     /// character break type instead of line break type).
     Anywhere = 4,
+    /// Legacy WebKit compatibility value retained by Chromium 147.
+    AfterWhiteSpace = 5,
 }
 
 impl LineBreak {
@@ -1039,6 +1043,7 @@ pub enum TextTransform {
     Lowercase = 3,
     FullWidth = 4,
     FullSizeKana = 5,
+    MathAuto = 6,
 }
 
 impl TextTransform {

@@ -50,6 +50,85 @@ pub enum StyleProperty {
     ListStyleType = 44,
     Transform = 45,
     PointerEvents = 46,
+    Direction = 47,
+    FontKerning = 48,
+    FontOpticalSizing = 49,
+    FontPalette = 50,
+    FontSizeAdjust = 51,
+    FontStretch = 52,
+    FontStyle = 53,
+    FontVariantLigatures = 54,
+    FontVariantCaps = 55,
+    FontVariantEastAsian = 56,
+    FontVariantNumeric = 57,
+    FontVariantAlternates = 58,
+    FontVariantPosition = 59,
+    FontVariantEmoji = 60,
+    FontSynthesisWeight = 61,
+    FontSynthesisStyle = 62,
+    FontSynthesisSmallCaps = 63,
+    FontSynthesisPosition = 64,
+    FontFeatureSettings = 65,
+    FontVariationSettings = 66,
+    FontLanguageOverride = 67,
+    LineHeight = 68,
+    LetterSpacing = 69,
+    WordSpacing = 70,
+    TextIndent = 71,
+    TextAlign = 72,
+    TextAlignLast = 73,
+    TextJustify = 74,
+    WordBreak = 75,
+    OverflowWrap = 76,
+    WordWrap = 77,
+    LineBreak = 78,
+    Hyphens = 79,
+    HyphenateLimitChars = 80,
+    HyphenateCharacter = 81,
+    WhiteSpaceCollapse = 82,
+    TextWrapMode = 83,
+    TextWrapStyle = 84,
+    TextAutospace = 85,
+    TextSpacingTrim = 86,
+    TabSize = 87,
+    TextTransform = 88,
+    TextDecorationLine = 89,
+    TextDecorationStyle = 90,
+    TextDecorationColor = 91,
+    TextDecorationThickness = 92,
+    TextDecorationSkipInk = 93,
+    TextUnderlineOffset = 94,
+    TextUnderlinePosition = 95,
+    TextEmphasisStyle = 96,
+    TextEmphasisPosition = 97,
+    TextEmphasisColor = 98,
+    TextShadow = 99,
+    TextOverflow = 100,
+    TextSizeAdjust = 101,
+    TextCombineUpright = 102,
+    WritingMode = 103,
+    TextOrientation = 104,
+    UnicodeBidi = 105,
+    VerticalAlign = 106,
+    RubyAlign = 107,
+    RubyPosition = 108,
+    RubyOverhang = 109,
+    HangingPunctuation = 110,
+    InitialLetter = 111,
+    TextRendering = 112,
+    WebkitFontSmoothing = 113,
+    LineClamp = 114,
+    BlockEllipsis = 115,
+    TextBoxEdge = 116,
+    TextBoxTrim = 117,
+    Font = 118,
+    FontVariant = 119,
+    FontSynthesis = 120,
+    WhiteSpace = 121,
+    TextWrap = 122,
+    TextDecoration = 123,
+    TextEmphasis = 124,
+    TextBox = 125,
 }
 
 impl StyleProperty {
@@ -109,6 +188,85 @@ impl StyleProperty {
             "list-style" => Some(Self::ListStyleType),
             "transform" => Some(Self::Transform),
             "pointer-events" => Some(Self::PointerEvents),
+            "direction" => Some(Self::Direction),
+            "font-kerning" => Some(Self::FontKerning),
+            "font-optical-sizing" => Some(Self::FontOpticalSizing),
+            "font-palette" => Some(Self::FontPalette),
+            "font-size-adjust" => Some(Self::FontSizeAdjust),
+            "font-stretch" => Some(Self::FontStretch),
+            "font-style" => Some(Self::FontStyle),
+            "font-variant-ligatures" => Some(Self::FontVariantLigatures),
+            "font-variant-caps" => Some(Self::FontVariantCaps),
+            "font-variant-east-asian" => Some(Self::FontVariantEastAsian),
+            "font-variant-numeric" => Some(Self::FontVariantNumeric),
+            "font-variant-alternates" => Some(Self::FontVariantAlternates),
+            "font-variant-position" => Some(Self::FontVariantPosition),
+            "font-variant-emoji" => Some(Self::FontVariantEmoji),
+            "font-synthesis-weight" => Some(Self::FontSynthesisWeight),
+            "font-synthesis-style" => Some(Self::FontSynthesisStyle),
+            "font-synthesis-small-caps" => Some(Self::FontSynthesisSmallCaps),
+            "font-synthesis-position" => Some(Self::FontSynthesisPosition),
+            "font-feature-settings" => Some(Self::FontFeatureSettings),
+            "font-variation-settings" => Some(Self::FontVariationSettings),
+            "font-language-override" => Some(Self::FontLanguageOverride),
+            "line-height" => Some(Self::LineHeight),
+            "letter-spacing" => Some(Self::LetterSpacing),
+            "word-spacing" => Some(Self::WordSpacing),
+            "text-indent" => Some(Self::TextIndent),
+            "text-align" => Some(Self::TextAlign),
+            "text-align-last" => Some(Self::TextAlignLast),
+            "text-justify" => Some(Self::TextJustify),
+            "word-break" => Some(Self::WordBreak),
+            "overflow-wrap" => Some(Self::OverflowWrap),
+            "word-wrap" => Some(Self::WordWrap),
+            "line-break" => Some(Self::LineBreak),
+            "hyphens" => Some(Self::Hyphens),
+            "hyphenate-limit-chars" => Some(Self::HyphenateLimitChars),
+            "hyphenate-character" => Some(Self::HyphenateCharacter),
+            "white-space-collapse" => Some(Self::WhiteSpaceCollapse),
+            "text-wrap-mode" => Some(Self::TextWrapMode),
+            "text-wrap-style" => Some(Self::TextWrapStyle),
+            "text-autospace" => Some(Self::TextAutospace),
+            "text-spacing-trim" => Some(Self::TextSpacingTrim),
+            "tab-size" => Some(Self::TabSize),
+            "text-transform" => Some(Self::TextTransform),
+            "text-decoration-line" => Some(Self::TextDecorationLine),
+            "text-decoration-style" => Some(Self::TextDecorationStyle),
+            "text-decoration-color" => Some(Self::TextDecorationColor),
+            "text-decoration-thickness" => Some(Self::TextDecorationThickness),
+            "text-decoration-skip-ink" => Some(Self::TextDecorationSkipInk),
+            "text-underline-offset" => Some(Self::TextUnderlineOffset),
+            "text-underline-position" => Some(Self::TextUnderlinePosition),
+            "text-emphasis-style" => Some(Self::TextEmphasisStyle),
+            "text-emphasis-position" => Some(Self::TextEmphasisPosition),
+            "text-emphasis-color" => Some(Self::TextEmphasisColor),
+            "text-shadow" => Some(Self::TextShadow),
+            "text-overflow" => Some(Self::TextOverflow),
+            "text-size-adjust" => Some(Self::TextSizeAdjust),
+            "text-combine-upright" => Some(Self::TextCombineUpright),
+            "writing-mode" => Some(Self::WritingMode),
+            "text-orientation" => Some(Self::TextOrientation),
+            "unicode-bidi" => Some(Self::UnicodeBidi),
+            "vertical-align" => Some(Self::VerticalAlign),
+            "ruby-align" => Some(Self::RubyAlign),
+            "ruby-position" => Some(Self::RubyPosition),
+            "ruby-overhang" => Some(Self::RubyOverhang),
+            "hanging-punctuation" => Some(Self::HangingPunctuation),
+            "initial-letter" => Some(Self::InitialLetter),
+            "text-rendering" => Some(Self::TextRendering),
+            "-webkit-font-smoothing" => Some(Self::WebkitFontSmoothing),
+            "line-clamp" => Some(Self::LineClamp),
+            "block-ellipsis" => Some(Self::BlockEllipsis),
+            "text-box-edge" => Some(Self::TextBoxEdge),
+            "text-box-trim" => Some(Self::TextBoxTrim),
+            "font" => Some(Self::Font),
+            "font-variant" => Some(Self::FontVariant),
+            "font-synthesis" => Some(Self::FontSynthesis),
+            "white-space" => Some(Self::WhiteSpace),
+            "text-wrap" => Some(Self::TextWrap),
+            "text-decoration" => Some(Self::TextDecoration),
+            "text-emphasis" => Some(Self::TextEmphasis),
+            "text-box" => Some(Self::TextBox),
             _ => None,
         }
     }
@@ -579,6 +737,796 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
         invalidation: InvalidationClass::Accessibility,
         interpolation: InterpolationKind::Discrete,
     },
+    PropertyMetadata {
+        property: StyleProperty::Direction,
+        css_name: "direction",
+        rust_type: "Direction",
+        value_kind: ValueKind::Enum,
+        initial: "ltr",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontKerning,
+        css_name: "font-kerning",
+        rust_type: "FontKerning",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontOpticalSizing,
+        css_name: "font-optical-sizing",
+        rust_type: "FontOpticalSizing",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontPalette,
+        css_name: "font-palette",
+        rust_type: "FontPalette",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontSizeAdjust,
+        css_name: "font-size-adjust",
+        rust_type: "FontSizeAdjust",
+        value_kind: ValueKind::Compound,
+        initial: "none",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Number,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontStretch,
+        css_name: "font-stretch",
+        rust_type: "FontStretch",
+        value_kind: ValueKind::Compound,
+        initial: "100%",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Number,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontStyle,
+        css_name: "font-style",
+        rust_type: "FontStyleEnum",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontVariantLigatures,
+        css_name: "font-variant-ligatures",
+        rust_type: "FontVariantLigatures",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontVariantCaps,
+        css_name: "font-variant-caps",
+        rust_type: "FontVariantCaps",
+        value_kind: ValueKind::Enum,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontVariantEastAsian,
+        css_name: "font-variant-east-asian",
+        rust_type: "FontVariantEastAsian",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontVariantNumeric,
+        css_name: "font-variant-numeric",
+        rust_type: "FontVariantNumeric",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontVariantAlternates,
+        css_name: "font-variant-alternates",
+        rust_type: "FontVariantAlternates",
+        value_kind: ValueKind::Enum,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontVariantPosition,
+        css_name: "font-variant-position",
+        rust_type: "FontVariantPosition",
+        value_kind: ValueKind::Enum,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontVariantEmoji,
+        css_name: "font-variant-emoji",
+        rust_type: "FontVariantEmoji",
+        value_kind: ValueKind::Enum,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontSynthesisWeight,
+        css_name: "font-synthesis-weight",
+        rust_type: "FontSynthesis",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontSynthesisStyle,
+        css_name: "font-synthesis-style",
+        rust_type: "FontSynthesis",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontSynthesisSmallCaps,
+        css_name: "font-synthesis-small-caps",
+        rust_type: "FontSynthesis",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontSynthesisPosition,
+        css_name: "font-synthesis-position",
+        rust_type: "FontSynthesis",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontFeatureSettings,
+        css_name: "font-feature-settings",
+        rust_type: "OpenTypeFeatureList",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontVariationSettings,
+        css_name: "font-variation-settings",
+        rust_type: "FontVariationList",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontLanguageOverride,
+        css_name: "font-language-override",
+        rust_type: "FontLanguageOverride",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::LineHeight,
+        css_name: "line-height",
+        rust_type: "LineHeight",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::LetterSpacing,
+        css_name: "letter-spacing",
+        rust_type: "f32",
+        value_kind: ValueKind::Number,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::WordSpacing,
+        css_name: "word-spacing",
+        rust_type: "f32",
+        value_kind: ValueKind::Number,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextIndent,
+        css_name: "text-indent",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "0px",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextAlign,
+        css_name: "text-align",
+        rust_type: "TextAlign",
+        value_kind: ValueKind::Enum,
+        initial: "start",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextAlignLast,
+        css_name: "text-align-last",
+        rust_type: "TextAlignLast",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextJustify,
+        css_name: "text-justify",
+        rust_type: "TextJustify",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::WordBreak,
+        css_name: "word-break",
+        rust_type: "WordBreak",
+        value_kind: ValueKind::Enum,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::OverflowWrap,
+        css_name: "overflow-wrap",
+        rust_type: "OverflowWrap",
+        value_kind: ValueKind::Enum,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::WordWrap,
+        css_name: "word-wrap",
+        rust_type: "OverflowWrap",
+        value_kind: ValueKind::Enum,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::LineBreak,
+        css_name: "line-break",
+        rust_type: "LineBreak",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::Hyphens,
+        css_name: "hyphens",
+        rust_type: "Hyphens",
+        value_kind: ValueKind::Enum,
+        initial: "manual",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::HyphenateLimitChars,
+        css_name: "hyphenate-limit-chars",
+        rust_type: "HyphenationLimits",
+        value_kind: ValueKind::Compound,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::HyphenateCharacter,
+        css_name: "hyphenate-character",
+        rust_type: "HyphenateCharacter",
+        value_kind: ValueKind::Compound,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::WhiteSpaceCollapse,
+        css_name: "white-space-collapse",
+        rust_type: "WhiteSpaceCollapse",
+        value_kind: ValueKind::Enum,
+        initial: "collapse",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextWrapMode,
+        css_name: "text-wrap-mode",
+        rust_type: "TextWrapMode",
+        value_kind: ValueKind::Enum,
+        initial: "wrap",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextWrapStyle,
+        css_name: "text-wrap-style",
+        rust_type: "TextWrapStyle",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextAutospace,
+        css_name: "text-autospace",
+        rust_type: "TextAutospace",
+        value_kind: ValueKind::Enum,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextSpacingTrim,
+        css_name: "text-spacing-trim",
+        rust_type: "TextSpacingTrim",
+        value_kind: ValueKind::Enum,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TabSize,
+        css_name: "tab-size",
+        rust_type: "TabSize",
+        value_kind: ValueKind::Compound,
+        initial: "8",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextTransform,
+        css_name: "text-transform",
+        rust_type: "TextTransform",
+        value_kind: ValueKind::Enum,
+        initial: "none",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextDecorationLine,
+        css_name: "text-decoration-line",
+        rust_type: "TextDecorationLine",
+        value_kind: ValueKind::Compound,
+        initial: "none",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextDecorationStyle,
+        css_name: "text-decoration-style",
+        rust_type: "TextDecorationStyle",
+        value_kind: ValueKind::Enum,
+        initial: "solid",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextDecorationColor,
+        css_name: "text-decoration-color",
+        rust_type: "StyleColor",
+        value_kind: ValueKind::Compound,
+        initial: "currentColor",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Color,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextDecorationThickness,
+        css_name: "text-decoration-thickness",
+        rust_type: "TextDecorationThickness",
+        value_kind: ValueKind::Compound,
+        initial: "auto",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextDecorationSkipInk,
+        css_name: "text-decoration-skip-ink",
+        rust_type: "TextDecorationSkipInk",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextUnderlineOffset,
+        css_name: "text-underline-offset",
+        rust_type: "LengthValue",
+        value_kind: ValueKind::Length,
+        initial: "auto",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Length,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextUnderlinePosition,
+        css_name: "text-underline-position",
+        rust_type: "TextUnderlinePosition",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextEmphasisStyle,
+        css_name: "text-emphasis-style",
+        rust_type: "TextEmphasisStyle",
+        value_kind: ValueKind::Compound,
+        initial: "none",
+        inherited: true,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextEmphasisPosition,
+        css_name: "text-emphasis-position",
+        rust_type: "TextEmphasisPosition",
+        value_kind: ValueKind::Compound,
+        initial: "over right",
+        inherited: true,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextEmphasisColor,
+        css_name: "text-emphasis-color",
+        rust_type: "StyleColor",
+        value_kind: ValueKind::Compound,
+        initial: "currentColor",
+        inherited: true,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Color,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextShadow,
+        css_name: "text-shadow",
+        rust_type: "TextShadowList",
+        value_kind: ValueKind::Compound,
+        initial: "none",
+        inherited: true,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextOverflow,
+        css_name: "text-overflow",
+        rust_type: "TextOverflow",
+        value_kind: ValueKind::Enum,
+        initial: "clip",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextSizeAdjust,
+        css_name: "text-size-adjust",
+        rust_type: "TextSizeAdjust",
+        value_kind: ValueKind::Compound,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Number,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextCombineUpright,
+        css_name: "text-combine-upright",
+        rust_type: "TextCombineUpright",
+        value_kind: ValueKind::Enum,
+        initial: "none",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::WritingMode,
+        css_name: "writing-mode",
+        rust_type: "WritingMode",
+        value_kind: ValueKind::Enum,
+        initial: "horizontal-tb",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextOrientation,
+        css_name: "text-orientation",
+        rust_type: "TextOrientation",
+        value_kind: ValueKind::Enum,
+        initial: "mixed",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::UnicodeBidi,
+        css_name: "unicode-bidi",
+        rust_type: "UnicodeBidi",
+        value_kind: ValueKind::Enum,
+        initial: "normal",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::VerticalAlign,
+        css_name: "vertical-align",
+        rust_type: "VerticalAlign",
+        value_kind: ValueKind::Compound,
+        initial: "baseline",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::RubyAlign,
+        css_name: "ruby-align",
+        rust_type: "RubyAlign",
+        value_kind: ValueKind::Enum,
+        initial: "space-around",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::RubyPosition,
+        css_name: "ruby-position",
+        rust_type: "RubyPosition",
+        value_kind: ValueKind::Enum,
+        initial: "over",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::RubyOverhang,
+        css_name: "ruby-overhang",
+        rust_type: "RubyOverhang",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::HangingPunctuation,
+        css_name: "hanging-punctuation",
+        rust_type: "HangingPunctuation",
+        value_kind: ValueKind::Compound,
+        initial: "none",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::InitialLetter,
+        css_name: "initial-letter",
+        rust_type: "InitialLetterValue",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: false,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Number,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextRendering,
+        css_name: "text-rendering",
+        rust_type: "TextRendering",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::WebkitFontSmoothing,
+        css_name: "-webkit-font-smoothing",
+        rust_type: "FontSmoothing",
+        value_kind: ValueKind::Enum,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::LineClamp,
+        css_name: "line-clamp",
+        rust_type: "LineClamp",
+        value_kind: ValueKind::Compound,
+        initial: "none",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::BlockEllipsis,
+        css_name: "block-ellipsis",
+        rust_type: "BlockEllipsis",
+        value_kind: ValueKind::Compound,
+        initial: "auto",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextBoxEdge,
+        css_name: "text-box-edge",
+        rust_type: "TextBoxEdge",
+        value_kind: ValueKind::Compound,
+        initial: "auto",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextBoxTrim,
+        css_name: "text-box-trim",
+        rust_type: "TextBoxTrim",
+        value_kind: ValueKind::Enum,
+        initial: "none",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::Font,
+        css_name: "font",
+        rust_type: "FontShorthand",
+        value_kind: ValueKind::Compound,
+        initial: "medium sans-serif",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontVariant,
+        css_name: "font-variant",
+        rust_type: "FontVariantShorthand",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::FontSynthesis,
+        css_name: "font-synthesis",
+        rust_type: "FontSynthesisShorthand",
+        value_kind: ValueKind::Compound,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Intrinsic,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::WhiteSpace,
+        css_name: "white-space",
+        rust_type: "WhiteSpaceShorthand",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextWrap,
+        css_name: "text-wrap",
+        rust_type: "TextWrapShorthand",
+        value_kind: ValueKind::Compound,
+        initial: "wrap",
+        inherited: true,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextDecoration,
+        css_name: "text-decoration",
+        rust_type: "TextDecorationShorthand",
+        value_kind: ValueKind::Compound,
+        initial: "none",
+        inherited: false,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextEmphasis,
+        css_name: "text-emphasis",
+        rust_type: "TextEmphasisShorthand",
+        value_kind: ValueKind::Compound,
+        initial: "none",
+        inherited: true,
+        invalidation: InvalidationClass::Paint,
+        interpolation: InterpolationKind::Discrete,
+    },
+    PropertyMetadata {
+        property: StyleProperty::TextBox,
+        css_name: "text-box",
+        rust_type: "TextBoxShorthand",
+        value_kind: ValueKind::Compound,
+        initial: "normal",
+        inherited: false,
+        invalidation: InvalidationClass::Layout,
+        interpolation: InterpolationKind::Discrete,
+    },
 ];
 
 #[rustfmt::skip]
@@ -720,5 +1668,242 @@ impl Style {
     }
     pub fn pointer_events(self, value: PointerEvents) -> Self {
         self.with(StyleProperty::PointerEvents, value)
+    }
+    pub fn direction(self, value: Direction) -> Self {
+        self.with(StyleProperty::Direction, value)
+    }
+    pub fn font_kerning(self, value: FontKerning) -> Self {
+        self.with(StyleProperty::FontKerning, value)
+    }
+    pub fn font_optical_sizing(self, value: FontOpticalSizing) -> Self {
+        self.with(StyleProperty::FontOpticalSizing, value)
+    }
+    pub fn font_palette(self, value: FontPalette) -> Self {
+        self.with(StyleProperty::FontPalette, value)
+    }
+    pub fn font_size_adjust(self, value: FontSizeAdjust) -> Self {
+        self.with(StyleProperty::FontSizeAdjust, value)
+    }
+    pub fn font_stretch(self, value: FontStretch) -> Self {
+        self.with(StyleProperty::FontStretch, value)
+    }
+    pub fn font_style(self, value: FontStyleEnum) -> Self {
+        self.with(StyleProperty::FontStyle, value)
+    }
+    pub fn font_variant_ligatures(self, value: FontVariantLigatures) -> Self {
+        self.with(StyleProperty::FontVariantLigatures, value)
+    }
+    pub fn font_variant_caps(self, value: FontVariantCaps) -> Self {
+        self.with(StyleProperty::FontVariantCaps, value)
+    }
+    pub fn font_variant_east_asian(self, value: FontVariantEastAsian) -> Self {
+        self.with(StyleProperty::FontVariantEastAsian, value)
+    }
+    pub fn font_variant_numeric(self, value: FontVariantNumeric) -> Self {
+        self.with(StyleProperty::FontVariantNumeric, value)
+    }
+    pub fn font_variant_alternates(self, value: FontVariantAlternates) -> Self {
+        self.with(StyleProperty::FontVariantAlternates, value)
+    }
+    pub fn font_variant_position(self, value: FontVariantPosition) -> Self {
+        self.with(StyleProperty::FontVariantPosition, value)
+    }
+    pub fn font_variant_emoji(self, value: FontVariantEmoji) -> Self {
+        self.with(StyleProperty::FontVariantEmoji, value)
+    }
+    pub fn font_synthesis_weight(self, value: FontSynthesis) -> Self {
+        self.with(StyleProperty::FontSynthesisWeight, value)
+    }
+    pub fn font_synthesis_style(self, value: FontSynthesis) -> Self {
+        self.with(StyleProperty::FontSynthesisStyle, value)
+    }
+    pub fn font_synthesis_small_caps(self, value: FontSynthesis) -> Self {
+        self.with(StyleProperty::FontSynthesisSmallCaps, value)
+    }
+    pub fn font_synthesis_position(self, value: FontSynthesis) -> Self {
+        self.with(StyleProperty::FontSynthesisPosition, value)
+    }
+    pub fn font_feature_settings(self, value: OpenTypeFeatureList) -> Self {
+        self.with(StyleProperty::FontFeatureSettings, value)
+    }
+    pub fn font_variation_settings(self, value: FontVariationList) -> Self {
+        self.with(StyleProperty::FontVariationSettings, value)
+    }
+    pub fn font_language_override(self, value: FontLanguageOverride) -> Self {
+        self.with(StyleProperty::FontLanguageOverride, value)
+    }
+    pub fn line_height(self, value: LineHeight) -> Self {
+        self.with(StyleProperty::LineHeight, value)
+    }
+    pub fn letter_spacing(self, value: f32) -> Self {
+        self.with(StyleProperty::LetterSpacing, value)
+    }
+    pub fn word_spacing(self, value: f32) -> Self {
+        self.with(StyleProperty::WordSpacing, value)
+    }
+    pub fn text_indent(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::TextIndent, value)
+    }
+    pub fn text_align(self, value: TextAlign) -> Self {
+        self.with(StyleProperty::TextAlign, value)
+    }
+    pub fn text_align_last(self, value: TextAlignLast) -> Self {
+        self.with(StyleProperty::TextAlignLast, value)
+    }
+    pub fn text_justify(self, value: TextJustify) -> Self {
+        self.with(StyleProperty::TextJustify, value)
+    }
+    pub fn word_break(self, value: WordBreak) -> Self {
+        self.with(StyleProperty::WordBreak, value)
+    }
+    pub fn overflow_wrap(self, value: OverflowWrap) -> Self {
+        self.with(StyleProperty::OverflowWrap, value)
+    }
+    pub fn word_wrap(self, value: OverflowWrap) -> Self {
+        self.with(StyleProperty::WordWrap, value)
+    }
+    pub fn line_break(self, value: LineBreak) -> Self {
+        self.with(StyleProperty::LineBreak, value)
+    }
+    pub fn hyphens(self, value: Hyphens) -> Self {
+        self.with(StyleProperty::Hyphens, value)
+    }
+    pub fn hyphenate_limit_chars(self, value: HyphenationLimits) -> Self {
+        self.with(StyleProperty::HyphenateLimitChars, value)
+    }
+    pub fn hyphenate_character(self, value: HyphenateCharacter) -> Self {
+        self.with(StyleProperty::HyphenateCharacter, value)
+    }
+    pub fn white_space_collapse(self, value: WhiteSpaceCollapse) -> Self {
+        self.with(StyleProperty::WhiteSpaceCollapse, value)
+    }
+    pub fn text_wrap_mode(self, value: TextWrapMode) -> Self {
+        self.with(StyleProperty::TextWrapMode, value)
+    }
+    pub fn text_wrap_style(self, value: TextWrapStyle) -> Self {
+        self.with(StyleProperty::TextWrapStyle, value)
+    }
+    pub fn text_autospace(self, value: TextAutospace) -> Self {
+        self.with(StyleProperty::TextAutospace, value)
+    }
+    pub fn text_spacing_trim(self, value: TextSpacingTrim) -> Self {
+        self.with(StyleProperty::TextSpacingTrim, value)
+    }
+    pub fn tab_size(self, value: TabSize) -> Self {
+        self.with(StyleProperty::TabSize, value)
+    }
+    pub fn text_transform(self, value: TextTransform) -> Self {
+        self.with(StyleProperty::TextTransform, value)
+    }
+    pub fn text_decoration_line(self, value: TextDecorationLine) -> Self {
+        self.with(StyleProperty::TextDecorationLine, value)
+    }
+    pub fn text_decoration_style(self, value: TextDecorationStyle) -> Self {
+        self.with(StyleProperty::TextDecorationStyle, value)
+    }
+    pub fn text_decoration_color(self, value: StyleColor) -> Self {
+        self.with(StyleProperty::TextDecorationColor, value)
+    }
+    pub fn text_decoration_thickness(self, value: TextDecorationThickness) -> Self {
+        self.with(StyleProperty::TextDecorationThickness, value)
+    }
+    pub fn text_decoration_skip_ink(self, value: TextDecorationSkipInk) -> Self {
+        self.with(StyleProperty::TextDecorationSkipInk, value)
+    }
+    pub fn text_underline_offset(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::TextUnderlineOffset, value)
+    }
+    pub fn text_underline_position(self, value: TextUnderlinePosition) -> Self {
+        self.with(StyleProperty::TextUnderlinePosition, value)
+    }
+    pub fn text_emphasis_style(self, value: TextEmphasisStyle) -> Self {
+        self.with(StyleProperty::TextEmphasisStyle, value)
+    }
+    pub fn text_emphasis_position(self, value: TextEmphasisPosition) -> Self {
+        self.with(StyleProperty::TextEmphasisPosition, value)
+    }
+    pub fn text_emphasis_color(self, value: StyleColor) -> Self {
+        self.with(StyleProperty::TextEmphasisColor, value)
+    }
+    pub fn text_shadow(self, value: TextShadowList) -> Self {
+        self.with(StyleProperty::TextShadow, value)
+    }
+    pub fn text_overflow(self, value: TextOverflow) -> Self {
+        self.with(StyleProperty::TextOverflow, value)
+    }
+    pub fn text_size_adjust(self, value: TextSizeAdjust) -> Self {
+        self.with(StyleProperty::TextSizeAdjust, value)
+    }
+    pub fn text_combine_upright(self, value: TextCombineUpright) -> Self {
+        self.with(StyleProperty::TextCombineUpright, value)
+    }
+    pub fn writing_mode(self, value: WritingMode) -> Self {
+        self.with(StyleProperty::WritingMode, value)
+    }
+    pub fn text_orientation(self, value: TextOrientation) -> Self {
+        self.with(StyleProperty::TextOrientation, value)
+    }
+    pub fn unicode_bidi(self, value: UnicodeBidi) -> Self {
+        self.with(StyleProperty::UnicodeBidi, value)
+    }
+    pub fn vertical_align(self, value: VerticalAlign) -> Self {
+        self.with(StyleProperty::VerticalAlign, value)
+    }
+    pub fn ruby_align(self, value: RubyAlign) -> Self {
+        self.with(StyleProperty::RubyAlign, value)
+    }
+    pub fn ruby_position(self, value: RubyPosition) -> Self {
+        self.with(StyleProperty::RubyPosition, value)
+    }
+    pub fn ruby_overhang(self, value: RubyOverhang) -> Self {
+        self.with(StyleProperty::RubyOverhang, value)
+    }
+    pub fn hanging_punctuation(self, value: HangingPunctuation) -> Self {
+        self.with(StyleProperty::HangingPunctuation, value)
+    }
+    pub fn initial_letter(self, value: InitialLetterValue) -> Self {
+        self.with(StyleProperty::InitialLetter, value)
+    }
+    pub fn text_rendering(self, value: TextRendering) -> Self {
+        self.with(StyleProperty::TextRendering, value)
+    }
+    pub fn webkit_font_smoothing(self, value: FontSmoothing) -> Self {
+        self.with(StyleProperty::WebkitFontSmoothing, value)
+    }
+    pub fn line_clamp(self, value: LineClamp) -> Self {
+        self.with(StyleProperty::LineClamp, value)
+    }
+    pub fn block_ellipsis(self, value: BlockEllipsis) -> Self {
+        self.with(StyleProperty::BlockEllipsis, value)
+    }
+    pub fn text_box_edge(self, value: TextBoxEdge) -> Self {
+        self.with(StyleProperty::TextBoxEdge, value)
+    }
+    pub fn text_box_trim(self, value: TextBoxTrim) -> Self {
+        self.with(StyleProperty::TextBoxTrim, value)
+    }
+    pub fn font(self, value: FontShorthand) -> Self {
+        self.with(StyleProperty::Font, value)
+    }
+    pub fn font_variant(self, value: FontVariantShorthand) -> Self {
+        self.with(StyleProperty::FontVariant, value)
+    }
+    pub fn font_synthesis(self, value: FontSynthesisShorthand) -> Self {
+        self.with(StyleProperty::FontSynthesis, value)
+    }
+    pub fn white_space(self, value: WhiteSpaceShorthand) -> Self {
+        self.with(StyleProperty::WhiteSpace, value)
+    }
+    pub fn text_wrap(self, value: TextWrapShorthand) -> Self {
+        self.with(StyleProperty::TextWrap, value)
+    }
+    pub fn text_decoration(self, value: TextDecorationShorthand) -> Self {
+        self.with(StyleProperty::TextDecoration, value)
+    }
+    pub fn text_emphasis(self, value: TextEmphasisShorthand) -> Self {
+        self.with(StyleProperty::TextEmphasis, value)
+    }
+    pub fn text_box(self, value: TextBoxShorthand) -> Self {
+        self.with(StyleProperty::TextBox, value)
     }
 }

@@ -662,6 +662,10 @@ OuiStatus oui_font_family_create(OuiUtf8 name, int32_t generic_family, OuiStyleC
 OuiStatus oui_border_create(float width, int32_t style, OuiColor color, OuiStyleCompound** out_compound);
 OuiStatus oui_corner_radii_create(const OuiLength values[4], OuiStyleCompound** out_compound);
 OuiStatus oui_transform_create(const OuiTransformOperation* operations, size_t operation_count, OuiStyleCompound** out_compound);
+/* Parses one schema-typed literal. If tag is OUI_STYLE_VALUE_COMPOUND, the
+ * returned payload is owned by the caller and must be destroyed with
+ * oui_style_compound_destroy after the value has been submitted. */
+OuiStatus oui_style_value_parse(OuiStyleProperty property, OuiUtf8 literal, OuiStyleValue* out_value);
 OuiStatus oui_style_compound_destroy(OuiStyleCompound* compound);
 
 OuiStatus oui_document_register_image(OuiDocument* document, OuiUtf8 source, OuiUtf8 mime_type, OuiUtf8 sha256, const uint8_t* bytes, size_t byte_length, OuiResource** out_resource);
