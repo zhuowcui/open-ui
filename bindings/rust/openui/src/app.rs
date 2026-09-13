@@ -7,6 +7,8 @@ use crate::view_node::{mount_view, IntoView};
 use crate::{Document, ScopeId};
 use openui_engine::Viewport;
 use std::cell::Cell;
+#[cfg(all(feature = "linux", target_os = "linux"))]
+use std::cell::RefCell;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LogicalSize {
@@ -74,6 +76,8 @@ impl AppBuilder {
             options: self.options,
             root_scope: None,
             exit_requested: Cell::new(false),
+            #[cfg(all(feature = "linux", target_os = "linux"))]
+            software_compositor: RefCell::new(openui_compositor::SoftwareCompositor::default()),
         })
     }
 }
@@ -92,6 +96,8 @@ pub struct App {
     options: WindowOptions,
     root_scope: Option<ScopeId>,
     exit_requested: Cell<bool>,
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    software_compositor: RefCell<openui_compositor::SoftwareCompositor>,
 }
 
 impl App {
@@ -179,6 +185,7 @@ impl openui_platform::PlatformApplication for App {
             PointerButton::Right | PointerButton::Other(_) => crate::MouseButton::Right,
         };
         let result = match event {
+            PlatformEvent::BackendChanged(_) => Ok(()),
             PlatformEvent::Resized {
                 logical_width,
                 logical_height,
@@ -262,14 +269,22 @@ impl openui_platform::PlatformApplication for App {
     fn render(&mut self, time_ms: f64) -> Result<openui_platform::SoftwareFrame, String> {
         self.document
             .begin_frame(time_ms)
-            .and_then(|_| self.document.render_to_bitmap())
-            .map(|bitmap| openui_platform::SoftwareFrame {
-                width: bitmap.width,
-                height: bitmap.height,
-                stride: bitmap.stride,
-                pixels: bitmap.pixels,
-            })
-            .map_err(|error| error.to_string())
+            .map_err(|error| error.to_string())?;
+        let scene = self
+            .document
+            .with_engine_mut(|engine| engine.scene())
+            .map_err(|error| error.to_string())?;
+        let frame = self
+            .software_compositor
+            .borrow_mut()
+            .render(&scene)
+            .map_err(|error| error.to_string())?;
+        Ok(openui_platform::SoftwareFrame {
+            width: frame.width,
+            height: frame.height,
+            stride: frame.stride,
+            pixels: frame.pixels,
+        })
     }
 
     fn exit_requested(&self) -> bool {
@@ -367,6 +382,8 @@ impl HeadlessApp {
                 },
                 root_scope: None,
                 exit_requested: Cell::new(false),
+                #[cfg(all(feature = "linux", target_os = "linux"))]
+                software_compositor: RefCell::new(openui_compositor::SoftwareCompositor::default()),
             },
         })
     }

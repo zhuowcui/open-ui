@@ -13,12 +13,27 @@ borrows have been released. Redraws are requested for input, resize, expose,
 accessibility actions, or active animation; settled applications use winit's
 waiting control flow.
 
-The W7 presentation backend rasterizes the engine's immutable scene through the
-shared software compositor and presents it through softbuffer. It tolerates
-zero-sized/minimized windows, resizes the surface before each present, and
-scales logical frames to the current physical surface. W8 adds OpenGL; an
-explicit OpenGL preference currently returns a diagnostic error while `Auto`
-selects software.
+Both presentation paths consume the exact frame produced from the engine's
+immutable scene. `Software` presents it through softbuffer. `OpenGl` creates an
+EGL or GLX surface through glutin and uploads the frame to a retained texture;
+the GPU performs scale-correct presentation and buffer swaps. `Auto` attempts
+OpenGL first and falls back to software during initialization or after a
+presentation failure. Every backend selection and fallback is reported through
+`PlatformEvent::BackendChanged`, including the diagnostic reason.
+
+The pinned rust-skia revision cannot currently compile its optional Ganesh GL
+API because its Rust `GpuStats` declaration is one field behind the bundled
+Skia C++ declaration. W8 therefore preserves the exact CPU Skia raster and uses
+OpenGL for composition/presentation. Direct picture replay into a Skia GPU
+surface remains blocked until that pinned dependency is repaired; the engine,
+scene generation, layout, damage, and resulting pixels are backend-independent.
+
+Both paths tolerate zero-sized/minimized windows and resize their native
+surfaces before presentation. The software compositor caches the last raster by
+scene generation, so repeated presentation of an unchanged snapshot performs
+no new Skia raster work. A one-slot `SceneMailbox` coalesces queued immutable
+snapshots for render-thread integrations without allowing DOM or callbacks to
+cross the thread boundary.
 
 Clipboard ownership is backend-correct. X11 uses the CLIPBOARD selection and
 UTF8_STRING through x11rb. Pure Wayland uses the seat data device through
@@ -39,6 +54,6 @@ also build as native applications. For example:
 cargo run -p counter --features linux
 ```
 
-Select the backend through `AppBuilder::backend`. `Auto` and `Software` use
-the W7 CPU presenter; `OpenGl` is rejected with an explicit diagnostic until
-the W8 compositor is enabled.
+Select the backend through `AppBuilder::backend`. `Auto` prefers OpenGL,
+`OpenGl` makes initialization or presentation failure explicit, and `Software`
+forces softbuffer.

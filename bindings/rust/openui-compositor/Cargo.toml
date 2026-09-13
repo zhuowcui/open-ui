@@ -10,3 +10,6 @@ rust-version = "1.85"
 openui-layout = { path = "../openui-layout" }
 openui-paint = { path = "../openui-paint" }
 skia-safe = "0.94"
+
+[dev-dependencies]
+openui-dom = { path = "../openui-dom" }

@@ -19,6 +19,12 @@ pub enum BackendPreference {
     Software,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct BackendStatus {
+    pub active: BackendPreference,
+    pub fallback_reason: Option<String>,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct WindowOptions {
     pub title: String,
@@ -70,6 +76,7 @@ pub struct Modifiers {
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum PlatformEvent {
+    BackendChanged(BackendStatus),
     Resized {
         logical_width: u32,
         logical_height: u32,

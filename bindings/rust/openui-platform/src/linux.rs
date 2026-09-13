@@ -1,10 +1,17 @@
 use crate::{
-    BackendPreference, CursorIcon, KeyPhase, Modifiers, PlatformApplication, PlatformError,
-    PlatformEvent, PointerButton, PointerPhase, SoftwareFrame, WindowOptions,
+    BackendPreference, BackendStatus, CursorIcon, KeyPhase, Modifiers, PlatformApplication,
+    PlatformError, PlatformEvent, PointerButton, PointerPhase, SoftwareFrame, WindowOptions,
 };
 use accesskit_winit::{Adapter as AccessibilityAdapter, WindowEvent as AccessibilityEvent};
-use raw_window_handle::{HasDisplayHandle, RawDisplayHandle};
-use softbuffer::{Context, Surface};
+use glutin::config::{ConfigTemplateBuilder, GlConfig};
+use glutin::context::{ContextApi, ContextAttributesBuilder, GlContext, PossiblyCurrentContext};
+use glutin::display::{GetGlDisplay, GlDisplay};
+use glutin::prelude::{GlSurface, NotCurrentGlContext};
+use glutin::surface::{Surface as GlutinSurface, SwapInterval, WindowSurface};
+use glutin_winit::{DisplayBuilder, GlWindow};
+use raw_window_handle::{HasDisplayHandle, HasWindowHandle, RawDisplayHandle};
+use softbuffer::{Context as SoftContext, Surface as SoftSurface};
+use std::ffi::CString;
 use std::num::NonZeroU32;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
@@ -31,6 +38,422 @@ impl From<accesskit_winit::Event> for UserEvent {
 enum NativeClipboard {
     Wayland(Box<smithay_clipboard::Clipboard>),
     X11(Box<x11_clipboard::Clipboard>),
+}
+
+enum Presenter {
+    Software {
+        _context: SoftContext<OwnedDisplayHandle>,
+        surface: SoftSurface<OwnedDisplayHandle, Arc<Window>>,
+    },
+    OpenGl(OpenGlPresenter),
+}
+
+struct OpenGlPresenter {
+    surface: GlutinSurface<WindowSurface>,
+    context: PossiblyCurrentContext,
+    program: u32,
+    texture: u32,
+    texture_size: Option<(u32, u32)>,
+    vertex_array: u32,
+    vertex_buffer: u32,
+    window: Arc<Window>,
+}
+
+impl Drop for OpenGlPresenter {
+    fn drop(&mut self) {
+        // SAFETY: this presenter owns these names and its glutin context is
+        // current on the event-loop thread for its entire lifetime.
+        unsafe {
+            gl::DeleteBuffers(1, &self.vertex_buffer);
+            gl::DeleteVertexArrays(1, &self.vertex_array);
+            gl::DeleteTextures(1, &self.texture);
+            gl::DeleteProgram(self.program);
+        }
+    }
+}
+
+impl OpenGlPresenter {
+    fn new(
+        event_loop: &ActiveEventLoop,
+        attributes: WindowAttributes,
+    ) -> Result<(Arc<Window>, Self), PlatformError> {
+        let template = ConfigTemplateBuilder::new().with_alpha_size(8);
+        let display_builder = DisplayBuilder::new().with_window_attributes(Some(attributes));
+        let (window, config) = display_builder
+            .build(event_loop, template, |configs| {
+                configs
+                    .reduce(|selected, candidate| {
+                        if candidate.num_samples() < selected.num_samples() {
+                            candidate
+                        } else {
+                            selected
+                        }
+                    })
+                    .expect("glutin supplied no configuration to its mandatory picker")
+            })
+            .map_err(|error| PlatformError::Initialization(error.to_string()))?;
+        let window = Arc::new(window.ok_or_else(|| {
+            PlatformError::Window("glutin did not create the requested window".into())
+        })?);
+        let raw_window = window
+            .window_handle()
+            .map_err(|error| PlatformError::Initialization(error.to_string()))?
+            .as_raw();
+        let attributes = ContextAttributesBuilder::new().build(Some(raw_window));
+        let fallback_attributes = ContextAttributesBuilder::new()
+            .with_context_api(ContextApi::Gles(None))
+            .build(Some(raw_window));
+        // SAFETY: `raw_window` comes from `window`, which is retained by this
+        // presenter until every GL object has been destroyed.
+        let not_current = unsafe {
+            config
+                .display()
+                .create_context(&config, &attributes)
+                .or_else(|_| {
+                    config
+                        .display()
+                        .create_context(&config, &fallback_attributes)
+                })
+        }
+        .map_err(|error| PlatformError::Initialization(error.to_string()))?;
+        let surface_attributes = window
+            .build_surface_attributes(Default::default())
+            .map_err(|error| PlatformError::Initialization(error.to_string()))?;
+        // SAFETY: the surface attributes were built from the retained winit
+        // window and the surface is dropped before that window.
+        let surface = unsafe {
+            config
+                .display()
+                .create_window_surface(&config, &surface_attributes)
+        }
+        .map_err(|error| PlatformError::Initialization(error.to_string()))?;
+        let context = not_current
+            .make_current(&surface)
+            .map_err(|error| PlatformError::Initialization(error.to_string()))?;
+        let display = config.display();
+        gl::load_with(|name| {
+            CString::new(name)
+                .ok()
+                .map_or(std::ptr::null(), |name| display.get_proc_address(&name))
+        });
+        let gles = matches!(context.context_api(), ContextApi::Gles(_));
+        let (program, texture, vertex_array, vertex_buffer) = initialize_gl_objects(gles)?;
+        let _ = surface.set_swap_interval(
+            &context,
+            SwapInterval::Wait(NonZeroU32::new(1).expect("one is nonzero")),
+        );
+        Ok((
+            window.clone(),
+            Self {
+                surface,
+                context,
+                program,
+                texture,
+                texture_size: None,
+                vertex_array,
+                vertex_buffer,
+                window,
+            },
+        ))
+    }
+
+    fn present(&mut self, frame: &SoftwareFrame) -> Result<(), PlatformError> {
+        let physical = self.window.inner_size();
+        if physical.width == 0 || physical.height == 0 {
+            return Ok(());
+        }
+        self.window.resize_surface(&self.surface, &self.context);
+        validate_frame(frame)?;
+        let width = i32::try_from(frame.width)
+            .map_err(|_| PlatformError::Presentation("frame width exceeds i32".into()))?;
+        let height = i32::try_from(frame.height)
+            .map_err(|_| PlatformError::Presentation("frame height exceeds i32".into()))?;
+        let viewport_width = i32::try_from(physical.width)
+            .map_err(|_| PlatformError::Presentation("surface width exceeds i32".into()))?;
+        let viewport_height = i32::try_from(physical.height)
+            .map_err(|_| PlatformError::Presentation("surface height exceeds i32".into()))?;
+        // SAFETY: all names were created by this current context; the frame
+        // slice was validated for a tightly packed RGBA upload below.
+        unsafe {
+            gl::Viewport(0, 0, viewport_width, viewport_height);
+            gl::ClearColor(1.0, 1.0, 1.0, 1.0);
+            gl::Clear(gl::COLOR_BUFFER_BIT);
+            gl::UseProgram(self.program);
+            gl::ActiveTexture(gl::TEXTURE0);
+            gl::BindTexture(gl::TEXTURE_2D, self.texture);
+            gl::PixelStorei(gl::UNPACK_ALIGNMENT, 1);
+            gl::PixelStorei(gl::UNPACK_ROW_LENGTH, (frame.stride / 4) as i32);
+            if self.texture_size != Some((frame.width, frame.height)) {
+                gl::TexImage2D(
+                    gl::TEXTURE_2D,
+                    0,
+                    gl::RGBA as i32,
+                    width,
+                    height,
+                    0,
+                    gl::RGBA,
+                    gl::UNSIGNED_BYTE,
+                    std::ptr::null(),
+                );
+                self.texture_size = Some((frame.width, frame.height));
+            }
+            gl::TexSubImage2D(
+                gl::TEXTURE_2D,
+                0,
+                0,
+                0,
+                width,
+                height,
+                gl::RGBA,
+                gl::UNSIGNED_BYTE,
+                frame.pixels.as_ptr().cast(),
+            );
+            gl::BindVertexArray(self.vertex_array);
+            gl::DrawArrays(gl::TRIANGLE_STRIP, 0, 4);
+            gl::BindVertexArray(0);
+            gl::PixelStorei(gl::UNPACK_ROW_LENGTH, 0);
+        }
+        self.surface
+            .swap_buffers(&self.context)
+            .map_err(|error| PlatformError::Presentation(error.to_string()))
+    }
+}
+
+fn initialize_gl_objects(gles: bool) -> Result<(u32, u32, u32, u32), PlatformError> {
+    let vertex_source = if gles {
+        "#version 300 es\nlayout(location=0) in vec2 position; layout(location=1) in vec2 uv; out vec2 texture_uv; void main(){ texture_uv=uv; gl_Position=vec4(position,0.0,1.0); }"
+    } else {
+        "#version 330 core\nlayout(location=0) in vec2 position; layout(location=1) in vec2 uv; out vec2 texture_uv; void main(){ texture_uv=uv; gl_Position=vec4(position,0.0,1.0); }"
+    };
+    let fragment_source = if gles {
+        "#version 300 es\nprecision mediump float; in vec2 texture_uv; uniform sampler2D frame_texture; out vec4 color; void main(){ color=texture(frame_texture,texture_uv); }"
+    } else {
+        "#version 330 core\nin vec2 texture_uv; uniform sampler2D frame_texture; out vec4 color; void main(){ color=texture(frame_texture,texture_uv); }"
+    };
+    let vertex_shader = compile_shader(gl::VERTEX_SHADER, vertex_source)?;
+    let fragment_shader = match compile_shader(gl::FRAGMENT_SHADER, fragment_source) {
+        Ok(shader) => shader,
+        Err(error) => {
+            // SAFETY: the vertex shader belongs to the current context and is
+            // no longer needed after the paired shader failed.
+            unsafe { gl::DeleteShader(vertex_shader) };
+            return Err(error);
+        }
+    };
+    // SAFETY: the GL context is current, shader identifiers are valid, and all
+    // buffer source pointers remain valid for the duration of their calls.
+    unsafe {
+        let program = gl::CreateProgram();
+        gl::AttachShader(program, vertex_shader);
+        gl::AttachShader(program, fragment_shader);
+        gl::LinkProgram(program);
+        gl::DeleteShader(vertex_shader);
+        gl::DeleteShader(fragment_shader);
+        check_program(program)?;
+
+        let vertices: [f32; 16] = [
+            -1.0, -1.0, 0.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0,
+        ];
+        let mut vertex_array = 0;
+        let mut vertex_buffer = 0;
+        gl::GenVertexArrays(1, &mut vertex_array);
+        gl::GenBuffers(1, &mut vertex_buffer);
+        gl::BindVertexArray(vertex_array);
+        gl::BindBuffer(gl::ARRAY_BUFFER, vertex_buffer);
+        gl::BufferData(
+            gl::ARRAY_BUFFER,
+            isize::try_from(std::mem::size_of_val(&vertices)).expect("vertex data fits isize"),
+            vertices.as_ptr().cast(),
+            gl::STATIC_DRAW,
+        );
+        let stride = i32::try_from(4 * std::mem::size_of::<f32>()).expect("vertex stride fits i32");
+        gl::EnableVertexAttribArray(0);
+        gl::VertexAttribPointer(0, 2, gl::FLOAT, gl::FALSE, stride, std::ptr::null());
+        gl::EnableVertexAttribArray(1);
+        gl::VertexAttribPointer(
+            1,
+            2,
+            gl::FLOAT,
+            gl::FALSE,
+            stride,
+            (2 * std::mem::size_of::<f32>()) as *const _,
+        );
+        gl::BindVertexArray(0);
+
+        let mut texture = 0;
+        gl::GenTextures(1, &mut texture);
+        gl::BindTexture(gl::TEXTURE_2D, texture);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::LINEAR as i32);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::LINEAR as i32);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE as i32);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::CLAMP_TO_EDGE as i32);
+        gl::UseProgram(program);
+        let sampler = CString::new("frame_texture").expect("static string has no nul");
+        gl::Uniform1i(gl::GetUniformLocation(program, sampler.as_ptr()), 0);
+        Ok((program, texture, vertex_array, vertex_buffer))
+    }
+}
+
+fn compile_shader(kind: u32, source: &str) -> Result<u32, PlatformError> {
+    let source = CString::new(source).expect("shader source has no nul");
+    // SAFETY: the context is current, `source` is NUL terminated, and GL owns
+    // the returned shader until it is explicitly deleted.
+    unsafe {
+        let shader = gl::CreateShader(kind);
+        gl::ShaderSource(shader, 1, &source.as_ptr(), std::ptr::null());
+        gl::CompileShader(shader);
+        let mut success = 0;
+        gl::GetShaderiv(shader, gl::COMPILE_STATUS, &mut success);
+        if success == 0 {
+            let message = shader_log(shader);
+            gl::DeleteShader(shader);
+            return Err(PlatformError::Initialization(format!(
+                "OpenGL shader compilation failed: {message}"
+            )));
+        }
+        Ok(shader)
+    }
+}
+
+unsafe fn shader_log(shader: u32) -> String {
+    let mut length = 0;
+    // SAFETY: `shader` is a live shader owned by the caller.
+    unsafe { gl::GetShaderiv(shader, gl::INFO_LOG_LENGTH, &mut length) };
+    let mut bytes = vec![0_u8; length.max(1) as usize];
+    // SAFETY: `bytes` is writable for the reported log length.
+    unsafe {
+        gl::GetShaderInfoLog(
+            shader,
+            length,
+            std::ptr::null_mut(),
+            bytes.as_mut_ptr().cast(),
+        )
+    };
+    String::from_utf8_lossy(&bytes)
+        .trim_end_matches(char::from(0))
+        .to_owned()
+}
+
+unsafe fn program_log(program: u32) -> String {
+    let mut length = 0;
+    // SAFETY: `program` is a live program owned by the caller.
+    unsafe { gl::GetProgramiv(program, gl::INFO_LOG_LENGTH, &mut length) };
+    let mut bytes = vec![0_u8; length.max(1) as usize];
+    // SAFETY: `bytes` is writable for the reported log length.
+    unsafe {
+        gl::GetProgramInfoLog(
+            program,
+            length,
+            std::ptr::null_mut(),
+            bytes.as_mut_ptr().cast(),
+        )
+    };
+    String::from_utf8_lossy(&bytes)
+        .trim_end_matches(char::from(0))
+        .to_owned()
+}
+
+fn check_program(program: u32) -> Result<(), PlatformError> {
+    let mut success = 0;
+    // SAFETY: `program` was returned by the current GL context.
+    unsafe { gl::GetProgramiv(program, gl::LINK_STATUS, &mut success) };
+    if success == 0 {
+        // SAFETY: the program is still live and can be queried before deletion.
+        let message = unsafe { program_log(program) };
+        // SAFETY: the program belongs to the current context.
+        unsafe { gl::DeleteProgram(program) };
+        Err(PlatformError::Initialization(format!(
+            "OpenGL program link failed: {message}"
+        )))
+    } else {
+        Ok(())
+    }
+}
+
+fn validate_frame(frame: &SoftwareFrame) -> Result<(), PlatformError> {
+    if frame.width == 0
+        || frame.height == 0
+        || frame.stride < frame.width as usize * 4
+        || frame.stride % 4 != 0
+        || frame.pixels.len() < frame.stride * frame.height as usize
+        || frame.stride / 4 > i32::MAX as usize
+    {
+        Err(PlatformError::Presentation(
+            "application returned an invalid software frame".into(),
+        ))
+    } else {
+        Ok(())
+    }
+}
+
+fn software_presenter(
+    display: &OwnedDisplayHandle,
+    window: Arc<Window>,
+) -> Result<Presenter, PlatformError> {
+    let context = SoftContext::new(display.clone())
+        .map_err(|error| PlatformError::Initialization(error.to_string()))?;
+    let surface = SoftSurface::new(&context, window)
+        .map_err(|error| PlatformError::Presentation(error.to_string()))?;
+    Ok(Presenter::Software {
+        _context: context,
+        surface,
+    })
+}
+
+fn initialize_presenter(
+    event_loop: &ActiveEventLoop,
+    display: &OwnedDisplayHandle,
+    options: &WindowOptions,
+) -> Result<(Arc<Window>, Presenter, BackendStatus), PlatformError> {
+    let attributes = WindowAttributes::default()
+        .with_title(options.title.clone())
+        .with_inner_size(LogicalSize::new(options.width, options.height))
+        .with_visible(false);
+    if options.backend != BackendPreference::Software {
+        match OpenGlPresenter::new(event_loop, attributes.clone()) {
+            Ok((window, presenter)) => {
+                return Ok((
+                    window,
+                    Presenter::OpenGl(presenter),
+                    BackendStatus {
+                        active: BackendPreference::OpenGl,
+                        fallback_reason: None,
+                    },
+                ));
+            }
+            Err(error) if options.backend == BackendPreference::OpenGl => return Err(error),
+            Err(error) => {
+                let window = Arc::new(
+                    event_loop
+                        .create_window(attributes)
+                        .map_err(|error| PlatformError::Window(error.to_string()))?,
+                );
+                let presenter = software_presenter(display, window.clone())?;
+                return Ok((
+                    window,
+                    presenter,
+                    BackendStatus {
+                        active: BackendPreference::Software,
+                        fallback_reason: Some(error.to_string()),
+                    },
+                ));
+            }
+        }
+    }
+    let window = Arc::new(
+        event_loop
+            .create_window(attributes)
+            .map_err(|error| PlatformError::Window(error.to_string()))?,
+    );
+    let presenter = software_presenter(display, window.clone())?;
+    Ok((
+        window,
+        presenter,
+        BackendStatus {
+            active: BackendPreference::Software,
+            fallback_reason: None,
+        },
+    ))
 }
 
 impl NativeClipboard {
@@ -93,11 +516,11 @@ impl NativeClipboard {
 struct Runtime<A: PlatformApplication> {
     application: A,
     options: WindowOptions,
-    context: Context<OwnedDisplayHandle>,
+    display: OwnedDisplayHandle,
     clipboard: NativeClipboard,
     proxy: EventLoopProxy<UserEvent>,
     window: Option<Arc<Window>>,
-    surface: Option<Surface<OwnedDisplayHandle, Arc<Window>>>,
+    presenter: Option<Presenter>,
     accessibility: Option<AccessibilityAdapter>,
     cursor: LogicalPosition<f64>,
     scale_factor: f64,
@@ -157,32 +580,55 @@ impl<A: PlatformApplication> Runtime<A> {
             return;
         }
         let elapsed_ms = self.started.elapsed().as_secs_f64() * 1000.0;
-        let frame = match self.application.render(elapsed_ms) {
-            Ok(frame) => frame,
-            Err(error) => {
-                self.fail(event_loop, PlatformError::Application(error));
+        let result = match self.presenter.as_mut() {
+            Some(Presenter::OpenGl(presenter)) => self
+                .application
+                .render(elapsed_ms)
+                .map_err(PlatformError::Application)
+                .and_then(|frame| presenter.present(&frame)),
+            Some(Presenter::Software { surface, .. }) => self
+                .application
+                .render(elapsed_ms)
+                .map_err(PlatformError::Application)
+                .and_then(|frame| {
+                    surface
+                        .resize(
+                            NonZeroU32::new(physical.width).expect("nonzero width checked"),
+                            NonZeroU32::new(physical.height).expect("nonzero height checked"),
+                        )
+                        .map_err(|error| PlatformError::Presentation(error.to_string()))?;
+                    let mut buffer = surface
+                        .buffer_mut()
+                        .map_err(|error| PlatformError::Presentation(error.to_string()))?;
+                    copy_scaled_frame(&frame, physical.width, physical.height, &mut buffer)?;
+                    buffer
+                        .present()
+                        .map_err(|error| PlatformError::Presentation(error.to_string()))
+                }),
+            None => Err(PlatformError::Presentation(
+                "presentation backend is unavailable".into(),
+            )),
+        };
+        if let Err(error) = result {
+            if self.options.backend == BackendPreference::Auto
+                && matches!(self.presenter, Some(Presenter::OpenGl(_)))
+            {
+                self.presenter.take();
+                match software_presenter(&self.display, window) {
+                    Ok(presenter) => {
+                        self.presenter = Some(presenter);
+                        let status = BackendStatus {
+                            active: BackendPreference::Software,
+                            fallback_reason: Some(error.to_string()),
+                        };
+                        if self.send(event_loop, PlatformEvent::BackendChanged(status)) {
+                            self.request_redraw();
+                        }
+                    }
+                    Err(fallback_error) => self.fail(event_loop, fallback_error),
+                }
                 return;
             }
-        };
-        let result = (|| {
-            let surface = self.surface.as_mut().ok_or_else(|| {
-                PlatformError::Presentation("software surface is unavailable".into())
-            })?;
-            surface
-                .resize(
-                    NonZeroU32::new(physical.width).expect("nonzero width checked"),
-                    NonZeroU32::new(physical.height).expect("nonzero height checked"),
-                )
-                .map_err(|error| PlatformError::Presentation(error.to_string()))?;
-            let mut buffer = surface
-                .buffer_mut()
-                .map_err(|error| PlatformError::Presentation(error.to_string()))?;
-            copy_scaled_frame(&frame, physical.width, physical.height, &mut buffer)?;
-            buffer
-                .present()
-                .map_err(|error| PlatformError::Presentation(error.to_string()))
-        })();
-        if let Err(error) = result {
             self.fail(event_loop, error);
             return;
         }
@@ -260,33 +706,26 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
         if self.window.is_some() {
             return;
         }
-        let attributes = WindowAttributes::default()
-            .with_title(self.options.title.clone())
-            .with_inner_size(LogicalSize::new(self.options.width, self.options.height))
-            .with_visible(false);
-        let window = match event_loop.create_window(attributes) {
-            Ok(window) => Arc::new(window),
-            Err(error) => {
-                self.fail(event_loop, PlatformError::Window(error.to_string()));
-                return;
-            }
-        };
-        let surface = match Surface::new(&self.context, window.clone()) {
-            Ok(surface) => surface,
-            Err(error) => {
-                self.fail(event_loop, PlatformError::Presentation(error.to_string()));
-                return;
-            }
-        };
+        let (window, presenter, status) =
+            match initialize_presenter(event_loop, &self.display, &self.options) {
+                Ok(initialized) => initialized,
+                Err(error) => {
+                    self.fail(event_loop, error);
+                    return;
+                }
+            };
         self.scale_factor = window.scale_factor();
         let size = window.inner_size().to_logical::<f64>(self.scale_factor);
         let accessibility =
             AccessibilityAdapter::with_event_loop_proxy(event_loop, &window, self.proxy.clone());
         window.set_ime_allowed(true);
         window.set_visible(true);
-        self.surface = Some(surface);
+        self.presenter = Some(presenter);
         self.accessibility = Some(accessibility);
         self.window = Some(window);
+        if !self.send(event_loop, PlatformEvent::BackendChanged(status)) {
+            return;
+        }
         if self.send(
             event_loop,
             PlatformEvent::Resized {
@@ -540,28 +979,21 @@ pub fn run<A: PlatformApplication>(
     application: A,
     options: WindowOptions,
 ) -> Result<(), PlatformError> {
-    if options.backend == BackendPreference::OpenGl {
-        return Err(PlatformError::Initialization(
-            "the OpenGL backend is introduced by compositor wave W8".into(),
-        ));
-    }
     let event_loop = EventLoop::<UserEvent>::with_user_event()
         .build()
         .map_err(|error| PlatformError::Initialization(error.to_string()))?;
     event_loop.set_control_flow(ControlFlow::Wait);
     let display = event_loop.owned_display_handle();
-    let context = Context::new(display.clone())
-        .map_err(|error| PlatformError::Initialization(error.to_string()))?;
     let clipboard = NativeClipboard::new(&display)?;
     let proxy = event_loop.create_proxy();
     let mut runtime = Runtime {
         application,
         options,
-        context,
+        display,
         clipboard,
         proxy,
         window: None,
-        surface: None,
+        presenter: None,
         accessibility: None,
         cursor: LogicalPosition::new(0.0, 0.0),
         scale_factor: 1.0,
@@ -711,5 +1143,27 @@ mod tests {
             output,
             [0xff0000, 0xff0000, 0x0000ff, 0x0000ff, 0xff0000, 0xff0000, 0x0000ff, 0x0000ff]
         );
+    }
+
+    #[test]
+    fn invalid_frame_layout_is_rejected_before_native_upload() {
+        let short = SoftwareFrame {
+            width: 2,
+            height: 2,
+            stride: 8,
+            pixels: vec![0; 15],
+        };
+        assert!(matches!(
+            validate_frame(&short),
+            Err(PlatformError::Presentation(_))
+        ));
+
+        let padded = SoftwareFrame {
+            width: 2,
+            height: 2,
+            stride: 12,
+            pixels: vec![0; 24],
+        };
+        validate_frame(&padded).unwrap();
     }
 }
