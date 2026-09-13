@@ -143,6 +143,24 @@ pub struct LifecycleStats {
     pub scenes: u64,
 }
 
+/// Counts of document-owned objects used by leak and soak qualification.
+///
+/// `handle_slots` is retained capacity and may include reusable vacant slots;
+/// `live_nodes` is the number of currently valid node handles.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct EngineObjectCounts {
+    pub live_nodes: usize,
+    pub arena_nodes: usize,
+    pub reusable_arena_nodes: usize,
+    pub handle_slots: usize,
+    pub vacant_handle_slots: usize,
+    pub controls: usize,
+    pub semantic_overrides: usize,
+    pub animations: usize,
+    pub scroll_animations: usize,
+    pub image_resources: usize,
+}
+
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct DirtyGenerations {
     pub tree: u64,
@@ -361,6 +379,20 @@ impl Engine {
     pub fn stats(&self) -> LifecycleStats {
         self.stats
     }
+    pub fn object_counts(&self) -> EngineObjectCounts {
+        EngineObjectCounts {
+            live_nodes: self.node_slots.len(),
+            arena_nodes: self.document.node_count(),
+            reusable_arena_nodes: self.document.reusable_node_count(),
+            handle_slots: self.slots.len(),
+            vacant_handle_slots: self.free_slots.len(),
+            controls: self.controls.len(),
+            semantic_overrides: self.semantics.len(),
+            animations: self.animations.len(),
+            scroll_animations: self.scroll_animations.len(),
+            image_resources: self.document.image_resource_count(),
+        }
+    }
     pub fn dirty_generations(&self) -> DirtyGenerations {
         self.dirty_generations
     }
@@ -553,8 +585,8 @@ impl Engine {
         {
             self.modal_root = None;
         }
-        for node in descendants {
-            if let Some(index) = self.node_slots.remove(&node) {
+        for node in &descendants {
+            if let Some(index) = self.node_slots.remove(node) {
                 self.controls.remove(&index);
                 self.semantics.remove(&index);
                 let slot = &mut self.slots[index as usize];
@@ -563,6 +595,12 @@ impl Engine {
                 slot.generation = slot.generation.wrapping_add(1).max(1);
                 self.free_slots.push(index);
             }
+        }
+        for node in descendants.into_iter().rev() {
+            if !self.document.node(node).parent.is_none() {
+                self.document.detach(node);
+            }
+            debug_assert!(self.document.release_detached_node(node));
         }
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
@@ -1347,5 +1385,27 @@ mod tests {
             engine.set_image_resource(image, ImageResourceId::new(99), None),
             Err(EngineError::UnknownResource)
         );
+    }
+
+    #[test]
+    fn long_running_mutations_reuse_owned_storage() {
+        let mut engine = Engine::new(Viewport::new(64, 64).unwrap()).unwrap();
+        let root = engine.root();
+        for iteration in 0..10_000 {
+            let node = engine.create_element(ElementTag::Div).unwrap();
+            engine.append_child(root, node).unwrap();
+            engine.set_text(node, iteration.to_string()).unwrap();
+            engine.remove(node).unwrap();
+        }
+        let counts = engine.object_counts();
+        assert_eq!(counts.live_nodes, 1);
+        assert_eq!(counts.handle_slots, 2);
+        assert_eq!(counts.vacant_handle_slots, 1);
+        assert_eq!(counts.arena_nodes, 2);
+        assert_eq!(counts.reusable_arena_nodes, 1);
+        assert_eq!(counts.controls, 0);
+        assert_eq!(counts.semantic_overrides, 0);
+        assert_eq!(counts.animations, 0);
+        assert_eq!(counts.scroll_animations, 0);
     }
 }

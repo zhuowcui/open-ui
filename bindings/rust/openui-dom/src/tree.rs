@@ -126,9 +126,10 @@ impl NodeId {
 /// What kind of element this node represents.
 /// We don't need a full tag enum — the layout algorithm only cares about
 /// display type (from ComputedStyle) and whether this is text.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum ElementTag {
     /// A generic container element (like HTML `<div>`).
+    #[default]
     Div,
     /// An inline container (like HTML `<span>`).
     Span,
@@ -182,12 +183,6 @@ pub enum ElementTag {
     Style,
     /// The root viewport element.
     Viewport,
-}
-
-impl Default for ElementTag {
-    fn default() -> Self {
-        Self::Div
-    }
 }
 
 /// Generated pseudo-element identity stored on an ordinary arena node.
@@ -319,6 +314,7 @@ impl NodeData {
 #[derive(Clone)]
 pub struct Document {
     nodes: Vec<NodeData>,
+    free_nodes: Vec<u32>,
     root: NodeId,
     image_resources: Vec<EncodedImageResource>,
     legacy_canvas_body: Option<NodeId>,
@@ -329,6 +325,7 @@ impl Document {
     pub fn new() -> Self {
         let mut doc = Self {
             nodes: Vec::new(),
+            free_nodes: Vec::new(),
             root: NodeId::NONE,
             image_resources: Vec::new(),
             legacy_canvas_body: None,
@@ -348,9 +345,14 @@ impl Document {
 
     /// Create a new detached node (not yet in the tree).
     pub fn create_node(&mut self, tag: ElementTag) -> NodeId {
-        let id = NodeId(self.nodes.len() as u32);
-        self.nodes.push(NodeData::new(tag));
-        id
+        if let Some(index) = self.free_nodes.pop() {
+            self.nodes[index as usize] = NodeData::new(tag);
+            NodeId(index)
+        } else {
+            let id = NodeId(self.nodes.len() as u32);
+            self.nodes.push(NodeData::new(tag));
+            id
+        }
     }
 
     /// Append `child` as the last child of `parent`.
@@ -423,6 +425,28 @@ impl Document {
         self.nodes[child.index()].parent = NodeId::NONE;
         self.nodes[child.index()].prev_sibling = NodeId::NONE;
         self.nodes[child.index()].next_sibling = NodeId::NONE;
+        true
+    }
+
+    /// Return a detached leaf node's arena entry to the reusable pool.
+    ///
+    /// This is intentionally explicit: legacy layout builders may retain
+    /// stable `NodeId` values and never call it. Generation-checked owners
+    /// such as `openui-engine` can release an already-invalidated subtree in
+    /// postorder and safely reuse its storage.
+    pub fn release_detached_node(&mut self, node: NodeId) -> bool {
+        if node == self.root || node.index() >= self.nodes.len() {
+            return false;
+        }
+        let data = &self.nodes[node.index()];
+        if !data.parent.is_none() || !data.first_child.is_none() || !data.last_child.is_none() {
+            return false;
+        }
+        if self.free_nodes.contains(&node.0) {
+            return false;
+        }
+        self.nodes[node.index()] = NodeData::new(ElementTag::Div);
+        self.free_nodes.push(node.0);
         true
     }
 
@@ -663,6 +687,11 @@ impl Document {
     /// Count of all nodes in the document.
     pub fn node_count(&self) -> usize {
         self.nodes.len()
+    }
+
+    /// Number of arena entries currently available for reuse.
+    pub fn reusable_node_count(&self) -> usize {
+        self.free_nodes.len()
     }
 
     /// Whether any attached/generated node requires the platform native text
@@ -1111,6 +1140,19 @@ mod tests {
         assert_eq!(doc.children(root).collect::<Vec<_>>(), vec![a, c]);
         assert!(doc.node(b).parent.is_none());
         assert!(!doc.detach(b));
+    }
+
+    #[test]
+    fn released_detached_nodes_reuse_arena_storage() {
+        let mut document = Document::new();
+        let node = document.create_node(ElementTag::Div);
+        assert!(document.release_detached_node(node));
+        assert_eq!(document.reusable_node_count(), 1);
+        let replacement = document.create_node(ElementTag::Span);
+        assert_eq!(replacement, node);
+        assert_eq!(document.reusable_node_count(), 0);
+        assert_eq!(document.node_count(), 2);
+        assert_eq!(document.node(replacement).tag, ElementTag::Span);
     }
 
     #[test]

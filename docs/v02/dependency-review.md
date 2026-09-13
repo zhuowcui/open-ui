@@ -20,3 +20,8 @@ freezes the lockfile digest.
 Transitive package `uuid` 1.26.1 is used by AccessKit tree identifiers and is
 covered by the same lockfile, license, MSRV, and advisory checks. Linux shell
 dependencies are reviewed when the feature-gated platform crate lands.
+
+The isolated fuzz workspace pins `libfuzzer-sys` 0.4.13 under its combined
+MIT/Apache-2.0 and NCSA license. It is maintained by the Rust Fuzz project,
+requires a nightly compiler only for fuzz execution, and is excluded from the
+runtime workspace and all release artifacts.

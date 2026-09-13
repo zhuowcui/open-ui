@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "profile_id": "openui-v02-linux-reference-v1",
+  "status": "awaiting_reference_machine_qualification",
+  "requirements": {
+    "active_scene_hz_min": 60.0,
+    "p95_input_to_present_ms_max": 33.3,
+    "compositor_animations": 100,
+    "compositor_animation_presented_fps_min": 59.0,
+    "ui_thread_block_ms": 250.0,
+    "idle_cpu_single_core_percent_max": 1.0,
+    "measured_interactions": 10000,
+    "rss_growth_percent_max": 2.0,
+    "owned_engine_object_leaks": 0,
+    "unchanged_layouts": 0,
+    "unchanged_paints": 0
+  },
+  "required_environment": {
+    "os": "Linux",
+    "architectures": ["x86_64", "aarch64"],
+    "software_gpu": "Mesa llvmpipe",
+    "physical_gpu_release_qualification": true,
+    "power_governor": "performance",
+    "exclusive_runner": true
+  }
+}

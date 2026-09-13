@@ -39,19 +39,20 @@ def dynamic_symbols(library: Path) -> set[str]:
     }
 
 
-def compilers() -> tuple[str | None, str | None, list[str], list[str]]:
+def compilers() -> tuple[str | None, str | None, list[str], list[str], list[str]]:
     system_cc = os.environ.get("CC") or shutil.which("cc")
     system_cxx = os.environ.get("CXX") or shutil.which("c++")
-    if system_cc and system_cxx and Path("/usr/include/stdio.h").is_file():
-        return system_cc, system_cxx, [], []
     configured: dict[str, str] = {}
     if RUST_CONFIG.is_file():
         configured = tomllib.loads(RUST_CONFIG.read_text(encoding="utf-8")).get("env", {})
-    cc = configured.get("CC", system_cc)
-    cxx = configured.get("CXX", system_cxx or cc)
-    flags = shlex.split(configured.get("CXXFLAGS", ""))
-    link_flags: list[str] = []
-    sysroot = configured.get("PKG_CONFIG_SYSROOT_DIR")
+    use_system = bool(system_cc and system_cxx and Path("/usr/include/stdio.h").is_file())
+    cc = system_cc if use_system else configured.get("CC", system_cc)
+    cxx = system_cxx if use_system else configured.get("CXX", system_cxx or cc)
+    configured_flags = [] if use_system else shlex.split(configured.get("CXXFLAGS", ""))
+    c_flags = configured_flags + shlex.split(os.environ.get("CFLAGS", ""))
+    cxx_flags = configured_flags + shlex.split(os.environ.get("CXXFLAGS", ""))
+    link_flags: list[str] = shlex.split(os.environ.get("LDFLAGS", ""))
+    sysroot = None if use_system else configured.get("PKG_CONFIG_SYSROOT_DIR")
     if sysroot:
         gcc = Path(sysroot) / "usr/lib/gcc/x86_64-linux-gnu/10"
         link_flags.extend(
@@ -61,7 +62,7 @@ def compilers() -> tuple[str | None, str | None, list[str], list[str]]:
                 f"-B{gcc}",
             ]
         )
-    return cc, cxx, flags, link_flags
+    return cc, cxx, c_flags, cxx_flags, link_flags
 
 
 def main() -> None:
@@ -69,7 +70,7 @@ def main() -> None:
     parser.add_argument("--library", type=Path, default=DEFAULT_LIBRARY)
     parser.add_argument("--skip-run", action="store_true")
     args = parser.parse_args()
-    cc, cxx, toolchain_flags, link_flags = compilers()
+    cc, cxx, c_flags, cxx_flags, link_flags = compilers()
     if not cc or not cxx or not shutil.which("nm"):
         raise SystemExit("a C/C++ compiler and nm are required")
     library = args.library.resolve()
@@ -95,7 +96,7 @@ def main() -> None:
                 "-Wall",
                 "-Wextra",
                 "-Werror",
-                *toolchain_flags,
+                *cxx_flags,
                 f"-I{INCLUDE}",
                 str(EXAMPLES / "header_smoke.cc"),
                 "-c",
@@ -114,7 +115,7 @@ def main() -> None:
                     "-Wall",
                     "-Wextra",
                     "-Werror",
-                    *toolchain_flags,
+                    *c_flags,
                     f"-I{INCLUDE}",
                     str(source),
                     "-c",
@@ -125,7 +126,7 @@ def main() -> None:
             run(
                 [
                     cxx,
-                    *toolchain_flags,
+                    *cxx_flags,
                     *link_flags,
                     "-fuse-ld=lld",
                     str(object_file),

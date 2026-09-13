@@ -416,7 +416,7 @@ mod tests {
             // Simulates the keyed diff: old=[A,B,C], new=[B,D,A]
             // Expected: C removed, D added, B and A reused.
             let old_keys = vec!["A", "B", "C"];
-            let new_keys = vec!["B", "D", "A"];
+            let new_keys = ["B", "D", "A"];
 
             let new_set: HashMap<&str, ()> = new_keys.iter().map(|k| (*k, ())).collect();
 

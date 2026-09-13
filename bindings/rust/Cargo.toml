@@ -19,6 +19,7 @@ members = [
     "examples/dashboard",
     "pixel-compare",
 ]
+exclude = ["fuzz"]
 
 [patch.crates-io]
 skia-safe = { git = "https://github.com/rust-skia/rust-skia.git", rev = "c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09" }

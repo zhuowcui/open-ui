@@ -54,11 +54,20 @@ fn application_view() -> ViewNode {
 
 #[cfg(feature = "linux")]
 fn main() -> Result<(), Error> {
-    App::builder()
+    let backend = match std::env::var("OUI_BACKEND").as_deref() {
+        Ok("opengl") => BackendPreference::OpenGl,
+        Ok("software") => BackendPreference::Software,
+        _ => BackendPreference::Auto,
+    };
+    let app = App::builder()
         .title("Hello, Open UI!")
         .size(LogicalSize::new(800.0, 600.0))
-        .build()?
-        .run(application_view)
+        .backend(backend)
+        .build()?;
+    if std::env::var_os("OUI_SMOKE_EXIT").is_some() {
+        app.request_exit();
+    }
+    app.run(application_view)
 }
 
 #[cfg(not(feature = "linux"))]

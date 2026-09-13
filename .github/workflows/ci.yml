@@ -75,11 +75,19 @@ jobs:
           --package openui
           --package openui-ffi
 
+      - name: Replay frozen Open UI pixels
+        run: |
+          cargo build --manifest-path bindings/rust/Cargo.toml \
+            --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' \
+            --locked --package pixel-compare
+          python3 tools/accountability/verify_frozen_openui_pixels.py \
+            --pixel-compare bindings/rust/target/debug/pixel_compare --jobs 4
+
       - name: Build and verify the C ABI
         run: |
-          cargo --manifest-path bindings/rust/Cargo.toml \
+          cargo build --manifest-path bindings/rust/Cargo.toml \
             --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' \
-            build --locked --package openui-ffi
+            --locked --package openui-ffi
           python3 tools/ffi/verify_abi.py
 
   python-accountability:
@@ -111,6 +119,10 @@ jobs:
           python3 tools/release/generate_v02_contract.py --check
           python3 tools/style/generate_properties.py --check
           python3 tools/ffi/generate_ffi.py --check
+          python3 tools/conformance/verify_v02.py
+          python3 tools/performance/verify_v02.py
+          python3 tools/performance/verify_v02.py \
+            tools/performance/results/local-wsl2-2026-09-13.json
 
       - name: Audit authoritative accountability artifacts
         run: python3 tools/accountability/audit.py --repository-only

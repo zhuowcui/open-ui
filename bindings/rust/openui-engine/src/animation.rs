@@ -29,8 +29,9 @@ pub struct AnimationEvent {
     pub iteration: u64,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum AnimationTimeline {
+    #[default]
     Document,
     Scroll {
         source: NodeHandle,
@@ -42,12 +43,6 @@ pub enum AnimationTimeline {
         axis: TimelineAxis,
         range: TimelineRange,
     },
-}
-
-impl Default for AnimationTimeline {
-    fn default() -> Self {
-        Self::Document
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]

@@ -83,10 +83,6 @@ struct ShapeCollector {
     current_positions: Vec<Point>,
     current_offsets: Vec<Point>,
     current_clusters: Vec<u32>,
-    /// Info about the current run.
-    current_glyph_count: usize,
-    current_utf8_range: std::ops::Range<usize>,
-    current_advance: Vector,
 }
 
 /// A fully collected glyph run.
@@ -109,9 +105,6 @@ impl ShapeCollector {
             current_positions: Vec::new(),
             current_offsets: Vec::new(),
             current_clusters: Vec::new(),
-            current_glyph_count: 0,
-            current_utf8_range: 0..0,
-            current_advance: Vector::default(),
         }
     }
 
@@ -399,15 +392,20 @@ impl SkRunHandler for ShapeCollector {
         // Single-line shaping — nothing to do.
     }
 
-    fn run_info(&mut self, info: &run_handler::RunInfo) {
-        self.current_glyph_count = info.glyph_count;
-        self.current_utf8_range = info.utf8_range.clone();
-        self.current_advance = info.advance;
+    fn run_info(&mut self, _info: &run_handler::RunInfo) {
+        // SkShaper reports metadata for every run before it calls
+        // `run_buffer` for any run. Do not retain a single `RunInfo` here:
+        // mixed-script lines can have different glyph counts and the last
+        // reported count does not necessarily belong to the next buffer.
     }
 
     fn commit_run_info(&mut self) {
-        // Allocate storage for the run.
-        let n = self.current_glyph_count;
+        // Buffer allocation is intentionally deferred until `run_buffer`,
+        // whose `RunInfo` identifies the exact run Skia is about to fill.
+    }
+
+    fn run_buffer(&mut self, info: &run_handler::RunInfo) -> run_handler::Buffer<'_> {
+        let n = info.glyph_count;
         self.current_glyphs.clear();
         self.current_glyphs.resize(n, 0);
         self.current_positions.clear();
@@ -416,9 +414,6 @@ impl SkRunHandler for ShapeCollector {
         self.current_offsets.resize(n, Point::default());
         self.current_clusters.clear();
         self.current_clusters.resize(n, 0);
-    }
-
-    fn run_buffer(&mut self, _info: &run_handler::RunInfo) -> run_handler::Buffer<'_> {
         run_handler::Buffer {
             glyphs: &mut self.current_glyphs,
             positions: &mut self.current_positions,
@@ -428,15 +423,15 @@ impl SkRunHandler for ShapeCollector {
         }
     }
 
-    fn commit_run_buffer(&mut self, _info: &run_handler::RunInfo) {
+    fn commit_run_buffer(&mut self, info: &run_handler::RunInfo) {
         // Save the completed run.
         self.runs.push(CollectedRun {
             glyphs: self.current_glyphs.clone(),
             positions: self.current_positions.clone(),
             offsets: self.current_offsets.clone(),
             clusters: self.current_clusters.clone(),
-            utf8_range: self.current_utf8_range.clone(),
-            advance: self.current_advance,
+            utf8_range: info.utf8_range.clone(),
+            advance: info.advance,
         });
     }
 
@@ -1488,6 +1483,26 @@ mod tests {
 
         // Verify fallback doesn't break when there's only one font.
         assert!(font.fallback_count() >= 1);
+    }
+
+    #[test]
+    fn mixed_bidi_and_emoji_runs_use_exact_buffer_sizes() {
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+
+        for (text, direction) in [
+            ("שלום 👩🏽‍💻 مرحبا", TextDirection::Ltr),
+            ("مرحبا 👩🏽‍💻 שלום", TextDirection::Rtl),
+        ] {
+            let result = shaper.shape(text, &font, direction);
+            assert_eq!(result.num_characters, text.chars().count());
+            assert!(result.width.is_finite());
+            assert!(result.runs.iter().all(|run| {
+                run.glyphs.len() == run.advances.len()
+                    && run.glyphs.len() == run.offsets.len()
+                    && run.glyphs.len() == run.clusters.len()
+            }));
+        }
     }
 
     #[test]
