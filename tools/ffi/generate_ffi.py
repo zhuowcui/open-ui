@@ -140,6 +140,7 @@ def outputs() -> dict[Path, bytes]:
             "OuiBitmap": {"size": 32, "align": 8},
             "OuiTransformOperation": {"size": 48, "align": 4},
             "OuiEvent": {"size": 88, "align": 8},
+            "OuiAccessibilityUpdate": {"size": 40, "align": 8},
             "OuiErrorInfo": {"size": 24, "align": 8},
         },
     }

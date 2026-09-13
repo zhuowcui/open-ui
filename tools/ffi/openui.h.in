@@ -217,6 +217,52 @@ typedef enum OuiControlFlags {
   OUI_CONTROL_PASSWORD = 1u << 5
 } OuiControlFlags;
 
+typedef enum OuiAccessibilityRole {
+  OUI_ACCESSIBILITY_ROLE_AUTO = 0,
+  OUI_ACCESSIBILITY_ROLE_GENERIC = 1,
+  OUI_ACCESSIBILITY_ROLE_BUTTON = 2,
+  OUI_ACCESSIBILITY_ROLE_CHECKBOX = 3,
+  OUI_ACCESSIBILITY_ROLE_RADIO = 4,
+  OUI_ACCESSIBILITY_ROLE_TEXT_INPUT = 5,
+  OUI_ACCESSIBILITY_ROLE_MULTILINE_TEXT_INPUT = 6,
+  OUI_ACCESSIBILITY_ROLE_COMBOBOX = 7,
+  OUI_ACCESSIBILITY_ROLE_OPTION = 8,
+  OUI_ACCESSIBILITY_ROLE_SLIDER = 9,
+  OUI_ACCESSIBILITY_ROLE_IMAGE = 10,
+  OUI_ACCESSIBILITY_ROLE_LINK = 11,
+  OUI_ACCESSIBILITY_ROLE_DIALOG = 12,
+  OUI_ACCESSIBILITY_ROLE_HEADING = 13,
+  OUI_ACCESSIBILITY_ROLE_STATUS = 14,
+  OUI_ACCESSIBILITY_ROLE_ALERT = 15
+} OuiAccessibilityRole;
+
+typedef enum OuiAccessibilityLive {
+  OUI_ACCESSIBILITY_LIVE_OFF = 0,
+  OUI_ACCESSIBILITY_LIVE_POLITE = 1,
+  OUI_ACCESSIBILITY_LIVE_ASSERTIVE = 2
+} OuiAccessibilityLive;
+
+typedef enum OuiAccessibilityRelation {
+  OUI_ACCESSIBILITY_LABELLED_BY = 0,
+  OUI_ACCESSIBILITY_DESCRIBED_BY = 1,
+  OUI_ACCESSIBILITY_CONTROLS = 2,
+  OUI_ACCESSIBILITY_DETAILS = 3
+} OuiAccessibilityRelation;
+
+typedef enum OuiAccessibilityAction {
+  OUI_ACCESSIBILITY_CLICK = 0,
+  OUI_ACCESSIBILITY_FOCUS = 1,
+  OUI_ACCESSIBILITY_BLUR = 2,
+  OUI_ACCESSIBILITY_INCREMENT = 3,
+  OUI_ACCESSIBILITY_DECREMENT = 4,
+  OUI_ACCESSIBILITY_EXPAND = 5,
+  OUI_ACCESSIBILITY_COLLAPSE = 6,
+  OUI_ACCESSIBILITY_SET_VALUE = 7,
+  OUI_ACCESSIBILITY_REPLACE_SELECTED_TEXT = 8,
+  OUI_ACCESSIBILITY_SET_TEXT_SELECTION = 9,
+  OUI_ACCESSIBILITY_SCROLL_INTO_VIEW = 10
+} OuiAccessibilityAction;
+
 typedef enum OuiTransformOperationKind {
   OUI_TRANSFORM_TRANSLATE = 1,
   OUI_TRANSFORM_SCALE = 2,
@@ -317,6 +363,17 @@ typedef struct OuiEvent {
   OuiElement* current_target;
 } OuiEvent;
 
+typedef struct OuiAccessibilityUpdate {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint64_t generation;
+  size_t updated_nodes;
+  uint64_t focus_id;
+  uint8_t full_tree;
+  uint8_t reduced_motion;
+  uint16_t reserved;
+} OuiAccessibilityUpdate;
+
 typedef struct OuiErrorInfo {
   uint32_t struct_size;
   uint32_t abi_version;
@@ -363,6 +420,8 @@ OuiStatus oui_document_dispatch_pointer_event(OuiDocument* document, OuiEvent* e
 OuiStatus oui_document_hit_test(OuiDocument* document, float x, float y, OuiElement** out_element);
 OuiStatus oui_document_advance_focus(OuiDocument* document, int32_t direction, OuiElement** out_element);
 OuiStatus oui_document_set_modal_root(OuiDocument* document, OuiElement* root);
+OuiStatus oui_document_accessibility_update(OuiDocument* document, OuiAccessibilityUpdate* out_update);
+OuiStatus oui_document_set_reduced_motion(OuiDocument* document, uint8_t reduced);
 
 OuiStatus oui_element_create(OuiDocument* document, OuiElementTag tag, OuiElement** out_element);
 OuiStatus oui_text_create(OuiDocument* document, OuiUtf8 text, OuiElement** out_text);
@@ -390,6 +449,15 @@ OuiStatus oui_element_get_control_flags(OuiElement* element, uint32_t* out_flags
 OuiStatus oui_element_set_checked(OuiElement* element, uint8_t checked);
 OuiStatus oui_element_set_indeterminate(OuiElement* element, uint8_t indeterminate);
 OuiStatus oui_element_adjust_control(OuiElement* element, OuiControlAdjustment adjustment);
+OuiStatus oui_element_get_accessibility_id(OuiElement* element, uint64_t* out_id);
+OuiStatus oui_element_set_accessibility_role(OuiElement* element, OuiAccessibilityRole role);
+OuiStatus oui_element_set_accessibility_label(OuiElement* element, OuiUtf8 label);
+OuiStatus oui_element_set_accessibility_description(OuiElement* element, OuiUtf8 description);
+OuiStatus oui_element_set_accessibility_value(OuiElement* element, OuiUtf8 value);
+OuiStatus oui_element_set_accessibility_live(OuiElement* element, OuiAccessibilityLive live);
+OuiStatus oui_element_set_accessibility_hidden(OuiElement* element, uint8_t hidden);
+OuiStatus oui_element_set_accessibility_relation(OuiElement* element, OuiAccessibilityRelation relation, OuiElement* const* targets, size_t target_count);
+OuiStatus oui_element_perform_accessibility_action(OuiElement* element, OuiAccessibilityAction action, OuiUtf8 value, size_t anchor, size_t focus);
 OuiStatus oui_element_add_event_listener(OuiElement* element, OuiEventType event_type, uint8_t capture, OuiEventCallback callback, void* user_data, OuiListener** out_listener);
 OuiStatus oui_listener_destroy(OuiListener* listener);
 

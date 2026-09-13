@@ -1,6 +1,12 @@
 //! Retained, thread-affine Open UI document engine.
 
+mod accessibility;
 mod interaction;
+
+pub use accessibility::{
+    AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
+    AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
+};
 
 pub use interaction::{
     ActivationResult, ControlAdjustment, ControlState, EditCommand, EventPhase, EventRoute,
@@ -262,10 +268,14 @@ pub struct Engine {
     hover_paths: HashMap<u64, Vec<NodeHandle>>,
     active_pointers: HashMap<u64, NodeHandle>,
     controls: HashMap<u32, ControlState>,
+    semantics: HashMap<u32, accessibility::SemanticProperties>,
+    accessibility_nodes: HashMap<AccessibilityNodeId, AccessibilityNode>,
+    accessibility_initialized: bool,
     focus_visible: bool,
     modal_root: Option<NodeHandle>,
     focus_before_modal: Option<NodeHandle>,
     animation_time_ms: f64,
+    reduced_motion: bool,
     stats: LifecycleStats,
     _thread_affine: PhantomData<Rc<()>>,
 }
@@ -309,10 +319,14 @@ impl Engine {
             hover_paths: HashMap::new(),
             active_pointers: HashMap::new(),
             controls: HashMap::new(),
+            semantics: HashMap::new(),
+            accessibility_nodes: HashMap::new(),
+            accessibility_initialized: false,
             focus_visible: false,
             modal_root: None,
             focus_before_modal: None,
             animation_time_ms: 0.0,
+            reduced_motion: false,
             stats: LifecycleStats::default(),
             _thread_affine: PhantomData,
         })
@@ -524,6 +538,7 @@ impl Engine {
         for node in descendants {
             if let Some(index) = self.node_slots.remove(&node) {
                 self.controls.remove(&index);
+                self.semantics.remove(&index);
                 let slot = &mut self.slots[index as usize];
                 slot.node = None;
                 slot.authored.clear();
@@ -766,7 +781,6 @@ impl Engine {
             self.dirty.hit_test = false;
         }
         if !self.dirty.visual() {
-            self.dirty.accessibility = false;
             return self
                 .latest_scene
                 .as_ref()
@@ -810,7 +824,11 @@ impl Engine {
         }];
         self.latest_scene = Some(SceneSnapshot::new(generation, recording, fragment, damage));
         self.stats.scenes += 1;
-        self.dirty = DirtyState::default();
+        let accessibility = self.dirty.accessibility;
+        self.dirty = DirtyState {
+            accessibility,
+            ..DirtyState::default()
+        };
         Ok(self.latest_scene.as_ref().expect("scene assigned"))
     }
 
@@ -927,6 +945,10 @@ impl Engine {
                 self.dirty.accessibility = true;
                 self.dirty_generations.accessibility += 1;
             }
+        }
+        if class != InvalidationClass::Accessibility {
+            self.dirty.accessibility = true;
+            self.dirty_generations.accessibility += 1;
         }
     }
     fn rebuild_hit_test(&mut self, fragment: &Fragment) {

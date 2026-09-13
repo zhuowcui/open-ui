@@ -8,8 +8,9 @@ use crate::style::{Bitmap, Error};
 use openui_compositor::SoftwareCompositor;
 use openui_dom::FormControlRole;
 use openui_engine::{
-    ControlAdjustment, EditCommand, Engine, EventPhase as EngineEventPhase, FocusOrigin,
-    NodeHandle, PointerEventKind, TextDirection, TextUnit, Viewport,
+    AccessibilityAction, AccessibilityTreeUpdate, ControlAdjustment, EditCommand, Engine,
+    EventPhase as EngineEventPhase, FocusOrigin, NodeHandle, PointerEventKind, TextDirection,
+    TextUnit, Viewport,
 };
 use openui_style::ImageResourceId;
 use std::cell::{Cell, RefCell};
@@ -85,6 +86,62 @@ impl Document {
 
     pub fn update_all(&self) -> Result<(), Error> {
         self.with_engine_mut(|engine| engine.update().map(|_| ()))
+    }
+
+    pub fn accessibility_update(&self) -> Result<AccessibilityTreeUpdate, Error> {
+        self.with_engine_mut(Engine::accessibility_update)
+    }
+
+    pub fn prefers_reduced_motion(&self) -> Result<bool, Error> {
+        self.with_engine(Engine::prefers_reduced_motion)
+    }
+
+    pub fn set_prefers_reduced_motion(&self, reduced: bool) -> Result<(), Error> {
+        self.with_engine_mut(|engine| {
+            engine.set_prefers_reduced_motion(reduced);
+            Ok(())
+        })
+    }
+
+    pub(crate) fn perform_accessibility_action(
+        &self,
+        target: NodeHandle,
+        action: AccessibilityAction,
+    ) -> Result<(), Error> {
+        if action == AccessibilityAction::Click {
+            let event = Event::keyboard("click", 0, None, Modifiers::NONE);
+            self.dispatch_to(target, &event)?;
+            if event.default_prevented() {
+                return Ok(());
+            }
+        }
+        let previous_focus = self.with_engine(Engine::focused)?;
+        let changes = self.with_engine_mut(|engine| {
+            engine.perform_accessibility_action(target, action.clone())
+        })?;
+        let next_focus = self.with_engine(Engine::focused)?;
+        if previous_focus != next_focus {
+            self.dispatch_focus_change(previous_focus, next_focus)?;
+        }
+        if matches!(
+            action,
+            AccessibilityAction::Click
+                | AccessibilityAction::Increment
+                | AccessibilityAction::Decrement
+                | AccessibilityAction::Expand
+                | AccessibilityAction::Collapse
+                | AccessibilityAction::SetValue(_)
+                | AccessibilityAction::ReplaceSelectedText(_)
+        ) {
+            for changed in changes.changed {
+                self.dispatch_to(changed, &Event::keyboard("input", 0, None, Modifiers::NONE))?;
+                self.dispatch_to(
+                    changed,
+                    &Event::keyboard("change", 0, None, Modifiers::NONE),
+                )?;
+            }
+        }
+        Ok(())
     }
 
     pub fn render_to_bitmap(&self) -> Result<Bitmap, Error> {
@@ -915,5 +972,39 @@ mod tests {
         assert!(modal_button.has_focus().unwrap());
         document.set_modal_root(None).unwrap();
         assert!(last.has_focus().unwrap());
+    }
+
+    #[test]
+    fn accessibility_tree_and_actions_use_the_same_control_state() {
+        let document = Document::new(200, 100).unwrap();
+        let checkbox = mounted(&document, "input");
+        checkbox.set_attribute("type", "checkbox").unwrap();
+        checkbox.set_accessibility_label("Ship").unwrap();
+        let clicks = Rc::new(Cell::new(0));
+        let observed_clicks = clicks.clone();
+        checkbox
+            .on("click", move |_| {
+                observed_clicks.set(observed_clicks.get() + 1)
+            })
+            .unwrap();
+        let initial = document.accessibility_update().unwrap();
+        let checkbox_id = document
+            .with_engine(|engine| engine.accessibility_node_id(checkbox.handle))
+            .unwrap()
+            .unwrap();
+        let node = &initial
+            .nodes
+            .iter()
+            .find(|(id, _)| *id == checkbox_id)
+            .unwrap()
+            .1;
+        assert_eq!(node.role(), openui_engine::AccessibilityRole::CheckBox);
+        assert_eq!(node.label(), Some("Ship"));
+        checkbox
+            .perform_accessibility_action(openui_engine::AccessibilityAction::Click)
+            .unwrap();
+        assert_eq!(clicks.get(), 1);
+        assert!(checkbox.is_checked().unwrap());
+        assert_eq!(document.accessibility_update().unwrap().nodes.len(), 1);
     }
 }

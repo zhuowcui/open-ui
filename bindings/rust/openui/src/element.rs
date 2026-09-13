@@ -4,7 +4,10 @@ use crate::document::{Document, DocumentInner};
 use crate::events::{Event, Listener};
 use crate::style::{Error, Rect};
 use openui_dom::ElementTag;
-use openui_engine::{NodeHandle, WeakNode};
+use openui_engine::{
+    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, NodeHandle,
+    WeakNode,
+};
 use openui_style::{Display, Style, StyleProperty, StyleValue};
 use std::rc::{Rc, Weak};
 
@@ -212,6 +215,59 @@ impl Element {
         self.document.with_engine_mut(|engine| {
             engine.set_image_resource(self.handle, resource, intrinsic_size)
         })
+    }
+
+    pub fn set_accessibility_role(&self, role: AccessibilityRole) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_accessibility_role(self.handle, role))
+    }
+
+    pub fn set_accessibility_label(&self, label: &str) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_accessibility_label(self.handle, label))
+    }
+
+    pub fn set_accessibility_description(&self, description: &str) -> Result<(), Error> {
+        self.document.with_engine_mut(|engine| {
+            engine.set_accessibility_description(self.handle, description)
+        })
+    }
+
+    pub fn set_accessibility_value(&self, value: &str) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_accessibility_value(self.handle, value))
+    }
+
+    pub fn set_accessibility_live(&self, live: AccessibilityLive) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_accessibility_live(self.handle, live))
+    }
+
+    pub fn set_accessibility_hidden(&self, hidden: bool) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_accessibility_hidden(self.handle, hidden))
+    }
+
+    pub fn set_accessibility_relation(
+        &self,
+        relation: AccessibilityRelation,
+        targets: &[Element],
+    ) -> Result<(), Error> {
+        if targets
+            .iter()
+            .any(|target| !Rc::ptr_eq(&self.document.inner, &target.document.inner))
+        {
+            return Err(openui_engine::EngineError::WrongDocument.into());
+        }
+        let handles: Vec<_> = targets.iter().map(|target| target.handle).collect();
+        self.document.with_engine_mut(|engine| {
+            engine.set_accessibility_relation(self.handle, relation, &handles)
+        })
+    }
+
+    pub fn perform_accessibility_action(&self, action: AccessibilityAction) -> Result<(), Error> {
+        self.document
+            .perform_accessibility_action(self.handle, action)
     }
 
     pub fn bounding_rect(&self) -> Result<Option<Rect>, Error> {

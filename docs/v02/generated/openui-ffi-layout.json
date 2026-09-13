@@ -2,6 +2,10 @@
   "abi_version": "0x00020000",
   "pointer_width": 64,
   "types": {
+    "OuiAccessibilityUpdate": {
+      "align": 8,
+      "size": 40
+    },
     "OuiAppConfig": {
       "align": 8,
       "size": 40

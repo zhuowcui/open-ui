@@ -1022,7 +1022,7 @@ impl Engine {
             .is_some_and(|control| control.disabled)
     }
 
-    fn is_focusable(&self, handle: NodeHandle) -> bool {
+    pub(crate) fn is_focusable(&self, handle: NodeHandle) -> bool {
         if self.resolve(handle).is_err()
             || self.is_disabled(handle)
             || !self.is_inside_modal(handle)
@@ -1114,7 +1114,7 @@ impl Engine {
         Ok(())
     }
 
-    fn sync_bool_attribute(&mut self, handle: NodeHandle, name: &str, value: bool) {
+    pub(crate) fn sync_bool_attribute(&mut self, handle: NodeHandle, name: &str, value: bool) {
         if let Ok(node) = self.resolve(handle) {
             if value {
                 self.document.set_attribute(node, name, "");

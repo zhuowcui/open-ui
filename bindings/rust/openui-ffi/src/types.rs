@@ -160,6 +160,19 @@ pub const OUI_CONTROL_PASSWORD: u32 = 1 << 5;
 
 #[repr(C)]
 #[derive(Clone, Copy)]
+pub struct OuiAccessibilityUpdate {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub generation: u64,
+    pub updated_nodes: usize,
+    pub focus_id: u64,
+    pub full_tree: u8,
+    pub reduced_motion: u8,
+    pub reserved: u16,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
 pub struct OuiEvent {
     pub struct_size: u32,
     pub abi_version: u32,

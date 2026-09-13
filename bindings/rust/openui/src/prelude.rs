@@ -16,7 +16,9 @@ pub use crate::style::*;
 pub use crate::text_node::{TextNode, WeakTextNode};
 pub use crate::typed_style::*;
 pub use crate::view_node::{mount_view, IntoView, ViewNode};
-pub use crate::Viewport;
+pub use crate::{
+    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, Viewport,
+};
 pub use openui_macros::{component, view};
 
 // Reactive primitives

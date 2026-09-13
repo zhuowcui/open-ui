@@ -122,6 +122,8 @@ pub use app::{
     App, AppBuilder, BackendPreference, HeadlessApp, LogicalSize, RenderOptions, WindowOptions,
 };
 pub use openui_engine::{
+    AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
+    AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
     ControlAdjustment, EditCommand, FocusOrigin, PointerEventKind, TextDirection, TextUnit,
     Viewport,
 };

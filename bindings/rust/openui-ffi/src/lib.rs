@@ -17,6 +17,7 @@ use generated::{property_from_raw, valid_event_type};
 use openui_compositor::SoftwareCompositor;
 use openui_dom::ElementTag;
 use openui_engine::{
+    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
     ControlAdjustment, Engine, EventPhase as EngineEventPhase, FocusOrigin, NodeHandle,
     PointerEventKind, Viewport,
 };
@@ -461,6 +462,53 @@ pub extern "C" fn oui_document_update(document_handle: *mut OuiDocument) -> OuiS
     })
 }
 
+// SAFETY CONTRACT: `document` is live and `out_update` is readable/writable
+// and initialized with the v0.2 struct header.
+#[no_mangle]
+pub extern "C" fn oui_document_accessibility_update(
+    document_handle: *mut OuiDocument,
+    out_update: *mut OuiAccessibilityUpdate,
+) -> OuiStatus {
+    ffi(|| {
+        if out_update.is_null() {
+            return Err(invalid("accessibility update output is null"));
+        }
+        // SAFETY: the caller guarantees a readable/writable output struct.
+        let output = unsafe { &mut *out_update };
+        check_header(
+            output.struct_size,
+            output.abi_version,
+            size_of::<OuiAccessibilityUpdate>(),
+        )?;
+        let state = document(document_handle as usize)?;
+        let mut engine = borrow_engine_mut(&state)?;
+        let update = engine.accessibility_update()?;
+        output.generation = engine.dirty_generations().accessibility;
+        output.updated_nodes = update.nodes.len();
+        output.focus_id = update.focus.0;
+        output.full_tree = u8::from(update.tree.is_some());
+        output.reduced_motion = u8::from(engine.prefers_reduced_motion());
+        output.reserved = 0;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `document` is live and `reduced` is zero or one.
+#[no_mangle]
+pub extern "C" fn oui_document_set_reduced_motion(
+    document_handle: *mut OuiDocument,
+    reduced: u8,
+) -> OuiStatus {
+    ffi(|| {
+        if reduced > 1 {
+            return Err(invalid("reduced motion must be zero or one"));
+        }
+        let state = document(document_handle as usize)?;
+        borrow_engine_mut(&state)?.set_prefers_reduced_motion(reduced != 0);
+        Ok(())
+    })
+}
+
 fn render_frame(document_handle: *mut OuiDocument) -> Result<openui_compositor::Frame, ApiError> {
     let state = document(document_handle as usize)?;
     if state.update_depth.get() != 0 {
@@ -720,10 +768,10 @@ pub extern "C" fn oui_element_get_bounds(
         if out_rect.is_null() {
             return Err(invalid("out_rect is null"));
         }
-        let element = element(element_handle as usize)?;
-        let state = element_document(&element)?;
+        let source = element(element_handle as usize)?;
+        let state = element_document(&source)?;
         let bounds = borrow_engine_mut(&state)?
-            .bounds(element.node)?
+            .bounds(source.node)?
             .ok_or_else(|| ApiError::new(OuiStatus::InvalidState, "element has no layout box"))?;
         // SAFETY: the caller guarantees writable storage for one `OuiRect`.
         unsafe {
@@ -766,9 +814,9 @@ pub extern "C" fn oui_element_get_scroll_offset(
         if out_x.is_null() || out_y.is_null() {
             return Err(invalid("scroll output pointer is null"));
         }
-        let element = element(element_handle as usize)?;
-        let state = element_document(&element)?;
-        let (x, y) = borrow_engine(&state)?.scroll_offset(element.node)?;
+        let source = element(element_handle as usize)?;
+        let state = element_document(&source)?;
+        let (x, y) = borrow_engine(&state)?.scroll_offset(source.node)?;
         // SAFETY: both pointers are caller-provided writable `double` slots.
         unsafe {
             ptr::write(out_x, x);
@@ -936,6 +984,27 @@ fn validate_event(event: &OuiEvent) -> Result<(), ApiError> {
         return Err(invalid("event coordinates and deltas must be finite"));
     }
     Ok(())
+}
+
+fn synthesized_event(event_type: u32, text: OuiUtf8) -> OuiEvent {
+    OuiEvent {
+        struct_size: size_of::<OuiEvent>() as u32,
+        abi_version: OUI_ABI_VERSION,
+        event_type,
+        phase: 0,
+        flags: 0,
+        modifiers: 0,
+        timestamp_ns: 0,
+        x: 0.0,
+        y: 0.0,
+        delta_x: 0.0,
+        delta_y: 0.0,
+        key_code: 0,
+        pointer_id: 0,
+        text,
+        target: ptr::null_mut(),
+        current_target: ptr::null_mut(),
+    }
 }
 
 fn dispatch_event_to(
@@ -1295,12 +1364,19 @@ pub extern "C" fn oui_element_get_control_flags(
             .control_state(element.node)?
             .cloned()
             .ok_or_else(|| ApiError::new(OuiStatus::InvalidState, "element is not a control"))?;
-        let flags = (control.disabled as u32) * OUI_CONTROL_DISABLED
-            | (control.checked as u32) * OUI_CONTROL_CHECKED
-            | (control.selected as u32) * OUI_CONTROL_SELECTED
-            | (control.open as u32) * OUI_CONTROL_OPEN
-            | (control.indeterminate as u32) * OUI_CONTROL_INDETERMINATE
-            | (control.password as u32) * OUI_CONTROL_PASSWORD;
+        let mut flags = 0;
+        for (enabled, flag) in [
+            (control.disabled, OUI_CONTROL_DISABLED),
+            (control.checked, OUI_CONTROL_CHECKED),
+            (control.selected, OUI_CONTROL_SELECTED),
+            (control.open, OUI_CONTROL_OPEN),
+            (control.indeterminate, OUI_CONTROL_INDETERMINATE),
+            (control.password, OUI_CONTROL_PASSWORD),
+        ] {
+            if enabled {
+                flags |= flag;
+            }
+        }
         // SAFETY: output storage was validated above.
         unsafe { ptr::write(out_flags, flags) };
         Ok(())
@@ -1361,6 +1437,237 @@ pub extern "C" fn oui_element_adjust_control(
         let element = element(element_handle as usize)?;
         let state = element_document(&element)?;
         borrow_engine_mut(&state)?.adjust_control(element.node, adjustment)?;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is live and `out_id` is writable.
+#[no_mangle]
+pub extern "C" fn oui_element_get_accessibility_id(
+    element_handle: *mut OuiElement,
+    out_id: *mut u64,
+) -> OuiStatus {
+    ffi(|| {
+        if out_id.is_null() {
+            return Err(invalid("accessibility id output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let id = borrow_engine(&state)?
+            .accessibility_node_id(element.node)?
+            .0;
+        // SAFETY: output storage was validated above.
+        unsafe { ptr::write(out_id, id) };
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is live and role is a declared
+// OuiAccessibilityRole value.
+#[no_mangle]
+pub extern "C" fn oui_element_set_accessibility_role(
+    element_handle: *mut OuiElement,
+    role: i32,
+) -> OuiStatus {
+    ffi(|| {
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let mut engine = borrow_engine_mut(&state)?;
+        let role = match role {
+            0 => return Ok(engine.clear_accessibility_role(element.node)?),
+            1 => AccessibilityRole::GenericContainer,
+            2 => AccessibilityRole::Button,
+            3 => AccessibilityRole::CheckBox,
+            4 => AccessibilityRole::RadioButton,
+            5 => AccessibilityRole::TextInput,
+            6 => AccessibilityRole::MultilineTextInput,
+            7 => AccessibilityRole::ComboBox,
+            8 => AccessibilityRole::ListBoxOption,
+            9 => AccessibilityRole::Slider,
+            10 => AccessibilityRole::Image,
+            11 => AccessibilityRole::Link,
+            12 => AccessibilityRole::Dialog,
+            13 => AccessibilityRole::Heading,
+            14 => AccessibilityRole::Status,
+            15 => AccessibilityRole::Alert,
+            _ => return Err(invalid("unknown accessibility role")),
+        };
+        engine.set_accessibility_role(element.node, role)?;
+        Ok(())
+    })
+}
+
+macro_rules! accessibility_string_setter {
+    ($name:ident, $method:ident, $label:literal) => {
+        #[doc = concat!("SAFETY CONTRACT: `element` is live and ", $label, " is readable for its length.")]
+        #[no_mangle]
+        pub extern "C" fn $name(element_handle: *mut OuiElement, value: OuiUtf8) -> OuiStatus {
+            ffi(|| {
+                let value = utf8(value, $label)?;
+                let element = element(element_handle as usize)?;
+                let state = element_document(&element)?;
+                borrow_engine_mut(&state)?.$method(element.node, value)?;
+                Ok(())
+            })
+        }
+    };
+}
+
+accessibility_string_setter!(
+    oui_element_set_accessibility_label,
+    set_accessibility_label,
+    "accessibility label"
+);
+accessibility_string_setter!(
+    oui_element_set_accessibility_description,
+    set_accessibility_description,
+    "accessibility description"
+);
+accessibility_string_setter!(
+    oui_element_set_accessibility_value,
+    set_accessibility_value,
+    "accessibility value"
+);
+
+// SAFETY CONTRACT: `element` is live and live is a declared
+// OuiAccessibilityLive value.
+#[no_mangle]
+pub extern "C" fn oui_element_set_accessibility_live(
+    element_handle: *mut OuiElement,
+    live: i32,
+) -> OuiStatus {
+    ffi(|| {
+        let live = match live {
+            0 => AccessibilityLive::Off,
+            1 => AccessibilityLive::Polite,
+            2 => AccessibilityLive::Assertive,
+            _ => return Err(invalid("unknown accessibility live mode")),
+        };
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        borrow_engine_mut(&state)?.set_accessibility_live(element.node, live)?;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is live and hidden is zero or one.
+#[no_mangle]
+pub extern "C" fn oui_element_set_accessibility_hidden(
+    element_handle: *mut OuiElement,
+    hidden: u8,
+) -> OuiStatus {
+    ffi(|| {
+        if hidden > 1 {
+            return Err(invalid("accessibility hidden must be zero or one"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        borrow_engine_mut(&state)?.set_accessibility_hidden(element.node, hidden != 0)?;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is live and `targets` is either null for zero
+// targets or references target_count aligned, readable element pointers.
+#[no_mangle]
+pub extern "C" fn oui_element_set_accessibility_relation(
+    element_handle: *mut OuiElement,
+    relation: i32,
+    targets: *const *mut OuiElement,
+    target_count: usize,
+) -> OuiStatus {
+    ffi(|| {
+        let relation = match relation {
+            0 => AccessibilityRelation::LabelledBy,
+            1 => AccessibilityRelation::DescribedBy,
+            2 => AccessibilityRelation::Controls,
+            3 => AccessibilityRelation::Details,
+            _ => return Err(invalid("unknown accessibility relation")),
+        };
+        let target_addresses = copy_array(targets, target_count, "accessibility target")?;
+        let source = element(element_handle as usize)?;
+        let state = element_document(&source)?;
+        let mut target_nodes = Vec::new();
+        target_nodes
+            .try_reserve_exact(target_addresses.len())
+            .map_err(|_| ApiError::new(OuiStatus::OutOfMemory, "relation allocation failed"))?;
+        for target in target_addresses {
+            let target = element(target as usize)?;
+            if !Rc::ptr_eq(&state, &element_document(&target)?) {
+                return Err(ApiError::new(
+                    OuiStatus::WrongDocument,
+                    "accessibility relation crosses documents",
+                ));
+            }
+            target_nodes.push(target.node);
+        }
+        borrow_engine_mut(&state)?.set_accessibility_relation(
+            source.node,
+            relation,
+            &target_nodes,
+        )?;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is live, action is declared, and value is
+// readable for its length. Anchor/focus are used only for selection actions.
+#[no_mangle]
+pub extern "C" fn oui_element_perform_accessibility_action(
+    element_handle: *mut OuiElement,
+    action: i32,
+    value: OuiUtf8,
+    anchor: usize,
+    focus: usize,
+) -> OuiStatus {
+    ffi(|| {
+        let action_value = utf8(value, "accessibility action value")?;
+        let action = match action {
+            0 => AccessibilityAction::Click,
+            1 => AccessibilityAction::Focus,
+            2 => AccessibilityAction::Blur,
+            3 => AccessibilityAction::Increment,
+            4 => AccessibilityAction::Decrement,
+            5 => AccessibilityAction::Expand,
+            6 => AccessibilityAction::Collapse,
+            7 => AccessibilityAction::SetValue(action_value),
+            8 => AccessibilityAction::ReplaceSelectedText(action_value),
+            9 => AccessibilityAction::SetTextSelection { anchor, focus },
+            10 => AccessibilityAction::ScrollIntoView,
+            _ => return Err(invalid("unknown accessibility action")),
+        };
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let ordinary_event_type = match &action {
+            AccessibilityAction::Click => Some(4),
+            AccessibilityAction::Focus => Some(12),
+            AccessibilityAction::Blur => Some(13),
+            _ => None,
+        };
+        if let Some(event_type) = ordinary_event_type {
+            let mut event = synthesized_event(event_type, value);
+            dispatch_event_to(
+                &state,
+                element.node,
+                element_handle as usize,
+                &mut event,
+                true,
+            )?;
+            return Ok(());
+        }
+
+        let changed = borrow_engine_mut(&state)?
+            .perform_accessibility_action(element.node, action)?
+            .changed;
+        for changed in changed {
+            let Ok(address) = element_address(&state, changed) else {
+                continue;
+            };
+            for event_type in [16, 17] {
+                let mut event = synthesized_event(event_type, value);
+                dispatch_event_to(&state, changed, address, &mut event, false)?;
+            }
+        }
         Ok(())
     })
 }
@@ -1802,6 +2109,13 @@ mod tests {
             (48, 4)
         );
         assert_eq!((size_of::<OuiEvent>(), align_of::<OuiEvent>()), (88, 8));
+        assert_eq!(
+            (
+                size_of::<OuiAccessibilityUpdate>(),
+                align_of::<OuiAccessibilityUpdate>()
+            ),
+            (40, 8)
+        );
         assert_eq!(
             (size_of::<OuiErrorInfo>(), align_of::<OuiErrorInfo>()),
             (24, 8)
@@ -2266,6 +2580,126 @@ mod tests {
         assert_eq!(std::str::from_utf8(&value).unwrap(), "ab👩‍💻");
 
         assert_eq!(oui_element_destroy(input), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(checkbox), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_accessibility_updates_actions_and_validation_share_engine_state() {
+        let document = create_document(100, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let checkbox = create_element(document, 23, root);
+        assert_eq!(set_length(checkbox, 4, 40.0), OuiStatus::Ok);
+        assert_eq!(set_length(checkbox, 5, 40.0), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_set_attribute(checkbox, text("type"), text("checkbox")),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_element_set_accessibility_label(checkbox, text("Ship")),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_element_set_accessibility_role(checkbox, 99),
+            OuiStatus::InvalidArgument
+        );
+        let mut log = Vec::new();
+        let mut click_data = CallbackData {
+            code: 4,
+            log: &mut log,
+            mutate: ptr::null_mut(),
+        };
+        let mut input_data = CallbackData {
+            code: 6,
+            log: &mut log,
+            mutate: ptr::null_mut(),
+        };
+        let mut change_data = CallbackData {
+            code: 7,
+            log: &mut log,
+            mutate: ptr::null_mut(),
+        };
+        let mut click_listener = ptr::null_mut();
+        let mut input_listener = ptr::null_mut();
+        let mut change_listener = ptr::null_mut();
+        assert_eq!(
+            oui_element_add_event_listener(
+                checkbox,
+                4,
+                0,
+                Some(record_event),
+                &mut click_data as *mut _ as *mut c_void,
+                &mut click_listener,
+            ),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_element_add_event_listener(
+                checkbox,
+                16,
+                0,
+                Some(record_event),
+                &mut input_data as *mut _ as *mut c_void,
+                &mut input_listener,
+            ),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_element_add_event_listener(
+                checkbox,
+                17,
+                0,
+                Some(record_event),
+                &mut change_data as *mut _ as *mut c_void,
+                &mut change_listener,
+            ),
+            OuiStatus::Ok
+        );
+        let mut id = 0;
+        assert_eq!(
+            oui_element_get_accessibility_id(checkbox, &mut id),
+            OuiStatus::Ok
+        );
+        assert_ne!(id, 0);
+        let mut update = OuiAccessibilityUpdate {
+            struct_size: size_of::<OuiAccessibilityUpdate>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            generation: 0,
+            updated_nodes: 0,
+            focus_id: 0,
+            full_tree: 0,
+            reduced_motion: 0,
+            reserved: 0,
+        };
+        assert_eq!(
+            oui_document_accessibility_update(document, &mut update),
+            OuiStatus::Ok
+        );
+        assert_eq!(update.full_tree, 1);
+        assert!(update.updated_nodes >= 2);
+        assert_eq!(
+            oui_element_perform_accessibility_action(checkbox, 0, empty_utf8(), 0, 0),
+            OuiStatus::Ok
+        );
+        assert_eq!(log, [42, 62, 72]);
+        assert_eq!(
+            oui_document_accessibility_update(document, &mut update),
+            OuiStatus::Ok
+        );
+        assert_eq!(update.full_tree, 0);
+        assert_eq!(update.updated_nodes, 1);
+        assert_eq!(oui_document_set_reduced_motion(document, 1), OuiStatus::Ok);
+        assert_eq!(
+            oui_document_accessibility_update(document, &mut update),
+            OuiStatus::Ok
+        );
+        assert_eq!(update.reduced_motion, 1);
+
+        assert_eq!(oui_listener_destroy(click_listener), OuiStatus::Ok);
+        assert_eq!(oui_listener_destroy(input_listener), OuiStatus::Ok);
+        assert_eq!(oui_listener_destroy(change_listener), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(checkbox), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
