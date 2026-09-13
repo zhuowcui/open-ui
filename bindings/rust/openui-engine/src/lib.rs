@@ -1,12 +1,18 @@
 //! Retained, thread-affine Open UI document engine.
 
 mod accessibility;
+mod animation;
 mod interaction;
 
 pub use accessibility::{
     AccessibilityAction, AccessibilityActionData, AccessibilityActionRequest, AccessibilityLive,
     AccessibilityNode, AccessibilityNodeId, AccessibilityPlatformAction, AccessibilityRelation,
     AccessibilityRole, AccessibilityTreeUpdate,
+};
+
+pub use animation::{
+    AnimationEvent, AnimationEventKind, AnimationId, AnimationState, AnimationTimeline,
+    ScrollAnimationId,
 };
 
 pub use interaction::{
@@ -276,6 +282,11 @@ pub struct Engine {
     modal_root: Option<NodeHandle>,
     focus_before_modal: Option<NodeHandle>,
     animation_time_ms: f64,
+    animations: BTreeMap<AnimationId, animation::AnimationInstance>,
+    animation_events: Vec<AnimationEvent>,
+    next_animation_id: u64,
+    scroll_animations: BTreeMap<ScrollAnimationId, animation::ScrollAnimationInstance>,
+    next_scroll_animation_id: u64,
     reduced_motion: bool,
     stats: LifecycleStats,
     _thread_affine: PhantomData<Rc<()>>,
@@ -327,6 +338,11 @@ impl Engine {
             modal_root: None,
             focus_before_modal: None,
             animation_time_ms: 0.0,
+            animations: BTreeMap::new(),
+            animation_events: Vec::new(),
+            next_animation_id: 1,
+            scroll_animations: BTreeMap::new(),
+            next_scroll_animation_id: 1,
             reduced_motion: false,
             stats: LifecycleStats::default(),
             _thread_affine: PhantomData,
@@ -516,6 +532,7 @@ impl Engine {
             .filter_map(|node| self.node_slots.get(node))
             .map(|index| self.handle_for_slot(*index))
             .collect();
+        self.cancel_animations_for_handles(&removed_handles);
         if self
             .focused
             .is_some_and(|focused| removed_handles.contains(&focused))
@@ -632,9 +649,20 @@ impl Engine {
         .map_err(|_| EngineError::PropertyType { property })?;
         self.slots[handle.index as usize]
             .authored
-            .insert(property as u16, value);
+            .insert(property as u16, value.clone());
+        let mut has_animation = false;
+        for animation in self.animations.values_mut().filter(|animation| {
+            animation.target == handle && animation.keyframes.property() == property
+        }) {
+            animation.underlying = value.clone();
+            animation.last_applied = None;
+            has_animation = true;
+        }
         self.dirty.hit_test = true;
         self.mark_dirty(property.metadata().invalidation);
+        if has_animation {
+            self.sample_animations()?;
+        }
         Ok(())
     }
 
@@ -712,10 +740,16 @@ impl Engine {
         }
         let node = self.resolve(handle)?;
         let (x, y) = (x.max(0.0) as f32, y.max(0.0) as f32);
-        let data = self.document.node_mut(node);
-        if (data.scroll_left, data.scroll_top) == (x, y) {
+        if (
+            self.document.node(node).scroll_left,
+            self.document.node(node).scroll_top,
+        ) == (x, y)
+        {
             return Ok(());
         }
+        self.scroll_animations
+            .retain(|_, animation| animation.target != handle);
+        let data = self.document.node_mut(node);
         data.scroll_left = x;
         data.scroll_top = y;
         self.dirty.hit_test = true;
@@ -782,7 +816,8 @@ impl Engine {
             ));
         }
         self.animation_time_ms = time_ms;
-        Ok(())
+        self.sample_animations()?;
+        self.sample_scroll_animations()
     }
 
     pub fn animation_time(&self) -> f64 {

@@ -33,6 +33,7 @@ impl Bitmap {
 pub enum Error {
     Engine(openui_engine::EngineError),
     Compositor(openui_compositor::CompositorError),
+    Animation(openui_style::AnimationError),
     UnknownTag(String),
     ReentrantMutation,
     InvalidArgument(&'static str),
@@ -46,6 +47,7 @@ impl std::fmt::Display for Error {
         match self {
             Self::Engine(error) => error.fmt(f),
             Self::Compositor(error) => error.fmt(f),
+            Self::Animation(error) => error.fmt(f),
             Self::UnknownTag(tag) => write!(f, "unknown element tag `{tag}`"),
             Self::ReentrantMutation => {
                 f.write_str("a callback attempted a reentrant document mutation")
@@ -71,6 +73,12 @@ impl From<openui_engine::EngineError> for Error {
 impl From<openui_compositor::CompositorError> for Error {
     fn from(value: openui_compositor::CompositorError) -> Self {
         Self::Compositor(value)
+    }
+}
+
+impl From<openui_style::AnimationError> for Error {
+    fn from(value: openui_style::AnimationError) -> Self {
+        Self::Animation(value)
     }
 }
 

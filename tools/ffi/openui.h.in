@@ -344,6 +344,84 @@ typedef struct OuiTransformOperation {
   float values[6];
 } OuiTransformOperation;
 
+typedef enum OuiEasingKind {
+  OUI_EASING_LINEAR = 0,
+  OUI_EASING_CUBIC_BEZIER = 1,
+  OUI_EASING_STEPS = 2,
+  OUI_EASING_LINEAR_STOPS = 3
+} OuiEasingKind;
+
+typedef enum OuiStepPosition {
+  OUI_STEP_JUMP_START = 0,
+  OUI_STEP_JUMP_END = 1,
+  OUI_STEP_JUMP_NONE = 2,
+  OUI_STEP_JUMP_BOTH = 3
+} OuiStepPosition;
+
+typedef struct OuiEasing {
+  uint32_t kind;
+  uint32_t step_position;
+  uint32_t step_count;
+  uint32_t reserved;
+  double values[4];
+} OuiEasing;
+
+typedef struct OuiAnimationOptions {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  double delay_ms;
+  double duration_ms;
+  double iterations; /* -1 means infinite */
+  double playback_rate;
+  uint32_t direction;
+  uint32_t fill;
+  uint32_t play_state;
+  uint32_t composite;
+  OuiEasing easing;
+} OuiAnimationOptions;
+
+typedef struct OuiAnimationTimeline {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t kind; /* 0 document, 1 scroll, 2 view */
+  uint32_t axis; /* 0 block, 1 inline, 2 x, 3 y */
+  OuiElement* source;
+  double range_start;
+  double range_end;
+} OuiAnimationTimeline;
+
+typedef struct OuiKeyframe {
+  double offset;
+  OuiStyleValue value;
+  OuiEasing easing;
+  uint32_t has_easing;
+  uint32_t reserved;
+} OuiKeyframe;
+
+typedef struct OuiAnimationState {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint64_t animation_id;
+  double current_time_ms;
+  uint64_t iteration;
+  int32_t property;
+  uint32_t play_state;
+  uint32_t phase;
+  uint8_t finished;
+  uint8_t reserved[3];
+} OuiAnimationState;
+
+typedef struct OuiAnimationEvent {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint64_t animation_id;
+  uint32_t kind;
+  int32_t property;
+  double elapsed_time_ms;
+  uint64_t iteration;
+  OuiElement* target;
+} OuiAnimationEvent;
+
 typedef struct OuiEvent {
   uint32_t struct_size;
   uint32_t abi_version;
@@ -422,6 +500,16 @@ OuiStatus oui_document_advance_focus(OuiDocument* document, int32_t direction, O
 OuiStatus oui_document_set_modal_root(OuiDocument* document, OuiElement* root);
 OuiStatus oui_document_accessibility_update(OuiDocument* document, OuiAccessibilityUpdate* out_update);
 OuiStatus oui_document_set_reduced_motion(OuiDocument* document, uint8_t reduced);
+OuiStatus oui_document_set_animation_time(OuiDocument* document, double time_ms);
+OuiStatus oui_document_is_animating(OuiDocument* document, uint8_t* out_animating);
+OuiStatus oui_document_animation_pause(OuiDocument* document, uint64_t animation_id);
+OuiStatus oui_document_animation_play(OuiDocument* document, uint64_t animation_id);
+OuiStatus oui_document_animation_seek(OuiDocument* document, uint64_t animation_id, double current_time_ms);
+OuiStatus oui_document_animation_set_playback_rate(OuiDocument* document, uint64_t animation_id, double playback_rate);
+OuiStatus oui_document_animation_finish(OuiDocument* document, uint64_t animation_id);
+OuiStatus oui_document_animation_cancel(OuiDocument* document, uint64_t animation_id);
+OuiStatus oui_document_animation_get_state(OuiDocument* document, uint64_t animation_id, OuiAnimationState* out_state);
+OuiStatus oui_document_take_animation_event(OuiDocument* document, OuiAnimationEvent* out_event, uint8_t* out_has_event);
 
 OuiStatus oui_element_create(OuiDocument* document, OuiElementTag tag, OuiElement** out_element);
 OuiStatus oui_text_create(OuiDocument* document, OuiUtf8 text, OuiElement** out_text);
@@ -434,6 +522,8 @@ OuiStatus oui_element_set_text(OuiElement* element, OuiUtf8 text);
 OuiStatus oui_element_set_attribute(OuiElement* element, OuiUtf8 name, OuiUtf8 value);
 OuiStatus oui_element_remove_attribute(OuiElement* element, OuiUtf8 name);
 OuiStatus oui_element_set_property(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* value);
+OuiStatus oui_element_animate(OuiElement* element, OuiStyleProperty property, const OuiKeyframe* keyframes, size_t keyframe_count, const OuiAnimationOptions* options, const OuiAnimationTimeline* timeline, uint64_t* out_animation_id);
+OuiStatus oui_element_transition(OuiElement* element, OuiStyleProperty property, const OuiStyleValue* target, const OuiAnimationOptions* options, uint64_t* out_animation_id);
 OuiStatus oui_element_get_bounds(OuiElement* element, OuiRect* out_rect);
 OuiStatus oui_element_scroll_to(OuiElement* element, double x, double y);
 OuiStatus oui_element_get_scroll_offset(OuiElement* element, double* out_x, double* out_y);

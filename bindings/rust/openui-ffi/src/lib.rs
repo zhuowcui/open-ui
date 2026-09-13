@@ -18,12 +18,14 @@ use openui_compositor::SoftwareCompositor;
 use openui_dom::ElementTag;
 use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
-    ControlAdjustment, Engine, EventPhase as EngineEventPhase, FocusOrigin, NodeHandle,
-    PointerEventKind, Viewport,
+    AnimationEventKind, AnimationId, AnimationTimeline, ControlAdjustment, Engine,
+    EventPhase as EngineEventPhase, FocusOrigin, NodeHandle, PointerEventKind, Viewport,
 };
 use openui_style::{
-    Border, BorderStyle, Color, CornerRadii, Edges, FontFamilyList, Gap, GenericFontFamily,
-    StyleValue, Transform2D, TransformList, TransformOperation,
+    AnimationOptions, AnimationPhase, Border, BorderStyle, Color, CompositeOperation, CornerRadii,
+    Easing, Edges, FillMode, FontFamilyList, Gap, GenericFontFamily, IterationCount, Keyframe,
+    Keyframes, LinearStop, PlayState, PlaybackDirection, PropertyKeyframes, StepPosition,
+    StyleValue, TimelineAxis, TimelineRange, Transform2D, TransformList, TransformOperation,
 };
 use registry::{
     borrow_engine, borrow_engine_mut, bytes, destroy, document, element, element_document, ffi,
@@ -118,6 +120,7 @@ fn new_document(config: &OuiDocumentConfig) -> Result<Rc<DocumentState>, ApiErro
         listeners: RefCell::new(Vec::new()),
         next_listener: Cell::new(1),
         element_handles: RefCell::new(std::collections::HashMap::new()),
+        animation_events: RefCell::new(Vec::new()),
     }))
 }
 
@@ -212,6 +215,185 @@ fn copy_array<T: Copy>(
     // aligned `T` values for the call. Bounds and null were validated above.
     result.extend_from_slice(unsafe { std::slice::from_raw_parts(data, length) });
     Ok(result)
+}
+
+fn animation_easing(value: OuiEasing) -> Result<Easing, ApiError> {
+    if value.reserved != 0 || value.values.iter().any(|number| !number.is_finite()) {
+        return Err(invalid(
+            "animation easing contains invalid or reserved values",
+        ));
+    }
+    let step_position = match value.step_position {
+        0 => StepPosition::JumpStart,
+        1 => StepPosition::JumpEnd,
+        2 => StepPosition::JumpNone,
+        3 => StepPosition::JumpBoth,
+        _ => return Err(invalid("unknown step position")),
+    };
+    match value.kind {
+        0 => Ok(Easing::Linear),
+        1 => Easing::cubic_bezier(
+            value.values[0],
+            value.values[1],
+            value.values[2],
+            value.values[3],
+        )
+        .map_err(|error| invalid(error.to_string())),
+        2 => Easing::steps(value.step_count, step_position)
+            .map_err(|error| invalid(error.to_string())),
+        3 => Easing::linear_stops(vec![
+            LinearStop {
+                input: value.values[0],
+                output: value.values[1],
+            },
+            LinearStop {
+                input: value.values[2],
+                output: value.values[3],
+            },
+        ])
+        .map_err(|error| invalid(error.to_string())),
+        _ => Err(invalid("unknown animation easing kind")),
+    }
+}
+
+fn animation_options(value: *const OuiAnimationOptions) -> Result<AnimationOptions, ApiError> {
+    if value.is_null() {
+        return Err(invalid("animation options are null"));
+    }
+    // SAFETY: the C contract requires a readable options structure.
+    let value = unsafe { &*value };
+    check_header(
+        value.struct_size,
+        value.abi_version,
+        size_of::<OuiAnimationOptions>(),
+    )?;
+    let iterations = if value.iterations == -1.0 {
+        IterationCount::Infinite
+    } else {
+        IterationCount::Number(value.iterations)
+    };
+    let direction = match value.direction {
+        0 => PlaybackDirection::Normal,
+        1 => PlaybackDirection::Reverse,
+        2 => PlaybackDirection::Alternate,
+        3 => PlaybackDirection::AlternateReverse,
+        _ => return Err(invalid("unknown animation direction")),
+    };
+    let fill = match value.fill {
+        0 => FillMode::None,
+        1 => FillMode::Forwards,
+        2 => FillMode::Backwards,
+        3 => FillMode::Both,
+        _ => return Err(invalid("unknown animation fill mode")),
+    };
+    let play_state = match value.play_state {
+        0 => PlayState::Running,
+        1 => PlayState::Paused,
+        _ => return Err(invalid("unknown animation play state")),
+    };
+    let composite = match value.composite {
+        0 => CompositeOperation::Replace,
+        1 => CompositeOperation::Add,
+        2 => CompositeOperation::Accumulate,
+        _ => return Err(invalid("unknown animation composite operation")),
+    };
+    let options = AnimationOptions {
+        delay_ms: value.delay_ms,
+        duration_ms: value.duration_ms,
+        iterations,
+        direction,
+        fill,
+        play_state,
+        playback_rate: value.playback_rate,
+        composite,
+        easing: animation_easing(value.easing)?,
+    };
+    options
+        .validate()
+        .map_err(|error| invalid(error.to_string()))?;
+    Ok(options)
+}
+
+fn animation_timeline(
+    owner: &Rc<DocumentState>,
+    value: *const OuiAnimationTimeline,
+) -> Result<AnimationTimeline, ApiError> {
+    if value.is_null() {
+        return Ok(AnimationTimeline::Document);
+    }
+    // SAFETY: the C contract requires a readable timeline structure.
+    let value = unsafe { &*value };
+    check_header(
+        value.struct_size,
+        value.abi_version,
+        size_of::<OuiAnimationTimeline>(),
+    )?;
+    if value.kind == 0 {
+        if !value.source.is_null() {
+            return Err(invalid("document timelines must not specify a source"));
+        }
+        return Ok(AnimationTimeline::Document);
+    }
+    let source = element(value.source as usize)?;
+    let source_document = element_document(&source)?;
+    if !Rc::ptr_eq(owner, &source_document) {
+        return Err(ApiError::new(
+            OuiStatus::WrongDocument,
+            "animation timeline source belongs to another document",
+        ));
+    }
+    let axis = match value.axis {
+        0 => TimelineAxis::Block,
+        1 => TimelineAxis::Inline,
+        2 => TimelineAxis::X,
+        3 => TimelineAxis::Y,
+        _ => return Err(invalid("unknown animation timeline axis")),
+    };
+    let range = TimelineRange::new(value.range_start, value.range_end)
+        .map_err(|error| invalid(error.to_string()))?;
+    match value.kind {
+        1 => Ok(AnimationTimeline::Scroll {
+            source: source.node,
+            axis,
+            range,
+        }),
+        2 => Ok(AnimationTimeline::View {
+            subject: source.node,
+            axis,
+            range,
+        }),
+        _ => Err(invalid("unknown animation timeline kind")),
+    }
+}
+
+fn flush_animation_events(state: &Rc<DocumentState>) -> Result<(), ApiError> {
+    let events = borrow_engine_mut(state)?.drain_animation_events();
+    for animation_event in &events {
+        let Ok(address) = element_address(state, animation_event.target) else {
+            continue;
+        };
+        let event_type = match animation_event.kind {
+            AnimationEventKind::Start => 20,
+            AnimationEventKind::Iteration => 21,
+            AnimationEventKind::End => 22,
+            AnimationEventKind::Cancel => 23,
+        };
+        let mut event = synthesized_event(
+            event_type,
+            OuiUtf8 {
+                data: ptr::null(),
+                length: 0,
+            },
+        );
+        event.timestamp_ns = (animation_event.elapsed_time_ms.max(0.0) * 1_000_000.0) as u64;
+        dispatch_event_to(state, animation_event.target, address, &mut event, false)?;
+    }
+    state
+        .animation_events
+        .try_borrow_mut()
+        .map_err(|_| ApiError::new(OuiStatus::Reentrant, "animation event queue is borrowed"))?
+        .extend(events);
+    Ok(())
 }
 
 // SAFETY CONTRACT: no pointers are accepted; this constant query is reentrant.
@@ -509,6 +691,179 @@ pub extern "C" fn oui_document_set_reduced_motion(
     })
 }
 
+// SAFETY CONTRACT: `document` is live and `time_ms` is finite and non-negative.
+#[no_mangle]
+pub extern "C" fn oui_document_set_animation_time(
+    document_handle: *mut OuiDocument,
+    time_ms: f64,
+) -> OuiStatus {
+    ffi(|| {
+        let state = document(document_handle as usize)?;
+        borrow_engine_mut(&state)?.set_animation_time(time_ms)?;
+        flush_animation_events(&state)
+    })
+}
+
+// SAFETY CONTRACT: `document` is live and `out_animating` is writable.
+#[no_mangle]
+pub extern "C" fn oui_document_is_animating(
+    document_handle: *mut OuiDocument,
+    out_animating: *mut u8,
+) -> OuiStatus {
+    ffi(|| {
+        if out_animating.is_null() {
+            return Err(invalid("out_animating is null"));
+        }
+        let state = document(document_handle as usize)?;
+        let animating = u8::from(borrow_engine(&state)?.is_animating());
+        // SAFETY: output storage was checked for null and must be writable.
+        unsafe { ptr::write(out_animating, animating) };
+        Ok(())
+    })
+}
+
+macro_rules! animation_command {
+    ($name:ident, $method:ident) => {
+        // SAFETY CONTRACT: `document` is live and the animation ID was created by it.
+        #[no_mangle]
+        pub extern "C" fn $name(document_handle: *mut OuiDocument, animation_id: u64) -> OuiStatus {
+            ffi(|| {
+                let state = document(document_handle as usize)?;
+                borrow_engine_mut(&state)?.$method(AnimationId(animation_id))?;
+                flush_animation_events(&state)
+            })
+        }
+    };
+}
+
+animation_command!(oui_document_animation_pause, pause_animation);
+animation_command!(oui_document_animation_play, play_animation);
+animation_command!(oui_document_animation_finish, finish_animation);
+animation_command!(oui_document_animation_cancel, cancel_animation);
+
+// SAFETY CONTRACT: `document` and animation ID are live; time is finite.
+#[no_mangle]
+pub extern "C" fn oui_document_animation_seek(
+    document_handle: *mut OuiDocument,
+    animation_id: u64,
+    current_time_ms: f64,
+) -> OuiStatus {
+    ffi(|| {
+        let state = document(document_handle as usize)?;
+        borrow_engine_mut(&state)?.seek_animation(AnimationId(animation_id), current_time_ms)?;
+        flush_animation_events(&state)
+    })
+}
+
+// SAFETY CONTRACT: `document` and animation ID are live; rate is finite/non-zero.
+#[no_mangle]
+pub extern "C" fn oui_document_animation_set_playback_rate(
+    document_handle: *mut OuiDocument,
+    animation_id: u64,
+    playback_rate: f64,
+) -> OuiStatus {
+    ffi(|| {
+        let state = document(document_handle as usize)?;
+        borrow_engine_mut(&state)?
+            .set_animation_playback_rate(AnimationId(animation_id), playback_rate)?;
+        flush_animation_events(&state)
+    })
+}
+
+// SAFETY CONTRACT: `document` and animation ID are live; `out_state` is a
+// readable/writable versioned output structure.
+#[no_mangle]
+pub extern "C" fn oui_document_animation_get_state(
+    document_handle: *mut OuiDocument,
+    animation_id: u64,
+    out_state: *mut OuiAnimationState,
+) -> OuiStatus {
+    ffi(|| {
+        if out_state.is_null() {
+            return Err(invalid("animation state output is null"));
+        }
+        // SAFETY: the caller supplies readable/writable output storage.
+        let output = unsafe { &mut *out_state };
+        check_header(
+            output.struct_size,
+            output.abi_version,
+            size_of::<OuiAnimationState>(),
+        )?;
+        let state = document(document_handle as usize)?;
+        let animation = borrow_engine(&state)?.animation_state(AnimationId(animation_id))?;
+        output.animation_id = animation.id.0;
+        output.current_time_ms = animation.current_time_ms;
+        output.iteration = animation.iteration;
+        output.property = animation.property as i32;
+        output.play_state = match animation.play_state {
+            PlayState::Running => 0,
+            PlayState::Paused => 1,
+        };
+        output.phase = match animation.phase {
+            AnimationPhase::Before => 0,
+            AnimationPhase::Active => 1,
+            AnimationPhase::After => 2,
+        };
+        output.finished = u8::from(animation.finished);
+        output.reserved = [0; 3];
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `document` is live and both outputs are writable. The
+// caller initializes the event output's versioned struct header.
+#[no_mangle]
+pub extern "C" fn oui_document_take_animation_event(
+    document_handle: *mut OuiDocument,
+    out_event: *mut OuiAnimationEvent,
+    out_has_event: *mut u8,
+) -> OuiStatus {
+    ffi(|| {
+        if out_event.is_null() || out_has_event.is_null() {
+            return Err(invalid("animation event outputs are null"));
+        }
+        // SAFETY: the caller supplies readable/writable output storage.
+        let output = unsafe { &mut *out_event };
+        check_header(
+            output.struct_size,
+            output.abi_version,
+            size_of::<OuiAnimationEvent>(),
+        )?;
+        let state = document(document_handle as usize)?;
+        let event = {
+            let mut events = state.animation_events.try_borrow_mut().map_err(|_| {
+                ApiError::new(OuiStatus::Reentrant, "animation event queue is borrowed")
+            })?;
+            if events.is_empty() {
+                None
+            } else {
+                Some(events.remove(0))
+            }
+        };
+        if let Some(event) = event {
+            output.animation_id = event.animation.0;
+            output.kind = match event.kind {
+                AnimationEventKind::Start => 0,
+                AnimationEventKind::Iteration => 1,
+                AnimationEventKind::End => 2,
+                AnimationEventKind::Cancel => 3,
+            };
+            output.property = event.property as i32;
+            output.elapsed_time_ms = event.elapsed_time_ms;
+            output.iteration = event.iteration;
+            output.target = element_address(&state, event.target)
+                .map(|address| address as *mut OuiElement)
+                .unwrap_or(ptr::null_mut());
+            // SAFETY: output storage was checked for null and must be writable.
+            unsafe { ptr::write(out_has_event, 1) };
+        } else {
+            // SAFETY: output storage was checked for null and must be writable.
+            unsafe { ptr::write(out_has_event, 0) };
+        }
+        Ok(())
+    })
+}
+
 fn render_frame(document_handle: *mut OuiDocument) -> Result<openui_compositor::Frame, ApiError> {
     let state = document(document_handle as usize)?;
     if state.update_depth.get() != 0 {
@@ -755,6 +1110,86 @@ pub extern "C" fn oui_element_set_property(
         with_element_mut(element_handle as usize, |engine, node| {
             engine.set_property(node, property, value)
         })
+    })
+}
+
+// SAFETY CONTRACT: `element` is live; keyframes, options, optional timeline,
+// and output storage remain readable/writable for the duration of this call.
+#[no_mangle]
+pub extern "C" fn oui_element_animate(
+    element_handle: *mut OuiElement,
+    property: i32,
+    keyframes: *const OuiKeyframe,
+    keyframe_count: usize,
+    options: *const OuiAnimationOptions,
+    timeline: *const OuiAnimationTimeline,
+    out_animation_id: *mut u64,
+) -> OuiStatus {
+    ffi(|| {
+        if out_animation_id.is_null() {
+            return Err(invalid("animation ID output is null"));
+        }
+        let property = property_from_raw(property)
+            .ok_or_else(|| invalid("unknown style property identifier"))?;
+        let raw_keyframes = copy_array(keyframes, keyframe_count, "keyframe")?;
+        let mut typed_keyframes = Vec::new();
+        typed_keyframes
+            .try_reserve_exact(raw_keyframes.len())
+            .map_err(|_| ApiError::new(OuiStatus::OutOfMemory, "keyframe allocation failed"))?;
+        for keyframe in raw_keyframes {
+            if keyframe.reserved != 0 || keyframe.has_easing > 1 || !keyframe.offset.is_finite() {
+                return Err(invalid("keyframe contains invalid or reserved values"));
+            }
+            typed_keyframes.push(Keyframe {
+                offset: keyframe.offset,
+                value: value::style_value(property, &keyframe.value)?,
+                easing: if keyframe.has_easing == 1 {
+                    Some(animation_easing(keyframe.easing)?)
+                } else {
+                    None
+                },
+            });
+        }
+        let keyframes =
+            Keyframes::new(typed_keyframes).map_err(|error| invalid(error.to_string()))?;
+        let keyframes = PropertyKeyframes::typed(property, keyframes)
+            .map_err(|error| invalid(error.to_string()))?;
+        let options = animation_options(options)?;
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let timeline = animation_timeline(&state, timeline)?;
+        let id = borrow_engine_mut(&state)?.animate(element.node, keyframes, options, timeline)?;
+        // SAFETY: output storage was checked for null and must be writable.
+        unsafe { ptr::write(out_animation_id, id.0) };
+        flush_animation_events(&state)
+    })
+}
+
+// SAFETY CONTRACT: `element` is live; target, options, and output storage
+// remain readable/writable for the duration of this call.
+#[no_mangle]
+pub extern "C" fn oui_element_transition(
+    element_handle: *mut OuiElement,
+    property: i32,
+    target: *const OuiStyleValue,
+    options: *const OuiAnimationOptions,
+    out_animation_id: *mut u64,
+) -> OuiStatus {
+    ffi(|| {
+        if target.is_null() || out_animation_id.is_null() {
+            return Err(invalid("transition target or animation ID output is null"));
+        }
+        let property = property_from_raw(property)
+            .ok_or_else(|| invalid("unknown style property identifier"))?;
+        // SAFETY: the caller guarantees one readable tagged value.
+        let target = value::style_value(property, unsafe { &*target })?;
+        let options = animation_options(options)?;
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let id = borrow_engine_mut(&state)?.transition(element.node, property, target, options)?;
+        // SAFETY: output storage was checked for null and must be writable.
+        unsafe { ptr::write(out_animation_id, id.0) };
+        flush_animation_events(&state)
     })
 }
 
@@ -1988,6 +2423,7 @@ pub extern "C" fn oui_buffer_destroy(buffer: *mut OuiBuffer) -> OuiStatus {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use openui_style::StyleProperty;
     use std::mem::{align_of, size_of};
 
     fn empty_utf8() -> OuiUtf8 {
@@ -2075,6 +2511,46 @@ mod tests {
         }
     }
 
+    fn linear_easing() -> OuiEasing {
+        OuiEasing {
+            kind: 0,
+            step_position: 0,
+            step_count: 0,
+            reserved: 0,
+            values: [0.0; 4],
+        }
+    }
+
+    fn animation_options(duration_ms: f64) -> OuiAnimationOptions {
+        OuiAnimationOptions {
+            struct_size: size_of::<OuiAnimationOptions>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            delay_ms: 0.0,
+            duration_ms,
+            iterations: 1.0,
+            playback_rate: 1.0,
+            direction: 0,
+            fill: 3,
+            play_state: 0,
+            composite: 0,
+            easing: linear_easing(),
+        }
+    }
+
+    fn number_keyframe(offset: f64, value: f32) -> OuiKeyframe {
+        OuiKeyframe {
+            offset,
+            value: OuiStyleValue {
+                tag: 2,
+                reserved: 0,
+                data: OuiStylePayload { number: value },
+            },
+            easing: linear_easing(),
+            has_easing: 0,
+            reserved: 0,
+        }
+    }
+
     #[test]
     fn frozen_layout_metadata_matches_rust() {
         assert_eq!((size_of::<OuiUtf8>(), align_of::<OuiUtf8>()), (16, 8));
@@ -2108,6 +2584,39 @@ mod tests {
             ),
             (48, 4)
         );
+        assert_eq!((size_of::<OuiEasing>(), align_of::<OuiEasing>()), (48, 8));
+        assert_eq!(
+            (
+                size_of::<OuiAnimationOptions>(),
+                align_of::<OuiAnimationOptions>()
+            ),
+            (104, 8)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiAnimationTimeline>(),
+                align_of::<OuiAnimationTimeline>()
+            ),
+            (40, 8)
+        );
+        assert_eq!(
+            (size_of::<OuiKeyframe>(), align_of::<OuiKeyframe>()),
+            (80, 8)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiAnimationState>(),
+                align_of::<OuiAnimationState>()
+            ),
+            (48, 8)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiAnimationEvent>(),
+                align_of::<OuiAnimationEvent>()
+            ),
+            (48, 8)
+        );
         assert_eq!((size_of::<OuiEvent>(), align_of::<OuiEvent>()), (88, 8));
         assert_eq!(
             (
@@ -2120,6 +2629,96 @@ mod tests {
             (size_of::<OuiErrorInfo>(), align_of::<OuiErrorInfo>()),
             (24, 8)
         );
+    }
+
+    #[test]
+    fn c_animation_api_samples_controls_and_reports_events() {
+        let document = create_document(100, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let element = create_element(document, 1, root);
+        let keyframes = [number_keyframe(0.0, 0.0), number_keyframe(1.0, 1.0)];
+        let options = animation_options(100.0);
+        let mut animation_id = 0;
+        assert_eq!(
+            oui_element_animate(
+                element,
+                StyleProperty::Opacity as i32,
+                keyframes.as_ptr(),
+                keyframes.len(),
+                &options,
+                ptr::null(),
+                &mut animation_id,
+            ),
+            OuiStatus::Ok
+        );
+        assert_ne!(animation_id, 0);
+        let mut animating = 0;
+        assert_eq!(
+            oui_document_is_animating(document, &mut animating),
+            OuiStatus::Ok
+        );
+        assert_eq!(animating, 1);
+        assert_eq!(
+            oui_document_set_animation_time(document, 50.0),
+            OuiStatus::Ok
+        );
+        let mut state = OuiAnimationState {
+            struct_size: size_of::<OuiAnimationState>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            animation_id: 0,
+            current_time_ms: 0.0,
+            iteration: 0,
+            property: 0,
+            play_state: 0,
+            phase: 0,
+            finished: 0,
+            reserved: [0; 3],
+        };
+        assert_eq!(
+            oui_document_animation_get_state(document, animation_id, &mut state),
+            OuiStatus::Ok
+        );
+        assert_eq!(state.current_time_ms, 50.0);
+        assert_eq!(state.phase, 1);
+        assert_eq!(
+            oui_document_animation_pause(document, animation_id),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_document_animation_seek(document, animation_id, 100.0),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_document_animation_get_state(document, animation_id, &mut state),
+            OuiStatus::Ok
+        );
+        assert_eq!(state.finished, 1);
+        let mut output_event = OuiAnimationEvent {
+            struct_size: size_of::<OuiAnimationEvent>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            animation_id: 0,
+            kind: 0,
+            property: 0,
+            elapsed_time_ms: 0.0,
+            iteration: 0,
+            target: ptr::null_mut(),
+        };
+        let mut has_event = 0;
+        assert_eq!(
+            oui_document_take_animation_event(document, &mut output_event, &mut has_event),
+            OuiStatus::Ok
+        );
+        assert_eq!(has_event, 1);
+        assert_eq!(output_event.animation_id, animation_id);
+        assert_eq!(output_event.property, StyleProperty::Opacity as i32);
+        assert_eq!(
+            oui_document_animation_cancel(document, animation_id),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_destroy(element), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }
 
     #[test]

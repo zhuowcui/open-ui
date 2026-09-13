@@ -166,6 +166,7 @@ impl Engine {
         if self.reduced_motion != reduced {
             self.reduced_motion = reduced;
             self.mark_dirty(openui_style::InvalidationClass::Accessibility);
+            let _ = self.sample_animations();
         }
     }
 

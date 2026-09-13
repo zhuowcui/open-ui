@@ -149,6 +149,82 @@ pub struct OuiTransformOperation {
     pub values: [f32; 6],
 }
 
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiEasing {
+    pub kind: u32,
+    pub step_position: u32,
+    pub step_count: u32,
+    pub reserved: u32,
+    pub values: [f64; 4],
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationOptions {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub delay_ms: f64,
+    pub duration_ms: f64,
+    pub iterations: f64,
+    pub playback_rate: f64,
+    pub direction: u32,
+    pub fill: u32,
+    pub play_state: u32,
+    pub composite: u32,
+    pub easing: OuiEasing,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiAnimationTimeline {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub kind: u32,
+    pub axis: u32,
+    pub source: *mut OuiElement,
+    pub range_start: f64,
+    pub range_end: f64,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiKeyframe {
+    pub offset: f64,
+    pub value: OuiStyleValue,
+    pub easing: OuiEasing,
+    pub has_easing: u32,
+    pub reserved: u32,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiAnimationState {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub animation_id: u64,
+    pub current_time_ms: f64,
+    pub iteration: u64,
+    pub property: i32,
+    pub play_state: u32,
+    pub phase: u32,
+    pub finished: u8,
+    pub reserved: [u8; 3],
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiAnimationEvent {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub animation_id: u64,
+    pub kind: u32,
+    pub property: i32,
+    pub elapsed_time_ms: f64,
+    pub iteration: u64,
+    pub target: *mut OuiElement,
+}
+
 pub const OUI_EVENT_FLAG_DEFAULT_PREVENTED: u32 = 1 << 0;
 pub const OUI_EVENT_FLAG_PROPAGATION_STOPPED: u32 = 1 << 1;
 pub const OUI_CONTROL_DISABLED: u32 = 1 << 0;

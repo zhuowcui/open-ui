@@ -5,10 +5,13 @@ use crate::events::{Event, Listener};
 use crate::style::{Error, Rect};
 use openui_dom::ElementTag;
 use openui_engine::{
-    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, NodeHandle,
-    WeakNode,
+    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, AnimationId,
+    AnimationTimeline, NodeHandle, ScrollAnimationId, WeakNode,
 };
-use openui_style::{Display, Style, StyleProperty, StyleValue};
+use openui_style::{
+    AnimationOptions, Display, Keyframes, PropertyKeyframes, Style, StyleProperty, StyleValue,
+    TimelineAxis, TimelineRange,
+};
 use std::rc::{Rc, Weak};
 
 #[derive(Clone)]
@@ -171,6 +174,128 @@ impl Element {
             }
             Ok(())
         })
+    }
+
+    pub fn animate<T>(
+        &self,
+        property: StyleProperty,
+        keyframes: Keyframes<T>,
+        options: AnimationOptions,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        let keyframes = PropertyKeyframes::typed(property, keyframes)?;
+        self.document.with_engine_mut(|engine| {
+            engine.animate(self.handle, keyframes, options, AnimationTimeline::Document)
+        })
+    }
+
+    pub fn animate_on_scroll<T>(
+        &self,
+        property: StyleProperty,
+        keyframes: Keyframes<T>,
+        options: AnimationOptions,
+        source: &Element,
+        axis: TimelineAxis,
+        range: TimelineRange,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        self.ensure_same_document(source)?;
+        let keyframes = PropertyKeyframes::typed(property, keyframes)?;
+        self.document.with_engine_mut(|engine| {
+            engine.animate(
+                self.handle,
+                keyframes,
+                options,
+                AnimationTimeline::Scroll {
+                    source: source.handle,
+                    axis,
+                    range,
+                },
+            )
+        })
+    }
+
+    pub fn animate_on_view<T>(
+        &self,
+        property: StyleProperty,
+        keyframes: Keyframes<T>,
+        options: AnimationOptions,
+        subject: &Element,
+        axis: TimelineAxis,
+        range: TimelineRange,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        self.ensure_same_document(subject)?;
+        let keyframes = PropertyKeyframes::typed(property, keyframes)?;
+        self.document.with_engine_mut(|engine| {
+            engine.animate(
+                self.handle,
+                keyframes,
+                options,
+                AnimationTimeline::View {
+                    subject: subject.handle,
+                    axis,
+                    range,
+                },
+            )
+        })
+    }
+
+    pub fn transition<T>(
+        &self,
+        property: StyleProperty,
+        to: T,
+        options: AnimationOptions,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        self.document
+            .with_engine_mut(|engine| engine.transition(self.handle, property, to, options))
+    }
+
+    pub fn smooth_scroll_to(
+        &self,
+        x: f64,
+        y: f64,
+        duration_ms: f64,
+        easing: openui_style::Easing,
+    ) -> Result<ScrollAnimationId, Error> {
+        self.document.with_engine_mut(|engine| {
+            engine.smooth_scroll_to(self.handle, x, y, duration_ms, easing)
+        })
+    }
+
+    pub fn settle_scroll_snap(
+        &self,
+        snap_points_x: &[f64],
+        snap_points_y: &[f64],
+        duration_ms: f64,
+        easing: openui_style::Easing,
+    ) -> Result<Option<ScrollAnimationId>, Error> {
+        self.document.with_engine_mut(|engine| {
+            engine.settle_scroll_snap(
+                self.handle,
+                snap_points_x,
+                snap_points_y,
+                duration_ms,
+                easing,
+            )
+        })
+    }
+
+    fn ensure_same_document(&self, other: &Element) -> Result<(), Error> {
+        if Rc::ptr_eq(&self.document.inner, &other.document.inner) {
+            Ok(())
+        } else {
+            Err(openui_engine::EngineError::WrongDocument.into())
+        }
     }
 
     pub fn set_attribute(&self, name: &str, value: &str) -> Result<(), Error> {
@@ -522,7 +647,39 @@ fn tag_definition(tag: &str) -> Result<(ElementTag, Option<Display>), Error> {
 mod tests {
     use super::*;
     use crate::events::{EventPhase, Modifiers, MouseButton, MouseEventType};
-    use std::cell::RefCell;
+    use openui_style::{AnimationOptions, FillMode, Keyframes};
+    use std::cell::{Cell, RefCell};
+
+    #[test]
+    fn typed_animation_uses_manual_clock_and_dispatches_events() {
+        let document = Document::new(100, 100).unwrap();
+        let element = Element::create(&document, "div").unwrap();
+        document.body().append_child(&element).unwrap();
+        let ended = Rc::new(Cell::new(false));
+        let observed = ended.clone();
+        element
+            .on("animationend", move |_| observed.set(true))
+            .unwrap();
+        let animation = element
+            .animate(
+                StyleProperty::Opacity,
+                Keyframes::from_values(0.0_f32, 1.0_f32),
+                AnimationOptions {
+                    duration_ms: 100.0,
+                    fill: FillMode::Both,
+                    ..AnimationOptions::default()
+                },
+            )
+            .unwrap();
+        document.advance_time(50.0).unwrap();
+        assert_eq!(
+            document.animation_state(animation).unwrap().current_time_ms,
+            50.0
+        );
+        document.advance_time(100.0).unwrap();
+        assert!(ended.get());
+        assert_eq!(document.drain_animation_events().unwrap().len(), 2);
+    }
 
     #[test]
     fn stale_weak_and_cross_document_handles_are_safe() {

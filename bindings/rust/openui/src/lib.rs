@@ -124,7 +124,8 @@ pub use app::{
 pub use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
     AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
-    ControlAdjustment, EditCommand, FocusOrigin, PointerEventKind, TextDirection, TextUnit,
+    AnimationEvent, AnimationEventKind, AnimationId, AnimationState, ControlAdjustment,
+    EditCommand, FocusOrigin, PointerEventKind, ScrollAnimationId, TextDirection, TextUnit,
     Viewport,
 };
 

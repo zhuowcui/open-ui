@@ -18,3 +18,7 @@ id,c_name,rust_name
 17,OUI_EVENT_CHANGE,change
 18,OUI_EVENT_BEFORE_INPUT,beforeinput
 19,OUI_EVENT_SCROLL,scroll
+20,OUI_EVENT_ANIMATION_START,animationstart
+21,OUI_EVENT_ANIMATION_ITERATION,animationiteration
+22,OUI_EVENT_ANIMATION_END,animationend
+23,OUI_EVENT_ANIMATION_CANCEL,animationcancel

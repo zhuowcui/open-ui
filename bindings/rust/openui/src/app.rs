@@ -303,6 +303,10 @@ impl openui_platform::PlatformApplication for App {
             .map_err(|error| error.to_string())
     }
 
+    fn is_animating(&self) -> bool {
+        self.document.is_animating().unwrap_or(false)
+    }
+
     fn cursor_icon(&mut self, x: f32, y: f32) -> Result<openui_platform::CursorIcon, String> {
         self.document
             .with_engine_mut(|engine| {

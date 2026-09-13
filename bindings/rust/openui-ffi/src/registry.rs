@@ -1,5 +1,5 @@
 use crate::types::{OuiEventCallback, OuiStatus, OuiUtf8};
-use openui_engine::{Engine, EngineError, NodeHandle};
+use openui_engine::{AnimationEvent, Engine, EngineError, NodeHandle};
 use openui_style::{ImageResourceId, StyleValue};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
@@ -34,6 +34,7 @@ pub(crate) struct DocumentState {
     pub listeners: RefCell<Vec<ListenerRecord>>,
     pub next_listener: Cell<u64>,
     pub element_handles: RefCell<HashMap<NodeHandle, Vec<usize>>>,
+    pub animation_events: RefCell<Vec<AnimationEvent>>,
 }
 
 #[derive(Clone)]

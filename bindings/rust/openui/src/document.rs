@@ -8,9 +8,10 @@ use crate::style::{Bitmap, Error};
 use openui_compositor::SoftwareCompositor;
 use openui_dom::FormControlRole;
 use openui_engine::{
-    AccessibilityAction, AccessibilityTreeUpdate, ControlAdjustment, EditCommand, Engine,
-    EventPhase as EngineEventPhase, FocusOrigin, NodeHandle, PointerEventKind, TextDirection,
-    TextUnit, Viewport,
+    AccessibilityAction, AccessibilityTreeUpdate, AnimationEvent, AnimationEventKind, AnimationId,
+    AnimationState, ControlAdjustment, EditCommand, Engine, EventPhase as EngineEventPhase,
+    FocusOrigin, NodeHandle, PointerEventKind, ScrollAnimationId, TextDirection, TextUnit,
+    Viewport,
 };
 use openui_style::ImageResourceId;
 use std::cell::{Cell, RefCell};
@@ -25,6 +26,7 @@ pub(crate) struct DocumentInner {
     pub listeners: RefCell<HashMap<ListenerKey, Vec<Listener>>>,
     pub resource_provider: RefCell<Option<Box<ResourceProvider>>>,
     pub clipboard: RefCell<String>,
+    animation_events: RefCell<Vec<AnimationEvent>>,
     transaction_depth: Cell<usize>,
 }
 
@@ -48,6 +50,7 @@ impl Document {
                 listeners: RefCell::new(HashMap::new()),
                 resource_provider: RefCell::new(None),
                 clipboard: RefCell::new(String::new()),
+                animation_events: RefCell::new(Vec::new()),
                 transaction_depth: Cell::new(0),
             }),
         })
@@ -182,7 +185,8 @@ impl Document {
     }
 
     pub fn advance_time(&self, time_ms: f64) -> Result<(), Error> {
-        self.with_engine_mut(|engine| engine.set_animation_time(time_ms))
+        self.with_engine_mut(|engine| engine.set_animation_time(time_ms))?;
+        self.dispatch_animation_events()
     }
 
     pub fn advance_time_by(&self, delta_ms: f64) -> Result<(), Error> {
@@ -199,9 +203,91 @@ impl Document {
         self.with_engine(|engine| engine.animation_time())
     }
 
+    pub fn is_animating(&self) -> Result<bool, Error> {
+        self.with_engine(Engine::is_animating)
+    }
+
+    pub fn animation_state(&self, animation: AnimationId) -> Result<AnimationState, Error> {
+        self.with_engine(|engine| engine.animation_state(animation))?
+            .map_err(Into::into)
+    }
+
+    pub fn pause_animation(&self, animation: AnimationId) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.pause_animation(animation))
+    }
+
+    pub fn play_animation(&self, animation: AnimationId) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.play_animation(animation))
+    }
+
+    pub fn seek_animation(
+        &self,
+        animation: AnimationId,
+        current_time_ms: f64,
+    ) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.seek_animation(animation, current_time_ms))?;
+        self.dispatch_animation_events()
+    }
+
+    pub fn set_animation_playback_rate(
+        &self,
+        animation: AnimationId,
+        playback_rate: f64,
+    ) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.set_animation_playback_rate(animation, playback_rate))
+    }
+
+    pub fn finish_animation(&self, animation: AnimationId) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.finish_animation(animation))?;
+        self.dispatch_animation_events()
+    }
+
+    pub fn cancel_animation(&self, animation: AnimationId) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.cancel_animation(animation))?;
+        self.dispatch_animation_events()
+    }
+
+    pub fn cancel_smooth_scroll(&self, animation: ScrollAnimationId) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.cancel_smooth_scroll(animation))
+    }
+
+    pub fn drain_animation_events(&self) -> Result<Vec<AnimationEvent>, Error> {
+        let mut events = self
+            .inner
+            .animation_events
+            .try_borrow_mut()
+            .map_err(|_| Error::ReentrantMutation)?;
+        Ok(std::mem::take(&mut *events))
+    }
+
     pub fn begin_frame(&self, time_ms: f64) -> Result<(), Error> {
         self.advance_time(time_ms)?;
         self.update_all()
+    }
+
+    fn dispatch_animation_events(&self) -> Result<(), Error> {
+        let events = self.with_engine_mut(|engine| Ok(engine.drain_animation_events()))?;
+        for animation_event in &events {
+            if !self.with_engine(|engine| engine.event_route(animation_event.target).is_ok())? {
+                continue;
+            }
+            let event_type = match animation_event.kind {
+                AnimationEventKind::Start => "animationstart",
+                AnimationEventKind::Iteration => "animationiteration",
+                AnimationEventKind::End => "animationend",
+                AnimationEventKind::Cancel => "animationcancel",
+            };
+            self.dispatch_to(
+                animation_event.target,
+                &Event::keyboard(event_type, 0, None, Modifiers::NONE),
+            )?;
+        }
+        self.inner
+            .animation_events
+            .try_borrow_mut()
+            .map_err(|_| Error::ReentrantMutation)?
+            .extend(events);
+        Ok(())
     }
 
     pub fn dispatch_mouse_event(

@@ -4,6 +4,7 @@
 //! Every enum, every initial value, every type is extracted character-by-character
 //! from Blink's generated `computed_style_base.h` and `computed_style_constants.h`.
 
+mod animation;
 mod color;
 mod computed;
 mod enums;
@@ -11,6 +12,7 @@ mod font_types;
 mod layout_systems;
 mod property;
 
+pub use animation::*;
 pub use color::{Color, StyleColor};
 pub use computed::{
     AspectRatio, BackgroundLayer, BackgroundPosition, BackgroundRepeat, BackgroundSize,

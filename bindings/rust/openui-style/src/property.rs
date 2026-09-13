@@ -181,13 +181,50 @@ pub enum PointerEvents {
 #[derive(Debug, Clone, PartialEq)]
 pub enum TransformOperation {
     Translate(LengthValue, LengthValue),
+    Translate3d(LengthValue, LengthValue, LengthValue),
     Scale(f32, f32),
+    Scale3d(f32, f32, f32),
     Rotate(f32),
+    Rotate3d {
+        x: f32,
+        y: f32,
+        z: f32,
+        degrees: f32,
+    },
+    Perspective(LengthValue),
     Matrix(Transform2D),
+    Matrix3d(Transform3D),
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct TransformList(pub Vec<TransformOperation>);
+
+/// A column-major CSS 4x4 transform matrix.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct Transform3D(pub [f32; 16]);
+
+impl Transform3D {
+    pub const IDENTITY: Self = Self([
+        1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+    ]);
+
+    pub fn projected_2d(self) -> Transform2D {
+        Transform2D {
+            a: self.0[0],
+            b: self.0[1],
+            c: self.0[4],
+            d: self.0[5],
+            e: self.0[12],
+            f: self.0[13],
+        }
+    }
+}
+
+impl Default for Transform3D {
+    fn default() -> Self {
+        Self::IDENTITY
+    }
+}
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum StyleValue {
@@ -694,7 +731,15 @@ pub fn apply_to_computed(
                         matrix.a *= x;
                         matrix.d *= y;
                     }
+                    TransformOperation::Scale3d(x, y, _) => {
+                        matrix.a *= x;
+                        matrix.d *= y;
+                    }
                     TransformOperation::Translate(x, y) => {
+                        matrix.e += resolve(*x).value();
+                        matrix.f += resolve(*y).value();
+                    }
+                    TransformOperation::Translate3d(x, y, _) => {
                         matrix.e += resolve(*x).value();
                         matrix.f += resolve(*y).value();
                     }
@@ -710,6 +755,23 @@ pub fn apply_to_computed(
                             f: matrix.f,
                         };
                     }
+                    TransformOperation::Rotate3d { x, y, z, degrees } => {
+                        let length = (*x * *x + *y * *y + *z * *z).sqrt();
+                        if length > f32::EPSILON && (*z / length).abs() > 1.0 - 1e-6 {
+                            let r = (*degrees * z.signum()).to_radians();
+                            let (s, c) = r.sin_cos();
+                            matrix = Transform2D {
+                                a: c,
+                                b: s,
+                                c: -s,
+                                d: c,
+                                e: matrix.e,
+                                f: matrix.f,
+                            };
+                        }
+                    }
+                    TransformOperation::Perspective(_) => {}
+                    TransformOperation::Matrix3d(value) => matrix = value.projected_2d(),
                 }
             }
             style.transform = matrix;
@@ -719,6 +781,111 @@ pub fn apply_to_computed(
         _ => return Err(mismatch()),
     }
     Ok(property.metadata().invalidation)
+}
+
+/// Read a schema value back from a computed style.
+///
+/// Relative lengths have already been resolved by this point and are returned
+/// as pixel values. This is primarily used to capture an animation's
+/// underlying value without maintaining a second handwritten style model.
+pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> StyleValue {
+    use StyleProperty as P;
+    let length = |value: Length| StyleValue::Length(LengthValue::Computed(value));
+    let border = |width: i32, border_style: BorderStyle, color: StyleColor| {
+        StyleValue::Border(Border {
+            width: width as f32,
+            style: border_style,
+            color: color.resolve(&style.color),
+        })
+    };
+    match property {
+        P::Display => StyleValue::Display(style.display),
+        P::Position => StyleValue::Position(style.position),
+        P::Overflow => StyleValue::Overflow(style.overflow_x),
+        P::Width => length(style.width),
+        P::Height => length(style.height),
+        P::MinWidth => length(style.min_width),
+        P::MinHeight => length(style.min_height),
+        P::MaxWidth => length(style.max_width),
+        P::MaxHeight => length(style.max_height),
+        P::Margin => StyleValue::Edges(Edges {
+            top: style.margin_top.into(),
+            right: style.margin_right.into(),
+            bottom: style.margin_bottom.into(),
+            left: style.margin_left.into(),
+        }),
+        P::MarginTop => length(style.margin_top),
+        P::MarginRight => length(style.margin_right),
+        P::MarginBottom => length(style.margin_bottom),
+        P::MarginLeft => length(style.margin_left),
+        P::Padding => StyleValue::Edges(Edges {
+            top: style.padding_top.into(),
+            right: style.padding_right.into(),
+            bottom: style.padding_bottom.into(),
+            left: style.padding_left.into(),
+        }),
+        P::PaddingTop => length(style.padding_top),
+        P::PaddingRight => length(style.padding_right),
+        P::PaddingBottom => length(style.padding_bottom),
+        P::PaddingLeft => length(style.padding_left),
+        P::BackgroundColor => StyleValue::Color(style.background_color),
+        P::Color => StyleValue::Color(style.color),
+        P::Opacity => StyleValue::Number(style.opacity),
+        P::ZIndex => StyleValue::Integer(style.z_index.unwrap_or_default()),
+        P::FlexDirection => StyleValue::FlexDirection(style.flex_direction),
+        P::FlexWrap => StyleValue::FlexWrap(style.flex_wrap),
+        P::FlexGrow => StyleValue::Number(style.flex_grow),
+        P::FlexShrink => StyleValue::Number(style.flex_shrink),
+        P::FlexBasis => length(style.flex_basis),
+        P::AlignItems => StyleValue::ItemAlignment(style.align_items),
+        P::JustifyContent => StyleValue::ContentAlignment(style.justify_content),
+        P::Gap => StyleValue::Gap(Gap {
+            row: style.row_gap.unwrap_or_else(Length::zero).into(),
+            column: style.column_gap.unwrap_or_else(Length::zero).into(),
+        }),
+        P::RowGap => length(style.row_gap.unwrap_or_else(Length::zero)),
+        P::ColumnGap => length(style.column_gap.unwrap_or_else(Length::zero)),
+        P::FontFamily => StyleValue::FontFamily(style.font_family.clone()),
+        P::FontSize => StyleValue::Length(LengthValue::px(style.font_size)),
+        P::FontWeight => StyleValue::FontWeight(style.font_weight),
+        P::Border => border(
+            style.border_top_width,
+            style.border_top_style,
+            style.border_top_color,
+        ),
+        P::BorderTop => border(
+            style.border_top_width,
+            style.border_top_style,
+            style.border_top_color,
+        ),
+        P::BorderRight => border(
+            style.border_right_width,
+            style.border_right_style,
+            style.border_right_color,
+        ),
+        P::BorderBottom => border(
+            style.border_bottom_width,
+            style.border_bottom_style,
+            style.border_bottom_color,
+        ),
+        P::BorderLeft => border(
+            style.border_left_width,
+            style.border_left_style,
+            style.border_left_color,
+        ),
+        P::BorderRadius => StyleValue::CornerRadii(CornerRadii(Edges {
+            top: LengthValue::px(style.border_top_left_radius.0),
+            right: LengthValue::px(style.border_top_right_radius.0),
+            bottom: LengthValue::px(style.border_bottom_right_radius.0),
+            left: LengthValue::px(style.border_bottom_left_radius.0),
+        })),
+        P::Cursor => StyleValue::Cursor(Cursor::Auto),
+        P::ListStyleType => StyleValue::ListStyle(style.list_style_type),
+        P::Transform => StyleValue::Transform(TransformList(vec![TransformOperation::Matrix(
+            style.transform,
+        )])),
+        P::PointerEvents => StyleValue::PointerEvents(style.pointer_events),
+    }
 }
 
 #[cfg(test)]
