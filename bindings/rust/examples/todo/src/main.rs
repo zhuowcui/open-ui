@@ -6,10 +6,10 @@
 
 use openui::prelude::*;
 
-fn main() {
-    let mut app = App::new(800, 600);
+fn main() -> Result<(), Error> {
+    let mut app = HeadlessApp::new(Viewport::new(800, 600)?)?;
 
-    app.render(|| {
+    app.mount(|| {
         // Reactive list of todo items.
         let items = create_signal(vec![
             "Learn Rust".to_string(),
@@ -78,9 +78,10 @@ fn main() {
         // We need to get the <ul> and mount into it. Since the view is
         // already a ViewNode, we return a Fragment containing both.
         ViewNode::Fragment(vec![page, list_view])
-    });
+    })?;
 
-    app.run_frames(1).render_to_png("todo.png");
+    app.render_png_to(0.0, "todo.png")?;
 
     println!("Rendered todo.png");
+    Ok(())
 }

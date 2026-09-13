@@ -5,6 +5,3 @@ edition = "2024"
 
 [dependencies]
 openui = { path = "../../openui" }
-
-[build-dependencies]
-openui-build = { path = "../../openui-build" }

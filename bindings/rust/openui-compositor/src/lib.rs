@@ -3,6 +3,7 @@
 use openui_layout::Fragment;
 use openui_paint::{rasterize_picture, RecordedPicture};
 use skia_safe::image::CachingHint;
+use skia_safe::EncodedImageFormat;
 use std::sync::Arc;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -95,7 +96,7 @@ impl SoftwareCompositor {
         let info = image.image_info();
         let stride = scene.viewport.0 as usize * 4;
         let mut pixels = vec![0; stride * scene.viewport.1 as usize];
-        if !image.read_pixels(&info, &mut pixels, stride, (0, 0), CachingHint::Allow) {
+        if !image.read_pixels(info, &mut pixels, stride, (0, 0), CachingHint::Allow) {
             return Err(CompositorError::ReadPixels);
         }
         self.last_presented = Some(scene.generation);
@@ -110,6 +111,16 @@ impl SoftwareCompositor {
 
     pub fn last_presented(&self) -> Option<SceneGeneration> {
         self.last_presented
+    }
+
+    pub fn render_png(&mut self, scene: &SceneSnapshot) -> Result<Vec<u8>, CompositorError> {
+        let mut surface = rasterize_picture(&scene.picture).map_err(CompositorError::Raster)?;
+        let data = surface
+            .image_snapshot()
+            .encode(None, EncodedImageFormat::PNG, None)
+            .ok_or(CompositorError::ReadPixels)?;
+        self.last_presented = Some(scene.generation);
+        Ok(data.as_bytes().to_vec())
     }
 }
 

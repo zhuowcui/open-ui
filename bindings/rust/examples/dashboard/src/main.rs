@@ -59,11 +59,15 @@ fn MetricCard(label: String, value: String, color: String) -> ViewNode {
 #[component]
 fn NavItem(label: String, active: i32) -> ViewNode {
     let bg = if active != 0 {
-        "#edf2f7"
+        Color::from_hex(0xedf2f7, false)
     } else {
-        "transparent"
+        Color::TRANSPARENT
     };
-    let fw = if active != 0 { "600" } else { "400" };
+    let fw = if active != 0 {
+        FontWeight::SEMI_BOLD
+    } else {
+        FontWeight::NORMAL
+    };
     view! {
         <div
             style:padding="10px 16px"
@@ -72,8 +76,8 @@ fn NavItem(label: String, active: i32) -> ViewNode {
             style:cursor="pointer"
             style:font-size="14px"
             style:color="#2d3748"
-            style:background-color={move || bg}
-            style:font-weight={move || fw}
+            style:background-color={bg}
+            style:font-weight={fw}
         >
             <span>{label}</span>
         </div>
@@ -98,20 +102,29 @@ fn ActivityRow(text: String, time: String) -> ViewNode {
     }
 }
 
-fn main() {
-    let mut app = App::new(1200, 800);
+fn main() -> Result<(), Error> {
+    let mut app = HeadlessApp::new(Viewport::new(1200, 800)?)?;
 
-    app.render(|| {
+    app.mount(|| {
         let show_details = create_signal(true);
         let doc = current_document();
 
         // ── Root container ──────────────────────────────────────
-        let root = Element::create(doc, "div").expect("create root");
-        root.set_style("display", "flex").expect("style");
-        root.set_style("flex-direction", "column").expect("style");
-        root.set_style("min-height", "100vh").expect("style");
-        root.set_style("background-color", "#f7fafc")
+        let root = Element::create(&doc, "div").expect("create root");
+        root.set_property(StyleProperty::Display, Display::Flex.into())
             .expect("style");
+        root.set_property(StyleProperty::FlexDirection, FlexDirection::Column.into())
+            .expect("style");
+        root.set_property(
+            StyleProperty::MinHeight,
+            LengthValue::ViewportHeight(100.0).into(),
+        )
+        .expect("style");
+        root.set_property(
+            StyleProperty::BackgroundColor,
+            Color::from_hex(0xf7fafc, false).into(),
+        )
+        .expect("style");
 
         // ── Header ──────────────────────────────────────────────
         mount_view(
@@ -122,20 +135,43 @@ fn main() {
         );
 
         // ── Body: sidebar + main ────────────────────────────────
-        let body = Element::create(doc, "div").expect("create body");
-        body.set_style("display", "flex").expect("style");
-        body.set_style("flex", "1").expect("style");
+        let body = Element::create(&doc, "div").expect("create body");
+        body.set_property(StyleProperty::Display, Display::Flex.into())
+            .expect("style");
+        body.set_property(StyleProperty::FlexGrow, 1.0_f32.into())
+            .expect("style");
 
         // Sidebar navigation
-        let sidebar = Element::create(doc, "nav").expect("create sidebar");
-        sidebar.set_style("width", "220px").expect("style");
+        let sidebar = Element::create(&doc, "nav").expect("create sidebar");
         sidebar
-            .set_style("background-color", "white")
+            .set_property(StyleProperty::Width, LengthValue::px(220.0).into())
             .expect("style");
         sidebar
-            .set_style("border-right", "1px solid #e2e8f0")
+            .set_property(StyleProperty::BackgroundColor, Color::WHITE.into())
             .expect("style");
-        sidebar.set_style("padding", "16px 8px").expect("style");
+        sidebar
+            .set_property(
+                StyleProperty::BorderRight,
+                Border {
+                    width: 1.0,
+                    style: BorderStyle::Solid,
+                    color: Color::from_hex(0xe2e8f0, false),
+                }
+                .into(),
+            )
+            .expect("style");
+        sidebar
+            .set_property(
+                StyleProperty::Padding,
+                Edges {
+                    top: LengthValue::px(16.0),
+                    right: LengthValue::px(8.0),
+                    bottom: LengthValue::px(16.0),
+                    left: LengthValue::px(8.0),
+                }
+                .into(),
+            )
+            .expect("style");
 
         let nav_labels = ["Overview", "Analytics", "Projects", "Team", "Settings"];
         for (i, label) in nav_labels.iter().enumerate() {
@@ -148,13 +184,19 @@ fn main() {
                 }),
             );
         }
-        body.append_child(&sidebar);
-        std::mem::forget(sidebar);
+        body.append_child(&sidebar).expect("append sidebar");
 
         // Main content area
-        let main_el = Element::create(doc, "main").expect("create main");
-        main_el.set_style("flex", "1").expect("style");
-        main_el.set_style("padding", "24px").expect("style");
+        let main_el = Element::create(&doc, "main").expect("create main");
+        main_el
+            .set_property(StyleProperty::FlexGrow, 1.0_f32.into())
+            .expect("style");
+        main_el
+            .set_property(
+                StyleProperty::Padding,
+                Edges::all(LengthValue::px(24.0)).into(),
+            )
+            .expect("style");
 
         // Section title
         mount_view(
@@ -169,11 +211,22 @@ fn main() {
         );
 
         // Metric cards row
-        let metrics_row = Element::create(doc, "div").expect("create metrics row");
-        metrics_row.set_style("display", "flex").expect("style");
-        metrics_row.set_style("gap", "16px").expect("style");
+        let metrics_row = Element::create(&doc, "div").expect("create metrics row");
         metrics_row
-            .set_style("margin-bottom", "24px")
+            .set_property(StyleProperty::Display, Display::Flex.into())
+            .expect("style");
+        metrics_row
+            .set_property(
+                StyleProperty::Gap,
+                Gap {
+                    row: LengthValue::px(16.0),
+                    column: LengthValue::px(16.0),
+                }
+                .into(),
+            )
+            .expect("style");
+        metrics_row
+            .set_property(StyleProperty::MarginBottom, LengthValue::px(24.0).into())
             .expect("style");
 
         let metrics = [
@@ -192,22 +245,35 @@ fn main() {
                 }),
             );
         }
-        main_el.append_child(&metrics_row);
-        std::mem::forget(metrics_row);
+        main_el.append_child(&metrics_row).expect("append metrics");
 
         // Activity feed section
-        let activity_section = Element::create(doc, "div").expect("create activity");
+        let activity_section = Element::create(&doc, "div").expect("create activity");
         activity_section
-            .set_style("background-color", "white")
+            .set_property(StyleProperty::BackgroundColor, Color::WHITE.into())
             .expect("style");
         activity_section
-            .set_style("border-radius", "8px")
+            .set_property(
+                StyleProperty::BorderRadius,
+                CornerRadii(Edges::all(LengthValue::px(8.0))).into(),
+            )
             .expect("style");
         activity_section
-            .set_style("padding", "20px")
+            .set_property(
+                StyleProperty::Padding,
+                Edges::all(LengthValue::px(20.0)).into(),
+            )
             .expect("style");
         activity_section
-            .set_style("border", "1px solid #e2e8f0")
+            .set_property(
+                StyleProperty::Border,
+                Border {
+                    width: 1.0,
+                    style: BorderStyle::Solid,
+                    color: Color::from_hex(0xe2e8f0, false),
+                }
+                .into(),
+            )
             .expect("style");
 
         mount_view(
@@ -241,8 +307,9 @@ fn main() {
             },
         );
         mount_view(&activity_section, activity_list);
-        main_el.append_child(&activity_section);
-        std::mem::forget(activity_section);
+        main_el
+            .append_child(&activity_section)
+            .expect("append activity");
 
         // Conditional details panel rendered with Show
         let details_panel = Show(
@@ -284,16 +351,15 @@ fn main() {
         );
         mount_view(&main_el, details_panel);
 
-        body.append_child(&main_el);
-        std::mem::forget(main_el);
+        body.append_child(&main_el).expect("append main");
 
-        root.append_child(&body);
-        std::mem::forget(body);
+        root.append_child(&body).expect("append body");
 
         ViewNode::Element(root)
-    });
+    })?;
 
-    app.run_frames(1).render_to_png("dashboard.png");
+    app.render_png_to(0.0, "dashboard.png")?;
 
     println!("Rendered dashboard.png");
+    Ok(())
 }

@@ -1,8 +1,30 @@
 //! # Open UI
 //!
-//! Safe, idiomatic Rust bindings for the Open UI C API (Chromium/Blink
-//! rendering pipeline) together with a Leptos-style fine-grained reactive
-//! runtime.
+//! Safe, direct Rust framework over the pure-Rust Open UI retained engine.
+//!
+//! ```no_run
+//! use openui::prelude::*;
+//!
+//! # fn main() -> Result<(), Error> {
+//! let count = create_signal(0_i32);
+//! let app = App::builder()
+//!     .title("Open UI")
+//!     .size(LogicalSize::new(800.0, 600.0))
+//!     .backend(BackendPreference::Auto)
+//!     .build()?;
+//!
+//! app.run(move || view! {
+//!     <button
+//!         style:display={Display::Flex}
+//!         style:padding="8px 16px"
+//!         on:click={move |_| count.update(|value| *value += 1)}
+//!     >
+//!         {count.get()}
+//!     </button>
+//! })?;
+//! # Ok(())
+//! # }
+//! ```
 //!
 //! ## Reactive primitives
 //!
@@ -20,7 +42,7 @@
 //!
 //! | Type | Purpose |
 //! |------|---------|
-//! | [`Document`] | Blink viewport and rendering context |
+//! | [`Document`] | Native retained document and rendering context |
 //! | [`Element`] | A node in the DOM tree |
 //!
 //! ## View system
@@ -34,6 +56,8 @@
 //! | [`mount_view`] | Mount a view node onto a parent element |
 //! | [`with_document`] | Set the render context document |
 //! | [`current_document`] | Access the current render context document |
+
+extern crate self as openui;
 
 // ─── Reactive runtime modules ───────────────────────────────
 
@@ -56,6 +80,8 @@ pub mod context;
 pub mod renderer;
 pub mod view_node;
 
+mod generated_style_setters;
+
 // ─── Application shell ─────────────────────────────────────
 
 pub mod app;
@@ -73,13 +99,16 @@ pub use signal::{create_memo, create_signal, Memo, Signal};
 // ─── Re-exports: DOM wrappers ───────────────────────────────
 
 pub use document::Document;
-pub use element::Element;
-pub use events::{Event, KeyEventType, Modifiers, MouseButton, MouseEventType};
-pub use style::{
-    AlignItems, Bitmap, Display, FlexDirection, FlexWrap, FontStyle, JustifyContent, Length,
-    OuiError, Overflow, Position, Rect, TextAlign,
-};
-pub use text_node::TextNode;
+pub use element::{Element, WeakElement};
+pub use events::{Event, EventPhase, KeyEventType, Modifiers, MouseButton, MouseEventType};
+pub use style::{Bitmap, Error, Rect};
+pub use text_node::{TextNode, WeakTextNode};
+
+/// Canonical typed style values shared with the engine, macro, and C schema.
+pub mod typed_style {
+    pub use openui_style::*;
+}
+pub use openui_style::{Style, StyleProperty, StyleValue};
 
 // ─── Re-exports: view system ────────────────────────────────
 
@@ -89,7 +118,10 @@ pub use view_node::{mount_view, IntoView, ViewNode};
 
 // ─── Re-exports: application shell ─────────────────────────
 
-pub use app::App;
+pub use app::{
+    App, AppBuilder, BackendPreference, HeadlessApp, LogicalSize, RenderOptions, WindowOptions,
+};
+pub use openui_engine::Viewport;
 
 // ─── Re-exports: proc macros ────────────────────────────────
 

@@ -188,7 +188,6 @@ name = "counter"
 version = "0.1.0"
 dependencies = [
  "openui",
- "openui-build",
 ]
 
 [[package]]
@@ -272,7 +271,6 @@ name = "dashboard"
 version = "0.1.0"
 dependencies = [
  "openui",
- "openui-build",
 ]
 
 [[package]]
@@ -374,7 +372,6 @@ name = "hello"
 version = "0.1.0"
 dependencies = [
  "openui",
- "openui-build",
 ]
 
 [[package]]
@@ -524,16 +521,14 @@ checksum = "d6790f58c7ff633d8771f42965289203411a5e5c68388703c06e14f24770b41e"
 
 [[package]]
 name = "openui"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
- "openui-build",
+ "openui-compositor",
+ "openui-dom",
+ "openui-engine",
  "openui-macros",
- "openui-sys",
+ "openui-style",
 ]
-
-[[package]]
-name = "openui-build"
-version = "0.1.0"
 
 [[package]]
 name = "openui-compositor"
@@ -610,13 +605,6 @@ name = "openui-style"
 version = "0.1.0"
 dependencies = [
  "openui-geometry",
-]
-
-[[package]]
-name = "openui-sys"
-version = "0.1.0"
-dependencies = [
- "openui-build",
 ]
 
 [[package]]
@@ -960,7 +948,6 @@ name = "todo"
 version = "0.1.0"
 dependencies = [
  "openui",
- "openui-build",
 ]
 
 [[package]]

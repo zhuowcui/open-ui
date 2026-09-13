@@ -1,270 +1,430 @@
-//! Safe wrapper around an Open UI document (rendering context).
-//!
-//! A [`Document`] owns a Blink viewport and the DOM tree rooted at its body.
-//! It is the entry point for creating elements, running layout, rendering,
-//! and dispatching input events.
+//! Safe, single-thread-affine document API over `openui-engine`.
 
 use crate::element::Element;
-use crate::events::{resource_provider_trampoline, RESOURCE_PROVIDER_REGISTRY};
-use crate::style::{check_status, Bitmap, OuiError};
-use openui_sys::OuiBitmap;
-use std::ffi::{c_void, CString};
+use crate::events::{
+    Event, EventPhase, KeyEventType, Listener, Modifiers, MouseButton, MouseEventType,
+};
+use crate::style::{Bitmap, Error};
+use openui_compositor::SoftwareCompositor;
+use openui_engine::{Engine, NodeHandle, Viewport};
+use openui_style::ImageResourceId;
+use std::cell::{Cell, RefCell};
+use std::collections::HashMap;
+use std::rc::Rc;
 
-/// A document represents a Blink rendering context with a viewport.
-///
-/// It owns the underlying C `OuiDocument` and destroys it on drop.
-/// All elements created within this document are logically owned by it.
+type ListenerKey = (NodeHandle, String);
+type ResourceProvider = dyn Fn(&str) -> Option<Vec<u8>>;
+
+pub(crate) struct DocumentInner {
+    pub engine: RefCell<Engine>,
+    pub listeners: RefCell<HashMap<ListenerKey, Vec<Listener>>>,
+    pub resource_provider: RefCell<Option<Box<ResourceProvider>>>,
+    transaction_depth: Cell<usize>,
+}
+
+/// Cloneable owner reference for one retained native document.
+#[derive(Clone)]
 pub struct Document {
-    raw: *mut openui_sys::OuiDocument,
+    pub(crate) inner: Rc<DocumentInner>,
 }
 
 impl Document {
-    /// Create a new document with the given viewport dimensions.
-    pub fn new(width: i32, height: i32) -> Result<Self, OuiError> {
-        let raw = unsafe { openui_sys::oui_document_create(width, height) };
-        if raw.is_null() {
-            return Err(OuiError::CreationFailed);
+    pub fn new(width: i32, height: i32) -> Result<Self, Error> {
+        let width = u32::try_from(width).map_err(|_| Error::InvalidArgument("invalid width"))?;
+        let height = u32::try_from(height).map_err(|_| Error::InvalidArgument("invalid height"))?;
+        Self::with_viewport(Viewport::new(width, height)?)
+    }
+
+    pub fn with_viewport(viewport: Viewport) -> Result<Self, Error> {
+        Ok(Self {
+            inner: Rc::new(DocumentInner {
+                engine: RefCell::new(Engine::new(viewport)?),
+                listeners: RefCell::new(HashMap::new()),
+                resource_provider: RefCell::new(None),
+                transaction_depth: Cell::new(0),
+            }),
+        })
+    }
+
+    pub fn body(&self) -> Element {
+        let handle = self.inner.engine.borrow().root();
+        Element::from_handle(self.clone(), handle)
+    }
+
+    pub fn transaction<T>(
+        &self,
+        operation: impl FnOnce(&Document) -> Result<T, Error>,
+    ) -> Result<T, Error> {
+        struct DepthGuard<'a> {
+            depth: &'a Cell<usize>,
         }
-        Ok(Document { raw })
-    }
-
-    /// Get the document body (root element).
-    ///
-    /// The returned element is *borrowed* — it is owned by the document and
-    /// will not be destroyed when dropped.
-    pub fn body(&self) -> Option<Element> {
-        let raw = unsafe { openui_sys::oui_document_body(self.raw) };
-        if raw.is_null() {
-            None
-        } else {
-            Some(Element::from_raw(raw, false))
+        impl Drop for DepthGuard<'_> {
+            fn drop(&mut self) {
+                self.depth.set(self.depth.get() - 1);
+            }
         }
-    }
 
-    /// Set the viewport size.
-    pub fn set_viewport(&self, width: i32, height: i32) {
-        unsafe { openui_sys::oui_document_set_viewport(self.raw, width, height) };
-    }
-
-    /// Trigger layout computation.
-    pub fn layout(&self) -> Result<(), OuiError> {
-        check_status(unsafe { openui_sys::oui_document_layout(self.raw) })
-    }
-
-    /// Full lifecycle update (style recalc + layout + compositing).
-    pub fn update_all(&self) -> Result<(), OuiError> {
-        check_status(unsafe { openui_sys::oui_document_update_all(self.raw) })
-    }
-
-    /// Load and parse HTML content into the document.
-    pub fn load_html(&self, html: &str) -> Result<(), OuiError> {
-        let c_html = CString::new(html).map_err(|_| OuiError::InvalidArgument)?;
-        check_status(unsafe { openui_sys::oui_document_load_html(self.raw, c_html.as_ptr()) })
-    }
-
-    /// Render the document to a PNG file on disk.
-    pub fn render_to_png(&self, path: &str) -> Result<(), OuiError> {
-        let c_path = CString::new(path).map_err(|_| OuiError::InvalidArgument)?;
-        check_status(unsafe { openui_sys::oui_document_render_to_png(self.raw, c_path.as_ptr()) })
-    }
-
-    /// Render the document to an in-memory RGBA bitmap.
-    pub fn render_to_bitmap(&self) -> Result<Bitmap, OuiError> {
-        let mut bitmap = OuiBitmap {
-            pixels: std::ptr::null_mut(),
-            width: 0,
-            height: 0,
-            stride: 0,
+        self.inner
+            .transaction_depth
+            .set(self.inner.transaction_depth.get() + 1);
+        let _guard = DepthGuard {
+            depth: &self.inner.transaction_depth,
         };
-        check_status(unsafe { openui_sys::oui_document_render_to_bitmap(self.raw, &mut bitmap) })?;
-        Ok(Bitmap { raw: bitmap })
+        operation(self)
     }
 
-    /// Render the document to an in-memory PNG buffer.
-    pub fn render_to_png_buffer(&self) -> Result<Vec<u8>, OuiError> {
-        let mut data: *mut u8 = std::ptr::null_mut();
-        let mut size: usize = 0;
-        check_status(unsafe {
-            openui_sys::oui_document_render_to_png_buffer(self.raw, &mut data, &mut size)
-        })?;
-        if data.is_null() {
-            return Err(OuiError::Internal);
+    pub fn set_viewport(&self, width: u32, height: u32) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.set_viewport(Viewport::new(width, height)?))
+    }
+
+    pub fn update_all(&self) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.update().map(|_| ()))
+    }
+
+    pub fn render_to_bitmap(&self) -> Result<Bitmap, Error> {
+        let scene = self.with_engine_mut(|engine| engine.scene())?;
+        let frame = SoftwareCompositor::default().render(&scene)?;
+        Ok(Bitmap {
+            pixels: frame.pixels,
+            width: frame.width,
+            height: frame.height,
+            stride: frame.stride,
+        })
+    }
+
+    pub fn render_to_png_buffer(&self) -> Result<Vec<u8>, Error> {
+        let scene = self.with_engine_mut(|engine| engine.scene())?;
+        Ok(SoftwareCompositor::default().render_png(&scene)?)
+    }
+
+    pub fn render_to_png(&self, path: impl AsRef<std::path::Path>) -> Result<(), Error> {
+        std::fs::write(path, self.render_to_png_buffer()?)?;
+        Ok(())
+    }
+
+    pub fn hit_test(&self, x: f32, y: f32) -> Result<Option<Element>, Error> {
+        let handle = self.with_engine_mut(|engine| engine.hit_test(x, y))?;
+        Ok(handle.map(|handle| Element::from_handle(self.clone(), handle)))
+    }
+
+    pub fn advance_time(&self, time_ms: f64) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.set_animation_time(time_ms))
+    }
+
+    pub fn advance_time_by(&self, delta_ms: f64) -> Result<(), Error> {
+        if !delta_ms.is_finite() {
+            return Err(Error::InvalidArgument("animation delta must be finite"));
         }
-        let vec = unsafe { std::slice::from_raw_parts(data, size) }.to_vec();
-        unsafe { openui_sys::oui_free(data as *mut c_void) };
-        Ok(vec)
+        self.with_engine_mut(|engine| {
+            let next = engine.animation_time() + delta_ms;
+            engine.set_animation_time(next)
+        })
     }
 
-    /// Hit-test at viewport coordinates and return the topmost element.
-    ///
-    /// Returns `None` if no element was hit.
-    pub fn hit_test(&self, x: f32, y: f32) -> Option<Element> {
-        let raw = unsafe { openui_sys::oui_document_hit_test(self.raw, x, y) };
-        if raw.is_null() {
-            None
-        } else {
-            Some(Element::from_raw(raw, false))
-        }
+    pub fn get_time(&self) -> Result<f64, Error> {
+        self.with_engine(|engine| engine.animation_time())
     }
 
-    // ─── Time & animation ───────────────────────────────────
-
-    /// Advance the animation clock to an absolute time in milliseconds.
-    pub fn advance_time(&self, time_ms: f64) -> Result<(), OuiError> {
-        check_status(unsafe { openui_sys::oui_document_advance_time(self.raw, time_ms) })
+    pub fn begin_frame(&self, time_ms: f64) -> Result<(), Error> {
+        self.advance_time(time_ms)?;
+        self.update_all()
     }
 
-    /// Advance the animation clock by a delta in milliseconds.
-    pub fn advance_time_by(&self, delta_ms: f64) -> Result<(), OuiError> {
-        check_status(unsafe { openui_sys::oui_document_advance_time_by(self.raw, delta_ms) })
-    }
-
-    /// Get the current animation time in milliseconds.
-    pub fn get_time(&self) -> f64 {
-        unsafe { openui_sys::oui_document_get_time(self.raw) }
-    }
-
-    /// Full frame tick: advance time, run animations, and update lifecycle.
-    pub fn begin_frame(&self, time_ms: f64) -> Result<(), OuiError> {
-        check_status(unsafe { openui_sys::oui_document_begin_frame(self.raw, time_ms) })
-    }
-
-    // ─── Input event dispatch ───────────────────────────────
-
-    /// Dispatch a mouse event into the document.
     pub fn dispatch_mouse_event(
         &self,
-        event_type: crate::events::MouseEventType,
+        event_type: MouseEventType,
         x: f32,
         y: f32,
-        button: crate::events::MouseButton,
-        modifiers: crate::events::Modifiers,
-    ) -> Result<(), OuiError> {
-        check_status(unsafe {
-            openui_sys::oui_document_dispatch_mouse_event(
-                self.raw,
-                event_type.into(),
-                x,
-                y,
-                button.into(),
-                modifiers.bits() as i32,
-            )
-        })
+        button: MouseButton,
+        modifiers: Modifiers,
+    ) -> Result<(), Error> {
+        let target = self.with_engine_mut(|engine| {
+            if let Some(captured) = engine.pointer_capture(0) {
+                Ok(Some(captured))
+            } else {
+                engine.hit_test(x, y)
+            }
+        })?;
+        let Some(target) = target else {
+            return Ok(());
+        };
+        let event = Event::pointer(event_type.name(), x, y, button, modifiers);
+        self.dispatch_to(target, &event)?;
+        if event_type == MouseEventType::Up && !event.default_prevented() {
+            let click = Event::pointer("click", x, y, button, modifiers);
+            self.dispatch_to(target, &click)?;
+        }
+        Ok(())
     }
 
-    /// Dispatch a keyboard event into the document.
     pub fn dispatch_key_event(
         &self,
-        event_type: crate::events::KeyEventType,
+        event_type: KeyEventType,
         key_code: i32,
         key_text: Option<&str>,
-        modifiers: crate::events::Modifiers,
-    ) -> Result<(), OuiError> {
-        let c_text = key_text
-            .map(|t| CString::new(t))
-            .transpose()
-            .map_err(|_| OuiError::InvalidArgument)?;
-        let text_ptr = c_text.as_ref().map_or(std::ptr::null(), |s| s.as_ptr());
-        check_status(unsafe {
-            openui_sys::oui_document_dispatch_key_event(
-                self.raw,
-                event_type.into(),
-                key_code,
-                text_ptr,
-                modifiers.bits() as i32,
-            )
-        })
+        modifiers: Modifiers,
+    ) -> Result<(), Error> {
+        let target =
+            self.with_engine(|engine| engine.focused().unwrap_or_else(|| engine.root()))?;
+        let event = Event::keyboard(event_type.name(), key_code, key_text, modifiers);
+        self.dispatch_to(target, &event)
     }
 
-    /// Dispatch a wheel (scroll) event into the document.
     pub fn dispatch_wheel_event(
         &self,
         x: f32,
         y: f32,
         delta_x: f32,
         delta_y: f32,
-        modifiers: crate::events::Modifiers,
-    ) -> Result<(), OuiError> {
-        check_status(unsafe {
-            openui_sys::oui_document_dispatch_wheel_event(
-                self.raw,
-                x,
-                y,
-                delta_x,
-                delta_y,
-                modifiers.bits() as i32,
-            )
-        })
-    }
-
-    // ─── Focus management ───────────────────────────────────
-
-    /// Get the currently focused element, if any.
-    pub fn get_focused_element(&self) -> Option<Element> {
-        let raw = unsafe { openui_sys::oui_document_get_focused_element(self.raw) };
-        if raw.is_null() {
-            None
-        } else {
-            Some(Element::from_raw(raw, false))
+        modifiers: Modifiers,
+    ) -> Result<(), Error> {
+        let target = self.with_engine_mut(|engine| engine.hit_test(x, y))?;
+        if let Some(target) = target {
+            self.dispatch_to(target, &Event::wheel(x, y, delta_x, delta_y, modifiers))?;
         }
+        Ok(())
     }
 
-    /// Advance focus in the given direction (1 = Tab, -1 = Shift+Tab).
-    pub fn advance_focus(&self, direction: i32) -> Result<(), OuiError> {
-        check_status(unsafe { openui_sys::oui_document_advance_focus(self.raw, direction) })
+    pub fn focused_element(&self) -> Result<Option<Element>, Error> {
+        let handle = self.with_engine(|engine| engine.focused())?;
+        Ok(handle.map(|handle| Element::from_handle(self.clone(), handle)))
     }
 
-    // ─── Resource provider ──────────────────────────────────
+    pub fn advance_focus(&self, direction: i32) -> Result<(), Error> {
+        if direction != -1 && direction != 1 {
+            return Err(Error::InvalidArgument("focus direction must be -1 or 1"));
+        }
+        let candidates = self.focus_candidates()?;
+        if candidates.is_empty() {
+            return Ok(());
+        }
+        let focused = self.with_engine(|engine| engine.focused())?;
+        let index = focused
+            .and_then(|focused| candidates.iter().position(|item| *item == focused))
+            .map(|index| {
+                if direction > 0 {
+                    (index + 1) % candidates.len()
+                } else {
+                    (index + candidates.len() - 1) % candidates.len()
+                }
+            })
+            .unwrap_or_else(|| {
+                if direction > 0 {
+                    0
+                } else {
+                    candidates.len() - 1
+                }
+            });
+        self.with_engine_mut(|engine| engine.focus(candidates[index]))
+    }
 
-    /// Set a resource provider callback.
-    ///
-    /// The callback receives a URL string and should return `Some(bytes)` to
-    /// supply the resource data, or `None` to let the engine handle it.
-    pub fn set_resource_provider<F>(&self, callback: F) -> Result<(), OuiError>
+    pub fn set_resource_provider<F>(&self, callback: F) -> Result<(), Error>
     where
         F: Fn(&str) -> Option<Vec<u8>> + 'static,
     {
-        let boxed: Box<dyn Fn(&str) -> Option<Vec<u8>>> = Box::new(callback);
-        let user_data = Box::into_raw(Box::new(boxed)) as *mut c_void;
+        *self
+            .inner
+            .resource_provider
+            .try_borrow_mut()
+            .map_err(|_| Error::ReentrantMutation)? = Some(Box::new(callback));
+        Ok(())
+    }
 
-        // Store for cleanup, freeing any previous provider.
-        {
-            let mut map = RESOURCE_PROVIDER_REGISTRY.lock().unwrap();
-            if let Some(old) = map.remove(&(self.raw as usize)) {
-                let _ = unsafe { Box::from_raw(old as *mut Box<dyn Fn(&str) -> Option<Vec<u8>>>) };
-            }
-            map.insert(self.raw as usize, user_data as usize);
-        }
-
-        check_status(unsafe {
-            openui_sys::oui_document_set_resource_provider(
-                self.raw,
-                Some(resource_provider_trampoline),
-                user_data,
-            )
+    pub fn register_image_resource(
+        &self,
+        source: impl Into<String>,
+        mime_type: impl Into<String>,
+        sha256: impl Into<String>,
+        bytes: impl Into<Vec<u8>>,
+    ) -> Result<ImageResourceId, Error> {
+        let source = source.into();
+        let mime_type = mime_type.into();
+        let sha256 = sha256.into();
+        let bytes = bytes.into();
+        self.with_engine_mut(|engine| {
+            Ok(engine.register_image_resource(source, mime_type, sha256, bytes))
         })
     }
 
-    // ─── Raw access ─────────────────────────────────────────
-
-    /// Get the underlying raw FFI pointer (for advanced use).
-    pub fn as_raw(&self) -> *mut openui_sys::OuiDocument {
-        self.raw
+    pub fn load_image_resource(
+        &self,
+        source: &str,
+        mime_type: &str,
+        sha256: &str,
+    ) -> Result<Option<ImageResourceId>, Error> {
+        let bytes = {
+            let provider = self
+                .inner
+                .resource_provider
+                .try_borrow()
+                .map_err(|_| Error::ReentrantMutation)?;
+            provider.as_ref().and_then(|provider| provider(source))
+        };
+        bytes
+            .map(|bytes| self.register_image_resource(source, mime_type, sha256, bytes))
+            .transpose()
     }
-}
 
-impl Drop for Document {
-    fn drop(&mut self) {
-        if !self.raw.is_null() {
-            // Free any resource provider closure.
-            if let Some(ptr) = RESOURCE_PROVIDER_REGISTRY
-                .lock()
-                .unwrap()
-                .remove(&(self.raw as usize))
-            {
-                let _ = unsafe { Box::from_raw(ptr as *mut Box<dyn Fn(&str) -> Option<Vec<u8>>>) };
+    pub(crate) fn add_listener(
+        &self,
+        handle: NodeHandle,
+        event_type: &str,
+        listener: Listener,
+    ) -> Result<(), Error> {
+        self.with_engine(|engine| handle.downgrade().upgrade(engine))??;
+        self.inner
+            .listeners
+            .try_borrow_mut()
+            .map_err(|_| Error::ReentrantMutation)?
+            .entry((handle, event_type.to_owned()))
+            .or_default()
+            .push(listener);
+        Ok(())
+    }
+
+    pub(crate) fn remove_listeners(
+        &self,
+        handle: NodeHandle,
+        event_type: &str,
+    ) -> Result<(), Error> {
+        self.inner
+            .listeners
+            .try_borrow_mut()
+            .map_err(|_| Error::ReentrantMutation)?
+            .remove(&(handle, event_type.to_owned()));
+        Ok(())
+    }
+
+    pub(crate) fn remove_node(&self, handle: NodeHandle) -> Result<(), Error> {
+        let handles = self.subtree_handles(handle)?;
+        self.with_engine_mut(|engine| engine.remove(handle))?;
+        self.inner
+            .listeners
+            .try_borrow_mut()
+            .map_err(|_| Error::ReentrantMutation)?
+            .retain(|(node, _), _| !handles.contains(node));
+        Ok(())
+    }
+
+    pub(crate) fn with_engine<T>(&self, f: impl FnOnce(&Engine) -> T) -> Result<T, Error> {
+        let engine = self
+            .inner
+            .engine
+            .try_borrow()
+            .map_err(|_| Error::ReentrantMutation)?;
+        Ok(f(&engine))
+    }
+
+    pub(crate) fn with_engine_mut<T>(
+        &self,
+        f: impl FnOnce(&mut Engine) -> Result<T, openui_engine::EngineError>,
+    ) -> Result<T, Error> {
+        let mut engine = self
+            .inner
+            .engine
+            .try_borrow_mut()
+            .map_err(|_| Error::ReentrantMutation)?;
+        Ok(f(&mut engine)?)
+    }
+
+    fn subtree_handles(&self, root: NodeHandle) -> Result<Vec<NodeHandle>, Error> {
+        self.with_engine(|engine| {
+            fn collect(engine: &Engine, node: NodeHandle, result: &mut Vec<NodeHandle>) {
+                result.push(node);
+                if let Ok(children) = engine.children(node) {
+                    for child in children {
+                        collect(engine, child, result);
+                    }
+                }
             }
-            unsafe { openui_sys::oui_document_destroy(self.raw) };
+            let mut result = Vec::new();
+            collect(engine, root, &mut result);
+            result
+        })
+    }
+
+    fn focus_candidates(&self) -> Result<Vec<NodeHandle>, Error> {
+        self.with_engine(|engine| {
+            fn collect(engine: &Engine, node: NodeHandle, result: &mut Vec<NodeHandle>) {
+                let focusable_tag = engine.element_tag(node).is_ok_and(|tag| {
+                    matches!(
+                        tag,
+                        openui_dom::ElementTag::Button
+                            | openui_dom::ElementTag::Input
+                            | openui_dom::ElementTag::TextArea
+                            | openui_dom::ElementTag::Select
+                    )
+                });
+                let explicit = engine
+                    .attribute(node, "tabindex")
+                    .ok()
+                    .flatten()
+                    .and_then(|value| value.parse::<i32>().ok())
+                    .is_some_and(|value| value >= 0);
+                if focusable_tag || explicit {
+                    result.push(node);
+                }
+                if let Ok(children) = engine.children(node) {
+                    for child in children {
+                        collect(engine, child, result);
+                    }
+                }
+            }
+            let mut result = Vec::new();
+            collect(engine, engine.root(), &mut result);
+            result
+        })
+    }
+
+    fn dispatch_to(&self, target: NodeHandle, event: &Event) -> Result<(), Error> {
+        let path = self.with_engine(|engine| {
+            let mut path = vec![target];
+            let mut current = target;
+            while let Ok(Some(parent)) = engine.parent(current) {
+                path.push(parent);
+                current = parent;
+            }
+            path
+        })?;
+
+        for node in path.iter().skip(1).rev() {
+            event.set_phase(EventPhase::Capture);
+            self.invoke(*node, event, Some(true))?;
+            if event.propagation_stopped() {
+                return Ok(());
+            }
         }
+        event.set_phase(EventPhase::Target);
+        self.invoke(target, event, Some(true))?;
+        self.invoke(target, event, Some(false))?;
+        if event.propagation_stopped() {
+            return Ok(());
+        }
+        for node in path.iter().skip(1) {
+            event.set_phase(EventPhase::Bubble);
+            self.invoke(*node, event, Some(false))?;
+            if event.propagation_stopped() {
+                break;
+            }
+        }
+        Ok(())
+    }
+
+    fn invoke(&self, node: NodeHandle, event: &Event, capture: Option<bool>) -> Result<(), Error> {
+        let callbacks: Vec<_> = self
+            .inner
+            .listeners
+            .try_borrow()
+            .map_err(|_| Error::ReentrantMutation)?
+            .get(&(node, event.event_type.clone()))
+            .into_iter()
+            .flat_map(|listeners| listeners.iter())
+            .filter(|listener| capture.is_none_or(|capture| listener.capture == capture))
+            .map(|listener| listener.callback.clone())
+            .collect();
+        for callback in callbacks {
+            callback(event);
+        }
+        Ok(())
     }
 }

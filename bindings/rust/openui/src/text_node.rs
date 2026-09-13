@@ -1,56 +1,69 @@
-//! Safe wrapper around `OuiTextNode` — a mutable DOM Text node handle.
-//!
-//! Unlike [`Element`], a `TextNode` wraps `blink::Text` (not `blink::Element`).
-//! It is created via [`Element::create_text_child`] and provides a
-//! [`set_data`](TextNode::set_data) method for reactive text updates without
-//! introducing wrapper elements like `<span>`.
+//! Mutable text-node handles.
 
-use std::ffi::CString;
+use crate::document::{Document, DocumentInner};
+use crate::style::Error;
+use openui_engine::{NodeHandle, WeakNode};
+use std::rc::{Rc, Weak};
 
-/// RAII handle to a DOM Text node.
-///
-/// When dropped (if owned), removes the text node from the DOM and frees
-/// the underlying C object.
 pub struct TextNode {
-    raw: *mut openui_sys::OuiTextNode,
-    owned: bool,
+    document: Document,
+    handle: NodeHandle,
+    remove_on_drop: bool,
+}
+
+#[derive(Clone)]
+pub struct WeakTextNode {
+    document: Weak<DocumentInner>,
+    handle: WeakNode,
+}
+
+impl WeakTextNode {
+    pub fn upgrade(&self) -> Option<TextNode> {
+        let inner = self.document.upgrade()?;
+        let document = Document { inner };
+        let handle = document
+            .with_engine(|engine| self.handle.upgrade(engine))
+            .ok()?
+            .ok()?;
+        Some(TextNode::from_handle(document, handle, false))
+    }
 }
 
 impl TextNode {
-    /// Wrap a raw pointer, taking ownership.
-    ///
-    /// # Safety
-    /// `raw` must be a valid pointer returned by `oui_element_create_text_child`
-    /// that has not been destroyed.
-    pub(crate) unsafe fn from_raw(raw: *mut openui_sys::OuiTextNode) -> Self {
-        TextNode { raw, owned: true }
+    pub(crate) fn from_handle(
+        document: Document,
+        handle: NodeHandle,
+        remove_on_drop: bool,
+    ) -> Self {
+        Self {
+            document,
+            handle,
+            remove_on_drop,
+        }
     }
 
-    /// Wrap a raw pointer *without* ownership — drop will not destroy it.
-    ///
-    /// # Safety
-    /// `raw` must be a valid, non-null `OuiTextNode` pointer that outlives
-    /// the returned `TextNode`.
-    pub unsafe fn from_raw_borrowed(raw: *mut openui_sys::OuiTextNode) -> Self {
-        TextNode { raw, owned: false }
+    pub fn downgrade(&self) -> WeakTextNode {
+        WeakTextNode {
+            document: Rc::downgrade(&self.document.inner),
+            handle: self.handle.downgrade(),
+        }
     }
 
-    /// Returns the underlying raw pointer.
-    pub fn as_raw(&self) -> *mut openui_sys::OuiTextNode {
-        self.raw
+    pub fn set_data(&self, data: &str) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_text(self.handle, data.to_owned()))
     }
 
-    /// Update the text content of this node.
-    pub fn set_data(&self, data: &str) {
-        let c = CString::new(data).unwrap_or_default();
-        unsafe { openui_sys::oui_text_node_set_data(self.raw, c.as_ptr()) };
+    pub fn remove(mut self) -> Result<(), Error> {
+        self.remove_on_drop = false;
+        self.document.remove_node(self.handle)
     }
 }
 
 impl Drop for TextNode {
     fn drop(&mut self) {
-        if self.owned && !self.raw.is_null() {
-            unsafe { openui_sys::oui_text_node_destroy(self.raw) };
+        if self.remove_on_drop {
+            let _ = self.document.remove_node(self.handle);
         }
     }
 }

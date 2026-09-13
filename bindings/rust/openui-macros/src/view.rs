@@ -593,7 +593,7 @@ fn gen_html_element(tag: &Ident, attrs: &[Attr], children: &[ViewNode]) -> Token
     quote_spanned! {span=> {
         let __doc = ::openui::current_document();
         #[allow(unused_variables)]
-        let __el = ::openui::Element::create(__doc, #tag_str)
+        let __el = ::openui::Element::create(&__doc, #tag_str)
             .expect("failed to create element");
         #(#attr_stmts)*
         #(#child_stmts)*
@@ -610,17 +610,16 @@ fn gen_dynamic_view_node(expr: &Expr, span: Span) -> TokenStream {
         ::openui::ViewNode::MountFn(Box::new(move |__el: &::openui::Element| {
             let __text_node = __el.create_text_child(
                 &::std::string::ToString::to_string(&(#expr))
-            );
-            let __text_raw = __text_node.as_raw();
+            ).expect("create dynamic text node");
+            let __text_weak = __text_node.downgrade();
             ::openui::on_cleanup(move || { drop(__text_node); });
             ::openui::create_effect({
-                let __text_raw = __text_raw;
+                let __text_weak = __text_weak;
                 move || {
-                    let __node_ref = unsafe {
-                        ::openui::TextNode::from_raw_borrowed(__text_raw)
-                    };
-                    let __val = ::std::string::ToString::to_string(&(#expr));
-                    __node_ref.set_data(&__val);
+                    if let Some(__node_ref) = __text_weak.upgrade() {
+                        let __val = ::std::string::ToString::to_string(&(#expr));
+                        __node_ref.set_data(&__val).expect("update dynamic text");
+                    }
                 }
             });
         }))
@@ -671,15 +670,14 @@ fn gen_attr_stmt(attr: &Attr) -> TokenStream {
                     None => unreachable!(),
                 });
             quote_spanned! {*span=> {
-                let __style_raw = __el.as_raw();
+                let __style_node = __el.downgrade();
                 ::openui::create_effect({
-                    let __style_raw = __style_raw;
+                    let __style_node = __style_node;
                     move || {
-                        let __el_ref = unsafe {
-                            ::openui::Element::from_raw_borrowed(__style_raw)
-                        };
-                        let __val: #expected = (#expr)();
-                        __el_ref.set_property(#property, __val.into()).expect("set typed style");
+                        if let Some(__el_ref) = __style_node.upgrade() {
+                            let __val: #expected = #expr;
+                            __el_ref.set_property(#property, __val.into()).expect("set typed style");
+                        }
                     }
                 });
             }}
@@ -718,26 +716,25 @@ fn gen_child_stmt(child: &ViewNode) -> TokenStream {
         ViewNode::Text(lit) => {
             let text = lit.value();
             quote_spanned! {lit.span()=>
-                __el.append_text_node(#text);
+                __el.append_text_node(#text).expect("append text node");
             }
         }
         ViewNode::Dynamic { expr, span } => {
             quote_spanned! {*span=> {
                 let __text_node = __el.create_text_child(
                     &::std::string::ToString::to_string(&(#expr))
-                );
-                let __text_raw = __text_node.as_raw();
+                ).expect("create dynamic text node");
+                let __text_weak = __text_node.downgrade();
                 // Transfer ownership to scope cleanup so the text node is
                 // removed from the DOM when the enclosing scope is disposed.
                 ::openui::on_cleanup(move || { drop(__text_node); });
                 ::openui::create_effect({
-                    let __text_raw = __text_raw;
+                    let __text_weak = __text_weak;
                     move || {
-                        let __node_ref = unsafe {
-                            ::openui::TextNode::from_raw_borrowed(__text_raw)
-                        };
-                        let __val = ::std::string::ToString::to_string(&(#expr));
-                        __node_ref.set_data(&__val);
+                        if let Some(__node_ref) = __text_weak.upgrade() {
+                            let __val = ::std::string::ToString::to_string(&(#expr));
+                            __node_ref.set_data(&__val).expect("update dynamic text");
+                        }
                     }
                 });
             }}
@@ -758,14 +755,13 @@ fn gen_child_html_element(tag: &Ident, attrs: &[Attr], children: &[ViewNode]) ->
         let __child = {
             let __doc = ::openui::current_document();
             #[allow(unused_variables)]
-            let __el = ::openui::Element::create(__doc, #tag_str)
+            let __el = ::openui::Element::create(&__doc, #tag_str)
                 .expect("failed to create element");
             #(#attr_stmts)*
             #(#child_stmts)*
             __el
         };
-        __el.append_child(&__child);
-        ::std::mem::forget(__child);
+        __el.append_child(&__child).expect("append child element");
     }}
 }
 
@@ -1163,6 +1159,16 @@ mod tests {
     }
 
     #[test]
+    fn codegen_dynamic_style_uses_typed_weak_handle() {
+        let body = parse_ok(quote! { <div style:opacity={0.5_f32} /> });
+        let output = generate(&body).to_string();
+        assert!(output.contains("let __val : f32"));
+        assert!(output.contains("downgrade"));
+        assert!(!output.contains("as_raw"));
+        assert!(!output.contains("from_raw"));
+    }
+
+    #[test]
     fn codegen_unknown_property_is_compile_error() {
         let body = parse_ok(quote! { <div style:definitely-unknown="10px" /> });
         assert!(generate(&body).to_string().contains("compile_error"));
@@ -1211,6 +1217,8 @@ mod tests {
             "must not create a <span> wrapper for dynamic text: {}",
             output_str
         );
+        assert!(output_str.contains("downgrade"));
+        assert!(!output_str.contains("from_raw"));
     }
 
     #[test]
@@ -1228,6 +1236,7 @@ mod tests {
             "expected 'create_text_child' in: {}",
             output_str
         );
+        assert!(!output_str.contains("as_raw"));
     }
 
     #[test]

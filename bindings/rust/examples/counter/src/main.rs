@@ -6,10 +6,10 @@
 
 use openui::prelude::*;
 
-fn main() {
-    let mut app = App::new(800, 600);
+fn main() -> Result<(), Error> {
+    let mut app = HeadlessApp::new(Viewport::new(800, 600)?)?;
 
-    app.render(|| {
+    app.mount(|| {
         // Reactive state: the counter value.
         let count = create_signal(0_i32);
 
@@ -81,10 +81,11 @@ fn main() {
                 </p>
             </div>
         }
-    });
+    })?;
 
     // Render initial state (count = 0).
-    app.run_frames(1).render_to_png("counter.png");
+    app.render_png_to(0.0, "counter.png")?;
 
     println!("Rendered counter.png");
+    Ok(())
 }

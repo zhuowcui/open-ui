@@ -10,12 +10,13 @@ use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::hash::Hash;
 
-use crate::context::current_document;
+use crate::context::{current_document, with_document};
 use crate::effect::create_effect;
-use crate::element::Element;
+use crate::element::{Element, WeakElement};
 use crate::runtime::ScopeId;
 use crate::scope::{create_scope, dispose_scope};
 use crate::view_node::{mount_view, IntoView, ViewNode};
+use openui_style::{Display, StyleProperty};
 
 /// Conditionally render content based on a reactive boolean expression.
 ///
@@ -47,10 +48,13 @@ where
     V: IntoView,
 {
     let doc = current_document();
-    let container = Element::create(doc, "div").expect("Show: failed to create container");
-    container.set_style("display", "contents").ok();
+    let container = Element::create(&doc, "div").expect("Show: failed to create container");
+    container
+        .set_property(StyleProperty::Display, Display::Contents.into())
+        .expect("Show: set transparent layout");
 
-    let raw = container.as_raw();
+    let weak = container.downgrade();
+    let effect_document = doc.clone();
     let scope_cell: Cell<Option<ScopeId>> = Cell::new(None);
     let showing_cell: Cell<Option<bool>> = Cell::new(None);
 
@@ -68,18 +72,23 @@ where
             dispose_scope(old);
         }
 
-        let scope_id = create_scope(|| {
-            // SAFETY: raw points to our container which outlives this scope.
-            let container_ref = unsafe { Element::from_raw_borrowed(raw) };
-            container_ref.remove_all_children();
+        let Some(container_ref) = weak.upgrade() else {
+            return;
+        };
+        let scope_id = with_document(&effect_document, || {
+            create_scope(|| {
+                container_ref
+                    .remove_all_children()
+                    .expect("Show: clear prior branch");
 
-            if show {
-                let view = children().into_view();
-                mount_view(&container_ref, view);
-            } else {
-                let view = fallback().into_view();
-                mount_view(&container_ref, view);
-            }
+                if show {
+                    let view = children().into_view();
+                    mount_view(&container_ref, view);
+                } else {
+                    let view = fallback().into_view();
+                    mount_view(&container_ref, view);
+                }
+            })
         });
 
         scope_cell.set(Some(scope_id));
@@ -119,20 +128,24 @@ where
     V: IntoView,
 {
     let doc = current_document();
-    let container = Element::create(doc, "div").expect("For: failed to create container");
-    container.set_style("display", "contents").ok();
+    let container = Element::create(&doc, "div").expect("For: failed to create container");
+    container
+        .set_property(StyleProperty::Display, Display::Contents.into())
+        .expect("For: set transparent layout");
 
-    let raw = container.as_raw();
+    let weak = container.downgrade();
+    let effect_document = doc.clone();
 
-    // Ordered state: (key, scope_id, wrapper_raw_ptr) for each item currently
+    // Ordered state: (key, scope_id, weak wrapper) for each item currently
     // in the DOM.
-    let state: RefCell<Vec<(K, ScopeId, *mut openui_sys::OuiElement)>> = RefCell::new(Vec::new());
+    let state: RefCell<Vec<(K, ScopeId, WeakElement)>> = RefCell::new(Vec::new());
 
     create_effect(move || {
         let new_data = each();
 
-        // SAFETY: raw points to our container which outlives this effect.
-        let container_ref = unsafe { Element::from_raw_borrowed(raw) };
+        let Some(container_ref) = weak.upgrade() else {
+            return;
+        };
 
         let mut old_state = state.borrow_mut();
 
@@ -141,13 +154,15 @@ where
         let new_key_set: HashMap<K, ()> = new_keys.iter().map(|k| (k.clone(), ())).collect();
 
         // Partition old items into kept (reusable) and removed.
-        let mut kept: HashMap<K, (ScopeId, *mut openui_sys::OuiElement)> = HashMap::new();
-        for (k, scope_id, el_raw) in old_state.drain(..) {
+        let mut kept: HashMap<K, (ScopeId, WeakElement)> = HashMap::new();
+        for (k, scope_id, element) in old_state.drain(..) {
             if new_key_set.contains_key(&k) {
-                kept.insert(k, (scope_id, el_raw));
+                kept.insert(k, (scope_id, element));
             } else {
                 dispose_scope(scope_id);
-                Element::destroy_subtree(el_raw);
+                if let Some(element) = element.upgrade() {
+                    element.remove().expect("For: remove obsolete item");
+                }
             }
         }
 
@@ -156,28 +171,34 @@ where
         // gives us correct ordering for free.
         let mut new_state = Vec::with_capacity(new_data.len());
         for (item, k) in new_data.into_iter().zip(new_keys.into_iter()) {
-            if let Some((scope_id, el_raw)) = kept.remove(&k) {
+            if let Some((scope_id, element)) = kept.remove(&k) {
                 // Re-use existing element — move to end via append_child.
-                let el_ref = unsafe { Element::from_raw_borrowed(el_raw) };
-                container_ref.append_child(&el_ref);
-                new_state.push((k, scope_id, el_raw));
+                if let Some(element_ref) = element.upgrade() {
+                    container_ref
+                        .append_child(&element_ref)
+                        .expect("For: reorder item");
+                    new_state.push((k, scope_id, element));
+                }
             } else {
                 // Create a new wrapper + content.
-                let wrapper = Element::create(current_document(), "div")
+                let wrapper = Element::create(&effect_document, "div")
                     .expect("For: failed to create item wrapper");
-                wrapper.set_style("display", "contents").ok();
-                let wrapper_raw = wrapper.as_raw();
+                wrapper
+                    .set_property(StyleProperty::Display, Display::Contents.into())
+                    .expect("For: set item layout");
+                let wrapper_weak = wrapper.downgrade();
 
-                let scope_id = create_scope(|| {
-                    let w = unsafe { Element::from_raw_borrowed(wrapper_raw) };
-                    let view = children(item).into_view();
-                    mount_view(&w, view);
+                let scope_id = with_document(&effect_document, || {
+                    create_scope(|| {
+                        let view = children(item).into_view();
+                        mount_view(&wrapper, view);
+                    })
                 });
 
-                container_ref.append_child(&wrapper);
-                // Ownership transfers to the DOM tree.
-                std::mem::forget(wrapper);
-                new_state.push((k, scope_id, wrapper_raw));
+                container_ref
+                    .append_child(&wrapper)
+                    .expect("For: append item");
+                new_state.push((k, scope_id, wrapper_weak));
             }
         }
 
@@ -208,9 +229,10 @@ where
     V: IntoView,
 {
     let doc = current_document();
-    let container = Element::create(doc, "span").expect("DynChild: failed to create container");
+    let container = Element::create(&doc, "span").expect("DynChild: failed to create container");
 
-    let raw = container.as_raw();
+    let weak = container.downgrade();
+    let effect_document = doc.clone();
     let scope_cell: Cell<Option<ScopeId>> = Cell::new(None);
 
     create_effect(move || {
@@ -219,13 +241,18 @@ where
             dispose_scope(old);
         }
 
-        let scope_id = create_scope(|| {
-            // SAFETY: raw points to our container which outlives this scope.
-            let container_ref = unsafe { Element::from_raw_borrowed(raw) };
-            container_ref.remove_all_children();
+        let Some(container_ref) = weak.upgrade() else {
+            return;
+        };
+        let scope_id = with_document(&effect_document, || {
+            create_scope(|| {
+                container_ref
+                    .remove_all_children()
+                    .expect("DynChild: clear prior content");
 
-            let view = f().into_view();
-            mount_view(&container_ref, view);
+                let view = f().into_view();
+                mount_view(&container_ref, view);
+            })
         });
 
         scope_cell.set(Some(scope_id));

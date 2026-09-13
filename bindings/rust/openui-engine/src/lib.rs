@@ -164,6 +164,9 @@ pub struct Engine {
     latest_fragment: Option<Arc<Fragment>>,
     latest_scene: Option<SceneSnapshot>,
     hit_test: Vec<HitEntry>,
+    focused: Option<NodeHandle>,
+    pointer_capture: HashMap<u64, NodeHandle>,
+    animation_time_ms: f64,
     stats: LifecycleStats,
     _thread_affine: PhantomData<Rc<()>>,
 }
@@ -201,6 +204,9 @@ impl Engine {
             latest_fragment: None,
             latest_scene: None,
             hit_test: Vec::new(),
+            focused: None,
+            pointer_capture: HashMap::new(),
+            animation_time_ms: 0.0,
             stats: LifecycleStats::default(),
             _thread_affine: PhantomData,
         })
@@ -382,6 +388,19 @@ impl Engine {
         let mut descendants = Vec::new();
         self.collect_subtree(node, &mut descendants);
         self.document.detach(node);
+        let removed_handles: Vec<_> = descendants
+            .iter()
+            .filter_map(|node| self.node_slots.get(node))
+            .map(|index| self.handle_for_slot(*index))
+            .collect();
+        if self
+            .focused
+            .is_some_and(|focused| removed_handles.contains(&focused))
+        {
+            self.focused = None;
+        }
+        self.pointer_capture
+            .retain(|_, captured| !removed_handles.contains(captured));
         for node in descendants {
             if let Some(index) = self.node_slots.remove(&node) {
                 let slot = &mut self.slots[index as usize];
@@ -425,6 +444,34 @@ impl Engine {
         self.document.set_attribute(node, name, value);
         self.mark_dirty(InvalidationClass::Accessibility);
         Ok(())
+    }
+
+    pub fn attribute(&self, handle: NodeHandle, name: &str) -> Result<Option<&str>, EngineError> {
+        let node = self.resolve(handle)?;
+        Ok(self
+            .document
+            .node(node)
+            .attributes
+            .get(name)
+            .map(String::as_str))
+    }
+
+    pub fn remove_attribute(
+        &mut self,
+        handle: NodeHandle,
+        name: &str,
+    ) -> Result<bool, EngineError> {
+        let node = self.resolve(handle)?;
+        let removed = self
+            .document
+            .node_mut(node)
+            .attributes
+            .remove(name)
+            .is_some();
+        if removed {
+            self.mark_dirty(InvalidationClass::Accessibility);
+        }
+        Ok(removed)
     }
 
     pub fn set_property(
@@ -496,6 +543,94 @@ impl Engine {
         handle: NodeHandle,
     ) -> Result<&openui_style::ComputedStyle, EngineError> {
         Ok(&self.document.node(self.resolve(handle)?).style)
+    }
+
+    pub fn element_tag(&self, handle: NodeHandle) -> Result<ElementTag, EngineError> {
+        Ok(self.document.node(self.resolve(handle)?).tag)
+    }
+
+    pub fn scroll_offset(&self, handle: NodeHandle) -> Result<(f64, f64), EngineError> {
+        let node = self.resolve(handle)?;
+        let node = self.document.node(node);
+        Ok((node.scroll_left as f64, node.scroll_top as f64))
+    }
+
+    pub fn scroll_to(&mut self, handle: NodeHandle, x: f64, y: f64) -> Result<(), EngineError> {
+        if !x.is_finite() || !y.is_finite() {
+            return Err(EngineError::Render("scroll offsets must be finite".into()));
+        }
+        let node = self.resolve(handle)?;
+        let (x, y) = (x.max(0.0) as f32, y.max(0.0) as f32);
+        let data = self.document.node_mut(node);
+        if (data.scroll_left, data.scroll_top) == (x, y) {
+            return Ok(());
+        }
+        data.scroll_left = x;
+        data.scroll_top = y;
+        self.mark_dirty(InvalidationClass::Composite);
+        Ok(())
+    }
+
+    pub fn focus(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
+        self.resolve(handle)?;
+        if self.focused != Some(handle) {
+            self.focused = Some(handle);
+            self.mark_dirty(InvalidationClass::Accessibility);
+        }
+        Ok(())
+    }
+
+    pub fn blur(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
+        self.resolve(handle)?;
+        if self.focused == Some(handle) {
+            self.focused = None;
+            self.mark_dirty(InvalidationClass::Accessibility);
+        }
+        Ok(())
+    }
+
+    pub fn focused(&self) -> Option<NodeHandle> {
+        self.focused
+    }
+
+    pub fn set_pointer_capture(
+        &mut self,
+        pointer_id: u64,
+        handle: NodeHandle,
+    ) -> Result<(), EngineError> {
+        self.resolve(handle)?;
+        self.pointer_capture.insert(pointer_id, handle);
+        Ok(())
+    }
+
+    pub fn release_pointer_capture(
+        &mut self,
+        pointer_id: u64,
+        handle: NodeHandle,
+    ) -> Result<(), EngineError> {
+        self.resolve(handle)?;
+        if self.pointer_capture.get(&pointer_id) == Some(&handle) {
+            self.pointer_capture.remove(&pointer_id);
+        }
+        Ok(())
+    }
+
+    pub fn pointer_capture(&self, pointer_id: u64) -> Option<NodeHandle> {
+        self.pointer_capture.get(&pointer_id).copied()
+    }
+
+    pub fn set_animation_time(&mut self, time_ms: f64) -> Result<(), EngineError> {
+        if !time_ms.is_finite() || time_ms < 0.0 {
+            return Err(EngineError::Render(
+                "animation time must be finite and non-negative".into(),
+            ));
+        }
+        self.animation_time_ms = time_ms;
+        Ok(())
+    }
+
+    pub fn animation_time(&self) -> f64 {
+        self.animation_time_ms
     }
 
     pub fn update(&mut self) -> Result<&SceneSnapshot, EngineError> {

@@ -259,34 +259,6 @@ impl Style {
         });
         self
     }
-
-    pub fn display(self, value: Display) -> Self {
-        self.with(StyleProperty::Display, value)
-    }
-    pub fn width(self, value: LengthValue) -> Self {
-        self.with(StyleProperty::Width, value)
-    }
-    pub fn height(self, value: LengthValue) -> Self {
-        self.with(StyleProperty::Height, value)
-    }
-    pub fn padding(self, value: Edges<LengthValue>) -> Self {
-        self.with(StyleProperty::Padding, value)
-    }
-    pub fn margin(self, value: Edges<LengthValue>) -> Self {
-        self.with(StyleProperty::Margin, value)
-    }
-    pub fn color(self, value: Color) -> Self {
-        self.with(StyleProperty::Color, value)
-    }
-    pub fn background_color(self, value: Color) -> Self {
-        self.with(StyleProperty::BackgroundColor, value)
-    }
-    pub fn opacity(self, value: f32) -> Self {
-        self.with(StyleProperty::Opacity, value)
-    }
-    pub fn transform(self, value: TransformList) -> Self {
-        self.with(StyleProperty::Transform, value)
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

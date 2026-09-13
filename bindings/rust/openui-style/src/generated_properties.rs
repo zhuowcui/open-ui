@@ -562,3 +562,142 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
         interpolation: InterpolationKind::Transform,
     },
 ];
+
+#[rustfmt::skip]
+impl Style {
+    pub fn display(self, value: Display) -> Self {
+        self.with(StyleProperty::Display, value)
+    }
+    pub fn position(self, value: Position) -> Self {
+        self.with(StyleProperty::Position, value)
+    }
+    pub fn overflow(self, value: Overflow) -> Self {
+        self.with(StyleProperty::Overflow, value)
+    }
+    pub fn width(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::Width, value)
+    }
+    pub fn height(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::Height, value)
+    }
+    pub fn min_width(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::MinWidth, value)
+    }
+    pub fn min_height(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::MinHeight, value)
+    }
+    pub fn max_width(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::MaxWidth, value)
+    }
+    pub fn max_height(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::MaxHeight, value)
+    }
+    pub fn margin(self, value: Edges<LengthValue>) -> Self {
+        self.with(StyleProperty::Margin, value)
+    }
+    pub fn margin_top(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::MarginTop, value)
+    }
+    pub fn margin_right(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::MarginRight, value)
+    }
+    pub fn margin_bottom(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::MarginBottom, value)
+    }
+    pub fn margin_left(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::MarginLeft, value)
+    }
+    pub fn padding(self, value: Edges<LengthValue>) -> Self {
+        self.with(StyleProperty::Padding, value)
+    }
+    pub fn padding_top(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::PaddingTop, value)
+    }
+    pub fn padding_right(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::PaddingRight, value)
+    }
+    pub fn padding_bottom(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::PaddingBottom, value)
+    }
+    pub fn padding_left(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::PaddingLeft, value)
+    }
+    pub fn background_color(self, value: Color) -> Self {
+        self.with(StyleProperty::BackgroundColor, value)
+    }
+    pub fn color(self, value: Color) -> Self {
+        self.with(StyleProperty::Color, value)
+    }
+    pub fn opacity(self, value: f32) -> Self {
+        self.with(StyleProperty::Opacity, value)
+    }
+    pub fn z_index(self, value: i32) -> Self {
+        self.with(StyleProperty::ZIndex, value)
+    }
+    pub fn flex_direction(self, value: FlexDirection) -> Self {
+        self.with(StyleProperty::FlexDirection, value)
+    }
+    pub fn flex_wrap(self, value: FlexWrap) -> Self {
+        self.with(StyleProperty::FlexWrap, value)
+    }
+    pub fn flex_grow(self, value: f32) -> Self {
+        self.with(StyleProperty::FlexGrow, value)
+    }
+    pub fn flex_shrink(self, value: f32) -> Self {
+        self.with(StyleProperty::FlexShrink, value)
+    }
+    pub fn flex_basis(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::FlexBasis, value)
+    }
+    pub fn align_items(self, value: ItemAlignment) -> Self {
+        self.with(StyleProperty::AlignItems, value)
+    }
+    pub fn justify_content(self, value: ContentAlignment) -> Self {
+        self.with(StyleProperty::JustifyContent, value)
+    }
+    pub fn gap(self, value: Gap) -> Self {
+        self.with(StyleProperty::Gap, value)
+    }
+    pub fn row_gap(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::RowGap, value)
+    }
+    pub fn column_gap(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::ColumnGap, value)
+    }
+    pub fn font_family(self, value: FontFamilyList) -> Self {
+        self.with(StyleProperty::FontFamily, value)
+    }
+    pub fn font_size(self, value: LengthValue) -> Self {
+        self.with(StyleProperty::FontSize, value)
+    }
+    pub fn font_weight(self, value: FontWeight) -> Self {
+        self.with(StyleProperty::FontWeight, value)
+    }
+    pub fn border(self, value: Border) -> Self {
+        self.with(StyleProperty::Border, value)
+    }
+    pub fn border_top(self, value: Border) -> Self {
+        self.with(StyleProperty::BorderTop, value)
+    }
+    pub fn border_right(self, value: Border) -> Self {
+        self.with(StyleProperty::BorderRight, value)
+    }
+    pub fn border_bottom(self, value: Border) -> Self {
+        self.with(StyleProperty::BorderBottom, value)
+    }
+    pub fn border_left(self, value: Border) -> Self {
+        self.with(StyleProperty::BorderLeft, value)
+    }
+    pub fn border_radius(self, value: CornerRadii) -> Self {
+        self.with(StyleProperty::BorderRadius, value)
+    }
+    pub fn cursor(self, value: Cursor) -> Self {
+        self.with(StyleProperty::Cursor, value)
+    }
+    pub fn list_style(self, value: ListStyleType) -> Self {
+        self.with(StyleProperty::ListStyleType, value)
+    }
+    pub fn transform(self, value: TransformList) -> Self {
+        self.with(StyleProperty::Transform, value)
+    }
+}

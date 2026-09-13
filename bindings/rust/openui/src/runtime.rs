@@ -260,6 +260,12 @@ impl Runtime {
 
 // ─── Standalone helpers (borrow-safe) ────────────────────────────────
 
+impl Default for Runtime {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// Flush all pending effects. Each effect is run outside any `RefCell` borrow
 /// so its closure can freely read/write signals.
 pub(crate) fn flush_pending() {

@@ -30,7 +30,7 @@ mod view;
 /// - Dynamic text interpolation: `{expression}`
 /// - Event handlers: `on:click=expr`
 /// - Static styles: `style:width="100px"`
-/// - Dynamic styles: `style:opacity=move || expr`
+/// - Dynamic typed styles: `style:opacity={signal.get()}`
 /// - Standard and boolean HTML attributes
 /// - Component instantiation via PascalCase tags
 /// - Multiple root nodes (returns a `Fragment`)
