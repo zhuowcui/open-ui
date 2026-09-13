@@ -786,12 +786,8 @@ impl TextShaper {
                     }
                     tried_codepoints.push(missing_char);
 
-                    let platform_data = {
-                        let mut cache = crate::font::cache::GLOBAL_FONT_CACHE
-                            .lock()
-                            .unwrap_or_else(|p| p.into_inner());
-                        cache.platform_fallback_for_character(missing_char, desc)
-                    };
+                    let platform_data =
+                        font.collection().fallback_for_character(missing_char, desc);
 
                     let fb_data = match platform_data {
                         Some(d) => d,
@@ -1768,7 +1764,7 @@ mod tests {
         // char_advance_from_runs(_, 0) should be (8+4)/1 = 12.0
         // char_advance_from_runs(_, 1) should be 10.0
         let font_data = {
-            let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+            let mut cache = crate::font::FontCache::new();
             let desc = FontDescription::default();
             cache
                 .get_font_platform_data("sans-serif", &desc)
@@ -1803,7 +1799,7 @@ mod tests {
         // 3 glyphs all with cluster=0 covering 2 chars, 1 glyph with cluster=2.
         // cluster 0 covers chars [0,2), advance sum = 5+3+2 = 10, per-char = 5.0
         let font_data = {
-            let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+            let mut cache = crate::font::FontCache::new();
             let desc = FontDescription::default();
             cache
                 .get_font_platform_data("sans-serif", &desc)
@@ -1843,7 +1839,7 @@ mod tests {
     fn char_advance_from_runs_1to1_mapping_unchanged() {
         // 1:1 mapping should still work correctly.
         let font_data = {
-            let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+            let mut cache = crate::font::FontCache::new();
             let desc = FontDescription::default();
             cache
                 .get_font_platform_data("sans-serif", &desc)
@@ -1880,14 +1876,21 @@ mod tests {
     #[test]
     fn upright_vertical_shaping_enables_cjk_vertical_substitution() {
         let shaper = TextShaper::new();
+        let collection = crate::font::FontCollection::deterministic_test();
         let horizontal = shaper.shape(
             "\u{3001}",
-            &Font::new(droid_description(FontOrientation::Horizontal)),
+            &Font::new_in_collection(
+                droid_description(FontOrientation::Horizontal),
+                Arc::clone(&collection),
+            ),
             TextDirection::Ltr,
         );
         let vertical = shaper.shape(
             "\u{3001}",
-            &Font::new(droid_description(FontOrientation::VerticalUpright)),
+            &Font::new_in_collection(
+                droid_description(FontOrientation::VerticalUpright),
+                collection,
+            ),
             TextDirection::Ltr,
         );
         assert_eq!(horizontal.num_glyphs(), 1);
@@ -1898,14 +1901,21 @@ mod tests {
     #[test]
     fn sideways_orientation_preserves_horizontal_shaping() {
         let shaper = TextShaper::new();
+        let collection = crate::font::FontCollection::deterministic_test();
         let horizontal = shaper.shape(
             "A1",
-            &Font::new(droid_description(FontOrientation::Horizontal)),
+            &Font::new_in_collection(
+                droid_description(FontOrientation::Horizontal),
+                Arc::clone(&collection),
+            ),
             TextDirection::Ltr,
         );
         let sideways = shaper.shape(
             "A1",
-            &Font::new(droid_description(FontOrientation::VerticalRotated)),
+            &Font::new_in_collection(
+                droid_description(FontOrientation::VerticalRotated),
+                collection,
+            ),
             TextDirection::Ltr,
         );
         assert_eq!(horizontal.runs[0].glyphs, sideways.runs[0].glyphs);
@@ -1929,6 +1939,7 @@ mod tests {
             .collect(),
         };
         let shaper = TextShaper::new();
+        let collection = crate::font::FontCollection::deterministic_test();
         for (text, expected_family) in [
             ("A", "Ahem"),
             ("\u{2026}", "Ahem"),
@@ -1940,7 +1951,7 @@ mod tests {
             // fallback boundaries before shaping. Exercise the same
             // homogeneous-run contract here rather than asking Skia's
             // single-font callback to shape several scripts in one segment.
-            let font = Font::new(description.clone());
+            let font = Font::new_in_collection(description.clone(), Arc::clone(&collection));
             let result = shaper.shape(text, &font, TextDirection::Ltr);
             let family = result
                 .runs

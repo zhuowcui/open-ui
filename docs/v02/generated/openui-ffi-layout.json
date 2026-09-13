@@ -50,6 +50,22 @@
       "align": 8,
       "size": 88
     },
+    "OuiFontFaceDescriptor": {
+      "align": 8,
+      "size": 112
+    },
+    "OuiFontFaceInfo": {
+      "align": 8,
+      "size": 152
+    },
+    "OuiFontFeatureDefault": {
+      "align": 4,
+      "size": 8
+    },
+    "OuiFontUnicodeRange": {
+      "align": 4,
+      "size": 8
+    },
     "OuiKeyframe": {
       "align": 8,
       "size": 80

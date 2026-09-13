@@ -1,5 +1,7 @@
 use crate::types::{OuiEventCallback, OuiStatus, OuiUtf8};
-use openui_engine::{AnimationEvent, Engine, EngineError, NodeHandle};
+use openui_engine::{
+    AnimationEvent, Engine, EngineError, FontCollectionError, FontFaceHandle, NodeHandle,
+};
 use openui_style::{ImageResourceId, StyleValue};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
@@ -17,6 +19,7 @@ pub(crate) enum HandleKind {
     Element,
     Compound,
     Resource,
+    FontFace,
     Listener,
     Buffer,
 }
@@ -50,6 +53,12 @@ pub(crate) struct ResourceRef {
 }
 
 #[derive(Clone)]
+pub(crate) struct FontFaceRef {
+    pub document: Weak<DocumentState>,
+    pub face: FontFaceHandle,
+}
+
+#[derive(Clone)]
 pub(crate) struct ListenerRef {
     pub document: Weak<DocumentState>,
     pub id: u64,
@@ -73,6 +82,7 @@ pub(crate) enum LocalHandle {
     Element(ElementRef),
     Compound(StyleValue),
     Resource(ResourceRef),
+    FontFace(FontFaceRef),
     Listener(ListenerRef),
     Buffer(Rc<Vec<u8>>),
 }
@@ -85,6 +95,7 @@ impl LocalHandle {
             Self::Element(_) => HandleKind::Element,
             Self::Compound(_) => HandleKind::Compound,
             Self::Resource(_) => HandleKind::Resource,
+            Self::FontFace(_) => HandleKind::FontFace,
             Self::Listener(_) => HandleKind::Listener,
             Self::Buffer(_) => HandleKind::Buffer,
         }
@@ -138,6 +149,10 @@ impl From<EngineError> for ApiError {
             EngineError::StaleHandle => OuiStatus::StaleHandle,
             EngineError::PropertyType { .. } => OuiStatus::WrongValueType,
             EngineError::InvalidViewport => OuiStatus::InvalidArgument,
+            EngineError::Font(FontCollectionError::AllocationFailed) => OuiStatus::OutOfMemory,
+            EngineError::Font(FontCollectionError::WrongCollection) => OuiStatus::WrongDocument,
+            EngineError::Font(FontCollectionError::UnknownFace) => OuiStatus::StaleHandle,
+            EngineError::Font(_) => OuiStatus::InvalidArgument,
             _ => OuiStatus::InvalidState,
         };
         Self::new(status, value.to_string())

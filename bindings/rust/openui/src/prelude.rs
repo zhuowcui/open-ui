@@ -21,6 +21,10 @@ pub use crate::{
     ViewportAuthority, ViewportMetrics,
 };
 pub use openui_macros::{component, view};
+pub use openui_text::{
+    FontAxisRange, FontCollection, FontFaceDescriptor, FontFaceHandle, FontFeatureDefault,
+    FontMetricOverrides, FontStyleRange, FontUnicodeRange,
+};
 
 // Reactive primitives
 pub use crate::effect::{batch, create_effect};

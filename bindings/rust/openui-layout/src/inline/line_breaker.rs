@@ -15,6 +15,8 @@
 //! - Forced breaks (`<br>`, newlines in pre/pre-line)
 //! - Trailing space stripping per CSS Text §4.1.3
 
+use std::sync::Arc;
+
 use openui_geometry::{LayoutUnit, Length, LengthType, WritingDirectionMode};
 use openui_style::{
     BoxSizing, ComputedStyle, Hyphens, LineBreak, OverflowWrap, TextAlign, WhiteSpace, WordBreak,
@@ -855,7 +857,8 @@ impl<'a> LineBreaker<'a> {
         let hyphen_advance = {
             let shaper = TextShaper::new();
             let font_desc = style_to_font_description(style);
-            let font = Font::new(font_desc);
+            let font =
+                Font::new_in_collection(font_desc, Arc::clone(&self.items_data.font_collection));
             let sr = shaper.shape("-", &font, openui_text::TextDirection::Ltr);
             LayoutUnit::from_f32_ceil(sr.width)
         };
@@ -1105,7 +1108,8 @@ impl<'a> LineBreaker<'a> {
         let hyphen_advance = {
             let shaper = TextShaper::new();
             let font_desc = style_to_font_description(style);
-            let font = Font::new(font_desc);
+            let font =
+                Font::new_in_collection(font_desc, Arc::clone(&self.items_data.font_collection));
             let sr = shaper.shape("-", &font, openui_text::TextDirection::Ltr);
             LayoutUnit::from_f32_ceil(sr.width)
         };
@@ -3074,6 +3078,7 @@ mod tests {
         let style_index = 0;
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![InlineItem {
                 item_type: InlineItemType::Text,
@@ -3252,6 +3257,7 @@ mod tests {
         style.overflow_wrap = OverflowWrap::BreakWord;
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![InlineItem {
                 item_type: InlineItemType::Text,
@@ -3491,6 +3497,7 @@ mod tests {
         style.overflow_wrap = OverflowWrap::BreakWord;
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![item],
             styles: vec![style],
@@ -4175,6 +4182,7 @@ mod tests {
         };
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![item],
             styles: vec![ComputedStyle::default()],
@@ -4225,6 +4233,7 @@ mod tests {
         };
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![item],
             styles: vec![ComputedStyle::default()],
@@ -4280,6 +4289,7 @@ mod tests {
         };
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![item],
             styles: vec![ComputedStyle::default()],
@@ -4315,6 +4325,7 @@ mod tests {
         use openui_style::Hyphens;
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: String::new(),
             items: vec![],
             styles: vec![],
@@ -4357,6 +4368,7 @@ mod tests {
         let narrow = LayoutUnit::from_f32(shape.width_for_range(0, 6) + 1.0);
         let wide = LayoutUnit::from_f32(shape.width + 1.0);
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![InlineItem {
                 item_type: InlineItemType::Text,
@@ -4400,6 +4412,7 @@ mod tests {
         let font = Font::new(FontDescription::default());
         let shape = Arc::new(shaper.shape(text, &font, TextDirection::Ltr));
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![InlineItem {
                 item_type: InlineItemType::Text,
@@ -4437,6 +4450,7 @@ mod tests {
         let first_word_end = "oversized ".len();
         let narrow = LayoutUnit::from_f32(shape.width_for_range(0, 4));
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![InlineItem {
                 item_type: InlineItemType::Text,
@@ -4484,6 +4498,7 @@ mod tests {
         let link_shape = Arc::new(shaper.shape(link, &font, TextDirection::Ltr));
         let link_start = prefix.len();
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text,
             items: vec![
                 InlineItem {

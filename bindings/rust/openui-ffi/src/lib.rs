@@ -19,8 +19,9 @@ use openui_dom::ElementTag;
 use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
     AnimationEventKind, AnimationId, AnimationTimeline, ControlAdjustment, Engine,
-    EventPhase as EngineEventPhase, FocusOrigin, NodeHandle, PointerEventKind, ViewportAuthority,
-    ViewportMetrics,
+    EventPhase as EngineEventPhase, FocusOrigin, FontAxisRange, FontContainerFormat,
+    FontFaceDescriptor, FontFeatureDefault, FontMetricOverrides, FontStyleRange, FontUnicodeRange,
+    NodeHandle, PointerEventKind, ViewportAuthority, ViewportMetrics,
 };
 use openui_style::{
     AnimationOptions, AnimationPhase, Border, BorderStyle, Color, CompositeOperation, CornerRadii,
@@ -31,13 +32,14 @@ use openui_style::{
 use registry::{
     borrow_engine, borrow_engine_mut, bytes, destroy, document, element, element_document, ffi,
     ffi_preserve, ffi_value, get, last_error, register, utf8, ApiError, AppState, DocumentState,
-    ElementRef, HandleKind, ListenerRecord, ListenerRef, LocalHandle, ResourceRef,
+    ElementRef, FontFaceRef, HandleKind, ListenerRecord, ListenerRef, LocalHandle, ResourceRef,
 };
 use std::cell::{Cell, RefCell};
 use std::ffi::c_void;
 use std::mem::size_of;
 use std::ptr;
 use std::rc::Rc;
+use std::sync::Arc;
 
 fn invalid(message: impl Into<String>) -> ApiError {
     ApiError::new(OuiStatus::InvalidArgument, message)
@@ -251,6 +253,148 @@ fn copy_array<T: Copy>(
     // aligned `T` values for the call. Bounds and null were validated above.
     result.extend_from_slice(unsafe { std::slice::from_raw_parts(data, length) });
     Ok(result)
+}
+
+fn font_descriptor(raw: *const OuiFontFaceDescriptor) -> Result<FontFaceDescriptor, ApiError> {
+    if raw.is_null() {
+        return Err(invalid("font descriptor is null"));
+    }
+    // SAFETY: the C contract requires a readable descriptor structure.
+    let raw = unsafe { &*raw };
+    check_header(
+        raw.struct_size,
+        raw.abi_version,
+        size_of::<OuiFontFaceDescriptor>(),
+    )?;
+    let known_flags = OUI_FONT_FACE_HAS_SIZE_ADJUST
+        | OUI_FONT_FACE_HAS_ASCENT_OVERRIDE
+        | OUI_FONT_FACE_HAS_DESCENT_OVERRIDE
+        | OUI_FONT_FACE_HAS_LINE_GAP_OVERRIDE;
+    if raw.reserved != 0 || raw.flags & !known_flags != 0 {
+        return Err(invalid("font descriptor contains reserved values"));
+    }
+    let family = utf8(raw.family, "font family")?;
+    let unicode_ranges = copy_array(
+        raw.unicode_ranges,
+        raw.unicode_range_count,
+        "font Unicode range",
+    )?
+    .into_iter()
+    .map(|range| FontUnicodeRange {
+        start: range.start,
+        end: range.end,
+    })
+    .collect();
+    let feature_defaults = copy_array(
+        raw.feature_defaults,
+        raw.feature_default_count,
+        "font feature default",
+    )?
+    .into_iter()
+    .map(|feature| FontFeatureDefault {
+        tag: feature.tag,
+        value: feature.value,
+    })
+    .collect();
+    let style = match raw.style {
+        OUI_FONT_FACE_STYLE_NORMAL => FontStyleRange::Normal,
+        OUI_FONT_FACE_STYLE_ITALIC => FontStyleRange::Italic,
+        OUI_FONT_FACE_STYLE_OBLIQUE => {
+            FontStyleRange::Oblique(FontAxisRange::new(raw.style_min, raw.style_max))
+        }
+        _ => return Err(invalid("font style range is invalid")),
+    };
+    let optional = |flag: u32, value: f32| (raw.flags & flag != 0).then_some(value);
+    Ok(FontFaceDescriptor {
+        family,
+        face_index: raw.face_index,
+        style,
+        weight: FontAxisRange::new(raw.weight_min, raw.weight_max),
+        stretch: FontAxisRange::new(raw.stretch_min, raw.stretch_max),
+        unicode_ranges,
+        feature_defaults,
+        size_adjust: optional(OUI_FONT_FACE_HAS_SIZE_ADJUST, raw.size_adjust),
+        metric_overrides: FontMetricOverrides {
+            ascent: optional(OUI_FONT_FACE_HAS_ASCENT_OVERRIDE, raw.ascent_override),
+            descent: optional(OUI_FONT_FACE_HAS_DESCENT_OVERRIDE, raw.descent_override),
+            line_gap: optional(OUI_FONT_FACE_HAS_LINE_GAP_OVERRIDE, raw.line_gap_override),
+        },
+    })
+}
+
+fn font_face_ref(address: usize) -> Result<FontFaceRef, ApiError> {
+    match get(address, HandleKind::FontFace)? {
+        LocalHandle::FontFace(value) => Ok(value),
+        _ => unreachable!("kind checked by registry"),
+    }
+}
+
+fn font_face_document(face: &FontFaceRef) -> Result<Rc<DocumentState>, ApiError> {
+    face.document
+        .upgrade()
+        .ok_or_else(|| ApiError::new(OuiStatus::InvalidHandle, "font document was destroyed"))
+}
+
+fn copy_bytes_to_c(
+    value: &[u8],
+    destination: *mut u8,
+    capacity: usize,
+    out_length: *mut usize,
+    label: &'static str,
+) -> Result<(), ApiError> {
+    if out_length.is_null() {
+        return Err(invalid(format!("{label} length output is null")));
+    }
+    // SAFETY: caller supplies writable storage for one size_t.
+    unsafe { ptr::write(out_length, value.len()) };
+    if destination.is_null() && capacity == 0 {
+        return Ok(());
+    }
+    if capacity < value.len() {
+        return Err(ApiError::new(
+            OuiStatus::BufferTooSmall,
+            format!("{label} destination is too small"),
+        ));
+    }
+    if !value.is_empty() {
+        if destination.is_null() {
+            return Err(invalid(format!("{label} destination is null")));
+        }
+        // SAFETY: capacity and null were validated and buffers do not overlap.
+        unsafe { ptr::copy_nonoverlapping(value.as_ptr(), destination, value.len()) };
+    }
+    Ok(())
+}
+
+fn copy_array_to_c<T: Copy>(
+    value: &[T],
+    destination: *mut T,
+    capacity: usize,
+    out_count: *mut usize,
+    label: &'static str,
+) -> Result<(), ApiError> {
+    if out_count.is_null() {
+        return Err(invalid(format!("{label} count output is null")));
+    }
+    // SAFETY: caller supplies writable storage for one size_t.
+    unsafe { ptr::write(out_count, value.len()) };
+    if destination.is_null() && capacity == 0 {
+        return Ok(());
+    }
+    if capacity < value.len() {
+        return Err(ApiError::new(
+            OuiStatus::BufferTooSmall,
+            format!("{label} destination is too small"),
+        ));
+    }
+    if !value.is_empty() {
+        if destination.is_null() {
+            return Err(invalid(format!("{label} destination is null")));
+        }
+        // SAFETY: element capacity and null were validated.
+        unsafe { ptr::copy_nonoverlapping(value.as_ptr(), destination, value.len()) };
+    }
+    Ok(())
 }
 
 fn animation_easing(value: OuiEasing) -> Result<Easing, ApiError> {
@@ -2376,6 +2520,216 @@ pub extern "C" fn oui_style_compound_destroy(compound: *mut OuiStyleCompound) ->
     })
 }
 
+// SAFETY CONTRACT: document is live; descriptor and byte slice are readable
+// for the duration of this call; `out_face` is writable.
+#[no_mangle]
+pub extern "C" fn oui_document_register_font(
+    document_handle: *mut OuiDocument,
+    data: *const u8,
+    byte_length: usize,
+    descriptor: *const OuiFontFaceDescriptor,
+    out_face: *mut *mut OuiFontFace,
+) -> OuiStatus {
+    ffi(|| {
+        if byte_length == 0 || byte_length > 64 * 1024 * 1024 {
+            return Err(invalid("font byte length is outside the supported range"));
+        }
+        if out_face.is_null() {
+            return Err(invalid("font face output handle is null"));
+        }
+        let state = document(document_handle as usize)?;
+        let descriptor = font_descriptor(descriptor)?;
+        let owned: Arc<[u8]> = bytes(data, byte_length)?.into();
+        let face = borrow_engine_mut(&state)?.register_font_face(owned, descriptor)?;
+        write_handle(
+            out_face,
+            LocalHandle::FontFace(FontFaceRef {
+                document: Rc::downgrade(&state),
+                face,
+            }),
+        )
+    })
+}
+
+// SAFETY CONTRACT: face is live and `out_info` is writable.
+#[no_mangle]
+pub extern "C" fn oui_font_face_get_info(
+    face_handle: *mut OuiFontFace,
+    out_info: *mut OuiFontFaceInfo,
+) -> OuiStatus {
+    ffi(|| {
+        if out_info.is_null() {
+            return Err(invalid("font info output is null"));
+        }
+        // SAFETY: caller supplies readable/writable storage for the header.
+        let output = unsafe { &mut *out_info };
+        check_header(
+            output.struct_size,
+            output.abi_version,
+            size_of::<OuiFontFaceInfo>(),
+        )?;
+        let face = font_face_ref(face_handle as usize)?;
+        let state = font_face_document(&face)?;
+        let engine = borrow_engine(&state)?;
+        let info = engine.font_face_info(face.face)?;
+        let (style, style_min, style_max) = match info.descriptor.style {
+            FontStyleRange::Normal => (OUI_FONT_FACE_STYLE_NORMAL, 0.0, 0.0),
+            FontStyleRange::Italic => (OUI_FONT_FACE_STYLE_ITALIC, 0.0, 0.0),
+            FontStyleRange::Oblique(range) => (OUI_FONT_FACE_STYLE_OBLIQUE, range.min, range.max),
+        };
+        let mut flags = 0;
+        if info.descriptor.size_adjust.is_some() {
+            flags |= OUI_FONT_FACE_HAS_SIZE_ADJUST;
+        }
+        if info.descriptor.metric_overrides.ascent.is_some() {
+            flags |= OUI_FONT_FACE_HAS_ASCENT_OVERRIDE;
+        }
+        if info.descriptor.metric_overrides.descent.is_some() {
+            flags |= OUI_FONT_FACE_HAS_DESCENT_OVERRIDE;
+        }
+        if info.descriptor.metric_overrides.line_gap.is_some() {
+            flags |= OUI_FONT_FACE_HAS_LINE_GAP_OVERRIDE;
+        }
+        *output = OuiFontFaceInfo {
+            struct_size: size_of::<OuiFontFaceInfo>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            collection_id: info.handle.collection_id(),
+            face_id: info.handle.face_id(),
+            collection_generation: engine.font_collection().generation(),
+            byte_length: info.byte_length,
+            format: match info.format {
+                FontContainerFormat::Ttf => OUI_FONT_CONTAINER_TTF,
+                FontContainerFormat::Otf => OUI_FONT_CONTAINER_OTF,
+                FontContainerFormat::Collection => OUI_FONT_CONTAINER_COLLECTION,
+                FontContainerFormat::Woff => OUI_FONT_CONTAINER_WOFF,
+                FontContainerFormat::Woff2 => OUI_FONT_CONTAINER_WOFF2,
+            },
+            face_index: info.descriptor.face_index,
+            style,
+            flags,
+            style_min,
+            style_max,
+            weight_min: info.descriptor.weight.min,
+            weight_max: info.descriptor.weight.max,
+            stretch_min: info.descriptor.stretch.min,
+            stretch_max: info.descriptor.stretch.max,
+            size_adjust: info.descriptor.size_adjust.unwrap_or(0.0),
+            ascent_override: info.descriptor.metric_overrides.ascent.unwrap_or(0.0),
+            descent_override: info.descriptor.metric_overrides.descent.unwrap_or(0.0),
+            line_gap_override: info.descriptor.metric_overrides.line_gap.unwrap_or(0.0),
+            family_length: info.descriptor.family.len(),
+            unicode_range_count: info.descriptor.unicode_ranges.len(),
+            feature_default_count: info.descriptor.feature_defaults.len(),
+            sha256: info.sha256,
+        };
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: face is live; destination is writable for capacity bytes.
+#[no_mangle]
+pub extern "C" fn oui_font_face_copy_family(
+    face_handle: *mut OuiFontFace,
+    destination: *mut u8,
+    capacity: usize,
+    out_length: *mut usize,
+) -> OuiStatus {
+    ffi(|| {
+        let face = font_face_ref(face_handle as usize)?;
+        let state = font_face_document(&face)?;
+        let info = borrow_engine(&state)?.font_face_info(face.face)?;
+        copy_bytes_to_c(
+            info.descriptor.family.as_bytes(),
+            destination,
+            capacity,
+            out_length,
+            "font family",
+        )
+    })
+}
+
+// SAFETY CONTRACT: face is live; destination is writable for capacity elements.
+#[no_mangle]
+pub extern "C" fn oui_font_face_copy_unicode_ranges(
+    face_handle: *mut OuiFontFace,
+    destination: *mut OuiFontUnicodeRange,
+    capacity: usize,
+    out_count: *mut usize,
+) -> OuiStatus {
+    ffi(|| {
+        let face = font_face_ref(face_handle as usize)?;
+        let state = font_face_document(&face)?;
+        let ranges = borrow_engine(&state)?
+            .font_face_info(face.face)?
+            .descriptor
+            .unicode_ranges
+            .iter()
+            .map(|range| OuiFontUnicodeRange {
+                start: range.start,
+                end: range.end,
+            })
+            .collect::<Vec<_>>();
+        copy_array_to_c(
+            &ranges,
+            destination,
+            capacity,
+            out_count,
+            "font Unicode range",
+        )
+    })
+}
+
+// SAFETY CONTRACT: face is live; destination is writable for capacity elements.
+#[no_mangle]
+pub extern "C" fn oui_font_face_copy_feature_defaults(
+    face_handle: *mut OuiFontFace,
+    destination: *mut OuiFontFeatureDefault,
+    capacity: usize,
+    out_count: *mut usize,
+) -> OuiStatus {
+    ffi(|| {
+        let face = font_face_ref(face_handle as usize)?;
+        let state = font_face_document(&face)?;
+        let features = borrow_engine(&state)?
+            .font_face_info(face.face)?
+            .descriptor
+            .feature_defaults
+            .iter()
+            .map(|feature| OuiFontFeatureDefault {
+                tag: feature.tag,
+                value: feature.value,
+            })
+            .collect::<Vec<_>>();
+        copy_array_to_c(
+            &features,
+            destination,
+            capacity,
+            out_count,
+            "font feature default",
+        )
+    })
+}
+
+// SAFETY CONTRACT: face is a live registered font handle.
+#[no_mangle]
+pub extern "C" fn oui_font_face_unregister(face_handle: *mut OuiFontFace) -> OuiStatus {
+    ffi(|| {
+        let face = font_face_ref(face_handle as usize)?;
+        let state = font_face_document(&face)?;
+        borrow_engine_mut(&state)?.unregister_font_face(face.face)?;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: face is a live font handle owned by this thread.
+#[no_mangle]
+pub extern "C" fn oui_font_face_destroy(face_handle: *mut OuiFontFace) -> OuiStatus {
+    ffi(|| {
+        destroy(face_handle as usize, HandleKind::FontFace)?;
+        Ok(())
+    })
+}
+
 // SAFETY CONTRACT: document is live; all slices are readable for their
 // lengths; `out_resource` is writable. Input bytes are copied synchronously.
 #[no_mangle]
@@ -2659,6 +3013,31 @@ mod tests {
             ),
             (48, 8)
         );
+        assert_eq!(
+            (
+                size_of::<OuiFontUnicodeRange>(),
+                align_of::<OuiFontUnicodeRange>()
+            ),
+            (8, 4)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiFontFeatureDefault>(),
+                align_of::<OuiFontFeatureDefault>()
+            ),
+            (8, 4)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiFontFaceDescriptor>(),
+                align_of::<OuiFontFaceDescriptor>()
+            ),
+            (112, 8)
+        );
+        assert_eq!(
+            (size_of::<OuiFontFaceInfo>(), align_of::<OuiFontFaceInfo>()),
+            (152, 8)
+        );
         assert_eq!((size_of::<OuiRect>(), align_of::<OuiRect>()), (16, 4));
         assert_eq!((size_of::<OuiBitmap>(), align_of::<OuiBitmap>()), (32, 8));
         assert_eq!(
@@ -2713,6 +3092,162 @@ mod tests {
             (size_of::<OuiErrorInfo>(), align_of::<OuiErrorInfo>()),
             (24, 8)
         );
+    }
+
+    #[test]
+    fn c_font_registration_queries_and_removal_validate_lifetimes() {
+        let document = create_document(64, 64);
+        let family = "C application Ahem";
+        let ranges = [OuiFontUnicodeRange {
+            start: 0x20,
+            end: 0x7e,
+        }];
+        let features = [OuiFontFeatureDefault {
+            tag: *b"kern",
+            value: 0,
+        }];
+        let descriptor = OuiFontFaceDescriptor {
+            struct_size: size_of::<OuiFontFaceDescriptor>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            family: text(family),
+            face_index: 0,
+            style: 2,
+            style_min: -12.0,
+            style_max: 18.0,
+            weight_min: 300.0,
+            weight_max: 700.0,
+            stretch_min: 75.0,
+            stretch_max: 125.0,
+            unicode_ranges: ranges.as_ptr(),
+            unicode_range_count: ranges.len(),
+            feature_defaults: features.as_ptr(),
+            feature_default_count: features.len(),
+            size_adjust: 1.1,
+            ascent_override: 0.8,
+            descent_override: 0.2,
+            line_gap_override: 0.1,
+            flags: 0x0f,
+            reserved: 0,
+        };
+        let font_bytes = include_bytes!("../../openui-text/fonts/Ahem.ttf");
+        let mut face = ptr::null_mut();
+        assert_eq!(
+            oui_document_register_font(
+                document,
+                font_bytes.as_ptr(),
+                font_bytes.len(),
+                &descriptor,
+                &mut face,
+            ),
+            OuiStatus::Ok
+        );
+        assert!(!face.is_null());
+
+        let mut info = OuiFontFaceInfo {
+            struct_size: size_of::<OuiFontFaceInfo>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            collection_id: 0,
+            face_id: 0,
+            collection_generation: 0,
+            byte_length: 0,
+            format: 0,
+            face_index: 0,
+            style: 0,
+            flags: 0,
+            style_min: 0.0,
+            style_max: 0.0,
+            weight_min: 0.0,
+            weight_max: 0.0,
+            stretch_min: 0.0,
+            stretch_max: 0.0,
+            size_adjust: 0.0,
+            ascent_override: 0.0,
+            descent_override: 0.0,
+            line_gap_override: 0.0,
+            family_length: 0,
+            unicode_range_count: 0,
+            feature_default_count: 0,
+            sha256: [0; 32],
+        };
+        assert_eq!(oui_font_face_get_info(face, &mut info), OuiStatus::Ok);
+        assert_ne!(info.collection_id, 0);
+        assert_ne!(info.face_id, 0);
+        assert_eq!(info.byte_length, font_bytes.len());
+        assert_eq!(info.format, OUI_FONT_CONTAINER_TTF);
+        assert_eq!(info.style, OUI_FONT_FACE_STYLE_OBLIQUE);
+        assert_eq!(info.flags, 0x0f);
+        assert_eq!(info.family_length, family.len());
+        assert_eq!(info.unicode_range_count, 1);
+        assert_eq!(info.feature_default_count, 1);
+        assert_ne!(info.sha256, [0; 32]);
+
+        let mut family_length = 0;
+        assert_eq!(
+            oui_font_face_copy_family(face, ptr::null_mut(), 0, &mut family_length),
+            OuiStatus::Ok
+        );
+        let mut copied_family = vec![0; family_length];
+        assert_eq!(
+            oui_font_face_copy_family(
+                face,
+                copied_family.as_mut_ptr(),
+                copied_family.len(),
+                &mut family_length,
+            ),
+            OuiStatus::Ok
+        );
+        assert_eq!(copied_family, family.as_bytes());
+
+        let mut range_count = 0;
+        assert_eq!(
+            oui_font_face_copy_unicode_ranges(face, ptr::null_mut(), 0, &mut range_count),
+            OuiStatus::Ok
+        );
+        let mut copied_ranges = vec![OuiFontUnicodeRange { start: 0, end: 0 }; range_count];
+        assert_eq!(
+            oui_font_face_copy_unicode_ranges(
+                face,
+                copied_ranges.as_mut_ptr(),
+                copied_ranges.len(),
+                &mut range_count,
+            ),
+            OuiStatus::Ok
+        );
+        assert_eq!(copied_ranges[0].start, ranges[0].start);
+        assert_eq!(copied_ranges[0].end, ranges[0].end);
+
+        let mut feature_count = 0;
+        assert_eq!(
+            oui_font_face_copy_feature_defaults(face, ptr::null_mut(), 0, &mut feature_count,),
+            OuiStatus::Ok
+        );
+        let mut copied_features = vec![
+            OuiFontFeatureDefault {
+                tag: [0; 4],
+                value: 0,
+            };
+            feature_count
+        ];
+        assert_eq!(
+            oui_font_face_copy_feature_defaults(
+                face,
+                copied_features.as_mut_ptr(),
+                copied_features.len(),
+                &mut feature_count,
+            ),
+            OuiStatus::Ok
+        );
+        assert_eq!(copied_features[0].tag, features[0].tag);
+        assert_eq!(copied_features[0].value, features[0].value);
+
+        assert_eq!(oui_font_face_unregister(face), OuiStatus::Ok);
+        assert_eq!(
+            oui_font_face_get_info(face, &mut info),
+            OuiStatus::StaleHandle
+        );
+        assert_eq!(oui_font_face_destroy(face), OuiStatus::Ok);
+        assert_eq!(oui_font_face_destroy(face), OuiStatus::InvalidHandle);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }
 
     #[test]

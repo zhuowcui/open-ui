@@ -306,7 +306,7 @@ pub(crate) fn inline_float_source_positions(
     configure_line_breaker(&mut breaker, style, space, None);
     let reservations = float_line_break_reservations(doc, floats, available_inline_size, space);
     let mut consumed = HashSet::new();
-    let font = Font::new(style_to_font_description(style));
+    let font = doc.resolve_font(style_to_font_description(style));
     let metrics = font.font_metrics().copied().unwrap_or_default();
     let line_metrics = compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
     let line_height = LayoutUnit::from_f32(line_metrics.ascent + line_metrics.descent);
@@ -1002,7 +1002,10 @@ fn materialize_inline_line_child(
         InlineLineChild::InlineBox(index) => {
             let record = &boxes[index];
             let style = &items_data.styles[record.style_index];
-            let font = Font::new(style_to_font_description(style));
+            let font = Font::new_in_collection(
+                style_to_font_description(style),
+                Arc::clone(&items_data.font_collection),
+            );
             let metrics = font.font_metrics().copied().unwrap_or_default();
             let mut children: Vec<Fragment> = record
                 .children
@@ -1726,7 +1729,8 @@ pub fn inline_layout_from_items(
 
     // Get block's font metrics for the strut.
     let block_font_desc = style_to_font_description(style);
-    let block_font = Font::new(block_font_desc);
+    let block_font =
+        Font::new_in_collection(block_font_desc, Arc::clone(&items_data.font_collection));
     let block_metrics = block_font.font_metrics().copied().unwrap_or_default();
 
     // Step 4: Layout each line.
@@ -3257,7 +3261,7 @@ pub fn inline_layout_for_children(
     );
 
     let block_font_desc = style_to_font_description(style);
-    let block_font = Font::new(block_font_desc);
+    let block_font = doc.resolve_font(block_font_desc);
     let block_metrics = block_font.font_metrics().copied().unwrap_or_default();
 
     let mut line_fragments: Vec<Fragment> = Vec::new();
@@ -3832,7 +3836,7 @@ fn create_line_box(
                 let item = &items_data.items[item_result.item_index];
                 let style = &items_data.styles[item.style_index];
                 let font_desc = style_to_font_description(style);
-                let font = Font::new(font_desc);
+                let font = doc.resolve_font(font_desc);
                 let primary_metrics = font.font_metrics().copied().unwrap_or_default();
                 let metrics =
                     text_line_metrics(primary_metrics, style, item, item_result, items_data);
@@ -3979,7 +3983,7 @@ fn create_line_box(
                         openui_geometry::LengthType::Fixed => logical_block_size.value(),
                         _ => {
                             let font_desc = style_to_font_description(style);
-                            let font = Font::new(font_desc);
+                            let font = doc.resolve_font(font_desc);
                             let metrics = font.font_metrics().copied().unwrap_or_default();
                             metrics.ascent + metrics.descent
                         }
@@ -4082,7 +4086,7 @@ fn create_line_box(
                     VerticalAlign::Percentage(pct) => {
                         // Compute element's own line-height for percentage basis
                         let font_desc = style_to_font_description(style);
-                        let font = Font::new(font_desc);
+                        let font = doc.resolve_font(font_desc);
                         let metrics = font.font_metrics().copied().unwrap_or_default();
                         let element_line_height =
                             used_line_height(&metrics, &style.line_height, style.font_size);
@@ -4147,7 +4151,7 @@ fn create_line_box(
                 let item = &items_data.items[item_result.item_index];
                 let style = &items_data.styles[item.style_index];
                 let font_desc = style_to_font_description(style);
-                let font = Font::new(font_desc);
+                let font = doc.resolve_font(font_desc);
                 let metrics = font.font_metrics().copied().unwrap_or_default();
                 let item_lh =
                     compute_line_height_metrics(&metrics, &style.line_height, style.font_size);
@@ -4245,7 +4249,7 @@ fn create_line_box(
                         )
                     } else {
                         let font_desc = style_to_font_description(style);
-                        let font = Font::new(font_desc);
+                        let font = doc.resolve_font(font_desc);
                         let metrics = font.font_metrics().copied().unwrap_or_default();
                         compute_line_height_metrics(&metrics, &style.line_height, style.font_size)
                     };
@@ -4362,7 +4366,7 @@ fn create_line_box(
             .map(|r| &items_data.styles[items_data.items[r.item_index].style_index])
             .unwrap_or(block_style);
         let hyphen_font_desc = style_to_font_description(last_style);
-        let hyphen_font = Font::new(hyphen_font_desc);
+        let hyphen_font = doc.resolve_font(hyphen_font_desc);
         let shaper = TextShaper::new();
         let hyphen_text = "-";
         let hyphen_sr = shaper.shape(hyphen_text, &hyphen_font, openui_text::TextDirection::Ltr);
@@ -4380,7 +4384,7 @@ fn create_line_box(
     // Pre-compute ellipsis width so alignment accounts for it.
     let ellipsis_extra_width = if line_info.has_ellipsis {
         let block_font_desc = style_to_font_description(block_style);
-        let ellipsis_font = Font::new(block_font_desc);
+        let ellipsis_font = doc.resolve_font(block_font_desc);
         let shaper = TextShaper::new();
         let marker = line_info.ellipsis_text.as_deref().unwrap_or("\u{2026}");
         let sr = shaper.shape(marker, &ellipsis_font, openui_text::TextDirection::Ltr);
@@ -4560,7 +4564,7 @@ fn create_line_box(
             InlineItemType::Text => {
                 let style = &items_data.styles[item.style_index];
                 let font_desc = style_to_font_description(style);
-                let font = Font::new(font_desc);
+                let font = doc.resolve_font(font_desc);
                 let primary_metrics = font.font_metrics().copied().unwrap_or_default();
                 let metrics =
                     text_line_metrics(primary_metrics, style, item, item_result, items_data);
@@ -4791,7 +4795,7 @@ fn create_line_box(
                 inline_box_record_stack.push(index);
                 // Push this inline element's font metrics for nested content.
                 let font_desc = style_to_font_description(style);
-                let font = Font::new(font_desc);
+                let font = doc.resolve_font(font_desc);
                 let metrics = font.font_metrics().copied().unwrap_or_default();
                 inline_metrics_stack.push(metrics);
                 inline_font_size_stack.push(style.font_size);
@@ -4873,7 +4877,7 @@ fn create_line_box(
                         }
                         _ => {
                             let font_desc = style_to_font_description(style);
-                            let font = Font::new(font_desc);
+                            let font = doc.resolve_font(font_desc);
                             let metrics = font.font_metrics().copied().unwrap_or_default();
                             LayoutUnit::from_f32_ceil(metrics.ascent + metrics.descent)
                         }
@@ -4991,7 +4995,7 @@ fn create_line_box(
                     VerticalAlign::Percentage(pct) => {
                         // Percentage of the element's own line-height (CSS 2.2 §10.8.1).
                         let font_desc = style_to_font_description(style);
-                        let font = Font::new(font_desc);
+                        let font = doc.resolve_font(font_desc);
                         let metrics = font.font_metrics().copied().unwrap_or_default();
                         let element_line_height =
                             used_line_height(&metrics, &style.line_height, style.font_size);
@@ -5116,7 +5120,7 @@ fn create_line_box(
     if let Some((ref hyphen_sr, hyphen_width, ref hyphen_style)) = hyphen_shape_data {
         let hyphen_metrics = {
             let hyphen_font_desc = style_to_font_description(hyphen_style);
-            let hyphen_font = Font::new(hyphen_font_desc);
+            let hyphen_font = doc.resolve_font(hyphen_font_desc);
             hyphen_font.font_metrics().copied().unwrap_or_default()
         };
         let hyphen_height =
@@ -5167,7 +5171,7 @@ fn create_line_box(
     if line_info.has_ellipsis {
         // Shape the configured clamp marker (U+2026 for text-overflow/auto).
         let block_font_desc = style_to_font_description(block_style);
-        let ellipsis_font = Font::new(block_font_desc);
+        let ellipsis_font = doc.resolve_font(block_font_desc);
         let shaper = TextShaper::new();
         let ellipsis_text = line_info.ellipsis_text.as_deref().unwrap_or("\u{2026}");
         let ellipsis_sr = shaper.shape(
@@ -5573,7 +5577,8 @@ fn apply_ellipsis_marker(
     }
 
     let block_font_desc = style_to_font_description(block_style);
-    let block_font = Font::new(block_font_desc);
+    let block_font =
+        Font::new_in_collection(block_font_desc, Arc::clone(&items_data.font_collection));
     let shaper = TextShaper::new();
     let ellipsis_sr = shaper.shape(marker, &block_font, openui_text::TextDirection::Ltr);
     let ellipsis_width = LayoutUnit::from_f32(ellipsis_sr.width);
@@ -6288,7 +6293,7 @@ pub(crate) fn append_clamp_marker_to_last_line(
         return;
     }
     let marker_style = last_text_style(line).unwrap_or_else(|| fallback_style.clone());
-    let font = Font::new(style_to_font_description(&marker_style));
+    let font = doc.resolve_font(style_to_font_description(&marker_style));
     let shaper = TextShaper::new();
     let shape = shaper.shape(marker, &font, openui_text::TextDirection::Ltr);
     let width = LayoutUnit::from_f32(shape.width);
@@ -7019,6 +7024,7 @@ mod tests {
         let mut line_info = LineInfo::new(LayoutUnit::from_f32(100.0));
         line_info.used_width = LayoutUnit::from_f32(150.0);
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),
@@ -7098,6 +7104,7 @@ mod tests {
         line_info.used_width = LayoutUnit::from_f32(150.0);
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),
@@ -7128,6 +7135,7 @@ mod tests {
         line_info.used_width = LayoutUnit::from_f32(150.0);
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),

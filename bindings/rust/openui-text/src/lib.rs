@@ -36,9 +36,11 @@ pub use transform::apply_text_transform;
 
 pub use font::features::collect_font_features;
 pub use font::{
-    used_line_height, used_line_height_metrics, Font, FontCache, FontDescription, FontFallbackList,
-    FontMetrics, FontPlatformData, FontRelativeLengthResolver, FontRelativeUnit,
-    UsedLineHeightMetrics,
+    used_line_height, used_line_height_metrics, Font, FontAxisRange, FontCache, FontCollection,
+    FontCollectionError, FontCollectionStats, FontContainerFormat, FontDescription,
+    FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFallbackList, FontFeatureDefault,
+    FontMetricOverrides, FontMetrics, FontPlatformData, FontRelativeLengthResolver,
+    FontRelativeUnit, FontStyleRange, FontUnicodeRange, UsedLineHeightMetrics,
 };
 
 pub use shaping::{

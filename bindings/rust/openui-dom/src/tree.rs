@@ -318,23 +318,52 @@ pub struct Document {
     root: NodeId,
     image_resources: Vec<EncodedImageResource>,
     legacy_canvas_body: Option<NodeId>,
+    font_collection: std::sync::Arc<openui_text::FontCollection>,
 }
 
 impl Document {
     /// Create a new document with a root viewport element.
     pub fn new() -> Self {
+        Self::new_with_font_collection(openui_text::FontCollection::system())
+    }
+
+    /// Create a document with an explicit application/system font registry.
+    pub fn new_with_font_collection(
+        font_collection: std::sync::Arc<openui_text::FontCollection>,
+    ) -> Self {
         let mut doc = Self {
             nodes: Vec::new(),
             free_nodes: Vec::new(),
             root: NodeId::NONE,
             image_resources: Vec::new(),
             legacy_canvas_body: None,
+            font_collection,
         };
         let root_id = doc.create_node(ElementTag::Viewport);
         doc.root = root_id;
         // The viewport is a block-level element.
         doc.nodes[root_id.index()].style.display = openui_style::Display::Block;
         doc
+    }
+
+    pub fn font_collection(&self) -> &std::sync::Arc<openui_text::FontCollection> {
+        &self.font_collection
+    }
+
+    pub fn resolve_font(&self, description: openui_text::FontDescription) -> openui_text::Font {
+        openui_text::Font::new_in_collection(
+            description,
+            std::sync::Arc::clone(&self.font_collection),
+        )
+    }
+
+    /// Replace the collection before layout; existing fragments remain tied
+    /// to the typefaces with which they were shaped.
+    pub fn set_font_collection(
+        &mut self,
+        font_collection: std::sync::Arc<openui_text::FontCollection>,
+    ) {
+        self.font_collection = font_collection;
     }
 
     /// The root viewport node.

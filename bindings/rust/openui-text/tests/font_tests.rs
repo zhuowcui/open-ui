@@ -442,9 +442,10 @@ fn style_oblique_resolves() {
 
 #[test]
 fn cache_returns_same_arc_for_same_description() {
+    let collection = openui_text::FontCollection::system();
     let desc = FontDescription::default();
-    let font1 = Font::new(desc.clone());
-    let font2 = Font::new(desc);
+    let font1 = Font::new_in_collection(desc.clone(), Arc::clone(&collection));
+    let font2 = Font::new_in_collection(desc, collection);
     let p1 = font1.primary_font().expect("should resolve");
     let p2 = font2.primary_font().expect("should resolve");
     assert!(
@@ -455,10 +456,11 @@ fn cache_returns_same_arc_for_same_description() {
 
 #[test]
 fn cache_returns_different_arc_for_different_size() {
+    let collection = openui_text::FontCollection::system();
     let desc1 = FontDescription::with_family_and_size(FontFamilyList::default(), 12.0);
     let desc2 = FontDescription::with_family_and_size(FontFamilyList::default(), 24.0);
-    let font1 = Font::new(desc1);
-    let font2 = Font::new(desc2);
+    let font1 = Font::new_in_collection(desc1, Arc::clone(&collection));
+    let font2 = Font::new_in_collection(desc2, collection);
     let p1 = font1.primary_font().expect("should resolve");
     let p2 = font2.primary_font().expect("should resolve");
     assert!(
@@ -471,15 +473,15 @@ fn cache_returns_different_arc_for_different_size() {
 fn cache_generic_family_name_mapping() {
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Serif),
-        "DejaVu Serif"
+        "serif"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::SansSerif),
-        "DejaVu Sans"
+        "sans-serif"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Monospace),
-        "DejaVu Sans Mono"
+        "monospace"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Cursive),
@@ -491,11 +493,11 @@ fn cache_generic_family_name_mapping() {
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::SystemUi),
-        "DejaVu Sans"
+        "system-ui"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::None),
-        "DejaVu Sans"
+        "sans-serif"
     );
 }
 

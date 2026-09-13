@@ -25,6 +25,7 @@ oui_document_end_update
 oui_document_get_viewport
 oui_document_hit_test
 oui_document_is_animating
+oui_document_register_font
 oui_document_register_image
 oui_document_render_png
 oui_document_render_rgba
@@ -76,6 +77,12 @@ oui_element_set_text
 oui_element_transition
 oui_error_copy_message
 oui_error_get_last
+oui_font_face_copy_family
+oui_font_face_copy_feature_defaults
+oui_font_face_copy_unicode_ranges
+oui_font_face_destroy
+oui_font_face_get_info
+oui_font_face_unregister
 oui_font_family_create
 oui_gap_create
 oui_listener_destroy

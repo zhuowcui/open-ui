@@ -5935,7 +5935,7 @@ def generate_style_code(
         if has_relative_lengths:
             resolver = f"{var_name}_font_relative"
             lines.append(
-                f"let {resolver} = openui_text::FontRelativeLengthResolver::from_style(&doc.node({var_name}).style);"
+                f"let {resolver} = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node({var_name}).style, std::sync::Arc::clone(doc.font_collection()));"
             )
             _ACTIVE_FONT_RELATIVE_RESOLVER = resolver
         for prop, val in styles.items():

@@ -28,6 +28,11 @@ pub struct OuiResource {
 }
 
 #[repr(C)]
+pub struct OuiFontFace {
+    _private: [u8; 0],
+}
+
+#[repr(C)]
 pub struct OuiListener {
     _private: [u8; 0],
 }
@@ -128,6 +133,88 @@ pub struct OuiDocumentConfig {
     pub abi_version: u32,
     pub viewport: OuiViewportMetrics,
 }
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiFontUnicodeRange {
+    pub start: u32,
+    pub end: u32,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiFontFeatureDefault {
+    pub tag: [u8; 4],
+    pub value: u32,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiFontFaceDescriptor {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub family: OuiUtf8,
+    pub face_index: u32,
+    pub style: u32,
+    pub style_min: f32,
+    pub style_max: f32,
+    pub weight_min: f32,
+    pub weight_max: f32,
+    pub stretch_min: f32,
+    pub stretch_max: f32,
+    pub unicode_ranges: *const OuiFontUnicodeRange,
+    pub unicode_range_count: usize,
+    pub feature_defaults: *const OuiFontFeatureDefault,
+    pub feature_default_count: usize,
+    pub size_adjust: f32,
+    pub ascent_override: f32,
+    pub descent_override: f32,
+    pub line_gap_override: f32,
+    pub flags: u32,
+    pub reserved: u32,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, Copy)]
+pub struct OuiFontFaceInfo {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub collection_id: u64,
+    pub face_id: u64,
+    pub collection_generation: u64,
+    pub byte_length: usize,
+    pub format: u32,
+    pub face_index: u32,
+    pub style: u32,
+    pub flags: u32,
+    pub style_min: f32,
+    pub style_max: f32,
+    pub weight_min: f32,
+    pub weight_max: f32,
+    pub stretch_min: f32,
+    pub stretch_max: f32,
+    pub size_adjust: f32,
+    pub ascent_override: f32,
+    pub descent_override: f32,
+    pub line_gap_override: f32,
+    pub family_length: usize,
+    pub unicode_range_count: usize,
+    pub feature_default_count: usize,
+    pub sha256: [u8; 32],
+}
+
+pub const OUI_FONT_FACE_STYLE_NORMAL: u32 = 0;
+pub const OUI_FONT_FACE_STYLE_ITALIC: u32 = 1;
+pub const OUI_FONT_FACE_STYLE_OBLIQUE: u32 = 2;
+pub const OUI_FONT_CONTAINER_TTF: u32 = 1;
+pub const OUI_FONT_CONTAINER_OTF: u32 = 2;
+pub const OUI_FONT_CONTAINER_COLLECTION: u32 = 3;
+pub const OUI_FONT_CONTAINER_WOFF: u32 = 4;
+pub const OUI_FONT_CONTAINER_WOFF2: u32 = 5;
+pub const OUI_FONT_FACE_HAS_SIZE_ADJUST: u32 = 1 << 0;
+pub const OUI_FONT_FACE_HAS_ASCENT_OVERRIDE: u32 = 1 << 1;
+pub const OUI_FONT_FACE_HAS_DESCENT_OVERRIDE: u32 = 1 << 2;
+pub const OUI_FONT_FACE_HAS_LINE_GAP_OVERRIDE: u32 = 1 << 3;
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, Default, PartialEq)]

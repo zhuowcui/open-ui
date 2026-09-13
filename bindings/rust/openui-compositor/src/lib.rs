@@ -75,6 +75,10 @@ impl SceneSnapshot {
     pub fn physical_damage(&self) -> &[PhysicalSceneRect] {
         &self.physical_damage
     }
+    /// Number of immutable application-font byte buffers retained by this scene.
+    pub fn retained_font_face_count(&self) -> usize {
+        self.picture.retained_font_face_count()
+    }
 
     /// Replay this immutable scene into a caller-owned Skia canvas.
     ///

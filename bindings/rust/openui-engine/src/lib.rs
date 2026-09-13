@@ -30,6 +30,11 @@ use openui_paint::record_fragment;
 use openui_style::{
     apply_to_computed, ImageResourceId, InvalidationClass, StyleProperty, StyleValue,
 };
+pub use openui_text::{
+    FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
+    FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFeatureDefault, FontMetricOverrides,
+    FontStyleRange, FontUnicodeRange,
+};
 use std::collections::{BTreeMap, HashMap};
 use std::marker::PhantomData;
 use std::rc::Rc;
@@ -88,6 +93,7 @@ pub enum EngineError {
     NotEditable,
     NotFocusable,
     Render(String),
+    Font(FontCollectionError),
 }
 
 impl std::fmt::Display for EngineError {
@@ -111,6 +117,7 @@ impl std::fmt::Display for EngineError {
             Self::NotEditable => f.write_str("control is not editable"),
             Self::NotFocusable => f.write_str("node is not focusable"),
             Self::Render(value) => write!(f, "render failed: {value}"),
+            Self::Font(value) => write!(f, "font registration failed: {value}"),
         }
     }
 }
@@ -120,6 +127,12 @@ impl std::error::Error for EngineError {}
 impl From<ViewportMetricsError> for EngineError {
     fn from(_: ViewportMetricsError) -> Self {
         Self::InvalidViewport
+    }
+}
+
+impl From<FontCollectionError> for EngineError {
+    fn from(value: FontCollectionError) -> Self {
+        Self::Font(value)
     }
 }
 
@@ -146,6 +159,8 @@ pub struct EngineObjectCounts {
     pub animations: usize,
     pub scroll_animations: usize,
     pub image_resources: usize,
+    pub font_faces: usize,
+    pub cached_font_instances: usize,
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -299,7 +314,14 @@ pub struct Engine {
 
 impl Engine {
     pub fn new(viewport: ViewportMetrics) -> Result<Self, EngineError> {
-        let document = NativeDocument::new();
+        Self::new_with_font_collection(viewport, FontCollection::system())
+    }
+
+    pub fn new_with_font_collection(
+        viewport: ViewportMetrics,
+        font_collection: Arc<FontCollection>,
+    ) -> Result<Self, EngineError> {
+        let document = NativeDocument::new_with_font_collection(font_collection);
         let root_node = document.root();
         let root_slot = Slot {
             generation: 1,
@@ -353,6 +375,9 @@ impl Engine {
     pub fn viewport(&self) -> ViewportMetrics {
         self.viewport
     }
+    pub fn font_collection(&self) -> &Arc<FontCollection> {
+        self.document.font_collection()
+    }
     pub fn root(&self) -> NodeHandle {
         self.handle_for_slot(0)
     }
@@ -360,6 +385,7 @@ impl Engine {
         self.stats
     }
     pub fn object_counts(&self) -> EngineObjectCounts {
+        let font_stats = self.document.font_collection().stats();
         EngineObjectCounts {
             live_nodes: self.node_slots.len(),
             arena_nodes: self.document.node_count(),
@@ -371,7 +397,32 @@ impl Engine {
             animations: self.animations.len(),
             scroll_animations: self.scroll_animations.len(),
             image_resources: self.document.image_resource_count(),
+            font_faces: font_stats.registered_faces,
+            cached_font_instances: font_stats.cached_instances,
         }
+    }
+
+    pub fn register_font_face(
+        &mut self,
+        bytes: Arc<[u8]>,
+        descriptor: FontFaceDescriptor,
+    ) -> Result<FontFaceHandle, EngineError> {
+        let handle = self
+            .document
+            .font_collection()
+            .register(bytes, descriptor)?;
+        self.mark_dirty(InvalidationClass::Intrinsic);
+        Ok(handle)
+    }
+
+    pub fn unregister_font_face(&mut self, handle: FontFaceHandle) -> Result<(), EngineError> {
+        self.document.font_collection().unregister(handle)?;
+        self.mark_dirty(InvalidationClass::Intrinsic);
+        Ok(())
+    }
+
+    pub fn font_face_info(&self, handle: FontFaceHandle) -> Result<FontFaceInfo, EngineError> {
+        Ok(self.document.font_collection().query(handle)?)
     }
     pub fn dirty_generations(&self) -> DirtyGenerations {
         self.dirty_generations
@@ -1483,6 +1534,33 @@ mod tests {
             engine.set_image_resource(image, ImageResourceId::new(99), None),
             Err(EngineError::UnknownResource)
         );
+    }
+
+    #[test]
+    fn application_fonts_are_document_owned_invalidate_and_survive_in_scenes() {
+        let viewport = ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap();
+        let mut first = Engine::new(viewport).unwrap();
+        let second = Engine::new(viewport).unwrap();
+        let before = first.dirty_generations();
+        let handle = first
+            .register_font_face(
+                Arc::from(include_bytes!("../../openui-text/fonts/Ahem.ttf").as_slice()),
+                FontFaceDescriptor::new("Engine-owned Ahem"),
+            )
+            .unwrap();
+        assert_eq!(first.object_counts().font_faces, 1);
+        assert_eq!(second.object_counts().font_faces, 0);
+        assert!(first.dirty_generations().intrinsic > before.intrinsic);
+
+        let scene = first.scene().unwrap();
+        assert_eq!(scene.retained_font_face_count(), 1);
+        first.unregister_font_face(handle).unwrap();
+        assert_eq!(first.object_counts().font_faces, 0);
+        assert_eq!(scene.retained_font_face_count(), 1);
+        assert!(matches!(
+            first.font_face_info(handle),
+            Err(EngineError::Font(FontCollectionError::UnknownFace))
+        ));
     }
 
     #[test]

@@ -18,4 +18,5 @@ openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
 openui-layout = { version = "=0.2.0", path = "../openui-layout" }
 openui-paint = { version = "=0.2.0", path = "../openui-paint" }
 openui-style = { version = "=0.2.0", path = "../openui-style" }
+openui-text = { version = "=0.2.0", path = "../openui-text" }
 unicode-segmentation = "1.10"

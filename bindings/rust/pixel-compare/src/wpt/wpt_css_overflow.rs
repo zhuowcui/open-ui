@@ -8073,7 +8073,7 @@ fn css_overflow_line_clamp_discard_discard_multicol_001() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(16.0);
     doc.node_mut(n1).style.margin_right = Length::px(16.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
@@ -8108,7 +8108,7 @@ fn css_overflow_line_clamp_discard_discard_multicol_001() -> Document {
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
+    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n2).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n2).style.margin_top = Length::px(16.0);
     doc.node_mut(n2).style.margin_right = Length::px(16.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
@@ -8158,7 +8158,7 @@ fn css_overflow_line_clamp_discard_discard_multicol_002() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(16.0);
     doc.node_mut(n1).style.margin_right = Length::px(16.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
@@ -8193,7 +8193,7 @@ fn css_overflow_line_clamp_discard_discard_multicol_002() -> Document {
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
+    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n2).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n2).style.margin_top = Length::px(16.0);
     doc.node_mut(n2).style.margin_right = Length::px(16.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(16.0);
@@ -8243,7 +8243,7 @@ fn css_overflow_line_clamp_discard_discard_multicol_003() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(16.0);
     doc.node_mut(n1).style.margin_right = Length::px(16.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
@@ -8596,7 +8596,7 @@ fn css_overflow_line_clamp_discard_discard_multicol_003() -> Document {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     let n29_font_relative =
-        openui_text::FontRelativeLengthResolver::from_style(&doc.node(n29).style);
+        openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n29).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n29).style.margin_top = Length::px(16.0);
     doc.node_mut(n29).style.margin_right = Length::px(16.0);
     doc.node_mut(n29).style.margin_bottom = Length::px(16.0);
@@ -8714,7 +8714,7 @@ fn css_overflow_line_clamp_discard_discard_multicol_004() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(16.0);
     doc.node_mut(n1).style.margin_right = Length::px(16.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(16.0);
@@ -8749,7 +8749,7 @@ fn css_overflow_line_clamp_discard_discard_multicol_004() -> Document {
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
+    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n2).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n2).style.margin_top = Length::px(16.0);
     doc.node_mut(n2).style.margin_right = Length::px(16.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(16.0);

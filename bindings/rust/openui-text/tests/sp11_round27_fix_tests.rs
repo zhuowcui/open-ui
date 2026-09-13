@@ -163,7 +163,7 @@ fn platform_fallback_preserves_oblique_angle() {
     let mut desc = FontDescription::default();
     desc.style = openui_style::FontStyleEnum::Oblique(14.0);
 
-    let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+    let mut cache = openui_text::FontCache::new();
     if let Some(fb_data) = cache.platform_fallback_for_character('\u{4E16}', &desc) {
         assert_eq!(
             fb_data.synthetic_oblique_angle(),
@@ -176,7 +176,7 @@ fn platform_fallback_preserves_oblique_angle() {
 #[test]
 fn platform_fallback_normal_style_has_zero_oblique() {
     let desc = FontDescription::default();
-    let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+    let mut cache = openui_text::FontCache::new();
     if let Some(fb_data) = cache.platform_fallback_for_character('A', &desc) {
         assert_eq!(
             fb_data.synthetic_oblique_angle(),

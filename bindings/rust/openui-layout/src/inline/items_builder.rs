@@ -91,6 +91,8 @@ fn definite_content_block_size(
 /// The collected inline items data — output of the builder.
 #[derive(Clone, Debug)]
 pub struct InlineItemsData {
+    /// Collection that resolved all fonts in this immutable inline stream.
+    pub font_collection: std::sync::Arc<openui_text::FontCollection>,
     /// Concatenated text content from all text nodes.
     pub text: String,
     /// Flat list of inline items in document order.
@@ -242,7 +244,10 @@ impl InlineItemsData {
                 let text = &self.text[item.text_range.clone()];
                 let style = &self.styles[item.style_index];
                 let font_desc = style_to_font_description(style);
-                let font = Font::new(font_desc);
+                let font = Font::new_in_collection(
+                    font_desc,
+                    std::sync::Arc::clone(&self.font_collection),
+                );
                 // Use bidi level for direction: odd = RTL, even = LTR.
                 // This ensures RTL sub-items (after bidi splitting) are shaped
                 // with RTL direction, not the CSS direction property.
@@ -501,7 +506,10 @@ impl InlineItemsData {
                 continue;
             }
             let item_text = &self.text[item.text_range.clone()];
-            let font = Font::new(style_to_font_description(style));
+            let font = Font::new_in_collection(
+                style_to_font_description(style),
+                std::sync::Arc::clone(&self.font_collection),
+            );
             let scripts = RunSegmenter::segment(item_text);
             let mut runs: Vec<(usize, usize, (TextRunOrientation, Script, Option<usize>))> =
                 Vec::new();
@@ -807,6 +815,7 @@ impl<'a> InlineItemsBuilder<'a> {
             .writing_direction(block_style.writing_mode);
         builder.collect_children(block_node_id);
         let mut data = InlineItemsData {
+            font_collection: std::sync::Arc::clone(doc.font_collection()),
             text: builder.text,
             items: builder.items,
             styles: builder.styles,
@@ -852,6 +861,7 @@ impl<'a> InlineItemsBuilder<'a> {
             builder.collect_single_child(child_id);
         }
         let mut data = InlineItemsData {
+            font_collection: std::sync::Arc::clone(doc.font_collection()),
             text: builder.text,
             items: builder.items,
             styles: builder.styles,
@@ -1094,7 +1104,7 @@ impl<'a> InlineItemsBuilder<'a> {
             WhiteSpace::Pre | WhiteSpace::PreWrap | WhiteSpace::BreakSpaces
         ) {
             let font_desc = style_to_font_description(style);
-            let font = Font::new(font_desc);
+            let font = self.doc.resolve_font(font_desc);
             let space_advance = font.width(" ");
             let font_clone = font;
             expand_tabs(&processed, &style.tab_size, space_advance, |ch| {
@@ -1644,11 +1654,14 @@ impl<'a> InlineItemsBuilder<'a> {
 
             let (width, child_has_content) = if child.tag == ElementTag::Text {
                 let text = child.text.as_deref().unwrap_or("");
-                let processed = preprocess_text_for_shaping(text, &child.style);
+                let processed =
+                    preprocess_text_for_shaping(text, &child.style, self.doc.font_collection());
                 if processed.is_empty() {
                     (0.0, false)
                 } else {
-                    let font = Font::new(style_to_font_description(&child.style));
+                    let font = self
+                        .doc
+                        .resolve_font(style_to_font_description(&child.style));
                     let shaper = TextShaper::new();
                     (
                         shaper.shape(&processed, &font, TextDirection::Ltr).width(),
@@ -1731,11 +1744,15 @@ impl<'a> InlineItemsBuilder<'a> {
                 ElementTag::Text => {
                     if let Some(ref text) = child.text {
                         if !text.is_empty() {
-                            let processed = preprocess_text_for_shaping(text, &child.style);
+                            let processed = preprocess_text_for_shaping(
+                                text,
+                                &child.style,
+                                self.doc.font_collection(),
+                            );
                             if !processed.is_empty() {
                                 has_content = true;
                                 let font_desc = style_to_font_description(&child.style);
-                                let font = Font::new(font_desc);
+                                let font = self.doc.resolve_font(font_desc);
 
                                 // For white-space modes that preserve newlines,
                                 // split on \n so each line is measured separately.
@@ -1930,7 +1947,11 @@ fn is_collapsible_ws_mode(ws: WhiteSpace) -> bool {
 ///
 /// Shared by `append_text` (real layout) and `compute_intrinsic_inline_size_recursive`
 /// (intrinsic sizing) so that measured widths match rendered output.
-pub fn preprocess_text_for_shaping(text: &str, style: &ComputedStyle) -> String {
+pub fn preprocess_text_for_shaping(
+    text: &str,
+    style: &ComputedStyle,
+    font_collection: &std::sync::Arc<openui_text::FontCollection>,
+) -> String {
     if text.is_empty() {
         return String::new();
     }
@@ -1951,7 +1972,7 @@ pub fn preprocess_text_for_shaping(text: &str, style: &ComputedStyle) -> String 
         WhiteSpace::Pre | WhiteSpace::PreWrap | WhiteSpace::BreakSpaces
     ) {
         let font_desc = style_to_font_description(style);
-        let font = Font::new(font_desc);
+        let font = Font::new_in_collection(font_desc, std::sync::Arc::clone(font_collection));
         let space_advance = font.width(" ");
         let font_clone = font;
         expand_tabs(&processed, &style.tab_size, space_advance, |ch| {

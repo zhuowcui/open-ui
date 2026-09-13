@@ -6,9 +6,7 @@
 
 use std::sync::Arc;
 
-use openui_style::FontFamily;
-
-use super::cache::{FontCache, GLOBAL_FONT_CACHE};
+use super::collection::{family_name, FontCollection};
 use super::description::FontDescription;
 use super::platform::FontPlatformData;
 
@@ -18,13 +16,22 @@ use super::platform::FontPlatformData;
 /// The first successfully resolved font is the "primary" font.
 pub struct FontFallbackList {
     platform_data: Vec<Arc<FontPlatformData>>,
+    collection: Arc<FontCollection>,
 }
 
 impl FontFallbackList {
     /// Resolve all families in the description and build the fallback chain.
     pub fn new(description: &FontDescription) -> Self {
+        Self::new_in_collection(description, FontCollection::system())
+    }
+
+    pub fn new_in_collection(
+        description: &FontDescription,
+        collection: Arc<FontCollection>,
+    ) -> Self {
         let mut list = Self {
             platform_data: Vec::new(),
+            collection,
         };
         list.resolve(description);
         list
@@ -32,27 +39,18 @@ impl FontFallbackList {
 
     /// Try to resolve each family in order, then fall back to sans-serif.
     fn resolve(&mut self, description: &FontDescription) {
-        let mut cache = GLOBAL_FONT_CACHE.lock().unwrap_or_else(|poisoned| {
-            // Recover from a poisoned mutex — the data is still usable.
-            // This can happen if a previous thread panicked while holding the lock.
-            poisoned.into_inner()
-        });
-
         for family in &description.family.families {
-            let name = match family {
-                FontFamily::Named(name) => name.as_str(),
-                FontFamily::Generic(generic) => FontCache::generic_family_name(*generic),
-            };
-
-            if let Some(data) = cache.get_font_platform_data(name, description) {
+            if let Some(data) = self
+                .collection
+                .resolve_family(family_name(family), description)
+            {
                 self.platform_data.push(data);
             }
         }
 
-        // If nothing resolved, use the same vendored sans face as the CSS
-        // generic. This keeps missing-family fallback independent of the host.
+        // CSS's final generic fallback is resolved by Fontconfig/Skia.
         if self.platform_data.is_empty() {
-            if let Some(data) = cache.get_font_platform_data("DejaVu Sans", description) {
+            if let Some(data) = self.collection.resolve_family("sans-serif", description) {
                 self.platform_data.push(data);
             }
         }
@@ -86,6 +84,10 @@ impl FontFallbackList {
     #[inline]
     pub fn iter(&self) -> impl Iterator<Item = &Arc<FontPlatformData>> {
         self.platform_data.iter()
+    }
+
+    pub fn collection(&self) -> &Arc<FontCollection> {
+        &self.collection
     }
 }
 

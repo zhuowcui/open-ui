@@ -1,9 +1,10 @@
 # Vendored fonts (pixel-parity)
 
-These fonts are pinned in-process by `openui-text`'s `FontCache` so OpenUI
-resolves them deterministically, independent of ambient system font config.
-This lets WPT pixel comparisons render byte-identical glyph outlines to the
-headless-Chromium reference.
+These fonts are registered only by `FontCollection::deterministic_test()`.
+Production documents use application-registered faces and installed system
+fonts; these fixtures never override production family resolution implicitly.
+The explicit test collection lets WPT pixel comparisons render byte-identical
+glyph outlines to the headless-Chromium reference.
 
 - `Ahem.ttf` — the canonical Web Platform Tests Ahem font (exact 1em square
   glyphs; used for deterministic single-line text parity, SP14).
@@ -40,6 +41,6 @@ distributed under OFL-1.1 (`LICENSE-OFL-1.1.txt`).
 - `DejaVuSerif-Bold.ttf` — DejaVu Serif Bold 2.37.
   sha256: 847b33e13925f19ff87e4d934d6b3cf7cac35ce16424f6f670e40c2f377cf2df
 
-SP16 resolves the CSS `sans-serif`, `monospace`, and `serif` generics to
-these exact assets on both renderers. The license is recorded in
+The deterministic collection aliases CSS `sans-serif`, `monospace`, and
+`serif` generics to these exact assets. The license is recorded in
 `LICENSE-DejaVu.txt`.

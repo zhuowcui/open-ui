@@ -27,7 +27,6 @@ use openui_style::{
     ScrollSnapAlign, ScrollSnapAxis, TextAlign, TextEmphasisMark, VerticalAlign, WebkitBoxOrient,
     WhiteSpace,
 };
-use openui_text::Font;
 
 use crate::constraint_space::ConstraintSpace;
 use crate::exclusions::float_utils::{position_float, UnpositionedFloat};
@@ -585,7 +584,7 @@ fn replaced_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             // in the content box. Export that host's text baseline so nested
             // flex containers align surrounding inline text with the value,
             // including when the control is stretched in the cross axis.
-            let font = Font::new(crate::inline::items_builder::style_to_font_description(
+            let font = doc.resolve_font(crate::inline::items_builder::style_to_font_description(
                 style,
             ));
             let metrics = font.font_metrics().copied().unwrap_or_default();
@@ -678,7 +677,7 @@ fn missing_image_layout(
             .attribute(node_id, "alt")
             .is_some_and(|alt| !alt.is_empty())
         {
-            let font = Font::new(crate::inline::items_builder::style_to_font_description(
+            let font = doc.resolve_font(crate::inline::items_builder::style_to_font_description(
                 style,
             ));
             LayoutUnit::from_f32_ceil(font.width(doc.attribute(node_id, "alt").unwrap_or("")))
@@ -710,7 +709,7 @@ fn missing_image_layout(
         // A failed image's anonymous alternative-text run owns its baseline.
         // Export that text baseline instead of the bottom margin edge so the
         // 16px fallback slot does not add an extra font descent to the line.
-        let font = Font::new(crate::inline::items_builder::style_to_font_description(
+        let font = doc.resolve_font(crate::inline::items_builder::style_to_font_description(
             style,
         ));
         let ascent = font
@@ -20578,7 +20577,7 @@ fn layout_multicol(
                                     // The atomic inline border box excludes
                                     // its containing line's descent, which is
                                     // still part of this indivisible unit.
-                                    let font = Font::new(
+                                    let font = doc.resolve_font(
                                         crate::inline::items_builder::style_to_font_description(
                                             child_style,
                                         ),

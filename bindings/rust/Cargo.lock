@@ -1766,6 +1766,7 @@ dependencies = [
  "openui-macros",
  "openui-platform",
  "openui-style",
+ "openui-text",
 ]
 
 [[package]]
@@ -1785,6 +1786,7 @@ version = "0.2.0"
 dependencies = [
  "openui-geometry",
  "openui-style",
+ "openui-text",
 ]
 
 [[package]]
@@ -1798,6 +1800,7 @@ dependencies = [
  "openui-layout",
  "openui-paint",
  "openui-style",
+ "openui-text",
  "unicode-segmentation",
 ]
 

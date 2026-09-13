@@ -13,3 +13,4 @@ description = "Arena-backed native document tree for the Open UI renderer"
 [dependencies]
 openui-style = { version = "=0.2.0", path = "../openui-style" }
 openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
+openui-text = { version = "=0.2.0", path = "../openui-text" }

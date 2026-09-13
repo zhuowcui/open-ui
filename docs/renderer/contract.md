@@ -24,3 +24,6 @@ properties. An unclassified field is a qualification failure.
 partition. Pure final-state mutation candidates remain candidates until their
 native lowering is pixel-qualified. Behavioral rows do not count against
 renderer coverage because the product does not embed a browser runtime.
+
+Application and system font ownership, registration limits, and C handle
+lifetime rules are documented in [font collections](font-collections.md).

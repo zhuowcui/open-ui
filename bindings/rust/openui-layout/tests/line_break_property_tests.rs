@@ -678,6 +678,7 @@ fn linebreaker_anywhere_breaks_every_char() {
     style.line_break = LineBreak::Anywhere;
 
     let items_data = InlineItemsData {
+        font_collection: openui_text::FontCollection::system(),
         text: text.to_string(),
         items: vec![InlineItem {
             item_type: InlineItemType::Text,
@@ -726,6 +727,7 @@ fn linebreaker_strict_prevents_break_before_chouon() {
     style.line_break = LineBreak::Strict;
 
     let items_data = InlineItemsData {
+        font_collection: openui_text::FontCollection::system(),
         text: text.to_string(),
         items: vec![InlineItem {
             item_type: InlineItemType::Text,

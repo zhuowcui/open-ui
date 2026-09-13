@@ -14,6 +14,7 @@ use openui_engine::{
     ViewportMetrics,
 };
 use openui_style::ImageResourceId;
+use openui_text::{FontCollection, FontFaceDescriptor, FontFaceHandle, FontFaceInfo};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -48,9 +49,16 @@ impl Document {
     }
 
     pub fn with_viewport_metrics(viewport: ViewportMetrics) -> Result<Self, Error> {
+        Self::with_font_collection(viewport, FontCollection::system())
+    }
+
+    pub fn with_font_collection(
+        viewport: ViewportMetrics,
+        font_collection: std::sync::Arc<FontCollection>,
+    ) -> Result<Self, Error> {
         Ok(Self {
             inner: Rc::new(DocumentInner {
-                engine: RefCell::new(Engine::new(viewport)?),
+                engine: RefCell::new(Engine::new_with_font_collection(viewport, font_collection)?),
                 listeners: RefCell::new(HashMap::new()),
                 resource_provider: RefCell::new(None),
                 clipboard: RefCell::new(String::new()),
@@ -89,6 +97,26 @@ impl Document {
 
     pub fn set_viewport(&self, viewport: ViewportMetrics) -> Result<(), Error> {
         self.with_engine_mut(|engine| engine.set_viewport(viewport))
+    }
+
+    pub fn register_font_face(
+        &self,
+        bytes: impl Into<std::sync::Arc<[u8]>>,
+        descriptor: FontFaceDescriptor,
+    ) -> Result<FontFaceHandle, Error> {
+        self.with_engine_mut(|engine| engine.register_font_face(bytes.into(), descriptor))
+    }
+
+    pub fn unregister_font_face(&self, handle: FontFaceHandle) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.unregister_font_face(handle))
+    }
+
+    pub fn font_face_info(&self, handle: FontFaceHandle) -> Result<FontFaceInfo, Error> {
+        Ok(self.with_engine(|engine| engine.font_face_info(handle))??)
+    }
+
+    pub fn font_collection_stats(&self) -> Result<openui_text::FontCollectionStats, Error> {
+        self.with_engine(|engine| engine.font_collection().stats())
     }
 
     pub fn update_all(&self) -> Result<(), Error> {

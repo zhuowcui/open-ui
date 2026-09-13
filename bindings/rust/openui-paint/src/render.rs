@@ -12,6 +12,7 @@ use skia_safe::{
     Picture, PictureRecorder, PixelGeometry, Rect, SamplingOptions, Surface, SurfaceProps,
     SurfacePropsFlags,
 };
+use std::sync::Arc;
 
 use crate::painter::paint_fragment;
 
@@ -48,6 +49,15 @@ pub struct RecordedPicture {
     pub viewport: ViewportMetrics,
     pub(crate) lcd_surface: bool,
     pub(crate) direct_replay: bool,
+    /// Retains immutable registered bytes for every face referenced by a
+    /// scene, even if the live document unregisters that face immediately.
+    pub(crate) retained_font_bytes: Arc<[Arc<[u8]>]>,
+}
+
+impl RecordedPicture {
+    pub fn retained_font_face_count(&self) -> usize {
+        self.retained_font_bytes.len()
+    }
 }
 
 /// Lay out and record a document without rasterizing it.
@@ -101,6 +111,7 @@ pub fn record_fragment(
         viewport,
         lcd_surface,
         direct_replay: has_promoted_non_axis_transform(fragment, doc),
+        retained_font_bytes: doc.font_collection().retained_face_bytes(),
     })
 }
 

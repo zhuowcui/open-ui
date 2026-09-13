@@ -17,6 +17,7 @@ typedef struct OuiDocument OuiDocument;
 typedef struct OuiElement OuiElement;
 typedef struct OuiStyleCompound OuiStyleCompound;
 typedef struct OuiResource OuiResource;
+typedef struct OuiFontFace OuiFontFace;
 typedef struct OuiListener OuiListener;
 typedef struct OuiBuffer OuiBuffer;
 
@@ -355,6 +356,88 @@ typedef struct OuiDocumentConfig {
   OuiViewportMetrics viewport;
 } OuiDocumentConfig;
 
+typedef enum OuiFontFaceStyle {
+  OUI_FONT_FACE_STYLE_NORMAL = 0,
+  OUI_FONT_FACE_STYLE_ITALIC = 1,
+  OUI_FONT_FACE_STYLE_OBLIQUE = 2
+} OuiFontFaceStyle;
+
+typedef enum OuiFontContainerFormat {
+  OUI_FONT_CONTAINER_TTF = 1,
+  OUI_FONT_CONTAINER_OTF = 2,
+  OUI_FONT_CONTAINER_COLLECTION = 3,
+  OUI_FONT_CONTAINER_WOFF = 4,
+  OUI_FONT_CONTAINER_WOFF2 = 5
+} OuiFontContainerFormat;
+
+enum {
+  OUI_FONT_FACE_HAS_SIZE_ADJUST = 1u << 0,
+  OUI_FONT_FACE_HAS_ASCENT_OVERRIDE = 1u << 1,
+  OUI_FONT_FACE_HAS_DESCENT_OVERRIDE = 1u << 2,
+  OUI_FONT_FACE_HAS_LINE_GAP_OVERRIDE = 1u << 3
+};
+
+typedef struct OuiFontUnicodeRange {
+  uint32_t start;
+  uint32_t end;
+} OuiFontUnicodeRange;
+
+typedef struct OuiFontFeatureDefault {
+  uint8_t tag[4];
+  uint32_t value;
+} OuiFontFeatureDefault;
+
+typedef struct OuiFontFaceDescriptor {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  OuiUtf8 family;
+  uint32_t face_index;
+  uint32_t style;
+  float style_min;
+  float style_max;
+  float weight_min;
+  float weight_max;
+  float stretch_min;
+  float stretch_max;
+  const OuiFontUnicodeRange* unicode_ranges;
+  size_t unicode_range_count;
+  const OuiFontFeatureDefault* feature_defaults;
+  size_t feature_default_count;
+  float size_adjust;
+  float ascent_override;
+  float descent_override;
+  float line_gap_override;
+  uint32_t flags;
+  uint32_t reserved;
+} OuiFontFaceDescriptor;
+
+typedef struct OuiFontFaceInfo {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint64_t collection_id;
+  uint64_t face_id;
+  uint64_t collection_generation;
+  size_t byte_length;
+  uint32_t format;
+  uint32_t face_index;
+  uint32_t style;
+  uint32_t flags;
+  float style_min;
+  float style_max;
+  float weight_min;
+  float weight_max;
+  float stretch_min;
+  float stretch_max;
+  float size_adjust;
+  float ascent_override;
+  float descent_override;
+  float line_gap_override;
+  size_t family_length;
+  size_t unicode_range_count;
+  size_t feature_default_count;
+  uint8_t sha256[32];
+} OuiFontFaceInfo;
+
 typedef struct OuiRect {
   float x;
   float y;
@@ -546,6 +629,14 @@ OuiStatus oui_document_animation_finish(OuiDocument* document, uint64_t animatio
 OuiStatus oui_document_animation_cancel(OuiDocument* document, uint64_t animation_id);
 OuiStatus oui_document_animation_get_state(OuiDocument* document, uint64_t animation_id, OuiAnimationState* out_state);
 OuiStatus oui_document_take_animation_event(OuiDocument* document, OuiAnimationEvent* out_event, uint8_t* out_has_event);
+
+OuiStatus oui_document_register_font(OuiDocument* document, const uint8_t* bytes, size_t byte_length, const OuiFontFaceDescriptor* descriptor, OuiFontFace** out_face);
+OuiStatus oui_font_face_get_info(OuiFontFace* face, OuiFontFaceInfo* out_info);
+OuiStatus oui_font_face_copy_family(OuiFontFace* face, uint8_t* destination, size_t capacity, size_t* out_length);
+OuiStatus oui_font_face_copy_unicode_ranges(OuiFontFace* face, OuiFontUnicodeRange* destination, size_t capacity, size_t* out_count);
+OuiStatus oui_font_face_copy_feature_defaults(OuiFontFace* face, OuiFontFeatureDefault* destination, size_t capacity, size_t* out_count);
+OuiStatus oui_font_face_unregister(OuiFontFace* face);
+OuiStatus oui_font_face_destroy(OuiFontFace* face);
 
 OuiStatus oui_element_create(OuiDocument* document, OuiElementTag tag, OuiElement** out_element);
 OuiStatus oui_text_create(OuiDocument* document, OuiUtf8 text, OuiElement** out_text);

@@ -67256,7 +67256,7 @@ fn css_backgrounds_gradient_wrong_interpolation_crash() -> Document {
     let (mut doc, html, vp) = root_doc();
     doc.node_mut(vp).style.display = Display::Block;
     let html_font_relative =
-        openui_text::FontRelativeLengthResolver::from_style(&doc.node(html).style);
+        openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(html).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(html).style.margin_top = Length::px(0.0);
     doc.node_mut(html).style.margin_right = Length::px(0.0);
     doc.node_mut(html).style.margin_bottom = Length::px(0.0);
@@ -67276,7 +67276,7 @@ fn css_backgrounds_gradient_wrong_interpolation_crash() -> Document {
         ],
     };
     doc.node_mut(vp).style.font_size = 16.0;
-    let vp_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(vp).style);
+    let vp_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(vp).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(vp).style.margin_top = Length::px(0.0);
     doc.node_mut(vp).style.margin_right = Length::px(0.0);
     doc.node_mut(vp).style.margin_bottom = Length::px(0.0);

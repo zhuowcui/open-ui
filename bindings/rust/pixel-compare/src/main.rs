@@ -543,7 +543,9 @@ fn registry() -> Vec<(&'static str, TestBuilder)> {
 /// matching the HTML test file defaults:
 ///   body { margin: 0; padding: 20px; font-family: DejaVu Sans; font-size: 16px; }
 pub fn base_doc() -> (Document, NodeId) {
-    let mut doc = Document::new();
+    let mut doc = Document::new_with_font_collection(
+        openui_text::FontCollection::deterministic_test(),
+    );
     let viewport = doc.root();
     // Viewport: no margin/padding, just a container matching screen dimensions
     doc.node_mut(viewport).style.display = Display::Block;
@@ -576,7 +578,9 @@ pub fn base_doc() -> (Document, NodeId) {
 /// three distinct nodes.  Existing generated builders intentionally continue
 /// to use the historical two-node helper.
 pub fn root_doc() -> (Document, NodeId, NodeId) {
-    let mut doc = Document::new();
+    let mut doc = Document::new_with_font_collection(
+        openui_text::FontCollection::deterministic_test(),
+    );
     let viewport = doc.root();
     doc.node_mut(viewport).style.display = Display::Block;
 

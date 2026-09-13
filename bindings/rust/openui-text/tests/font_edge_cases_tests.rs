@@ -560,18 +560,18 @@ fn system_fonts_all_generic_families_resolve() {
 
 #[test]
 fn system_font_cache_name_mapping() {
-    // Verify FontCache maps all required generics to string names
+    // Production collections preserve generic family names for Fontconfig.
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Serif),
-        "DejaVu Serif"
+        "serif"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::SansSerif),
-        "DejaVu Sans"
+        "sans-serif"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Monospace),
-        "DejaVu Sans Mono"
+        "monospace"
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::Cursive),
@@ -583,6 +583,6 @@ fn system_font_cache_name_mapping() {
     );
     assert_eq!(
         FontCache::generic_family_name(GenericFontFamily::SystemUi),
-        "DejaVu Sans"
+        "system-ui"
     );
 }

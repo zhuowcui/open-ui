@@ -13,7 +13,7 @@ description = "Deterministic font resolution, metrics, bidi, and shaping for Ope
 [dependencies]
 openui-style = { version = "=0.2.0", path = "../openui-style" }
 openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
-skia-safe = { version = "0.94", features = ["textlayout"] }
+skia-safe = { version = "0.94", features = ["textlayout", "freetype-woff2"] }
 unicode-script = "0.5"
 unicode-bidi = "0.3"
 unicode-segmentation = "1.10"

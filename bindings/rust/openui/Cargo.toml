@@ -21,3 +21,4 @@ openui-engine = { version = "=0.2.0", path = "../openui-engine" }
 openui-macros = { version = "=0.2.0", path = "../openui-macros" }
 openui-platform = { version = "=0.2.0", path = "../openui-platform", optional = true }
 openui-style = { version = "=0.2.0", path = "../openui-style" }
+openui-text = { version = "=0.2.0", path = "../openui-text" }

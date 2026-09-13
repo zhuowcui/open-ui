@@ -29,7 +29,7 @@ use openui_style::{
     ListStyleType, ObjectFit, Overflow, OverflowClipBox, Position, RadialGradientShape,
     RadialGradientSize, StyleColor, Visibility,
 };
-use openui_text::{Font, FontMetrics, TextDirection, TextShaper};
+use openui_text::{FontMetrics, TextDirection, TextShaper};
 use skia_safe::canvas::{SaveLayerRec, SrcRectConstraint};
 use skia_safe::rrect::Corner as RRectCorner;
 use skia_safe::{
@@ -1386,7 +1386,7 @@ fn paint_control_text_lines(
         return;
     }
     let style = &doc.node(fragment.node_id).style;
-    let font = Font::new(crate::text_painter::style_to_font_description(style));
+    let font = doc.resolve_font(crate::text_painter::style_to_font_description(style));
     let direction = if style.direction == Direction::Rtl {
         TextDirection::Rtl
     } else {
@@ -1735,7 +1735,7 @@ fn paint_text_input_control(
         control_style.color = Color::from_rgba8(117, 117, 117, 255);
     }
     let style = &control_style;
-    let font = Font::new(crate::text_painter::style_to_font_description(style));
+    let font = doc.resolve_font(crate::text_painter::style_to_font_description(style));
     let direction = if style.direction == Direction::Rtl {
         TextDirection::Rtl
     } else {
@@ -1852,6 +1852,7 @@ fn paint_text_input_control(
 
 fn paint_single_line_control_text(
     canvas: &Canvas,
+    doc: &Document,
     text: &str,
     style: &ComputedStyle,
     rect: Rect,
@@ -1861,7 +1862,7 @@ fn paint_single_line_control_text(
     if text.is_empty() || rect.width() <= 0.0 || rect.height() <= 0.0 {
         return;
     }
-    let font = Font::new(crate::text_painter::style_to_font_description(style));
+    let font = doc.resolve_font(crate::text_painter::style_to_font_description(style));
     let direction = if style.direction == Direction::Rtl {
         TextDirection::Rtl
     } else {
@@ -1918,7 +1919,15 @@ fn paint_input_button_contents(
         (abs_offset.left + fragment.size.width - fragment.border.right).to_f32(),
         (abs_offset.top + fragment.size.height - fragment.border.bottom).to_f32(),
     );
-    paint_single_line_control_text(canvas, label, &node.style, rect, true, opacity_multiplier);
+    paint_single_line_control_text(
+        canvas,
+        doc,
+        label,
+        &node.style,
+        rect,
+        true,
+        opacity_multiplier,
+    );
 }
 
 fn paint_color_input_control(
@@ -1991,6 +2000,7 @@ fn paint_date_input_control(
     ] {
         paint_single_line_control_text(
             canvas,
+            doc,
             text,
             style,
             Rect::from_ltrb(
@@ -2176,6 +2186,7 @@ fn paint_file_input_control(
     button_style.native_button_text_metrics = false;
     paint_single_line_control_text(
         canvas,
+        doc,
         "Choose File",
         &button_style,
         Rect::from_xywh(x + 1.0, y + 3.0, button_width - 4.0, 16.0_f32.min(height)),
@@ -2188,6 +2199,7 @@ fn paint_file_input_control(
     filename_style.native_button_text_metrics = true;
     paint_single_line_control_text(
         canvas,
+        doc,
         "No file chosen",
         &filename_style,
         Rect::from_xywh(
@@ -3373,7 +3385,7 @@ fn paint_missing_image(
         && doc.children(fragment.node_id).next().is_none()
     {
         let alt = doc.attribute(fragment.node_id, "alt").unwrap_or("");
-        let font = Font::new(crate::text_painter::style_to_font_description(style));
+        let font = doc.resolve_font(crate::text_painter::style_to_font_description(style));
         let direction = if style.direction == Direction::Rtl {
             TextDirection::Rtl
         } else {
@@ -7475,11 +7487,12 @@ fn paint_resize_handle_if_needed(canvas: &Canvas, style: &ComputedStyle, clip_re
 /// fails. This ensures decoration positioning uses the intended CSS font
 /// even when the first shaped run uses a fallback (emoji, CJK, etc.).
 fn resolve_decoration_metrics(
+    doc: &Document,
     style: &ComputedStyle,
     shape_result: &openui_text::shaping::ShapeResult,
 ) -> FontMetrics {
     let font_desc = crate::text_painter::style_to_font_description(style);
-    let font = openui_text::Font::new(font_desc);
+    let font = doc.resolve_font(font_desc);
     font.font_metrics()
         .copied()
         .unwrap_or_else(|| crate::text_painter::metrics_from_shape_result(shape_result))
@@ -7509,7 +7522,7 @@ fn paint_text_fragment(
 
     // Resolve font metrics from the styled font (CSS font-family/size), not
     // from the first shaped run which may be a fallback font (emoji, CJK).
-    let metrics = resolve_decoration_metrics(style, shape_result);
+    let metrics = resolve_decoration_metrics(doc, style, shape_result);
 
     // Text content for CJK detection in skip-ink Auto mode.
     let text_content = fragment.text_content.as_deref();

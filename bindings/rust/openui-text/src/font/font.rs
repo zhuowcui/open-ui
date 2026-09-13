@@ -6,6 +6,7 @@
 
 use std::sync::Arc;
 
+use super::collection::FontCollection;
 use super::description::FontDescription;
 use super::fallback::FontFallbackList;
 use super::metrics::FontMetrics;
@@ -23,7 +24,15 @@ pub struct Font {
 impl Font {
     /// Create a font from a description. Resolves typefaces immediately.
     pub fn new(description: FontDescription) -> Self {
-        let fallback_list = FontFallbackList::new(&description);
+        Self::new_in_collection(description, FontCollection::system())
+    }
+
+    /// Create a font using one document's application and system faces.
+    pub fn new_in_collection(
+        description: FontDescription,
+        collection: Arc<FontCollection>,
+    ) -> Self {
+        let fallback_list = FontFallbackList::new_in_collection(&description, collection);
         Self {
             description,
             fallback_list,
@@ -52,6 +61,10 @@ impl Font {
     #[inline]
     pub fn fallback_list(&self) -> &FontFallbackList {
         &self.fallback_list
+    }
+
+    pub fn collection(&self) -> &Arc<FontCollection> {
+        self.fallback_list.collection()
     }
 
     /// Measure the advance width of a string using the primary font.

@@ -20,7 +20,6 @@ use openui_geometry::{
 use openui_style::{
     BoxSizing, Clear, ColumnSpan, ComputedStyle, FontFamily, LineBreak, WhiteSpace, WordBreak,
 };
-use openui_text::Font;
 
 use crate::block::{resolve_border, resolve_margins, resolve_padding};
 use crate::inline::items::InlineItemType;
@@ -912,7 +911,7 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
                 .text
                 .as_deref()
                 .expect("whitespace child must be text");
-            let text_sizes = compute_text_intrinsic_sizes_impl(text, child_style, true);
+            let text_sizes = compute_text_intrinsic_sizes_impl(doc, text, child_style, true);
             child_sizes.min_content_inline_size = text_sizes.min;
             child_sizes.max_content_inline_size = text_sizes.max;
         }
@@ -2346,7 +2345,7 @@ pub fn compute_intrinsic_inline_sizes(doc: &Document, node_id: NodeId) -> MinMax
     match tag {
         ElementTag::Text => {
             if let Some(ref text) = node.text {
-                compute_text_intrinsic_sizes(text, &node.style)
+                compute_text_intrinsic_sizes(doc, text, &node.style)
             } else {
                 MinMaxSizes::zero()
             }
@@ -2443,7 +2442,7 @@ fn compute_logical_intrinsic_inline_sizes_impl(
         return node
             .text
             .as_deref()
-            .map(|text| compute_text_intrinsic_sizes(text, &node.style))
+            .map(|text| compute_text_intrinsic_sizes(doc, text, &node.style))
             .unwrap_or_else(MinMaxSizes::zero);
     }
     if node.replaced.is_some() || is_replaced_element(node.tag) {
@@ -2529,6 +2528,7 @@ fn compute_logical_intrinsic_inline_sizes_impl(
                 .as_deref()
                 .map(|text| {
                     compute_text_intrinsic_sizes_impl(
+                        doc,
                         text,
                         child_style,
                         is_interior_collapsible_whitespace(doc, &child_ids, child_index),
@@ -2826,8 +2826,8 @@ fn compute_child_intrinsic_contribution_with_block_size(
 /// inline layout so shrink-to-fit boxes do not acquire an unrelated 8px-per-
 /// character approximation.
 /// max-content = full text width.
-fn compute_text_intrinsic_sizes(text: &str, style: &ComputedStyle) -> MinMaxSizes {
-    compute_text_intrinsic_sizes_impl(text, style, false)
+fn compute_text_intrinsic_sizes(doc: &Document, text: &str, style: &ComputedStyle) -> MinMaxSizes {
+    compute_text_intrinsic_sizes_impl(doc, text, style, false)
 }
 
 fn is_css_collapsible_whitespace(ch: char) -> bool {
@@ -2835,11 +2835,12 @@ fn is_css_collapsible_whitespace(ch: char) -> bool {
 }
 
 fn compute_text_intrinsic_sizes_impl(
+    doc: &Document,
     text: &str,
     style: &ComputedStyle,
     preserve_boundary_whitespace: bool,
 ) -> MinMaxSizes {
-    let processed = preprocess_text_for_shaping(text, style);
+    let processed = preprocess_text_for_shaping(text, style, doc.font_collection());
     // Collapsible white space at an intrinsic line boundary has no advance.
     // In particular, source indentation around a text-only shrink-to-fit
     // float must not inflate its max-content width. Inline layout already
@@ -2859,7 +2860,7 @@ fn compute_text_intrinsic_sizes_impl(
         return MinMaxSizes::zero();
     }
 
-    let font = Font::new(style_to_font_description(style));
+    let font = doc.resolve_font(style_to_font_description(style));
     let measure = |run: &str| LayoutUnit::from_f32_ceil(font.width(run));
     let forced_lines = processed.split('\n');
     let max_content = forced_lines
@@ -3073,7 +3074,7 @@ pub fn compute_replaced_intrinsic_sizes_for_node(
         .flatten()
         .filter(|alt| !alt.is_empty())
         .map(|alt| {
-            let font = Font::new(style_to_font_description(&node.style));
+            let font = doc.resolve_font(style_to_font_description(&node.style));
             font.width(alt)
         })
         .unwrap_or(0.0);
@@ -3878,14 +3879,22 @@ mod tests {
 
     #[test]
     fn text_min_content_widest_word() {
-        let sizes = compute_text_intrinsic_sizes("hello world", &ComputedStyle::default());
+        let sizes = compute_text_intrinsic_sizes(
+            &Document::new(),
+            "hello world",
+            &ComputedStyle::default(),
+        );
         assert!(sizes.min > LayoutUnit::zero());
         assert!(sizes.max > sizes.min);
     }
 
     #[test]
     fn text_single_word_min_equals_max() {
-        let sizes = compute_text_intrinsic_sizes("indivisible", &ComputedStyle::default());
+        let sizes = compute_text_intrinsic_sizes(
+            &Document::new(),
+            "indivisible",
+            &ComputedStyle::default(),
+        );
         // Both min and max are the full word
         assert_eq!(sizes.min, sizes.max);
     }
@@ -3895,15 +3904,15 @@ mod tests {
         let mut style = ComputedStyle::default();
         style.font_family.families = vec![FontFamily::Named("Droid Sans Fallback".into())];
         assert_eq!(
-            compute_text_intrinsic_sizes("\n  vertical-rl:\n  ", &style),
-            compute_text_intrinsic_sizes("vertical-rl:", &style)
+            compute_text_intrinsic_sizes(&Document::new(), "\n  vertical-rl:\n  ", &style),
+            compute_text_intrinsic_sizes(&Document::new(), "vertical-rl:", &style)
         );
     }
 
     #[test]
     fn collapsible_interior_whitespace_retains_one_advance() {
         let style = ComputedStyle::default();
-        let sizes = compute_text_intrinsic_sizes_impl("\n  ", &style, true);
+        let sizes = compute_text_intrinsic_sizes_impl(&Document::new(), "\n  ", &style, true);
         assert_eq!(sizes.min, LayoutUnit::zero());
         assert!(sizes.max > LayoutUnit::zero());
     }
@@ -3912,7 +3921,7 @@ mod tests {
     fn non_breaking_space_is_not_trimmed_as_css_whitespace() {
         let mut style = ComputedStyle::default();
         style.font_family.families = vec![FontFamily::Named("Droid Sans Fallback".into())];
-        let sizes = compute_text_intrinsic_sizes("\u{00a0}", &style);
+        let sizes = compute_text_intrinsic_sizes(&Document::new(), "\u{00a0}", &style);
         assert!(sizes.min > LayoutUnit::zero());
         assert_eq!(sizes.min, sizes.max);
     }
@@ -4117,10 +4126,10 @@ mod tests {
     fn line_break_anywhere_uses_character_min_content_opportunities() {
         let mut style = ComputedStyle::default();
         style.font_family.families = vec![FontFamily::Named("Droid Sans Fallback".into())];
-        let normal = compute_text_intrinsic_sizes("fragmentation", &style);
+        let normal = compute_text_intrinsic_sizes(&Document::new(), "fragmentation", &style);
 
         style.line_break = LineBreak::Anywhere;
-        let anywhere = compute_text_intrinsic_sizes("fragmentation", &style);
+        let anywhere = compute_text_intrinsic_sizes(&Document::new(), "fragmentation", &style);
 
         assert!(anywhere.min < normal.min);
         assert_eq!(anywhere.max, normal.max);

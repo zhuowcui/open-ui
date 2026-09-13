@@ -847,7 +847,7 @@ fn css2_floats_float_nowrap_1_notref() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -865,7 +865,7 @@ fn css2_floats_float_nowrap_1_notref() -> Document {
     doc.node_mut(n2).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
+    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n2).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -912,7 +912,7 @@ fn css2_floats_float_nowrap_1() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -938,7 +938,7 @@ fn css2_floats_float_nowrap_1() -> Document {
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
+    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n3).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -979,7 +979,7 @@ fn css2_floats_float_nowrap_2() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -1005,7 +1005,7 @@ fn css2_floats_float_nowrap_2() -> Document {
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
+    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n3).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -1052,7 +1052,7 @@ fn css2_floats_float_nowrap_3_ref() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -1106,7 +1106,7 @@ fn css2_floats_float_nowrap_3_ref() -> Document {
     doc.node_mut(n6).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n6_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n6).style);
+    let n6_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n6).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n6).style.margin_top = Length::px(0.0);
     doc.node_mut(n6).style.margin_right = Length::px(0.0);
     doc.node_mut(n6).style.margin_bottom = Length::px(0.0);
@@ -1144,7 +1144,7 @@ fn css2_floats_float_nowrap_3() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -1191,7 +1191,7 @@ fn css2_floats_float_nowrap_3() -> Document {
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
+    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n5).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -1238,7 +1238,7 @@ fn css2_floats_float_nowrap_4_ref() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -1262,7 +1262,7 @@ fn css2_floats_float_nowrap_4_ref() -> Document {
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
+    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n3).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -1330,7 +1330,7 @@ fn css2_floats_float_nowrap_4_ref2() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -1369,7 +1369,7 @@ fn css2_floats_float_nowrap_4_ref2() -> Document {
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
+    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n5).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -1437,7 +1437,7 @@ fn css2_floats_float_nowrap_4() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -1476,7 +1476,7 @@ fn css2_floats_float_nowrap_4() -> Document {
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n4_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n4).style);
+    let n4_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n4).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
     doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
@@ -1632,7 +1632,7 @@ fn css2_floats_float_nowrap_7() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -1674,7 +1674,7 @@ fn css2_floats_float_nowrap_7() -> Document {
     doc.node_mut(n4).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n4_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n4).style);
+    let n4_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n4).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n4).style.margin_top = Length::px(0.0);
     doc.node_mut(n4).style.margin_right = Length::px(0.0);
     doc.node_mut(n4).style.margin_bottom = Length::px(0.0);
@@ -1744,7 +1744,7 @@ fn css2_floats_float_nowrap_8() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -1770,7 +1770,7 @@ fn css2_floats_float_nowrap_8() -> Document {
     doc.node_mut(n3).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
+    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n3).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
@@ -1817,7 +1817,7 @@ fn css2_floats_float_nowrap_9() -> Document {
     doc.node_mut(n1).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -1864,7 +1864,7 @@ fn css2_floats_float_nowrap_9() -> Document {
     doc.node_mut(n5).style.font_family = FontFamilyList {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
-    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
+    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n5).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -1931,7 +1931,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref() -> Document {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n2).style.font_size = 20.0;
-    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
+    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n2).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -2415,7 +2415,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1_ref2() -> Document {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n2).style.font_size = 20.0;
-    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
+    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n2).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -2899,7 +2899,7 @@ fn css2_floats_float_nowrap_hyphen_rewind_1() -> Document {
         families: vec![FontFamily::Generic(GenericFontFamily::Monospace)],
     };
     doc.node_mut(n2).style.font_size = 20.0;
-    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n2).style);
+    let n2_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n2).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n2).style.margin_top = Length::px(0.0);
     doc.node_mut(n2).style.margin_right = Length::px(0.0);
     doc.node_mut(n2).style.margin_bottom = Length::px(0.0);
@@ -3634,7 +3634,7 @@ fn css2_floats_floats_line_wrap_shifted_001_ref() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.font_size = 10.0;
     doc.node_mut(n1).style.line_height = LineHeight::Number(1.0);
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -3671,7 +3671,7 @@ fn css2_floats_floats_line_wrap_shifted_001_ref() -> Document {
     doc.node_mut(n5).style.display = Display::Block;
     doc.node_mut(n5).style.font_size = 10.0;
     doc.node_mut(n5).style.line_height = LineHeight::Number(1.0);
-    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n5).style);
+    let n5_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n5).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n5).style.margin_top = Length::px(0.0);
     doc.node_mut(n5).style.margin_right = Length::px(0.0);
     doc.node_mut(n5).style.margin_bottom = Length::px(0.0);
@@ -3705,7 +3705,7 @@ fn css2_floats_floats_line_wrap_shifted_001() -> Document {
     doc.node_mut(n1).style.display = Display::Block;
     doc.node_mut(n1).style.font_size = 10.0;
     doc.node_mut(n1).style.line_height = LineHeight::Number(1.0);
-    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n1).style);
+    let n1_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n1).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n1).style.margin_top = Length::px(0.0);
     doc.node_mut(n1).style.margin_right = Length::px(0.0);
     doc.node_mut(n1).style.margin_bottom = Length::px(0.0);
@@ -3736,7 +3736,7 @@ fn css2_floats_floats_line_wrap_shifted_001() -> Document {
     doc.node_mut(n3).style.display = Display::Block;
     doc.node_mut(n3).style.font_size = 10.0;
     doc.node_mut(n3).style.line_height = LineHeight::Number(1.0);
-    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style(&doc.node(n3).style);
+    let n3_font_relative = openui_text::FontRelativeLengthResolver::from_style_in_collection(&doc.node(n3).style, std::sync::Arc::clone(doc.font_collection()));
     doc.node_mut(n3).style.margin_top = Length::px(0.0);
     doc.node_mut(n3).style.margin_right = Length::px(0.0);
     doc.node_mut(n3).style.margin_bottom = Length::px(0.0);
