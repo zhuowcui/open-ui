@@ -9,7 +9,7 @@ use openui_layout::{block_layout, ConstraintSpace, Fragment};
 use skia_safe::canvas::SrcRectConstraint;
 use skia_safe::{
     surfaces, Color as SkColor, ColorSpace, EncodedImageFormat, FilterMode, ImageInfo, Paint,
-    PictureRecorder, PixelGeometry, Rect, SamplingOptions, Surface, SurfaceProps,
+    Picture, PictureRecorder, PixelGeometry, Rect, SamplingOptions, Surface, SurfaceProps,
     SurfacePropsFlags,
 };
 
@@ -41,95 +41,95 @@ fn root_constraint_space(doc: &Document, width: i32, height: i32) -> ConstraintS
     )
 }
 
-/// Render a Document tree to a PNG file.
-///
-/// 1. Performs block layout starting from the viewport root.
-/// 2. Creates a Skia raster surface at the given dimensions.
-/// 3. Paints the fragment tree to the surface.
-/// 4. Encodes the surface to PNG and writes to the given path.
-pub fn render_to_png(doc: &Document, width: i32, height: i32, path: &str) -> Result<(), String> {
-    let mut surface = render_to_surface(doc, width, height)?;
-
-    // Encode to PNG
-    let image = surface.image_snapshot();
-    let data = image
-        .encode(None, EncodedImageFormat::PNG, None)
-        .ok_or_else(|| "Failed to encode PNG".to_string())?;
-
-    std::fs::write(path, data.as_bytes()).map_err(|e| format!("Failed to write PNG: {}", e))?;
-
-    Ok(())
+/// Immutable paint recording consumed by both headless and window compositors.
+#[derive(Clone)]
+pub struct RecordedPicture {
+    pub picture: Picture,
+    pub width: i32,
+    pub height: i32,
+    pub(crate) lcd_surface: bool,
+    pub(crate) direct_replay: bool,
 }
 
-/// Render a Document tree to a Skia surface (for testing / compositing).
-///
-/// Returns the surface with the rendered content. The surface uses
-/// raster (CPU) backend — same pixels as Blink's software renderer.
-pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surface, String> {
-    // Chromium's Linux LCD path uses horizontal RGB subpixels. This is scoped
-    // by the comparison runner to SP16 IDs so historical Ahem and box-only
-    // snapshots retain the default unknown pixel geometry.
+/// Lay out and record a document without rasterizing it.
+pub fn record_document(
+    doc: &Document,
+    width: i32,
+    height: i32,
+) -> Result<(Fragment, RecordedPicture), String> {
+    let space = root_constraint_space(doc, width, height);
+    let fragment = block_layout(doc, doc.root(), &space);
+    let picture = record_fragment(doc, &fragment, width, height)?;
+    Ok((fragment, picture))
+}
+
+/// Record an already-computed fragment tree into an immutable Skia picture.
+pub fn record_fragment(
+    doc: &Document,
+    fragment: &Fragment,
+    width: i32,
+    height: i32,
+) -> Result<RecordedPicture, String> {
+    if width <= 0 || height <= 0 {
+        return Err("viewport dimensions must be positive".to_string());
+    }
     let real_font_raster = std::env::var("OPENUI_REAL_FONT_RASTER").ok().as_deref() == Some("1");
     let lcd_surface = real_font_raster
         || doc.uses_native_control_text()
         || (std::env::var("OPENUI_EDGING").ok().as_deref() == Some("alias")
             && doc.uses_lcd_author_text());
-    let mut surface = create_raster_surface(width, height, lcd_surface)
-        .ok_or_else(|| "Failed to create Skia surface".to_string())?;
-
-    // The browser canvas starts white; the complete selected html/body
-    // background (color plus images) is recorded over it below.
-    let canvas_color = SkColor::WHITE;
-    // Layout
-    let space = root_constraint_space(doc, width, height);
-    let fragment = block_layout(doc, doc.root(), &space);
-
-    // Chromium's software compositor rasterizes paint records into overlapping
-    // 256px tiles and composites each tile's 255px interior. Replaying the
-    // display list with the same tile origin is observable for antialiased
-    // geometry that crosses a tile boundary, so keep rasterization and final
-    // composition as separate, general stages here too.
     let bounds = Rect::from_xywh(0.0, 0.0, width as f32, height as f32);
     let mut recorder = PictureRecorder::new();
     let recording_canvas = recorder.begin_recording(bounds, false);
-    recording_canvas.clear(canvas_color);
+    recording_canvas.clear(SkColor::WHITE);
     crate::painter::paint_canvas_background(
         recording_canvas,
         doc,
-        &fragment,
+        fragment,
         width as f32,
         height as f32,
     );
     paint_fragment(
         recording_canvas,
-        &fragment,
+        fragment,
         doc,
         openui_geometry::PhysicalOffset::zero(),
     );
     let picture = recorder
         .finish_recording_as_picture(None)
         .ok_or_else(|| "Failed to record paint commands".to_string())?;
+    Ok(RecordedPicture {
+        picture,
+        width,
+        height,
+        lcd_surface,
+        direct_replay: has_promoted_non_axis_transform(fragment, doc),
+    })
+}
 
+/// Rasterize an immutable recording using the exact headless tiling policy.
+pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String> {
+    let width = recording.width;
+    let height = recording.height;
+    let mut surface = create_raster_surface(width, height, recording.lcd_surface)
+        .ok_or_else(|| "Failed to create Skia surface".to_string())?;
+    let canvas_color = SkColor::WHITE;
     surface.canvas().clear(canvas_color);
-    if has_promoted_non_axis_transform(&fragment, doc) {
-        // Chromium rasterizes the root picture into tiles, then composites
-        // will-change transform surfaces as independent quads. Replaying our
-        // currently unified picture once preserves that compositor coverage;
-        // replaying shader-bearing promoted surfaces independently inside
-        // every root tile introduces a second, tile-origin-dependent raster
-        // pass that Chromium never performs.
-        surface.canvas().draw_picture(&picture, None, None);
+    if recording.direct_replay {
+        surface
+            .canvas()
+            .draw_picture(&recording.picture, None, None);
         return Ok(surface);
     }
     const TILE_SIZE: i32 = 256;
     const TILE_STEP: i32 = TILE_SIZE - 2;
     for tile_y in (0..height).step_by(TILE_STEP as usize) {
         for tile_x in (0..width).step_by(TILE_STEP as usize) {
-            let mut tile = create_raster_surface(TILE_SIZE, TILE_SIZE, lcd_surface)
+            let mut tile = create_raster_surface(TILE_SIZE, TILE_SIZE, recording.lcd_surface)
                 .ok_or_else(|| "Failed to create raster tile".to_string())?;
             tile.canvas().clear(canvas_color);
             tile.canvas().translate((-tile_x as f32, -tile_y as f32));
-            tile.canvas().draw_picture(&picture, None, None);
+            tile.canvas().draw_picture(&recording.picture, None, None);
 
             let image = tile.image_snapshot();
             let crop_left = if tile_x == 0 { 0 } else { 1 };
@@ -164,8 +164,36 @@ pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surf
             );
         }
     }
-
     Ok(surface)
+}
+
+/// Render a Document tree to a PNG file.
+///
+/// 1. Performs block layout starting from the viewport root.
+/// 2. Creates a Skia raster surface at the given dimensions.
+/// 3. Paints the fragment tree to the surface.
+/// 4. Encodes the surface to PNG and writes to the given path.
+pub fn render_to_png(doc: &Document, width: i32, height: i32, path: &str) -> Result<(), String> {
+    let mut surface = render_to_surface(doc, width, height)?;
+
+    // Encode to PNG
+    let image = surface.image_snapshot();
+    let data = image
+        .encode(None, EncodedImageFormat::PNG, None)
+        .ok_or_else(|| "Failed to encode PNG".to_string())?;
+
+    std::fs::write(path, data.as_bytes()).map_err(|e| format!("Failed to write PNG: {}", e))?;
+
+    Ok(())
+}
+
+/// Render a Document tree to a Skia surface (for testing / compositing).
+///
+/// Returns the surface with the rendered content. The surface uses
+/// raster (CPU) backend — same pixels as Blink's software renderer.
+pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surface, String> {
+    let (_, recording) = record_document(doc, width, height)?;
+    rasterize_picture(&recording)
 }
 
 fn create_raster_surface(width: i32, height: i32, real_font_raster: bool) -> Option<Surface> {

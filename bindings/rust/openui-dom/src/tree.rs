@@ -396,6 +396,36 @@ impl Document {
         self.nodes[parent.index()].last_child = child;
     }
 
+    /// Detach a node from its parent while retaining its arena allocation.
+    ///
+    /// Arena entries are intentionally never reused here. Higher-level owners
+    /// may layer generation-checked handles over the stable `NodeId` storage.
+    pub fn detach(&mut self, child: NodeId) -> bool {
+        if child == self.root || child.index() >= self.nodes.len() {
+            return false;
+        }
+        let parent = self.nodes[child.index()].parent;
+        if parent.is_none() {
+            return false;
+        }
+        let previous = self.nodes[child.index()].prev_sibling;
+        let next = self.nodes[child.index()].next_sibling;
+        if previous.is_none() {
+            self.nodes[parent.index()].first_child = next;
+        } else {
+            self.nodes[previous.index()].next_sibling = next;
+        }
+        if next.is_none() {
+            self.nodes[parent.index()].last_child = previous;
+        } else {
+            self.nodes[next.index()].prev_sibling = previous;
+        }
+        self.nodes[child.index()].parent = NodeId::NONE;
+        self.nodes[child.index()].prev_sibling = NodeId::NONE;
+        self.nodes[child.index()].next_sibling = NodeId::NONE;
+        true
+    }
+
     /// Insert `child` before the current first child of `parent`.
     pub fn prepend_child(&mut self, parent: NodeId, child: NodeId) {
         assert!(self.nodes[child.index()].parent.is_none());
@@ -413,7 +443,7 @@ impl Document {
     }
 
     /// Insert a detached node immediately before an attached sibling.
-    fn insert_before_sibling(&mut self, sibling: NodeId, child: NodeId) {
+    pub fn insert_before(&mut self, sibling: NodeId, child: NodeId) {
         assert!(self.nodes[child.index()].parent.is_none());
         let parent = self.nodes[sibling.index()].parent;
         assert!(!parent.is_none());
@@ -465,7 +495,7 @@ impl Document {
                     && self.nodes[origin.index()].style.scroll_marker_group
                         == ScrollMarkerGroup::Before =>
             {
-                self.insert_before_sibling(origin, pseudo)
+                self.insert_before(origin, pseudo)
             }
             PseudoElementKind::ScrollMarkerGroup
                 if self.nodes[origin.index()].parent.is_none()
@@ -1065,6 +1095,22 @@ mod tests {
         assert_eq!(doc.node(b).prev_sibling, a);
         assert_eq!(doc.node(b).next_sibling, c);
         assert_eq!(doc.node(c).prev_sibling, b);
+    }
+
+    #[test]
+    fn detach_repairs_sibling_links() {
+        let mut doc = Document::new();
+        let root = doc.root();
+        let a = doc.create_node(ElementTag::Div);
+        let b = doc.create_node(ElementTag::Div);
+        let c = doc.create_node(ElementTag::Div);
+        doc.append_child(root, a);
+        doc.append_child(root, b);
+        doc.append_child(root, c);
+        assert!(doc.detach(b));
+        assert_eq!(doc.children(root).collect::<Vec<_>>(), vec![a, c]);
+        assert!(doc.node(b).parent.is_none());
+        assert!(!doc.detach(b));
     }
 
     #[test]

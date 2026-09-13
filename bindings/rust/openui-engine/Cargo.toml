@@ -1,0 +1,15 @@
+[package]
+name = "openui-engine"
+version = "0.2.0"
+edition = "2021"
+description = "Retained document, interaction, and scene engine for Open UI"
+license = "Apache-2.0"
+rust-version = "1.85"
+
+[dependencies]
+openui-compositor = { path = "../openui-compositor" }
+openui-dom = { path = "../openui-dom" }
+openui-geometry = { path = "../openui-geometry" }
+openui-layout = { path = "../openui-layout" }
+openui-paint = { path = "../openui-paint" }
+openui-style = { path = "../openui-style" }

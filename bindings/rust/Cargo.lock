@@ -536,10 +536,31 @@ name = "openui-build"
 version = "0.1.0"
 
 [[package]]
+name = "openui-compositor"
+version = "0.2.0"
+dependencies = [
+ "openui-layout",
+ "openui-paint",
+ "skia-safe",
+]
+
+[[package]]
 name = "openui-dom"
 version = "0.1.0"
 dependencies = [
  "openui-geometry",
+ "openui-style",
+]
+
+[[package]]
+name = "openui-engine"
+version = "0.2.0"
+dependencies = [
+ "openui-compositor",
+ "openui-dom",
+ "openui-geometry",
+ "openui-layout",
+ "openui-paint",
  "openui-style",
 ]
 

@@ -1,0 +1,12 @@
+[package]
+name = "openui-compositor"
+version = "0.2.0"
+edition = "2021"
+description = "Immutable scene snapshots and rendering backends for Open UI"
+license = "Apache-2.0"
+rust-version = "1.85"
+
+[dependencies]
+openui-layout = { path = "../openui-layout" }
+openui-paint = { path = "../openui-paint" }
+skia-safe = "0.94"
