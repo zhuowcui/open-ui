@@ -2,15 +2,16 @@
 
 use crate::{ActivationResult, ControlAdjustment, Engine, EngineError, FocusOrigin, NodeHandle};
 use accesskit::{
-    Action, Live, Node, NodeId, Rect, Role, TextPosition, TextSelection, Toggled, TreeId, TreeInfo,
-    TreeUpdate,
+    Action, ActionData, ActionRequest, Live, Node, NodeId, Rect, Role, TextPosition, TextSelection,
+    Toggled, TreeId, TreeInfo, TreeUpdate,
 };
 use openui_dom::{ElementTag, FormControlRole, NodeId as DomNodeId};
 use std::collections::HashMap;
 
 pub use accesskit::{
-    Action as AccessibilityPlatformAction, Live as AccessibilityLive, Node as AccessibilityNode,
-    NodeId as AccessibilityNodeId, Role as AccessibilityRole,
+    Action as AccessibilityPlatformAction, ActionData as AccessibilityActionData,
+    ActionRequest as AccessibilityActionRequest, Live as AccessibilityLive,
+    Node as AccessibilityNode, NodeId as AccessibilityNodeId, Role as AccessibilityRole,
     TreeUpdate as AccessibilityTreeUpdate,
 };
 
@@ -35,6 +36,8 @@ pub enum AccessibilityAction {
     ReplaceSelectedText(String),
     SetTextSelection { anchor: usize, focus: usize },
     ScrollIntoView,
+    ScrollBy { delta_x: f64, delta_y: f64 },
+    SetScrollOffset { x: f64, y: f64 },
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -268,7 +271,122 @@ impl Engine {
                 self.scroll_into_view(handle)?;
                 Ok(ActivationResult { changed: vec![] })
             }
+            AccessibilityAction::ScrollBy { delta_x, delta_y } => {
+                let (x, y) = self.scroll_offset(handle)?;
+                self.scroll_to(handle, x + delta_x, y + delta_y)?;
+                Ok(ActivationResult { changed: vec![] })
+            }
+            AccessibilityAction::SetScrollOffset { x, y } => {
+                self.scroll_to(handle, x, y)?;
+                Ok(ActivationResult { changed: vec![] })
+            }
         }
+    }
+
+    /// Validate and lower a platform AccessKit request to the engine's typed
+    /// action vocabulary. Text offsets are converted from characters to UTF-8
+    /// byte boundaries before entering the editing pipeline.
+    pub fn accessibility_action_from_request(
+        &self,
+        request: &ActionRequest,
+    ) -> Result<(NodeHandle, AccessibilityAction), EngineError> {
+        if request.target_tree != TreeId::ROOT {
+            return Err(EngineError::InvalidInput(
+                "accessibility action targets a foreign tree",
+            ));
+        }
+        let handle = self.handle_from_accessibility_id(request.target_node)?;
+        let action = match request.action {
+            Action::Click => AccessibilityAction::Click,
+            Action::Focus => AccessibilityAction::Focus,
+            Action::Blur => AccessibilityAction::Blur,
+            Action::Collapse => AccessibilityAction::Collapse,
+            Action::Expand => AccessibilityAction::Expand,
+            Action::Decrement => AccessibilityAction::Decrement,
+            Action::Increment => AccessibilityAction::Increment,
+            Action::ReplaceSelectedText => match request.data.as_ref() {
+                Some(ActionData::Value(value)) => {
+                    AccessibilityAction::ReplaceSelectedText(value.to_string())
+                }
+                _ => return Err(EngineError::InvalidInput("accessibility action needs text")),
+            },
+            Action::ScrollIntoView => AccessibilityAction::ScrollIntoView,
+            Action::ScrollDown => AccessibilityAction::ScrollBy {
+                delta_x: 0.0,
+                delta_y: 40.0,
+            },
+            Action::ScrollUp => AccessibilityAction::ScrollBy {
+                delta_x: 0.0,
+                delta_y: -40.0,
+            },
+            Action::ScrollLeft => AccessibilityAction::ScrollBy {
+                delta_x: -40.0,
+                delta_y: 0.0,
+            },
+            Action::ScrollRight => AccessibilityAction::ScrollBy {
+                delta_x: 40.0,
+                delta_y: 0.0,
+            },
+            Action::SetScrollOffset => match request.data.as_ref() {
+                Some(ActionData::SetScrollOffset(point)) => AccessibilityAction::SetScrollOffset {
+                    x: point.x,
+                    y: point.y,
+                },
+                _ => {
+                    return Err(EngineError::InvalidInput(
+                        "accessibility action needs a scroll offset",
+                    ))
+                }
+            },
+            Action::SetTextSelection => match request.data.as_ref() {
+                Some(ActionData::SetTextSelection(selection)) => {
+                    let control = self
+                        .controls
+                        .get(&handle.index)
+                        .ok_or(EngineError::NotEditable)?;
+                    AccessibilityAction::SetTextSelection {
+                        anchor: character_to_byte(
+                            &control.value,
+                            selection.anchor.character_index,
+                        )?,
+                        focus: character_to_byte(&control.value, selection.focus.character_index)?,
+                    }
+                }
+                _ => {
+                    return Err(EngineError::InvalidInput(
+                        "accessibility action needs a text selection",
+                    ))
+                }
+            },
+            Action::SetValue => match request.data.as_ref() {
+                Some(ActionData::Value(value)) => AccessibilityAction::SetValue(value.to_string()),
+                Some(ActionData::NumericValue(value)) => {
+                    AccessibilityAction::SetValue(value.to_string())
+                }
+                _ => {
+                    return Err(EngineError::InvalidInput(
+                        "accessibility action needs a value",
+                    ))
+                }
+            },
+            _ => {
+                return Err(EngineError::InvalidInput(
+                    "unsupported accessibility action",
+                ))
+            }
+        };
+        Ok((handle, action))
+    }
+
+    fn handle_from_accessibility_id(&self, id: NodeId) -> Result<NodeHandle, EngineError> {
+        let raw = id.0 & !(1_u64 << 63);
+        let handle = NodeHandle {
+            document: self.id,
+            index: (raw >> 32) as u32,
+            generation: raw as u32,
+        };
+        self.resolve(handle)?;
+        Ok(handle)
     }
 
     fn build_accessibility_nodes(&self) -> Result<HashMap<NodeId, Node>, EngineError> {
@@ -618,6 +736,17 @@ fn text_node_id(handle: NodeHandle) -> NodeId {
     NodeId(node_id(handle).0 | (1_u64 << 63))
 }
 
+fn character_to_byte(value: &str, character: usize) -> Result<usize, EngineError> {
+    if character == value.chars().count() {
+        return Ok(value.len());
+    }
+    value
+        .char_indices()
+        .nth(character)
+        .map(|(offset, _)| offset)
+        .ok_or(EngineError::InvalidSelection)
+}
+
 fn descendant_text(document: &openui_dom::Document, node: DomNodeId) -> String {
     let mut result = document.node(node).text.clone().unwrap_or_default();
     for child in document.children(node) {
@@ -700,5 +829,41 @@ mod tests {
             .unwrap();
         assert_eq!(text.1.role(), Role::TextRun);
         assert!(text.1.text_selection().is_some());
+    }
+
+    #[test]
+    fn platform_requests_validate_ids_and_convert_character_offsets() {
+        let mut engine = Engine::new(crate::Viewport::new(200, 100).unwrap()).unwrap();
+        let input = mounted_control(&mut engine, ElementTag::Input);
+        engine.set_control_value(input, "a👩‍💻z").unwrap();
+        let request = ActionRequest {
+            action: Action::SetTextSelection,
+            target_tree: TreeId::ROOT,
+            target_node: text_node_id(input),
+            data: Some(ActionData::SetTextSelection(TextSelection {
+                anchor: TextPosition {
+                    node: text_node_id(input),
+                    character_index: 1,
+                },
+                focus: TextPosition {
+                    node: text_node_id(input),
+                    character_index: 4,
+                },
+            })),
+        };
+        let (target, action) = engine.accessibility_action_from_request(&request).unwrap();
+        assert_eq!(target, input);
+        assert_eq!(
+            action,
+            AccessibilityAction::SetTextSelection {
+                anchor: 1,
+                focus: "a👩‍💻".len(),
+            }
+        );
+        engine.perform_accessibility_action(target, action).unwrap();
+        assert_eq!(
+            engine.control_state(input).unwrap().unwrap().selection(),
+            (1, "a👩‍💻".len())
+        );
     }
 }

@@ -4,8 +4,9 @@ mod accessibility;
 mod interaction;
 
 pub use accessibility::{
-    AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
-    AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
+    AccessibilityAction, AccessibilityActionData, AccessibilityActionRequest, AccessibilityLive,
+    AccessibilityNode, AccessibilityNodeId, AccessibilityPlatformAction, AccessibilityRelation,
+    AccessibilityRole, AccessibilityTreeUpdate,
 };
 
 pub use interaction::{
@@ -678,6 +679,21 @@ impl Engine {
         handle: NodeHandle,
     ) -> Result<&openui_style::ComputedStyle, EngineError> {
         Ok(&self.document.node(self.resolve(handle)?).style)
+    }
+
+    pub fn cursor(&self, handle: NodeHandle) -> Result<openui_style::Cursor, EngineError> {
+        let mut current = Some(handle);
+        while let Some(node) = current {
+            self.resolve(node)?;
+            if let Some(StyleValue::Cursor(cursor)) = self.slots[node.index as usize]
+                .authored
+                .get(&(StyleProperty::Cursor as u16))
+            {
+                return Ok(*cursor);
+            }
+            current = self.parent(node)?;
+        }
+        Ok(openui_style::Cursor::Auto)
     }
 
     pub fn element_tag(&self, handle: NodeHandle) -> Result<ElementTag, EngineError> {

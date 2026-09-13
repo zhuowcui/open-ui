@@ -4,9 +4,14 @@ version = "0.2.0"
 edition = "2021"
 description = "Open UI reactive runtime — Leptos-style fine-grained reactivity in pure Rust"
 
+[features]
+default = []
+linux = ["dep:openui-platform", "openui-platform/linux"]
+
 [dependencies]
 openui-compositor = { path = "../openui-compositor" }
 openui-dom = { path = "../openui-dom" }
 openui-engine = { path = "../openui-engine" }
 openui-macros = { path = "../openui-macros" }
+openui-platform = { path = "../openui-platform", optional = true }
 openui-style = { path = "../openui-style" }

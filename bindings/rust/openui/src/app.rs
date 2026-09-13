@@ -122,11 +122,23 @@ impl App {
     }
 
     /// Run the owned native event loop.
-    ///
-    /// The Linux platform feature supplies the event loop in W7. Headless-only
-    /// builds return an explicit error after validating and mounting the view.
     pub fn run<V: IntoView>(mut self, view: impl FnOnce() -> V) -> Result<(), Error> {
         self.mount(view)?;
+        #[cfg(all(feature = "linux", target_os = "linux"))]
+        {
+            let options = openui_platform::WindowOptions {
+                title: self.options.title.clone(),
+                width: self.options.size.width,
+                height: self.options.size.height,
+                backend: match self.options.backend {
+                    BackendPreference::Auto => openui_platform::BackendPreference::Auto,
+                    BackendPreference::OpenGl => openui_platform::BackendPreference::OpenGl,
+                    BackendPreference::Software => openui_platform::BackendPreference::Software,
+                },
+            };
+            openui_platform::run(self, options).map_err(|error| Error::Platform(error.to_string()))
+        }
+        #[cfg(not(all(feature = "linux", target_os = "linux")))]
         Err(Error::PlatformUnavailable)
     }
 
@@ -137,6 +149,188 @@ impl App {
     pub fn exit_requested(&self) -> bool {
         self.exit_requested.get()
     }
+}
+
+#[cfg(all(feature = "linux", target_os = "linux"))]
+impl openui_platform::PlatformApplication for App {
+    fn event(&mut self, event: openui_platform::PlatformEvent) -> Result<(), String> {
+        use openui_engine::PointerEventKind;
+        use openui_platform::{KeyPhase, PlatformEvent, PointerButton, PointerPhase};
+
+        let modifiers = |value: openui_platform::Modifiers| {
+            let mut result = crate::Modifiers::NONE;
+            if value.shift {
+                result |= crate::Modifiers::SHIFT;
+            }
+            if value.control {
+                result |= crate::Modifiers::CTRL;
+            }
+            if value.alt {
+                result |= crate::Modifiers::ALT;
+            }
+            if value.meta {
+                result |= crate::Modifiers::META;
+            }
+            result
+        };
+        let button = |value: PointerButton| match value {
+            PointerButton::Left => crate::MouseButton::Left,
+            PointerButton::Middle => crate::MouseButton::Middle,
+            PointerButton::Right | PointerButton::Other(_) => crate::MouseButton::Right,
+        };
+        let result = match event {
+            PlatformEvent::Resized {
+                logical_width,
+                logical_height,
+                scale_factor,
+            } => self
+                .document
+                .set_viewport_with_scale(logical_width, logical_height, scale_factor),
+            PlatformEvent::Pointer {
+                pointer_id,
+                phase,
+                x,
+                y,
+                button: pointer,
+                modifiers: keys,
+            } => self.document.dispatch_pointer_event(
+                pointer_id,
+                match phase {
+                    PointerPhase::Move => PointerEventKind::Move,
+                    PointerPhase::Down => PointerEventKind::Down,
+                    PointerPhase::Up => PointerEventKind::Up,
+                    PointerPhase::Cancel | PointerPhase::Leave => PointerEventKind::Cancel,
+                },
+                x,
+                y,
+                button(pointer),
+                modifiers(keys),
+                pointer_id != 0,
+            ),
+            PlatformEvent::Wheel {
+                x,
+                y,
+                delta_x,
+                delta_y,
+                modifiers: keys,
+            } => self
+                .document
+                .dispatch_wheel_event(x, y, delta_x, delta_y, modifiers(keys)),
+            PlatformEvent::Key {
+                phase,
+                key_code,
+                text,
+                modifiers: keys,
+                ..
+            } => {
+                let keys = modifiers(keys);
+                let dispatched = self.document.dispatch_key_event(
+                    match phase {
+                        KeyPhase::Down => crate::KeyEventType::Down,
+                        KeyPhase::Up => crate::KeyEventType::Up,
+                    },
+                    key_code,
+                    text.as_deref(),
+                    keys,
+                );
+                if dispatched.is_ok()
+                    && phase == KeyPhase::Down
+                    && !keys.contains(crate::Modifiers::CTRL)
+                    && !keys.contains(crate::Modifiers::META)
+                    && text.as_deref().is_some_and(is_text_input)
+                {
+                    self.document
+                        .dispatch_text_input(text.as_deref().expect("text was checked"))
+                } else {
+                    dispatched
+                }
+            }
+            PlatformEvent::TextInput(text) => self.document.dispatch_text_input(&text),
+            PlatformEvent::CompositionStart => self.document.dispatch_composition_start(),
+            PlatformEvent::CompositionUpdate(text) => {
+                self.document.dispatch_composition_update(&text)
+            }
+            PlatformEvent::CompositionEnd(text) => self.document.dispatch_composition_end(&text),
+            PlatformEvent::Focused(_)
+            | PlatformEvent::DroppedFile(_)
+            | PlatformEvent::HoveredFile(_)
+            | PlatformEvent::HoveredFileCancelled => Ok(()),
+        };
+        result.map_err(|error| error.to_string())
+    }
+
+    fn render(&mut self, time_ms: f64) -> Result<openui_platform::SoftwareFrame, String> {
+        self.document
+            .begin_frame(time_ms)
+            .and_then(|_| self.document.render_to_bitmap())
+            .map(|bitmap| openui_platform::SoftwareFrame {
+                width: bitmap.width,
+                height: bitmap.height,
+                stride: bitmap.stride,
+                pixels: bitmap.pixels,
+            })
+            .map_err(|error| error.to_string())
+    }
+
+    fn exit_requested(&self) -> bool {
+        self.exit_requested()
+    }
+
+    fn clipboard_text(&self) -> Result<String, String> {
+        self.document
+            .clipboard_text()
+            .map_err(|error| error.to_string())
+    }
+
+    fn set_clipboard_text(&mut self, text: String) -> Result<(), String> {
+        self.document
+            .set_clipboard_text(text)
+            .map_err(|error| error.to_string())
+    }
+
+    fn cursor_icon(&mut self, x: f32, y: f32) -> Result<openui_platform::CursorIcon, String> {
+        self.document
+            .with_engine_mut(|engine| {
+                let Some(target) = engine.hit_test(x, y)? else {
+                    return Ok(openui_platform::CursorIcon::Default);
+                };
+                Ok(match engine.cursor(target)? {
+                    openui_style::Cursor::Auto | openui_style::Cursor::Default => {
+                        openui_platform::CursorIcon::Default
+                    }
+                    openui_style::Cursor::Pointer => openui_platform::CursorIcon::Pointer,
+                    openui_style::Cursor::Text => openui_platform::CursorIcon::Text,
+                    openui_style::Cursor::Move => openui_platform::CursorIcon::Move,
+                    openui_style::Cursor::NotAllowed => openui_platform::CursorIcon::NotAllowed,
+                })
+            })
+            .map_err(|error| error.to_string())
+    }
+
+    fn accessibility_update(&mut self) -> Result<openui_platform::TreeUpdate, String> {
+        self.document
+            .accessibility_update()
+            .map_err(|error| error.to_string())
+    }
+
+    fn accessibility_action(
+        &mut self,
+        request: openui_platform::ActionRequest,
+    ) -> Result<(), String> {
+        let (target, action) = self
+            .document
+            .with_engine(|engine| engine.accessibility_action_from_request(&request))
+            .map_err(|error| error.to_string())?
+            .map_err(|error| error.to_string())?;
+        self.document
+            .perform_accessibility_action(target, action)
+            .map_err(|error| error.to_string())
+    }
+}
+
+#[cfg(all(feature = "linux", target_os = "linux"))]
+fn is_text_input(text: &str) -> bool {
+    !text.is_empty() && text.chars().all(|character| !character.is_control())
 }
 
 impl Drop for App {
@@ -293,5 +487,44 @@ mod tests {
         items.set(vec![3, 1, 4]);
         let after = app.render_at(0.0).unwrap();
         assert_ne!(before.pixels(), after.pixels());
+    }
+
+    #[cfg(all(feature = "linux", target_os = "linux"))]
+    #[test]
+    fn normalized_platform_events_drive_the_headless_reference_path() {
+        use openui_platform::{
+            KeyPhase, Modifiers as PlatformModifiers, PlatformApplication, PlatformEvent,
+        };
+
+        let mut app = App::builder()
+            .size(LogicalSize::new(100.0, 50.0))
+            .build()
+            .unwrap();
+        let input = crate::Element::create(app.document(), "input").unwrap();
+        app.document().body().append_child(&input).unwrap();
+        input.focus().unwrap();
+        PlatformApplication::event(
+            &mut app,
+            PlatformEvent::Key {
+                phase: KeyPhase::Down,
+                key_code: 'a' as i32,
+                text: Some("a".into()),
+                modifiers: PlatformModifiers::default(),
+                repeat: false,
+            },
+        )
+        .unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("a"));
+        PlatformApplication::event(
+            &mut app,
+            PlatformEvent::Resized {
+                logical_width: 240,
+                logical_height: 120,
+                scale_factor: 2.0,
+            },
+        )
+        .unwrap();
+        let frame = PlatformApplication::render(&mut app, 0.0).unwrap();
+        assert_eq!((frame.width, frame.height), (240, 120));
     }
 }

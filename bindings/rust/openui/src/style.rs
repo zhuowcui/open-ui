@@ -38,6 +38,7 @@ pub enum Error {
     InvalidArgument(&'static str),
     Io(std::io::Error),
     PlatformUnavailable,
+    Platform(String),
 }
 
 impl std::fmt::Display for Error {
@@ -54,6 +55,7 @@ impl std::fmt::Display for Error {
             Self::PlatformUnavailable => {
                 f.write_str("the native platform runtime is not enabled in this build")
             }
+            Self::Platform(message) => write!(f, "platform runtime failed: {message}"),
         }
     }
 }

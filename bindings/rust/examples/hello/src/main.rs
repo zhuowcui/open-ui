@@ -6,10 +6,8 @@
 
 use openui::prelude::*;
 
-fn main() -> Result<(), Error> {
-    let mut app = HeadlessApp::new(Viewport::new(800, 600)?)?;
-    app.mount(|| {
-        view! {
+fn application_view() -> ViewNode {
+    view! {
             <div
                 style:display="flex"
                 style:flex-direction="column"
@@ -51,8 +49,22 @@ fn main() -> Result<(), Error> {
                     "Built with Rust + Skia"
                 </p>
             </div>
-        }
-    })?;
+    }
+}
+
+#[cfg(feature = "linux")]
+fn main() -> Result<(), Error> {
+    App::builder()
+        .title("Hello, Open UI!")
+        .size(LogicalSize::new(800.0, 600.0))
+        .build()?
+        .run(application_view)
+}
+
+#[cfg(not(feature = "linux"))]
+fn main() -> Result<(), Error> {
+    let mut app = HeadlessApp::new(Viewport::new(800, 600)?)?;
+    app.mount(application_view)?;
     app.render_png_to(0.0, "hello.png")?;
 
     println!("Rendered hello.png");

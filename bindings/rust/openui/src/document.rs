@@ -84,6 +84,17 @@ impl Document {
         self.with_engine_mut(|engine| engine.set_viewport(Viewport::new(width, height)?))
     }
 
+    pub fn set_viewport_with_scale(
+        &self,
+        width: u32,
+        height: u32,
+        scale_factor: f64,
+    ) -> Result<(), Error> {
+        let mut viewport = Viewport::new(width, height)?;
+        viewport.scale_factor = scale_factor;
+        self.with_engine_mut(|engine| engine.set_viewport(viewport))
+    }
+
     pub fn update_all(&self) -> Result<(), Error> {
         self.with_engine_mut(|engine| engine.update().map(|_| ()))
     }
