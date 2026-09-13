@@ -5,8 +5,9 @@
 //! needed to select and configure a typeface.
 
 use openui_style::{
-    FontFamilyList, FontFeature, FontOpticalSizing, FontOrientation, FontSmoothing, FontStretch,
-    FontStyleEnum, FontSynthesis, FontVariantAlternates, FontVariantCaps, FontVariantEastAsian,
+    FontFamilyList, FontFeature, FontKerning, FontLanguageOverride, FontOpticalSizing,
+    FontOrientation, FontPalette, FontSizeAdjust, FontSmoothing, FontStretch, FontStyleEnum,
+    FontSynthesis, FontVariantAlternates, FontVariantCaps, FontVariantEastAsian, FontVariantEmoji,
     FontVariantLigatures, FontVariantNumeric, FontVariantPosition, FontVariation, FontWeight,
     TextRendering,
 };
@@ -29,6 +30,8 @@ pub struct FontDescription {
     pub stretch: FontStretch,
     /// Font style: normal, italic, or oblique (CSS `font-style`).
     pub style: FontStyleEnum,
+    /// Kerning control (CSS `font-kerning`).
+    pub kerning: FontKerning,
     /// Small-caps and other variant caps (CSS `font-variant-caps`).
     pub variant_caps: FontVariantCaps,
     /// Ligature control (CSS `font-variant-ligatures`).
@@ -41,6 +44,13 @@ pub struct FontDescription {
     pub variant_position: FontVariantPosition,
     /// Alternate glyph forms (CSS `font-variant-alternates`).
     pub variant_alternates: FontVariantAlternates,
+    /// Emoji presentation preference (CSS `font-variant-emoji`).
+    pub variant_emoji: FontVariantEmoji,
+    /// Apparent-size preservation (CSS `font-size-adjust`).
+    pub size_adjust: FontSizeAdjust,
+    /// Aspect captured from the first available face for
+    /// `font-size-adjust: from-font`; used for later fallback faces.
+    pub(crate) resolved_from_font_aspect: Option<f32>,
     /// Extra spacing between characters in pixels (CSS `letter-spacing`).
     pub letter_spacing: f32,
     /// Extra spacing at word boundaries in pixels (CSS `word-spacing`).
@@ -59,8 +69,16 @@ pub struct FontDescription {
     pub font_synthesis_weight: FontSynthesis,
     /// Whether to synthesize italic (CSS `font-synthesis-style`).
     pub font_synthesis_style: FontSynthesis,
+    /// Whether missing small-cap glyphs may be synthesized.
+    pub font_synthesis_small_caps: FontSynthesis,
+    /// Whether missing super/subscript glyphs may be synthesized.
+    pub font_synthesis_position: FontSynthesis,
     /// Optical sizing mode (CSS `font-optical-sizing`).
     pub font_optical_sizing: FontOpticalSizing,
+    /// OpenType language-system override.
+    pub language_override: FontLanguageOverride,
+    /// Color-font palette selection.
+    pub palette: FontPalette,
     /// Resolved font orientation for vertical text layout.
     ///
     /// Derived from `writing-mode` + `text-orientation`. Controls whether
@@ -87,12 +105,16 @@ impl FontDescription {
             weight: FontWeight::NORMAL,
             stretch: FontStretch::NORMAL,
             style: FontStyleEnum::Normal,
+            kerning: FontKerning::Auto,
             variant_caps: FontVariantCaps::Normal,
             variant_ligatures: FontVariantLigatures::default(),
             variant_numeric: FontVariantNumeric::default(),
             variant_east_asian: FontVariantEastAsian::default(),
             variant_position: FontVariantPosition::Normal,
             variant_alternates: FontVariantAlternates::Normal,
+            variant_emoji: FontVariantEmoji::Normal,
+            size_adjust: FontSizeAdjust::None,
+            resolved_from_font_aspect: None,
             letter_spacing: 0.0,
             word_spacing: 0.0,
             locale: None,
@@ -102,7 +124,11 @@ impl FontDescription {
             variation_settings: Vec::new(),
             font_synthesis_weight: FontSynthesis::Auto,
             font_synthesis_style: FontSynthesis::Auto,
+            font_synthesis_small_caps: FontSynthesis::Auto,
+            font_synthesis_position: FontSynthesis::Auto,
             font_optical_sizing: FontOpticalSizing::Auto,
+            language_override: FontLanguageOverride::NORMAL,
+            palette: FontPalette::Normal,
             orientation: FontOrientation::Horizontal,
             native_control_text: false,
             embedded_document_text: false,
@@ -131,12 +157,16 @@ impl FontDescription {
             weight: style.font_weight,
             stretch: style.font_stretch,
             style: style.font_style,
+            kerning: style.font_kerning,
             variant_caps: style.font_variant_caps,
             variant_ligatures: style.font_variant_ligatures,
             variant_numeric: style.font_variant_numeric,
             variant_east_asian: style.font_variant_east_asian,
             variant_position: style.font_variant_position,
             variant_alternates: style.font_variant_alternates,
+            variant_emoji: style.font_variant_emoji,
+            size_adjust: style.font_size_adjust,
+            resolved_from_font_aspect: None,
             letter_spacing: style.letter_spacing,
             word_spacing: style.word_spacing,
             locale: style.locale.clone(),
@@ -146,7 +176,11 @@ impl FontDescription {
             variation_settings: style.font_variation_settings.clone(),
             font_synthesis_weight: style.font_synthesis_weight,
             font_synthesis_style: style.font_synthesis_style,
+            font_synthesis_small_caps: style.font_synthesis_small_caps,
+            font_synthesis_position: style.font_synthesis_position,
             font_optical_sizing: style.font_optical_sizing,
+            language_override: style.font_language_override,
+            palette: style.font_palette.clone(),
             orientation: openui_style::font_orientation(style.writing_mode, style.text_orientation),
             native_control_text: style.native_control_text,
             embedded_document_text: style.embedded_document_text,

@@ -34,7 +34,9 @@ use openui_style::{
 pub use openui_text::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
     FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFeatureDefault, FontMetricOverrides,
-    FontStyleRange, FontUnicodeRange,
+    FontPaletteBase, FontPaletteEntryOverride, FontPaletteHandle, FontPaletteValuesDescriptor,
+    FontStyleRange, FontUnicodeRange, HyphenationDictionaryHandle, HyphenationRegistry,
+    HyphenationRegistryError,
 };
 use std::collections::{BTreeMap, HashMap};
 use std::marker::PhantomData;
@@ -95,6 +97,7 @@ pub enum EngineError {
     NotFocusable,
     Render(String),
     Font(FontCollectionError),
+    Hyphenation(HyphenationRegistryError),
 }
 
 impl std::fmt::Display for EngineError {
@@ -119,6 +122,7 @@ impl std::fmt::Display for EngineError {
             Self::NotFocusable => f.write_str("node is not focusable"),
             Self::Render(value) => write!(f, "render failed: {value}"),
             Self::Font(value) => write!(f, "font registration failed: {value}"),
+            Self::Hyphenation(value) => write!(f, "hyphenation dictionary failed: {value}"),
         }
     }
 }
@@ -134,6 +138,12 @@ impl From<ViewportMetricsError> for EngineError {
 impl From<FontCollectionError> for EngineError {
     fn from(value: FontCollectionError) -> Self {
         Self::Font(value)
+    }
+}
+
+impl From<HyphenationRegistryError> for EngineError {
+    fn from(value: HyphenationRegistryError) -> Self {
+        Self::Hyphenation(value)
     }
 }
 
@@ -379,6 +389,9 @@ impl Engine {
     pub fn font_collection(&self) -> &Arc<FontCollection> {
         self.document.font_collection()
     }
+    pub fn hyphenation_registry(&self) -> &Arc<HyphenationRegistry> {
+        self.document.font_collection().hyphenation_registry()
+    }
     pub fn root(&self) -> NodeHandle {
         self.handle_for_slot(0)
     }
@@ -424,6 +437,44 @@ impl Engine {
 
     pub fn font_face_info(&self, handle: FontFaceHandle) -> Result<FontFaceInfo, EngineError> {
         Ok(self.document.font_collection().query(handle)?)
+    }
+    pub fn register_font_palette_values(
+        &mut self,
+        descriptor: FontPaletteValuesDescriptor,
+    ) -> Result<FontPaletteHandle, EngineError> {
+        let handle = self
+            .document
+            .font_collection()
+            .register_palette_values(descriptor)?;
+        self.mark_dirty(InvalidationClass::Intrinsic);
+        Ok(handle)
+    }
+    pub fn unregister_font_palette_values(
+        &mut self,
+        handle: FontPaletteHandle,
+    ) -> Result<(), EngineError> {
+        self.document
+            .font_collection()
+            .unregister_palette_values(handle)?;
+        self.mark_dirty(InvalidationClass::Intrinsic);
+        Ok(())
+    }
+    pub fn register_hyphenation_dictionary(
+        &mut self,
+        locale: &str,
+        bytes: Arc<[u8]>,
+    ) -> Result<HyphenationDictionaryHandle, EngineError> {
+        let handle = self.hyphenation_registry().register(locale, bytes)?;
+        self.mark_dirty(InvalidationClass::Intrinsic);
+        Ok(handle)
+    }
+    pub fn unregister_hyphenation_dictionary(
+        &mut self,
+        handle: HyphenationDictionaryHandle,
+    ) -> Result<(), EngineError> {
+        self.hyphenation_registry().unregister(handle)?;
+        self.mark_dirty(InvalidationClass::Intrinsic);
+        Ok(())
     }
     pub fn dirty_generations(&self) -> DirtyGenerations {
         self.dirty_generations

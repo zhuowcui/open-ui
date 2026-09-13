@@ -11,6 +11,7 @@ use skia_safe::{
     GlyphId, Point, Shaper, Vector,
 };
 use unicode_script::{Script, UnicodeScript};
+use unicode_segmentation::UnicodeSegmentation;
 
 use crate::font::features::{collect_font_features, to_skia_features};
 use crate::font::{Font, FontPlatformData};
@@ -66,6 +67,29 @@ fn is_complex_script(ch: char) -> bool {
 /// advance for these code points; browsers must suppress that advance.
 fn is_bidi_embedding_control(ch: char) -> bool {
     matches!(ch, '\u{202a}'..='\u{202e}')
+}
+
+fn glyph_required_for_fallback(character: char) -> bool {
+    !character.is_control()
+        && !matches!(
+            character as u32,
+            0x200C..=0x200D | 0x202A..=0x202E | 0x2066..=0x2069 | 0xFE00..=0xFE0F
+        )
+}
+
+fn shaping_language(description: &crate::font::FontDescription) -> String {
+    if let Some(tag) = description.language_override.0 {
+        let language = String::from_utf8_lossy(&tag).trim().to_ascii_lowercase();
+        if !language.is_empty() {
+            return language;
+        }
+    }
+    description
+        .locale
+        .as_deref()
+        .filter(|locale| !locale.is_empty())
+        .unwrap_or("und")
+        .to_string()
 }
 
 /// Collects shaping output from Skia's SkShaper callbacks.
@@ -497,9 +521,17 @@ impl TextShaper {
 
         let mut collector = ShapeCollector::new(Arc::clone(&font_data), direction);
 
-        // Collect OpenType features from font-variant-* properties and
-        // explicit font-feature-settings, matching Blink's FontFeatures.
-        let mut font_features = collect_font_features(font.description());
+        // Face defaults come first. Variant properties and explicit CSS
+        // feature settings follow, so later values win for duplicate tags.
+        let mut font_features: Vec<FontFeature> = font_data
+            .feature_defaults()
+            .iter()
+            .map(|feature| FontFeature {
+                tag: feature.tag,
+                value: feature.value,
+            })
+            .collect();
+        font_features.extend(collect_font_features(font.description()));
         if matches!(
             font.description().orientation,
             FontOrientation::VerticalMixed | FontOrientation::VerticalUpright
@@ -519,22 +551,31 @@ impl TextShaper {
         }
         let skia_features = to_skia_features(&font_features, text.len());
 
-        if skia_features.is_empty() {
-            // Fast path: no features — use the simple shaping API.
-            self.shaper
-                .shape(text, sk_font, left_to_right, f32::INFINITY, &mut collector);
+        // The full iterator API is used even with no explicit features. This
+        // supplies HarfBuzz with Unicode script runs, UAX#9 bidi levels, and
+        // the document's BCP47 language instead of the old `script=0`/`und`
+        // placeholders.
+        let mut font_iter = shaper::Shaper::new_trivial_font_run_iterator(sk_font, text.len());
+        let bidi_level = if left_to_right { 0 } else { 1 };
+        let mut script_iter = shaper::Shaper::new_hb_icu_script_run_iterator(text);
+        let language = shaping_language(font.description());
+        let mut lang_iter =
+            shaper::Shaper::new_trivial_language_run_iterator(&language, text.len());
+        if let Some(mut bidi_iter) = shaper::Shaper::new_icu_bidi_run_iterator(text, bidi_level) {
+            self.shaper.shape_with_iterators_and_features(
+                text,
+                &mut font_iter,
+                &mut bidi_iter,
+                &mut script_iter,
+                &mut lang_iter,
+                &skia_features,
+                f32::INFINITY,
+                &mut collector,
+            );
         } else {
-            // Feature-aware path: set up run iterators for the full API.
-            let mut font_iter = shaper::Shaper::new_trivial_font_run_iterator(sk_font, text.len());
-            let bidi_level = if left_to_right { 0 } else { 1 };
             #[allow(deprecated)]
             let mut bidi_iter =
                 shaper::Shaper::new_trivial_bidi_run_iterator(bidi_level, text.len());
-            #[allow(deprecated)]
-            let mut script_iter = shaper::Shaper::new_trivial_script_run_iterator(0, text.len());
-            let mut lang_iter =
-                shaper::Shaper::new_trivial_language_run_iterator("und", text.len());
-
             self.shaper.shape_with_iterators_and_features(
                 text,
                 &mut font_iter,
@@ -552,15 +593,79 @@ impl TextShaper {
         // ── Font fallback for missing glyphs ────────────────────────────
         // Scan for runs with glyph_id == 0 (.notdef) and attempt to
         // re-shape those character ranges with fallback fonts.
-        let fallback_list = font.fallback_list();
-        if fallback_list.len() > 1 {
-            self.apply_font_fallback(&mut result, text, font, direction);
-        }
+        self.apply_font_fallback(&mut result, text, font, direction);
 
         // Apply letter spacing and word spacing from the font description.
         Self::apply_spacing(&mut result, font, text);
 
         result
+    }
+
+    fn shape_with_font_data(
+        &self,
+        text: &str,
+        font_data: Arc<FontPlatformData>,
+        description: &crate::font::FontDescription,
+        direction: TextDirection,
+    ) -> ShapeResult {
+        let mut collector = ShapeCollector::new(Arc::clone(&font_data), direction);
+        let mut features: Vec<FontFeature> = font_data
+            .feature_defaults()
+            .iter()
+            .map(|feature| FontFeature {
+                tag: feature.tag,
+                value: feature.value,
+            })
+            .collect();
+        features.extend(collect_font_features(description));
+        if matches!(
+            description.orientation,
+            FontOrientation::VerticalMixed | FontOrientation::VerticalUpright
+        ) {
+            features.push(FontFeature {
+                tag: *b"vert",
+                value: 1,
+            });
+            features.push(FontFeature {
+                tag: *b"vrt2",
+                value: 1,
+            });
+        }
+        let skia_features = to_skia_features(&features, text.len());
+        let mut font_iter =
+            shaper::Shaper::new_trivial_font_run_iterator(font_data.sk_font(), text.len());
+        let bidi_level = if direction.is_ltr() { 0 } else { 1 };
+        let mut script_iter = shaper::Shaper::new_hb_icu_script_run_iterator(text);
+        let language = shaping_language(description);
+        let mut language_iter =
+            shaper::Shaper::new_trivial_language_run_iterator(&language, text.len());
+        if let Some(mut bidi_iter) = shaper::Shaper::new_icu_bidi_run_iterator(text, bidi_level) {
+            self.shaper.shape_with_iterators_and_features(
+                text,
+                &mut font_iter,
+                &mut bidi_iter,
+                &mut script_iter,
+                &mut language_iter,
+                &skia_features,
+                f32::INFINITY,
+                &mut collector,
+            );
+        } else {
+            #[allow(deprecated)]
+            let mut bidi_iter =
+                shaper::Shaper::new_trivial_bidi_run_iterator(bidi_level, text.len());
+            self.shaper.shape_with_iterators_and_features(
+                text,
+                &mut font_iter,
+                &mut bidi_iter,
+                &mut script_iter,
+                &mut language_iter,
+                &skia_features,
+                f32::INFINITY,
+                &mut collector,
+            );
+        }
+        collector.into_shape_result(text)
     }
 
     /// Re-shape character ranges that have missing glyphs (glyph_id == 0)
@@ -579,7 +684,6 @@ impl TextShaper {
     ) {
         let chars: Vec<char> = text.chars().collect();
         let fallback_list = font.fallback_list();
-        let left_to_right = direction.is_ltr();
 
         // Collect segments (character ranges) with missing glyphs across all runs.
         let mut missing_segments: Vec<(usize, usize)> = Vec::new(); // (char_start, char_end)
@@ -623,6 +727,25 @@ impl TextShaper {
             return;
         }
 
+        // A missing scalar expands to its complete extended grapheme cluster.
+        // This keeps combining sequences, emoji ZWJ sequences, Indic
+        // conjuncts, and variation selectors on one face.
+        let grapheme_ranges: Vec<(usize, usize)> = text
+            .grapheme_indices(true)
+            .map(|(byte_start, grapheme)| {
+                let start = text[..byte_start].chars().count();
+                (start, start + grapheme.chars().count())
+            })
+            .collect();
+        for segment in &mut missing_segments {
+            for &(start, end) in &grapheme_ranges {
+                if start < segment.1 && segment.0 < end {
+                    segment.0 = segment.0.min(start);
+                    segment.1 = segment.1.max(end);
+                }
+            }
+        }
+
         // Merge overlapping/adjacent segments.
         missing_segments.sort_by_key(|s| s.0);
         let mut merged: Vec<(usize, usize)> = Vec::new();
@@ -656,10 +779,11 @@ impl TextShaper {
                 };
 
                 // Check if this fallback font covers the missing characters.
-                let fb_sk_font = fb_data.sk_font();
                 let mut covers = true;
                 for &ch in &chars[*seg_char_start..*seg_char_end] {
-                    if fb_sk_font.unichar_to_glyph(ch as i32) == 0 {
+                    if glyph_required_for_fallback(ch)
+                        && fb_data.sk_font().unichar_to_glyph(ch as i32) == 0
+                    {
                         covers = false;
                         break;
                     }
@@ -676,15 +800,12 @@ impl TextShaper {
                 let fb_data_clone = Arc::clone(fb_data);
                 let segment_text_owned = segment_text.to_string();
                 let fb_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                    let mut fb_collector = ShapeCollector::new(fb_data_clone, direction);
-                    self.shaper.shape(
+                    self.shape_with_font_data(
                         &segment_text_owned,
-                        fb_sk_font,
-                        left_to_right,
-                        f32::INFINITY,
-                        &mut fb_collector,
-                    );
-                    fb_collector.into_shape_result(&segment_text_owned)
+                        fb_data_clone,
+                        font.description(),
+                        direction,
+                    )
                 }));
 
                 let fb_result = match fb_result {
@@ -786,27 +907,22 @@ impl TextShaper {
                     }
                     tried_codepoints.push(missing_char);
 
-                    let platform_data =
-                        font.collection().fallback_for_character(missing_char, desc);
+                    let platform_data = font.collection().fallback_for_text(segment_text, desc);
 
                     let fb_data = match platform_data {
                         Some(d) => d,
                         None => break, // No more platform fonts available.
                     };
 
-                    let fb_sk_font = fb_data.sk_font();
                     let fb_data_clone = Arc::clone(&fb_data);
                     let segment_text_owned = segment_text.to_string();
                     let fb_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                        let mut fb_collector = ShapeCollector::new(fb_data_clone, direction);
-                        self.shaper.shape(
+                        self.shape_with_font_data(
                             &segment_text_owned,
-                            fb_sk_font,
-                            left_to_right,
-                            f32::INFINITY,
-                            &mut fb_collector,
-                        );
-                        fb_collector.into_shape_result(&segment_text_owned)
+                            fb_data_clone,
+                            font.description(),
+                            direction,
+                        )
                     }));
 
                     if let Ok(fb_result) = fb_result {

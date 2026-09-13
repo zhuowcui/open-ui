@@ -9,9 +9,9 @@
 //! features (per the CSS cascade).
 
 use openui_style::{
-    EastAsianForm, EastAsianWidth, FontFeature, FontVariantAlternates, FontVariantCaps,
-    FontVariantEastAsian, FontVariantLigatures, FontVariantNumeric, FontVariantPosition,
-    LigatureState, NumericFigure, NumericFraction, NumericSpacing,
+    EastAsianForm, EastAsianWidth, FontFeature, FontKerning, FontVariantAlternates,
+    FontVariantCaps, FontVariantEastAsian, FontVariantLigatures, FontVariantNumeric,
+    FontVariantPosition, LigatureState, NumericFigure, NumericFraction, NumericSpacing,
 };
 
 use super::description::FontDescription;
@@ -78,6 +78,11 @@ pub fn to_skia_features(
 pub fn collect_font_features(desc: &FontDescription) -> Vec<FontFeature> {
     let mut features = Vec::new();
 
+    match desc.kerning {
+        FontKerning::Auto => {}
+        FontKerning::Normal => features.push(on(b"kern")),
+        FontKerning::None => features.push(off(b"kern")),
+    }
     add_ligature_features(&desc.variant_ligatures, &mut features);
     add_caps_features(desc.variant_caps, &mut features);
     add_numeric_features(&desc.variant_numeric, &mut features);

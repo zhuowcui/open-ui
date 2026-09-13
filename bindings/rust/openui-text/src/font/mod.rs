@@ -21,6 +21,7 @@ pub use cache::FontCache;
 pub use collection::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
     FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFeatureDefault, FontMetricOverrides,
+    FontPaletteBase, FontPaletteEntryOverride, FontPaletteHandle, FontPaletteValuesDescriptor,
     FontStyleRange, FontUnicodeRange,
 };
 pub use description::FontDescription;

@@ -23,7 +23,9 @@ pub use crate::{
 pub use openui_macros::{component, view};
 pub use openui_text::{
     FontAxisRange, FontCollection, FontFaceDescriptor, FontFaceHandle, FontFeatureDefault,
-    FontMetricOverrides, FontStyleRange, FontUnicodeRange,
+    FontMetricOverrides, FontPaletteBase, FontPaletteEntryOverride, FontPaletteHandle,
+    FontPaletteValuesDescriptor, FontStyleRange, FontUnicodeRange, HyphenationDictionaryHandle,
+    HyphenationRegistry,
 };
 
 // Reactive primitives

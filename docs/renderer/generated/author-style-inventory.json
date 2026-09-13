@@ -1310,6 +1310,7 @@
       "canonical_schema_entry": false,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs"
       ],
       "css_name": "locale",

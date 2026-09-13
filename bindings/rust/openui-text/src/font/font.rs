@@ -29,10 +29,11 @@ impl Font {
 
     /// Create a font using one document's application and system faces.
     pub fn new_in_collection(
-        description: FontDescription,
+        mut description: FontDescription,
         collection: Arc<FontCollection>,
     ) -> Self {
         let fallback_list = FontFallbackList::new_in_collection(&description, collection);
+        description.resolved_from_font_aspect = fallback_list.resolved_from_font_aspect();
         Self {
             description,
             fallback_list,

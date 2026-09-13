@@ -10,6 +10,17 @@ use skia_safe::{
 };
 
 use super::metrics::FontMetrics;
+use super::{FontFeatureDefault, FontMetricOverrides};
+
+/// Face-specific values resolved by `FontCollection` before a platform font
+/// instance is constructed.
+#[derive(Debug, Clone, Default)]
+pub(crate) struct ResolvedFontConfiguration {
+    pub allow_synthetic_weight: bool,
+    pub allow_synthetic_style: bool,
+    pub feature_defaults: Vec<FontFeatureDefault>,
+    pub metric_overrides: FontMetricOverrides,
+}
 
 /// Resolved platform font data — Skia typeface + font + cached metrics.
 ///
@@ -25,6 +36,7 @@ pub struct FontPlatformData {
     /// Oblique angle in degrees for synthetic oblique synthesis.
     /// 0.0 for normal/italic styles. CSS default oblique is 14°.
     synthetic_oblique_angle: f32,
+    feature_defaults: Vec<FontFeatureDefault>,
 }
 
 /// OpenType `vhea`/`vmtx` data retained with a resolved face.
@@ -170,12 +182,42 @@ impl FontPlatformData {
         embedded_document_text: bool,
         native_button_text_metrics: bool,
     ) -> Self {
+        Self::with_resolved_configuration(
+            typeface,
+            size,
+            oblique_angle,
+            requested_weight,
+            native_control_text,
+            embedded_document_text,
+            native_button_text_metrics,
+            ResolvedFontConfiguration {
+                allow_synthetic_weight: true,
+                allow_synthetic_style: true,
+                ..ResolvedFontConfiguration::default()
+            },
+        )
+    }
+
+    pub(crate) fn with_resolved_configuration(
+        typeface: Typeface,
+        size: f32,
+        mut oblique_angle: f32,
+        requested_weight: skia_safe::font_style::Weight,
+        native_control_text: bool,
+        embedded_document_text: bool,
+        native_button_text_metrics: bool,
+        configuration: ResolvedFontConfiguration,
+    ) -> Self {
         // Font matching may return a regular face when a family has no bold
         // member (Ahem is the canonical example). CSS font synthesis requires
         // a synthetic bold face in that case; SkFont does not infer it from
         // the requested FontStyle after typeface matching.
-        let synthetic_bold = requested_weight >= skia_safe::font_style::Weight::SEMI_BOLD
+        let synthetic_bold = configuration.allow_synthetic_weight
+            && requested_weight >= skia_safe::font_style::Weight::SEMI_BOLD
             && typeface.font_style().weight() < skia_safe::font_style::Weight::SEMI_BOLD;
+        if !configuration.allow_synthetic_style {
+            oblique_angle = 0.0;
+        }
         let mut sk_font = SkFont::from_typeface(&typeface, size);
         sk_font.set_embolden(synthetic_bold);
         // SP14 parity experiment: allow overriding rasterization settings via env
@@ -261,7 +303,17 @@ impl FontPlatformData {
         }
 
         let (_, sk_metrics) = sk_font.metrics();
-        let metrics = Self::convert_metrics(&sk_metrics, &typeface, &sk_font);
+        let mut metrics = Self::convert_metrics(&sk_metrics, &typeface, &sk_font);
+        if let Some(value) = configuration.metric_overrides.ascent {
+            metrics.ascent = value * size;
+        }
+        if let Some(value) = configuration.metric_overrides.descent {
+            metrics.descent = value * size;
+        }
+        if let Some(value) = configuration.metric_overrides.line_gap {
+            metrics.line_gap = value * size;
+        }
+        metrics.line_spacing = metrics.ascent + metrics.descent + metrics.line_gap;
         let vertical_metrics = VerticalMetrics::from_typeface(&typeface);
 
         Self {
@@ -272,6 +324,7 @@ impl FontPlatformData {
             vertical_metrics,
             synthetic_bold,
             synthetic_oblique_angle: oblique_angle,
+            feature_defaults: configuration.feature_defaults,
         }
     }
 
@@ -342,6 +395,12 @@ impl FontPlatformData {
     #[inline]
     pub fn synthetic_oblique_angle(&self) -> f32 {
         self.synthetic_oblique_angle
+    }
+
+    /// Defaults supplied by the selected application face. CSS declarations
+    /// are appended after these values so author settings win by tag.
+    pub fn feature_defaults(&self) -> &[FontFeatureDefault] {
+        &self.feature_defaults
     }
 
     /// Convert Skia's `SkFontMetrics` to our `FontMetrics`.

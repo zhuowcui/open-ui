@@ -227,9 +227,25 @@ impl<'a> LineBreaker<'a> {
     /// `hyphens`: the CSS `hyphens` property value
     /// `limits`: the CSS `hyphenate-limit-chars` property as (min_word, min_prefix, min_suffix)
     pub fn set_hyphens(&mut self, hyphens: Hyphens, limits: (u8, u8, u8)) {
+        self.set_hyphenation(hyphens, limits, Some("en-US"));
+    }
+
+    /// Configure automatic hyphenation for the element language. Missing
+    /// dictionaries deliberately produce no automatic opportunities.
+    pub fn set_hyphenation(
+        &mut self,
+        hyphens: Hyphens,
+        limits: (u8, u8, u8),
+        locale: Option<&str>,
+    ) {
         self.hyphens = hyphens;
         if hyphens == Hyphens::Auto {
-            self.hyphenation = Some(Hyphenation::english_from_css_limits(limits));
+            self.hyphenation = locale.and_then(|locale| {
+                self.items_data
+                    .font_collection
+                    .hyphenation_registry()
+                    .resolve(locale, limits)
+            });
         } else {
             self.hyphenation = None;
         }

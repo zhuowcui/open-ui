@@ -64,7 +64,11 @@ fn configure_line_breaker(
             || style.text_wrap == openui_style::TextWrap::Balance
             || space.line_clamp_context.is_some(),
     );
-    breaker.set_hyphens(style.hyphens, style.hyphenate_limit_chars);
+    breaker.set_hyphenation(
+        style.hyphens,
+        style.hyphenate_limit_chars,
+        style.locale.as_deref(),
+    );
 }
 
 fn line_count_at_width(

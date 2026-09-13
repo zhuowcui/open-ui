@@ -1,18 +1,26 @@
 //! Document-owned application and system font collection.
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 
-use openui_style::{FontFamily, FontStyleEnum, GenericFontFamily};
-use skia_safe::{FontMgr, Typeface};
+use openui_style::{
+    FontFamily, FontOpticalSizing, FontPalette, FontSizeAdjust, FontStyleEnum, FontSynthesis,
+    FontVariantEmoji, GenericFontFamily,
+};
+use skia_safe::{
+    font_arguments::{variation_position::Coordinate, Palette, VariationPosition},
+    Font as SkFont, FontArguments, FontMgr, Typeface,
+};
 
 use super::description::FontDescription;
-use super::platform::FontPlatformData;
+use super::platform::{FontPlatformData, ResolvedFontConfiguration};
+use crate::hyphenation::HyphenationRegistry;
 
 const MAX_FACE_BYTES: usize = 64 * 1024 * 1024;
 const MAX_COLLECTION_BYTES: usize = 256 * 1024 * 1024;
 const MAX_REGISTERED_FACES: usize = 512;
+const MAX_REGISTERED_PALETTES: usize = 512;
 const MAX_INSTANCE_CACHE: usize = 256;
 
 static NEXT_COLLECTION_ID: AtomicU64 = AtomicU64::new(1);
@@ -75,6 +83,48 @@ pub struct FontMetricOverrides {
     pub ascent: Option<f32>,
     pub descent: Option<f32>,
     pub line_gap: Option<f32>,
+}
+
+/// Base palette selected by an application `@font-palette-values` resource.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FontPaletteBase {
+    Normal,
+    Light,
+    Dark,
+    Index(u16),
+}
+
+/// One CPAL entry replacement in an application palette resource.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct FontPaletteEntryOverride {
+    pub index: u16,
+    pub color: openui_style::Color,
+}
+
+/// Native equivalent of CSS `@font-palette-values`.
+#[derive(Debug, Clone, PartialEq)]
+pub struct FontPaletteValuesDescriptor {
+    pub name: String,
+    pub family: String,
+    pub base_palette: FontPaletteBase,
+    pub overrides: Vec<FontPaletteEntryOverride>,
+}
+
+/// Stable identifier for a registered palette resource.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct FontPaletteHandle {
+    collection_id: u64,
+    palette_id: u64,
+}
+
+impl FontPaletteHandle {
+    pub const fn collection_id(self) -> u64 {
+        self.collection_id
+    }
+
+    pub const fn palette_id(self) -> u64 {
+        self.palette_id
+    }
 }
 
 /// Validated application font-face metadata.
@@ -140,6 +190,7 @@ pub enum FontCollectionError {
     AllocationFailed,
     WrongCollection,
     UnknownFace,
+    UnknownPalette,
 }
 
 impl std::fmt::Display for FontCollectionError {
@@ -164,6 +215,7 @@ impl std::fmt::Display for FontCollectionError {
                 formatter.write_str("font handle belongs to another collection")
             }
             Self::UnknownFace => formatter.write_str("font handle is not registered"),
+            Self::UnknownPalette => formatter.write_str("font palette handle is not registered"),
         }
     }
 }
@@ -195,17 +247,17 @@ struct RegisteredFace {
     registration_order: u64,
 }
 
+struct RegisteredPalette {
+    handle: FontPaletteHandle,
+    descriptor: FontPaletteValuesDescriptor,
+}
+
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
 struct FontInstanceKey {
     family: String,
-    size_bits: u32,
-    weight_bits: u32,
-    stretch_bits: u32,
-    style_tag: u8,
-    oblique_angle_bits: u32,
-    native_control_text: bool,
-    embedded_document_text: bool,
-    native_button_text_metrics: bool,
+    /// Collision-free, canonical encoding of every value that can affect
+    /// face selection, instantiation, metrics, or raster policy.
+    description: String,
 }
 
 struct CachedInstance {
@@ -216,9 +268,11 @@ struct CachedInstance {
 struct CollectionState {
     generation: u64,
     next_face_id: u64,
+    next_palette_id: u64,
     clock: u64,
     registered_bytes: usize,
     faces: Vec<RegisteredFace>,
+    palettes: Vec<RegisteredPalette>,
     instances: HashMap<FontInstanceKey, CachedInstance>,
     cache_hits: u64,
     cache_misses: u64,
@@ -228,6 +282,7 @@ struct CollectionState {
 pub struct FontCollection {
     id: u64,
     system: SendFontMgr,
+    hyphenation_registry: Arc<HyphenationRegistry>,
     state: Mutex<CollectionState>,
 }
 
@@ -247,12 +302,15 @@ impl FontCollection {
         Arc::new(Self {
             id: NEXT_COLLECTION_ID.fetch_add(1, Ordering::Relaxed),
             system: SendFontMgr(FontMgr::default()),
+            hyphenation_registry: HyphenationRegistry::bundled(),
             state: Mutex::new(CollectionState {
                 generation: 1,
                 next_face_id: 1,
+                next_palette_id: 1,
                 clock: 0,
                 registered_bytes: 0,
                 faces: Vec::new(),
+                palettes: Vec::new(),
                 instances: HashMap::new(),
                 cache_hits: 0,
                 cache_misses: 0,
@@ -275,6 +333,10 @@ impl FontCollection {
 
     pub const fn id(&self) -> u64 {
         self.id
+    }
+
+    pub fn hyphenation_registry(&self) -> &Arc<HyphenationRegistry> {
+        &self.hyphenation_registry
     }
 
     /// Register immutable application bytes after validating metadata and face index.
@@ -369,6 +431,74 @@ impl FontCollection {
         Ok(())
     }
 
+    pub fn register_palette_values(
+        &self,
+        descriptor: FontPaletteValuesDescriptor,
+    ) -> Result<FontPaletteHandle, FontCollectionError> {
+        if descriptor.name.trim().is_empty()
+            || descriptor.family.trim().is_empty()
+            || descriptor.name.contains('\0')
+            || descriptor.family.contains('\0')
+            || descriptor.overrides.len() > u16::MAX as usize
+            || descriptor.overrides.iter().any(|entry| {
+                [entry.color.r, entry.color.g, entry.color.b, entry.color.a]
+                    .iter()
+                    .any(|component| !component.is_finite() || !(0.0..=1.0).contains(component))
+            })
+        {
+            return Err(FontCollectionError::InvalidDescriptor(
+                "font palette values",
+            ));
+        }
+        let mut state = self
+            .state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        if state.palettes.iter().any(|palette| {
+            palette.descriptor.name == descriptor.name
+                && palette
+                    .descriptor
+                    .family
+                    .eq_ignore_ascii_case(&descriptor.family)
+        }) {
+            return Err(FontCollectionError::DuplicateDescriptor);
+        }
+        if state.palettes.len() >= MAX_REGISTERED_PALETTES {
+            return Err(FontCollectionError::CollectionLimit);
+        }
+        let handle = FontPaletteHandle {
+            collection_id: self.id,
+            palette_id: state.next_palette_id,
+        };
+        state.next_palette_id = state.next_palette_id.saturating_add(1);
+        state
+            .palettes
+            .push(RegisteredPalette { handle, descriptor });
+        registry_changed(&mut state);
+        Ok(handle)
+    }
+
+    pub fn unregister_palette_values(
+        &self,
+        handle: FontPaletteHandle,
+    ) -> Result<(), FontCollectionError> {
+        if handle.collection_id != self.id {
+            return Err(FontCollectionError::WrongCollection);
+        }
+        let mut state = self
+            .state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        let index = state
+            .palettes
+            .iter()
+            .position(|palette| palette.handle == handle)
+            .ok_or(FontCollectionError::UnknownPalette)?;
+        state.palettes.remove(index);
+        registry_changed(&mut state);
+        Ok(())
+    }
+
     pub fn query(&self, handle: FontFaceHandle) -> Result<FontFaceInfo, FontCollectionError> {
         if handle.collection_id != self.id {
             return Err(FontCollectionError::WrongCollection);
@@ -451,8 +581,8 @@ impl FontCollection {
             description.stretch.0,
             &description.style,
         );
-        let typeface = best_application_face(&state.faces, family_name, description)
-            .map(|face| face.typeface.clone())
+        let selected = best_application_face(&state.faces, family_name, description)
+            .map(|face| (face.typeface.clone(), Some(face.info.descriptor.clone())))
             .or_else(|| {
                 let mut family = self.system.0.match_family(family_name);
                 let count = family.count();
@@ -461,8 +591,20 @@ impl FontCollection {
                     .and_then(|index| family.new_typeface(index))
                     .or_else(|| (count == 1).then(|| family.new_typeface(0)).flatten())
                     .or_else(|| family.match_style(requested))
+                    .map(|typeface| (typeface, None))
             })?;
-        let data = make_platform_data(typeface, description);
+        let palette = resolve_palette(
+            &state.palettes,
+            &selected.0,
+            selected.1.as_ref(),
+            description,
+        );
+        let data = make_platform_data(
+            selected.0,
+            selected.1.as_ref(),
+            palette.as_ref(),
+            description,
+        );
         insert_instance(&mut state, key, Arc::clone(&data), clock);
         Some(data)
     }
@@ -472,7 +614,20 @@ impl FontCollection {
         codepoint: char,
         description: &FontDescription,
     ) -> Option<Arc<FontPlatformData>> {
-        let key = FontInstanceKey::new(&format!("\0fallback:{:X}", codepoint as u32), description);
+        let mut buffer = [0_u8; 4];
+        self.fallback_for_text(codepoint.encode_utf8(&mut buffer), description)
+    }
+
+    /// Resolve one face for an entire extended grapheme cluster. Application
+    /// faces are considered only through authored families and a candidate
+    /// must cover every painted scalar, preventing combining marks and emoji
+    /// sequences from being split across unrelated faces.
+    pub(crate) fn fallback_for_text(
+        &self,
+        text: &str,
+        description: &FontDescription,
+    ) -> Option<Arc<FontPlatformData>> {
+        let key = FontInstanceKey::new(&format!("\0fallback:{text}"), description);
         let mut state = self
             .state
             .lock()
@@ -497,17 +652,49 @@ impl FontCollection {
             .as_deref()
             .filter(|locale| !locale.is_empty())
             .map_or_else(|| vec!["und"], |locale| vec![locale]);
-        let typeface = best_application_fallback(&state.faces, codepoint, description)
-            .map(|face| face.typeface.clone())
+        let painted: Vec<char> = text
+            .chars()
+            .filter(|character| glyph_required(*character))
+            .collect();
+        let selected = best_application_fallback(&state.faces, &painted, description)
+            .map(|face| (face.typeface.clone(), Some(face.info.descriptor.clone())))
             .or_else(|| {
-                self.system.0.match_family_style_character(
-                    "",
-                    requested,
-                    &locales,
-                    codepoint as i32,
-                )
+                let families: &[&str] = match description.variant_emoji {
+                    FontVariantEmoji::Emoji => &["emoji", ""],
+                    FontVariantEmoji::Text => &["sans-serif", ""],
+                    FontVariantEmoji::Normal | FontVariantEmoji::Unicode => &[""],
+                };
+                families.iter().find_map(|family| {
+                    painted.iter().find_map(|codepoint| {
+                        self.system
+                            .0
+                            .match_family_style_character(
+                                family,
+                                requested,
+                                &locales,
+                                *codepoint as i32,
+                            )
+                            .filter(|typeface| {
+                                painted.iter().all(|character| {
+                                    typeface.unichar_to_glyph(*character as i32) != 0
+                                })
+                            })
+                            .map(|typeface| (typeface, None))
+                    })
+                })
             })?;
-        let data = make_platform_data(typeface, description);
+        let palette = resolve_palette(
+            &state.palettes,
+            &selected.0,
+            selected.1.as_ref(),
+            description,
+        );
+        let data = make_platform_data(
+            selected.0,
+            selected.1.as_ref(),
+            palette.as_ref(),
+            description,
+        );
         insert_instance(&mut state, key, Arc::clone(&data), clock);
         Some(data)
     }
@@ -518,12 +705,15 @@ impl Default for FontCollection {
         Self {
             id: NEXT_COLLECTION_ID.fetch_add(1, Ordering::Relaxed),
             system: SendFontMgr(FontMgr::default()),
+            hyphenation_registry: HyphenationRegistry::bundled(),
             state: Mutex::new(CollectionState {
                 generation: 1,
                 next_face_id: 1,
+                next_palette_id: 1,
                 clock: 0,
                 registered_bytes: 0,
                 faces: Vec::new(),
+                palettes: Vec::new(),
                 instances: HashMap::new(),
                 cache_hits: 0,
                 cache_misses: 0,
@@ -534,21 +724,13 @@ impl Default for FontCollection {
 
 impl FontInstanceKey {
     fn new(family: &str, description: &FontDescription) -> Self {
-        let (style_tag, oblique_angle_bits) = match description.style {
-            FontStyleEnum::Normal => (0, 0),
-            FontStyleEnum::Italic => (1, 0),
-            FontStyleEnum::Oblique(angle) => (2, angle.to_bits()),
-        };
         Self {
             family: family.to_ascii_lowercase(),
-            size_bits: description.size.to_bits(),
-            weight_bits: description.weight.0.to_bits(),
-            stretch_bits: description.stretch.0.to_bits(),
-            style_tag,
-            oblique_angle_bits,
-            native_control_text: description.native_control_text,
-            embedded_document_text: description.embedded_document_text,
-            native_button_text_metrics: description.native_button_text_metrics,
+            // `FontDescription` is a closed typed structure. Its derived
+            // representation includes enum payloads, float values, ordered
+            // feature/axis lists, locale, palette, synthesis, and harness
+            // policy, unlike the former seven-field cache key.
+            description: format!("{description:?}"),
         }
     }
 }
@@ -591,51 +773,139 @@ fn best_application_face<'a>(
     faces
         .iter()
         .filter(|face| face.info.descriptor.family.eq_ignore_ascii_case(family))
-        .min_by(|left, right| {
-            face_score(&left.info.descriptor, description, left.registration_order).total_cmp(
-                &face_score(
-                    &right.info.descriptor,
-                    description,
-                    right.registration_order,
-                ),
-            )
-        })
+        .min_by_key(|face| face_rank(&face.info.descriptor, description, face.registration_order))
 }
 
 fn best_application_fallback<'a>(
     faces: &'a [RegisteredFace],
-    character: char,
+    characters: &[char],
     description: &FontDescription,
 ) -> Option<&'a RegisteredFace> {
-    faces
-        .iter()
-        .filter(|face| descriptor_covers(&face.info.descriptor, character))
-        .filter(|face| face.typeface.unichar_to_glyph(character as i32) != 0)
-        .min_by(|left, right| {
-            face_score(&left.info.descriptor, description, left.registration_order).total_cmp(
-                &face_score(
-                    &right.info.descriptor,
-                    description,
-                    right.registration_order,
-                ),
-            )
-        })
+    description.family.families.iter().find_map(|family| {
+        let family = family_name(family);
+        faces
+            .iter()
+            .filter(|face| face.info.descriptor.family.eq_ignore_ascii_case(family))
+            .filter(|face| {
+                characters.iter().all(|character| {
+                    descriptor_covers(&face.info.descriptor, *character)
+                        && face.typeface.unichar_to_glyph(*character as i32) != 0
+                })
+            })
+            .min_by_key(|face| {
+                face_rank(&face.info.descriptor, description, face.registration_order)
+            })
+    })
 }
 
-fn face_score(descriptor: &FontFaceDescriptor, description: &FontDescription, order: u64) -> f64 {
-    let style = match (descriptor.style, description.style) {
-        (FontStyleRange::Normal, FontStyleEnum::Normal)
-        | (FontStyleRange::Italic, FontStyleEnum::Italic) => 0.0,
-        (FontStyleRange::Oblique(range), FontStyleEnum::Oblique(angle)) => {
-            f64::from(distance_to_range(angle, range))
-        }
-        (FontStyleRange::Italic, FontStyleEnum::Oblique(_))
-        | (FontStyleRange::Oblique(_), FontStyleEnum::Italic) => 1.0,
-        _ => 2.0,
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+struct FaceRank {
+    style_class: u8,
+    style_distance: u32,
+    stretch_class: u8,
+    stretch_distance: u32,
+    weight_class: u8,
+    weight_distance: u32,
+    registration_order: u64,
+}
+
+fn face_rank(
+    descriptor: &FontFaceDescriptor,
+    description: &FontDescription,
+    registration_order: u64,
+) -> FaceRank {
+    let (style_class, style_distance) = style_rank(descriptor.style, description.style);
+    let (stretch_class, stretch_distance) = directional_axis_rank(
+        descriptor.stretch,
+        description.stretch.0,
+        description.stretch.0 <= 100.0,
+    );
+    let (weight_class, weight_distance) = weight_rank(descriptor.weight, description.weight.0);
+    FaceRank {
+        style_class,
+        style_distance,
+        stretch_class,
+        stretch_distance,
+        weight_class,
+        weight_distance,
+        registration_order,
+    }
+}
+
+fn style_rank(range: FontStyleRange, requested: FontStyleEnum) -> (u8, u32) {
+    let rank = match requested {
+        FontStyleEnum::Normal => match range {
+            FontStyleRange::Normal => (0, 0.0),
+            FontStyleRange::Oblique(angle) => (1, distance_to_range(0.0, angle)),
+            FontStyleRange::Italic => (2, 0.0),
+        },
+        FontStyleEnum::Italic => match range {
+            FontStyleRange::Italic => (0, 0.0),
+            FontStyleRange::Oblique(angle) => (1, distance_to_range(14.0, angle)),
+            FontStyleRange::Normal => (2, 0.0),
+        },
+        FontStyleEnum::Oblique(angle) => match range {
+            FontStyleRange::Oblique(candidate) => (0, distance_to_range(angle, candidate)),
+            FontStyleRange::Italic => (1, 0.0),
+            FontStyleRange::Normal => (2, 0.0),
+        },
     };
-    let stretch = f64::from(distance_to_range(description.stretch.0, descriptor.stretch));
-    let weight = f64::from(distance_to_range(description.weight.0, descriptor.weight));
-    style * 1.0e15 + stretch * 1.0e10 + weight * 1.0e5 + order as f64
+    (rank.0, quantize_distance(rank.1))
+}
+
+fn directional_axis_rank(range: FontAxisRange, requested: f32, prefer_lower: bool) -> (u8, u32) {
+    if range.min <= requested && requested <= range.max {
+        return (0, 0);
+    }
+    let candidate = if range.max < requested {
+        range.max
+    } else {
+        range.min
+    };
+    let preferred_side = if prefer_lower {
+        candidate < requested
+    } else {
+        candidate > requested
+    };
+    (
+        if preferred_side { 1 } else { 2 },
+        quantize_distance((candidate - requested).abs()),
+    )
+}
+
+fn weight_rank(range: FontAxisRange, requested: f32) -> (u8, u32) {
+    if range.min <= requested && requested <= range.max {
+        return (0, 0);
+    }
+    let candidate = if range.max < requested {
+        range.max
+    } else {
+        range.min
+    };
+    let class = if (400.0..=500.0).contains(&requested) {
+        if candidate > requested && candidate <= 500.0 {
+            1
+        } else if candidate < requested {
+            2
+        } else {
+            3
+        }
+    } else if requested < 400.0 {
+        if candidate < requested {
+            1
+        } else {
+            2
+        }
+    } else if candidate > requested {
+        1
+    } else {
+        2
+    };
+    (class, quantize_distance((candidate - requested).abs()))
+}
+
+fn quantize_distance(value: f32) -> u32 {
+    (value.abs() * 1024.0).round().min(u32::MAX as f32) as u32
 }
 
 fn distance_to_range(value: f32, range: FontAxisRange) -> f32 {
@@ -656,7 +926,14 @@ fn descriptor_covers(descriptor: &FontFaceDescriptor, character: char) -> bool {
             .any(|range| range.start <= character as u32 && character as u32 <= range.end)
 }
 
-fn make_platform_data(typeface: Typeface, description: &FontDescription) -> Arc<FontPlatformData> {
+fn make_platform_data(
+    typeface: Typeface,
+    descriptor: Option<&FontFaceDescriptor>,
+    palette: Option<&ResolvedPalette>,
+    description: &FontDescription,
+) -> Arc<FontPlatformData> {
+    let typeface = instantiate_typeface(typeface, palette, description);
+    let size = adjusted_font_size(&typeface, descriptor, description);
     let oblique_angle = match description.style {
         FontStyleEnum::Italic
             if typeface.font_style().slant() == skia_safe::font_style::Slant::Upright =>
@@ -670,15 +947,238 @@ fn make_platform_data(typeface: Typeface, description: &FontDescription) -> Arc<
         }
         _ => 0.0,
     };
-    Arc::new(FontPlatformData::with_synthetic_styles_and_native_metrics(
+    let configuration = ResolvedFontConfiguration {
+        allow_synthetic_weight: description.font_synthesis_weight == FontSynthesis::Auto,
+        allow_synthetic_style: description.font_synthesis_style == FontSynthesis::Auto,
+        feature_defaults: descriptor
+            .map(|descriptor| descriptor.feature_defaults.clone())
+            .unwrap_or_default(),
+        metric_overrides: descriptor
+            .map(|descriptor| descriptor.metric_overrides)
+            .unwrap_or_default(),
+    };
+    Arc::new(FontPlatformData::with_resolved_configuration(
         typeface,
-        description.size,
+        size,
         oblique_angle,
         skia_safe::font_style::Weight::from(description.weight.0 as i32),
         description.native_control_text,
         description.embedded_document_text,
         description.native_button_text_metrics,
+        configuration,
     ))
+}
+
+struct ResolvedPalette {
+    base: FontPaletteBase,
+    overrides: Vec<skia_safe::font_arguments::palette::Override>,
+}
+
+fn resolve_palette(
+    palettes: &[RegisteredPalette],
+    typeface: &Typeface,
+    face: Option<&FontFaceDescriptor>,
+    description: &FontDescription,
+) -> Option<ResolvedPalette> {
+    let FontPalette::Custom(name) = &description.palette else {
+        return None;
+    };
+    let system_family;
+    let family = if let Some(face) = face {
+        face.family.as_str()
+    } else {
+        system_family = typeface.family_name();
+        &system_family
+    };
+    let descriptor = palettes.iter().rev().find(|palette| {
+        palette.descriptor.name == *name && palette.descriptor.family.eq_ignore_ascii_case(family)
+    })?;
+    Some(ResolvedPalette {
+        base: descriptor.descriptor.base_palette,
+        overrides: descriptor
+            .descriptor
+            .overrides
+            .iter()
+            .map(|entry| skia_safe::font_arguments::palette::Override {
+                index: entry.index,
+                color: skia_safe::Color::from_argb(
+                    (entry.color.a * 255.0).round() as u8,
+                    (entry.color.r * 255.0).round() as u8,
+                    (entry.color.g * 255.0).round() as u8,
+                    (entry.color.b * 255.0).round() as u8,
+                ),
+            })
+            .collect(),
+    })
+}
+
+fn instantiate_typeface(
+    typeface: Typeface,
+    resolved_palette: Option<&ResolvedPalette>,
+    description: &FontDescription,
+) -> Typeface {
+    let mut axes = BTreeMap::<u32, f32>::new();
+    axes.insert(u32::from_be_bytes(*b"wght"), description.weight.0);
+    axes.insert(u32::from_be_bytes(*b"wdth"), description.stretch.0);
+    match description.style {
+        FontStyleEnum::Normal => {
+            axes.insert(u32::from_be_bytes(*b"ital"), 0.0);
+            axes.insert(u32::from_be_bytes(*b"slnt"), 0.0);
+        }
+        FontStyleEnum::Italic => {
+            axes.insert(u32::from_be_bytes(*b"ital"), 1.0);
+        }
+        FontStyleEnum::Oblique(angle) => {
+            axes.insert(u32::from_be_bytes(*b"ital"), 0.0);
+            axes.insert(u32::from_be_bytes(*b"slnt"), -angle);
+        }
+    }
+    if description.font_optical_sizing == FontOpticalSizing::Auto {
+        axes.insert(u32::from_be_bytes(*b"opsz"), description.size);
+    }
+    // CSS `font-variation-settings` has precedence over every CSS-derived
+    // registered axis, including optical sizing.
+    for variation in &description.variation_settings {
+        axes.insert(u32::from_be_bytes(variation.tag), variation.value);
+    }
+
+    let parameters = typeface.variation_design_parameters().unwrap_or_default();
+    axes.retain(|tag, value| {
+        let Some(parameter) = parameters.iter().find(|axis| *axis.tag == *tag) else {
+            return false;
+        };
+        if !value.is_finite() {
+            return false;
+        }
+        *value = value.clamp(parameter.min, parameter.max);
+        true
+    });
+
+    if axes.is_empty()
+        && resolved_palette.is_none()
+        && matches!(
+            description.palette,
+            FontPalette::Normal | FontPalette::Custom(_)
+        )
+    {
+        return typeface;
+    }
+
+    let coordinates: Vec<Coordinate> = axes
+        .into_iter()
+        .map(|(axis, value)| Coordinate {
+            axis: axis.into(),
+            value,
+        })
+        .collect();
+    let arguments = FontArguments::new().set_variation_design_position(VariationPosition {
+        coordinates: &coordinates,
+    });
+    let palette_index = resolved_palette.map_or_else(
+        || select_palette_index(&typeface, &description.palette),
+        |palette| match palette.base {
+            FontPaletteBase::Normal => 0,
+            FontPaletteBase::Light => cpal_palette_for_background(&typeface, 1).unwrap_or(0),
+            FontPaletteBase::Dark => cpal_palette_for_background(&typeface, 2).unwrap_or(0),
+            FontPaletteBase::Index(index) => i32::from(index),
+        },
+    );
+    let arguments = arguments.set_palette(Palette {
+        index: palette_index,
+        overrides: resolved_palette.map_or(&[], |palette| palette.overrides.as_slice()),
+    });
+    typeface
+        .clone_with_arguments(&arguments)
+        .unwrap_or(typeface)
+}
+
+fn select_palette_index(typeface: &Typeface, palette: &FontPalette) -> i32 {
+    match palette {
+        FontPalette::Normal | FontPalette::Custom(_) => 0,
+        FontPalette::Light => cpal_palette_for_background(typeface, 0x0000_0001).unwrap_or(0),
+        FontPalette::Dark => cpal_palette_for_background(typeface, 0x0000_0002).unwrap_or(0),
+    }
+}
+
+/// Read CPAL v1 palette-type flags. Skia then applies that palette uniformly
+/// to COLR v0/v1; bitmap, sbix, and SVG faces continue through their native
+/// Skia glyph painters without a separate renderer path.
+fn cpal_palette_for_background(typeface: &Typeface, requested_flag: u32) -> Option<i32> {
+    const CPAL: u32 = u32::from_be_bytes(*b"CPAL");
+    let table = typeface.copy_table_data(CPAL)?;
+    let data = table.as_bytes();
+    if read_u16_be(data, 0)? < 1 {
+        return None;
+    }
+    let palette_count = read_u16_be(data, 4)? as usize;
+    let type_offset = read_u32_be(data, 12 + palette_count * 2)? as usize;
+    (0..palette_count)
+        .find(|index| {
+            read_u32_be(data, type_offset + index * 4)
+                .is_some_and(|flags| flags & requested_flag != 0)
+        })
+        .and_then(|index| i32::try_from(index).ok())
+}
+
+fn read_u16_be(data: &[u8], offset: usize) -> Option<u16> {
+    Some(u16::from_be_bytes([
+        *data.get(offset)?,
+        *data.get(offset + 1)?,
+    ]))
+}
+
+fn read_u32_be(data: &[u8], offset: usize) -> Option<u32> {
+    Some(u32::from_be_bytes([
+        *data.get(offset)?,
+        *data.get(offset + 1)?,
+        *data.get(offset + 2)?,
+        *data.get(offset + 3)?,
+    ]))
+}
+
+fn adjusted_font_size(
+    typeface: &Typeface,
+    descriptor: Option<&FontFaceDescriptor>,
+    description: &FontDescription,
+) -> f32 {
+    let descriptor_scale = descriptor.and_then(|face| face.size_adjust).unwrap_or(1.0);
+    let base_size = description.size * descriptor_scale;
+    let requested_aspect = match description.size_adjust {
+        FontSizeAdjust::None => return base_size,
+        FontSizeAdjust::FromFont => match description.resolved_from_font_aspect {
+            Some(value) => value,
+            None => return base_size,
+        },
+        FontSizeAdjust::ExHeight(value)
+        | FontSizeAdjust::CapHeight(value)
+        | FontSizeAdjust::ChWidth(value)
+        | FontSizeAdjust::IcWidth(value)
+        | FontSizeAdjust::IcHeight(value) => value,
+    };
+    let font = SkFont::from_typeface(typeface, base_size);
+    let (_, metrics) = font.metrics();
+    let actual_aspect = match description.size_adjust {
+        FontSizeAdjust::ExHeight(_) => metrics.x_height / base_size,
+        FontSizeAdjust::CapHeight(_) => metrics.cap_height / base_size,
+        FontSizeAdjust::ChWidth(_) => font.measure_str("0", None).0 / base_size,
+        FontSizeAdjust::IcWidth(_) => font.measure_str("水", None).0 / base_size,
+        FontSizeAdjust::IcHeight(_) => 1.0,
+        FontSizeAdjust::FromFont => metrics.x_height / base_size,
+        FontSizeAdjust::None => 1.0,
+    };
+    if actual_aspect.is_finite() && actual_aspect > 0.0 {
+        base_size * requested_aspect / actual_aspect
+    } else {
+        base_size
+    }
+}
+
+fn glyph_required(character: char) -> bool {
+    !character.is_control()
+        && !matches!(
+            character as u32,
+            0x200C..=0x200D | 0x202A..=0x202E | 0x2066..=0x2069 | 0xFE00..=0xFE0F
+        )
 }
 
 fn validate_descriptor(descriptor: &FontFaceDescriptor) -> Result<(), FontCollectionError> {
@@ -1135,5 +1635,137 @@ mod tests {
             .unwrap();
         assert_eq!(face.typeface().family_name(), "DejaVu Sans");
         assert_eq!(collection.stats().registered_faces, TEST_FONTS.len());
+    }
+
+    #[test]
+    fn css_face_matching_is_lexicographic_and_directional() {
+        let mut description = FontDescription::default();
+        description.weight.0 = 400.0;
+        let weight_300 = FontFaceDescriptor {
+            weight: FontAxisRange::new(300.0, 300.0),
+            ..FontFaceDescriptor::new("Match")
+        };
+        let weight_500 = FontFaceDescriptor {
+            weight: FontAxisRange::new(500.0, 500.0),
+            ..FontFaceDescriptor::new("Match")
+        };
+        assert!(face_rank(&weight_500, &description, 2) < face_rank(&weight_300, &description, 1));
+
+        description.stretch.0 = 80.0;
+        let narrow = FontFaceDescriptor {
+            stretch: FontAxisRange::new(75.0, 75.0),
+            ..FontFaceDescriptor::new("Match")
+        };
+        let normal = FontFaceDescriptor {
+            stretch: FontAxisRange::new(100.0, 100.0),
+            ..FontFaceDescriptor::new("Match")
+        };
+        assert!(face_rank(&narrow, &description, 3) < face_rank(&normal, &description, 1));
+
+        description.style = FontStyleEnum::Italic;
+        let italic = FontFaceDescriptor {
+            style: FontStyleRange::Italic,
+            ..FontFaceDescriptor::new("Match")
+        };
+        assert!(face_rank(&italic, &description, 9) < face_rank(&narrow, &description, 1));
+    }
+
+    #[test]
+    fn instance_key_includes_variations_palette_and_synthesis() {
+        let base = FontDescription::default();
+        let mut varied = base.clone();
+        varied.variation_settings.push(openui_style::FontVariation {
+            tag: *b"wght",
+            value: 625.0,
+        });
+        let mut palette = base.clone();
+        palette.palette = FontPalette::Dark;
+        let mut synthesis = base.clone();
+        synthesis.font_synthesis_weight = FontSynthesis::None;
+        let base = FontInstanceKey::new("family", &base);
+        assert_ne!(base, FontInstanceKey::new("family", &varied));
+        assert_ne!(base, FontInstanceKey::new("family", &palette));
+        assert_ne!(base, FontInstanceKey::new("family", &synthesis));
+    }
+
+    #[test]
+    fn face_metrics_defaults_and_synthesis_are_applied() {
+        let collection = FontCollection::system();
+        let mut descriptor = FontFaceDescriptor::new("Configured Ahem");
+        descriptor.size_adjust = Some(1.25);
+        descriptor.metric_overrides = FontMetricOverrides {
+            ascent: Some(0.7),
+            descent: Some(0.2),
+            line_gap: Some(0.1),
+        };
+        descriptor.feature_defaults.push(FontFeatureDefault {
+            tag: *b"kern",
+            value: 0,
+        });
+        collection
+            .register(
+                Arc::from(include_bytes!("../../fonts/Ahem.ttf").as_slice()),
+                descriptor,
+            )
+            .unwrap();
+        let mut description = FontDescription::default();
+        description.family = openui_style::FontFamilyList::single("Configured Ahem");
+        description.size = 20.0;
+        description.weight.0 = 700.0;
+        description.font_synthesis_weight = FontSynthesis::None;
+        let data = collection
+            .resolve_family("Configured Ahem", &description)
+            .unwrap();
+        assert!((data.size() - 25.0).abs() < 0.01);
+        assert!((data.metrics().ascent - 17.5).abs() < 0.01);
+        assert!((data.metrics().descent - 5.0).abs() < 0.01);
+        assert!((data.metrics().line_gap - 2.5).abs() < 0.01);
+        assert!(!data.is_synthetic_bold());
+        assert_eq!(data.feature_defaults()[0].tag, *b"kern");
+    }
+
+    #[test]
+    fn custom_palette_values_are_owned_and_invalidate_instances() {
+        let collection = FontCollection::deterministic_test();
+        let generation = collection.generation();
+        let descriptor = FontPaletteValuesDescriptor {
+            name: "brand".into(),
+            family: "Noto Color Emoji".into(),
+            base_palette: FontPaletteBase::Index(0),
+            overrides: vec![FontPaletteEntryOverride {
+                index: 2,
+                color: openui_style::Color::RED,
+            }],
+        };
+        let handle = collection.register_palette_values(descriptor).unwrap();
+        assert!(collection.generation() > generation);
+
+        let state = collection
+            .state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        let face = state
+            .faces
+            .iter()
+            .find(|face| face.info.descriptor.family == "Noto Color Emoji")
+            .unwrap();
+        let mut description = FontDescription::default();
+        description.palette = FontPalette::Custom("brand".into());
+        let palette = resolve_palette(
+            &state.palettes,
+            &face.typeface,
+            Some(&face.info.descriptor),
+            &description,
+        )
+        .unwrap();
+        assert_eq!(palette.overrides.len(), 1);
+        assert_eq!(palette.overrides[0].index, 2);
+        drop(state);
+
+        collection.unregister_palette_values(handle).unwrap();
+        assert_eq!(
+            collection.unregister_palette_values(handle),
+            Err(FontCollectionError::UnknownPalette)
+        );
     }
 }

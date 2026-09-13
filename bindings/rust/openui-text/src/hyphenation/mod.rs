@@ -16,7 +16,222 @@
 mod patterns;
 mod trie;
 
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, Mutex};
+
 use trie::PatternTrie;
+
+const MAX_DICTIONARY_BYTES: usize = 8 * 1024 * 1024;
+const MAX_DICTIONARIES: usize = 64;
+static NEXT_REGISTRY_ID: AtomicU64 = AtomicU64::new(1);
+
+/// Stable identifier for an application-provided hyphenation dictionary.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct HyphenationDictionaryHandle {
+    registry_id: u64,
+    dictionary_id: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum HyphenationRegistryError {
+    InvalidLocale,
+    InvalidUtf8,
+    InvalidPattern,
+    InputTooLarge,
+    RegistryLimit,
+    DuplicateLocale,
+    WrongRegistry,
+    UnknownDictionary,
+}
+
+impl std::fmt::Display for HyphenationRegistryError {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(formatter, "{self:?}")
+    }
+}
+
+impl std::error::Error for HyphenationRegistryError {}
+
+struct Dictionary {
+    handle: HyphenationDictionaryHandle,
+    locale: String,
+    patterns: Arc<str>,
+}
+
+struct RegistryState {
+    next_dictionary_id: u64,
+    dictionaries: Vec<Dictionary>,
+}
+
+/// Engine-owned locale dictionary registry. The deterministic `en-US`
+/// patterns are bundled; other locales only hyphenate after the application
+/// registers an immutable UTF-8 Knuth-Liang pattern dictionary.
+pub struct HyphenationRegistry {
+    id: u64,
+    state: Mutex<RegistryState>,
+}
+
+impl std::fmt::Debug for HyphenationRegistry {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("HyphenationRegistry")
+            .field("id", &self.id)
+            .field("dictionary_count", &self.dictionary_count())
+            .finish()
+    }
+}
+
+impl HyphenationRegistry {
+    pub fn bundled() -> Arc<Self> {
+        Arc::new(Self {
+            id: NEXT_REGISTRY_ID.fetch_add(1, Ordering::Relaxed),
+            state: Mutex::new(RegistryState {
+                next_dictionary_id: 1,
+                dictionaries: Vec::new(),
+            }),
+        })
+    }
+
+    pub fn register(
+        &self,
+        locale: &str,
+        bytes: Arc<[u8]>,
+    ) -> Result<HyphenationDictionaryHandle, HyphenationRegistryError> {
+        let locale = normalize_locale(locale).ok_or(HyphenationRegistryError::InvalidLocale)?;
+        if bytes.len() > MAX_DICTIONARY_BYTES {
+            return Err(HyphenationRegistryError::InputTooLarge);
+        }
+        let patterns =
+            std::str::from_utf8(&bytes).map_err(|_| HyphenationRegistryError::InvalidUtf8)?;
+        validate_patterns(patterns)?;
+        let mut state = self
+            .state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        if state.dictionaries.len() >= MAX_DICTIONARIES {
+            return Err(HyphenationRegistryError::RegistryLimit);
+        }
+        if state
+            .dictionaries
+            .iter()
+            .any(|entry| entry.locale == locale)
+        {
+            return Err(HyphenationRegistryError::DuplicateLocale);
+        }
+        let handle = HyphenationDictionaryHandle {
+            registry_id: self.id,
+            dictionary_id: state.next_dictionary_id,
+        };
+        state.next_dictionary_id = state.next_dictionary_id.saturating_add(1);
+        state.dictionaries.push(Dictionary {
+            handle,
+            locale,
+            patterns: Arc::<str>::from(patterns),
+        });
+        Ok(handle)
+    }
+
+    pub fn unregister(
+        &self,
+        handle: HyphenationDictionaryHandle,
+    ) -> Result<(), HyphenationRegistryError> {
+        if handle.registry_id != self.id {
+            return Err(HyphenationRegistryError::WrongRegistry);
+        }
+        let mut state = self
+            .state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        let index = state
+            .dictionaries
+            .iter()
+            .position(|entry| entry.handle == handle)
+            .ok_or(HyphenationRegistryError::UnknownDictionary)?;
+        state.dictionaries.remove(index);
+        Ok(())
+    }
+
+    pub fn dictionary_count(&self) -> usize {
+        self.state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+            .dictionaries
+            .len()
+    }
+
+    pub fn resolve(&self, locale: &str, limits: (u8, u8, u8)) -> Option<Hyphenation> {
+        let locale = normalize_locale(locale)?;
+        let state = self
+            .state
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        let entry = locale_candidates(&locale).find_map(|candidate| {
+            state
+                .dictionaries
+                .iter()
+                .find(|entry| entry.locale == candidate)
+        });
+        if let Some(entry) = entry {
+            return Some(Hyphenation::from_patterns(
+                &entry.patterns,
+                limits.1 as usize,
+                limits.2 as usize,
+                limits.0 as usize,
+            ));
+        }
+        locale
+            .starts_with("en")
+            .then(|| Hyphenation::english_from_css_limits(limits))
+    }
+}
+
+impl Default for HyphenationRegistry {
+    fn default() -> Self {
+        Self {
+            id: NEXT_REGISTRY_ID.fetch_add(1, Ordering::Relaxed),
+            state: Mutex::new(RegistryState {
+                next_dictionary_id: 1,
+                dictionaries: Vec::new(),
+            }),
+        }
+    }
+}
+
+fn normalize_locale(locale: &str) -> Option<String> {
+    let locale = locale.trim().replace('_', "-").to_ascii_lowercase();
+    (!locale.is_empty()
+        && locale.is_ascii()
+        && locale.split('-').all(|part| {
+            !part.is_empty()
+                && part.len() <= 8
+                && part.bytes().all(|byte| byte.is_ascii_alphanumeric())
+        }))
+    .then_some(locale)
+}
+
+fn locale_candidates(locale: &str) -> impl Iterator<Item = &str> {
+    std::iter::successors(Some(locale), |candidate| {
+        candidate.rsplit_once('-').map(|(parent, _)| parent)
+    })
+}
+
+fn validate_patterns(patterns: &str) -> Result<(), HyphenationRegistryError> {
+    let mut count = 0_usize;
+    for pattern in patterns.split_whitespace() {
+        count += 1;
+        if pattern.chars().count() > 128
+            || pattern.chars().any(|character| {
+                !(character.is_alphabetic() || character == '.' || character.is_ascii_digit())
+            })
+        {
+            return Err(HyphenationRegistryError::InvalidPattern);
+        }
+    }
+    if count == 0 {
+        return Err(HyphenationRegistryError::InvalidPattern);
+    }
+    Ok(())
+}
 
 /// The soft hyphen character (U+00AD).
 ///
@@ -103,6 +318,19 @@ impl Hyphenation {
     /// `min_word`: minimum word length to hyphenate (default 5)
     pub fn english_with_limits(min_prefix: usize, min_suffix: usize, min_word: usize) -> Self {
         let trie = patterns::build_english_trie();
+        Self::new(trie, min_prefix, min_suffix, min_word)
+    }
+
+    fn from_patterns(
+        patterns: &str,
+        min_prefix: usize,
+        min_suffix: usize,
+        min_word: usize,
+    ) -> Self {
+        let mut trie = PatternTrie::new();
+        for pattern in patterns.split_whitespace() {
+            trie.insert_pattern(pattern);
+        }
         Self::new(trie, min_prefix, min_suffix, min_word)
     }
 
@@ -225,6 +453,41 @@ impl Hyphenation {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn registry_is_locale_aware_and_application_owned() {
+        let registry = HyphenationRegistry::bundled();
+        assert!(registry.resolve("en-CA", (5, 2, 2)).is_some());
+        assert!(registry.resolve("de-DE", (5, 2, 2)).is_none());
+
+        let handle = registry
+            .register("de-DE", Arc::from(b"sil1ben".as_slice()))
+            .unwrap();
+        assert!(registry.resolve("de-DE-1996", (5, 2, 2)).is_some());
+        assert_eq!(registry.dictionary_count(), 1);
+        registry.unregister(handle).unwrap();
+        assert!(registry.resolve("de-DE", (5, 2, 2)).is_none());
+    }
+
+    #[test]
+    fn registry_rejects_malformed_and_duplicate_dictionaries() {
+        let registry = HyphenationRegistry::bundled();
+        assert_eq!(
+            registry.register("bad locale!", Arc::from(b"ab1c".as_slice())),
+            Err(HyphenationRegistryError::InvalidLocale)
+        );
+        assert_eq!(
+            registry.register("fr", Arc::from([0xff_u8].as_slice())),
+            Err(HyphenationRegistryError::InvalidUtf8)
+        );
+        registry
+            .register("fr", Arc::from(b"hy1phen".as_slice()))
+            .unwrap();
+        assert_eq!(
+            registry.register("FR", Arc::from(b"an1other".as_slice())),
+            Err(HyphenationRegistryError::DuplicateLocale)
+        );
+    }
 
     // ── Soft hyphen tests ───────────────────────────────────────────
 

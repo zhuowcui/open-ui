@@ -112,7 +112,9 @@ pub use openui_style::{Style, StyleProperty, StyleValue};
 pub use openui_text::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
     FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFeatureDefault, FontMetricOverrides,
-    FontStyleRange, FontUnicodeRange,
+    FontPaletteBase, FontPaletteEntryOverride, FontPaletteHandle, FontPaletteValuesDescriptor,
+    FontStyleRange, FontUnicodeRange, HyphenationDictionaryHandle, HyphenationRegistry,
+    HyphenationRegistryError,
 };
 
 // ─── Re-exports: view system ────────────────────────────────

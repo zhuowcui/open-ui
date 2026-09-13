@@ -17,6 +17,7 @@ use super::platform::FontPlatformData;
 pub struct FontFallbackList {
     platform_data: Vec<Arc<FontPlatformData>>,
     collection: Arc<FontCollection>,
+    resolved_from_font_aspect: Option<f32>,
 }
 
 impl FontFallbackList {
@@ -32,6 +33,7 @@ impl FontFallbackList {
         let mut list = Self {
             platform_data: Vec::new(),
             collection,
+            resolved_from_font_aspect: None,
         };
         list.resolve(description);
         list
@@ -39,11 +41,24 @@ impl FontFallbackList {
 
     /// Try to resolve each family in order, then fall back to sans-serif.
     fn resolve(&mut self, description: &FontDescription) {
+        let mut working = description.clone();
         for family in &description.family.families {
             if let Some(data) = self
                 .collection
-                .resolve_family(family_name(family), description)
+                .resolve_family(family_name(family), &working)
             {
+                if self.platform_data.is_empty()
+                    && matches!(
+                        description.size_adjust,
+                        openui_style::FontSizeAdjust::FromFont
+                    )
+                {
+                    let aspect = data.metrics().x_height / data.size();
+                    if aspect.is_finite() && aspect > 0.0 {
+                        self.resolved_from_font_aspect = Some(aspect);
+                        working.resolved_from_font_aspect = Some(aspect);
+                    }
+                }
                 self.platform_data.push(data);
             }
         }
@@ -88,6 +103,10 @@ impl FontFallbackList {
 
     pub fn collection(&self) -> &Arc<FontCollection> {
         &self.collection
+    }
+
+    pub(crate) fn resolved_from_font_aspect(&self) -> Option<f32> {
+        self.resolved_from_font_aspect
     }
 }
 

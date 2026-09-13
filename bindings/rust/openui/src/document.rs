@@ -14,7 +14,10 @@ use openui_engine::{
     ViewportMetrics,
 };
 use openui_style::ImageResourceId;
-use openui_text::{FontCollection, FontFaceDescriptor, FontFaceHandle, FontFaceInfo};
+use openui_text::{
+    FontCollection, FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontPaletteHandle,
+    FontPaletteValuesDescriptor, HyphenationDictionaryHandle,
+};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -117,6 +120,33 @@ impl Document {
 
     pub fn font_collection_stats(&self) -> Result<openui_text::FontCollectionStats, Error> {
         self.with_engine(|engine| engine.font_collection().stats())
+    }
+
+    pub fn register_font_palette_values(
+        &self,
+        descriptor: FontPaletteValuesDescriptor,
+    ) -> Result<FontPaletteHandle, Error> {
+        self.with_engine_mut(|engine| engine.register_font_palette_values(descriptor))
+    }
+
+    pub fn unregister_font_palette_values(&self, handle: FontPaletteHandle) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.unregister_font_palette_values(handle))
+    }
+
+    /// Register a UTF-8 Knuth-Liang pattern dictionary for a BCP47 locale.
+    pub fn register_hyphenation_dictionary(
+        &self,
+        locale: &str,
+        bytes: impl Into<std::sync::Arc<[u8]>>,
+    ) -> Result<HyphenationDictionaryHandle, Error> {
+        self.with_engine_mut(|engine| engine.register_hyphenation_dictionary(locale, bytes.into()))
+    }
+
+    pub fn unregister_hyphenation_dictionary(
+        &self,
+        handle: HyphenationDictionaryHandle,
+    ) -> Result<(), Error> {
+        self.with_engine_mut(|engine| engine.unregister_hyphenation_dictionary(handle))
     }
 
     pub fn update_all(&self) -> Result<(), Error> {
