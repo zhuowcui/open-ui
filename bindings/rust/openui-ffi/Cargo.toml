@@ -1,0 +1,18 @@
+[package]
+name = "openui-ffi"
+version = "0.2.0"
+edition = "2021"
+description = "Validated C ABI for the Open UI retained engine"
+license = "BSD-3-Clause"
+publish = false
+build = "build.rs"
+
+[lib]
+crate-type = ["rlib", "staticlib", "cdylib"]
+
+[dependencies]
+openui-compositor = { path = "../openui-compositor" }
+openui-dom = { path = "../openui-dom" }
+openui-engine = { path = "../openui-engine" }
+openui-geometry = { path = "../openui-geometry" }
+openui-style = { path = "../openui-style" }

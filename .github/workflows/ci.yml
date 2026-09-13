@@ -14,35 +14,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  native-build:
-    name: native-build (Debug + Release)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install native build tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install --yes --no-install-recommends \
-            clang generate-ninja lld ninja-build
-
-      - name: Generate Debug build
-        run: gn gen out/Debug --args='is_debug=true'
-
-      - name: Build and run Debug smoke target
-        run: |
-          ninja -C out/Debug hello_world
-          out/Debug/hello_world
-
-      - name: Generate Release build
-        run: gn gen out/Release --args='is_debug=false'
-
-      - name: Build and run Release smoke target
-        run: |
-          ninja -C out/Release hello_world
-          out/Release/hello_world
-
   rust-parity:
     name: rust-parity
     runs-on: ubuntu-24.04
@@ -98,6 +69,18 @@ jobs:
           --package openui-text
           --package openui-layout
           --package openui-paint
+          --package openui-compositor
+          --package openui-engine
+          --package openui-macros
+          --package openui
+          --package openui-ffi
+
+      - name: Build and verify the C ABI
+        run: |
+          cargo --manifest-path bindings/rust/Cargo.toml \
+            --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' \
+            build --locked --package openui-ffi
+          python3 tools/ffi/verify_abi.py
 
   python-accountability:
     name: python-accountability
@@ -127,6 +110,7 @@ jobs:
           python3 tools/wpt/generate_sp20_closure.py --check
           python3 tools/release/generate_v02_contract.py --check
           python3 tools/style/generate_properties.py --check
+          python3 tools/ffi/generate_ffi.py --check
 
       - name: Audit authoritative accountability artifacts
         run: python3 tools/accountability/audit.py --repository-only

@@ -560,6 +560,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "openui-ffi"
+version = "0.2.0"
+dependencies = [
+ "openui-compositor",
+ "openui-dom",
+ "openui-engine",
+ "openui-geometry",
+ "openui-style",
+]
+
+[[package]]
 name = "openui-geometry"
 version = "0.1.0"
 

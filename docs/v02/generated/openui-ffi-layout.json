@@ -1,0 +1,54 @@
+{
+  "abi_version": "0x00020000",
+  "pointer_width": 64,
+  "types": {
+    "OuiAppConfig": {
+      "align": 8,
+      "size": 40
+    },
+    "OuiBitmap": {
+      "align": 8,
+      "size": 32
+    },
+    "OuiColor": {
+      "align": 1,
+      "size": 4
+    },
+    "OuiDocumentConfig": {
+      "align": 8,
+      "size": 24
+    },
+    "OuiErrorInfo": {
+      "align": 8,
+      "size": 24
+    },
+    "OuiEvent": {
+      "align": 8,
+      "size": 88
+    },
+    "OuiLength": {
+      "align": 4,
+      "size": 8
+    },
+    "OuiRect": {
+      "align": 4,
+      "size": 16
+    },
+    "OuiStylePayload": {
+      "align": 8,
+      "size": 8
+    },
+    "OuiStyleValue": {
+      "align": 8,
+      "size": 16
+    },
+    "OuiTransformOperation": {
+      "align": 4,
+      "size": 48
+    },
+    "OuiUtf8": {
+      "align": 8,
+      "size": 16
+    }
+  }
+}

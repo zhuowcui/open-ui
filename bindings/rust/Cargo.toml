@@ -8,6 +8,7 @@ members = [
     "openui-paint",
     "openui-compositor",
     "openui-engine",
+    "openui-ffi",
     "openui-text",
     "openui",
     "openui-macros",
