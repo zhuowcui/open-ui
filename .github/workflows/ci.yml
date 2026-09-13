@@ -106,7 +106,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Run SP18 closure and porter tests
+      - name: Run frozen closure and porter tests
         run: |
           python3 -m unittest \
             tools.wpt.test_sp13p_paint_closure \
@@ -115,13 +115,17 @@ jobs:
             tools.wpt.test_sp15_closure \
             tools.wpt.test_sp16_closure \
             tools.wpt.test_sp17_closure \
-            tools.wpt.test_sp18_closure
+            tools.wpt.test_sp18_closure \
+            tools.wpt.test_sp19_closure \
+            tools.wpt.test_sp20_closure
 
       - name: Verify immutable closure ledgers
         run: |
           python3 tools/wpt/generate_sp13r_multicol_closure.py --check
           python3 tools/wpt/generate_sp17_closure.py --check
           python3 tools/wpt/generate_sp18_closure.py --check
+          python3 tools/wpt/generate_sp20_closure.py --check
+          python3 tools/release/generate_v02_contract.py --check
 
       - name: Audit authoritative accountability artifacts
         run: python3 tools/accountability/audit.py --repository-only
