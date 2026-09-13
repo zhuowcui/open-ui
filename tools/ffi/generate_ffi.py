@@ -44,6 +44,7 @@ TAG_BY_KIND = {
     "cursor": 5,
     "list-style": 5,
     "transform": 6,
+    "pointer-events": 5,
 }
 
 

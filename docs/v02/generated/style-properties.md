@@ -48,3 +48,4 @@
 | 43 | `cursor` | `Cursor` | `auto` | true | accessibility | discrete |
 | 44 | `list-style` | `ListStyleType` | `disc` | true | subtree | discrete |
 | 45 | `transform` | `TransformList` | `none` | false | composite | transform |
+| 46 | `pointer-events` | `PointerEvents` | `auto` | true | accessibility | discrete |

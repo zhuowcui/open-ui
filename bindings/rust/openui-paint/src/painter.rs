@@ -41,6 +41,7 @@ use skia_safe::{
 
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet, HashSet};
+use unicode_segmentation::UnicodeSegmentation;
 
 fn set_paint_css_color(paint: &mut Paint, color: &Color) {
     set_paint_css_color_with_alpha(paint, color, 1.0);
@@ -1101,6 +1102,7 @@ fn paint_form_control(
         Some(FormControlRole::Range) => paint_range_control(
             canvas,
             fragment,
+            doc,
             abs_offset,
             opacity_multiplier,
             doc.node(fragment.node_id).form_control_native_appearance,
@@ -1437,8 +1439,15 @@ fn paint_textarea_contents(
     abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
 ) {
-    let Some(text) = first_descendant_text(doc, fragment.node_id) else {
-        return;
+    let authored = doc
+        .attribute(fragment.node_id, "value")
+        .or_else(|| first_descendant_text(doc, fragment.node_id))
+        .unwrap_or_default();
+    let text = if authored.is_empty() {
+        doc.attribute(fragment.node_id, "placeholder")
+            .unwrap_or_default()
+    } else {
+        authored
     };
     paint_control_text_lines(
         canvas,
@@ -1497,6 +1506,8 @@ fn paint_checkable_control(
     opacity_multiplier: f32,
 ) {
     let node = doc.node(fragment.node_id);
+    let checked = doc.attribute(fragment.node_id, "checked").is_some();
+    let indeterminate = doc.attribute(fragment.node_id, "indeterminate").is_some();
     let left = abs_offset.left.round().to_f32();
     let top = abs_offset.top.round().to_f32();
     let right = (abs_offset.left + fragment.size.width).round().to_f32();
@@ -1638,6 +1649,47 @@ fn paint_checkable_control(
             ],
         );
     }
+
+    if !(checked || indeterminate) {
+        return;
+    }
+    let mark_color = if node.form_control_disabled {
+        Color::from_rgba8(128, 128, 128, 255)
+    } else {
+        Color::from_rgba8(0, 117, 255, 255)
+    };
+    let mut mark = Paint::default();
+    mark.set_anti_alias(true);
+    mark.set_style(PaintStyle::Fill);
+    set_paint_css_color_with_alpha(&mut mark, &mark_color, opacity_multiplier);
+    if node.form_control == Some(FormControlRole::Radio) {
+        let dot = Rect::from_xywh(
+            left + width * 0.3,
+            top + height * 0.3,
+            width * 0.4,
+            height * 0.4,
+        );
+        canvas.draw_oval(dot, &mark);
+        return;
+    }
+    canvas.draw_rect(
+        Rect::from_xywh(left + 1.0, top + 1.0, width - 2.0, height - 2.0),
+        &mark,
+    );
+    mark.set_style(PaintStyle::Stroke);
+    mark.set_stroke_width((width.min(height) * 0.13).max(1.0));
+    mark.set_stroke_cap(skia_safe::PaintCap::Round);
+    set_paint_css_color_with_alpha(&mut mark, &Color::WHITE, opacity_multiplier);
+    let mut path = PathBuilder::new();
+    if indeterminate {
+        path.move_to(Point::new(left + width * 0.25, top + height * 0.5));
+        path.line_to(Point::new(left + width * 0.75, top + height * 0.5));
+    } else {
+        path.move_to(Point::new(left + width * 0.22, top + height * 0.52));
+        path.line_to(Point::new(left + width * 0.43, top + height * 0.72));
+        path.line_to(Point::new(left + width * 0.79, top + height * 0.28));
+    }
+    canvas.draw_path(&path.detach(), &mark);
 }
 
 /// Paint the deterministic initial value of a single-line text field.
@@ -1654,24 +1706,34 @@ fn paint_text_input_control(
     opacity_multiplier: f32,
 ) {
     let node = doc.node(fragment.node_id);
-    let Some(authored_value) = doc
+    let authored = doc
         .attribute(fragment.node_id, "value")
-        .filter(|value| !value.is_empty())
-    else {
+        .filter(|value| !value.is_empty());
+    let placeholder = doc
+        .attribute(fragment.node_id, "placeholder")
+        .filter(|value| !value.is_empty());
+    let focused = doc
+        .attribute(fragment.node_id, "data-oui-focused")
+        .is_some();
+    let Some(authored_value) = authored.or(placeholder).or_else(|| focused.then_some("")) else {
         return;
     };
-    let masked_value;
-    let value = if doc
+    let showing_placeholder = authored.is_none() && placeholder.is_some();
+    let is_password = doc
         .attribute(fragment.node_id, "type")
-        .is_some_and(|input_type| input_type.eq_ignore_ascii_case("password"))
-    {
-        masked_value = "\u{2022}".repeat(authored_value.chars().count());
+        .is_some_and(|input_type| input_type.eq_ignore_ascii_case("password"));
+    let masked_value;
+    let value = if is_password {
+        masked_value = "\u{2022}".repeat(authored_value.graphemes(true).count());
         masked_value.as_str()
     } else {
         authored_value
     };
     let mut control_style = node.style.clone();
     control_style.native_button_text_metrics = true;
+    if showing_placeholder {
+        control_style.color = Color::from_rgba8(117, 117, 117, 255);
+    }
     let style = &control_style;
     let font = Font::new(crate::text_painter::style_to_font_description(style));
     let direction = if style.direction == Direction::Rtl {
@@ -1703,12 +1765,88 @@ fn paint_text_input_control(
     let content_height = content_bottom - content_top;
     let line_height = line_metrics.ascent + line_metrics.descent;
     let line_top = content_top + ((content_height - line_height) / 2.0).max(0.0);
+    let source_offset_to_character = |offset: usize| {
+        let mut offset = offset.min(authored_value.len());
+        while !authored_value.is_char_boundary(offset) {
+            offset -= 1;
+        }
+        if is_password {
+            authored_value[..offset].graphemes(true).count()
+        } else {
+            authored_value[..offset].chars().count()
+        }
+    };
+    let selection_anchor = doc
+        .attribute(fragment.node_id, "data-oui-selection-anchor")
+        .and_then(|value| value.parse::<usize>().ok())
+        .unwrap_or(0);
+    let selection_focus = doc
+        .attribute(fragment.node_id, "data-oui-selection-focus")
+        .and_then(|value| value.parse::<usize>().ok())
+        .unwrap_or(selection_anchor);
+    let (selection_start, selection_end) = if selection_anchor <= selection_focus {
+        (selection_anchor, selection_focus)
+    } else {
+        (selection_focus, selection_anchor)
+    };
+    let start_character = source_offset_to_character(selection_start);
+    let end_character = source_offset_to_character(selection_end);
+    let selection_left = content_left + shaped.width_for_range(0, start_character);
+    let selection_right = content_left + shaped.width_for_range(0, end_character);
+    if focused && selection_start != selection_end {
+        let mut selection_paint = Paint::default();
+        selection_paint.set_style(PaintStyle::Fill);
+        set_paint_css_color_with_alpha(
+            &mut selection_paint,
+            &Color::from_rgba8(51, 103, 209, 120),
+            opacity_multiplier,
+        );
+        canvas.draw_rect(
+            Rect::from_ltrb(
+                selection_left.min(selection_right),
+                line_top,
+                selection_left.max(selection_right),
+                line_top + line_height,
+            ),
+            &selection_paint,
+        );
+    }
     crate::text_painter::paint_text(
         canvas,
         &shaped,
         (content_left, line_top + line_metrics.ascent),
         &text_style,
     );
+    if focused && selection_start == selection_end && !showing_placeholder {
+        let mut caret = Paint::default();
+        caret.set_style(PaintStyle::Stroke);
+        caret.set_stroke_width(1.0);
+        set_paint_css_color_with_alpha(&mut caret, &style.color, opacity_multiplier);
+        canvas.draw_line(
+            (selection_left, line_top),
+            (selection_left, line_top + line_height),
+            &caret,
+        );
+    }
+    let composition_start = doc
+        .attribute(fragment.node_id, "data-oui-composition-start")
+        .and_then(|value| value.parse::<usize>().ok());
+    let composition_end = doc
+        .attribute(fragment.node_id, "data-oui-composition-end")
+        .and_then(|value| value.parse::<usize>().ok());
+    if let (Some(start), Some(end)) = (composition_start, composition_end) {
+        let left = content_left + shaped.width_for_range(0, source_offset_to_character(start));
+        let right = content_left + shaped.width_for_range(0, source_offset_to_character(end));
+        let mut composition = Paint::default();
+        composition.set_style(PaintStyle::Stroke);
+        composition.set_stroke_width(1.0);
+        set_paint_css_color_with_alpha(&mut composition, &style.color, opacity_multiplier);
+        canvas.draw_line(
+            (left.min(right), line_top + line_height),
+            (left.max(right), line_top + line_height),
+            &composition,
+        );
+    }
     canvas.restore();
 }
 
@@ -2686,6 +2824,7 @@ fn paint_progress_control(
 fn paint_range_control(
     canvas: &Canvas,
     fragment: &Fragment,
+    doc: &Document,
     abs_offset: PhysicalOffset,
     opacity_multiplier: f32,
     native_appearance: bool,
@@ -2703,6 +2842,28 @@ fn paint_range_control(
     let snapped_bottom = (y + height).round();
     let snapped_width = (snapped_right - snapped_left).max(0.0);
     let snapped_height = (snapped_bottom - snapped_top).max(0.0);
+    let min = doc
+        .attribute(fragment.node_id, "min")
+        .and_then(|value| value.parse::<f32>().ok())
+        .filter(|value| value.is_finite())
+        .unwrap_or(0.0);
+    let max = doc
+        .attribute(fragment.node_id, "max")
+        .and_then(|value| value.parse::<f32>().ok())
+        .filter(|value| value.is_finite())
+        .unwrap_or(100.0);
+    let midpoint = min + (max - min) / 2.0;
+    let value = doc
+        .attribute(fragment.node_id, "value")
+        .and_then(|value| value.parse::<f32>().ok())
+        .filter(|value| value.is_finite())
+        .unwrap_or(midpoint)
+        .clamp(min.min(max), min.max(max));
+    let fraction = if (max - min).abs() <= f32::EPSILON {
+        0.0
+    } else {
+        ((value - min) / (max - min)).clamp(0.0, 1.0)
+    };
     let mut paint = Paint::default();
     paint.set_style(PaintStyle::Fill);
     paint.set_anti_alias(true);
@@ -2726,7 +2887,7 @@ fn paint_range_control(
         );
         canvas.draw_rrect(track_rrect, &paint);
 
-        let thumb_local_x = ((snapped_width - 16.0) / 2.0).round();
+        let thumb_local_x = ((snapped_width - 16.0) * fraction).round();
         canvas.save();
         canvas.clip_rect(
             Rect::from_ltrb(
@@ -2764,7 +2925,7 @@ fn paint_range_control(
 
     // The UA thumb is a 16x16 part whose absolute frame is pixel-snapped;
     // NativeTheme paints its 0.5px-inset rounded rectangle with radius 8.
-    let thumb_left = (x + (width - 16.0) / 2.0).round();
+    let thumb_left = (x + (width - 16.0) * fraction).round();
     let thumb_top = (y + (height - 16.0) / 2.0).round();
     let thumb_rect = Rect::from_xywh(thumb_left + 0.5, thumb_top + 0.5, 15.0, 15.0);
     paint.set_style(PaintStyle::Fill);

@@ -49,6 +49,7 @@ pub enum StyleProperty {
     Cursor = 43,
     ListStyleType = 44,
     Transform = 45,
+    PointerEvents = 46,
 }
 
 impl StyleProperty {
@@ -101,6 +102,7 @@ impl StyleProperty {
             "cursor" => Some(Self::Cursor),
             "list-style" => Some(Self::ListStyleType),
             "transform" => Some(Self::Transform),
+            "pointer-events" => Some(Self::PointerEvents),
             _ => None,
         }
     }
@@ -561,6 +563,16 @@ pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
         invalidation: InvalidationClass::Composite,
         interpolation: InterpolationKind::Transform,
     },
+    PropertyMetadata {
+        property: StyleProperty::PointerEvents,
+        css_name: "pointer-events",
+        rust_type: "PointerEvents",
+        value_kind: ValueKind::PointerEvents,
+        initial: "auto",
+        inherited: true,
+        invalidation: InvalidationClass::Accessibility,
+        interpolation: InterpolationKind::Discrete,
+    },
 ];
 
 #[rustfmt::skip]
@@ -699,5 +711,8 @@ impl Style {
     }
     pub fn transform(self, value: TransformList) -> Self {
         self.with(StyleProperty::Transform, value)
+    }
+    pub fn pointer_events(self, value: PointerEvents) -> Self {
+        self.with(StyleProperty::PointerEvents, value)
     }
 }

@@ -151,6 +151,10 @@ typedef enum OuiCursor {
   OUI_CURSOR_TEXT = 3, OUI_CURSOR_MOVE = 4, OUI_CURSOR_NOT_ALLOWED = 5
 } OuiCursor;
 
+typedef enum OuiPointerEvents {
+  OUI_POINTER_EVENTS_AUTO = 0, OUI_POINTER_EVENTS_NONE = 1
+} OuiPointerEvents;
+
 typedef enum OuiListStyleType {
   OUI_LIST_STYLE_NONE = 0, OUI_LIST_STYLE_DISC = 1,
   OUI_LIST_STYLE_DISCLOSURE_OPEN = 2, OUI_LIST_STYLE_DISCLOSURE_CLOSED = 3
@@ -186,6 +190,12 @@ typedef enum OuiEventType {
   OUI_EVENT_COMPOSITION_END = 11,
   OUI_EVENT_FOCUS = 12,
   OUI_EVENT_BLUR = 13,
+  OUI_EVENT_POINTER_ENTER = 14,
+  OUI_EVENT_POINTER_LEAVE = 15,
+  OUI_EVENT_INPUT = 16,
+  OUI_EVENT_CHANGE = 17,
+  OUI_EVENT_BEFORE_INPUT = 18,
+  OUI_EVENT_SCROLL = 19,
 } OuiEventType;
 
 typedef enum OuiEventPhase {
@@ -206,6 +216,24 @@ typedef enum OuiModifiers {
   OUI_MODIFIER_META = 1u << 3,
   OUI_MODIFIER_CAPS_LOCK = 1u << 4
 } OuiModifiers;
+
+typedef enum OuiControlAdjustment {
+  OUI_CONTROL_PREVIOUS = 0,
+  OUI_CONTROL_NEXT = 1,
+  OUI_CONTROL_PAGE_BACKWARD = 2,
+  OUI_CONTROL_PAGE_FORWARD = 3,
+  OUI_CONTROL_MINIMUM = 4,
+  OUI_CONTROL_MAXIMUM = 5
+} OuiControlAdjustment;
+
+typedef enum OuiControlFlags {
+  OUI_CONTROL_DISABLED = 1u << 0,
+  OUI_CONTROL_CHECKED = 1u << 1,
+  OUI_CONTROL_SELECTED = 1u << 2,
+  OUI_CONTROL_OPEN = 1u << 3,
+  OUI_CONTROL_INDETERMINATE = 1u << 4,
+  OUI_CONTROL_PASSWORD = 1u << 5
+} OuiControlFlags;
 
 typedef enum OuiTransformOperationKind {
   OUI_TRANSFORM_TRANSLATE = 1,
@@ -349,6 +377,10 @@ OuiStatus oui_document_update(OuiDocument* document);
 OuiStatus oui_document_render_rgba(OuiDocument* document, OuiBitmap* out_bitmap);
 OuiStatus oui_document_render_png(OuiDocument* document, OuiBuffer** out_buffer);
 OuiStatus oui_document_dispatch_event(OuiDocument* document, OuiElement* target, OuiEvent* event);
+OuiStatus oui_document_dispatch_pointer_event(OuiDocument* document, OuiEvent* event);
+OuiStatus oui_document_hit_test(OuiDocument* document, float x, float y, OuiElement** out_element);
+OuiStatus oui_document_advance_focus(OuiDocument* document, int32_t direction, OuiElement** out_element);
+OuiStatus oui_document_set_modal_root(OuiDocument* document, OuiElement* root);
 
 OuiStatus oui_element_create(OuiDocument* document, OuiElementTag tag, OuiElement** out_element);
 OuiStatus oui_text_create(OuiDocument* document, OuiUtf8 text, OuiElement** out_text);
@@ -368,6 +400,14 @@ OuiStatus oui_element_focus(OuiElement* element);
 OuiStatus oui_element_blur(OuiElement* element);
 OuiStatus oui_element_set_pointer_capture(OuiElement* element, uint32_t pointer_id);
 OuiStatus oui_element_release_pointer_capture(OuiElement* element, uint32_t pointer_id);
+OuiStatus oui_element_set_control_value(OuiElement* element, OuiUtf8 value);
+OuiStatus oui_element_copy_control_value(OuiElement* element, uint8_t* destination, size_t capacity, size_t* out_length);
+OuiStatus oui_element_set_selection(OuiElement* element, size_t anchor, size_t focus);
+OuiStatus oui_element_get_selection(OuiElement* element, size_t* out_anchor, size_t* out_focus);
+OuiStatus oui_element_get_control_flags(OuiElement* element, uint32_t* out_flags);
+OuiStatus oui_element_set_checked(OuiElement* element, uint8_t checked);
+OuiStatus oui_element_set_indeterminate(OuiElement* element, uint8_t indeterminate);
+OuiStatus oui_element_adjust_control(OuiElement* element, OuiControlAdjustment adjustment);
 OuiStatus oui_element_add_event_listener(OuiElement* element, OuiEventType event_type, uint8_t capture, OuiEventCallback callback, void* user_data, OuiListener** out_listener);
 OuiStatus oui_listener_destroy(OuiListener* listener);
 

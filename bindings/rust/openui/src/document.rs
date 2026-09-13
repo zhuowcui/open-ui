@@ -6,7 +6,11 @@ use crate::events::{
 };
 use crate::style::{Bitmap, Error};
 use openui_compositor::SoftwareCompositor;
-use openui_engine::{Engine, NodeHandle, Viewport};
+use openui_dom::FormControlRole;
+use openui_engine::{
+    ControlAdjustment, EditCommand, Engine, EventPhase as EngineEventPhase, FocusOrigin,
+    NodeHandle, PointerEventKind, TextDirection, TextUnit, Viewport,
+};
 use openui_style::ImageResourceId;
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
@@ -19,6 +23,7 @@ pub(crate) struct DocumentInner {
     pub engine: RefCell<Engine>,
     pub listeners: RefCell<HashMap<ListenerKey, Vec<Listener>>>,
     pub resource_provider: RefCell<Option<Box<ResourceProvider>>>,
+    pub clipboard: RefCell<String>,
     transaction_depth: Cell<usize>,
 }
 
@@ -41,6 +46,7 @@ impl Document {
                 engine: RefCell::new(Engine::new(viewport)?),
                 listeners: RefCell::new(HashMap::new()),
                 resource_provider: RefCell::new(None),
+                clipboard: RefCell::new(String::new()),
                 transaction_depth: Cell::new(0),
             }),
         })
@@ -138,21 +144,101 @@ impl Document {
         button: MouseButton,
         modifiers: Modifiers,
     ) -> Result<(), Error> {
-        let target = self.with_engine_mut(|engine| {
-            if let Some(captured) = engine.pointer_capture(0) {
-                Ok(Some(captured))
-            } else {
-                engine.hit_test(x, y)
-            }
-        })?;
-        let Some(target) = target else {
+        self.dispatch_pointer_event(
+            0,
+            match event_type {
+                MouseEventType::Down => PointerEventKind::Down,
+                MouseEventType::Up => PointerEventKind::Up,
+                MouseEventType::Move => PointerEventKind::Move,
+            },
+            x,
+            y,
+            button,
+            modifiers,
+            false,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub fn dispatch_pointer_event(
+        &self,
+        pointer_id: u64,
+        event_type: PointerEventKind,
+        x: f32,
+        y: f32,
+        button: MouseButton,
+        modifiers: Modifiers,
+        pointer_names: bool,
+    ) -> Result<(), Error> {
+        let update =
+            self.with_engine_mut(|engine| engine.pointer_event(pointer_id, event_type, x, y))?;
+        let prefix = if pointer_names { "pointer" } else { "mouse" };
+        for node in update.left {
+            let event = Event::pointer(
+                format!("{prefix}leave"),
+                pointer_id,
+                x,
+                y,
+                button,
+                modifiers,
+            );
+            event.set_phase(EventPhase::Target);
+            self.invoke(node, &event, None)?;
+        }
+        for node in update.entered {
+            let event = Event::pointer(
+                format!("{prefix}enter"),
+                pointer_id,
+                x,
+                y,
+                button,
+                modifiers,
+            );
+            event.set_phase(EventPhase::Target);
+            self.invoke(node, &event, None)?;
+        }
+        let Some(target) = update.target else {
             return Ok(());
         };
-        let event = Event::pointer(event_type.name(), x, y, button, modifiers);
+        let event_name = match (pointer_names, event_type) {
+            (true, PointerEventKind::Down) => "pointerdown",
+            (true, PointerEventKind::Up) => "pointerup",
+            (true, PointerEventKind::Move) => "pointermove",
+            (true, PointerEventKind::Cancel) => "pointercancel",
+            (false, PointerEventKind::Down) => "mousedown",
+            (false, PointerEventKind::Up) => "mouseup",
+            (false, PointerEventKind::Move) => "mousemove",
+            (false, PointerEventKind::Cancel) => "mousecancel",
+        };
+        let event = Event::pointer(event_name, pointer_id, x, y, button, modifiers);
         self.dispatch_to(target, &event)?;
-        if event_type == MouseEventType::Up && !event.default_prevented() {
-            let click = Event::pointer("click", x, y, button, modifiers);
-            self.dispatch_to(target, &click)?;
+        if event.default_prevented() {
+            return Ok(());
+        }
+        if event_type == PointerEventKind::Down {
+            self.focus_from(target, FocusOrigin::Pointer)?;
+        }
+        if let Some((range, fraction)) = update.range_value {
+            if self.with_engine_mut(|engine| engine.set_range_fraction(range, fraction))? {
+                self.dispatch_to(range, &Event::keyboard("input", 0, None, modifiers))?;
+            }
+            if event_type == PointerEventKind::Up {
+                self.dispatch_to(range, &Event::keyboard("change", 0, None, modifiers))?;
+            }
+        }
+        let activation = update
+            .activation
+            .or_else(|| (!pointer_names && event_type == PointerEventKind::Up).then_some(target));
+        if let Some(activation) = activation {
+            let click = Event::pointer("click", pointer_id, x, y, button, modifiers);
+            self.dispatch_to(activation, &click)?;
+            if !click.default_prevented() {
+                let changed = self.with_engine_mut(|engine| engine.activate(activation))?;
+                for changed in changed.changed {
+                    self.dispatch_to(changed, &Event::keyboard("input", 0, None, modifiers))?;
+                    self.dispatch_to(changed, &Event::keyboard("change", 0, None, modifiers))?;
+                }
+            }
         }
         Ok(())
     }
@@ -167,7 +253,135 @@ impl Document {
         let target =
             self.with_engine(|engine| engine.focused().unwrap_or_else(|| engine.root()))?;
         let event = Event::keyboard(event_type.name(), key_code, key_text, modifiers);
-        self.dispatch_to(target, &event)
+        self.dispatch_to(target, &event)?;
+        if event.default_prevented() {
+            return Ok(());
+        }
+        if event_type == KeyEventType::Char {
+            if let Some(text) = key_text.filter(|text| !text.is_empty()) {
+                if self
+                    .with_engine_mut(|engine| engine.insert_text(target, text))
+                    .is_ok()
+                {
+                    self.dispatch_to(target, &Event::keyboard("input", 0, Some(text), modifiers))?;
+                }
+            }
+            return Ok(());
+        }
+        if event_type != KeyEventType::Down {
+            return Ok(());
+        }
+        let key = key_text.unwrap_or_default();
+        if key_code == 9 || key.eq_ignore_ascii_case("tab") {
+            return self.advance_focus(if modifiers.contains(Modifiers::SHIFT) {
+                -1
+            } else {
+                1
+            });
+        }
+        if modifiers.contains(Modifiers::CTRL) || modifiers.contains(Modifiers::META) {
+            match key.to_ascii_lowercase().as_str() {
+                "a" => return self.edit_focused(EditCommand::SelectAll),
+                "z" if modifiers.contains(Modifiers::SHIFT) => {
+                    return self.edit_focused(EditCommand::Redo)
+                }
+                "z" => return self.edit_focused(EditCommand::Undo),
+                "y" => return self.edit_focused(EditCommand::Redo),
+                "c" => return self.copy_selection(false),
+                "x" => return self.copy_selection(true),
+                "v" => return self.paste_clipboard(),
+                _ => {}
+            }
+        }
+        let extend = modifiers.contains(Modifiers::SHIFT);
+        let adjustment = match (key_code, key.to_ascii_lowercase().as_str()) {
+            (37 | 38, _) | (_, "arrowleft" | "arrowup") => Some(ControlAdjustment::Previous),
+            (39 | 40, _) | (_, "arrowright" | "arrowdown") => Some(ControlAdjustment::Next),
+            (33, _) | (_, "pageup") => Some(ControlAdjustment::PageBackward),
+            (34, _) | (_, "pagedown") => Some(ControlAdjustment::PageForward),
+            (36, _) | (_, "home") => Some(ControlAdjustment::Minimum),
+            (35, _) | (_, "end") => Some(ControlAdjustment::Maximum),
+            _ => None,
+        };
+        let adjustable = self.with_engine(|engine| {
+            engine
+                .control_state(target)
+                .ok()
+                .flatten()
+                .is_some_and(|state| {
+                    matches!(
+                        state.role,
+                        FormControlRole::Range | FormControlRole::Radio | FormControlRole::Select
+                    )
+                })
+        })?;
+        if adjustable {
+            if let Some(adjustment) = adjustment {
+                return self.adjust_focused(adjustment);
+            }
+        }
+        let command = match (key_code, key.to_ascii_lowercase().as_str()) {
+            (8, _) | (_, "backspace") => Some(EditCommand::Delete {
+                direction: TextDirection::Backward,
+                unit: if modifiers.contains(Modifiers::CTRL) {
+                    TextUnit::Word
+                } else {
+                    TextUnit::Grapheme
+                },
+            }),
+            (46, _) | (_, "delete") => Some(EditCommand::Delete {
+                direction: TextDirection::Forward,
+                unit: if modifiers.contains(Modifiers::CTRL) {
+                    TextUnit::Word
+                } else {
+                    TextUnit::Grapheme
+                },
+            }),
+            (37, _) | (_, "arrowleft") => Some(EditCommand::Move {
+                direction: TextDirection::Backward,
+                unit: if modifiers.contains(Modifiers::CTRL) {
+                    TextUnit::Word
+                } else {
+                    TextUnit::Grapheme
+                },
+                extend,
+            }),
+            (39, _) | (_, "arrowright") => Some(EditCommand::Move {
+                direction: TextDirection::Forward,
+                unit: if modifiers.contains(Modifiers::CTRL) {
+                    TextUnit::Word
+                } else {
+                    TextUnit::Grapheme
+                },
+                extend,
+            }),
+            (36, _) | (_, "home") => Some(EditCommand::Move {
+                direction: TextDirection::Backward,
+                unit: TextUnit::Line,
+                extend,
+            }),
+            (35, _) | (_, "end") => Some(EditCommand::Move {
+                direction: TextDirection::Forward,
+                unit: TextUnit::Line,
+                extend,
+            }),
+            _ => None,
+        };
+        if let Some(command) = command {
+            return self.edit_focused(command);
+        }
+        if key_code == 13 || key_code == 32 || key == "Enter" || key == " " {
+            let click = Event::keyboard("click", key_code, key_text, modifiers);
+            self.dispatch_to(target, &click)?;
+            if !click.default_prevented() {
+                let changed = self.with_engine_mut(|engine| engine.activate(target))?;
+                for changed in changed.changed {
+                    self.dispatch_to(changed, &Event::keyboard("input", 0, None, modifiers))?;
+                    self.dispatch_to(changed, &Event::keyboard("change", 0, None, modifiers))?;
+                }
+            }
+        }
+        Ok(())
     }
 
     pub fn dispatch_wheel_event(
@@ -180,7 +394,26 @@ impl Document {
     ) -> Result<(), Error> {
         let target = self.with_engine_mut(|engine| engine.hit_test(x, y))?;
         if let Some(target) = target {
-            self.dispatch_to(target, &Event::wheel(x, y, delta_x, delta_y, modifiers))?;
+            let event = Event::wheel(x, y, delta_x, delta_y, modifiers);
+            self.dispatch_to(target, &event)?;
+            if !event.default_prevented() {
+                let mut current = Some(target);
+                while let Some(node) = current {
+                    let scrollable = self.with_engine(|engine| {
+                        engine.computed_style(node).is_ok_and(|style| {
+                            style.overflow_x.is_scrollable() || style.overflow_y.is_scrollable()
+                        })
+                    })?;
+                    if scrollable {
+                        self.with_engine_mut(|engine| {
+                            let (left, top) = engine.scroll_offset(node)?;
+                            engine.scroll_to(node, left + delta_x as f64, top + delta_y as f64)
+                        })?;
+                        break;
+                    }
+                    current = self.with_engine(|engine| engine.parent(node))??;
+                }
+            }
         }
         Ok(())
     }
@@ -190,32 +423,87 @@ impl Document {
         Ok(handle.map(|handle| Element::from_handle(self.clone(), handle)))
     }
 
+    pub fn set_modal_root(&self, root: Option<&Element>) -> Result<(), Error> {
+        if let Some(root) = root {
+            if !Rc::ptr_eq(&self.inner, &root.document.inner) {
+                return Err(openui_engine::EngineError::WrongDocument.into());
+            }
+        }
+        self.with_engine_mut(|engine| engine.set_modal_root(root.map(|root| root.handle)))
+    }
+
     pub fn advance_focus(&self, direction: i32) -> Result<(), Error> {
         if direction != -1 && direction != 1 {
             return Err(Error::InvalidArgument("focus direction must be -1 or 1"));
         }
-        let candidates = self.focus_candidates()?;
-        if candidates.is_empty() {
+        let previous = self.with_engine(|engine| engine.focused())?;
+        let next = self.with_engine_mut(|engine| engine.advance_focus(direction))?;
+        self.dispatch_focus_change(previous, next)
+    }
+
+    pub fn dispatch_text_input(&self, text: &str) -> Result<(), Error> {
+        let Some(target) = self.with_engine(|engine| engine.focused())? else {
             return Ok(());
+        };
+        let before = Event::keyboard("beforeinput", 0, Some(text), Modifiers::NONE);
+        self.dispatch_to(target, &before)?;
+        if !before.default_prevented() {
+            self.with_engine_mut(|engine| engine.insert_text(target, text))?;
+            self.dispatch_to(
+                target,
+                &Event::keyboard("input", 0, Some(text), Modifiers::NONE),
+            )?;
         }
-        let focused = self.with_engine(|engine| engine.focused())?;
-        let index = focused
-            .and_then(|focused| candidates.iter().position(|item| *item == focused))
-            .map(|index| {
-                if direction > 0 {
-                    (index + 1) % candidates.len()
-                } else {
-                    (index + candidates.len() - 1) % candidates.len()
-                }
-            })
-            .unwrap_or_else(|| {
-                if direction > 0 {
-                    0
-                } else {
-                    candidates.len() - 1
-                }
-            });
-        self.with_engine_mut(|engine| engine.focus(candidates[index]))
+        Ok(())
+    }
+
+    pub fn dispatch_composition_start(&self) -> Result<(), Error> {
+        if let Some(target) = self.with_engine(|engine| engine.focused())? {
+            self.dispatch_to(target, &Event::composition("compositionstart", ""))?;
+        }
+        Ok(())
+    }
+
+    pub fn dispatch_composition_update(&self, text: &str) -> Result<(), Error> {
+        let Some(target) = self.with_engine(|engine| engine.focused())? else {
+            return Ok(());
+        };
+        let event = Event::composition("compositionupdate", text);
+        self.dispatch_to(target, &event)?;
+        if !event.default_prevented() {
+            self.with_engine_mut(|engine| engine.update_composition(target, text))?;
+        }
+        Ok(())
+    }
+
+    pub fn dispatch_composition_end(&self, text: &str) -> Result<(), Error> {
+        let Some(target) = self.with_engine(|engine| engine.focused())? else {
+            return Ok(());
+        };
+        self.with_engine_mut(|engine| engine.finish_composition(target))?;
+        self.dispatch_to(target, &Event::composition("compositionend", text))?;
+        self.dispatch_to(
+            target,
+            &Event::keyboard("input", 0, Some(text), Modifiers::NONE),
+        )
+    }
+
+    pub fn clipboard_text(&self) -> Result<String, Error> {
+        Ok(self
+            .inner
+            .clipboard
+            .try_borrow()
+            .map_err(|_| Error::ReentrantMutation)?
+            .clone())
+    }
+
+    pub fn set_clipboard_text(&self, text: impl Into<String>) -> Result<(), Error> {
+        *self
+            .inner
+            .clipboard
+            .try_borrow_mut()
+            .map_err(|_| Error::ReentrantMutation)? = text.into();
+        Ok(())
     }
 
     pub fn set_resource_provider<F>(&self, callback: F) -> Result<(), Error>
@@ -343,68 +631,18 @@ impl Document {
         })
     }
 
-    fn focus_candidates(&self) -> Result<Vec<NodeHandle>, Error> {
-        self.with_engine(|engine| {
-            fn collect(engine: &Engine, node: NodeHandle, result: &mut Vec<NodeHandle>) {
-                let focusable_tag = engine.element_tag(node).is_ok_and(|tag| {
-                    matches!(
-                        tag,
-                        openui_dom::ElementTag::Button
-                            | openui_dom::ElementTag::Input
-                            | openui_dom::ElementTag::TextArea
-                            | openui_dom::ElementTag::Select
-                    )
-                });
-                let explicit = engine
-                    .attribute(node, "tabindex")
-                    .ok()
-                    .flatten()
-                    .and_then(|value| value.parse::<i32>().ok())
-                    .is_some_and(|value| value >= 0);
-                if focusable_tag || explicit {
-                    result.push(node);
-                }
-                if let Ok(children) = engine.children(node) {
-                    for child in children {
-                        collect(engine, child, result);
-                    }
-                }
-            }
-            let mut result = Vec::new();
-            collect(engine, engine.root(), &mut result);
-            result
-        })
-    }
-
     fn dispatch_to(&self, target: NodeHandle, event: &Event) -> Result<(), Error> {
-        let path = self.with_engine(|engine| {
-            let mut path = vec![target];
-            let mut current = target;
-            while let Ok(Some(parent)) = engine.parent(current) {
-                path.push(parent);
-                current = parent;
-            }
-            path
-        })?;
-
-        for node in path.iter().skip(1).rev() {
-            event.set_phase(EventPhase::Capture);
-            self.invoke(*node, event, Some(true))?;
+        let route = self.with_engine(|engine| engine.event_route(target))??;
+        for step in route.steps {
+            let (phase, capture) = match step.phase {
+                EngineEventPhase::Capture => (EventPhase::Capture, Some(true)),
+                EngineEventPhase::Target => (EventPhase::Target, None),
+                EngineEventPhase::Bubble => (EventPhase::Bubble, Some(false)),
+            };
+            event.set_phase(phase);
+            self.invoke(step.node, event, capture)?;
             if event.propagation_stopped() {
                 return Ok(());
-            }
-        }
-        event.set_phase(EventPhase::Target);
-        self.invoke(target, event, Some(true))?;
-        self.invoke(target, event, Some(false))?;
-        if event.propagation_stopped() {
-            return Ok(());
-        }
-        for node in path.iter().skip(1) {
-            event.set_phase(EventPhase::Bubble);
-            self.invoke(*node, event, Some(false))?;
-            if event.propagation_stopped() {
-                break;
             }
         }
         Ok(())
@@ -424,7 +662,258 @@ impl Document {
             .collect();
         for callback in callbacks {
             callback(event);
+            if event.immediate_propagation_stopped() {
+                break;
+            }
         }
         Ok(())
+    }
+
+    fn focus_from(&self, target: NodeHandle, origin: FocusOrigin) -> Result<(), Error> {
+        let outcome = self.with_engine_mut(|engine| engine.focus_with_origin(target, origin));
+        let Ok(previous) = outcome else {
+            return Ok(());
+        };
+        self.dispatch_focus_change(previous, Some(target))
+    }
+
+    fn dispatch_focus_change(
+        &self,
+        previous: Option<NodeHandle>,
+        next: Option<NodeHandle>,
+    ) -> Result<(), Error> {
+        if previous == next {
+            return Ok(());
+        }
+        if let Some(previous) = previous {
+            self.dispatch_to(previous, &Event::keyboard("blur", 0, None, Modifiers::NONE))?;
+        }
+        if let Some(next) = next {
+            self.dispatch_to(next, &Event::keyboard("focus", 0, None, Modifiers::NONE))?;
+        }
+        Ok(())
+    }
+
+    fn edit_focused(&self, command: EditCommand) -> Result<(), Error> {
+        let Some(target) = self.with_engine(|engine| engine.focused())? else {
+            return Ok(());
+        };
+        let changed = self.with_engine(|engine| {
+            engine
+                .control_state(target)
+                .map(|state| state.map(|state| state.value.clone()))
+        })??;
+        if self
+            .with_engine_mut(|engine| engine.edit_text(target, command))
+            .is_err()
+        {
+            return Ok(());
+        }
+        let after = self.with_engine(|engine| {
+            engine
+                .control_state(target)
+                .map(|state| state.map(|state| state.value.clone()))
+        })??;
+        if changed != after {
+            self.dispatch_to(target, &Event::keyboard("input", 0, None, Modifiers::NONE))?;
+        }
+        Ok(())
+    }
+
+    fn copy_selection(&self, cut: bool) -> Result<(), Error> {
+        let Some(target) = self.with_engine(|engine| engine.focused())? else {
+            return Ok(());
+        };
+        let selection = self.with_engine(|engine| {
+            engine.control_state(target).map(|state| {
+                state.map(|state| {
+                    let (start, end) = state.selection();
+                    state.value[start..end].to_owned()
+                })
+            })
+        })??;
+        let Some(selection) = selection else {
+            return Ok(());
+        };
+        self.set_clipboard_text(selection)?;
+        if cut {
+            self.edit_focused(EditCommand::Delete {
+                direction: TextDirection::Backward,
+                unit: TextUnit::Grapheme,
+            })?;
+        }
+        Ok(())
+    }
+
+    fn paste_clipboard(&self) -> Result<(), Error> {
+        let text = self.clipboard_text()?;
+        self.dispatch_text_input(&text)
+    }
+
+    fn adjust_focused(&self, adjustment: ControlAdjustment) -> Result<(), Error> {
+        let Some(target) = self.with_engine(|engine| engine.focused())? else {
+            return Ok(());
+        };
+        let result = self.with_engine_mut(|engine| engine.adjust_control(target, adjustment))?;
+        for changed in result.changed {
+            self.dispatch_to(changed, &Event::keyboard("input", 0, None, Modifiers::NONE))?;
+            self.dispatch_to(
+                changed,
+                &Event::keyboard("change", 0, None, Modifiers::NONE),
+            )?;
+        }
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{Element, StyleProperty};
+    use openui_style::{Display, LengthValue};
+    use std::cell::Cell;
+    use std::rc::Rc;
+
+    fn mounted(document: &Document, tag: &str) -> Element {
+        let element = Element::create(document, tag).unwrap();
+        document.body().append_child(&element).unwrap();
+        element
+            .set_property(StyleProperty::Display, Display::Block.into())
+            .unwrap();
+        element
+            .set_property(StyleProperty::Width, LengthValue::px(40.0).into())
+            .unwrap();
+        element
+            .set_property(StyleProperty::Height, LengthValue::px(40.0).into())
+            .unwrap();
+        element
+    }
+
+    #[test]
+    fn headless_text_input_handles_graphemes_clipboard_undo_and_composition() {
+        let document = Document::new(200, 100).unwrap();
+        let input = mounted(&document, "input");
+        input.focus().unwrap();
+        document.dispatch_text_input("a👩‍💻").unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("a👩‍💻"));
+
+        document
+            .dispatch_key_event(KeyEventType::Down, 8, Some("Backspace"), Modifiers::NONE)
+            .unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("a"));
+        document
+            .dispatch_key_event(KeyEventType::Down, 90, Some("z"), Modifiers::CTRL)
+            .unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("a👩‍💻"));
+
+        input.set_selection(0, 1).unwrap();
+        document
+            .dispatch_key_event(KeyEventType::Down, 67, Some("c"), Modifiers::CTRL)
+            .unwrap();
+        assert_eq!(document.clipboard_text().unwrap(), "a");
+        let end = input.control_value().unwrap().unwrap().len();
+        input.set_selection(end, end).unwrap();
+        document
+            .dispatch_key_event(KeyEventType::Down, 86, Some("v"), Modifiers::CTRL)
+            .unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("a👩‍💻a"));
+
+        document.dispatch_composition_start().unwrap();
+        document.dispatch_composition_update("é").unwrap();
+        document.dispatch_composition_update("東").unwrap();
+        document.dispatch_composition_end("東").unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("a👩‍💻a東"));
+    }
+
+    #[test]
+    fn pointer_and_keyboard_defaults_drive_controls_after_dispatch() {
+        let document = Document::new(200, 100).unwrap();
+        let checkbox = mounted(&document, "input");
+        checkbox.set_attribute("type", "checkbox").unwrap();
+        let changes = Rc::new(Cell::new(0));
+        let observed = changes.clone();
+        checkbox
+            .on("change", move |_| observed.set(observed.get() + 1))
+            .unwrap();
+        document
+            .dispatch_pointer_event(
+                4,
+                PointerEventKind::Down,
+                10.0,
+                10.0,
+                MouseButton::Left,
+                Modifiers::NONE,
+                true,
+            )
+            .unwrap();
+        document
+            .dispatch_pointer_event(
+                4,
+                PointerEventKind::Up,
+                10.0,
+                10.0,
+                MouseButton::Left,
+                Modifiers::NONE,
+                true,
+            )
+            .unwrap();
+        assert!(checkbox.is_checked().unwrap());
+        assert_eq!(changes.get(), 1);
+
+        let range = mounted(&document, "input");
+        range.set_attribute("type", "range").unwrap();
+        range.set_attribute("min", "0").unwrap();
+        range.set_attribute("max", "10").unwrap();
+        range.set_attribute("step", "2").unwrap();
+        range.set_control_value("4").unwrap();
+        range.focus().unwrap();
+        document
+            .dispatch_key_event(KeyEventType::Down, 39, Some("ArrowRight"), Modifiers::NONE)
+            .unwrap();
+        assert_eq!(range.control_value().unwrap().as_deref(), Some("6"));
+        document
+            .dispatch_pointer_event(
+                5,
+                PointerEventKind::Down,
+                38.0,
+                60.0,
+                MouseButton::Left,
+                Modifiers::NONE,
+                true,
+            )
+            .unwrap();
+        document
+            .dispatch_pointer_event(
+                5,
+                PointerEventKind::Up,
+                38.0,
+                60.0,
+                MouseButton::Left,
+                Modifiers::NONE,
+                true,
+            )
+            .unwrap();
+        assert_eq!(range.control_value().unwrap().as_deref(), Some("10"));
+    }
+
+    #[test]
+    fn tab_order_skips_disabled_controls_and_modal_focus_restores() {
+        let document = Document::new(200, 200).unwrap();
+        let first = mounted(&document, "button");
+        let disabled = mounted(&document, "button");
+        disabled.set_attribute("disabled", "").unwrap();
+        let last = mounted(&document, "button");
+        document.advance_focus(1).unwrap();
+        assert!(first.has_focus().unwrap());
+        document.advance_focus(1).unwrap();
+        assert!(last.has_focus().unwrap());
+
+        let modal = mounted(&document, "div");
+        let modal_button = Element::create(&document, "button").unwrap();
+        modal.append_child(&modal_button).unwrap();
+        document.set_modal_root(Some(&modal)).unwrap();
+        assert!(modal_button.has_focus().unwrap());
+        document.set_modal_root(None).unwrap();
+        assert!(last.has_focus().unwrap());
     }
 }

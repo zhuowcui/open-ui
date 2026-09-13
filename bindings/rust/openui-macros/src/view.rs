@@ -156,6 +156,10 @@ fn style_value_tokens(value: openui_style::StyleValue) -> TokenStream {
         StyleValue::Transform(_) => quote!(::openui::typed_style::StyleValue::Transform(
             ::openui::typed_style::TransformList::default()
         )),
+        StyleValue::PointerEvents(v) => {
+            let v = enum_tokens(quote!(::openui::typed_style::PointerEvents), v);
+            quote!(::openui::typed_style::StyleValue::PointerEvents(#v))
+        }
     }
 }
 

@@ -33,6 +33,7 @@ pub(crate) struct DocumentState {
     pub update_depth: Cell<u32>,
     pub listeners: RefCell<Vec<ListenerRecord>>,
     pub next_listener: Cell<u64>,
+    pub element_handles: RefCell<HashMap<NodeHandle, Vec<usize>>>,
 }
 
 #[derive(Clone)]

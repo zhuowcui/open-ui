@@ -29,6 +29,7 @@ pub enum ValueKind {
     Cursor,
     ListStyle,
     Transform,
+    PointerEvents,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
@@ -170,6 +171,13 @@ pub enum Cursor {
     NotAllowed,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum PointerEvents {
+    Auto,
+    None,
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum TransformOperation {
     Translate(LengthValue, LengthValue),
@@ -203,6 +211,7 @@ pub enum StyleValue {
     Cursor(Cursor),
     ListStyle(ListStyleType),
     Transform(TransformList),
+    PointerEvents(PointerEvents),
 }
 
 macro_rules! impl_style_value {
@@ -235,6 +244,7 @@ impl_style_value!(CornerRadii, CornerRadii);
 impl_style_value!(Cursor, Cursor);
 impl_style_value!(ListStyleType, ListStyle);
 impl_style_value!(TransformList, Transform);
+impl_style_value!(PointerEvents, PointerEvents);
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Declaration {
@@ -553,6 +563,12 @@ pub fn parse_literal(property: StyleProperty, input: &str) -> Result<StyleValue,
                 None
             }
         }
+        P::PointerEvents => match input {
+            "auto" => Some(PointerEvents::Auto),
+            "none" => Some(PointerEvents::None),
+            _ => None,
+        }
+        .map(StyleValue::PointerEvents),
     };
     result.ok_or_else(|| invalid(property, input))
 }
@@ -699,6 +715,7 @@ pub fn apply_to_computed(
             style.transform = matrix;
         }
         (P::Cursor, StyleValue::Cursor(_)) => {}
+        (P::PointerEvents, StyleValue::PointerEvents(v)) => style.pointer_events = *v,
         _ => return Err(mismatch()),
     }
     Ok(property.metadata().invalidation)

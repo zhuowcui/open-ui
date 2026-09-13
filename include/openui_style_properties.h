@@ -52,6 +52,7 @@ typedef enum OuiStyleProperty {
   OUI_STYLE_PROPERTY_CURSOR = 43,
   OUI_STYLE_PROPERTY_LIST_STYLE = 44,
   OUI_STYLE_PROPERTY_TRANSFORM = 45,
+  OUI_STYLE_PROPERTY_POINTER_EVENTS = 46,
 } OuiStyleProperty;
 
 typedef enum OuiStyleValueTag {

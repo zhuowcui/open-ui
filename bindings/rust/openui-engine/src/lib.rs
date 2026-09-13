@@ -1,5 +1,12 @@
 //! Retained, thread-affine Open UI document engine.
 
+mod interaction;
+
+pub use interaction::{
+    ActivationResult, ControlAdjustment, ControlState, EditCommand, EventPhase, EventRoute,
+    FocusOrigin, PointerEventKind, PointerUpdate, RouteStep, TextDirection, TextUnit,
+};
+
 use openui_compositor::{SceneGeneration, SceneRect, SceneSnapshot};
 use openui_dom::{
     Document as NativeDocument, ElementTag, NodeId, ReplacedContent, ReplacedResourceKind,
@@ -81,6 +88,11 @@ pub enum EngineError {
     InvalidSibling,
     PropertyType { property: StyleProperty },
     UnknownResource,
+    InvalidInput(&'static str),
+    InvalidSelection,
+    NotAControl,
+    NotEditable,
+    NotFocusable,
     Render(String),
 }
 
@@ -99,6 +111,11 @@ impl std::fmt::Display for EngineError {
                 write!(f, "wrong value type for `{}`", property.metadata().css_name)
             }
             Self::UnknownResource => f.write_str("resource does not belong to this document"),
+            Self::InvalidInput(message) => f.write_str(message),
+            Self::InvalidSelection => f.write_str("selection is outside the control value"),
+            Self::NotAControl => f.write_str("node is not a form control"),
+            Self::NotEditable => f.write_str("control is not editable"),
+            Self::NotFocusable => f.write_str("node is not focusable"),
             Self::Render(value) => write!(f, "render failed: {value}"),
         }
     }
@@ -131,9 +148,84 @@ struct Slot {
 }
 
 #[derive(Debug, Clone, Copy)]
+struct Affine {
+    a: f32,
+    b: f32,
+    c: f32,
+    d: f32,
+    e: f32,
+    f: f32,
+}
+
+impl Affine {
+    const IDENTITY: Self = Self {
+        a: 1.0,
+        b: 0.0,
+        c: 0.0,
+        d: 1.0,
+        e: 0.0,
+        f: 0.0,
+    };
+
+    fn translate(x: f32, y: f32) -> Self {
+        Self {
+            e: x,
+            f: y,
+            ..Self::IDENTITY
+        }
+    }
+
+    fn then(self, rhs: Self) -> Self {
+        Self {
+            a: self.a * rhs.a + self.c * rhs.b,
+            b: self.b * rhs.a + self.d * rhs.b,
+            c: self.a * rhs.c + self.c * rhs.d,
+            d: self.b * rhs.c + self.d * rhs.d,
+            e: self.a * rhs.e + self.c * rhs.f + self.e,
+            f: self.b * rhs.e + self.d * rhs.f + self.f,
+        }
+    }
+
+    fn inverse(self) -> Option<Self> {
+        let determinant = self.a * self.d - self.b * self.c;
+        if !determinant.is_finite() || determinant.abs() < f32::EPSILON {
+            return None;
+        }
+        let inverse = determinant.recip();
+        Some(Self {
+            a: self.d * inverse,
+            b: -self.b * inverse,
+            c: -self.c * inverse,
+            d: self.a * inverse,
+            e: (self.c * self.f - self.d * self.e) * inverse,
+            f: (self.b * self.e - self.a * self.f) * inverse,
+        })
+    }
+
+    fn map(self, x: f32, y: f32) -> (f32, f32) {
+        (
+            self.a * x + self.c * y + self.e,
+            self.b * x + self.d * y + self.f,
+        )
+    }
+}
+
+#[derive(Debug, Clone)]
+struct HitClip {
+    world_to_local: Affine,
+    width: f32,
+    height: f32,
+    radii: [(f32, f32); 4],
+}
+
+#[derive(Debug, Clone)]
 struct HitEntry {
     node: NodeId,
-    rect: SceneRect,
+    local_to_world: Affine,
+    world_to_local: Affine,
+    width: f32,
+    height: f32,
+    clips: Vec<HitClip>,
 }
 
 #[derive(Debug, Clone, Copy, Default)]
@@ -142,6 +234,7 @@ struct DirtyState {
     paint: bool,
     compositing: bool,
     accessibility: bool,
+    hit_test: bool,
 }
 
 impl DirtyState {
@@ -166,6 +259,12 @@ pub struct Engine {
     hit_test: Vec<HitEntry>,
     focused: Option<NodeHandle>,
     pointer_capture: HashMap<u64, NodeHandle>,
+    hover_paths: HashMap<u64, Vec<NodeHandle>>,
+    active_pointers: HashMap<u64, NodeHandle>,
+    controls: HashMap<u32, ControlState>,
+    focus_visible: bool,
+    modal_root: Option<NodeHandle>,
+    focus_before_modal: Option<NodeHandle>,
     animation_time_ms: f64,
     stats: LifecycleStats,
     _thread_affine: PhantomData<Rc<()>>,
@@ -199,6 +298,7 @@ impl Engine {
                 paint: true,
                 compositing: true,
                 accessibility: true,
+                hit_test: true,
             },
             dirty_generations: DirtyGenerations::default(),
             latest_fragment: None,
@@ -206,6 +306,12 @@ impl Engine {
             hit_test: Vec::new(),
             focused: None,
             pointer_capture: HashMap::new(),
+            hover_paths: HashMap::new(),
+            active_pointers: HashMap::new(),
+            controls: HashMap::new(),
+            focus_visible: false,
+            modal_root: None,
+            focus_before_modal: None,
             animation_time_ms: 0.0,
             stats: LifecycleStats::default(),
             _thread_affine: PhantomData,
@@ -270,8 +376,10 @@ impl Engine {
             index
         };
         self.node_slots.insert(node, index);
+        let handle = self.handle_for_slot(index);
+        self.initialize_control(handle, tag);
         self.mark_dirty(InvalidationClass::Subtree);
-        Ok(self.handle_for_slot(index))
+        Ok(handle)
     }
 
     pub fn create_text(&mut self, text: impl Into<String>) -> Result<NodeHandle, EngineError> {
@@ -401,8 +509,21 @@ impl Engine {
         }
         self.pointer_capture
             .retain(|_, captured| !removed_handles.contains(captured));
+        self.active_pointers
+            .retain(|_, active| !removed_handles.contains(active));
+        self.hover_paths.retain(|_, path| {
+            path.retain(|node| !removed_handles.contains(node));
+            !path.is_empty()
+        });
+        if self
+            .modal_root
+            .is_some_and(|modal| removed_handles.contains(&modal))
+        {
+            self.modal_root = None;
+        }
         for node in descendants {
             if let Some(index) = self.node_slots.remove(&node) {
+                self.controls.remove(&index);
                 let slot = &mut self.slots[index as usize];
                 slot.node = None;
                 slot.authored.clear();
@@ -436,24 +557,21 @@ impl Engine {
         value: impl Into<String>,
     ) -> Result<(), EngineError> {
         let node = self.resolve(handle)?;
-        let name = name.into();
+        let name = name.into().to_ascii_lowercase();
         let value = value.into();
         if self.document.node(node).attributes.get(&name) == Some(&value) {
             return Ok(());
         }
-        self.document.set_attribute(node, name, value);
+        self.document
+            .set_attribute(node, name.clone(), value.clone());
+        self.sync_control_attribute(handle, &name, &value);
         self.mark_dirty(InvalidationClass::Accessibility);
         Ok(())
     }
 
     pub fn attribute(&self, handle: NodeHandle, name: &str) -> Result<Option<&str>, EngineError> {
         let node = self.resolve(handle)?;
-        Ok(self
-            .document
-            .node(node)
-            .attributes
-            .get(name)
-            .map(String::as_str))
+        Ok(self.document.attribute(node, name))
     }
 
     pub fn remove_attribute(
@@ -466,9 +584,10 @@ impl Engine {
             .document
             .node_mut(node)
             .attributes
-            .remove(name)
+            .remove(&name.to_ascii_lowercase())
             .is_some();
         if removed {
+            self.remove_control_attribute(handle, &name.to_ascii_lowercase());
             self.mark_dirty(InvalidationClass::Accessibility);
         }
         Ok(removed)
@@ -498,6 +617,7 @@ impl Engine {
         self.slots[handle.index as usize]
             .authored
             .insert(property as u16, value);
+        self.dirty.hit_test = true;
         self.mark_dirty(property.metadata().invalidation);
         Ok(())
     }
@@ -567,23 +687,28 @@ impl Engine {
         }
         data.scroll_left = x;
         data.scroll_top = y;
+        self.dirty.hit_test = true;
         self.mark_dirty(InvalidationClass::Composite);
         Ok(())
     }
 
     pub fn focus(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
-        self.resolve(handle)?;
-        if self.focused != Some(handle) {
-            self.focused = Some(handle);
-            self.mark_dirty(InvalidationClass::Accessibility);
-        }
-        Ok(())
+        self.focus_with_origin(handle, FocusOrigin::Script)
+            .map(|_| ())
     }
 
     pub fn blur(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
         self.resolve(handle)?;
         if self.focused == Some(handle) {
             self.focused = None;
+            self.focus_visible = false;
+            if let Ok(node) = self.resolve(handle) {
+                self.document
+                    .node_mut(node)
+                    .attributes
+                    .remove("data-oui-focused");
+            }
+            self.dirty.paint = true;
             self.mark_dirty(InvalidationClass::Accessibility);
         }
         Ok(())
@@ -634,6 +759,12 @@ impl Engine {
     }
 
     pub fn update(&mut self) -> Result<&SceneSnapshot, EngineError> {
+        if self.dirty.hit_test && !self.dirty.layout {
+            if let Some(fragment) = self.latest_fragment.clone() {
+                self.rebuild_hit_test(&fragment);
+            }
+            self.dirty.hit_test = false;
+        }
         if !self.dirty.visual() {
             self.dirty.accessibility = false;
             return self
@@ -690,10 +821,12 @@ impl Engine {
     pub fn hit_test(&mut self, x: f32, y: f32) -> Result<Option<NodeHandle>, EngineError> {
         self.update()?;
         for entry in self.hit_test.iter().rev() {
-            if x >= entry.rect.x
-                && y >= entry.rect.y
-                && x < entry.rect.x + entry.rect.width
-                && y < entry.rect.y + entry.rect.height
+            let (local_x, local_y) = entry.world_to_local.map(x, y);
+            if rounded_rect_contains(local_x, local_y, entry.width, entry.height, [(0.0, 0.0); 4])
+                && entry.clips.iter().all(|clip| {
+                    let (clip_x, clip_y) = clip.world_to_local.map(x, y);
+                    rounded_rect_contains(clip_x, clip_y, clip.width, clip.height, clip.radii)
+                })
             {
                 if let Some(index) = self.node_slots.get(&entry.node) {
                     return Ok(Some(self.handle_for_slot(*index)));
@@ -711,7 +844,36 @@ impl Engine {
             .iter()
             .rev()
             .find(|entry| entry.node == node)
-            .map(|entry| entry.rect))
+            .map(|entry| {
+                let corners = [
+                    entry.local_to_world.map(0.0, 0.0),
+                    entry.local_to_world.map(entry.width, 0.0),
+                    entry.local_to_world.map(0.0, entry.height),
+                    entry.local_to_world.map(entry.width, entry.height),
+                ];
+                let min_x = corners
+                    .iter()
+                    .map(|point| point.0)
+                    .fold(f32::INFINITY, f32::min);
+                let max_x = corners
+                    .iter()
+                    .map(|point| point.0)
+                    .fold(f32::NEG_INFINITY, f32::max);
+                let min_y = corners
+                    .iter()
+                    .map(|point| point.1)
+                    .fold(f32::INFINITY, f32::min);
+                let max_y = corners
+                    .iter()
+                    .map(|point| point.1)
+                    .fold(f32::NEG_INFINITY, f32::max);
+                SceneRect {
+                    x: min_x,
+                    y: min_y,
+                    width: max_x - min_x,
+                    height: max_y - min_y,
+                }
+            }))
     }
 
     fn handle_for_slot(&self, index: u32) -> NodeHandle {
@@ -768,35 +930,179 @@ impl Engine {
         }
     }
     fn rebuild_hit_test(&mut self, fragment: &Fragment) {
-        fn walk(fragment: &Fragment, x: f32, y: f32, out: &mut Vec<HitEntry>) {
-            let x = x + fragment.offset.left.to_f32();
-            let y = y + fragment.offset.top.to_f32();
-            if !fragment.node_id.is_none() {
-                out.push(HitEntry {
-                    node: fragment.node_id,
-                    rect: SceneRect {
-                        x,
-                        y,
-                        width: fragment.size.width.to_f32(),
-                        height: fragment.size.height.to_f32(),
-                    },
-                });
+        fn resolve_origin(length: &openui_geometry::Length, size: f32) -> f32 {
+            if length.is_fixed() {
+                length.value()
+            } else if length.is_percent() {
+                length.value() * size / 100.0
+            } else if length.is_calculated() {
+                length.calc_offset() + length.value() * size / 100.0
+            } else {
+                size * 0.5
             }
-            for child in &fragment.children {
-                walk(child, x, y, out);
+        }
+        fn walk(
+            document: &NativeDocument,
+            fragment: &Fragment,
+            parent_world: Affine,
+            inherited_clips: &[HitClip],
+            out: &mut Vec<HitEntry>,
+        ) {
+            let width = fragment.size.width.to_f32();
+            let height = fragment.size.height.to_f32();
+            let translated = parent_world.then(Affine::translate(
+                fragment.offset.left.to_f32(),
+                fragment.offset.top.to_f32(),
+            ));
+            let (world, node_style) = if fragment.node_id.is_none() {
+                (translated, None)
+            } else {
+                let style = &document.node(fragment.node_id).style;
+                let transform = style.transform;
+                let origin_x = resolve_origin(&style.transform_origin.0, width);
+                let origin_y = resolve_origin(&style.transform_origin.1, height);
+                let transform = Affine {
+                    a: transform.a,
+                    b: transform.b,
+                    c: transform.c,
+                    d: transform.d,
+                    e: transform.e,
+                    f: transform.f,
+                };
+                (
+                    translated
+                        .then(Affine::translate(origin_x, origin_y))
+                        .then(transform)
+                        .then(Affine::translate(-origin_x, -origin_y)),
+                    Some(style),
+                )
+            };
+            let Some(world_to_local) = world.inverse() else {
+                return;
+            };
+            let mut own_clips = inherited_clips.to_vec();
+            if let Some(style) = node_style {
+                if let Some(inset) = style.clip_path_inset {
+                    let resolve = |length: &openui_geometry::Length, size: f32| {
+                        if length.is_fixed() {
+                            length.value()
+                        } else if length.is_percent() {
+                            length.value() * size / 100.0
+                        } else {
+                            0.0
+                        }
+                    };
+                    let top = resolve(&inset[0], height);
+                    let right = resolve(&inset[1], width);
+                    let bottom = resolve(&inset[2], height);
+                    let left = resolve(&inset[3], width);
+                    let clipped_world = world.then(Affine::translate(left, top));
+                    if let Some(inverse) = clipped_world.inverse() {
+                        own_clips.push(HitClip {
+                            world_to_local: inverse,
+                            width: (width - left - right).max(0.0),
+                            height: (height - top - bottom).max(0.0),
+                            radii: [(0.0, 0.0); 4],
+                        });
+                    }
+                }
+                let node = document.node(fragment.node_id);
+                let pointer_eligible = node.tag != ElementTag::Text
+                    && style.visibility == openui_style::Visibility::Visible
+                    && style.pointer_events == openui_style::PointerEvents::Auto;
+                if pointer_eligible && width > 0.0 && height > 0.0 {
+                    out.push(HitEntry {
+                        node: fragment.node_id,
+                        local_to_world: world,
+                        world_to_local,
+                        width,
+                        height,
+                        clips: own_clips.clone(),
+                    });
+                }
+                if fragment.has_overflow_clip {
+                    own_clips.push(HitClip {
+                        world_to_local,
+                        width,
+                        height,
+                        radii: if fragment.ignore_border_radius {
+                            [(0.0, 0.0); 4]
+                        } else {
+                            [
+                                style.border_top_left_radius,
+                                style.border_top_right_radius,
+                                style.border_bottom_right_radius,
+                                style.border_bottom_left_radius,
+                            ]
+                        },
+                    });
+                }
+            }
+            let child_world = if fragment.node_id.is_none() {
+                world
+            } else {
+                let node = document.node(fragment.node_id);
+                world.then(Affine::translate(-node.scroll_left, -node.scroll_top))
+            };
+            let mut children: Vec<_> = fragment.children.iter().enumerate().collect();
+            children.sort_by_key(|(order, child)| {
+                let z = if child.node_id.is_none() {
+                    0
+                } else {
+                    document.node(child.node_id).style.z_index.unwrap_or(0)
+                };
+                (z, *order)
+            });
+            for (_, child) in children {
+                walk(document, child, child_world, &own_clips, out);
             }
         }
         let mut entries = Vec::new();
-        walk(fragment, 0.0, 0.0, &mut entries);
+        walk(
+            &self.document,
+            fragment,
+            Affine::IDENTITY,
+            &[],
+            &mut entries,
+        );
         self.hit_test = entries;
     }
+}
+
+fn rounded_rect_contains(x: f32, y: f32, width: f32, height: f32, radii: [(f32, f32); 4]) -> bool {
+    if x < 0.0 || y < 0.0 || x >= width || y >= height {
+        return false;
+    }
+    let corners = [
+        (radii[0], radii[0].0, radii[0].1),
+        (radii[1], width - radii[1].0, radii[1].1),
+        (radii[2], width - radii[2].0, height - radii[2].1),
+        (radii[3], radii[3].0, height - radii[3].1),
+    ];
+    for (index, ((radius_x, radius_y), center_x, center_y)) in corners.into_iter().enumerate() {
+        let in_corner = match index {
+            0 => x < center_x && y < center_y,
+            1 => x > center_x && y < center_y,
+            2 => x > center_x && y > center_y,
+            _ => x < center_x && y > center_y,
+        };
+        if in_corner && radius_x > 0.0 && radius_y > 0.0 {
+            let dx = (x - center_x) / radius_x;
+            let dy = (y - center_y) / radius_y;
+            return dx * dx + dy * dy <= 1.0;
+        }
+    }
+    true
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use openui_compositor::SoftwareCompositor;
-    use openui_style::{Color, Display, LengthValue};
+    use openui_style::{
+        Color, CornerRadii, Display, Edges, LengthValue, Overflow, TransformList,
+        TransformOperation,
+    };
 
     #[test]
     fn stale_and_cross_document_handles_are_rejected() {
@@ -882,6 +1188,73 @@ mod tests {
         let frame = SoftwareCompositor::default().render(&scene).unwrap();
         assert_eq!((frame.width, frame.height), (64, 64));
         assert!(frame.pixels.iter().any(|v| *v != 255));
+    }
+
+    #[test]
+    fn hit_testing_respects_transforms_pointer_eligibility_and_rounded_clips() {
+        let mut engine = Engine::new(Viewport::new(100, 100).unwrap()).unwrap();
+        let root = engine.root();
+        let transformed = engine.create_element(ElementTag::Div).unwrap();
+        engine.append_child(root, transformed).unwrap();
+        for (property, value) in [
+            (StyleProperty::Display, Display::Block.into()),
+            (StyleProperty::Width, LengthValue::px(20.0).into()),
+            (StyleProperty::Height, LengthValue::px(20.0).into()),
+        ] {
+            engine.set_property(transformed, property, value).unwrap();
+        }
+        engine
+            .set_property(
+                transformed,
+                StyleProperty::Transform,
+                TransformList(vec![TransformOperation::Translate(
+                    LengthValue::px(40.0),
+                    LengthValue::px(0.0),
+                )])
+                .into(),
+            )
+            .unwrap();
+        assert_eq!(engine.hit_test(45.0, 5.0).unwrap(), Some(transformed));
+
+        engine
+            .set_property(
+                transformed,
+                StyleProperty::PointerEvents,
+                openui_style::PointerEvents::None.into(),
+            )
+            .unwrap();
+        assert_ne!(engine.hit_test(45.0, 5.0).unwrap(), Some(transformed));
+
+        let clip = engine.create_element(ElementTag::Div).unwrap();
+        let child = engine.create_element(ElementTag::Div).unwrap();
+        engine.append_child(root, clip).unwrap();
+        engine.append_child(clip, child).unwrap();
+        for node in [clip, child] {
+            engine
+                .set_property(node, StyleProperty::Display, Display::Block.into())
+                .unwrap();
+            engine
+                .set_property(node, StyleProperty::Width, LengthValue::px(40.0).into())
+                .unwrap();
+            engine
+                .set_property(node, StyleProperty::Height, LengthValue::px(40.0).into())
+                .unwrap();
+        }
+        engine
+            .set_property(clip, StyleProperty::Overflow, Overflow::Hidden.into())
+            .unwrap();
+        engine
+            .set_property(
+                clip,
+                StyleProperty::BorderRadius,
+                CornerRadii(Edges::all(LengthValue::px(20.0))).into(),
+            )
+            .unwrap();
+        let bounds = engine.bounds(clip).unwrap().unwrap();
+        assert_eq!(
+            engine.hit_test(bounds.x + 1.0, bounds.y + 1.0).unwrap(),
+            Some(clip)
+        );
     }
 
     #[test]

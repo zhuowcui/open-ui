@@ -121,7 +121,10 @@ pub use view_node::{mount_view, IntoView, ViewNode};
 pub use app::{
     App, AppBuilder, BackendPreference, HeadlessApp, LogicalSize, RenderOptions, WindowOptions,
 };
-pub use openui_engine::Viewport;
+pub use openui_engine::{
+    ControlAdjustment, EditCommand, FocusOrigin, PointerEventKind, TextDirection, TextUnit,
+    Viewport,
+};
 
 // ─── Re-exports: proc macros ────────────────────────────────
 

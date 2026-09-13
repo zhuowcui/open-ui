@@ -253,6 +253,84 @@ impl Element {
         self.scroll_to(x + dx, y + dy)
     }
 
+    pub fn control_value(&self) -> Result<Option<String>, Error> {
+        self.document
+            .with_engine(|engine| {
+                engine
+                    .control_state(self.handle)
+                    .map(|state| state.map(|state| state.value.clone()))
+            })?
+            .map_err(Into::into)
+    }
+
+    pub fn control_display_value(&self) -> Result<Option<String>, Error> {
+        self.document
+            .with_engine(|engine| {
+                engine
+                    .control_state(self.handle)
+                    .map(|state| state.map(openui_engine::ControlState::display_value))
+            })?
+            .map_err(Into::into)
+    }
+
+    pub fn set_control_value(&self, value: &str) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_control_value(self.handle, value))
+    }
+
+    pub fn selection(&self) -> Result<Option<(usize, usize)>, Error> {
+        self.document
+            .with_engine(|engine| {
+                engine
+                    .control_state(self.handle)
+                    .map(|state| state.map(openui_engine::ControlState::selection))
+            })?
+            .map_err(Into::into)
+    }
+
+    pub fn set_selection(&self, anchor: usize, focus: usize) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_selection(self.handle, anchor, focus))
+    }
+
+    pub fn is_checked(&self) -> Result<bool, Error> {
+        self.control_flag(|state| state.checked)
+    }
+
+    pub fn is_selected(&self) -> Result<bool, Error> {
+        self.control_flag(|state| state.selected)
+    }
+
+    pub fn is_open(&self) -> Result<bool, Error> {
+        self.control_flag(|state| state.open)
+    }
+
+    pub fn is_indeterminate(&self) -> Result<bool, Error> {
+        self.control_flag(|state| state.indeterminate)
+    }
+
+    pub fn set_checked(&self, checked: bool) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_checked(self.handle, checked))
+    }
+
+    pub fn set_indeterminate(&self, indeterminate: bool) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_indeterminate(self.handle, indeterminate))
+    }
+
+    pub fn is_hovered(&self) -> Result<bool, Error> {
+        self.document
+            .with_engine(|engine| engine.is_hovered(self.handle))?
+            .map_err(Into::into)
+    }
+
+    pub fn is_active(&self) -> Result<bool, Error> {
+        self.document
+            .with_engine(|engine| engine.is_active(self.handle))?
+            .map_err(Into::into)
+    }
+
     pub fn focus(&self) -> Result<(), Error> {
         self.document
             .with_engine_mut(|engine| engine.focus(self.handle))
@@ -318,6 +396,19 @@ impl Element {
                 callback: Rc::new(callback),
             },
         )
+    }
+
+    fn control_flag(
+        &self,
+        get: impl FnOnce(&openui_engine::ControlState) -> bool,
+    ) -> Result<bool, Error> {
+        self.document
+            .with_engine(|engine| {
+                engine
+                    .control_state(self.handle)
+                    .map(|state| state.is_some_and(get))
+            })?
+            .map_err(Into::into)
     }
 }
 

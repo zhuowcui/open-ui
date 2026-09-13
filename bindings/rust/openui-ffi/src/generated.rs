@@ -49,6 +49,7 @@ pub(crate) fn property_from_raw(value: i32) -> Option<StyleProperty> {
         43 => Some(StyleProperty::Cursor),
         44 => Some(StyleProperty::ListStyleType),
         45 => Some(StyleProperty::Transform),
+        46 => Some(StyleProperty::PointerEvents),
         _ => None,
     }
 }
@@ -100,9 +101,10 @@ pub(crate) fn expected_value_tag(property: StyleProperty) -> u32 {
         StyleProperty::Cursor => 5,
         StyleProperty::ListStyleType => 5,
         StyleProperty::Transform => 6,
+        StyleProperty::PointerEvents => 5,
     }
 }
 
 pub(crate) fn valid_event_type(value: u32) -> bool {
-    matches!(value, 1..=13)
+    matches!(value, 1..=19)
 }

@@ -14,6 +14,7 @@ pub enum EventPhase {
 struct EventState {
     default_prevented: Cell<bool>,
     propagation_stopped: Cell<bool>,
+    immediate_propagation_stopped: Cell<bool>,
     phase: Cell<Option<EventPhase>>,
 }
 
@@ -29,12 +30,15 @@ pub struct Event {
     pub key_code: i32,
     pub key_text: String,
     pub modifiers: i32,
+    pub pointer_id: u64,
+    pub is_composing: bool,
     state: Rc<EventState>,
 }
 
 impl Event {
     pub(crate) fn pointer(
         event_type: impl Into<String>,
+        pointer_id: u64,
         x: f32,
         y: f32,
         button: MouseButton,
@@ -50,6 +54,8 @@ impl Event {
             key_code: 0,
             key_text: String::new(),
             modifiers: modifiers.bits() as i32,
+            pointer_id,
+            is_composing: false,
             state: Rc::default(),
         }
     }
@@ -70,12 +76,14 @@ impl Event {
             key_code,
             key_text: key_text.unwrap_or_default().to_owned(),
             modifiers: modifiers.bits() as i32,
+            pointer_id: 0,
+            is_composing: false,
             state: Rc::default(),
         }
     }
 
     pub(crate) fn wheel(x: f32, y: f32, dx: f32, dy: f32, modifiers: Modifiers) -> Self {
-        let mut event = Self::pointer("wheel", x, y, MouseButton::Middle, modifiers);
+        let mut event = Self::pointer("wheel", 0, x, y, MouseButton::Middle, modifiers);
         event.delta_x = dx;
         event.delta_y = dy;
         event
@@ -101,8 +109,23 @@ impl Event {
         self.state.propagation_stopped.set(true);
     }
 
+    pub fn stop_immediate_propagation(&self) {
+        self.state.propagation_stopped.set(true);
+        self.state.immediate_propagation_stopped.set(true);
+    }
+
     pub fn propagation_stopped(&self) -> bool {
         self.state.propagation_stopped.get()
+    }
+
+    pub(crate) fn immediate_propagation_stopped(&self) -> bool {
+        self.state.immediate_propagation_stopped.get()
+    }
+
+    pub(crate) fn composition(event_type: &str, text: &str) -> Self {
+        let mut event = Self::keyboard(event_type, 0, Some(text), Modifiers::NONE);
+        event.is_composing = event_type != "compositionend";
+        event
     }
 }
 
@@ -111,16 +134,6 @@ pub enum MouseEventType {
     Down,
     Up,
     Move,
-}
-
-impl MouseEventType {
-    pub(crate) fn name(self) -> &'static str {
-        match self {
-            Self::Down => "mousedown",
-            Self::Up => "mouseup",
-            Self::Move => "mousemove",
-        }
-    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -161,6 +174,10 @@ impl Modifiers {
     pub fn bits(self) -> u32 {
         self.0
     }
+
+    pub fn contains(self, other: Self) -> bool {
+        self.0 & other.0 == other.0
+    }
 }
 
 impl std::ops::BitOr for Modifiers {
@@ -191,7 +208,7 @@ mod tests {
 
     #[test]
     fn event_control_state_is_shared_by_clones() {
-        let event = Event::pointer("click", 1.0, 2.0, MouseButton::Left, Modifiers::CTRL);
+        let event = Event::pointer("click", 0, 1.0, 2.0, MouseButton::Left, Modifiers::CTRL);
         let clone = event.clone();
         clone.prevent_default();
         assert!(event.default_prevented());

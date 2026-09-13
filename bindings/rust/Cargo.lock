@@ -557,6 +557,7 @@ dependencies = [
  "openui-layout",
  "openui-paint",
  "openui-style",
+ "unicode-segmentation",
 ]
 
 [[package]]
@@ -609,6 +610,7 @@ dependencies = [
  "openui-text",
  "png",
  "skia-safe",
+ "unicode-segmentation",
 ]
 
 [[package]]

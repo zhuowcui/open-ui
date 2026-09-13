@@ -44,4 +44,4 @@ id,rust_name,css_name,rust_type,value_kind,initial,inherited,invalidation,interp
 43,Cursor,cursor,Cursor,cursor,auto,true,accessibility,discrete
 44,ListStyleType,list-style,ListStyleType,list-style,disc,true,subtree,discrete
 45,Transform,transform,TransformList,transform,none,false,composite,transform
-
+46,PointerEvents,pointer-events,PointerEvents,pointer-events,auto,true,accessibility,discrete

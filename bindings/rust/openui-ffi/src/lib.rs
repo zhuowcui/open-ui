@@ -16,7 +16,10 @@ pub use types::*;
 use generated::{property_from_raw, valid_event_type};
 use openui_compositor::SoftwareCompositor;
 use openui_dom::ElementTag;
-use openui_engine::{Engine, NodeHandle, Viewport};
+use openui_engine::{
+    ControlAdjustment, Engine, EventPhase as EngineEventPhase, FocusOrigin, NodeHandle,
+    PointerEventKind, Viewport,
+};
 use openui_style::{
     Border, BorderStyle, Color, CornerRadii, Edges, FontFamilyList, Gap, GenericFontFamily,
     StyleValue, Transform2D, TransformList, TransformOperation,
@@ -62,6 +65,41 @@ fn write_handle<T>(out: *mut *mut T, handle: LocalHandle) -> Result<(), ApiError
     Ok(())
 }
 
+fn write_element_handle(
+    out: *mut *mut OuiElement,
+    state: &Rc<DocumentState>,
+    node: NodeHandle,
+) -> Result<(), ApiError> {
+    if out.is_null() {
+        return Err(invalid("output element pointer is null"));
+    }
+    let token = register(LocalHandle::Element(ElementRef {
+        document: Rc::downgrade(state),
+        node,
+    }))?;
+    state
+        .element_handles
+        .try_borrow_mut()
+        .map_err(|_| ApiError::new(OuiStatus::Reentrant, "element handle map is borrowed"))?
+        .entry(node)
+        .or_default()
+        .push(token);
+    // SAFETY: the caller guarantees writable storage for one opaque pointer.
+    unsafe { ptr::write(out, token as *mut OuiElement) };
+    Ok(())
+}
+
+fn element_address(state: &DocumentState, node: NodeHandle) -> Result<usize, ApiError> {
+    state
+        .element_handles
+        .try_borrow()
+        .map_err(|_| ApiError::new(OuiStatus::Reentrant, "element handle map is borrowed"))?
+        .get(&node)
+        .and_then(|handles| handles.last())
+        .copied()
+        .ok_or_else(|| ApiError::new(OuiStatus::InvalidHandle, "node has no live C handle"))
+}
+
 fn new_document(config: &OuiDocumentConfig) -> Result<Rc<DocumentState>, ApiError> {
     check_header(
         config.struct_size,
@@ -78,6 +116,7 @@ fn new_document(config: &OuiDocumentConfig) -> Result<Rc<DocumentState>, ApiErro
         update_depth: Cell::new(0),
         listeners: RefCell::new(Vec::new()),
         next_listener: Cell::new(1),
+        element_handles: RefCell::new(std::collections::HashMap::new()),
     }))
 }
 
@@ -342,13 +381,7 @@ pub extern "C" fn oui_document_root(
         }
         let state = document(document_handle as usize)?;
         let node = borrow_engine(&state)?.root();
-        write_handle(
-            out_root,
-            LocalHandle::Element(ElementRef {
-                document: Rc::downgrade(&state),
-                node,
-            }),
-        )
+        write_element_handle(out_root, &state, node)
     })
 }
 
@@ -508,13 +541,7 @@ pub extern "C" fn oui_element_create(
         }
         let state = document(document_handle as usize)?;
         let node = borrow_engine_mut(&state)?.create_element(element_tag(tag)?)?;
-        write_handle(
-            out_element,
-            LocalHandle::Element(ElementRef {
-                document: Rc::downgrade(&state),
-                node,
-            }),
-        )
+        write_element_handle(out_element, &state, node)
     })
 }
 
@@ -532,13 +559,7 @@ pub extern "C" fn oui_text_create(
         let state = document(document_handle as usize)?;
         let text = utf8(text, "text")?;
         let node = borrow_engine_mut(&state)?.create_text(text)?;
-        write_handle(
-            out_text,
-            LocalHandle::Element(ElementRef {
-                document: Rc::downgrade(&state),
-                node,
-            }),
-        )
+        write_element_handle(out_text, &state, node)
     })
 }
 
@@ -554,6 +575,14 @@ pub extern "C" fn oui_element_destroy(element_handle: *mut OuiElement) -> OuiSta
                 .try_borrow_mut()
                 .map_err(|_| ApiError::new(OuiStatus::Reentrant, "listener list is borrowed"))?
                 .retain(|record| record.element_address != element_handle as usize);
+            if let Ok(mut handles) = state.element_handles.try_borrow_mut() {
+                if let Some(addresses) = handles.get_mut(&element.node) {
+                    addresses.retain(|address| *address != element_handle as usize);
+                    if addresses.is_empty() {
+                        handles.remove(&element.node);
+                    }
+                }
+            }
         }
         destroy(element_handle as usize, HandleKind::Element)?;
         Ok(())
@@ -888,6 +917,87 @@ fn invoke_event_listeners(
     Ok(())
 }
 
+fn validate_event(event: &OuiEvent) -> Result<(), ApiError> {
+    check_header(event.struct_size, event.abi_version, size_of::<OuiEvent>())?;
+    if !valid_event_type(event.event_type) {
+        return Err(invalid("unknown event type"));
+    }
+    if event.flags & !(OUI_EVENT_FLAG_DEFAULT_PREVENTED | OUI_EVENT_FLAG_PROPAGATION_STOPPED) != 0
+        || event.modifiers & !0x1f != 0
+    {
+        return Err(invalid("event contains unknown flag bits"));
+    }
+    utf8(event.text, "event text")?;
+    if !event.x.is_finite()
+        || !event.y.is_finite()
+        || !event.delta_x.is_finite()
+        || !event.delta_y.is_finite()
+    {
+        return Err(invalid("event coordinates and deltas must be finite"));
+    }
+    Ok(())
+}
+
+fn dispatch_event_to(
+    state: &Rc<DocumentState>,
+    target: NodeHandle,
+    target_address: usize,
+    event: &mut OuiEvent,
+    apply_default: bool,
+) -> Result<(), ApiError> {
+    let route = borrow_engine(state)?.event_route(target)?;
+    event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED | OUI_EVENT_FLAG_PROPAGATION_STOPPED);
+    event.target = target_address as *mut OuiElement;
+    for step in route.steps {
+        match step.phase {
+            EngineEventPhase::Capture => {
+                event.phase = 1;
+                invoke_event_listeners(state, step.node, true, event)?;
+            }
+            EngineEventPhase::Target => {
+                event.phase = 2;
+                invoke_event_listeners(state, step.node, true, event)?;
+                invoke_event_listeners(state, step.node, false, event)?;
+            }
+            EngineEventPhase::Bubble => {
+                event.phase = 3;
+                invoke_event_listeners(state, step.node, false, event)?;
+            }
+        }
+        if event.flags & OUI_EVENT_FLAG_PROPAGATION_STOPPED != 0 {
+            break;
+        }
+    }
+    event.current_target = ptr::null_mut();
+    if apply_default && event.flags & OUI_EVENT_FLAG_DEFAULT_PREVENTED == 0 {
+        let text = utf8(event.text, "event text")?;
+        match event.event_type {
+            4 => {
+                let changed = borrow_engine_mut(state)?.activate(target)?.changed;
+                for changed in changed {
+                    let Ok(address) = element_address(state, changed) else {
+                        continue;
+                    };
+                    for event_type in [16, 17] {
+                        let mut derived = *event;
+                        derived.event_type = event_type;
+                        dispatch_event_to(state, changed, address, &mut derived, false)?;
+                    }
+                }
+            }
+            8 => borrow_engine_mut(state)?.insert_text(target, &text)?,
+            10 => borrow_engine_mut(state)?.update_composition(target, &text)?,
+            11 => borrow_engine_mut(state)?.finish_composition(target)?,
+            12 => {
+                borrow_engine_mut(state)?.focus_with_origin(target, FocusOrigin::Accessibility)?;
+            }
+            13 => borrow_engine_mut(state)?.blur(target)?,
+            _ => {}
+        }
+    }
+    Ok(())
+}
+
 // SAFETY CONTRACT: document and target are live same-document handles; `event`
 // is readable/writable for its declared size through all synchronous callbacks.
 #[no_mangle]
@@ -903,24 +1013,7 @@ pub extern "C" fn oui_document_dispatch_event(
         // SAFETY: the caller guarantees a readable/writable `OuiEvent` that
         // remains alive for this synchronous dispatch.
         let event = unsafe { &mut *event };
-        check_header(event.struct_size, event.abi_version, size_of::<OuiEvent>())?;
-        if !valid_event_type(event.event_type) {
-            return Err(invalid("unknown event type"));
-        }
-        if event.flags & !(OUI_EVENT_FLAG_DEFAULT_PREVENTED | OUI_EVENT_FLAG_PROPAGATION_STOPPED)
-            != 0
-            || event.modifiers & !0x1f != 0
-        {
-            return Err(invalid("event contains unknown flag bits"));
-        }
-        utf8(event.text, "event text")?;
-        if !event.x.is_finite()
-            || !event.y.is_finite()
-            || !event.delta_x.is_finite()
-            || !event.delta_y.is_finite()
-        {
-            return Err(invalid("event coordinates and deltas must be finite"));
-        }
+        validate_event(event)?;
         let state = document(document_handle as usize)?;
         let target = element(target_handle as usize)?;
         if !Rc::ptr_eq(&state, &element_document(&target)?) {
@@ -929,40 +1022,345 @@ pub extern "C" fn oui_document_dispatch_event(
                 "event target belongs to another document",
             ));
         }
-        let path = {
-            let engine = borrow_engine(&state)?;
-            target.node.downgrade().upgrade(&engine)?;
-            let mut path = vec![target.node];
-            let mut current = target.node;
-            while let Some(parent) = engine.parent(current)? {
-                path.push(parent);
-                current = parent;
-            }
-            path
+        dispatch_event_to(&state, target.node, target_handle as usize, event, true)
+    })
+}
+
+// SAFETY CONTRACT: `document` is live and `event` is readable/writable for its
+// declared size through all synchronous callbacks. The event type is pointer
+// down, up, or move; hit testing supplies the target.
+#[no_mangle]
+pub extern "C" fn oui_document_dispatch_pointer_event(
+    document_handle: *mut OuiDocument,
+    event: *mut OuiEvent,
+) -> OuiStatus {
+    ffi(|| {
+        if event.is_null() {
+            return Err(invalid("event is null"));
+        }
+        // SAFETY: the caller guarantees a live, writable event for this call.
+        let event = unsafe { &mut *event };
+        validate_event(event)?;
+        let kind = match event.event_type {
+            1 => PointerEventKind::Down,
+            2 => PointerEventKind::Up,
+            3 => PointerEventKind::Move,
+            _ => return Err(invalid("pointer dispatch requires a pointer event type")),
         };
-        event.flags &= !(OUI_EVENT_FLAG_DEFAULT_PREVENTED | OUI_EVENT_FLAG_PROPAGATION_STOPPED);
-        event.target = target_handle;
-        for node in path.iter().skip(1).rev() {
-            event.phase = 1;
-            invoke_event_listeners(&state, *node, true, event)?;
-            if event.flags & OUI_EVENT_FLAG_PROPAGATION_STOPPED != 0 {
-                event.current_target = ptr::null_mut();
-                return Ok(());
+        let state = document(document_handle as usize)?;
+        let update = borrow_engine_mut(&state)?.pointer_event(
+            event.pointer_id as u64,
+            kind,
+            event.x,
+            event.y,
+        )?;
+        for (nodes, event_type) in [
+            (update.left.as_slice(), 15),
+            (update.entered.as_slice(), 14),
+        ] {
+            for node in nodes {
+                let Ok(address) = element_address(&state, *node) else {
+                    continue;
+                };
+                let mut boundary_event = *event;
+                boundary_event.event_type = event_type;
+                dispatch_event_to(&state, *node, address, &mut boundary_event, false)?;
             }
         }
-        event.phase = 2;
-        invoke_event_listeners(&state, target.node, true, event)?;
-        invoke_event_listeners(&state, target.node, false, event)?;
-        if event.flags & OUI_EVENT_FLAG_PROPAGATION_STOPPED == 0 {
-            for node in path.iter().skip(1) {
-                event.phase = 3;
-                invoke_event_listeners(&state, *node, false, event)?;
-                if event.flags & OUI_EVENT_FLAG_PROPAGATION_STOPPED != 0 {
-                    break;
-                }
+        let Some(target) = update.target else {
+            event.target = ptr::null_mut();
+            event.current_target = ptr::null_mut();
+            return Ok(());
+        };
+        let address = element_address(&state, target)?;
+        dispatch_event_to(&state, target, address, event, false)?;
+        if event.flags & OUI_EVENT_FLAG_DEFAULT_PREVENTED != 0 {
+            return Ok(());
+        }
+        if kind == PointerEventKind::Down {
+            let _ = borrow_engine_mut(&state)?.focus_with_origin(target, FocusOrigin::Pointer);
+        }
+        if let Some((changed, fraction)) = update.range_value {
+            let did_change = borrow_engine_mut(&state)?.set_range_fraction(changed, fraction)?;
+            let changed_address = element_address(&state, changed)?;
+            if did_change {
+                let mut input = *event;
+                input.event_type = 16;
+                dispatch_event_to(&state, changed, changed_address, &mut input, false)?;
+            }
+            if kind == PointerEventKind::Up {
+                let mut change = *event;
+                change.event_type = 17;
+                dispatch_event_to(&state, changed, changed_address, &mut change, false)?;
             }
         }
-        event.current_target = ptr::null_mut();
+        if let Some(activation) = update.activation {
+            let activation_address = element_address(&state, activation)?;
+            let mut click = *event;
+            click.event_type = 4;
+            dispatch_event_to(&state, activation, activation_address, &mut click, true)?;
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `document` is live, coordinates are finite, and
+// `out_element` is writable. The returned pointer is a borrowed existing
+// element handle and must not outlive that handle.
+#[no_mangle]
+pub extern "C" fn oui_document_hit_test(
+    document_handle: *mut OuiDocument,
+    x: f32,
+    y: f32,
+    out_element: *mut *mut OuiElement,
+) -> OuiStatus {
+    ffi(|| {
+        if out_element.is_null() || !x.is_finite() || !y.is_finite() {
+            return Err(invalid("hit-test output and coordinates are invalid"));
+        }
+        // SAFETY: the caller guarantees storage for one output pointer.
+        unsafe { ptr::write(out_element, ptr::null_mut()) };
+        let state = document(document_handle as usize)?;
+        if let Some(node) = borrow_engine_mut(&state)?.hit_test(x, y)? {
+            let address = element_address(&state, node)?;
+            // SAFETY: output storage was validated above.
+            unsafe { ptr::write(out_element, address as *mut OuiElement) };
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `document` is live, direction is -1 or 1, and
+// `out_element` is writable. The returned pointer is borrowed.
+#[no_mangle]
+pub extern "C" fn oui_document_advance_focus(
+    document_handle: *mut OuiDocument,
+    direction: i32,
+    out_element: *mut *mut OuiElement,
+) -> OuiStatus {
+    ffi(|| {
+        if out_element.is_null() {
+            return Err(invalid("focused element output is null"));
+        }
+        // SAFETY: the caller guarantees storage for one output pointer.
+        unsafe { ptr::write(out_element, ptr::null_mut()) };
+        let state = document(document_handle as usize)?;
+        if let Some(node) = borrow_engine_mut(&state)?.advance_focus(direction)? {
+            let address = element_address(&state, node)?;
+            // SAFETY: output storage was validated above.
+            unsafe { ptr::write(out_element, address as *mut OuiElement) };
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `document` is live. `root` is null to leave modal mode or
+// is a live element handle from the same document.
+#[no_mangle]
+pub extern "C" fn oui_document_set_modal_root(
+    document_handle: *mut OuiDocument,
+    root_handle: *mut OuiElement,
+) -> OuiStatus {
+    ffi(|| {
+        let state = document(document_handle as usize)?;
+        let root = if root_handle.is_null() {
+            None
+        } else {
+            let root = element(root_handle as usize)?;
+            if !Rc::ptr_eq(&state, &element_document(&root)?) {
+                return Err(ApiError::new(
+                    OuiStatus::WrongDocument,
+                    "modal root belongs to another document",
+                ));
+            }
+            Some(root.node)
+        };
+        borrow_engine_mut(&state)?.set_modal_root(root)?;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is live and `value` is readable for its length.
+#[no_mangle]
+pub extern "C" fn oui_element_set_control_value(
+    element_handle: *mut OuiElement,
+    value: OuiUtf8,
+) -> OuiStatus {
+    ffi(|| {
+        let value = utf8(value, "control value")?;
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        borrow_engine_mut(&state)?.set_control_value(element.node, value)?;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is live, `out_length` is writable, and
+// `destination` is writable for capacity bytes when capacity is nonzero.
+#[no_mangle]
+pub extern "C" fn oui_element_copy_control_value(
+    element_handle: *mut OuiElement,
+    destination: *mut u8,
+    capacity: usize,
+    out_length: *mut usize,
+) -> OuiStatus {
+    ffi(|| {
+        if out_length.is_null() {
+            return Err(invalid("control value length output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let value = borrow_engine(&state)?
+            .control_state(element.node)?
+            .ok_or_else(|| ApiError::new(OuiStatus::InvalidState, "element is not a control"))?
+            .value
+            .as_bytes()
+            .to_vec();
+        // SAFETY: output storage for one size_t is guaranteed by the caller.
+        unsafe { ptr::write(out_length, value.len()) };
+        if destination.is_null() && capacity == 0 {
+            return Ok(());
+        }
+        if capacity < value.len() {
+            return Err(ApiError::new(
+                OuiStatus::BufferTooSmall,
+                "control value destination is too small",
+            ));
+        }
+        if !value.is_empty() {
+            if destination.is_null() {
+                return Err(invalid("control value destination is null"));
+            }
+            // SAFETY: capacity was validated and source/destination do not overlap.
+            unsafe { ptr::copy_nonoverlapping(value.as_ptr(), destination, value.len()) };
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is a live editable control handle.
+#[no_mangle]
+pub extern "C" fn oui_element_set_selection(
+    element_handle: *mut OuiElement,
+    anchor: usize,
+    focus: usize,
+) -> OuiStatus {
+    ffi(|| {
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        borrow_engine_mut(&state)?.set_selection(element.node, anchor, focus)?;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is live and both output pointers are writable.
+#[no_mangle]
+pub extern "C" fn oui_element_get_selection(
+    element_handle: *mut OuiElement,
+    out_anchor: *mut usize,
+    out_focus: *mut usize,
+) -> OuiStatus {
+    ffi(|| {
+        if out_anchor.is_null() || out_focus.is_null() {
+            return Err(invalid("selection output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let selection = borrow_engine(&state)?
+            .control_state(element.node)?
+            .ok_or_else(|| ApiError::new(OuiStatus::InvalidState, "element is not a control"))?
+            .selection();
+        // SAFETY: both output pointers were validated above.
+        unsafe {
+            ptr::write(out_anchor, selection.0);
+            ptr::write(out_focus, selection.1);
+        }
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is live and `out_flags` is writable.
+#[no_mangle]
+pub extern "C" fn oui_element_get_control_flags(
+    element_handle: *mut OuiElement,
+    out_flags: *mut u32,
+) -> OuiStatus {
+    ffi(|| {
+        if out_flags.is_null() {
+            return Err(invalid("control flags output is null"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        let control = borrow_engine(&state)?
+            .control_state(element.node)?
+            .cloned()
+            .ok_or_else(|| ApiError::new(OuiStatus::InvalidState, "element is not a control"))?;
+        let flags = (control.disabled as u32) * OUI_CONTROL_DISABLED
+            | (control.checked as u32) * OUI_CONTROL_CHECKED
+            | (control.selected as u32) * OUI_CONTROL_SELECTED
+            | (control.open as u32) * OUI_CONTROL_OPEN
+            | (control.indeterminate as u32) * OUI_CONTROL_INDETERMINATE
+            | (control.password as u32) * OUI_CONTROL_PASSWORD;
+        // SAFETY: output storage was validated above.
+        unsafe { ptr::write(out_flags, flags) };
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is a live checkbox/radio and checked is 0 or 1.
+#[no_mangle]
+pub extern "C" fn oui_element_set_checked(
+    element_handle: *mut OuiElement,
+    checked: u8,
+) -> OuiStatus {
+    ffi(|| {
+        if checked > 1 {
+            return Err(invalid("checked must be zero or one"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        borrow_engine_mut(&state)?.set_checked(element.node, checked != 0)?;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is a live checkbox and indeterminate is 0 or 1.
+#[no_mangle]
+pub extern "C" fn oui_element_set_indeterminate(
+    element_handle: *mut OuiElement,
+    indeterminate: u8,
+) -> OuiStatus {
+    ffi(|| {
+        if indeterminate > 1 {
+            return Err(invalid("indeterminate must be zero or one"));
+        }
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        borrow_engine_mut(&state)?.set_indeterminate(element.node, indeterminate != 0)?;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `element` is a live adjustable control and adjustment is
+// a declared OuiControlAdjustment value.
+#[no_mangle]
+pub extern "C" fn oui_element_adjust_control(
+    element_handle: *mut OuiElement,
+    adjustment: i32,
+) -> OuiStatus {
+    ffi(|| {
+        let adjustment = match adjustment {
+            0 => ControlAdjustment::Previous,
+            1 => ControlAdjustment::Next,
+            2 => ControlAdjustment::PageBackward,
+            3 => ControlAdjustment::PageForward,
+            4 => ControlAdjustment::Minimum,
+            5 => ControlAdjustment::Maximum,
+            _ => return Err(invalid("unknown control adjustment")),
+        };
+        let element = element(element_handle as usize)?;
+        let state = element_document(&element)?;
+        borrow_engine_mut(&state)?.adjust_control(element.node, adjustment)?;
         Ok(())
     })
 }
@@ -1347,6 +1745,27 @@ mod tests {
                 },
             },
         )
+    }
+
+    fn event(event_type: u32, value: &str) -> OuiEvent {
+        OuiEvent {
+            struct_size: size_of::<OuiEvent>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            event_type,
+            phase: 0,
+            flags: 0,
+            modifiers: 0,
+            timestamp_ns: 0,
+            x: 0.0,
+            y: 0.0,
+            delta_x: 0.0,
+            delta_y: 0.0,
+            key_code: 0,
+            pointer_id: 0,
+            text: text(value),
+            target: ptr::null_mut(),
+            current_target: ptr::null_mut(),
+        }
     }
 
     #[test]
@@ -1751,6 +2170,103 @@ mod tests {
         assert_eq!(oui_listener_destroy(second_listener), OuiStatus::Ok);
         assert_eq!(oui_listener_destroy(third_listener), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(target), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_events_hit_testing_and_control_state_share_engine_defaults() {
+        let document = create_document(100, 100);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let checkbox = create_element(document, 23, root);
+        assert_eq!(
+            oui_element_set_property(
+                checkbox,
+                1,
+                &OuiStyleValue {
+                    tag: 5,
+                    reserved: 0,
+                    data: OuiStylePayload { enum_value: 2 },
+                },
+            ),
+            OuiStatus::Ok
+        );
+        assert_eq!(set_length(checkbox, 4, 40.0), OuiStatus::Ok);
+        assert_eq!(set_length(checkbox, 5, 40.0), OuiStatus::Ok);
+        assert_eq!(
+            oui_element_set_attribute(checkbox, text("type"), text("checkbox")),
+            OuiStatus::Ok
+        );
+        let mut click = event(4, "");
+        assert_eq!(
+            oui_document_dispatch_event(document, checkbox, &mut click),
+            OuiStatus::Ok
+        );
+        let mut flags = 0;
+        assert_eq!(
+            oui_element_get_control_flags(checkbox, &mut flags),
+            OuiStatus::Ok
+        );
+        assert_ne!(flags & OUI_CONTROL_CHECKED, 0);
+
+        assert_eq!(oui_element_set_checked(checkbox, 0), OuiStatus::Ok);
+        let mut pointer = event(1, "");
+        pointer.x = 10.0;
+        pointer.y = 10.0;
+        pointer.pointer_id = 7;
+        assert_eq!(
+            oui_document_dispatch_pointer_event(document, &mut pointer),
+            OuiStatus::Ok
+        );
+        pointer.event_type = 2;
+        assert_eq!(
+            oui_document_dispatch_pointer_event(document, &mut pointer),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            oui_element_get_control_flags(checkbox, &mut flags),
+            OuiStatus::Ok
+        );
+        assert_ne!(flags & OUI_CONTROL_CHECKED, 0);
+
+        let mut hit = ptr::null_mut();
+        assert_eq!(
+            oui_document_hit_test(document, 10.0, 10.0, &mut hit),
+            OuiStatus::Ok
+        );
+        assert_eq!(hit, checkbox);
+
+        let input = create_element(document, 23, root);
+        assert_eq!(
+            oui_element_set_control_value(input, text("a👩‍💻")),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_set_selection(input, 1, 1), OuiStatus::Ok);
+        let mut input_event = event(8, "b");
+        assert_eq!(
+            oui_document_dispatch_event(document, input, &mut input_event),
+            OuiStatus::Ok
+        );
+        let mut value_length = 0;
+        assert_eq!(
+            oui_element_copy_control_value(input, ptr::null_mut(), 0, &mut value_length),
+            OuiStatus::Ok
+        );
+        let mut value = vec![0; value_length];
+        assert_eq!(
+            oui_element_copy_control_value(
+                input,
+                value.as_mut_ptr(),
+                value.len(),
+                &mut value_length,
+            ),
+            OuiStatus::Ok
+        );
+        assert_eq!(std::str::from_utf8(&value).unwrap(), "ab👩‍💻");
+
+        assert_eq!(oui_element_destroy(input), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(checkbox), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }

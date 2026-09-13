@@ -151,6 +151,12 @@ pub struct OuiTransformOperation {
 
 pub const OUI_EVENT_FLAG_DEFAULT_PREVENTED: u32 = 1 << 0;
 pub const OUI_EVENT_FLAG_PROPAGATION_STOPPED: u32 = 1 << 1;
+pub const OUI_CONTROL_DISABLED: u32 = 1 << 0;
+pub const OUI_CONTROL_CHECKED: u32 = 1 << 1;
+pub const OUI_CONTROL_SELECTED: u32 = 1 << 2;
+pub const OUI_CONTROL_OPEN: u32 = 1 << 3;
+pub const OUI_CONTROL_INDETERMINATE: u32 = 1 << 4;
+pub const OUI_CONTROL_PASSWORD: u32 = 1 << 5;
 
 #[repr(C)]
 #[derive(Clone, Copy)]

@@ -13,3 +13,4 @@ openui-geometry = { path = "../openui-geometry" }
 openui-layout = { path = "../openui-layout" }
 openui-paint = { path = "../openui-paint" }
 openui-style = { path = "../openui-style" }
+unicode-segmentation = "1.10"

@@ -141,4 +141,7 @@ impl Element {
     pub fn set_transform(&self, value: TransformList) -> Result<(), Error> {
         self.set_property(StyleProperty::Transform, value.into())
     }
+    pub fn set_pointer_events(&self, value: PointerEvents) -> Result<(), Error> {
+        self.set_property(StyleProperty::PointerEvents, value.into())
+    }
 }

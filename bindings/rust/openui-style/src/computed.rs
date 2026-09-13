@@ -434,6 +434,9 @@ pub struct ComputedStyle {
     /// CSS `visibility`. Initial: `visible`. Inherited.
     pub visibility: Visibility,
 
+    /// CSS `pointer-events`. Initial: `auto`. Inherited.
+    pub pointer_events: crate::PointerEvents,
+
     /// CSS `direction`. Initial: `ltr`. Inherited.
     pub direction: Direction,
 
@@ -1035,7 +1038,8 @@ impl ComputedStyle {
             scrollbar_track_color: None,
             box_sizing: BoxSizing::INITIAL,  // content-box
             visibility: Visibility::INITIAL, // visible
-            direction: Direction::INITIAL,   // ltr
+            pointer_events: crate::PointerEvents::Auto,
+            direction: Direction::INITIAL, // ltr
 
             width: Length::auto(),
             height: Length::auto(),
@@ -1309,6 +1313,7 @@ impl ComputedStyle {
         let mut style = Self::initial();
         style.color = origin.color;
         style.visibility = origin.visibility;
+        style.pointer_events = origin.pointer_events;
         style.direction = origin.direction;
         style.font_family = origin.font_family.clone();
         style.font_size = origin.font_size;
