@@ -1,5 +1,11 @@
 # Style System Architecture
 
+> **Historical research, not the v0.2 implementation contract.** This document
+> records the former Blink extraction study. The supported API is generated
+> from the canonical typed schema described in
+> [Rendering pipeline overview](rendering-pipeline-overview.md); runtime CSS
+> text and Blink style integration are outside v0.2.
+
 > Deep dive into Blink's style system internals and the extraction plan for Open UI's `libopenui_style`.
 >
 > **Chromium version:** M147 (`147.0.7727.24`)

@@ -1,15 +1,21 @@
 [package]
 name = "openui-paint"
-version = "0.1.0"
-edition = "2021"
-description = "Fragment-to-Skia paint pipeline extracted from Blink's paint system"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
+description = "Exact fragment-to-Skia picture recording and software raster for Open UI"
 
 [dependencies]
-openui-style = { path = "../openui-style" }
-openui-geometry = { path = "../openui-geometry" }
-openui-layout = { path = "../openui-layout" }
-openui-dom = { path = "../openui-dom" }
-openui-text = { path = "../openui-text" }
+openui-style = { version = "=0.2.0", path = "../openui-style" }
+openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
+openui-layout = { version = "=0.2.0", path = "../openui-layout" }
+openui-dom = { version = "=0.2.0", path = "../openui-dom" }
+openui-text = { version = "=0.2.0", path = "../openui-text" }
 skia-safe = "0.94"
 unicode-segmentation = "1.10"
 

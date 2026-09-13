@@ -30,6 +30,27 @@ env:
   SKIA_NINJA_COMMAND: ninja
 
 jobs:
+  msrv:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install MSRV and native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            build-essential clang libclang-18-dev libfontconfig1-dev \
+            libfreetype-dev libgl1-mesa-dev libwayland-dev libx11-dev \
+            libx11-xcb-dev libxcb1-dev libxkbcommon-dev ninja-build pkg-config
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+      - name: Check the public headless and Linux framework at the MSRV
+        working-directory: bindings/rust
+        run: |
+          cargo check --locked --package openui
+          cargo check --locked --package openui --features linux
+
   conformance-and-platform:
     runs-on: ubuntu-24.04
     timeout-minutes: 90

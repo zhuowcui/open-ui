@@ -1,512 +1,88 @@
-# Open UI Current Status
+# Open UI current status
 
-This document is the handoff snapshot for the current Rust WPT/accountability phase.
-It records what is complete, what remains, and how to interpret the tracking data.
+Open UI is in v0.2 release-candidate closure for the pure-Rust Linux/headless
+product. Waves W0 through W10 are locally committed. W11 source packaging and
+documentation are implemented, but final external and hardware qualifications
+remain open.
 
-## Goal
+## Verified repository state
 
-Open UI's long-term goal is Chromium pixel parity for UI rendering without shipping a
-browser. The project ports Chromium/Blink rendering behavior into a standalone UI
-engine with a stable API and Rust implementation layers for DOM, style, layout, and
-paint.
-
-The working standard is strict:
-
-- Compare Open UI output against headless Chromium.
-- Treat unexplained pixel differences as bugs.
-- Do not claim completion without generated artifacts and audit output.
-- Do not hide failures in generic buckets.
-- If a failing test depends on another sprint/system, classify it with an explicit
-  owning dependency.
-
-## Verified WPT Snapshot
-
-Latest authoritative accountability snapshot (SP17 W2B–W4 full no-resume run):
-
-| Metric | Value |
+| Evidence | Result |
 |---|---:|
-| Chromium inventory rows | 7673 |
-| Ported/runnable WPT tests | 3889 |
-| Unported but explicitly tracked tests | 3784 |
-| Runnable passes | 3619 |
-| Runnable failures | 270 |
-| Runnable render/diff errors | 0 |
-| Generic `not_ported` bucket rows | 0 |
-| Empty unported dependency rows | 0 |
-| `sp12_layout_bug` rows | 0 |
-| `needs_font_metrics` rows | 0 |
-| Runnable `sp13_multicol` rows | 0 |
-| Unported `sp13_multicol` residuals | 945 |
-
-`python3 tools/accountability/audit.py` passes all 7 checks for this snapshot.
-The full `wpt/` run was executed without resume on 2026-08-27. Its committed
-`summary.json` SHA-256 is
-`2021d915414b470edddf51ff266ae7494240f7e5b60ede4410452da4c46784ad`.
-All 3267 frozen SP17 baseline IDs, including all 2823 frozen SP13-R baseline
-IDs and all 351 runnable multicol targets, remain exact.
-
-## SP17 W2B–W4 Remaining Writing-Mode Mega-Closure
-
-SP17 is active on `agent/sp17-advanced-text`. W0A freezes all 3,267 starting
-exact IDs, the complete 842-row `needs_writing_mode` inventory, the 19 runnable
-kickoff IDs, and their exact per-pixel results. At kickoff the inventory was 19
-runnable plus 823 unported; 337 rows stopped directly on `writing-mode`, three
-on `unicode-bidi`, and 483 first stopped elsewhere. Historical SP13-R through
-SP16 ledgers are byte-pinned and unchanged.
-
-The kickoff 19-ID no-resume run produced 19 expected functional failures and
-zero errors. Its evidence remains immutable; live full-suite evidence now
-supersedes the kickoff summary for current accountability.
-
-W0B now accepts and transactionally computes the corpus-used SP17 declarations,
-preserves importance/specificity/source-order conflicts between logical and
-physical aliases, propagates inherited writing properties, and emits the
-existing Rust style enums. A faithful deterministic-Ahem builder probe over all
-823 kickoff-unported rows found 292 newly generatable rows and 531 actual
-residuals. Together with the 19 kickoff-runnable IDs, the frozen actionable
-ledger contains 311 rows. The two ledgers are sorted, disjoint, and cover all
-842 original owner rows.
-
-No generated Rust WPT module, runner profile, mapping row, or authoritative
-result changed in W0B. The only frozen residual dispositions still owned by
-SP17 are the `css-flexbox-test1` test/reference pair: their fullwidth digits are
-absent from the pinned fonts and remain guarded as `text_non_ascii` until W2
-adds a pinned glyph path. See `docs/SP17-PLAN.md` and the six
-`tools/accountability/data/wpt_ported/sp17_*` artifacts.
-
-W1A gives every `ConstraintSpace` an authoritative writing direction,
-provides one-time physical-root and parent/child orthogonal size conversion,
-and adds shared logical edge and computed-style projections. The production
-render root derives its direction from computed style. A release no-resume run
-of all 3,267 frozen exact IDs remained 3,267 exact at `0.0%` with zero errors,
-and the full 3,566-ID summary was restored byte-identically afterward.
-
-W1B adds shared child-space helpers and routes normal block children, floats,
-atomic inline/block-in-inline children, and final flex-item layout through the
-computed child writing direction. Flex now chooses and converts its logical
-axes with the container writing direction, including wrapping, direction,
-gaps, margins, placement, and final physical fragments. Overflowing
-right/RTL-start inline alignment also preserves the aligned edge.
-
-The first actionable admission,
-`wpt/css_flexbox/flexbox-writing-mode-001`, is exact at zero mismatched pixels.
-It is a horizontal-tb porter/cascade and shared-flex proof, not a vertical-text
-closure claim. Four retained-text RTL gap reference builders were regenerated
-to correct previously invalid logical-margin lowering; the complete `gap-00`
-slice is 32/32 exact.
-
-W1C fixes a shared direction-propagation defect in final flex item placement:
-the resolved container direction now reaches logical-to-physical conversion
-instead of falling back to the parent constraint direction. A parameterized
-regression covers every flex-direction and wrap reversal under
-horizontal-tb/RTL by original item identity. The sole surgical admission is
-`wpt/css_flexbox/flexbox-writing-mode-004`, exact at zero mismatched pixels.
-
-W1D covers vertical-rl/LTR, vertical-lr/LTR, vertical-rl/RTL, and
-vertical-lr/RTL across all eight flex-direction/wrap combinations by original
-CMYK item identity. It fixes physical flex-item size projection at the vertical
-fragment boundary while preserving fragmentation-reduced horizontal sizes.
-Only `flexbox-writing-mode-002`, 003, 005, and 006 were admitted; each is exact
-at zero mismatched pixels and its existing reference builder is byte-unchanged.
-W1E adds a single private flex-axis mapping boundary for container main/cross
-and child logical inline/block sizes. Available sizes, percentage bases,
-fixed/stretch flags, intrinsic measurements, aspect-ratio transfer, and final
-physical fragments now use that mapping consistently, while horizontal
-fragmentation-owned reductions remain authoritative. Fourteen orthogonal flex
-targets covering writing modes, intrinsic and fit-content sizing, alignment,
-wrapping, overflow padding, and aspect ratio were admitted in one transaction.
-All are exact, and the existing 007–009 reference builders are byte-identical.
-
-W1F converts normal block and vertical atomic-inline layout through logical
-coordinates, extends flex content/intrinsic sizing through the same axis
-mapping, and closes vertical row/column flow, wrapping, reverse flow, and all
-seven logical gap patterns. Homogeneous Latin/Ahem runs in vertical mixed
-orientation now shape horizontally and rotate their complete paint stack
-clockwise. Upright CJK and general mixed-script splitting remain deferred.
-
-The complete 44-ID cohort was spliced atomically and is 44/44 exact with zero
-mismatched pixels or errors. Shared reference builders remain byte-identical,
-the repeated splice is byte-idempotent, and writing-mode 010–016 were not
-generated. The W1F validator required all 64 exact SP17 promotions.
-
-W1G separates the containing-block, static-position parent, and abspos child's
-complete writing directions. Physical insets, margins, and authored sizes keep
-their physical semantics while intrinsic contributions, child constraints,
-static anchors, and fragments cross explicit logical/physical boundaries.
-Flex abspos static positions now use the flex main/cross mapping and the
-padding-box containing block, including direction reversal and asymmetric
-borders and padding.
-
-The atomic 27-ID W1G cohort covers six flex abspos auto-position cases, three
-vertical aspect-ratio transfers, twelve orthogonal intrinsic-sizing targets,
-their four shared references, and the orthogonal over-constrained margin pair.
-It is 27/27 exact with zero mismatched pixels or errors. The live validator now
-required all 91 exact SP17 promotions.
-
-W1H keeps multicol sizing, balancing, spanner placement, break progress, and
-continuation geometry in logical inline/block coordinates, then projects the
-container, columns, rules, in-flow fragments, decoration slices, baselines,
-and overflow metadata through one shared finalizer. Child and relayout spaces
-now use the complete computed writing direction; orthogonal children transpose
-sizing inputs without incorrectly inheriting general fragmentation support.
-
-Fragment paint records the fragmentation writing direction. Column and
-overflow clips, first/interior/last decoration edges, border radii, background
-sources, shadows, and ink overflow map to Y for horizontal-tb, left-origin X
-for vertical-lr, and right-origin X for vertical-rl. Vertical inline
-progression applies RTL independently. The same logical continuation boundary
-now covers wrapping row flex, growing column flex, and break-before cases, and
-vertical-rl float descendants no longer enlarge multicol scrollable overflow.
-
-The atomic 16-ID W1H cohort spans eight css-break fragmentation targets, six
-css-multicol sizing/scrolling targets, and two css-overflow float targets. The
-18-ID proof, including the existing exact `borders-006-ref` and
-`borders-007-ref`, is 18/18 exact with zero mismatched pixels or errors. The
-live validator requires all 107 exact SP17 promotions, and writing-mode
-010–016 remain absent.
-
-W1I introduces one private logical positioned-inline geometry path shared by
-both inline layout entry points. It derives first/last containing-block
-endpoints from the inline ancestor's direction and logical line positions,
-ignores synthetic empty continuations when content exists, and incorporates
-text indent, asymmetric edges, relative inline translation, atomic-inline
-bubbling, and block-in-inline interruption exactly once.
-
-The out-of-flow projection boundary now accepts inline containing blocks. It
-projects each candidate's logical static anchor, containing-block offset, and
-containing-block size together while preserving its inline containing-block
-node, direction, and zero-border contract. Vertical multicol sends the same
-first/last endpoints through W1H's column index/remainder and vertical-lr or
-vertical-rl mapping before physical out-of-flow layout; positioned fragments
-remain outside the final in-flow projection and have one owner.
-
-The atomic 30-ID admission contains the five direct `static-position_*`, five
-`static-position_*-in-multicol`, and five `*-in-multicols` shapes for each of
-vertical-lr and vertical-rl. The shared fix also repairs the two existing
-horizontal-tb RTL family failures. All 35 family IDs are exact with zero
-mismatched pixels or errors. The live validator requires exactly 139 SP17
-promotions; the SP13-R later-promotion allowlist recognizes the 20 multicol
-position IDs without changing any frozen ledger.
-
-W1J gives multicol positioned fragmentation one private logical record for the
-source block interval, static anchor, containing-block geometry, visual
-translation, resolved logical insets/margins, and writing direction. It
-intersects that interval with column flow, preserves source-local descendants
-and single ownership, then projects each continuation once through W1H's
-vertical-lr/vertical-rl mapping.
-
-The same path now covers relative inline containing blocks (including RTL
-boundary affinity and relative logical insets), fragmented positioned blocks,
-and fragmented flex containing blocks with percentage inline sizing and
-logical borders. The six-ID atomic admission is exact, and the 17-ID focused
-proof preserves guards 001, 050, 057, 062, 117, and 121–126 with zero
-mismatched pixels or errors. The live validator requires exactly 145
-promotions; the SP13-R later-promotion allowlist contains 42 IDs.
-
-W1K preserves signed main/cross free space and the complete overflow-alignment
-value in flex abspos static positioning. Main-axis placement now uses the
-shared content-alignment resolver and cross-axis placement uses the shared
-item-alignment resolver. Oversized safe alignment falls back to logical start,
-default/unsafe alignment retains signed offsets, fitting safe end remains at
-logical end, `align-self:auto` inherits both fields from `align-items`, and
-reverse/wrap/writing-direction projection occurs exactly once.
-
-The atomic seven-ID admission contains all three safe align-self test/reference
-pairs plus `flexbox-safe-overflow-position-005`. Its 18-ID proof adds safe
-overflow 001–004 and all six horizontal-tb/vertical-lr/vertical-rl × LTR/RTL
-abspos auto-position guards. It is 18/18 exact with zero mismatched pixels or
-errors. Child margin-box alignment, asymmetric borders/padding, signed center
-offsets, reverse flow, wrap-reverse, and one-time margin application are also
-covered by the parameterized Rust matrix. The live validator requires exactly
-152 promotions; the SP13-R later-promotion allowlist remains 42 IDs.
-
-W1L adds physical-axis start/center/end affinity to out-of-flow candidates and
-positioned fragmentation records. Flex static positions are now padding-box
-anchors plus an edge bias, while the generic solver owns edge-derived
-available intervals, complete margin-box alignment, shrink-to-fit, and
-post-layout auto-height recentering. Fragmented flex candidates materialize
-their retained block edge before multicol maps flow into columns.
-
-The shared fix promotes existing runnable `position-absolute-center-001`, and
-the surgical one-ID splice admits its vertical-rl transpose 002. The 17-ID
-proof is exact and preserves center 003–004, every W1K target, all six abspos
-writing-mode/direction guards. A separate two-ID proof preserves the fragmented
-flex 010/011 baseline guards. The live validator requires exactly 154
-promotions; the SP13-R later-promotion allowlist remains 42 IDs.
-
-W1M admits exactly 29 assertion-only check-layout files after proving their
-only scripting is the inert three-file harness and one body `checkLayout(...)`
-hook. The porter strips that harness and quoted-selector body attributes while
-continuing to reject inline mutation, unknown scripts, mixed handlers, and
-general JavaScript.
-
-The shared layout closure resolves flex abspos content/item fallbacks,
-physical and logical sides, reverse and wrap-reverse flow, writing mode, and
-direction once. It preserves safe overflow and self-alignment behavior,
-ignores `justify-self`, treats auto margins as zero in the hypothetical box,
-and aligns a specified complete margin box exactly once. Anonymous mixed-flow
-wrappers now retain the greater of float clearance and strut as clearance-only
-extent without giving the clearing line a visible box.
-
-The 29 admissions and ten existing fallback/justify-self/margin failures form
-one mandatory 39-ID exact cohort. The focused manifest adds all 17 W1L guards
-and fragmentation 010/011; it finishes 58/58 exact with zero mismatched pixels
-or errors. The validator authorizes only the manifest's 12 frozen residual
-rows and 17 non-SP17 admissions and requires exactly 166 SP17 promotions.
-
-The current full result is 3746 runnable, 3460 exact, 286 functional failures,
-and zero errors. Live `needs_writing_mode` ownership is 676 rows; the frozen
-842-row kickoff inventory and 311/531 disposition remain immutable. The text
-manifest contains 871 IDs. All 3,267 frozen kickoff exact IDs remain exact. The
-committed `summary.json` SHA-256 is
-`94574e79d0c0f5bbf979e57c6168e62aab35e56fed62f5977c2f3ed4784817df`.
-
-W1N keeps the W1M mapping and admission boundary unchanged and closes four
-existing runnable failures: `align-content-wrap-004` and `flex-wrap-002`
-through 004. When the flex main axis maps to a child's logical block axis, an
-auto cross size now uses logical-inline fit-content against the available
-container cross space after specified margins. Auto margins contribute zero
-during hypothetical sizing; border/padding and cross min/max constraints apply
-once, and final layout reuses the cross size that established the line.
-
-The four-ID target cohort is exact. Its 19-ID focused proof adds
-`flex-wrap-005`, writing-mode 002/003/005/006 and their references, gap-003
-LTR/RTL and their references, and flex fragmentation 010/011; all 19 are exact
-with zero errors. The current full result is 3746 runnable, 3464 exact, 282
-functional failures, and zero errors. Live `needs_writing_mode` ownership is
-672 rows; unported inventory remains 3927, the text manifest remains 871, and
-the validator requires exactly 170 promotions while preserving every W1M
-invariant and frozen ledger byte.
-The authoritative W1N `summary.json` SHA-256 is
-`3fa96c5a653460785bbec889ece0aa6bbadcdf410fb7edacd8d2c9c194105263`.
-
-W1O closes the sole remaining SP17-owned runnable failure,
-`auto-height-with-flex`, without changing the runnable inventory. Omitted
-one- and two-value flex shorthand bases, plus an accepted unitless third zero,
-now retain their computed `0%` representation instead of collapsing to fixed
-`0px`. Percentage bases resolve against definite main space and use
-content-based sizing when that space is indefinite; fixed zero remains
-definite.
-
-Retained `<br>` nodes are semantic `ElementTag::Break` controls carrying their
-inherited font, line-height, writing-mode, direction, and orientation. Their
-struts participate in line metrics without synthesizing a pre-line text node
-or a phantom trailing line. Content flex bases ignore the replaced main-size
-property, and semantic-break block contributions preserve forced lines while
-avoiding a synthetic min-inline relayout.
-
-Only the target builder was surgically regenerated. The one-ID target and
-15-ID proof are exact with zero mismatched pixels or errors, both no-write
-generations and splices are byte-identical, and the 871-ID text manifest is
-unchanged. The current full result is 3746 runnable, 3465 exact, 281 functional
-failures, and zero errors. Live `needs_writing_mode` ownership is 671 rows;
-unported inventory remains 3927, and the validator requires exactly 171
-promotions while preserving every W1N and frozen-ledger invariant.
-The authoritative W1O `summary.json` SHA-256 is
-`d182ff44328df0a6c711990830a62a3e9e6199d2c13bad583360efd68702b2a9`.
-
-W2A promotes 22 formerly unported flex writing-mode builders: the 010–016
-test/reference pairs and the sideways-lr/sideways-rl base, RTL, and row-mix
-matrix. Inline construction resolves a public `TextRunOrientation` for every
-text fragment; paint consumes that fragment metadata and transforms the entire
-shadow/decoration/glyph/emphasis stack with balanced save/restore behavior.
-Clockwise and counterclockwise runs use distinct physical origins, while
-layout preserves their logical advances and exported baselines.
-
-The 49-ID proof contains all 22 targets, writing-mode 001–009 test/reference
-pairs, `flexbox-writing-mode-slr-ref`, the six row-flow guards, and the
-vertical-row pair. It is 49/49 exact with zero mismatched pixels or errors. The
-target manifest SHA-256 is
-`4162bd75b614a81ab43c897aef201456660b35f6cdac8109c41b1aa126ec963f`;
-the reconstructed focused proof is pinned at
-`b44b3ec2d5c1aea2e6e159f923858d66cdb24ff9f4a958a75ec8092771012511`.
-
-The current full result is 3768 runnable, 3487 exact, 281 functional failures,
-and zero errors. There are 3905 unported rows, 649 live
-`needs_writing_mode` owners, 976 unported `sp13_multicol` rows, and 893 text
-manifest IDs. The validator requires exactly 193 SP17 promotions and preserves
-the frozen ledgers plus the 42-ID SP13-R later-promotion allowlist.
-
-W2B–W4 promotes one atomic 132-ID cohort containing every remaining non-exact
-ID from the frozen actionable ledger plus `css-flexbox-test1` and its reference.
-It splits homogeneous shaping runs at bidi, script, grapheme-safe fallback, and
-vertical-orientation boundaries; uses vertical substitutions and advances for
-upright glyphs while preserving horizontal sideways shaping; and carries ruby,
-text-combine, baseline, decoration, emphasis, shadow, clip, and emoji metadata
-from layout into paint.
-
-The same ordered Chromium-pinned fallback families are registered in OpenUI and
-the manifest-scoped Chromium fontconfig. The Droid CJK, Noto Devanagari, and
-Noto Color Emoji hashes are respectively
-`27db42b79d0846f6fd01b3d6a8233df9a8a5ece80b042299dc4174c48213ffd3`,
-`b1dffa1fccb30dc45287111834a9db15c652b05d4d67201abe73e67717017590`, and
-`72a635cb3d2f3524c51620cdde406b217204e8a6a06c6a096ff8ed4b5fd6e27b`.
-
-The 132 targets partition into 43 flexbox, 37 fragmentation, 22 sizing, 20
-overflow, five multicol, three backgrounds, one float, and one positioned ID.
-Their manifest SHA-256 is
-`0085f0df34162f355c1f2a24deae01967cf52f1753049f27a32ec7425e3ce089`.
-The focused proof contains every prior promotion plus the new cohort: 325/325
-exact with zero mismatched pixels or errors, pinned at
-`78efe59229615167e9603c6e40295c3eca0937c2f973f1097cd98a545d2793d3`.
-
-Exactly 121 formerly unported targets became runnable and 11 pinned failures
-became exact without a non-target status or mismatch change. The current full
-result is 3889 runnable, 3619 exact, 270 functional failures, and zero errors.
-There are 3784 unported rows, 517 live `needs_writing_mode` owners, 945
-unported `sp13_multicol` rows, and 1025 text-manifest IDs. The validator
-requires exactly 325 promotions and preserves the frozen ledgers plus the
-73-ID SP13-R later-promotion allowlist.
-
-The remaining residuals are separately owned JavaScript, table, grid, form
-control, transform, generated-content, image, and print-specific work; the
-frozen SP17 actionable writing-mode cohort is closed.
-
-## SP13-R Closure
-
-SP13-R is complete. Its immutable ledgers contain 2823 frozen exact passes, 351
-runnable multicol targets, and 1018 reason-owned unported residuals. The target
-run finishes 351 exact, zero failed, and zero errors; no runnable mapping row
-retains `sp13_multicol`.
-
-Multicol used geometry, fragmentation, spanners and nesting, flex and positioned
-interactions, rules, and fragmented paint now consume shared resolved layout and
-continuation state. The residual ledger preserves Chromium paths, porter rejection
-reasons, and complete owner sets. Vertical and sideways writing remain deferred.
-See `docs/SP13-R-PLAN.md` for the frozen scope and evidence.
-
-## SP16 Closure
-
-SP16 is complete. Its immutable ledgers contain 2,804 frozen exact passes, 226
-actionable real-font tests, and 550 reason-owned unported residuals. The actionable
-set finishes with 19 exact and 207 detector-backed functional failures; the 20
-sole-owner targets finish 5 exact and 15 functionally reclassified. All 776 original
-`needs_font_metrics` rows are covered and the category is retired globally.
-
-DejaVu Sans, Sans Mono, and Serif regular/bold faces, Fontconfig policy, and the
-pinned Chromium 147 FreeType runtime make real-font selection, metrics, and LCD
-rasterization deterministic without changing the historical Ahem profile. Shared
-line metrics now drive `ch`/`ex`/`lh`, used line-height, layout, and paint. See
-`docs/SP16-PLAN.md` for the frozen scope and evidence.
-
-## SP15 Closure
-
-SP15 is complete. Its immutable ledgers contain 2767 frozen exact passes, 76 actionable
-tests, and 54 reason-owned unported residuals. All 49 root/body targets became runnable;
-the 76-test actionable set finishes with 34 exact and 42 detector-backed functional
-failures. The deterministic text manifest now contains 496 tests: 128 exact and 368
-with functional non-text owners.
-
-No mapping row retains any of the five retired SP15 categories. Root/body canvas and
-overflow propagation, semantic clearing breaks, real decorated-inline continuation
-fragments, and `display:contents` inheritance/style handling are implemented. See
-`docs/SP15-PLAN.md` for the frozen scope and evidence.
-
-## What "SP12 Complete" Means
-
-SP12 is complete in the accountability sense: no remaining failure is classified as
-an SP12-owned layout bug. It does **not** mean every test file in the SP12-scope WPT
-directories passes.
-
-The SP12-scope WPT directories include tests whose visible output depends on other
-systems such as text shaping, inline layout, fragmentation, multicol, images,
-gradients, JavaScript harness behavior, writing modes, grid/table layout, generated
-content, and native form controls. Those rows are tracked under explicit dependency
-categories rather than `sp12_layout_bug`.
-
-## Current Runnable Failure Ownership
-
-The 281 non-passing runnable tests are ported tests classified by the feature that owns the
-remaining gap. Categories can overlap because one test may depend on multiple systems.
-
-Top runnable failure categories:
-
-| Category | Count |
-|---|---:|
-| `reference_test` | 85 |
-| `needs_gradient` | 80 |
-| `needs_image` | 66 |
-| `needs_complex_border` | 52 |
-| `needs_inline_block` | 50 |
-| `needs_empty_block_margin_collapse` | 34 |
-| `needs_body_canvas_background_extent` | 24 |
-| `needs_rounded_border_paint` | 22 |
-| `needs_generated_content` | 19 |
-| `needs_box_shadow` | 18 |
-| `sp13_fragmentation` | 17 |
-| `needs_writing_mode` | 11 |
-
-## Current Unported Inventory Ownership
-
-The 3927 unported rows are Chromium WPT files that the current porter or renderer cannot
-represent yet. They are still tracked with explicit dependency categories.
-
-Top unported categories:
-
-| Category | Count |
-|---|---:|
-| `needs_javascript` | 1916 |
-| `sp13_multicol` | 976 |
-| `needs_writing_mode` | 660 |
-| `sp13_fragmentation` | 637 |
-| `needs_table_layout` | 462 |
-| `needs_generated_content` | 429 |
-| `reference_test` | 412 |
-| `needs_inline_block` | 407 |
-| `needs_containment` | 335 |
-| `needs_image` | 325 |
-| `needs_advanced_selectors` | 306 |
-| `needs_grid` | 304 |
-| `needs_empty_block_margin_collapse` | 288 |
-| `needs_form_controls` | 264 |
-
-## Recommended Next Work
-
-Continue SP17 only with separately frozen dynamic-JavaScript or unrelated
-alignment cohorts. Keep tables, grid, transforms, generated content,
-image/print-only cases, and extreme column-rule geometry out of closed W1O.
-Reserve authoritative bidi,
-upright CJK and mixed-script run splitting, fallback shaping, sideways text,
-and `flexbox-writing-mode-010` through 016 for W2; do not substitute
-geometry-only builders for their glyph requirements.
-Keep all 3267 kickoff exact IDs green, splice surgically, do not batch-regenerate
-the remaining actionable builders, and do not retire the detector. Follow
-`docs/SP17-PLAN.md` for the exact boundary and recorded commands.
-
-Hosted pre-merge checks and the separate pinned Chromium parity gate are
-documented in `docs/CI.md`.
-
-## Authoritative Commands
-
-Build the comparison binary:
+| Frozen SP20 exact IDs | 5,731 |
+| Fresh byte-identical replay | 5,731 pass, 0 fail/error |
+| Full inventory | 7,673 |
+| Explicitly unported | 1,942 |
+| Accountability audit | 7/7 |
+| Application conformance scenarios | 36 across 10 domains |
+| Frozen C exports | 84 |
+| C examples / C++ consumers | 4 / 1 |
+| Workspace tests | pass |
+| Python closure tests | 204 pass |
+| Owned objects after 10,000 mutation soak | no growth/leak |
+| Unchanged-frame lifecycle | zero layout, paint, and raster work |
+
+The exact baseline records the Chromium 147 reference identity, viewport,
+device scale, font inventory, resources, and per-result hashes. Chromium is a
+test oracle only; supported builds and packages do not link or load it.
+
+## Implemented v0.2 surface
+
+- Canonical generated typed style properties for Rust macros, engine metadata,
+  and C tagged values.
+- Thread-affine retained documents with generation-checked node handles,
+  transactions, dirty generations, resources, hit testing, and immutable scene
+  snapshots.
+- Direct safe Rust framework with signals, effects, scopes, `Show`, keyed
+  `For`, components, `view!`, `AppBuilder`, and `HeadlessApp`.
+- Panic-contained C ABI with ownership/thread validation, structured errors,
+  compound builders, events, controls, animation, accessibility, and rendering.
+- Core controls, routed pointer/keyboard/text/composition events, focus and
+  modal containment, selection, Unicode editing, clipboard, undo/redo,
+  scrolling, and pointer capture.
+- Retained accessibility trees/actions and Linux AccessKit integration.
+- Winit X11/Wayland runtime, backend-correct clipboard, IME/data events,
+  softbuffer presentation, and multiple isolated windows.
+- OpenGL presentation of the exact CPU Skia frame with automatic software
+  fallback, diagnostics, resize recovery, and newest-scene scheduling.
+- Typed transitions/keyframes, easing, manual clocks, lifecycle events,
+  document/scroll/view timelines, smooth scrolling, snap, and reduced motion.
+- Conformance, fuzz, sanitizer, Miri, soak, platform, performance, and
+  reproducible package gates.
+
+## Release blockers
+
+- Direct Skia GPU raster is blocked by the pinned rust-skia `GpuStats` ABI
+  mismatch; OpenGL currently presents a CPU-rasterized exact frame.
+- The C ABI covers the retained engine and headless renderer, but does not yet
+  export the owned Linux event loop or full platform accessibility tree.
+- Retained per-node layers and compositor-owned animation curves are incomplete,
+  so the strict blocked-UI 100-animation gate is not yet qualified.
+- Full preserve-3d and backface layer semantics remain incomplete.
+- Physical-GPU/context-loss and automated AT-SPI release-lab runs are pending.
+- x86-64 and AArch64 clean-container packages must be built twice, compared,
+  attested, signed, installed, and exercised.
+- Crates.io publication requires final release approval and credentials.
+
+See [release qualification](../v02/release.md),
+[hardening](../v02/hardening.md), and the
+[unsupported list](../v02/unsupported-features.md). Do not describe the WSL2
+performance artifact as release qualification.
+
+## Canonical local gates
 
 ```bash
 cd bindings/rust
-cargo build --release --package pixel-compare
-```
+cargo test --workspace --locked
+cd ../..
 
-Run the full WPT pixel comparison:
-
-```bash
-LD_LIBRARY_PATH="$PWD/chrome/linux-147.0.7727.50/chrome-linux64" \
-  python3 -u tools/accountability/run_all_pixel_comparisons.py 'wpt/'
-```
-
-Regenerate tracking:
-
-```bash
-python3 tools/accountability/generate_wpt_mapping.py
-python3 tools/accountability/generate_sp12_5_csv.py
-python3 tools/accountability/generate_html_report.py
-python3 tools/wpt/generate_sp17_closure.py --check
-```
-
-Audit:
-
-```bash
+python3 tools/release/build_v02_linux.py --verify-source
 python3 tools/accountability/audit.py
+python3 tools/accountability/verify_frozen_openui_pixels.py \
+  --pixel-compare bindings/rust/target/debug/pixel_compare
+python3 tools/ffi/verify_abi.py
 ```
 
-Focused WPT runs overwrite `summary.json`; snapshot it before running filtered
-comparisons and restore it afterward unless the focused run is intentionally replacing
-the authoritative summary.
+For the workstation-only exact toolchain, pass
+`--config .cargo/config.chromium.toml` to Cargo. Ordinary development and
+release builds use the portable default configuration.

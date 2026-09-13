@@ -1,17 +1,23 @@
 [package]
 name = "openui"
-version = "0.2.0"
-edition = "2021"
-description = "Open UI reactive runtime — Leptos-style fine-grained reactivity in pure Rust"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
+description = "Typed reactive Linux and headless application framework over the Open UI engine"
 
 [features]
 default = []
 linux = ["dep:openui-platform", "openui-platform/linux"]
 
 [dependencies]
-openui-compositor = { path = "../openui-compositor" }
-openui-dom = { path = "../openui-dom" }
-openui-engine = { path = "../openui-engine" }
-openui-macros = { path = "../openui-macros" }
-openui-platform = { path = "../openui-platform", optional = true }
-openui-style = { path = "../openui-style" }
+openui-compositor = { version = "=0.2.0", path = "../openui-compositor" }
+openui-dom = { version = "=0.2.0", path = "../openui-dom" }
+openui-engine = { version = "=0.2.0", path = "../openui-engine" }
+openui-macros = { version = "=0.2.0", path = "../openui-macros" }
+openui-platform = { version = "=0.2.0", path = "../openui-platform", optional = true }
+openui-style = { version = "=0.2.0", path = "../openui-style" }

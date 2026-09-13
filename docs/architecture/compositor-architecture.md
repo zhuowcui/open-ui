@@ -1,5 +1,12 @@
 # Compositor Architecture (cc/)
 
+> **Historical research, not the v0.2 implementation contract.** This document
+> describes the former Chromium `cc/` extraction proposal. The supported
+> pure-Rust architecture is documented in
+> [Rendering pipeline overview](rendering-pipeline-overview.md), and remaining
+> compositor qualification gaps are tracked in
+> [current status](../progress/current-status.md).
+
 > Architecture document for the Open UI project.
 > Deep technical reference on Chromium's compositor layer (`cc/`), annotated
 > with extraction boundaries and the proposed C ABI surface.

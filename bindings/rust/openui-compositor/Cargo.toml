@@ -1,15 +1,19 @@
 [package]
 name = "openui-compositor"
-version = "0.2.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
 description = "Immutable scene snapshots and rendering backends for Open UI"
-license = "Apache-2.0"
-rust-version = "1.85"
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
 
 [dependencies]
-openui-layout = { path = "../openui-layout" }
-openui-paint = { path = "../openui-paint" }
+openui-layout = { version = "=0.2.0", path = "../openui-layout" }
+openui-paint = { version = "=0.2.0", path = "../openui-paint" }
 skia-safe = "0.94"
 
 [dev-dependencies]
-openui-dom = { path = "../openui-dom" }
+openui-dom = { version = "=0.2.0", path = "../openui-dom" }

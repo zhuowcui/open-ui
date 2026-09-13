@@ -18,7 +18,7 @@ INCLUDE = ROOT / "include"
 EXAMPLES = ROOT / "examples/c_v02"
 SYMBOLS = ROOT / "docs/v02/generated/openui-ffi-symbols.txt"
 DEFAULT_LIBRARY = ROOT / "bindings/rust/target/debug/libopenui_ffi.so"
-RUST_CONFIG = ROOT / "bindings/rust/.cargo/config.toml"
+PARITY_RUST_CONFIG = ROOT / "bindings/rust/.cargo/config.chromium.toml"
 
 
 def run(command: list[str]) -> None:
@@ -43,9 +43,11 @@ def compilers() -> tuple[str | None, str | None, list[str], list[str], list[str]
     system_cc = os.environ.get("CC") or shutil.which("cc")
     system_cxx = os.environ.get("CXX") or shutil.which("c++")
     configured: dict[str, str] = {}
-    if RUST_CONFIG.is_file():
-        configured = tomllib.loads(RUST_CONFIG.read_text(encoding="utf-8")).get("env", {})
     use_system = bool(system_cc and system_cxx and Path("/usr/include/stdio.h").is_file())
+    if not use_system and PARITY_RUST_CONFIG.is_file():
+        configured = tomllib.loads(
+            PARITY_RUST_CONFIG.read_text(encoding="utf-8")
+        ).get("env", {})
     cc = system_cc if use_system else configured.get("CC", system_cc)
     cxx = system_cxx if use_system else configured.get("CXX", system_cxx or cc)
     configured_flags = [] if use_system else shlex.split(configured.get("CXXFLAGS", ""))
@@ -86,6 +88,8 @@ def main() -> None:
 
     with tempfile.TemporaryDirectory(prefix="openui-ffi-") as temporary:
         temporary = Path(temporary)
+        runnable_library = temporary / "libopenui.so.0"
+        shutil.copy2(library, runnable_library)
         cpp = temporary / "header_smoke.o"
         run(
             [
@@ -130,8 +134,8 @@ def main() -> None:
                     *link_flags,
                     "-fuse-ld=lld",
                     str(object_file),
-                    str(library),
-                    f"-Wl,-rpath,{library.parent}",
+                    str(runnable_library),
+                    f"-Wl,-rpath,{temporary}",
                     "-o",
                     str(output),
                 ]

@@ -1,5 +1,10 @@
 # Open UI — Architecture Decision Records
 
+> **Historical SP1–SP20 decision log.** Entries below explain how exact parity
+> was reached but do not override the v0.2 product contract. Current decisions
+> are in [`docs/adr`](../adr/), with the supported architecture summarized in
+> [Rendering pipeline overview](rendering-pipeline-overview.md).
+
 ## ADR-001: Use Chromium's Embedded Skia, Not Upstream
 
 **Date**: SP1

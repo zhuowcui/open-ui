@@ -18,10 +18,16 @@ freezes the lockfile digest.
 | x11-clipboard | 0.9.3 | MIT | X11 CLIPBOARD/PRIMARY selection implementation over x11rb. |
 
 Transitive package `uuid` 1.26.1 is used by AccessKit tree identifiers and is
-covered by the same lockfile, license, MSRV, and advisory checks. Linux shell
-dependencies are reviewed when the feature-gated platform crate lands.
+covered by the same lockfile, license, MSRV, and advisory checks. Scheduled CI
+compiles the public headless and Linux framework surfaces with Rust 1.85; tag
+CI repeats that compiler floor while producing both native SDK architectures.
 
 The isolated fuzz workspace pins `libfuzzer-sys` 0.4.13 under its combined
 MIT/Apache-2.0 and NCSA license. It is maintained by the Rust Fuzz project,
 requires a nightly compiler only for fuzz execution, and is excluded from the
 runtime workspace and all release artifacts.
+
+All eleven crates.io packages declare Apache-2.0, repository/homepage metadata,
+the Rust 1.85 floor, and version 0.2.0. Internal dependencies carry both a
+local path and an exact registry version. The non-publishable `openui-ffi`
+crate is packaged as the native SDK after the same dependency review.

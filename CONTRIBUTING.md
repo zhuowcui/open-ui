@@ -1,112 +1,88 @@
 # Contributing to Open UI
 
-## Getting Started
+Open UI v0.2 is developed in the pure-Rust workspace under `bindings/rust`.
+The root GN/C++ Blink backend and the SP2 experiments are historical evidence;
+do not add new product features to them.
 
-1. Fork the repository
-2. Clone with submodules: `git clone --recursive <your-fork>`
-3. Install prerequisites (see [README.md](README.md))
-4. Create a branch: `git checkout -b my-feature`
-5. Make changes, commit, push, open a PR
+## Getting started
 
-## Code Style
-
-### Extracted Chromium Code (`third_party/chromium/`, `src/base/`)
-
-Follow [Chromium's C++ style guide](https://chromium.googlesource.com/chromium/src/+/main/styleguide/c++/c++.md):
-- 2-space indentation
-- `UpperCamelCase` for types, `lower_snake_case` for variables/functions
-- `kConstantName` for constants
-- Chromium `base/` types preferred over STL where extracted
-
-### Our Code (`src/`, `include/`)
-
-Follow the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html) with these adjustments:
-- C++20 standard
-- 2-space indentation
-- 100-character line limit
-- `#pragma once` for include guards
-
-### C API Headers (`include/openui/`)
-
-Conventions for the public C API:
-
-```c
-// All symbols prefixed with oui_ (lowercase)
-OuiStatus oui_compositor_create(OuiCompositor** comp);
-
-// Types prefixed with Oui (UpperCamelCase)
-typedef struct OuiCompositor OuiCompositor;
-
-// Enums prefixed with OUI_ (UPPER_SNAKE_CASE)
-typedef enum {
-    OUI_STATUS_OK = 0,
-    OUI_STATUS_ERROR = 1,
-    OUI_STATUS_OUT_OF_MEMORY = 2,
-} OuiStatus;
-
-// Handle-based: all objects are opaque pointers
-// Lifecycle: explicit create/destroy pairs
-// Error handling: return OuiStatus
-// No C++ in public headers (extern "C" wrappers internally)
-// Thread safety documented per function
-```
-
-## Formatting
-
-All code is formatted with `clang-format` using the config in `.clang-format`:
+1. Fork and clone the repository.
+2. Install the prerequisites in [the development guide](docs/DEVELOPMENT.md).
+3. Create a focused branch.
+4. Build and test the locked Rust workspace.
 
 ```bash
-# Format all native source files with the CI-pinned formatter
-find src include examples -type f \
-  \( -name '*.cc' -o -name '*.h' -o -name '*.c' \) -print0 | \
-  sort -z | xargs -0 --no-run-if-empty clang-format-18 -i
-
-# Check formatting (CI does this)
-find src include examples -type f \
-  \( -name '*.cc' -o -name '*.h' -o -name '*.c' \) -print0 | \
-  sort -z | xargs -0 --no-run-if-empty clang-format-18 --dry-run --Werror
+cd bindings/rust
+cargo build --workspace --locked
+cargo test --workspace --locked
 ```
 
-GN files are formatted with `gn format`:
+Headless builds are the default. Use the `linux` feature when changing the
+native X11/Wayland runtime. A Chromium checkout is not required for supported
+builds or release artifacts.
+
+## Code and API rules
+
+- Format Rust with `cargo fmt`; run Clippy for changed packages.
+- Keep every public crate and internal dependency on the coordinated v0.2
+  version declared by the workspace.
+- Treat `openui-style` as the only public source of style value definitions.
+- Do not add runtime property-name or CSS-value string setters.
+- Keep window-system dependencies behind Cargo features so headless consumers
+  do not acquire Linux display dependencies.
+- Document the safety contract for every unsafe block and FFI entry point, and
+  add negative tests for malformed inputs.
+- Preserve single-thread affinity for mutable engine state. Only immutable
+  scene snapshots may cross to the compositor thread.
+
+The generated C header is C11-compatible. Public symbols use the `oui_`
+prefix, opaque types use the `Oui` prefix, and exported functions return
+`OuiStatus`. New public structs require `struct_size` and `abi_version`; UTF-8
+inputs are length-delimited.
+
+## Generated files
+
+Never hand-edit generated style, ABI, migration, or closure artifacts. Change
+their schema/source and rerun the corresponding generator. Verification must
+be read-only and deterministic.
 
 ```bash
-git ls-files -z '*.gn' '*.gni' | xargs -0 --no-run-if-empty -n1 gn format
+python3 tools/style/generate_properties.py --check
+python3 tools/ffi/generate_ffi.py --check
+python3 tools/release/generate_v02_contract.py --check
+python3 tools/wpt/generate_sp20_closure.py --check
 ```
 
-The complete hosted-CI contract, local Rust/accountability commands, and the
-separate pinned Chromium pixel gate are documented in [`docs/CI.md`](docs/CI.md).
+## Correctness and release gates
 
-## Commit Messages
+Behavior changes need proportionate Rust, C ABI, conformance, and compile-fail
+coverage. Rendering changes must pass the frozen 5,731-case exact replay with
+zero tolerance. Do not introduce test-ID branches, reference substitution,
+synthetic geometry, hidden fallbacks, network access, or unclassified
+exclusions.
 
+At minimum, run the relevant package tests and:
+
+```bash
+python3 tools/release/build_v02_linux.py --verify-source
+python3 tools/ffi/verify_abi.py
+python3 tools/accountability/audit.py
+git diff --check
 ```
-component: short description
 
-Longer explanation if needed. Wrap at 72 characters.
+See [the CI contract](docs/CI.md) for the hosted matrix, scheduled hardening,
+and release proof. Performance and accessibility regressions in required
+scenarios are release blockers.
 
-- Bullet points are fine
-- Reference issues with #123
-```
+## Pull requests and commits
 
-Components: `skia`, `compositor`, `layout`, `style`, `scene_graph`, `platform`, `build`, `ci`, `docs`, `tools`
+- Keep each change logically scoped and include tests for behavior changes.
+- Update API, migration, and unsupported-feature documentation together.
+- Record significant design decisions in `docs/adr/` using the template.
+- Use a concise component-oriented subject such as
+  `engine: invalidate intrinsic sizes after text mutation`.
+- Do not include build outputs or release credentials.
 
-## Pull Requests
-
-- One logical change per PR
-- Include tests for behavioral changes
-- Update docs if changing public APIs
-- CI must pass before merge
-- Squash-merge to keep history clean
-
-## Architecture Decision Records (ADRs)
-
-Significant decisions are recorded in `docs/adr/`. To propose a new decision:
-
-1. Copy `docs/adr/TEMPLATE.md` → `docs/adr/NNN-title.md`
-2. Fill in context, decision, consequences
-3. Submit as a PR for review
-
-## Reporting Issues
-
-- Use GitHub Issues
-- Include: OS version, compiler version, build type (Debug/Release)
-- For rendering issues: include screenshot + minimal reproduction
+Issue reports should include the OS and architecture, Rust/compiler versions,
+selected backend, a minimal reproduction, and screenshots or traces for visual
+and interaction failures.

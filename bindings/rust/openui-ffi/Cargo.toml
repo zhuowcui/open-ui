@@ -1,9 +1,14 @@
 [package]
 name = "openui-ffi"
-version = "0.2.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
 description = "Validated C ABI for the Open UI retained engine"
-license = "BSD-3-Clause"
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
 publish = false
 build = "build.rs"
 
@@ -11,8 +16,8 @@ build = "build.rs"
 crate-type = ["rlib", "staticlib", "cdylib"]
 
 [dependencies]
-openui-compositor = { path = "../openui-compositor" }
-openui-dom = { path = "../openui-dom" }
-openui-engine = { path = "../openui-engine" }
-openui-geometry = { path = "../openui-geometry" }
-openui-style = { path = "../openui-style" }
+openui-compositor = { version = "=0.2.0", path = "../openui-compositor" }
+openui-dom = { version = "=0.2.0", path = "../openui-dom" }
+openui-engine = { version = "=0.2.0", path = "../openui-engine" }
+openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
+openui-style = { version = "=0.2.0", path = "../openui-style" }

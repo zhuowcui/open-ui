@@ -1,5 +1,10 @@
 # Layout Engine Architecture — LayoutNG Deep Dive
 
+> **Historical research, not the v0.2 implementation contract.** This file
+> records the original LayoutNG extraction analysis. Open UI v0.2 uses the
+> pure-Rust `openui-layout` crate through `openui-engine`; see the
+> [Rendering pipeline overview](rendering-pipeline-overview.md).
+
 > **Component:** `libopenui_layout`
 > **Chromium Source:** `third_party/blink/renderer/core/layout/ng/`
 > **Chromium Version:** M147 (`147.0.7727.24`)

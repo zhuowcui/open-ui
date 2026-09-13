@@ -1,17 +1,21 @@
 [package]
 name = "openui-engine"
-version = "0.2.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
 description = "Retained document, interaction, and scene engine for Open UI"
-license = "Apache-2.0"
-rust-version = "1.85"
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
 
 [dependencies]
 accesskit = "=0.25.0"
-openui-compositor = { path = "../openui-compositor" }
-openui-dom = { path = "../openui-dom" }
-openui-geometry = { path = "../openui-geometry" }
-openui-layout = { path = "../openui-layout" }
-openui-paint = { path = "../openui-paint" }
-openui-style = { path = "../openui-style" }
+openui-compositor = { version = "=0.2.0", path = "../openui-compositor" }
+openui-dom = { version = "=0.2.0", path = "../openui-dom" }
+openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
+openui-layout = { version = "=0.2.0", path = "../openui-layout" }
+openui-paint = { version = "=0.2.0", path = "../openui-paint" }
+openui-style = { version = "=0.2.0", path = "../openui-style" }
 unicode-segmentation = "1.10"

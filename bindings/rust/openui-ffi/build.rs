@@ -9,5 +9,6 @@ fn main() {
             "cargo:rustc-cdylib-link-arg=-Wl,--version-script={}",
             map.display()
         );
+        println!("cargo:rustc-cdylib-link-arg=-Wl,-soname,libopenui.so.0");
     }
 }

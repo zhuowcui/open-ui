@@ -1,12 +1,18 @@
 [package]
 name = "openui-text"
-version = "0.1.0"
-edition = "2021"
-description = "Font resolution, metrics, and text shaping — extracted from Blink's font subsystem"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
+description = "Deterministic font resolution, metrics, bidi, and shaping for Open UI"
 
 [dependencies]
-openui-style = { path = "../openui-style" }
-openui-geometry = { path = "../openui-geometry" }
+openui-style = { version = "=0.2.0", path = "../openui-style" }
+openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
 skia-safe = { version = "0.94", features = ["textlayout"] }
 unicode-script = "0.5"
 unicode-bidi = "0.3"
