@@ -126,6 +126,7 @@ jobs:
           python3 tools/wpt/generate_sp18_closure.py --check
           python3 tools/wpt/generate_sp20_closure.py --check
           python3 tools/release/generate_v02_contract.py --check
+          python3 tools/style/generate_properties.py --check
 
       - name: Audit authoritative accountability artifacts
         run: python3 tools/accountability/audit.py --repository-only

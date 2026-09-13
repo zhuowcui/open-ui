@@ -14,6 +14,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "docs" / "v02" / "generated"
+IMMUTABLE_GENERATED = {
+    "baseline.json": "787cd40ae63d06d5933efa89a4eba65a70d6327673b8056b83cae76ef3606001",
+    "api-inventory.json": "e6d9e9200d0a2849f03f577fe01a9918be0b49049818cd1c3f03e3186797255f",
+    "migration-ledger.csv": "aca0c1d7778a91361be909e9e6d9cc6fdfde2fc840e4f2e12db69f9cceef3edb",
+}
 SUMMARY = ROOT / "tools/accountability/data/pixel_comparison/results/summary.json"
 FROZEN_INPUTS = (
     ROOT / "CHROMIUM_VERSION",
@@ -181,12 +186,13 @@ def dependency_policy() -> bytes:
 
 
 def expected() -> dict[Path, bytes]:
-    return {
-        OUT / "baseline.json": baseline(),
-        OUT / "api-inventory.json": api_inventory(),
-        OUT / "migration-ledger.csv": migration(),
-        OUT / "dependency-policy.json": dependency_policy(),
-    }
+    artifacts = {OUT / "dependency-policy.json": dependency_policy()}
+    for name, expected_hash in IMMUTABLE_GENERATED.items():
+        path = OUT / name
+        if not path.is_file() or sha256(path) != expected_hash:
+            raise SystemExit(f"immutable v0.2 kickoff artifact drift: {rel(path)}")
+        artifacts[path] = path.read_bytes()
+    return artifacts
 
 
 def main() -> None:

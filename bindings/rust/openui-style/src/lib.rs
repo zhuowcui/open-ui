@@ -9,6 +9,7 @@ mod computed;
 mod enums;
 mod font_types;
 mod layout_systems;
+mod property;
 
 pub use color::{Color, StyleColor};
 pub use computed::{
@@ -22,3 +23,4 @@ pub use computed::{
 pub use enums::*;
 pub use font_types::*;
 pub use layout_systems::*;
+pub use property::*;

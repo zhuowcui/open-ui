@@ -1,0 +1,47 @@
+id,rust_name,css_name,rust_type,value_kind,initial,inherited,invalidation,interpolation
+1,Display,display,Display,display,inline,false,subtree,discrete
+2,Position,position,Position,position,static,false,layout,discrete
+3,Overflow,overflow,Overflow,overflow,visible,false,layout,discrete
+4,Width,width,LengthValue,length,auto,false,intrinsic,length
+5,Height,height,LengthValue,length,auto,false,intrinsic,length
+6,MinWidth,min-width,LengthValue,length,auto,false,intrinsic,length
+7,MinHeight,min-height,LengthValue,length,auto,false,intrinsic,length
+8,MaxWidth,max-width,LengthValue,length,none,false,intrinsic,length
+9,MaxHeight,max-height,LengthValue,length,none,false,intrinsic,length
+10,Margin,margin,Edges<LengthValue>,edges,0px,false,layout,length-list
+11,MarginTop,margin-top,LengthValue,length,0px,false,layout,length
+12,MarginRight,margin-right,LengthValue,length,0px,false,layout,length
+13,MarginBottom,margin-bottom,LengthValue,length,0px,false,layout,length
+14,MarginLeft,margin-left,LengthValue,length,0px,false,layout,length
+15,Padding,padding,Edges<LengthValue>,edges,0px,false,layout,length-list
+16,PaddingTop,padding-top,LengthValue,length,0px,false,layout,length
+17,PaddingRight,padding-right,LengthValue,length,0px,false,layout,length
+18,PaddingBottom,padding-bottom,LengthValue,length,0px,false,layout,length
+19,PaddingLeft,padding-left,LengthValue,length,0px,false,layout,length
+20,BackgroundColor,background-color,Color,color,transparent,false,paint,color
+21,Color,color,Color,color,black,true,paint,color
+22,Opacity,opacity,f32,number,1,false,composite,number
+23,ZIndex,z-index,i32,integer,auto,false,composite,integer
+24,FlexDirection,flex-direction,FlexDirection,flex-direction,row,false,layout,discrete
+25,FlexWrap,flex-wrap,FlexWrap,flex-wrap,nowrap,false,layout,discrete
+26,FlexGrow,flex-grow,f32,number,0,false,layout,number
+27,FlexShrink,flex-shrink,f32,number,1,false,layout,number
+28,FlexBasis,flex-basis,LengthValue,length,auto,false,intrinsic,length
+29,AlignItems,align-items,ItemAlignment,item-alignment,normal,false,layout,discrete
+30,JustifyContent,justify-content,ContentAlignment,content-alignment,normal,false,layout,discrete
+31,Gap,gap,Gap,gap,normal,false,layout,length-list
+32,RowGap,row-gap,LengthValue,length,normal,false,layout,length
+33,ColumnGap,column-gap,LengthValue,length,normal,false,layout,length
+34,FontFamily,font-family,FontFamilyList,font-family,sans-serif,true,intrinsic,discrete
+35,FontSize,font-size,LengthValue,length,16px,true,intrinsic,length
+36,FontWeight,font-weight,FontWeight,font-weight,400,true,intrinsic,number
+37,Border,border,Border,border,medium none currentColor,false,layout,discrete
+38,BorderTop,border-top,Border,border,medium none currentColor,false,layout,discrete
+39,BorderRight,border-right,Border,border,medium none currentColor,false,layout,discrete
+40,BorderBottom,border-bottom,Border,border,medium none currentColor,false,layout,discrete
+41,BorderLeft,border-left,Border,border,medium none currentColor,false,layout,discrete
+42,BorderRadius,border-radius,CornerRadii,corner-radii,0px,false,paint,length-list
+43,Cursor,cursor,Cursor,cursor,auto,true,accessibility,discrete
+44,ListStyleType,list-style,ListStyleType,list-style,disc,true,subtree,discrete
+45,Transform,transform,TransformList,transform,none,false,composite,transform
+
