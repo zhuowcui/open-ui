@@ -15,7 +15,7 @@ use unicode_segmentation::UnicodeSegmentation;
 
 use crate::font::features::{collect_font_features, to_skia_features};
 use crate::font::{Font, FontPlatformData};
-use openui_style::{FontFeature, FontOrientation};
+use openui_style::{FontFeature, FontOrientation, TextAutospace, TextSpacingTrim};
 
 use super::shape_result::{ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection};
 
@@ -60,6 +60,19 @@ fn is_complex_script(ch: char) -> bool {
             | Script::Sundanese
             | Script::Lepcha
     )
+}
+
+#[inline]
+fn is_autospace_ideographic(ch: char) -> bool {
+    matches!(
+        ch.script(),
+        Script::Han | Script::Hiragana | Script::Katakana | Script::Bopomofo | Script::Hangul
+    )
+}
+
+#[inline]
+fn is_autospace_alphanumeric(ch: char) -> bool {
+    !is_autospace_ideographic(ch) && ch.is_alphanumeric()
 }
 
 /// Legacy bidi embedding/override controls participate in UAX#9 but are
@@ -1357,7 +1370,11 @@ impl TextShaper {
         let letter_spacing = desc.letter_spacing;
         let word_spacing = desc.word_spacing;
 
-        if letter_spacing == 0.0 && word_spacing == 0.0 {
+        if letter_spacing == 0.0
+            && word_spacing == 0.0
+            && desc.text_autospace == TextAutospace::NoAutospace
+            && desc.text_spacing_trim != TextSpacingTrim::TrimStart
+        {
             return;
         }
 
@@ -1378,6 +1395,41 @@ impl TextShaper {
             if ch == ' ' {
                 extra_advance_per_char[char_idx] += word_spacing;
             }
+        }
+
+        // CSS Text 4 inserts a narrow gap between East Asian ideographs and
+        // adjacent non-East-Asian letters/numbers. Attach the gap to the
+        // preceding cluster so line breaking, caret geometry, and painting
+        // all consume the same advance.
+        if desc.text_autospace == TextAutospace::Normal {
+            let autospace = desc.size / 8.0;
+            for index in 0..chars.len().saturating_sub(1) {
+                let left_ideographic = is_autospace_ideographic(chars[index]);
+                let right_ideographic = is_autospace_ideographic(chars[index + 1]);
+                let left_alphanumeric = is_autospace_alphanumeric(chars[index]);
+                let right_alphanumeric = is_autospace_alphanumeric(chars[index + 1]);
+                if (left_ideographic && right_alphanumeric)
+                    || (left_alphanumeric && right_ideographic)
+                {
+                    extra_advance_per_char[index] += autospace;
+                }
+            }
+        }
+
+        let leading_trim = if desc.text_spacing_trim == TextSpacingTrim::TrimStart
+            && chars
+                .first()
+                .is_some_and(|ch| is_fullwidth_opening_punctuation(*ch))
+        {
+            // A fallback face can expose an opening-punctuation advance that
+            // is narrower than half an em. Never let trimming turn that
+            // cluster (or the complete shaped result) negative.
+            (desc.size / 2.0).min(Self::char_advance_from_runs(&result.runs, 0).max(0.0))
+        } else {
+            0.0
+        };
+        if leading_trim > 0.0 {
+            extra_advance_per_char[0] -= leading_trim;
         }
 
         // Distribute the extra advance to glyph runs.
@@ -1442,6 +1494,20 @@ impl TextShaper {
                     run_extra += per_glyph_extra[gi];
                 }
                 total_extra += run_extra;
+            }
+        }
+
+        if leading_trim > 0.0 && result.direction == TextDirection::Ltr {
+            for run in &mut result.runs {
+                if run.start_index != 0 {
+                    continue;
+                }
+                for (glyph_index, cluster) in run.clusters.iter().enumerate() {
+                    if *cluster == 0 {
+                        run.offsets[glyph_index].0 -= leading_trim;
+                    }
+                }
+                break;
             }
         }
 
@@ -1527,6 +1593,25 @@ impl TextShaper {
         }
         0.0
     }
+}
+
+#[inline]
+fn is_fullwidth_opening_punctuation(ch: char) -> bool {
+    matches!(
+        ch,
+        '\u{3008}'
+            | '\u{300A}'
+            | '\u{300C}'
+            | '\u{300E}'
+            | '\u{3010}'
+            | '\u{3014}'
+            | '\u{3016}'
+            | '\u{3018}'
+            | '\u{301A}'
+            | '\u{FF08}'
+            | '\u{FF3B}'
+            | '\u{FF5B}'
+    )
 }
 
 impl Default for TextShaper {

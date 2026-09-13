@@ -14,8 +14,8 @@ use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
 #[allow(unused_imports)]
 use openui_style::{
     ComputedStyle, Direction, Display, HangingPunctuation, Hyphens, LineBreak, LineHeight,
-    OverflowWrap, TabSize, TextAlign, TextAlignLast, TextJustify, TextOrientation, TextTransform,
-    VerticalAlign, WhiteSpace, WordBreak, WritingMode,
+    OverflowWrap, TabSize, TextAlign, TextAlignLast, TextBoxEdge, TextBoxEdgeKeyword, TextBoxTrim,
+    TextJustify, TextOrientation, TextTransform, VerticalAlign, WhiteSpace, WordBreak, WritingMode,
 };
 
 // -- Helpers --
@@ -195,6 +195,7 @@ fn layout_text_inheriting(
         doc.node_mut(t).style.overflow_wrap = bs.overflow_wrap;
         doc.node_mut(t).style.line_break = bs.line_break;
         doc.node_mut(t).style.hyphens = bs.hyphens;
+        doc.node_mut(t).style.hyphenate_character = bs.hyphenate_character.clone();
         doc.node_mut(t).style.letter_spacing = bs.letter_spacing;
         doc.node_mut(t).style.word_spacing = bs.word_spacing;
         doc.node_mut(t).style.line_height = bs.line_height.clone();
@@ -1794,6 +1795,26 @@ mod hyphens {
     }
 
     #[test]
+    fn authored_hyphenate_character_is_measured_and_emitted() {
+        let frag =
+            layout_text_inheriting(&["Supercalifragilis\u{00AD}ticexpialidocious"], 190, |s| {
+                s.hyphens = Hyphens::Manual;
+                s.hyphenate_character = Some("→".to_string());
+            });
+        let fragments = collect_text_fragments(&frag);
+        assert!(
+            fragments
+                .iter()
+                .any(|fragment| fragment.text_content.as_deref() == Some("→")),
+            "the visible discretionary marker must use hyphenate-character: {:?}",
+            fragments
+                .iter()
+                .map(|fragment| fragment.text_content.as_deref())
+                .collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
     fn none_ignores_soft_hyphen() {
         let frag =
             layout_text_inheriting(&["Supercalifragilis\u{00AD}ticexpialidocious"], 150, |s| {
@@ -1833,6 +1854,27 @@ mod hyphens {
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
+}
+
+#[test]
+fn text_box_trim_changes_line_and_intrinsic_block_geometry() {
+    let untrimmed = layout_text_styled(&["CAP"], 300, |style| {
+        style.font_size = 20.0;
+        style.line_height = LineHeight::Length(60.0);
+    });
+    let trimmed = layout_text_styled(&["CAP"], 300, |style| {
+        style.font_size = 20.0;
+        style.line_height = LineHeight::Length(60.0);
+        style.text_box_edge = TextBoxEdge {
+            over: TextBoxEdgeKeyword::Cap,
+            under: TextBoxEdgeKeyword::Alphabetic,
+        };
+        style.text_box_trim = TextBoxTrim::TrimBoth;
+    });
+    assert!(trimmed.size.height < untrimmed.size.height);
+    let line = trimmed.children.first().expect("trimmed line");
+    assert!(line.baseline_offset >= 0.0);
+    assert!(line.size.height > LayoutUnit::zero());
 }
 
 // ==========================================================================

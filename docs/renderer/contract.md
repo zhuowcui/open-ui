@@ -27,3 +27,6 @@ renderer coverage because the product does not embed a browser runtime.
 
 Application and system font ownership, registration limits, and C handle
 lifetime rules are documented in [font collections](font-collections.md).
+Font selection and shaping precedence is documented in
+[font selection and shaping](font-selection-and-shaping.md), and the shared
+layout/paint flow is documented in [text layout and paint](text-layout-and-paint.md).

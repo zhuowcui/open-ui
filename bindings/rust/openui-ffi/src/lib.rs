@@ -2534,6 +2534,8 @@ fn c_length(value: LengthValue) -> OuiLength {
         LengthValue::Rem(value) => OuiLength { value, unit: 3 },
         LengthValue::ViewportWidth(value) => OuiLength { value, unit: 4 },
         LengthValue::ViewportHeight(value) => OuiLength { value, unit: 5 },
+        LengthValue::ViewportMin(value) => OuiLength { value, unit: 8 },
+        LengthValue::ViewportMax(value) => OuiLength { value, unit: 9 },
     }
 }
 

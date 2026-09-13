@@ -612,25 +612,20 @@ def parse_length(value: str, font_size: float = 16.0) -> str | None:
         return 'Length::stretch()'
     if value == 'content':
         return 'Length::content()'
-    # Viewport-relative lengths are frozen against the accountability
-    # renderer's 800x600 viewport.  Keep vmin/vmax distinct: crash tests use
-    # very large values to force float continuations across fragmentainers.
+    # Keep viewport-relative lengths semantic until style computation. This
+    # lets one generated fixture run against every qualification viewport.
     m = re.match(r'^(-?[\d.]+)vw$', value)
     if m:
-        px_val = _zoomed_px(float(m.group(1)) * 8.0)  # 800px viewport
-        return f'Length::px({px_val})'
+        return f'crate::fixture_viewport_length(LengthValue::ViewportWidth({_zoomed_px(float(m.group(1)))}))'
     m = re.match(r'^(-?[\d.]+)vh$', value)
     if m:
-        px_val = _zoomed_px(float(m.group(1)) * 6.0)  # 600px viewport
-        return f'Length::px({px_val})'
+        return f'crate::fixture_viewport_length(LengthValue::ViewportHeight({_zoomed_px(float(m.group(1)))}))'
     m = re.match(r'^(-?[\d.]+)vmin$', value)
     if m:
-        px_val = _zoomed_px(float(m.group(1)) * 6.0)  # min(800, 600) / 100
-        return f'Length::px({px_val})'
+        return f'crate::fixture_viewport_length(LengthValue::ViewportMin({_zoomed_px(float(m.group(1)))}))'
     m = re.match(r'^(-?[\d.]+)vmax$', value)
     if m:
-        px_val = _zoomed_px(float(m.group(1)) * 8.0)  # max(800, 600) / 100
-        return f'Length::px({px_val})'
+        return f'crate::fixture_viewport_length(LengthValue::ViewportMax({_zoomed_px(float(m.group(1)))}))'
     # calc() — pre-evaluate pure-px expressions
     m = re.match(r'^calc\((.+)\)$', value)
     if m:
@@ -1035,17 +1030,13 @@ def _transform_2d_rust(
             if percentage_basis is None:
                 return None
             return amount / 100.0 * percentage_basis
-        match = re.fullmatch(r'(-?[\d.]+)(px|em|rem|vw|vh|vmin|vmax)', token)
+        match = re.fullmatch(r'(-?[\d.]+)(px|em|rem)', token)
         if not match:
             return None
         scale = {
             'px': 1.0,
             'em': font_size,
             'rem': 16.0,
-            'vw': 8.0,
-            'vh': 6.0,
-            'vmin': 6.0,
-            'vmax': 8.0,
         }[match.group(2)]
         return _zoomed_px(float(match.group(1)) * scale)
 
@@ -1197,18 +1188,10 @@ def _parse_calc_token(tok: str, font_size: float = 16.0):
     m = re.match(r'^(-?[\d.]+)lh$', tok)
     if m:
         return (float(m.group(1)) * _ACTIVE_LINE_HEIGHT_PX, 'px')
-    m = re.match(r'^(-?[\d.]+)vw$', tok)
-    if m:
-        return (float(m.group(1)) * 8.0, 'px')
-    m = re.match(r'^(-?[\d.]+)vh$', tok)
-    if m:
-        return (float(m.group(1)) * 6.0, 'px')
-    m = re.match(r'^(-?[\d.]+)vmin$', tok)
-    if m:
-        return (float(m.group(1)) * 6.0, 'px')
-    m = re.match(r'^(-?[\d.]+)vmax$', tok)
-    if m:
-        return (float(m.group(1)) * 8.0, 'px')
+    # Mixed-unit calc expressions remain unsupported instead of being baked
+    # against the historical 800x600 porter viewport.
+    if re.match(r'^-?[\d.]+(?:vw|vh|vmin|vmax)$', tok):
+        return None
     m = re.match(r'^(-?[\d.]+)$', tok)
     if m:
         return (float(m.group(1)), 'num')
@@ -4129,7 +4112,7 @@ def _css_length_px(value: str, font_size: float = 16.0) -> float | None:
     value = value.strip()
     if value in ('0', '0px'):
         return 0.0
-    m = re.match(r'^(-?[\d.]+)(px|em|rem|in|cm|mm|pt|pc|vw|vh|vmin|vmax)$', value)
+    m = re.match(r'^(-?[\d.]+)(px|em|rem|in|cm|mm|pt|pc)$', value)
     if not m:
         return None
     num = float(m.group(1))
@@ -4143,10 +4126,6 @@ def _css_length_px(value: str, font_size: float = 16.0) -> float | None:
         'mm': 96.0 / 25.4,
         'pt': 96.0 / 72.0,
         'pc': 16.0,
-        'vw': 8.0,
-        'vh': 6.0,
-        'vmin': 6.0,
-        'vmax': 8.0,
     }
     return _zoomed_px(num * factors[unit])
 

@@ -93,7 +93,9 @@ typedef enum OuiLengthUnit {
   OUI_LENGTH_VW = 4,
   OUI_LENGTH_VH = 5,
   OUI_LENGTH_AUTO = 6,
-  OUI_LENGTH_NONE = 7
+  OUI_LENGTH_NONE = 7,
+  OUI_LENGTH_VMIN = 8,
+  OUI_LENGTH_VMAX = 9
 } OuiLengthUnit;
 
 /* Values for OUI_STYLE_VALUE_ENUM, selected by the property schema. */

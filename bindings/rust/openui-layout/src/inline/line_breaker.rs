@@ -855,6 +855,11 @@ impl<'a> LineBreaker<'a> {
         if self.hyphens != Hyphens::None {
             let soft_breaks = hyphenation::find_soft_hyphens(text_slice);
             for sb in &soft_breaks {
+                // UAX #14 reports the boundary after U+00AD, while the
+                // discretionary-break machinery stores the boundary at the
+                // character so the invisible source code point is excluded
+                // from this line and skipped exactly once on resume.
+                break_opps.retain(|offset| *offset != *sb + '\u{00AD}'.len_utf8());
                 if !break_opps.contains(sb) {
                     break_opps.push(*sb);
                 }
@@ -875,7 +880,8 @@ impl<'a> LineBreaker<'a> {
             let font_desc = style_to_font_description(style);
             let font =
                 Font::new_in_collection(font_desc, Arc::clone(&self.items_data.font_collection));
-            let sr = shaper.shape("-", &font, openui_text::TextDirection::Ltr);
+            let marker = style.hyphenate_character.as_deref().unwrap_or("-");
+            let sr = shaper.shape(marker, &font, openui_text::TextDirection::Ltr);
             LayoutUnit::from_f32_ceil(sr.width)
         };
 
@@ -1126,7 +1132,8 @@ impl<'a> LineBreaker<'a> {
             let font_desc = style_to_font_description(style);
             let font =
                 Font::new_in_collection(font_desc, Arc::clone(&self.items_data.font_collection));
-            let sr = shaper.shape("-", &font, openui_text::TextDirection::Ltr);
+            let marker = style.hyphenate_character.as_deref().unwrap_or("-");
+            let sr = shaper.shape(marker, &font, openui_text::TextDirection::Ltr);
             LayoutUnit::from_f32_ceil(sr.width)
         };
 

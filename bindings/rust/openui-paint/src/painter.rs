@@ -1381,11 +1381,12 @@ fn paint_control_text_lines(
     text: &str,
     leading_inset: f32,
     center_single_line: bool,
+    style_override: Option<&ComputedStyle>,
 ) {
     if text.is_empty() {
         return;
     }
-    let style = &doc.node(fragment.node_id).style;
+    let style = style_override.unwrap_or(&doc.node(fragment.node_id).style);
     let font = doc.resolve_font(crate::text_painter::style_to_font_description(style));
     let direction = if style.direction == Direction::Rtl {
         TextDirection::Rtl
@@ -1443,7 +1444,8 @@ fn paint_textarea_contents(
         .attribute(fragment.node_id, "value")
         .or_else(|| first_descendant_text(doc, fragment.node_id))
         .unwrap_or_default();
-    let text = if authored.is_empty() {
+    let showing_placeholder = authored.is_empty();
+    let text = if showing_placeholder {
         doc.attribute(fragment.node_id, "placeholder")
             .unwrap_or_default()
     } else {
@@ -1458,6 +1460,14 @@ fn paint_textarea_contents(
         text,
         0.0,
         false,
+        showing_placeholder
+            .then(|| {
+                doc.node(fragment.node_id)
+                    .style
+                    .placeholder_style
+                    .as_deref()
+            })
+            .flatten(),
     );
 }
 
@@ -1495,6 +1505,7 @@ fn paint_select_contents(
         text,
         if multiple { 0.0 } else { 4.0 },
         !multiple,
+        None,
     );
 }
 
@@ -1729,9 +1740,17 @@ fn paint_text_input_control(
     } else {
         authored_value
     };
-    let mut control_style = node.style.clone();
+    let mut control_style = if showing_placeholder {
+        node.style
+            .placeholder_style
+            .as_deref()
+            .cloned()
+            .unwrap_or_else(|| node.style.clone())
+    } else {
+        node.style.clone()
+    };
     control_style.native_button_text_metrics = true;
-    if showing_placeholder {
+    if showing_placeholder && node.style.placeholder_style.is_none() {
         control_style.color = Color::from_rgba8(117, 117, 117, 255);
     }
     let style = &control_style;
@@ -5360,6 +5379,7 @@ fn paint_list_marker(
     style: &ComputedStyle,
     abs_offset: PhysicalOffset,
 ) {
+    let marker_style = style.marker_style.as_deref().unwrap_or(style);
     let mut ancestor = doc.node(fragment.node_id).parent;
     let mut in_multicol = style.column_count.is_some() || style.column_width.is_some();
     while !ancestor.is_none() && !in_multicol {
@@ -5397,8 +5417,8 @@ fn paint_list_marker(
         None
     }
 
-    let font_size = style.font_size.max(1.0);
-    let line_height = match style.line_height {
+    let font_size = marker_style.font_size.max(1.0);
+    let line_height = match marker_style.line_height {
         LineHeight::Normal => font_size * 1.2,
         LineHeight::Number(n) => font_size * n,
         LineHeight::Length(px) => px,
@@ -5435,7 +5455,7 @@ fn paint_list_marker(
         path.line_to(Point::new(left + 10.547, top));
         path.close();
         let mut paint = Paint::default();
-        paint.set_color(skia_safe::Color::BLACK);
+        set_paint_css_color_with_alpha(&mut paint, &marker_style.color, 1.0);
         paint.set_anti_alias(true);
         paint.set_style(PaintStyle::Fill);
         canvas.draw_path(&path.detach(), &paint);
@@ -5450,7 +5470,7 @@ fn paint_list_marker(
         path.line_to(Point::new(left, top + 10.546_875));
         path.close();
         let mut paint = Paint::default();
-        paint.set_color(skia_safe::Color::BLACK);
+        set_paint_css_color_with_alpha(&mut paint, &marker_style.color, 1.0);
         paint.set_anti_alias(true);
         paint.set_style(PaintStyle::Fill);
         canvas.draw_path(&path.detach(), &paint);
@@ -5461,7 +5481,7 @@ fn paint_list_marker(
         + marker_y_adjust;
 
     let mut paint = Paint::default();
-    paint.set_color(skia_safe::Color::BLACK);
+    set_paint_css_color_with_alpha(&mut paint, &marker_style.color, 1.0);
     paint.set_anti_alias(true);
     paint.set_style(PaintStyle::Fill);
     canvas.draw_oval(

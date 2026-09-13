@@ -9,7 +9,7 @@ use openui_style::{
     FontOrientation, FontPalette, FontSizeAdjust, FontSmoothing, FontStretch, FontStyleEnum,
     FontSynthesis, FontVariantAlternates, FontVariantCaps, FontVariantEastAsian, FontVariantEmoji,
     FontVariantLigatures, FontVariantNumeric, FontVariantPosition, FontVariation, FontWeight,
-    TextRendering,
+    TextAutospace, TextRendering, TextSizeAdjust, TextSpacingTrim,
 };
 
 /// Complete description of desired font properties, derived from CSS.
@@ -55,6 +55,10 @@ pub struct FontDescription {
     pub letter_spacing: f32,
     /// Extra spacing at word boundaries in pixels (CSS `word-spacing`).
     pub word_spacing: f32,
+    /// Automatic spacing at ideograph/alphanumeric boundaries.
+    pub text_autospace: TextAutospace,
+    /// Full-width punctuation spacing policy, retained for line-edge shaping.
+    pub text_spacing_trim: TextSpacingTrim,
     /// BCP47 locale for language-specific shaping.
     pub locale: Option<String>,
     /// Font smoothing mode (CSS `-webkit-font-smoothing`).
@@ -117,6 +121,8 @@ impl FontDescription {
             resolved_from_font_aspect: None,
             letter_spacing: 0.0,
             word_spacing: 0.0,
+            text_autospace: TextAutospace::Normal,
+            text_spacing_trim: TextSpacingTrim::Normal,
             locale: None,
             font_smoothing: FontSmoothing::Auto,
             text_rendering: TextRendering::Auto,
@@ -150,9 +156,17 @@ impl FontDescription {
     /// Keeping this conversion in the font subsystem prevents layout, paint,
     /// and font-relative length resolution from drifting apart.
     pub fn from_computed_style(style: &openui_style::ComputedStyle) -> Self {
+        let adjusted_size = match style.text_size_adjust {
+            TextSizeAdjust::Percentage(percent) if percent.is_finite() && percent >= 0.0 => {
+                style.font_size * percent / 100.0
+            }
+            TextSizeAdjust::Auto | TextSizeAdjust::None | TextSizeAdjust::Percentage(_) => {
+                style.font_size
+            }
+        };
         Self {
             family: style.font_family.clone(),
-            size: style.font_size,
+            size: adjusted_size,
             specified_size: style.font_size,
             weight: style.font_weight,
             stretch: style.font_stretch,
@@ -169,6 +183,8 @@ impl FontDescription {
             resolved_from_font_aspect: None,
             letter_spacing: style.letter_spacing,
             word_spacing: style.word_spacing,
+            text_autospace: style.text_autospace,
+            text_spacing_trim: style.text_spacing_trim,
             locale: style.locale.clone(),
             font_smoothing: style.font_smoothing,
             text_rendering: style.text_rendering,
@@ -192,5 +208,29 @@ impl FontDescription {
 impl Default for FontDescription {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn percentage_text_size_adjust_changes_used_not_specified_size() {
+        let mut style = openui_style::ComputedStyle::initial();
+        style.font_size = 20.0;
+        style.text_size_adjust = TextSizeAdjust::Percentage(150.0);
+        let description = FontDescription::from_computed_style(&style);
+        assert_eq!(description.specified_size, 20.0);
+        assert_eq!(description.size, 30.0);
+    }
+
+    #[test]
+    fn none_text_size_adjust_preserves_used_size() {
+        let mut style = openui_style::ComputedStyle::initial();
+        style.font_size = 20.0;
+        style.text_size_adjust = TextSizeAdjust::None;
+        let description = FontDescription::from_computed_style(&style);
+        assert_eq!(description.size, 20.0);
     }
 }

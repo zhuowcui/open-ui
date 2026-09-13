@@ -97,6 +97,8 @@ pub enum LengthValue {
     Rem(f32),
     ViewportWidth(f32),
     ViewportHeight(f32),
+    ViewportMin(f32),
+    ViewportMax(f32),
 }
 
 impl LengthValue {
@@ -123,6 +125,8 @@ impl LengthValue {
             Self::Rem(value) => Length::px(value * root_font_size),
             Self::ViewportWidth(value) => Length::px(viewport.0 * value / 100.0),
             Self::ViewportHeight(value) => Length::px(viewport.1 * value / 100.0),
+            Self::ViewportMin(value) => Length::px(viewport.0.min(viewport.1) * value / 100.0),
+            Self::ViewportMax(value) => Length::px(viewport.0.max(viewport.1) * value / 100.0),
         }
     }
 }
@@ -439,6 +443,8 @@ fn length(input: &str) -> Option<LengthValue> {
                 ("rem", LengthValue::Rem),
                 ("vw", LengthValue::ViewportWidth),
                 ("vh", LengthValue::ViewportHeight),
+                ("vmin", LengthValue::ViewportMin),
+                ("vmax", LengthValue::ViewportMax),
             ] {
                 if let Some(number) = input
                     .strip_suffix(suffix)
@@ -1180,7 +1186,13 @@ fn parse_typography_literal(property: StyleProperty, input: &str) -> Option<Styl
         P::TextSizeAdjust => TypographyValue::TextSizeAdjust(match input {
             "auto" => TextSizeAdjust::Auto,
             "none" => TextSizeAdjust::None,
-            value => TextSizeAdjust::Percentage(value.strip_suffix('%')?.parse().ok()?),
+            value => {
+                let percentage: f32 = value.strip_suffix('%')?.parse().ok()?;
+                if !percentage.is_finite() || percentage < 0.0 {
+                    return None;
+                }
+                TextSizeAdjust::Percentage(percentage)
+            }
         }),
         P::TextCombineUpright => TypographyValue::TextCombineUpright(match input {
             "none" => TextCombineUpright::None,
@@ -2426,6 +2438,22 @@ mod tests {
             LengthValue::ViewportHeight(100.0).resolve((800.0, 600.0), 16.0, 16.0),
             Length::px(600.0)
         );
+        assert_eq!(
+            LengthValue::ViewportMin(25.0).resolve((1280.0, 720.0), 16.0, 16.0),
+            Length::px(180.0)
+        );
+        assert_eq!(
+            LengthValue::ViewportMax(25.0).resolve((1280.0, 720.0), 16.0, 16.0),
+            Length::px(320.0)
+        );
+    }
+
+    #[test]
+    fn text_size_adjust_rejects_invalid_percentages() {
+        assert!(parse_literal(StyleProperty::TextSizeAdjust, "-1%").is_err());
+        assert!(parse_literal(StyleProperty::TextSizeAdjust, "NaN%").is_err());
+        assert!(parse_literal(StyleProperty::TextSizeAdjust, "inf%").is_err());
+        assert!(parse_literal(StyleProperty::TextSizeAdjust, "0%").is_ok());
     }
 
     #[test]

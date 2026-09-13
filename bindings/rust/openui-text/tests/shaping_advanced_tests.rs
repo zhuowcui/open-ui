@@ -2,6 +2,7 @@
 //! whitespace variants, ShapeResult operations, edge cases, direction, and
 //! script segmenter edge cases.
 
+use openui_style::{TextAutospace, TextSpacingTrim};
 use openui_text::font::{Font, FontDescription};
 use openui_text::shaping::{RunSegmenter, Script, ShapeResult, TextDirection, TextShaper};
 
@@ -32,6 +33,36 @@ fn shape_with_size(text: &str, size: f32) -> ShapeResult {
     let font = make_font(size);
     let shaper = TextShaper::new();
     shaper.shape(text, &font, TextDirection::Ltr)
+}
+
+#[test]
+fn text_autospace_adds_eighth_em_at_ideograph_latin_boundaries() {
+    let mut none = FontDescription::new();
+    none.size = 16.0;
+    none.specified_size = 16.0;
+    none.text_autospace = TextAutospace::NoAutospace;
+    let mut normal = none.clone();
+    normal.text_autospace = TextAutospace::Normal;
+    let shaper = TextShaper::new();
+    let compact = shaper.shape("漢A", &Font::new(none), TextDirection::Ltr);
+    let spaced = shaper.shape("漢A", &Font::new(normal), TextDirection::Ltr);
+    assert!((spaced.width() - compact.width() - 2.0).abs() < 0.05);
+}
+
+#[test]
+fn text_spacing_trim_removes_opening_punctuation_half_em() {
+    let mut spaced = FontDescription::new();
+    spaced.size = 16.0;
+    spaced.specified_size = 16.0;
+    spaced.text_autospace = TextAutospace::NoAutospace;
+    spaced.text_spacing_trim = TextSpacingTrim::SpaceAll;
+    let mut trimmed = spaced.clone();
+    trimmed.text_spacing_trim = TextSpacingTrim::TrimStart;
+    let shaper = TextShaper::new();
+    let full = shaper.shape("「漢", &Font::new(spaced), TextDirection::Ltr);
+    let compact = shaper.shape("「漢", &Font::new(trimmed), TextDirection::Ltr);
+    assert!((full.width() - compact.width() - 8.0).abs() < 0.05);
+    assert!(compact.width() >= 0.0);
 }
 
 // ═══════════════════════════════════════════════════════════════════════

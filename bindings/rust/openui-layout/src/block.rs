@@ -10677,13 +10677,14 @@ fn collapsed_multicol_child_end_margin(
 }
 
 fn list_marker_line_height(style: &ComputedStyle) -> LayoutUnit {
-    let marker_line_height = match style.line_height {
-        LineHeight::Normal => style.font_size * 1.2,
-        LineHeight::Number(n) => style.font_size * n,
+    let marker_style = style.marker_style.as_deref().unwrap_or(style);
+    let marker_line_height = match marker_style.line_height {
+        LineHeight::Normal => marker_style.font_size * 1.2,
+        LineHeight::Number(n) => marker_style.font_size * n,
         LineHeight::Length(px) => px,
-        LineHeight::Percentage(pct) => style.font_size * pct / 100.0,
+        LineHeight::Percentage(pct) => marker_style.font_size * pct / 100.0,
     };
-    LayoutUnit::from_f32(marker_line_height.max(style.font_size).floor())
+    LayoutUnit::from_f32(marker_line_height.max(marker_style.font_size).floor())
 }
 
 fn snap_wrapped_multicol_fragment_consumption(

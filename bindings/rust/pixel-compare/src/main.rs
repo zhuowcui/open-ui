@@ -18,6 +18,14 @@ mod wpt;
 const W: i32 = 800;
 const H: i32 = 600;
 
+/// Resolve a semantic viewport-relative declaration for a generated fixture.
+/// R6 replaces the legacy fixed CLI profile with a profile-selected value;
+/// keeping the resolution behind this boundary prevents the porter from ever
+/// baking 800x600 constants into generated source again.
+pub fn fixture_viewport_length(value: LengthValue) -> Length {
+    value.resolve((W as f32, H as f32), 16.0, 16.0)
+}
+
 fn main() {
     let args: Vec<String> = std::env::args().collect();
 

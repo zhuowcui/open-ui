@@ -4,9 +4,9 @@
     "bindings/rust/openui-paint/src"
   ],
   "counts": {
-    "consumed": 180,
-    "internal": 10,
-    "public_typed": 170,
+    "consumed": 213,
+    "internal": 12,
+    "public_typed": 201,
     "unclassified": 0
   },
   "fields": [
@@ -951,6 +951,56 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-feature-settings",
+      "field": "font_feature_settings",
+      "rust_type": "Vec<FontFeature>"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-kerning",
+      "field": "font_kerning",
+      "rust_type": "FontKerning"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-language-override",
+      "field": "font_language_override",
+      "rust_type": "FontLanguageOverride"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-optical-sizing",
+      "field": "font_optical_sizing",
+      "rust_type": "FontOpticalSizing"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-palette",
+      "field": "font_palette",
+      "rust_type": "FontPalette"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -967,6 +1017,26 @@
       "css_name": "font-size",
       "field": "font_size",
       "rust_type": "f32"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-size-adjust",
+      "field": "font_size_adjust",
+      "rust_type": "FontSizeAdjust"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-smoothing",
+      "field": "font_smoothing",
+      "rust_type": "FontSmoothing"
     },
     {
       "canonical_schema_entry": true,
@@ -997,9 +1067,119 @@
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs"
       ],
+      "css_name": "font-synthesis-position",
+      "field": "font_synthesis_position",
+      "rust_type": "FontSynthesis"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-synthesis-small-caps",
+      "field": "font_synthesis_small_caps",
+      "rust_type": "FontSynthesis"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-synthesis-style",
+      "field": "font_synthesis_style",
+      "rust_type": "FontSynthesis"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-synthesis-weight",
+      "field": "font_synthesis_weight",
+      "rust_type": "FontSynthesis"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-variant-alternates",
+      "field": "font_variant_alternates",
+      "rust_type": "FontVariantAlternates"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
       "css_name": "font-variant-caps",
       "field": "font_variant_caps",
       "rust_type": "FontVariantCaps"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-variant-east-asian",
+      "field": "font_variant_east_asian",
+      "rust_type": "FontVariantEastAsian"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-variant-emoji",
+      "field": "font_variant_emoji",
+      "rust_type": "FontVariantEmoji"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-variant-ligatures",
+      "field": "font_variant_ligatures",
+      "rust_type": "FontVariantLigatures"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-variant-numeric",
+      "field": "font_variant_numeric",
+      "rust_type": "FontVariantNumeric"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-variant-position",
+      "field": "font_variant_position",
+      "rust_type": "FontVariantPosition"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-variation-settings",
+      "field": "font_variation_settings",
+      "rust_type": "Vec<FontVariation>"
     },
     {
       "canonical_schema_entry": true,
@@ -1123,7 +1303,20 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs"
+      ],
+      "css_name": "hyphenate-character",
+      "field": "hyphenate_character",
+      "rust_type": "Option<String>"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
       ],
       "css_name": "hyphenate-limit-chars",
       "field": "hyphenate_limit_chars",
@@ -1134,6 +1327,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs"
       ],
       "css_name": "hyphens",
@@ -1248,6 +1442,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
       ],
@@ -1401,6 +1596,17 @@
       "css_name": "margin-trim",
       "field": "margin_trim",
       "rust_type": "MarginTrim"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": null,
+      "field": "marker_style",
+      "rust_type": "Option<Box<ComputedStyle>>"
     },
     {
       "canonical_schema_entry": false,
@@ -1614,6 +1820,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs"
       ],
       "css_name": "overflow-wrap",
@@ -1724,6 +1931,16 @@
       "rust_type": "Length"
     },
     {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": null,
+      "field": "placeholder_style",
+      "rust_type": "Option<Box<ComputedStyle>>"
+    },
+    {
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
@@ -1820,7 +2037,8 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
       ],
       "css_name": "ruby-align",
       "field": "ruby_align",
@@ -1830,7 +2048,18 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "ruby-overhang",
+      "field": "ruby_overhang",
+      "rust_type": "RubyOverhang"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
       ],
       "css_name": "ruby-position",
       "field": "ruby_position",
@@ -1942,6 +2171,48 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-autospace",
+      "field": "text_autospace",
+      "rust_type": "TextAutospace"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-box-edge",
+      "field": "text_box_edge",
+      "rust_type": "TextBoxEdge"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-box-trim",
+      "field": "text_box_trim",
+      "rust_type": "TextBoxTrim"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-combine-upright",
+      "field": "text_combine_upright",
+      "rust_type": "TextCombineUpright"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-paint/src/decoration_painter.rs"
       ],
@@ -1965,6 +2236,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-paint/src/decoration_painter.rs"
       ],
       "css_name": "text-decoration-skip-ink",
@@ -1997,6 +2269,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs"
       ],
       "css_name": "text-emphasis-color",
@@ -2007,6 +2280,7 @@
       "canonical_schema_entry": false,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs"
       ],
       "css_name": "text-emphasis-fill",
@@ -2019,6 +2293,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs"
       ],
       "css_name": "text-emphasis-mark",
@@ -2031,6 +2306,7 @@
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-paint/src/emphasis_painter.rs"
       ],
       "css_name": "text-emphasis-position",
@@ -2083,12 +2359,42 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-rendering",
+      "field": "text_rendering",
+      "rust_type": "TextRendering"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-paint/src/text_painter.rs"
       ],
       "css_name": "text-shadow",
       "field": "text_shadow",
       "rust_type": "Vec<TextShadow>"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-size-adjust",
+      "field": "text_size_adjust",
+      "rust_type": "TextSizeAdjust"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-spacing-trim",
+      "field": "text_spacing_trim",
+      "rust_type": "TextSpacingTrim"
     },
     {
       "canonical_schema_entry": true,
@@ -2105,6 +2411,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-paint/src/decoration_painter.rs"
       ],
       "css_name": "text-underline-offset",
@@ -2115,11 +2422,42 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
-        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-underline-position",
+      "field": "text_underline_position",
+      "rust_type": "TextUnderlinePosition"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
       ],
       "css_name": "text-wrap",
       "field": "text_wrap",
       "rust_type": "TextWrap"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-wrap-mode",
+      "field": "text_wrap_mode",
+      "rust_type": "TextWrapMode"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-wrap-style",
+      "field": "text_wrap_style",
+      "rust_type": "TextWrapStyle"
     },
     {
       "canonical_schema_entry": false,
@@ -2233,6 +2571,16 @@
       "rust_type": "WhiteSpace"
     },
     {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "white-space-collapse",
+      "field": "white_space_collapse",
+      "rust_type": "WhiteSpaceCollapse"
+    },
+    {
       "canonical_schema_entry": false,
       "classification": "public-typed",
       "consumers": [
@@ -2288,6 +2636,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
         "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
       ],

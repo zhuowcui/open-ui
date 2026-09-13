@@ -732,6 +732,12 @@ fn interpolate_length(from: LengthValue, to: LengthValue, progress: f32) -> Opti
         (LengthValue::ViewportHeight(from), LengthValue::ViewportHeight(to)) => {
             Some(LengthValue::ViewportHeight(lerp(from, to, progress)))
         }
+        (LengthValue::ViewportMin(from), LengthValue::ViewportMin(to)) => {
+            Some(LengthValue::ViewportMin(lerp(from, to, progress)))
+        }
+        (LengthValue::ViewportMax(from), LengthValue::ViewportMax(to)) => {
+            Some(LengthValue::ViewportMax(lerp(from, to, progress)))
+        }
         _ => None,
     }
 }

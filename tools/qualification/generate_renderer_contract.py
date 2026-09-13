@@ -65,8 +65,10 @@ INTERNAL_STYLE_FIELDS = {
     "legacy_webkit_box",
     "legacy_webkit_line_clamp",
     "list_item_is_flow_root",
+    "marker_style",
     "native_button_text_metrics",
     "native_control_text",
+    "placeholder_style",
     "will_change_transform",
 }
 

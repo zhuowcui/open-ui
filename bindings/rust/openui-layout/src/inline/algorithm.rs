@@ -13,7 +13,8 @@ use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
 use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalSize, WritingModeConverter};
 use openui_style::{
     BoxDecorationBreak, Clear, ComputedStyle, Direction, Display, Float, FontFamily, LineHeight,
-    TextAlign, TextAlignLast, TextJustify, VerticalAlign, WhiteSpace,
+    TextAlign, TextAlignLast, TextBoxEdgeKeyword, TextBoxTrim, TextJustify, VerticalAlign,
+    WhiteSpace,
 };
 use openui_text::{
     used_line_height, used_line_height_metrics, Font, FontMetrics, ShapeResult, TextShaper,
@@ -2240,6 +2241,9 @@ pub fn inline_layout_from_items(
         }
     }
 
+    block_offset = block_offset
+        - apply_text_box_trim(&mut line_fragments, style, &block_metrics).min_of(block_offset);
+
     if let Some(context) = &space.line_clamp_context {
         context.consume_layout(line_fragments.len(), block_offset);
         if line_static_inline_data
@@ -3604,6 +3608,9 @@ pub fn inline_layout_for_children(
         }
     }
 
+    block_offset = block_offset
+        - apply_text_box_trim(&mut line_fragments, style, &block_metrics).min_of(block_offset);
+
     if let Some(context) = &space.line_clamp_context {
         context.consume_layout(line_fragments.len(), block_offset);
     }
@@ -3665,6 +3672,85 @@ fn snap_line_baseline(
     } else {
         LayoutUnit::from_f32(line_ascent).floor()
     }
+}
+
+/// Apply CSS Inline `text-box-trim` after the line set is known. Trimming is
+/// intentionally a line-box operation (not a glyph translation in paint), so
+/// intrinsic block sizing, hit testing, selection, and accessibility observe
+/// the same geometry.
+fn apply_text_box_trim(
+    lines: &mut [Fragment],
+    style: &ComputedStyle,
+    metrics: &FontMetrics,
+) -> LayoutUnit {
+    if lines.is_empty() || style.text_box_trim == TextBoxTrim::None {
+        return LayoutUnit::zero();
+    }
+
+    let edge_extent = |edge: TextBoxEdgeKeyword, over: bool| -> f32 {
+        match edge {
+            TextBoxEdgeKeyword::Cap => over.then_some(metrics.cap_height).unwrap_or(0.0),
+            TextBoxEdgeKeyword::Ex => over.then_some(metrics.x_height).unwrap_or(0.0),
+            TextBoxEdgeKeyword::Alphabetic => 0.0,
+            TextBoxEdgeKeyword::Auto
+            | TextBoxEdgeKeyword::Text
+            | TextBoxEdgeKeyword::Ideographic
+            | TextBoxEdgeKeyword::IdeographicInk => {
+                if over {
+                    metrics.ascent
+                } else {
+                    metrics.descent
+                }
+            }
+        }
+    };
+
+    let trims_start = matches!(
+        style.text_box_trim,
+        TextBoxTrim::TrimStart | TextBoxTrim::TrimBoth
+    );
+    let trims_end = matches!(
+        style.text_box_trim,
+        TextBoxTrim::TrimEnd | TextBoxTrim::TrimBoth
+    );
+    let mut total = LayoutUnit::zero();
+
+    if trims_start {
+        let desired = edge_extent(style.text_box_edge.over, true);
+        let amount = LayoutUnit::from_f32(
+            (lines[0].baseline_offset - desired)
+                .max(0.0)
+                .min(lines[0].size.height.to_f32()),
+        );
+        if amount > LayoutUnit::zero() {
+            lines[0].size.height = lines[0].size.height - amount;
+            lines[0].baseline_offset -= amount.to_f32();
+            for child in &mut lines[0].children {
+                child.offset.top = child.offset.top - amount;
+            }
+            for line in lines.iter_mut().skip(1) {
+                line.offset.top = line.offset.top - amount;
+            }
+            total = total + amount;
+        }
+    }
+
+    if trims_end {
+        let last = lines.last_mut().expect("non-empty line set");
+        let below_baseline = last.size.height.to_f32() - last.baseline_offset;
+        let desired = edge_extent(style.text_box_edge.under, false);
+        let amount = LayoutUnit::from_f32(
+            (below_baseline - desired)
+                .max(0.0)
+                .min(last.size.height.to_f32()),
+        );
+        if amount > LayoutUnit::zero() {
+            last.size.height = last.size.height - amount;
+            total = total + amount;
+        }
+    }
+
+    total
 }
 
 fn create_line_box(
@@ -4372,17 +4458,22 @@ fn create_line_box(
         let hyphen_font_desc = style_to_font_description(last_style);
         let hyphen_font = doc.resolve_font(hyphen_font_desc);
         let shaper = TextShaper::new();
-        let hyphen_text = "-";
+        let hyphen_text = last_style.hyphenate_character.as_deref().unwrap_or("-");
         let hyphen_sr = shaper.shape(hyphen_text, &hyphen_font, openui_text::TextDirection::Ltr);
         let hyphen_width = LayoutUnit::from_f32(hyphen_sr.width);
-        Some((Arc::new(hyphen_sr), hyphen_width, last_style.clone()))
+        Some((
+            Arc::new(hyphen_sr),
+            hyphen_width,
+            last_style.clone(),
+            hyphen_text.to_string(),
+        ))
     } else {
         None
     };
 
     let hyphen_extra_width = hyphen_shape_data
         .as_ref()
-        .map(|(_, w, _)| *w)
+        .map(|(_, w, _, _)| *w)
         .unwrap_or(LayoutUnit::zero());
 
     // Pre-compute ellipsis width so alignment accounts for it.
@@ -5121,7 +5212,9 @@ fn create_line_box(
     }
 
     // === STEP 4b: Append visible hyphen if line was broken at a soft hyphen ===
-    if let Some((ref hyphen_sr, hyphen_width, ref hyphen_style)) = hyphen_shape_data {
+    if let Some((ref hyphen_sr, hyphen_width, ref hyphen_style, ref hyphen_text)) =
+        hyphen_shape_data
+    {
         let hyphen_metrics = {
             let hyphen_font_desc = style_to_font_description(hyphen_style);
             let hyphen_font = doc.resolve_font(hyphen_font_desc);
@@ -5135,11 +5228,12 @@ fn create_line_box(
             NodeId::NONE,
             PhysicalSize::new(hyphen_width, hyphen_height),
             Arc::clone(hyphen_sr),
-            "-".to_string(),
+            hyphen_text.clone(),
         );
         hyphen_fragment.inherited_style = Some(hyphen_style.clone());
         hyphen_fragment.baseline_offset = (baseline - hyphen_top).to_f32();
-        hyphen_fragment.text_run_orientation = resolve_text_run_orientation(hyphen_style, "-");
+        hyphen_fragment.text_run_orientation =
+            resolve_text_run_orientation(hyphen_style, hyphen_text);
 
         if block_style.direction == Direction::Rtl {
             // RTL: place hyphen at visual start (left of content), shift content right.
