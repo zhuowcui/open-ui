@@ -11,7 +11,7 @@ use openui_engine::{
     AccessibilityAction, AccessibilityTreeUpdate, AnimationEvent, AnimationEventKind, AnimationId,
     AnimationState, ControlAdjustment, EditCommand, Engine, EventPhase as EngineEventPhase,
     FocusOrigin, NodeHandle, PointerEventKind, ScrollAnimationId, TextDirection, TextUnit,
-    Viewport,
+    ViewportMetrics,
 };
 use openui_style::ImageResourceId;
 use std::cell::{Cell, RefCell};
@@ -40,10 +40,14 @@ impl Document {
     pub fn new(width: i32, height: i32) -> Result<Self, Error> {
         let width = u32::try_from(width).map_err(|_| Error::InvalidArgument("invalid width"))?;
         let height = u32::try_from(height).map_err(|_| Error::InvalidArgument("invalid height"))?;
-        Self::with_viewport(Viewport::new(width, height)?)
+        Self::with_viewport_metrics(ViewportMetrics::from_logical_size(
+            f64::from(width),
+            f64::from(height),
+            1.0,
+        )?)
     }
 
-    pub fn with_viewport(viewport: Viewport) -> Result<Self, Error> {
+    pub fn with_viewport_metrics(viewport: ViewportMetrics) -> Result<Self, Error> {
         Ok(Self {
             inner: Rc::new(DocumentInner {
                 engine: RefCell::new(Engine::new(viewport)?),
@@ -83,18 +87,7 @@ impl Document {
         operation(self)
     }
 
-    pub fn set_viewport(&self, width: u32, height: u32) -> Result<(), Error> {
-        self.with_engine_mut(|engine| engine.set_viewport(Viewport::new(width, height)?))
-    }
-
-    pub fn set_viewport_with_scale(
-        &self,
-        width: u32,
-        height: u32,
-        scale_factor: f64,
-    ) -> Result<(), Error> {
-        let mut viewport = Viewport::new(width, height)?;
-        viewport.scale_factor = scale_factor;
+    pub fn set_viewport(&self, viewport: ViewportMetrics) -> Result<(), Error> {
         self.with_engine_mut(|engine| engine.set_viewport(viewport))
     }
 
@@ -166,6 +159,7 @@ impl Document {
             width: frame.width,
             height: frame.height,
             stride: frame.stride,
+            viewport: frame.viewport,
         })
     }
 

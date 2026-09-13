@@ -17,7 +17,8 @@ pub use crate::text_node::{TextNode, WeakTextNode};
 pub use crate::typed_style::*;
 pub use crate::view_node::{mount_view, IntoView, ViewNode};
 pub use crate::{
-    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, Viewport,
+    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
+    ViewportAuthority, ViewportMetrics,
 };
 pub use openui_macros::{component, view};
 

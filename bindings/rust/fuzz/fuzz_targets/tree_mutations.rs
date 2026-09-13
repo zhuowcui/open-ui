@@ -2,11 +2,12 @@
 
 use libfuzzer_sys::fuzz_target;
 use openui_dom::ElementTag;
-use openui_engine::{Engine, NodeHandle, Viewport};
+use openui_engine::{Engine, NodeHandle, ViewportMetrics};
 use openui_style::{Color, StyleProperty};
 
 fuzz_target!(|data: &[u8]| {
-    let Ok(mut engine) = Engine::new(Viewport::new(96, 64).unwrap()) else {
+    let Ok(mut engine) = Engine::new(ViewportMetrics::from_logical_size(96.0, 64.0, 1.0).unwrap())
+    else {
         return;
     };
     let root = engine.root();

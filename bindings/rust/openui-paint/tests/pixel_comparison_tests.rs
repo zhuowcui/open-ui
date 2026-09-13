@@ -277,6 +277,15 @@ const SURFACE_W: i32 = 500;
 const SURFACE_H: i32 = 1200;
 const TOLERANCE: u8 = 2;
 
+fn test_viewport() -> openui_geometry::ViewportMetrics {
+    openui_geometry::ViewportMetrics::from_logical_size(
+        f64::from(SURFACE_W),
+        f64::from(SURFACE_H),
+        1.0,
+    )
+    .unwrap()
+}
+
 /// Create a block container (div) with a given width and append to parent.
 fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
@@ -400,12 +409,12 @@ fn render_and_compare(doc: &Document, test_name: &str) -> (Surface, Option<Pixel
     }
 
     // Render
-    let mut surface =
-        render_to_surface(doc, SURFACE_W, SURFACE_H).expect("render_to_surface failed");
+    let mut surface = render_to_surface(doc, test_viewport()).expect("render_to_surface failed");
 
     // Save our render
-    render_to_png(doc, SURFACE_W, SURFACE_H, out_path.to_str().unwrap())
-        .expect("render_to_png failed");
+    render_to_png(doc, test_viewport(), out_path.to_str().unwrap(),
+    )
+    .expect("render_to_png failed");
 
     // Compare with Chromium reference if it exists
     let ref_path = chromium_ref_path(test_name);
@@ -1327,7 +1336,7 @@ fn pixel_all_scenarios_produce_output() {
 
     let mut all_pass = true;
     for (name, doc) in &scenarios {
-        let result = render_to_surface(doc, SURFACE_W, SURFACE_H);
+        let result = render_to_surface(doc, test_viewport());
         match result {
             Ok(mut surface) => {
                 if !has_visible_content(&mut surface) {

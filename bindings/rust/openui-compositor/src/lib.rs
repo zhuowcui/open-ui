@@ -1,5 +1,6 @@
 //! Immutable, backend-independent scene snapshots.
 
+use openui_geometry::ViewportMetrics;
 use openui_layout::Fragment;
 use openui_paint::{rasterize_picture, RecordedPicture};
 use skia_safe::image::CachingHint;
@@ -14,6 +15,15 @@ pub struct SceneRect {
     pub height: f32,
 }
 
+/// Damage bounds snapped outward to physical surface pixels.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PhysicalSceneRect {
+    pub x: u32,
+    pub y: u32,
+    pub width: u32,
+    pub height: u32,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct SceneGeneration(pub u64);
 
@@ -21,10 +31,11 @@ pub struct SceneGeneration(pub u64);
 #[derive(Clone)]
 pub struct SceneSnapshot {
     generation: SceneGeneration,
-    viewport: (u32, u32),
+    viewport: ViewportMetrics,
     picture: Arc<RecordedPicture>,
     fragments: Arc<Fragment>,
-    damage: Arc<[SceneRect]>,
+    logical_damage: Arc<[SceneRect]>,
+    physical_damage: Arc<[PhysicalSceneRect]>,
 }
 
 impl SceneSnapshot {
@@ -34,27 +45,35 @@ impl SceneSnapshot {
         fragments: Arc<Fragment>,
         damage: Vec<SceneRect>,
     ) -> Self {
-        let viewport = (picture.width as u32, picture.height as u32);
+        let viewport = picture.viewport;
+        let physical_damage = damage
+            .iter()
+            .filter_map(|rect| physical_damage_rect(*rect, viewport))
+            .collect::<Vec<_>>();
         Self {
             generation,
             viewport,
             picture: Arc::new(picture),
             fragments,
-            damage: damage.into(),
+            logical_damage: damage.into(),
+            physical_damage: physical_damage.into(),
         }
     }
 
     pub fn generation(&self) -> SceneGeneration {
         self.generation
     }
-    pub fn viewport(&self) -> (u32, u32) {
+    pub fn viewport(&self) -> ViewportMetrics {
         self.viewport
     }
     pub fn fragments(&self) -> &Arc<Fragment> {
         &self.fragments
     }
     pub fn damage(&self) -> &[SceneRect] {
-        &self.damage
+        &self.logical_damage
+    }
+    pub fn physical_damage(&self) -> &[PhysicalSceneRect] {
+        &self.physical_damage
     }
 
     /// Replay this immutable scene into a caller-owned Skia canvas.
@@ -62,14 +81,48 @@ impl SceneSnapshot {
     /// GPU and software presenters use this exact recording, so backend
     /// selection cannot affect layout or scene construction.
     pub fn replay(&self, canvas: &Canvas) {
+        let scale = self.viewport.device_scale_factor() as f32;
+        canvas.scale((scale, scale));
         canvas.draw_picture(&self.picture.picture, None, None);
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+fn physical_damage_rect(rect: SceneRect, viewport: ViewportMetrics) -> Option<PhysicalSceneRect> {
+    if !rect.x.is_finite()
+        || !rect.y.is_finite()
+        || !rect.width.is_finite()
+        || !rect.height.is_finite()
+        || rect.width <= 0.0
+        || rect.height <= 0.0
+    {
+        return None;
+    }
+    let scale = viewport.device_scale_factor();
+    let max_x = f64::from(viewport.physical_width());
+    let max_y = f64::from(viewport.physical_height());
+    let left = (f64::from(rect.x) * scale).floor().clamp(0.0, max_x) as u32;
+    let top = (f64::from(rect.y) * scale).floor().clamp(0.0, max_y) as u32;
+    let right = ((f64::from(rect.x) + f64::from(rect.width)) * scale)
+        .ceil()
+        .clamp(0.0, max_x) as u32;
+    let bottom = ((f64::from(rect.y) + f64::from(rect.height)) * scale)
+        .ceil()
+        .clamp(0.0, max_y) as u32;
+    (right > left && bottom > top).then_some(PhysicalSceneRect {
+        x: left,
+        y: top,
+        width: right - left,
+        height: bottom - top,
+    })
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Frame {
+    /// Physical raster width.
     pub width: u32,
+    /// Physical raster height.
     pub height: u32,
+    pub viewport: ViewportMetrics,
     pub stride: usize,
     pub pixels: Vec<u8>,
     pub scene_generation: SceneGeneration,
@@ -119,14 +172,22 @@ impl SoftwareCompositor {
         let mut surface = rasterize_picture(&scene.picture).map_err(CompositorError::Raster)?;
         let image = surface.image_snapshot();
         let info = image.image_info();
-        let stride = scene.viewport.0 as usize * 4;
-        let mut pixels = vec![0; stride * scene.viewport.1 as usize];
+        let width = scene.viewport.physical_width();
+        let height = scene.viewport.physical_height();
+        let stride = (width as usize)
+            .checked_mul(4)
+            .ok_or_else(|| CompositorError::Raster("frame stride overflow".into()))?;
+        let pixel_len = stride
+            .checked_mul(height as usize)
+            .ok_or_else(|| CompositorError::Raster("frame allocation overflow".into()))?;
+        let mut pixels = vec![0; pixel_len];
         if !image.read_pixels(info, &mut pixels, stride, (0, 0), CachingHint::Allow) {
             return Err(CompositorError::ReadPixels);
         }
         let frame = Frame {
-            width: scene.viewport.0,
-            height: scene.viewport.1,
+            width,
+            height,
+            viewport: scene.viewport,
             stride,
             pixels,
             scene_generation: scene.generation,
@@ -231,17 +292,19 @@ mod tests {
     #[test]
     fn mailbox_coalesces_to_the_newest_complete_scene() {
         use openui_dom::Document;
+        use openui_geometry::ViewportMetrics;
         use openui_paint::record_document;
 
         let document = Document::new();
-        let (fragment, first) = record_document(&document, 10, 10).unwrap();
+        let viewport = ViewportMetrics::from_logical_size(10.0, 10.0, 1.0).unwrap();
+        let (fragment, first) = record_document(&document, viewport).unwrap();
         let first = SceneSnapshot::new(
             SceneGeneration(1),
             first,
             Arc::new(fragment.clone()),
             Vec::new(),
         );
-        let (_, second) = record_document(&document, 10, 10).unwrap();
+        let (_, second) = record_document(&document, viewport).unwrap();
         let second = SceneSnapshot::new(SceneGeneration(2), second, Arc::new(fragment), Vec::new());
         let mailbox = SceneMailbox::default();
         assert!(mailbox.submit(first));
@@ -256,10 +319,12 @@ mod tests {
     #[test]
     fn software_compositor_reuses_unchanged_frames() {
         use openui_dom::Document;
+        use openui_geometry::ViewportMetrics;
         use openui_paint::record_document;
 
         let document = Document::new();
-        let (fragment, picture) = record_document(&document, 10, 10).unwrap();
+        let viewport = ViewportMetrics::from_logical_size(10.0, 10.0, 1.0).unwrap();
+        let (fragment, picture) = record_document(&document, viewport).unwrap();
         let scene = SceneSnapshot::new(SceneGeneration(1), picture, Arc::new(fragment), Vec::new());
         let mut compositor = SoftwareCompositor::default();
         assert_eq!(
@@ -268,5 +333,36 @@ mod tests {
         );
         assert_eq!(compositor.stats().rasterized, 1);
         assert_eq!(compositor.stats().reused, 1);
+    }
+
+    #[test]
+    fn damage_is_converted_outward_to_physical_pixels() {
+        use openui_dom::Document;
+        use openui_geometry::ViewportMetrics;
+        use openui_paint::record_document;
+
+        let document = Document::new();
+        let viewport = ViewportMetrics::from_logical_size(10.0, 10.0, 1.25).unwrap();
+        let (fragment, picture) = record_document(&document, viewport).unwrap();
+        let scene = SceneSnapshot::new(
+            SceneGeneration(1),
+            picture,
+            Arc::new(fragment),
+            vec![SceneRect {
+                x: 0.25,
+                y: 1.25,
+                width: 2.0,
+                height: 3.0,
+            }],
+        );
+        assert_eq!(
+            scene.physical_damage(),
+            &[PhysicalSceneRect {
+                x: 0,
+                y: 1,
+                width: 3,
+                height: 5,
+            }]
+        );
     }
 }

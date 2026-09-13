@@ -27,6 +27,15 @@ const SURFACE_H: i32 = 600;
 const PAD: i32 = 20;
 const TOLERANCE: u8 = 2;
 
+fn test_viewport() -> openui_geometry::ViewportMetrics {
+    openui_geometry::ViewportMetrics::from_logical_size(
+        f64::from(SURFACE_W),
+        f64::from(SURFACE_H),
+        1.0,
+    )
+    .unwrap()
+}
+
 const RED: (u8, u8, u8) = (255, 0, 0);
 const GREEN: (u8, u8, u8) = (0, 128, 0);
 const BLUE: (u8, u8, u8) = (0, 0, 255);
@@ -280,7 +289,7 @@ fn inherit_text_style(doc: &mut Document, parent: NodeId, child: NodeId) {
 }
 
 fn render(doc: &Document) -> Surface {
-    render_to_surface(doc, SURFACE_W, SURFACE_H).expect("render_to_surface failed")
+    render_to_surface(doc, test_viewport()).expect("render_to_surface failed")
 }
 
 fn color_from_rgb(r: u8, g: u8, b: u8) -> Color {

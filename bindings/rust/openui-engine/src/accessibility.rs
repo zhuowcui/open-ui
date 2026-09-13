@@ -778,7 +778,9 @@ mod tests {
 
     #[test]
     fn initial_tree_infers_control_semantics_bounds_and_stable_ids() {
-        let mut engine = Engine::new(crate::Viewport::new(200, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(200.0, 100.0, 1.0).unwrap())
+                .unwrap();
         let checkbox = mounted_control(&mut engine, ElementTag::Input);
         engine.set_attribute(checkbox, "type", "checkbox").unwrap();
         engine.set_accessibility_label(checkbox, "Ship").unwrap();
@@ -801,7 +803,9 @@ mod tests {
 
     #[test]
     fn unchanged_updates_are_empty_and_actions_share_control_state() {
-        let mut engine = Engine::new(crate::Viewport::new(200, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(200.0, 100.0, 1.0).unwrap())
+                .unwrap();
         let checkbox = mounted_control(&mut engine, ElementTag::Input);
         engine.set_attribute(checkbox, "type", "checkbox").unwrap();
         engine.accessibility_update().unwrap();
@@ -818,7 +822,9 @@ mod tests {
 
     #[test]
     fn editable_controls_expose_text_runs_and_selection() {
-        let mut engine = Engine::new(crate::Viewport::new(200, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(200.0, 100.0, 1.0).unwrap())
+                .unwrap();
         let input = mounted_control(&mut engine, ElementTag::Input);
         engine.set_control_value(input, "a👩‍💻").unwrap();
         engine.set_selection(input, 1, "a👩‍💻".len()).unwrap();
@@ -834,7 +840,9 @@ mod tests {
 
     #[test]
     fn platform_requests_validate_ids_and_convert_character_offsets() {
-        let mut engine = Engine::new(crate::Viewport::new(200, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(200.0, 100.0, 1.0).unwrap())
+                .unwrap();
         let input = mounted_control(&mut engine, ElementTag::Input);
         engine.set_control_value(input, "a👩‍💻z").unwrap();
         let request = ActionRequest {

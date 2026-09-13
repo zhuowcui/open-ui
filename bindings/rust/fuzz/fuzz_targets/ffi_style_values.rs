@@ -12,9 +12,15 @@ fuzz_target!(|data: &[u8]| {
     let config = OuiDocumentConfig {
         struct_size: size_of::<OuiDocumentConfig>() as u32,
         abi_version: OUI_ABI_VERSION,
-        width: 64,
-        height: 64,
-        scale_factor: 1.0,
+        viewport: OuiViewportMetrics {
+            logical_width: 64.0,
+            logical_height: 64.0,
+            physical_width: 64,
+            physical_height: 64,
+            device_scale_factor: 1.0,
+            authority: 1,
+            reserved: 0,
+        },
     };
     let mut document = ptr::null_mut();
     if oui_document_create(&config, &mut document) != OuiStatus::Ok {

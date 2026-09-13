@@ -36,7 +36,7 @@
     },
     "OuiDocumentConfig": {
       "align": 8,
-      "size": 24
+      "size": 48
     },
     "OuiEasing": {
       "align": 8,
@@ -77,6 +77,10 @@
     "OuiUtf8": {
       "align": 8,
       "size": 16
+    },
+    "OuiViewportMetrics": {
+      "align": 8,
+      "size": 40
     }
   }
 }

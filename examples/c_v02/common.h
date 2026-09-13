@@ -27,7 +27,10 @@ static OuiStyleValue oui_example_px(float value) {
 }
 
 static int oui_example_render(const char* label, OuiColor background) {
-  OuiDocumentConfig config = {sizeof(config), OUI_ABI_VERSION, 480, 240, 1.0};
+  OuiDocumentConfig config = {
+      sizeof(config),
+      OUI_ABI_VERSION,
+      {480.0, 240.0, 480, 240, 1.0, OUI_VIEWPORT_LOGICAL, 0}};
   OuiDocument* document = NULL;
   OuiElement* root = NULL;
   OuiElement* card = NULL;

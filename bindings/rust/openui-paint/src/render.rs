@@ -4,7 +4,7 @@
 //! set styles, call `render_to_png()`, and get a pixel-perfect PNG.
 
 use openui_dom::Document;
-use openui_geometry::LayoutUnit;
+use openui_geometry::{LayoutUnit, ViewportMetrics};
 use openui_layout::{block_layout, ConstraintSpace, Fragment};
 use skia_safe::canvas::SrcRectConstraint;
 use skia_safe::{
@@ -29,14 +29,14 @@ fn has_promoted_non_axis_transform(fragment: &Fragment, doc: &Document) -> bool 
             .any(|child| has_promoted_non_axis_transform(child, doc))
 }
 
-fn root_constraint_space(doc: &Document, width: i32, height: i32) -> ConstraintSpace {
+fn root_constraint_space(doc: &Document, width: f64, height: f64) -> ConstraintSpace {
     let root_style = &doc.node(doc.root()).style;
     let writing_direction = root_style
         .direction
         .writing_direction(root_style.writing_mode);
     ConstraintSpace::for_root_with_writing_direction(
-        LayoutUnit::from_i32(width),
-        LayoutUnit::from_i32(height),
+        LayoutUnit::from_f64(width),
+        LayoutUnit::from_f64(height),
         writing_direction,
     )
 }
@@ -45,8 +45,7 @@ fn root_constraint_space(doc: &Document, width: i32, height: i32) -> ConstraintS
 #[derive(Clone)]
 pub struct RecordedPicture {
     pub picture: Picture,
-    pub width: i32,
-    pub height: i32,
+    pub viewport: ViewportMetrics,
     pub(crate) lcd_surface: bool,
     pub(crate) direct_replay: bool,
 }
@@ -54,12 +53,13 @@ pub struct RecordedPicture {
 /// Lay out and record a document without rasterizing it.
 pub fn record_document(
     doc: &Document,
-    width: i32,
-    height: i32,
+    viewport: ViewportMetrics,
 ) -> Result<(Fragment, RecordedPicture), String> {
+    let width = logical_dimension(viewport.logical_width())?;
+    let height = logical_dimension(viewport.logical_height())?;
     let space = root_constraint_space(doc, width, height);
     let fragment = block_layout(doc, doc.root(), &space);
-    let picture = record_fragment(doc, &fragment, width, height)?;
+    let picture = record_fragment(doc, &fragment, viewport)?;
     Ok((fragment, picture))
 }
 
@@ -67,12 +67,10 @@ pub fn record_document(
 pub fn record_fragment(
     doc: &Document,
     fragment: &Fragment,
-    width: i32,
-    height: i32,
+    viewport: ViewportMetrics,
 ) -> Result<RecordedPicture, String> {
-    if width <= 0 || height <= 0 {
-        return Err("viewport dimensions must be positive".to_string());
-    }
+    let width = logical_dimension(viewport.logical_width())?;
+    let height = logical_dimension(viewport.logical_height())?;
     let real_font_raster = std::env::var("OPENUI_REAL_FONT_RASTER").ok().as_deref() == Some("1");
     let lcd_surface = real_font_raster
         || doc.uses_native_control_text()
@@ -100,8 +98,7 @@ pub fn record_fragment(
         .ok_or_else(|| "Failed to record paint commands".to_string())?;
     Ok(RecordedPicture {
         picture,
-        width,
-        height,
+        viewport,
         lcd_surface,
         direct_replay: has_promoted_non_axis_transform(fragment, doc),
     })
@@ -109,13 +106,17 @@ pub fn record_fragment(
 
 /// Rasterize an immutable recording using the exact headless tiling policy.
 pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String> {
-    let width = recording.width;
-    let height = recording.height;
+    let width = i32::try_from(recording.viewport.physical_width())
+        .map_err(|_| "physical viewport width exceeds Skia limit".to_string())?;
+    let height = i32::try_from(recording.viewport.physical_height())
+        .map_err(|_| "physical viewport height exceeds Skia limit".to_string())?;
+    let scale = recording.viewport.device_scale_factor() as f32;
     let mut surface = create_raster_surface(width, height, recording.lcd_surface)
         .ok_or_else(|| "Failed to create Skia surface".to_string())?;
     let canvas_color = SkColor::WHITE;
     surface.canvas().clear(canvas_color);
     if recording.direct_replay {
+        surface.canvas().scale((scale, scale));
         surface
             .canvas()
             .draw_picture(&recording.picture, None, None);
@@ -129,6 +130,7 @@ pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String>
                 .ok_or_else(|| "Failed to create raster tile".to_string())?;
             tile.canvas().clear(canvas_color);
             tile.canvas().translate((-tile_x as f32, -tile_y as f32));
+            tile.canvas().scale((scale, scale));
             tile.canvas().draw_picture(&recording.picture, None, None);
 
             let image = tile.image_snapshot();
@@ -173,8 +175,8 @@ pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String>
 /// 2. Creates a Skia raster surface at the given dimensions.
 /// 3. Paints the fragment tree to the surface.
 /// 4. Encodes the surface to PNG and writes to the given path.
-pub fn render_to_png(doc: &Document, width: i32, height: i32, path: &str) -> Result<(), String> {
-    let mut surface = render_to_surface(doc, width, height)?;
+pub fn render_to_png(doc: &Document, viewport: ViewportMetrics, path: &str) -> Result<(), String> {
+    let mut surface = render_to_surface(doc, viewport)?;
 
     // Encode to PNG
     let image = surface.image_snapshot();
@@ -191,9 +193,16 @@ pub fn render_to_png(doc: &Document, width: i32, height: i32, path: &str) -> Res
 ///
 /// Returns the surface with the rendered content. The surface uses
 /// raster (CPU) backend — same pixels as Blink's software renderer.
-pub fn render_to_surface(doc: &Document, width: i32, height: i32) -> Result<Surface, String> {
-    let (_, recording) = record_document(doc, width, height)?;
+pub fn render_to_surface(doc: &Document, viewport: ViewportMetrics) -> Result<Surface, String> {
+    let (_, recording) = record_document(doc, viewport)?;
     rasterize_picture(&recording)
+}
+
+fn logical_dimension(value: f64) -> Result<f64, String> {
+    if !value.is_finite() || value <= 0.0 || value > 33_554_431.0 {
+        return Err("logical viewport dimensions exceed the layout limit".to_string());
+    }
+    Ok(value)
 }
 
 fn create_raster_surface(width: i32, height: i32, real_font_raster: bool) -> Option<Surface> {
@@ -232,7 +241,7 @@ mod tests {
         doc.node_mut(root).style.writing_mode = WritingMode::VerticalRl;
         doc.node_mut(root).style.direction = Direction::Rtl;
 
-        let space = root_constraint_space(&doc, 800, 600);
+        let space = root_constraint_space(&doc, 800.0, 600.0);
         assert!(!space.writing_direction.is_horizontal());
         assert!(space.writing_direction.is_flipped_blocks());
         assert!(space.writing_direction.is_rtl());
@@ -253,7 +262,12 @@ mod tests {
         doc.append_child(vp, div);
 
         // Should not panic
-        let mut surface = render_to_surface(&doc, 200, 200).unwrap();
+        let mut surface = render_to_surface(
+            &doc,
+            openui_geometry::ViewportMetrics::from_logical_size(200 as f64, 200 as f64, 1.0)
+                .unwrap(),
+        )
+        .unwrap();
         let image = surface.image_snapshot();
         assert_eq!(image.width(), 200);
         assert_eq!(image.height(), 200);
@@ -282,7 +296,12 @@ mod tests {
         doc.node_mut(inner).style.background_color = Color::RED;
         doc.append_child(outer, inner);
 
-        let mut surface = render_to_surface(&doc, 400, 300).unwrap();
+        let mut surface = render_to_surface(
+            &doc,
+            openui_geometry::ViewportMetrics::from_logical_size(400 as f64, 300 as f64, 1.0)
+                .unwrap(),
+        )
+        .unwrap();
         let image = surface.image_snapshot();
         assert_eq!(image.width(), 400);
     }
@@ -311,7 +330,12 @@ mod tests {
         doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::BLACK);
         doc.append_child(vp, div);
 
-        let mut surface = render_to_surface(&doc, 400, 300).unwrap();
+        let mut surface = render_to_surface(
+            &doc,
+            openui_geometry::ViewportMetrics::from_logical_size(400 as f64, 300 as f64, 1.0)
+                .unwrap(),
+        )
+        .unwrap();
         let image = surface.image_snapshot();
         assert_eq!(image.width(), 400);
     }
@@ -329,7 +353,13 @@ mod tests {
         doc.append_child(vp, div);
 
         let path = "/tmp/openui_test_render.png";
-        render_to_png(&doc, 200, 200, path).unwrap();
+        render_to_png(
+            &doc,
+            openui_geometry::ViewportMetrics::from_logical_size(200 as f64, 200 as f64, 1.0)
+                .unwrap(),
+            path,
+        )
+        .unwrap();
         assert!(std::path::Path::new(path).exists());
         // Cleanup
         std::fs::remove_file(path).ok();

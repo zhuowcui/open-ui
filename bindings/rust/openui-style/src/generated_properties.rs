@@ -53,6 +53,12 @@ pub enum StyleProperty {
 }
 
 impl StyleProperty {
+    pub fn from_u16(value: u16) -> Option<Self> {
+        PROPERTY_METADATA
+            .get(value.checked_sub(1)? as usize)
+            .map(|metadata| metadata.property)
+    }
+
     /// Look up a schema property. This is intended for tooling and macro expansion;
     /// application mutation APIs accept `StyleProperty`, never a runtime name.
     pub fn from_css_name(name: &str) -> Option<Self> {

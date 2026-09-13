@@ -5,7 +5,7 @@ use crate::scope::{create_scope, dispose_scope};
 use crate::style::{Bitmap, Error};
 use crate::view_node::{mount_view, IntoView};
 use crate::{Document, ScopeId};
-use openui_engine::Viewport;
+use openui_engine::ViewportMetrics;
 use std::cell::Cell;
 #[cfg(all(feature = "linux", target_os = "linux"))]
 use std::cell::RefCell;
@@ -69,10 +69,13 @@ impl AppBuilder {
     }
 
     pub fn build(self) -> Result<App, Error> {
-        let width = dimension(self.options.size.width)?;
-        let height = dimension(self.options.size.height)?;
+        let viewport = ViewportMetrics::from_logical_size(
+            self.options.size.width,
+            self.options.size.height,
+            1.0,
+        )?;
         Ok(App {
-            document: Document::with_viewport(Viewport::new(width, height)?)?,
+            document: Document::with_viewport_metrics(viewport)?,
             options: self.options,
             root_scope: None,
             exit_requested: Cell::new(false),
@@ -80,15 +83,6 @@ impl AppBuilder {
             software_compositor: RefCell::new(openui_compositor::SoftwareCompositor::default()),
         })
     }
-}
-
-fn dimension(value: f64) -> Result<u32, Error> {
-    if !value.is_finite() || value <= 0.0 || value > u32::MAX as f64 {
-        return Err(Error::InvalidArgument(
-            "window dimensions must be finite and positive",
-        ));
-    }
-    Ok(value.round() as u32)
 }
 
 pub struct App {
@@ -186,13 +180,7 @@ impl openui_platform::PlatformApplication for App {
         };
         let result = match event {
             PlatformEvent::BackendChanged(_) => Ok(()),
-            PlatformEvent::Resized {
-                logical_width,
-                logical_height,
-                scale_factor,
-            } => self
-                .document
-                .set_viewport_with_scale(logical_width, logical_height, scale_factor),
+            PlatformEvent::Resized(viewport) => self.document.set_viewport(viewport),
             PlatformEvent::Pointer {
                 pointer_id,
                 phase,
@@ -282,6 +270,7 @@ impl openui_platform::PlatformApplication for App {
         Ok(openui_platform::SoftwareFrame {
             width: frame.width,
             height: frame.height,
+            viewport: frame.viewport,
             stride: frame.stride,
             pixels: frame.pixels,
         })
@@ -376,12 +365,12 @@ pub struct HeadlessApp {
 }
 
 impl HeadlessApp {
-    pub fn new(viewport: Viewport) -> Result<Self, Error> {
+    pub fn new(viewport: ViewportMetrics) -> Result<Self, Error> {
         Ok(Self {
             app: App {
-                document: Document::with_viewport(viewport)?,
+                document: Document::with_viewport_metrics(viewport)?,
                 options: WindowOptions {
-                    size: LogicalSize::new(viewport.width as f64, viewport.height as f64),
+                    size: LogicalSize::new(viewport.logical_width(), viewport.logical_height()),
                     ..WindowOptions::default()
                 },
                 root_scope: None,
@@ -439,7 +428,8 @@ mod tests {
 
     #[test]
     fn headless_app_mounts_and_renders_the_typed_view_path() {
-        let mut app = HeadlessApp::new(Viewport::new(64, 64).unwrap()).unwrap();
+        let mut app =
+            HeadlessApp::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
         app.mount(|| {
             view! {
                 <div style:width="32px" style:height="32px" style:background-color="red">
@@ -458,7 +448,9 @@ mod tests {
     #[test]
     fn event_driven_signal_updates_retarget_the_native_text_node() {
         let count = create_signal(0_i32);
-        let mut app = HeadlessApp::new(Viewport::new(100, 50).unwrap()).unwrap();
+        let mut app =
+            HeadlessApp::new(ViewportMetrics::from_logical_size(100.0, 50.0, 1.0).unwrap())
+                .unwrap();
         app.mount(move || {
             view! {
                 <button style:width="100px" style:height="50px"
@@ -487,7 +479,9 @@ mod tests {
     fn show_and_keyed_for_mutate_retained_nodes() {
         let visible = create_signal(true);
         let items = create_signal(vec![1_i32, 2, 3]);
-        let mut app = HeadlessApp::new(Viewport::new(120, 80).unwrap()).unwrap();
+        let mut app =
+            HeadlessApp::new(ViewportMetrics::from_logical_size(120.0, 80.0, 1.0).unwrap())
+                .unwrap();
         app.mount(move || {
             vec![
                 Show(
@@ -538,14 +532,10 @@ mod tests {
         assert_eq!(input.control_value().unwrap().as_deref(), Some("a"));
         PlatformApplication::event(
             &mut app,
-            PlatformEvent::Resized {
-                logical_width: 240,
-                logical_height: 120,
-                scale_factor: 2.0,
-            },
+            PlatformEvent::Resized(ViewportMetrics::from_physical_size(480, 240, 2.0).unwrap()),
         )
         .unwrap();
         let frame = PlatformApplication::render(&mut app, 0.0).unwrap();
-        assert_eq!((frame.width, frame.height), (240, 120));
+        assert_eq!((frame.width, frame.height), (480, 240));
     }
 }

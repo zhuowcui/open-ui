@@ -577,7 +577,10 @@ impl Engine {
             &mut self.document.node_mut(node).style,
             property,
             value,
-            (self.viewport.width as f32, self.viewport.height as f32),
+            (
+                self.viewport.logical_width() as f32,
+                self.viewport.logical_height() as f32,
+            ),
         )
         .map_err(|_| EngineError::PropertyType { property })?;
         self.dirty.hit_test = true;
@@ -690,7 +693,7 @@ fn compose_value(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::Viewport;
+    use crate::ViewportMetrics;
     use openui_dom::ElementTag;
     use openui_style::{FillMode, Keyframe};
 
@@ -716,7 +719,8 @@ mod tests {
 
     #[test]
     fn manual_clock_samples_and_emits_lifecycle_events() {
-        let mut engine = Engine::new(Viewport::new(100, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
         let node = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(engine.root(), node).unwrap();
         let id = engine
@@ -743,7 +747,8 @@ mod tests {
 
     #[test]
     fn pause_seek_reverse_and_cancel_are_deterministic() {
-        let mut engine = Engine::new(Viewport::new(100, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
         let node = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(engine.root(), node).unwrap();
         engine
@@ -777,7 +782,8 @@ mod tests {
 
     #[test]
     fn transition_keeps_its_authored_target_after_completion() {
-        let mut engine = Engine::new(Viewport::new(100, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
         let node = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(engine.root(), node).unwrap();
         engine
@@ -792,7 +798,8 @@ mod tests {
 
     #[test]
     fn reduced_motion_finishes_finite_animations() {
-        let mut engine = Engine::new(Viewport::new(100, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
         let node = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(engine.root(), node).unwrap();
         engine.set_prefers_reduced_motion(true);
@@ -810,7 +817,8 @@ mod tests {
 
     #[test]
     fn smooth_scroll_and_snap_use_the_manual_clock() {
-        let mut engine = Engine::new(Viewport::new(100, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
         let node = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(engine.root(), node).unwrap();
         engine

@@ -3,12 +3,13 @@
 pub use openui_compositor::SceneRect as Rect;
 
 /// Owned premultiplied 32-bit bitmap produced by the software compositor.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Bitmap {
     pub(crate) pixels: Vec<u8>,
     pub(crate) width: u32,
     pub(crate) height: u32,
     pub(crate) stride: usize,
+    pub(crate) viewport: openui_engine::ViewportMetrics,
 }
 
 impl Bitmap {
@@ -26,6 +27,10 @@ impl Bitmap {
 
     pub fn stride(&self) -> usize {
         self.stride
+    }
+
+    pub fn viewport(&self) -> openui_engine::ViewportMetrics {
+        self.viewport
     }
 }
 
@@ -67,6 +72,12 @@ impl std::error::Error for Error {}
 impl From<openui_engine::EngineError> for Error {
     fn from(value: openui_engine::EngineError) -> Self {
         Self::Engine(value)
+    }
+}
+
+impl From<openui_engine::ViewportMetricsError> for Error {
+    fn from(value: openui_engine::ViewportMetricsError) -> Self {
+        Self::Engine(value.into())
     }
 }
 

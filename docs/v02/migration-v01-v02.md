@@ -41,7 +41,8 @@ For deterministic rendering:
 use openui::prelude::*;
 # fn view() -> ViewNode { view! { <div>"hello"</div> } }
 # fn main() -> Result<(), Error> {
-let mut app = HeadlessApp::new(Viewport::new(800, 600)?)?;
+let viewport = ViewportMetrics::from_logical_size(800.0, 600.0, 1.0)?;
+let mut app = HeadlessApp::new(viewport)?;
 app.mount(view)?;
 app.render_png_to(250.0, "frame.png")?;
 # Ok(())
@@ -83,9 +84,14 @@ All configuration and event structures start with `struct_size` and
 OuiDocumentConfig config = {
     .struct_size = sizeof(OuiDocumentConfig),
     .abi_version = OUI_ABI_VERSION,
-    .width = 800,
-    .height = 600,
-    .scale_factor = 1.0,
+    .viewport = {
+        .logical_width = 800.0,
+        .logical_height = 600.0,
+        .physical_width = 800,
+        .physical_height = 600,
+        .device_scale_factor = 1.0,
+        .authority = OUI_VIEWPORT_LOGICAL,
+    },
 };
 OuiDocument* document = NULL;
 OuiStatus status = oui_document_create(&config, &document);

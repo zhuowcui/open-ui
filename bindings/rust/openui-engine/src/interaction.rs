@@ -1280,7 +1280,9 @@ mod tests {
 
     #[test]
     fn event_route_is_capture_target_bubble() {
-        let mut engine = Engine::new(crate::Viewport::new(100, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap())
+                .unwrap();
         let parent = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(engine.root(), parent).unwrap();
         let child = engine.create_element(ElementTag::Button).unwrap();
@@ -1301,7 +1303,9 @@ mod tests {
 
     #[test]
     fn pointer_state_synthesizes_enter_leave_and_activation() {
-        let mut engine = Engine::new(crate::Viewport::new(100, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap())
+                .unwrap();
         let button = sized_control(&mut engine, ElementTag::Button);
         let moved = engine
             .pointer_event(7, PointerEventKind::Move, 10.0, 10.0)
@@ -1322,7 +1326,9 @@ mod tests {
 
     #[test]
     fn text_editing_uses_grapheme_boundaries_and_supports_undo() {
-        let mut engine = Engine::new(crate::Viewport::new(100, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap())
+                .unwrap();
         let input = sized_control(&mut engine, ElementTag::Input);
         engine.set_control_value(input, "á👩‍💻z").unwrap();
         engine
@@ -1341,7 +1347,9 @@ mod tests {
 
     #[test]
     fn checkbox_and_named_radio_activation_are_deterministic() {
-        let mut engine = Engine::new(crate::Viewport::new(100, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap())
+                .unwrap();
         let checkbox = sized_control(&mut engine, ElementTag::Input);
         engine.set_attribute(checkbox, "type", "checkbox").unwrap();
         engine.activate(checkbox).unwrap();

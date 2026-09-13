@@ -312,12 +312,25 @@ typedef struct OuiAppConfig {
   uint32_t reserved;
 } OuiAppConfig;
 
+typedef enum OuiViewportAuthority {
+  OUI_VIEWPORT_LOGICAL = 1,
+  OUI_VIEWPORT_PHYSICAL = 2
+} OuiViewportAuthority;
+
+typedef struct OuiViewportMetrics {
+  double logical_width;
+  double logical_height;
+  uint32_t physical_width;
+  uint32_t physical_height;
+  double device_scale_factor;
+  uint32_t authority;
+  uint32_t reserved;
+} OuiViewportMetrics;
+
 typedef struct OuiDocumentConfig {
   uint32_t struct_size;
   uint32_t abi_version;
-  uint32_t width;
-  uint32_t height;
-  double scale_factor;
+  OuiViewportMetrics viewport;
 } OuiDocumentConfig;
 
 typedef struct OuiRect {
@@ -488,6 +501,7 @@ OuiStatus oui_document_create(const OuiDocumentConfig* config, OuiDocument** out
 OuiStatus oui_document_destroy(OuiDocument* document);
 OuiStatus oui_document_root(OuiDocument* document, OuiElement** out_root);
 OuiStatus oui_document_set_viewport(OuiDocument* document, const OuiDocumentConfig* viewport);
+OuiStatus oui_document_get_viewport(OuiDocument* document, OuiViewportMetrics* out_viewport);
 OuiStatus oui_document_begin_update(OuiDocument* document);
 OuiStatus oui_document_end_update(OuiDocument* document);
 OuiStatus oui_document_update(OuiDocument* document);

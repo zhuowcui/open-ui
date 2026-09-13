@@ -22,6 +22,7 @@ oui_document_destroy
 oui_document_dispatch_event
 oui_document_dispatch_pointer_event
 oui_document_end_update
+oui_document_get_viewport
 oui_document_hit_test
 oui_document_is_animating
 oui_document_register_image

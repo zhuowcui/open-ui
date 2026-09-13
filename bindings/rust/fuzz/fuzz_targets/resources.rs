@@ -2,10 +2,11 @@
 
 use libfuzzer_sys::fuzz_target;
 use openui_dom::ElementTag;
-use openui_engine::{Engine, Viewport};
+use openui_engine::{Engine, ViewportMetrics};
 
 fuzz_target!(|data: &[u8]| {
-    let mut engine = Engine::new(Viewport::new(32, 32).unwrap()).unwrap();
+    let mut engine =
+        Engine::new(ViewportMetrics::from_logical_size(32.0, 32.0, 1.0).unwrap()).unwrap();
     let image = engine.create_element(ElementTag::Image).unwrap();
     engine.append_child(engine.root(), image).unwrap();
     for (index, bytes) in data.chunks(64).take(64).enumerate() {

@@ -134,7 +134,12 @@ fn render_test(test_id: &str, output: &str) {
     let tests = registry();
     if let Some((_, builder)) = tests.iter().find(|(id, _)| *id == test_id) {
         let doc = builder();
-        render_to_png(&doc, W, H, output).expect("render failed");
+        render_to_png(
+            &doc,
+            openui_geometry::ViewportMetrics::from_logical_size(W as f64, H as f64, 1.0).unwrap(),
+            output,
+        )
+        .expect("render failed");
         println!("OK: {} → {}", test_id, output);
     } else {
         eprintln!("Unknown test ID: {}", test_id);

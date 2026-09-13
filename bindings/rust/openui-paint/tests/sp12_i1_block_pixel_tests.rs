@@ -27,6 +27,15 @@ const SURFACE_H: i32 = 600;
 const VP: i32 = 20;
 const TOLERANCE: u8 = 2;
 
+fn test_viewport() -> openui_geometry::ViewportMetrics {
+    openui_geometry::ViewportMetrics::from_logical_size(
+        f64::from(SURFACE_W),
+        f64::from(SURFACE_H),
+        1.0,
+    )
+    .unwrap()
+}
+
 // Color tuples for pixel assertions
 const RED: (u8, u8, u8) = (255, 0, 0);
 const GREEN: (u8, u8, u8) = (0, 128, 0);
@@ -156,7 +165,7 @@ fn add_colored_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: 
 }
 
 fn render(doc: &Document) -> Surface {
-    render_to_surface(doc, SURFACE_W, SURFACE_H).expect("render_to_surface failed")
+    render_to_surface(doc, test_viewport()).expect("render_to_surface failed")
 }
 
 // ═══════════════════════════════════════════════════════════════════════

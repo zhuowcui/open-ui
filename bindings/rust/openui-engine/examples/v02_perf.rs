@@ -4,7 +4,7 @@
 
 use openui_compositor::SoftwareCompositor;
 use openui_dom::ElementTag;
-use openui_engine::{AnimationTimeline, Engine, Viewport};
+use openui_engine::{AnimationTimeline, Engine, ViewportMetrics};
 use openui_style::{
     AnimationOptions, Display, FillMode, Keyframes, LengthValue, PropertyKeyframes, StyleProperty,
 };
@@ -32,7 +32,7 @@ fn percentile_95(samples: &mut [f64]) -> f64 {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut engine = Engine::new(Viewport::new(128, 128)?)?;
+    let mut engine = Engine::new(ViewportMetrics::from_logical_size(128.0, 128.0, 1.0)?)?;
     let root = engine.root();
     let mut nodes = Vec::with_capacity(100);
     for _ in 0..100 {

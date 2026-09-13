@@ -470,7 +470,9 @@ fn responsive_viewport_reflows_geometry() {
     element.set_height(LengthValue::px(10.0)).unwrap();
     document.update_all().unwrap();
     let before = element.width().unwrap();
-    document.set_viewport(640, 240).unwrap();
+    document
+        .set_viewport(openui::ViewportMetrics::from_logical_size(640.0, 240.0, 1.0).unwrap())
+        .unwrap();
     document.update_all().unwrap();
     let after = element.width().unwrap();
     assert!(

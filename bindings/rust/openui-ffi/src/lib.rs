@@ -19,7 +19,8 @@ use openui_dom::ElementTag;
 use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
     AnimationEventKind, AnimationId, AnimationTimeline, ControlAdjustment, Engine,
-    EventPhase as EngineEventPhase, FocusOrigin, NodeHandle, PointerEventKind, Viewport,
+    EventPhase as EngineEventPhase, FocusOrigin, NodeHandle, PointerEventKind, ViewportAuthority,
+    ViewportMetrics,
 };
 use openui_style::{
     AnimationOptions, AnimationPhase, Border, BorderStyle, Color, CompositeOperation, CornerRadii,
@@ -109,11 +110,7 @@ fn new_document(config: &OuiDocumentConfig) -> Result<Rc<DocumentState>, ApiErro
         config.abi_version,
         size_of::<OuiDocumentConfig>(),
     )?;
-    let mut viewport = Viewport::new(config.width, config.height)?;
-    if !config.scale_factor.is_finite() || config.scale_factor <= 0.0 {
-        return Err(invalid("scale_factor must be finite and positive"));
-    }
-    viewport.scale_factor = config.scale_factor;
+    let viewport = viewport_metrics(&config.viewport)?;
     Ok(Rc::new(DocumentState {
         engine: RefCell::new(Engine::new(viewport)?),
         update_depth: Cell::new(0),
@@ -122,6 +119,45 @@ fn new_document(config: &OuiDocumentConfig) -> Result<Rc<DocumentState>, ApiErro
         element_handles: RefCell::new(std::collections::HashMap::new()),
         animation_events: RefCell::new(Vec::new()),
     }))
+}
+
+fn viewport_metrics(raw: &OuiViewportMetrics) -> Result<ViewportMetrics, ApiError> {
+    if raw.reserved != 0 {
+        return Err(invalid("viewport reserved field must be zero"));
+    }
+    let metrics = match raw.authority {
+        1 => ViewportMetrics::from_logical_size(
+            raw.logical_width,
+            raw.logical_height,
+            raw.device_scale_factor,
+        ),
+        2 => ViewportMetrics::from_physical_size(
+            raw.physical_width,
+            raw.physical_height,
+            raw.device_scale_factor,
+        ),
+        _ => return Err(invalid("viewport authority is invalid")),
+    }
+    .map_err(|error| invalid(error.to_string()))?;
+    if raw.authority == 1
+        && (raw.physical_width != 0 || raw.physical_height != 0)
+        && metrics.physical_size() != (raw.physical_width, raw.physical_height)
+    {
+        return Err(invalid(
+            "logical viewport has inconsistent physical dimensions",
+        ));
+    }
+    if raw.authority == 2
+        && ((raw.logical_width != 0.0
+            && raw.logical_width.to_bits() != metrics.logical_width().to_bits())
+            || (raw.logical_height != 0.0
+                && raw.logical_height.to_bits() != metrics.logical_height().to_bits()))
+    {
+        return Err(invalid(
+            "physical viewport has inconsistent logical dimensions",
+        ));
+    }
+    Ok(metrics)
 }
 
 fn element_tag(value: i32) -> Result<ElementTag, ApiError> {
@@ -490,9 +526,15 @@ pub extern "C" fn oui_app_create(
         let document_config = OuiDocumentConfig {
             struct_size: size_of::<OuiDocumentConfig>() as u32,
             abi_version: OUI_ABI_VERSION,
-            width: config.width,
-            height: config.height,
-            scale_factor: 1.0,
+            viewport: OuiViewportMetrics {
+                logical_width: f64::from(config.width),
+                logical_height: f64::from(config.height),
+                physical_width: config.width,
+                physical_height: config.height,
+                device_scale_factor: 1.0,
+                authority: 1,
+                reserved: 0,
+            },
         };
         let state = Rc::new(AppState {
             document: new_document(&document_config)?,
@@ -585,10 +627,39 @@ pub extern "C" fn oui_document_set_viewport(
             config.abi_version,
             size_of::<OuiDocumentConfig>(),
         )?;
-        let mut viewport = Viewport::new(config.width, config.height)?;
-        viewport.scale_factor = config.scale_factor;
+        let viewport = viewport_metrics(&config.viewport)?;
         let state = document(document_handle as usize)?;
         borrow_engine_mut(&state)?.set_viewport(viewport)?;
+        Ok(())
+    })
+}
+
+// SAFETY CONTRACT: `out_viewport` points to writable storage for one value.
+#[no_mangle]
+pub extern "C" fn oui_document_get_viewport(
+    document_handle: *mut OuiDocument,
+    out_viewport: *mut OuiViewportMetrics,
+) -> OuiStatus {
+    ffi(|| {
+        if out_viewport.is_null() {
+            return Err(invalid("out_viewport is null"));
+        }
+        let state = document(document_handle as usize)?;
+        let metrics = borrow_engine(&state)?.viewport();
+        let value = OuiViewportMetrics {
+            logical_width: metrics.logical_width(),
+            logical_height: metrics.logical_height(),
+            physical_width: metrics.physical_width(),
+            physical_height: metrics.physical_height(),
+            device_scale_factor: metrics.device_scale_factor(),
+            authority: match metrics.authority() {
+                ViewportAuthority::Logical => 1,
+                ViewportAuthority::Physical => 2,
+            },
+            reserved: 0,
+        };
+        // SAFETY: the caller guarantees writable storage and null was rejected.
+        unsafe { ptr::write(out_viewport, value) };
         Ok(())
     })
 }
@@ -2444,9 +2515,15 @@ mod tests {
         OuiDocumentConfig {
             struct_size: size_of::<OuiDocumentConfig>() as u32,
             abi_version: OUI_ABI_VERSION,
-            width,
-            height,
-            scale_factor: 1.0,
+            viewport: OuiViewportMetrics {
+                logical_width: f64::from(width),
+                logical_height: f64::from(height),
+                physical_width: width,
+                physical_height: height,
+                device_scale_factor: 1.0,
+                authority: 1,
+                reserved: 0,
+            },
         }
     }
 
@@ -2570,10 +2647,17 @@ mod tests {
         );
         assert_eq!(
             (
+                size_of::<OuiViewportMetrics>(),
+                align_of::<OuiViewportMetrics>()
+            ),
+            (40, 8)
+        );
+        assert_eq!(
+            (
                 size_of::<OuiDocumentConfig>(),
                 align_of::<OuiDocumentConfig>()
             ),
-            (24, 8)
+            (48, 8)
         );
         assert_eq!((size_of::<OuiRect>(), align_of::<OuiRect>()), (16, 4));
         assert_eq!((size_of::<OuiBitmap>(), align_of::<OuiBitmap>()), (32, 8));
@@ -2817,7 +2901,8 @@ mod tests {
 
     #[test]
     fn rust_and_c_paths_produce_identical_headless_pixels() {
-        let mut engine = Engine::new(Viewport::new(64, 64).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
         let direct = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(engine.root(), direct).unwrap();
         engine

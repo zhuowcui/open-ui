@@ -111,12 +111,22 @@ pub struct OuiAppConfig {
 
 #[repr(C)]
 #[derive(Clone, Copy)]
+pub struct OuiViewportMetrics {
+    pub logical_width: f64,
+    pub logical_height: f64,
+    pub physical_width: u32,
+    pub physical_height: u32,
+    pub device_scale_factor: f64,
+    pub authority: u32,
+    pub reserved: u32,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
 pub struct OuiDocumentConfig {
     pub struct_size: u32,
     pub abi_version: u32,
-    pub width: u32,
-    pub height: u32,
-    pub scale_factor: f64,
+    pub viewport: OuiViewportMetrics,
 }
 
 #[repr(C)]

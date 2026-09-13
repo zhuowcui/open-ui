@@ -366,7 +366,7 @@ fn main() -> Result<(), Error> {
 
 #[cfg(not(feature = "linux"))]
 fn main() -> Result<(), Error> {
-    let mut app = HeadlessApp::new(Viewport::new(1200, 800)?)?;
+    let mut app = HeadlessApp::new(ViewportMetrics::from_logical_size(1200.0, 800.0, 1.0)?)?;
     app.mount(application_view)?;
 
     app.render_png_to(0.0, "dashboard.png")?;

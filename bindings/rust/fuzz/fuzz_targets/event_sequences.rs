@@ -2,11 +2,12 @@
 
 use libfuzzer_sys::fuzz_target;
 use openui_dom::ElementTag;
-use openui_engine::{Engine, PointerEventKind, Viewport};
+use openui_engine::{Engine, PointerEventKind, ViewportMetrics};
 use openui_style::{Display, LengthValue, StyleProperty};
 
 fuzz_target!(|data: &[u8]| {
-    let mut engine = Engine::new(Viewport::new(128, 128).unwrap()).unwrap();
+    let mut engine =
+        Engine::new(ViewportMetrics::from_logical_size(128.0, 128.0, 1.0).unwrap()).unwrap();
     let target = engine.create_element(ElementTag::Button).unwrap();
     engine.append_child(engine.root(), target).unwrap();
     for (property, value) in [

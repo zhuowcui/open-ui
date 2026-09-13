@@ -9,6 +9,7 @@ pub use linux::run;
 #[cfg(feature = "linux")]
 pub use accesskit::{ActionRequest, TreeUpdate};
 
+use openui_geometry::ViewportMetrics;
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
@@ -77,11 +78,7 @@ pub struct Modifiers {
 #[derive(Debug, Clone, PartialEq)]
 pub enum PlatformEvent {
     BackendChanged(BackendStatus),
-    Resized {
-        logical_width: u32,
-        logical_height: u32,
-        scale_factor: f64,
-    },
+    Resized(ViewportMetrics),
     Pointer {
         pointer_id: u64,
         phase: PointerPhase,
@@ -114,10 +111,11 @@ pub enum PlatformEvent {
     HoveredFileCancelled,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct SoftwareFrame {
     pub width: u32,
     pub height: u32,
+    pub viewport: ViewportMetrics,
     pub stride: usize,
     pub pixels: Vec<u8>,
 }

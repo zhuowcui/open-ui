@@ -164,6 +164,12 @@ impl OpenGlPresenter {
         }
         self.window.resize_surface(&self.surface, &self.context);
         validate_frame(frame)?;
+        if (frame.width, frame.height) != (physical.width, physical.height) {
+            return Err(PlatformError::Presentation(format!(
+                "frame/surface size mismatch: frame={}x{}, surface={}x{}",
+                frame.width, frame.height, physical.width, physical.height
+            )));
+        }
         let width = i32::try_from(frame.width)
             .map_err(|_| PlatformError::Presentation("frame width exceeds i32".into()))?;
         let height = i32::try_from(frame.height)
@@ -283,8 +289,11 @@ fn initialize_gl_objects(gles: bool) -> Result<(u32, u32, u32, u32), PlatformErr
         let mut texture = 0;
         gl::GenTextures(1, &mut texture);
         gl::BindTexture(gl::TEXTURE_2D, texture);
-        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::LINEAR as i32);
-        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::LINEAR as i32);
+        // Presentation is an exact 1:1 transfer of an already rasterized
+        // physical frame. Nearest sampling prevents a driver from blending
+        // adjacent pixels even if its fullscreen-quad convention differs.
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MIN_FILTER, gl::NEAREST as i32);
+        gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_MAG_FILTER, gl::NEAREST as i32);
         gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_S, gl::CLAMP_TO_EDGE as i32);
         gl::TexParameteri(gl::TEXTURE_2D, gl::TEXTURE_WRAP_T, gl::CLAMP_TO_EDGE as i32);
         gl::UseProgram(program);
@@ -371,7 +380,8 @@ fn check_program(program: u32) -> Result<(), PlatformError> {
 }
 
 fn validate_frame(frame: &SoftwareFrame) -> Result<(), PlatformError> {
-    if frame.width == 0
+    if frame.viewport.physical_size() != (frame.width, frame.height)
+        || frame.width == 0
         || frame.height == 0
         || frame.stride < frame.width as usize * 4
         || frame.stride % 4 != 0
@@ -600,7 +610,7 @@ impl<A: PlatformApplication> Runtime<A> {
                     let mut buffer = surface
                         .buffer_mut()
                         .map_err(|error| PlatformError::Presentation(error.to_string()))?;
-                    copy_scaled_frame(&frame, physical.width, physical.height, &mut buffer)?;
+                    copy_frame(&frame, physical.width, physical.height, &mut buffer)?;
                     buffer
                         .present()
                         .map_err(|error| PlatformError::Presentation(error.to_string()))
@@ -715,7 +725,7 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
                 }
             };
         self.scale_factor = window.scale_factor();
-        let size = window.inner_size().to_logical::<f64>(self.scale_factor);
+        let physical = window.inner_size();
         let accessibility =
             AccessibilityAdapter::with_event_loop_proxy(event_loop, &window, self.proxy.clone());
         window.set_ime_allowed(true);
@@ -728,11 +738,14 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
         }
         if self.send(
             event_loop,
-            PlatformEvent::Resized {
-                logical_width: logical_dimension(size.width),
-                logical_height: logical_dimension(size.height),
-                scale_factor: self.scale_factor,
-            },
+            PlatformEvent::Resized(
+                openui_geometry::ViewportMetrics::from_physical_size(
+                    physical.width,
+                    physical.height,
+                    self.scale_factor,
+                )
+                .expect("winit returned validated window metrics"),
+            ),
         ) {
             self.request_redraw();
         }
@@ -762,16 +775,18 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
         match event {
             WindowEvent::CloseRequested | WindowEvent::Destroyed => event_loop.exit(),
             WindowEvent::Resized(physical) => {
-                let logical = physical.to_logical::<f64>(self.scale_factor);
                 if physical.width > 0
                     && physical.height > 0
                     && self.send(
                         event_loop,
-                        PlatformEvent::Resized {
-                            logical_width: logical_dimension(logical.width),
-                            logical_height: logical_dimension(logical.height),
-                            scale_factor: self.scale_factor,
-                        },
+                        PlatformEvent::Resized(
+                            openui_geometry::ViewportMetrics::from_physical_size(
+                                physical.width,
+                                physical.height,
+                                self.scale_factor,
+                            )
+                            .expect("winit returned validated window metrics"),
+                        ),
                     )
                 {
                     self.request_redraw();
@@ -780,14 +795,16 @@ impl<A: PlatformApplication> ApplicationHandler<UserEvent> for Runtime<A> {
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
                 self.scale_factor = scale_factor;
                 let physical = window.inner_size();
-                let logical = physical.to_logical::<f64>(scale_factor);
                 if self.send(
                     event_loop,
-                    PlatformEvent::Resized {
-                        logical_width: logical_dimension(logical.width),
-                        logical_height: logical_dimension(logical.height),
-                        scale_factor,
-                    },
+                    PlatformEvent::Resized(
+                        openui_geometry::ViewportMetrics::from_physical_size(
+                            physical.width,
+                            physical.height,
+                            scale_factor,
+                        )
+                        .expect("winit returned validated window metrics"),
+                    ),
                 ) {
                     self.request_redraw();
                 }
@@ -1008,10 +1025,6 @@ pub fn run<A: PlatformApplication>(
     runtime.error.map_or(Ok(()), Err)
 }
 
-fn logical_dimension(value: f64) -> u32 {
-    value.round().clamp(1.0, u32::MAX as f64) as u32
-}
-
 fn pointer_button(button: MouseButton) -> PointerButton {
     match button {
         MouseButton::Left => PointerButton::Left,
@@ -1083,13 +1096,15 @@ fn key_code(key: &Key) -> i32 {
     }
 }
 
-fn copy_scaled_frame(
+fn copy_frame(
     frame: &SoftwareFrame,
     destination_width: u32,
     destination_height: u32,
     destination: &mut [u32],
 ) -> Result<(), PlatformError> {
-    if frame.width == 0
+    if frame.width != destination_width
+        || frame.height != destination_height
+        || frame.width == 0
         || frame.height == 0
         || frame.stride < frame.width as usize * 4
         || frame.pixels.len() < frame.stride * frame.height as usize
@@ -1100,12 +1115,8 @@ fn copy_scaled_frame(
         ));
     }
     for y in 0..destination_height {
-        let source_y =
-            (u64::from(y) * u64::from(frame.height) / u64::from(destination_height)) as usize;
         for x in 0..destination_width {
-            let source_x =
-                (u64::from(x) * u64::from(frame.width) / u64::from(destination_width)) as usize;
-            let source = source_y * frame.stride + source_x * 4;
+            let source = y as usize * frame.stride + x as usize * 4;
             let red = u32::from(frame.pixels[source]);
             let green = u32::from(frame.pixels[source + 1]);
             let blue = u32::from(frame.pixels[source + 2]);
@@ -1130,26 +1141,28 @@ mod tests {
     use super::*;
 
     #[test]
-    fn software_frame_is_scaled_and_converted_for_softbuffer() {
+    fn software_frame_is_copied_without_resampling() {
+        let viewport = openui_geometry::ViewportMetrics::from_physical_size(2, 1, 1.0).unwrap();
         let frame = SoftwareFrame {
             width: 2,
             height: 1,
+            viewport,
             stride: 8,
             pixels: vec![255, 0, 0, 255, 0, 0, 255, 255],
         };
-        let mut output = [0; 8];
-        copy_scaled_frame(&frame, 4, 2, &mut output).unwrap();
-        assert_eq!(
-            output,
-            [0xff0000, 0xff0000, 0x0000ff, 0x0000ff, 0xff0000, 0xff0000, 0x0000ff, 0x0000ff]
-        );
+        let mut output = [0; 2];
+        copy_frame(&frame, 2, 1, &mut output).unwrap();
+        assert_eq!(output, [0xff0000, 0x0000ff]);
+        assert!(copy_frame(&frame, 4, 2, &mut [0; 8]).is_err());
     }
 
     #[test]
     fn invalid_frame_layout_is_rejected_before_native_upload() {
+        let viewport = openui_geometry::ViewportMetrics::from_physical_size(2, 2, 1.0).unwrap();
         let short = SoftwareFrame {
             width: 2,
             height: 2,
+            viewport,
             stride: 8,
             pixels: vec![0; 15],
         };
@@ -1161,6 +1174,7 @@ mod tests {
         let padded = SoftwareFrame {
             width: 2,
             height: 2,
+            viewport,
             stride: 12,
             pixels: vec![0; 24],
         };

@@ -9,6 +9,10 @@ use openui_geometry::Length;
 use openui_paint::render_to_surface;
 use openui_style::*;
 
+fn benchmark_viewport() -> openui_geometry::ViewportMetrics {
+    openui_geometry::ViewportMetrics::from_logical_size(800.0, 600.0, 1.0).unwrap()
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -75,7 +79,14 @@ fn bench_paint_text_simple(c: &mut Criterion) {
                 doc
             },
             |doc| {
-                render_to_surface(doc, 800, 600).unwrap();
+                render_to_surface(
+                    doc,
+                    openui_geometry::ViewportMetrics::from_logical_size(
+                        800 as f64, 600 as f64, 1.0,
+                    )
+                    .unwrap(),
+                )
+                .unwrap();
             },
             criterion::BatchSize::SmallInput,
         )
@@ -117,7 +128,14 @@ fn bench_paint_text_styled(c: &mut Criterion) {
                 doc
             },
             |doc| {
-                render_to_surface(doc, 800, 600).unwrap();
+                render_to_surface(
+                    doc,
+                    openui_geometry::ViewportMetrics::from_logical_size(
+                        800 as f64, 600 as f64, 1.0,
+                    )
+                    .unwrap(),
+                )
+                .unwrap();
             },
             criterion::BatchSize::SmallInput,
         )
@@ -146,7 +164,14 @@ fn bench_paint_decoration_underline(c: &mut Criterion) {
                 doc
             },
             |doc| {
-                render_to_surface(doc, 800, 600).unwrap();
+                render_to_surface(
+                    doc,
+                    openui_geometry::ViewportMetrics::from_logical_size(
+                        800 as f64, 600 as f64, 1.0,
+                    )
+                    .unwrap(),
+                )
+                .unwrap();
             },
             criterion::BatchSize::SmallInput,
         )
@@ -173,7 +198,14 @@ fn bench_paint_decoration_wavy(c: &mut Criterion) {
                 doc
             },
             |doc| {
-                render_to_surface(doc, 800, 600).unwrap();
+                render_to_surface(
+                    doc,
+                    openui_geometry::ViewportMetrics::from_logical_size(
+                        800 as f64, 600 as f64, 1.0,
+                    )
+                    .unwrap(),
+                )
+                .unwrap();
             },
             criterion::BatchSize::SmallInput,
         )
@@ -202,7 +234,14 @@ fn bench_paint_emphasis_dot(c: &mut Criterion) {
                 doc
             },
             |doc| {
-                render_to_surface(doc, 800, 600).unwrap();
+                render_to_surface(
+                    doc,
+                    openui_geometry::ViewportMetrics::from_logical_size(
+                        800 as f64, 600 as f64, 1.0,
+                    )
+                    .unwrap(),
+                )
+                .unwrap();
             },
             criterion::BatchSize::SmallInput,
         )
@@ -228,7 +267,14 @@ fn bench_paint_border_solid(c: &mut Criterion) {
                 doc
             },
             |doc| {
-                render_to_surface(doc, 800, 600).unwrap();
+                render_to_surface(
+                    doc,
+                    openui_geometry::ViewportMetrics::from_logical_size(
+                        800 as f64, 600 as f64, 1.0,
+                    )
+                    .unwrap(),
+                )
+                .unwrap();
             },
             criterion::BatchSize::SmallInput,
         )
@@ -255,7 +301,14 @@ fn bench_paint_border_radius(c: &mut Criterion) {
                 doc
             },
             |doc| {
-                render_to_surface(doc, 800, 600).unwrap();
+                render_to_surface(
+                    doc,
+                    openui_geometry::ViewportMetrics::from_logical_size(
+                        800 as f64, 600 as f64, 1.0,
+                    )
+                    .unwrap(),
+                )
+                .unwrap();
             },
             criterion::BatchSize::SmallInput,
         )
@@ -319,7 +372,14 @@ fn bench_paint_full_page(c: &mut Criterion) {
                 doc
             },
             |doc| {
-                render_to_surface(doc, 800, 600).unwrap();
+                render_to_surface(
+                    doc,
+                    openui_geometry::ViewportMetrics::from_logical_size(
+                        800 as f64, 600 as f64, 1.0,
+                    )
+                    .unwrap(),
+                )
+                .unwrap();
             },
             criterion::BatchSize::SmallInput,
         )
@@ -361,7 +421,14 @@ fn bench_paint_render_to_png(c: &mut Criterion) {
             },
             |doc| {
                 // Render to surface AND encode to PNG bytes (not written to disk)
-                let mut surface = render_to_surface(doc, 800, 600).unwrap();
+                let mut surface = render_to_surface(
+                    doc,
+                    openui_geometry::ViewportMetrics::from_logical_size(
+                        800 as f64, 600 as f64, 1.0,
+                    )
+                    .unwrap(),
+                )
+                .unwrap();
                 let image = surface.image_snapshot();
                 let _data = image.encode(None, skia_safe::EncodedImageFormat::PNG, None);
             },

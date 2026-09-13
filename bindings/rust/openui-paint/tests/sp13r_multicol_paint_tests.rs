@@ -60,7 +60,11 @@ fn opacity_stacking_context_in_a_column_paints_after_later_in_flow_content() {
     doc.node_mut(later).style.background_color = Color::from_rgba8(255, 255, 0, 255);
     doc.append_child(multicol, later);
 
-    let mut surface = render_to_surface(&doc, 200, 150).expect("multicol paint");
+    let mut surface = render_to_surface(
+        &doc,
+        openui_geometry::ViewportMetrics::from_logical_size(200 as f64, 150 as f64, 1.0).unwrap(),
+    )
+    .expect("multicol paint");
     let actual = pixel(&mut surface, 25, 75);
     for (channel, expected) in [actual.0, actual.1, actual.2]
         .into_iter()
@@ -119,7 +123,11 @@ fn fragmented_flex_item_outline_repeats_at_each_column_edge() {
     }
     doc.append_child(flex, item);
 
-    let mut surface = render_to_surface(&doc, 120, 60).expect("fragmented outline paint");
+    let mut surface = render_to_surface(
+        &doc,
+        openui_geometry::ViewportMetrics::from_logical_size(120 as f64, 60 as f64, 1.0).unwrap(),
+    )
+    .expect("fragmented outline paint");
     for (x, y) in [(10, 1), (60, 1), (10, 43), (60, 43)] {
         assert_eq!(pixel(&mut surface, x, y), (0, 0, 255), "at ({x}, {y})");
     }

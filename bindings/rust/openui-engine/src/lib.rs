@@ -24,6 +24,7 @@ use openui_compositor::{SceneGeneration, SceneRect, SceneSnapshot};
 use openui_dom::{
     Document as NativeDocument, ElementTag, NodeId, ReplacedContent, ReplacedResourceKind,
 };
+pub use openui_geometry::{ViewportAuthority, ViewportMetrics, ViewportMetricsError};
 use openui_layout::Fragment;
 use openui_paint::record_fragment;
 use openui_style::{
@@ -36,26 +37,6 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 
 static NEXT_DOCUMENT_ID: AtomicU64 = AtomicU64::new(1);
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Viewport {
-    pub width: u32,
-    pub height: u32,
-    pub scale_factor: f64,
-}
-
-impl Viewport {
-    pub fn new(width: u32, height: u32) -> Result<Self, EngineError> {
-        if width == 0 || height == 0 {
-            return Err(EngineError::InvalidViewport);
-        }
-        Ok(Self {
-            width,
-            height,
-            scale_factor: 1.0,
-        })
-    }
-}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct NodeHandle {
@@ -135,6 +116,12 @@ impl std::fmt::Display for EngineError {
 }
 
 impl std::error::Error for EngineError {}
+
+impl From<ViewportMetricsError> for EngineError {
+    fn from(_: ViewportMetricsError) -> Self {
+        Self::InvalidViewport
+    }
+}
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct LifecycleStats {
@@ -278,7 +265,7 @@ impl DirtyState {
 /// `!Send` and `!Sync`; immutable `SceneSnapshot`s may cross threads.
 pub struct Engine {
     id: u64,
-    viewport: Viewport,
+    viewport: ViewportMetrics,
     document: NativeDocument,
     slots: Vec<Slot>,
     free_slots: Vec<u32>,
@@ -311,14 +298,7 @@ pub struct Engine {
 }
 
 impl Engine {
-    pub fn new(viewport: Viewport) -> Result<Self, EngineError> {
-        if viewport.width == 0
-            || viewport.height == 0
-            || !viewport.scale_factor.is_finite()
-            || viewport.scale_factor <= 0.0
-        {
-            return Err(EngineError::InvalidViewport);
-        }
+    pub fn new(viewport: ViewportMetrics) -> Result<Self, EngineError> {
         let document = NativeDocument::new();
         let root_node = document.root();
         let root_slot = Slot {
@@ -370,7 +350,7 @@ impl Engine {
     pub fn document_id(&self) -> u64 {
         self.id
     }
-    pub fn viewport(&self) -> Viewport {
+    pub fn viewport(&self) -> ViewportMetrics {
         self.viewport
     }
     pub fn root(&self) -> NodeHandle {
@@ -400,17 +380,60 @@ impl Engine {
         &self.document
     }
 
-    pub fn set_viewport(&mut self, viewport: Viewport) -> Result<(), EngineError> {
-        if viewport.width == 0
-            || viewport.height == 0
-            || !viewport.scale_factor.is_finite()
-            || viewport.scale_factor <= 0.0
-        {
-            return Err(EngineError::InvalidViewport);
+    pub fn set_viewport(&mut self, viewport: ViewportMetrics) -> Result<(), EngineError> {
+        if self.viewport == viewport {
+            return Ok(());
         }
-        if self.viewport != viewport {
-            self.viewport = viewport;
+        let logical_changed = self.viewport.logical_size() != viewport.logical_size();
+        let scale_changed = self.viewport.device_scale_factor() != viewport.device_scale_factor();
+        let physical_changed = self.viewport.physical_size() != viewport.physical_size();
+        self.viewport = viewport;
+        if logical_changed {
+            self.recompute_authored_styles()?;
             self.mark_dirty(InvalidationClass::Intrinsic);
+        }
+        if scale_changed {
+            // Until oracle evidence proves a narrower dependency, scale is a
+            // font-metric, intrinsic, layout, paint, and raster invalidation.
+            self.dirty.layout = true;
+            self.dirty.paint = true;
+            self.dirty.compositing = true;
+            self.dirty.hit_test = true;
+            self.dirty_generations.intrinsic += 1;
+            self.dirty_generations.layout += 1;
+            self.dirty_generations.paint += 1;
+            self.dirty_generations.compositing += 1;
+        } else if physical_changed && !logical_changed {
+            self.dirty.paint = true;
+            self.dirty.compositing = true;
+            self.dirty_generations.paint += 1;
+            self.dirty_generations.compositing += 1;
+        }
+        Ok(())
+    }
+
+    fn recompute_authored_styles(&mut self) -> Result<(), EngineError> {
+        let viewport = (
+            self.viewport.logical_width() as f32,
+            self.viewport.logical_height() as f32,
+        );
+        let declarations = self
+            .slots
+            .iter()
+            .filter_map(|slot| slot.node.map(|node| (node, slot.authored.clone())))
+            .collect::<Vec<_>>();
+        for (node, authored) in declarations {
+            for (raw_property, value) in authored {
+                let property = StyleProperty::from_u16(raw_property)
+                    .ok_or(EngineError::InvalidInput("authored property ID is invalid"))?;
+                apply_to_computed(
+                    &mut self.document.node_mut(node).style,
+                    property,
+                    &value,
+                    viewport,
+                )
+                .map_err(|_| EngineError::PropertyType { property })?;
+            }
         }
         Ok(())
     }
@@ -682,7 +705,10 @@ impl Engine {
             &mut self.document.node_mut(node).style,
             property,
             &value,
-            (self.viewport.width as f32, self.viewport.height as f32),
+            (
+                self.viewport.logical_width() as f32,
+                self.viewport.logical_height() as f32,
+            ),
         )
         .map_err(|_| EngineError::PropertyType { property })?;
         self.slots[handle.index as usize]
@@ -875,16 +901,16 @@ impl Engine {
                 .as_ref()
                 .ok_or_else(|| EngineError::Render("missing initial scene".into()));
         }
-        let width = self.viewport.width as i32;
-        let height = self.viewport.height as i32;
+        let width = self.viewport.logical_width();
+        let height = self.viewport.logical_height();
         if self.dirty.layout || self.latest_fragment.is_none() {
             let root_style = &self.document.node(self.document.root()).style;
             let direction = root_style
                 .direction
                 .writing_direction(root_style.writing_mode);
             let space = openui_layout::ConstraintSpace::for_root_with_writing_direction(
-                openui_geometry::LayoutUnit::from_i32(width),
-                openui_geometry::LayoutUnit::from_i32(height),
+                openui_geometry::LayoutUnit::from_f64(width),
+                openui_geometry::LayoutUnit::from_f64(height),
                 direction,
             );
             let fragment = Arc::new(openui_layout::block_layout(
@@ -901,7 +927,7 @@ impl Engine {
             .as_ref()
             .expect("visual dirtiness always establishes a fragment")
             .clone();
-        let recording = record_fragment(&self.document, &fragment, width, height)
+        let recording = record_fragment(&self.document, &fragment, self.viewport)
             .map_err(EngineError::Render)?;
         self.stats.paints += 1;
         let generation = SceneGeneration(self.stats.scenes + 1);
@@ -1217,8 +1243,10 @@ mod tests {
 
     #[test]
     fn stale_and_cross_document_handles_are_rejected() {
-        let mut a = Engine::new(Viewport::new(100, 100).unwrap()).unwrap();
-        let mut b = Engine::new(Viewport::new(100, 100).unwrap()).unwrap();
+        let mut a =
+            Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
+        let mut b =
+            Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
         let child = a.create_element(ElementTag::Div).unwrap();
         a.append_child(a.root(), child).unwrap();
         a.remove(child).unwrap();
@@ -1231,7 +1259,8 @@ mod tests {
 
     #[test]
     fn retained_tree_supports_safe_reordering() {
-        let mut engine = Engine::new(Viewport::new(100, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
         let root = engine.root();
         let a = engine.create_element(ElementTag::Div).unwrap();
         let b = engine.create_element(ElementTag::Div).unwrap();
@@ -1248,7 +1277,8 @@ mod tests {
 
     #[test]
     fn unchanged_scene_performs_no_lifecycle_work() {
-        let mut engine = Engine::new(Viewport::new(64, 64).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
         let first = engine.scene().unwrap();
         let stats = engine.stats();
         let second = engine.scene().unwrap();
@@ -1258,7 +1288,8 @@ mod tests {
 
     #[test]
     fn invalidation_runs_only_the_required_visual_stages() {
-        let mut engine = Engine::new(Viewport::new(64, 64).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
         let div = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(engine.root(), div).unwrap();
         engine.scene().unwrap();
@@ -1280,7 +1311,8 @@ mod tests {
 
     #[test]
     fn typed_tree_renders_through_scene_compositor() {
-        let mut engine = Engine::new(Viewport::new(64, 64).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
         let div = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(engine.root(), div).unwrap();
         engine
@@ -1302,8 +1334,73 @@ mod tests {
     }
 
     #[test]
+    fn logical_layout_rasterizes_at_the_authoritative_physical_size() {
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(64.0, 48.0, 2.0).unwrap()).unwrap();
+        let scene = engine.scene().unwrap();
+        assert_eq!(scene.viewport().logical_size(), (64.0, 48.0));
+        assert_eq!(scene.viewport().physical_size(), (128, 96));
+        assert_eq!(
+            scene.physical_damage(),
+            &[openui_compositor::PhysicalSceneRect {
+                x: 0,
+                y: 0,
+                width: 128,
+                height: 96,
+            }]
+        );
+
+        let frame = SoftwareCompositor::default().render(&scene).unwrap();
+        assert_eq!((frame.width, frame.height), (128, 96));
+        assert_eq!(frame.viewport, scene.viewport());
+    }
+
+    #[test]
+    fn viewport_units_recompute_and_scale_invalidates_all_visual_stages() {
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(100.0, 80.0, 1.0).unwrap()).unwrap();
+        let div = engine.create_element(ElementTag::Div).unwrap();
+        engine.append_child(engine.root(), div).unwrap();
+        engine
+            .set_property(div, StyleProperty::Display, Display::Block.into())
+            .unwrap();
+        engine
+            .set_property(
+                div,
+                StyleProperty::Width,
+                LengthValue::ViewportWidth(50.0).into(),
+            )
+            .unwrap();
+        engine
+            .set_property(div, StyleProperty::Height, LengthValue::px(10.0).into())
+            .unwrap();
+        assert_eq!(engine.bounds(div).unwrap().unwrap().width, 50.0);
+
+        engine
+            .set_viewport(ViewportMetrics::from_logical_size(200.0, 80.0, 1.0).unwrap())
+            .unwrap();
+        assert_eq!(engine.bounds(div).unwrap().unwrap().width, 100.0);
+
+        let before = engine.dirty_generations();
+        engine
+            .set_viewport(ViewportMetrics::from_logical_size(200.0, 80.0, 2.0).unwrap())
+            .unwrap();
+        let after = engine.dirty_generations();
+        assert_eq!(after.intrinsic, before.intrinsic + 1);
+        assert_eq!(after.layout, before.layout + 1);
+        assert_eq!(after.paint, before.paint + 1);
+        assert_eq!(after.compositing, before.compositing + 1);
+        assert_eq!(engine.bounds(div).unwrap().unwrap().width, 100.0);
+        assert_eq!(
+            engine.scene().unwrap().viewport().physical_size(),
+            (400, 160)
+        );
+    }
+
+    #[test]
     fn hit_testing_respects_transforms_pointer_eligibility_and_rounded_clips() {
-        let mut engine = Engine::new(Viewport::new(100, 100).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap()).unwrap();
         let root = engine.root();
         let transformed = engine.create_element(ElementTag::Div).unwrap();
         engine.append_child(root, transformed).unwrap();
@@ -1370,7 +1467,8 @@ mod tests {
 
     #[test]
     fn resources_are_document_owned() {
-        let mut engine = Engine::new(Viewport::new(64, 64).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
         let image = engine.create_element(ElementTag::Image).unwrap();
         let resource = engine.register_image_resource(
             "memory:pixel",
@@ -1389,7 +1487,8 @@ mod tests {
 
     #[test]
     fn long_running_mutations_reuse_owned_storage() {
-        let mut engine = Engine::new(Viewport::new(64, 64).unwrap()).unwrap();
+        let mut engine =
+            Engine::new(ViewportMetrics::from_logical_size(64.0, 64.0, 1.0).unwrap()).unwrap();
         let root = engine.root();
         for iteration in 0..10_000 {
             let node = engine.create_element(ElementTag::Div).unwrap();

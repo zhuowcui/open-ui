@@ -28,6 +28,15 @@ use openui_style::*;
 const SURFACE_W: i32 = 800;
 const SURFACE_H: i32 = 600;
 
+fn test_viewport() -> openui_geometry::ViewportMetrics {
+    openui_geometry::ViewportMetrics::from_logical_size(
+        f64::from(SURFACE_W),
+        f64::from(SURFACE_H),
+        1.0,
+    )
+    .unwrap()
+}
+
 // ═══════════════════════════════════════════════════════════════════════
 // ── Pixel Sampling Helpers ────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════════════════════
@@ -223,7 +232,7 @@ fn build_overflow_test(
     doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(parent, child);
 
-    let surface = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let surface = render_to_surface(&doc, test_viewport()).unwrap();
     (doc, surface)
 }
 
@@ -377,7 +386,7 @@ fn overflow_hidden_parent_bg_renders_fully() {
     doc.append_child(vp, parent);
     // No children
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Parent bg should fill its bounds
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 80),
@@ -415,7 +424,7 @@ fn overflow_hidden_with_padding_clips_inside_padding_box() {
     doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(parent, child);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Total border-box: 220x120 (200+20 x 100+20)
     // Content inside should be visible
     assert!(
@@ -452,7 +461,7 @@ fn overflow_hidden_multiple_children_clipped() {
         );
     }
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // First 60px visible
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 40),
@@ -528,7 +537,7 @@ fn overflow_hidden_with_border_clips_inside_border() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Border area should have content (border itself)
     assert!(
         has_non_white_in_region(&mut s, 0, 0, 5, 100),
@@ -571,7 +580,7 @@ fn overflow_hidden_child_wider_parent_bg_still_visible() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Parent bg visible below child (y=50..100 at x=50)
     assert!(
         has_non_white_in_region(&mut s, 50, 55, 100, 40),
@@ -602,7 +611,7 @@ fn overflow_hidden_clips_bottom_right_corner_only() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 180),
         "Content within parent should be visible"
@@ -713,7 +722,7 @@ fn overflow_visible_parent_bg_visible() {
     doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(vp, parent);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 80),
         "Parent with overflow:visible (default) should render its background"
@@ -752,7 +761,7 @@ fn overflow_visible_multiple_children() {
         Color::from_rgba8(0, 0, 200, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         has_non_white_in_region(&mut s, 10, 5, 180, 40),
         "First child should be visible"
@@ -798,7 +807,7 @@ fn overflow_visible_explicit_setting_same_as_default() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Child extends vertically — should NOT be clipped
     assert!(
         has_non_white_in_region(&mut s, 10, 110, 180, 50),
@@ -1017,7 +1026,7 @@ fn min_width_prevents_element_from_being_too_narrow() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // min-width:200 > width:100, so element should be 200px wide
     assert!(
         pixel_is_not_white(&mut s, 150, 25),
@@ -1037,7 +1046,7 @@ fn min_width_no_effect_when_smaller_than_width() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // width:300 > min-width:100, so element should be 300px wide
     assert!(
         pixel_is_not_white(&mut s, 250, 25),
@@ -1057,7 +1066,7 @@ fn max_width_caps_element_size() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // max-width:200 < width:400, so element capped at 200px
     assert!(
         pixel_is_not_white(&mut s, 100, 25),
@@ -1081,7 +1090,7 @@ fn max_width_no_effect_when_larger_than_width() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         pixel_is_not_white(&mut s, 100, 25),
         "Element should be 200px wide since width < max-width"
@@ -1107,7 +1116,7 @@ fn min_width_with_auto_width_in_constrained_parent() {
     doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(parent, child);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // min-width should override the auto width from 150px parent
     assert!(
         pixel_is_not_white(&mut s, 170, 25),
@@ -1131,7 +1140,7 @@ fn max_width_constrains_auto_width() {
     doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(parent, child);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         pixel_is_not_white(&mut s, 100, 25),
         "Content within 200px should be visible"
@@ -1155,7 +1164,7 @@ fn min_max_width_both_set() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // width:50 clamped by min:150 → 150px
     assert!(
         pixel_is_not_white(&mut s, 100, 25),
@@ -1179,7 +1188,7 @@ fn min_width_zero_has_no_effect() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         pixel_is_not_white(&mut s, 100, 25),
         "Element should be 200px wide with min-width:0"
@@ -1210,7 +1219,7 @@ fn min_width_on_nested_child() {
     doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(parent, child);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         pixel_is_not_white(&mut s, 200, 40),
         "Nested child with min-width:250 should extend to at least 250px"
@@ -1232,7 +1241,7 @@ fn max_width_on_nested_child() {
     doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(parent, child);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         pixel_is_not_white(&mut s, 75, 40),
         "Content within 150px should be visible"
@@ -1257,7 +1266,7 @@ fn min_width_with_padding() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         has_visible_content(&mut s),
         "Element with min-width and padding should render"
@@ -1287,7 +1296,7 @@ fn max_width_with_border() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         has_visible_content(&mut s),
         "Element with max-width and border should render"
@@ -1315,7 +1324,7 @@ fn min_height_prevents_element_from_being_too_short() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // min-height:150 > height:50, so element should be 150px tall
     assert!(
         pixel_is_not_white(&mut s, 100, 120),
@@ -1335,7 +1344,7 @@ fn min_height_no_effect_when_smaller_than_height() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // height:200 > min-height:50, so element stays 200px
     assert!(
         pixel_is_not_white(&mut s, 100, 150),
@@ -1355,7 +1364,7 @@ fn max_height_caps_element_size() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         pixel_is_not_white(&mut s, 100, 75),
         "Content within max-height should be visible"
@@ -1378,7 +1387,7 @@ fn max_height_no_effect_when_larger_than_height() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         pixel_is_not_white(&mut s, 100, 50),
         "Element should be 100px tall"
@@ -1401,7 +1410,7 @@ fn min_height_with_auto_height() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(vp, div);
     // No children, so auto height would be 0
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // min-height should ensure element is at least 100px tall
     assert!(
         pixel_is_not_white(&mut s, 100, 50),
@@ -1430,7 +1439,7 @@ fn max_height_with_auto_height_and_tall_content() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 80),
         "Content within max-height should be visible"
@@ -1452,7 +1461,7 @@ fn min_max_height_both_set() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // height:30 clamped by min:100 → 100px
     assert!(
         pixel_is_not_white(&mut s, 100, 80),
@@ -1472,7 +1481,7 @@ fn min_height_zero_no_effect() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         pixel_is_not_white(&mut s, 100, 50),
         "Element should be 100px tall with min-height:0"
@@ -1509,7 +1518,7 @@ fn max_height_with_overflow_hidden_clips_content() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 60),
         "Content inside max-height + hidden should be visible"
@@ -1535,7 +1544,7 @@ fn min_height_on_nested_element() {
     doc.node_mut(child).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(parent, child);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         pixel_is_not_white(&mut s, 100, 100),
         "Nested element with min-height:120 should extend to y=120"
@@ -1557,7 +1566,7 @@ fn max_height_on_nested_element() {
     doc.node_mut(child).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(parent, child);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         pixel_is_not_white(&mut s, 100, 50),
         "Nested element within max-height should be visible"
@@ -1579,7 +1588,7 @@ fn min_height_with_colored_background() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Auto height with no children = 0, but min-height makes it 80px
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 60),
@@ -1615,7 +1624,7 @@ fn content_box_padding_adds_to_total_size() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // content-box: total = 200 + 20 + 20 = 240px wide
     assert!(
         pixel_is_not_white(&mut s, 230, 50),
@@ -1637,7 +1646,7 @@ fn border_box_padding_included_in_width() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 0, 200, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // border-box: total = 200px (padding included)
     assert!(
         pixel_is_not_white(&mut s, 100, 50),
@@ -1667,7 +1676,7 @@ fn content_box_border_adds_to_total_size() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // content-box: total = 200 + 10 + 10 = 220px
     assert!(
         pixel_is_not_white(&mut s, 215, 50),
@@ -1693,7 +1702,7 @@ fn border_box_border_included_in_width() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 0, 200, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // border-box: total = 200px (borders included)
     assert!(
         pixel_is_not_white(&mut s, 100, 50),
@@ -1725,7 +1734,7 @@ fn content_box_padding_and_border_cumulative() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // content-box: total = 200 + 30 (padding) + 10 (border) = 240px
     assert!(
         pixel_is_not_white(&mut s, 235, 50),
@@ -1753,7 +1762,7 @@ fn border_box_padding_and_border_included() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 0, 200, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // border-box: total = 200px (everything included)
     assert!(
         pixel_is_not_white(&mut s, 100, 50),
@@ -1779,7 +1788,7 @@ fn content_box_vs_border_box_different_total_size() {
     doc1.node_mut(div1).style.padding_right = Length::px(20.0);
     doc1.node_mut(div1).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc1.append_child(vp1, div1);
-    let mut s1 = render_to_surface(&doc1, SURFACE_W, SURFACE_H).unwrap();
+    let mut s1 = render_to_surface(&doc1, test_viewport()).unwrap();
 
     let mut doc2 = Document::new();
     let vp2 = setup_viewport(&mut doc2);
@@ -1792,7 +1801,7 @@ fn content_box_vs_border_box_different_total_size() {
     doc2.node_mut(div2).style.padding_right = Length::px(20.0);
     doc2.node_mut(div2).style.background_color = Color::from_rgba8(0, 0, 200, 255);
     doc2.append_child(vp2, div2);
-    let mut s2 = render_to_surface(&doc2, SURFACE_W, SURFACE_H).unwrap();
+    let mut s2 = render_to_surface(&doc2, test_viewport()).unwrap();
 
     // content-box: 240px total, border-box: 200px total
     // At x=210: content-box has content, border-box does not
@@ -1818,7 +1827,7 @@ fn border_box_vertical_sizing() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 0, 200, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // border-box: height 100px includes padding
     assert!(
         pixel_is_not_white(&mut s, 100, 50),
@@ -1868,7 +1877,7 @@ fn nested_overflow_hidden_inner_clips_further() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Inside inner box: content
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 80),
@@ -1911,7 +1920,7 @@ fn nested_overflow_outer_hidden_inner_visible() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Outer clips at 100px height, even though inner is overflow:visible
     assert!(
         region_is_white(&mut s, 0, 110, 200, 50),
@@ -1956,7 +1965,7 @@ fn three_level_nesting_overflow_hidden() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 130),
         "Content inside innermost box should render"
@@ -2002,7 +2011,7 @@ fn overflow_hidden_with_colored_borders_visible() {
         Color::from_rgba8(0, 200, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Border area should be visible
     assert!(
         has_non_white_in_region(&mut s, 0, 0, 5, 100),
@@ -2056,7 +2065,7 @@ fn overflow_scroll_with_nested_boxes() {
         Color::from_rgba8(0, 0, 200, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // First two children visible (100px total), third clipped
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 40),
@@ -2093,7 +2102,7 @@ fn overflow_auto_with_tall_content() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 60),
         "Visible portion should render"
@@ -2164,7 +2173,7 @@ fn multiple_overflow_containers_stacked() {
         Color::from_rgba8(200, 200, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // First box (y=0..80)
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 60),
@@ -2206,7 +2215,7 @@ fn overflow_hidden_with_zero_dimension_element() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Parent bg should still be visible
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 80),
@@ -2227,7 +2236,7 @@ fn overflow_hidden_with_bg_and_no_children() {
     doc.node_mut(parent).style.background_color = Color::from_rgba8(128, 128, 128, 255);
     doc.append_child(vp, parent);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 80),
         "Overflow:hidden box with bg and no children should render background"
@@ -2286,7 +2295,7 @@ fn overflow_hidden_child_partially_visible() {
         Color::from_rgba8(0, 200, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // First child fully visible
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 50),
@@ -2325,7 +2334,7 @@ fn overflow_hidden_with_max_height_combined() {
         Color::from_rgba8(200, 0, 0, 255),
     );
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 80),
         "Content within max-height should render"
@@ -2366,7 +2375,7 @@ fn overflow_hidden_preserves_sibling_after_clipped_box() {
     doc.node_mut(sibling).style.background_color = Color::from_rgba8(0, 0, 200, 255);
     doc.append_child(vp, sibling);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Hidden box at y=0..50
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 180, 30),
@@ -2428,7 +2437,7 @@ fn box_sizing_border_box_with_height_and_padding() {
     doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
     doc.append_child(vp, div);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // border-box: total = 200x100 (padding included)
     assert!(
         pixel_is_not_white(&mut s, 100, 50),
@@ -2476,7 +2485,7 @@ fn overflow_hidden_parent_and_child_same_bg_color() {
 
     add_colored_box(&mut doc, parent, 200.0, 200.0, color);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Two pixels within parent should have the same color
     assert!(
         pixels_match(&mut s, 50, 25, 150, 75),
@@ -2510,7 +2519,7 @@ fn overflow_hidden_with_min_width_child() {
     doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
     doc.append_child(parent, child);
 
-    let mut s = render_to_surface(&doc, SURFACE_W, SURFACE_H).unwrap();
+    let mut s = render_to_surface(&doc, test_viewport()).unwrap();
     // Inside parent: visible
     assert!(
         has_non_white_in_region(&mut s, 10, 10, 80, 30),

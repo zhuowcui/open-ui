@@ -88,7 +88,7 @@ fn main() -> Result<(), Error> {
 
 #[cfg(not(feature = "linux"))]
 fn main() -> Result<(), Error> {
-    let mut app = HeadlessApp::new(Viewport::new(800, 600)?)?;
+    let mut app = HeadlessApp::new(ViewportMetrics::from_logical_size(800.0, 600.0, 1.0)?)?;
     app.mount(application_view)?;
 
     app.render_png_to(0.0, "todo.png")?;

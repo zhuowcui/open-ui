@@ -1773,6 +1773,7 @@ name = "openui-compositor"
 version = "0.2.0"
 dependencies = [
  "openui-dom",
+ "openui-geometry",
  "openui-layout",
  "openui-paint",
  "skia-safe",
@@ -1862,6 +1863,7 @@ dependencies = [
  "gl",
  "glutin",
  "glutin-winit",
+ "openui-geometry",
  "raw-window-handle",
  "smithay-clipboard",
  "softbuffer",

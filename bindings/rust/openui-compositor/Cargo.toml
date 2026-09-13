@@ -11,6 +11,7 @@ categories.workspace = true
 keywords.workspace = true
 
 [dependencies]
+openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
 openui-layout = { version = "=0.2.0", path = "../openui-layout" }
 openui-paint = { version = "=0.2.0", path = "../openui-paint" }
 skia-safe = "0.94"
