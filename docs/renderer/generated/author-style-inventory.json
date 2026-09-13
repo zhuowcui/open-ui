@@ -1,0 +1,2344 @@
+{
+  "consumer_roots": [
+    "bindings/rust/openui-layout/src",
+    "bindings/rust/openui-paint/src"
+  ],
+  "counts": {
+    "consumed": 180,
+    "internal": 10,
+    "public_typed": 170,
+    "unclassified": 0
+  },
+  "fields": [
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "align-content",
+      "field": "align_content",
+      "rust_type": "ContentAlignment"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "css_name": "align-items",
+      "field": "align_items",
+      "rust_type": "ItemAlignment"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "css_name": "align-self",
+      "field": "align_self",
+      "rust_type": "ItemAlignment"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "aspect-ratio",
+      "field": "aspect_ratio",
+      "rust_type": "Option<AspectRatio>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "background-attachment",
+      "field": "background_attachment",
+      "rust_type": "BackgroundAttachment"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "background-clip",
+      "field": "background_clip",
+      "rust_type": "BackgroundClip"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "background-color",
+      "field": "background_color",
+      "rust_type": "Color"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "background-layers",
+      "field": "background_layers",
+      "rust_type": "Vec<BackgroundLayer>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "background-linear-gradient",
+      "field": "background_linear_gradient",
+      "rust_type": "Option<LinearGradient>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/constraint_space.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+      ],
+      "css_name": "block-ellipsis",
+      "field": "block_ellipsis",
+      "rust_type": "BlockEllipsis"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-bottom-color",
+      "field": "border_bottom_color",
+      "rust_type": "StyleColor"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "border-bottom-left-radius",
+      "field": "border_bottom_left_radius",
+      "rust_type": "(f32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "border-bottom-right-radius",
+      "field": "border_bottom_right_radius",
+      "rust_type": "(f32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-bottom-style",
+      "field": "border_bottom_style",
+      "rust_type": "BorderStyle"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-bottom-width",
+      "field": "border_bottom_width",
+      "rust_type": "i32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "border-collapse",
+      "field": "border_collapse",
+      "rust_type": "BorderCollapse"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "border-image",
+      "field": "border_image",
+      "rust_type": "Option<BorderImage>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-left-color",
+      "field": "border_left_color",
+      "rust_type": "StyleColor"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-left-style",
+      "field": "border_left_style",
+      "rust_type": "BorderStyle"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-left-width",
+      "field": "border_left_width",
+      "rust_type": "i32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "border-radius-percent",
+      "field": "border_radius_percent",
+      "rust_type": "[(bool"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-right-color",
+      "field": "border_right_color",
+      "rust_type": "StyleColor"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-right-style",
+      "field": "border_right_style",
+      "rust_type": "BorderStyle"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-right-width",
+      "field": "border_right_width",
+      "rust_type": "i32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/table.rs"
+      ],
+      "css_name": "border-spacing",
+      "field": "border_spacing",
+      "rust_type": "(Length"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-top-color",
+      "field": "border_top_color",
+      "rust_type": "StyleColor"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "border-top-left-radius",
+      "field": "border_top_left_radius",
+      "rust_type": "(f32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "border-top-right-radius",
+      "field": "border_top_right_radius",
+      "rust_type": "(f32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-top-style",
+      "field": "border_top_style",
+      "rust_type": "BorderStyle"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "border-top-width",
+      "field": "border_top_width",
+      "rust_type": "i32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/margin_collapsing.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs"
+      ],
+      "css_name": "bottom",
+      "field": "bottom",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "box-decoration-break",
+      "field": "box_decoration_break",
+      "rust_type": "BoxDecorationBreak"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "box-shadow",
+      "field": "box_shadow",
+      "rust_type": "Vec<BoxShadow>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/table.rs"
+      ],
+      "css_name": "box-sizing",
+      "field": "box_sizing",
+      "rust_type": "BoxSizing"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fragmentation/mod.rs",
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "break-after",
+      "field": "break_after",
+      "rust_type": "BreakValue"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/fragmentation/mod.rs",
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "break-before",
+      "field": "break_before",
+      "rust_type": "BreakValue"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "break-inside",
+      "field": "break_inside",
+      "rust_type": "BreakInside"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/table.rs"
+      ],
+      "css_name": "caption-side",
+      "field": "caption_side",
+      "rust_type": "CaptionSide"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/score_line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "clear",
+      "field": "clear",
+      "rust_type": "Clear"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "clip-path-inset",
+      "field": "clip_path_inset",
+      "rust_type": "Option<[Length; 4]>"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/first_line.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-paint/src/decoration_painter.rs",
+        "bindings/rust/openui-paint/src/emphasis_painter.rs",
+        "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs"
+      ],
+      "css_name": "color",
+      "field": "color",
+      "rust_type": "Color"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "column-count",
+      "field": "column_count",
+      "rust_type": "Option<u32>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs"
+      ],
+      "css_name": "column-fill",
+      "field": "column_fill",
+      "rust_type": "ColumnFill"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs"
+      ],
+      "css_name": "column-gap",
+      "field": "column_gap",
+      "rust_type": "Option<Length>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs"
+      ],
+      "css_name": "column-height",
+      "field": "column_height",
+      "rust_type": "Option<Length>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "column-rule-color",
+      "field": "column_rule_color",
+      "rust_type": "StyleColor"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "column-rule-style",
+      "field": "column_rule_style",
+      "rust_type": "BorderStyle"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs"
+      ],
+      "css_name": "column-rule-width",
+      "field": "column_rule_width",
+      "rust_type": "i32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "column-span",
+      "field": "column_span",
+      "rust_type": "ColumnSpan"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-layout/src/ruby/layout.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "column-width",
+      "field": "column_width",
+      "rust_type": "Option<Length>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs"
+      ],
+      "css_name": "column-wrap",
+      "field": "column_wrap",
+      "rust_type": "ColumnWrap"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/containment.rs"
+      ],
+      "css_name": "contain",
+      "field": "contain",
+      "rust_type": "Containment"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/containment.rs"
+      ],
+      "css_name": "contain-intrinsic-height",
+      "field": "contain_intrinsic_height",
+      "rust_type": "ContainIntrinsicLength"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/containment.rs"
+      ],
+      "css_name": "contain-intrinsic-width",
+      "field": "contain_intrinsic_width",
+      "rust_type": "ContainIntrinsicLength"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/containment.rs"
+      ],
+      "css_name": "container-type",
+      "field": "container_type",
+      "rust_type": "ContainerType"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "content",
+      "field": "content",
+      "rust_type": "Option<Vec<GeneratedContentItem>>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "direction",
+      "field": "direction",
+      "rust_type": "Direction"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "display",
+      "field": "display",
+      "rust_type": "Display"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-paint/src/text_painter.rs"
+      ],
+      "css_name": null,
+      "field": "embedded_document_text",
+      "rust_type": "bool"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": null,
+      "field": "establishes_transform_containing_block",
+      "rust_type": "bool"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "filter-blur",
+      "field": "filter_blur",
+      "rust_type": "f32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "filter-grayscale",
+      "field": "filter_grayscale",
+      "rust_type": "f32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": null,
+      "field": "first_letter_style",
+      "rust_type": "Option<Box<ComputedStyle>>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/first_line.rs"
+      ],
+      "css_name": null,
+      "field": "first_line_style",
+      "rust_type": "Option<Box<ComputedStyle>>"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/table.rs"
+      ],
+      "css_name": "flex-basis",
+      "field": "flex_basis",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "css_name": "flex-direction",
+      "field": "flex_direction",
+      "rust_type": "FlexDirection"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/flex/line_flexer.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/table.rs"
+      ],
+      "css_name": "flex-grow",
+      "field": "flex_grow",
+      "rust_type": "f32"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/flex/line_flexer.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "css_name": "flex-shrink",
+      "field": "flex_shrink",
+      "rust_type": "f32"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "css_name": "flex-wrap",
+      "field": "flex_wrap",
+      "rust_type": "FlexWrap"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/first_letter.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "float",
+      "field": "float",
+      "rust_type": "Float"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/emphasis_painter.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs"
+      ],
+      "css_name": "font-family",
+      "field": "font_family",
+      "rust_type": "FontFamilyList"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/first_letter.rs",
+        "bindings/rust/openui-layout/src/inline/first_line.rs",
+        "bindings/rust/openui-layout/src/inline/initial_letter.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/decoration_painter.rs",
+        "bindings/rust/openui-paint/src/emphasis_painter.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "font-size",
+      "field": "font_size",
+      "rust_type": "f32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-stretch",
+      "field": "font_stretch",
+      "rust_type": "FontStretch"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/first_line.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-style",
+      "field": "font_style",
+      "rust_type": "FontStyleEnum"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-variant-caps",
+      "field": "font_variant_caps",
+      "rust_type": "FontVariantCaps"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/first_line.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "font-weight",
+      "field": "font_weight",
+      "rust_type": "FontWeight"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "grid-auto-columns",
+      "field": "grid_auto_columns",
+      "rust_type": "Vec<GridTrackSize>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "grid-auto-flow",
+      "field": "grid_auto_flow",
+      "rust_type": "GridAutoFlow"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "grid-auto-rows",
+      "field": "grid_auto_rows",
+      "rust_type": "Vec<GridTrackSize>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "grid-column",
+      "field": "grid_column",
+      "rust_type": "GridPlacement"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "grid-row",
+      "field": "grid_row",
+      "rust_type": "GridPlacement"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "grid-template-areas",
+      "field": "grid_template_areas",
+      "rust_type": "GridTemplateAreas"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "grid-template-columns",
+      "field": "grid_template_columns",
+      "rust_type": "GridTrackList"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "grid-template-rows",
+      "field": "grid_template_rows",
+      "rust_type": "GridTrackList"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/first_letter.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "height",
+      "field": "height",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+      ],
+      "css_name": "hyphenate-limit-chars",
+      "field": "hyphenate_limit_chars",
+      "rust_type": "(u8"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs"
+      ],
+      "css_name": "hyphens",
+      "field": "hyphens",
+      "rust_type": "Hyphens"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": null,
+      "field": "is_first_letter_pseudo",
+      "rust_type": "bool"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "justify-content",
+      "field": "justify_content",
+      "rust_type": "ContentAlignment"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "justify-items",
+      "field": "justify_items",
+      "rust_type": "ItemAlignment"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/grid.rs"
+      ],
+      "css_name": "justify-self",
+      "field": "justify_self",
+      "rust_type": "ItemAlignment"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs"
+      ],
+      "css_name": "left",
+      "field": "left",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs"
+      ],
+      "css_name": null,
+      "field": "legacy_webkit_box",
+      "rust_type": "bool"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+      ],
+      "css_name": null,
+      "field": "legacy_webkit_line_clamp",
+      "rust_type": "bool"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/first_line.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "letter-spacing",
+      "field": "letter_spacing",
+      "rust_type": "f32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "css_name": "line-break",
+      "field": "line_break",
+      "rust_type": "LineBreak"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "line-clamp",
+      "field": "line_clamp",
+      "rust_type": "LineClamp"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/first_line.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "line-height",
+      "field": "line_height",
+      "rust_type": "LineHeight"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "list-style-position",
+      "field": "list_style_position",
+      "rust_type": "ListStylePosition"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "list-style-type",
+      "field": "list_style_type",
+      "rust_type": "ListStyleType"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "locale",
+      "field": "locale",
+      "rust_type": "Option<String>"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/margin_collapsing.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs"
+      ],
+      "css_name": "margin-bottom",
+      "field": "margin_bottom",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs"
+      ],
+      "css_name": "margin-left",
+      "field": "margin_left",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/first_letter.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs"
+      ],
+      "css_name": "margin-right",
+      "field": "margin_right",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/margin_collapsing.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs"
+      ],
+      "css_name": "margin-top",
+      "field": "margin_top",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs"
+      ],
+      "css_name": "margin-trim",
+      "field": "margin_trim",
+      "rust_type": "MarginTrim"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "mask-layers",
+      "field": "mask_layers",
+      "rust_type": "Vec<BackgroundLayer>"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "max-height",
+      "field": "max_height",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/table.rs"
+      ],
+      "css_name": "max-width",
+      "field": "max_width",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/table.rs"
+      ],
+      "css_name": "min-height",
+      "field": "min_height",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/table.rs"
+      ],
+      "css_name": "min-width",
+      "field": "min_width",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": null,
+      "field": "native_button_text_metrics",
+      "rust_type": "bool"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs"
+      ],
+      "css_name": null,
+      "field": "native_control_text",
+      "rust_type": "bool"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "object-fit",
+      "field": "object_fit",
+      "rust_type": "ObjectFit"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "object-position",
+      "field": "object_position",
+      "rust_type": "ObjectPosition"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "opacity",
+      "field": "opacity",
+      "rust_type": "f32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "css_name": "order",
+      "field": "order",
+      "rust_type": "i32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs"
+      ],
+      "css_name": "orphans",
+      "field": "orphans",
+      "rust_type": "u32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "outline-color",
+      "field": "outline_color",
+      "rust_type": "StyleColor"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "outline-offset",
+      "field": "outline_offset",
+      "rust_type": "i32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "outline-style",
+      "field": "outline_style",
+      "rust_type": "BorderStyle"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "overflow-clip-box",
+      "field": "overflow_clip_box",
+      "rust_type": "OverflowClipBox"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "overflow-clip-margin",
+      "field": "overflow_clip_margin",
+      "rust_type": "f32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs"
+      ],
+      "css_name": "overflow-wrap",
+      "field": "overflow_wrap",
+      "rust_type": "OverflowWrap"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "overflow-x",
+      "field": "overflow_x",
+      "rust_type": "Overflow"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "overflow-y",
+      "field": "overflow_y",
+      "rust_type": "Overflow"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "padding-bottom",
+      "field": "padding_bottom",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "padding-left",
+      "field": "padding_left",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "padding-right",
+      "field": "padding_right",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "padding-top",
+      "field": "padding_top",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/flex/alignment.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/ruby/layout.rs",
+        "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "position",
+      "field": "position",
+      "rust_type": "Position"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs"
+      ],
+      "css_name": "position-anchor",
+      "field": "position_anchor",
+      "rust_type": "Option<String>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs"
+      ],
+      "css_name": "position-area",
+      "field": "position_area",
+      "rust_type": "PositionArea"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "resize",
+      "field": "resize",
+      "rust_type": "Resize"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/emphasis_painter.rs",
+        "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs"
+      ],
+      "css_name": "right",
+      "field": "right",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs"
+      ],
+      "css_name": "row-gap",
+      "field": "row_gap",
+      "rust_type": "Option<Length>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+      ],
+      "css_name": "ruby-align",
+      "field": "ruby_align",
+      "rust_type": "RubyAlign"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+      ],
+      "css_name": "ruby-position",
+      "field": "ruby_position",
+      "rust_type": "RubyPosition"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs"
+      ],
+      "css_name": "scroll-marker-group",
+      "field": "scroll_marker_group",
+      "rust_type": "ScrollMarkerGroup"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs"
+      ],
+      "css_name": "scroll-snap-align",
+      "field": "scroll_snap_align",
+      "rust_type": "ScrollSnapAlign"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs"
+      ],
+      "css_name": "scroll-snap-axis",
+      "field": "scroll_snap_axis",
+      "rust_type": "ScrollSnapAxis"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs"
+      ],
+      "css_name": "scrollbar-gutter",
+      "field": "scrollbar_gutter",
+      "rust_type": "ScrollbarGutter"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "scrollbar-track-color",
+      "field": "scrollbar_track_color",
+      "rust_type": "Option<Color>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs"
+      ],
+      "css_name": "scrollbar-width",
+      "field": "scrollbar_width",
+      "rust_type": "ScrollbarWidth"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "tab-size",
+      "field": "tab_size",
+      "rust_type": "TabSize"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/table.rs"
+      ],
+      "css_name": "table-layout",
+      "field": "table_layout",
+      "rust_type": "TableLayout"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs"
+      ],
+      "css_name": "text-align",
+      "field": "text_align",
+      "rust_type": "TextAlign"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+      ],
+      "css_name": "text-align-last",
+      "field": "text_align_last",
+      "rust_type": "TextAlignLast"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-paint/src/decoration_painter.rs"
+      ],
+      "css_name": "text-decoration-color",
+      "field": "text_decoration_color",
+      "rust_type": "StyleColor"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/first_line.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-paint/src/decoration_painter.rs"
+      ],
+      "css_name": "text-decoration-line",
+      "field": "text_decoration_line",
+      "rust_type": "TextDecorationLine"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/decoration_painter.rs"
+      ],
+      "css_name": "text-decoration-skip-ink",
+      "field": "text_decoration_skip_ink",
+      "rust_type": "TextDecorationSkipInk"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-paint/src/decoration_painter.rs"
+      ],
+      "css_name": "text-decoration-style",
+      "field": "text_decoration_style",
+      "rust_type": "TextDecorationStyle"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-paint/src/decoration_painter.rs"
+      ],
+      "css_name": "text-decoration-thickness",
+      "field": "text_decoration_thickness",
+      "rust_type": "TextDecorationThickness"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/emphasis_painter.rs"
+      ],
+      "css_name": "text-emphasis-color",
+      "field": "text_emphasis_color",
+      "rust_type": "StyleColor"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/emphasis_painter.rs"
+      ],
+      "css_name": "text-emphasis-fill",
+      "field": "text_emphasis_fill",
+      "rust_type": "TextEmphasisFill"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-paint/src/emphasis_painter.rs"
+      ],
+      "css_name": "text-emphasis-mark",
+      "field": "text_emphasis_mark",
+      "rust_type": "TextEmphasisMark"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-paint/src/emphasis_painter.rs"
+      ],
+      "css_name": "text-emphasis-position",
+      "field": "text_emphasis_position",
+      "rust_type": "TextEmphasisPosition"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+      ],
+      "css_name": "text-indent",
+      "field": "text_indent",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+      ],
+      "css_name": "text-justify",
+      "field": "text_justify",
+      "rust_type": "TextJustify"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-orientation",
+      "field": "text_orientation",
+      "rust_type": "TextOrientation"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+      ],
+      "css_name": "text-overflow",
+      "field": "text_overflow",
+      "rust_type": "TextOverflow"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs"
+      ],
+      "css_name": "text-shadow",
+      "field": "text_shadow",
+      "rust_type": "Vec<TextShadow>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/first_line.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "text-transform",
+      "field": "text_transform",
+      "rust_type": "TextTransform"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/decoration_painter.rs"
+      ],
+      "css_name": "text-underline-offset",
+      "field": "text_underline_offset",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+      ],
+      "css_name": "text-wrap",
+      "field": "text_wrap",
+      "rust_type": "TextWrap"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/bfc_resolution.rs",
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/margin_collapsing.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/relative.rs",
+        "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs"
+      ],
+      "css_name": "top",
+      "field": "top",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "transform",
+      "field": "transform",
+      "rust_type": "Transform2D"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "transform-origin",
+      "field": "transform_origin",
+      "rust_type": "(Length"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "css_name": "unicode-bidi",
+      "field": "unicode_bidi",
+      "rust_type": "UnicodeBidi"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/first_line.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "vertical-align",
+      "field": "vertical_align",
+      "rust_type": "VerticalAlign"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "visibility",
+      "field": "visibility",
+      "rust_type": "Visibility"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs"
+      ],
+      "css_name": "webkit-box-orient",
+      "field": "webkit_box_orient",
+      "rust_type": "WebkitBoxOrient"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "css_name": "white-space",
+      "field": "white_space",
+      "rust_type": "WhiteSpace"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs"
+      ],
+      "css_name": "widows",
+      "field": "widows",
+      "rust_type": "u32"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/exclusions/float_utils.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/first_letter.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/multicol/mod.rs",
+        "bindings/rust/openui-layout/src/new_formatting_context.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/sticky.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/decoration_painter.rs",
+        "bindings/rust/openui-paint/src/emphasis_painter.rs",
+        "bindings/rust/openui-paint/src/image_resource.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "width",
+      "field": "width",
+      "rust_type": "Length"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": null,
+      "field": "will_change_transform",
+      "rust_type": "bool"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/line_breaker.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs"
+      ],
+      "css_name": "word-break",
+      "field": "word_break",
+      "rust_type": "WordBreak"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/inline/first_line.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+      ],
+      "css_name": "word-spacing",
+      "field": "word_spacing",
+      "rust_type": "f32"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/containment.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
+        "bindings/rust/openui-layout/src/fragment.rs",
+        "bindings/rust/openui-layout/src/grid.rs",
+        "bindings/rust/openui-layout/src/inline/algorithm.rs",
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-layout/src/intrinsic_sizing.rs",
+        "bindings/rust/openui-layout/src/logical_geometry.rs",
+        "bindings/rust/openui-layout/src/out_of_flow.rs",
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/emphasis_painter.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs"
+      ],
+      "css_name": "writing-mode",
+      "field": "writing_mode",
+      "rust_type": "WritingMode"
+    },
+    {
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "z-index",
+      "field": "z_index",
+      "rust_type": "Option<i32>"
+    }
+  ],
+  "schema_version": 1,
+  "source": "bindings/rust/openui-style/src/computed.rs"
+}

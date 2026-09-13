@@ -11,6 +11,7 @@ attestation identity.
 - formatting and the locked Rust renderer/framework/ABI suites;
 - a fresh 5,731-ID exact pixel replay;
 - generated style, C ABI, migration, and SP13-R through SP20 closure checks;
+- versioned renderer profiles, author-style inventory, and JavaScript disposition checks;
 - 204 Python porter/closure tests and the 7/7 repository audit;
 - C ABI export/layout checks plus C and C++ consumers;
 - application conformance and performance artifact validation.
