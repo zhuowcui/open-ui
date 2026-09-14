@@ -23,6 +23,7 @@ JS_OUT = ROOT / "docs/renderer/generated/javascript-disposition.json"
 LEGACY = ROOT / "docs/v02/generated/baseline.json"
 LEGACY_SHA256 = "787cd40ae63d06d5933efa89a4eba65a70d6327673b8056b83cae76ef3606001"
 CHROMIUM_VERSION = ROOT / "CHROMIUM_VERSION"
+RASTER_ORACLE_BUILD = "147.0.7727.50"
 COMPUTED = ROOT / "bindings/rust/openui-style/src/computed.rs"
 SCHEMA = ROOT / "bindings/rust/openui-style/property-schema.csv"
 JS_IDS = ROOT / "tools/wpt/sp20_javascript_exclusions.json"
@@ -147,6 +148,7 @@ def qualification_contract() -> dict[str, object]:
         "renderer_contract": "chromium-147-native-structure-v1",
         "chromium": {
             "build_identity": legacy["chromium_build_identity"],
+            "raster_oracle_build_identity": RASTER_ORACLE_BUILD,
             "pin_sha256": digest(CHROMIUM_VERSION.read_bytes()),
         },
         "raster": {

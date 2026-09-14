@@ -2,28 +2,106 @@
 //!
 //! Usage:
 //!   pixel_compare list                              # List all test IDs
-//!   pixel_compare render <test_id> <output.png>     # Render one test to PNG
-//!   pixel_compare render-all <output_dir>           # Render all tests
+//!   pixel_compare render <test_id> <output.png> [--viewport WxH] [--scale N]
+//!   pixel_compare render-all <output_dir> [--viewport WxH] [--scale N]
 //!
 //! Each test ID corresponds to a specific CSS feature variant that has
 //! a matching HTML file rendered by Chrome for pixel-by-pixel comparison.
 
 use openui_dom::{Document, ElementTag, NodeId};
-use openui_geometry::Length;
+use openui_geometry::{Length, ViewportMetrics};
 use openui_paint::render_to_png;
 use openui_style::*;
+use std::sync::OnceLock;
 
 mod wpt;
 
-const W: i32 = 800;
-const H: i32 = 600;
+const LEGACY_WIDTH: f64 = 800.0;
+const LEGACY_HEIGHT: f64 = 600.0;
+const LEGACY_SCALE: f64 = 1.0;
+
+static ACTIVE_VIEWPORT: OnceLock<ViewportMetrics> = OnceLock::new();
+
+fn legacy_viewport() -> ViewportMetrics {
+    ViewportMetrics::from_logical_size(LEGACY_WIDTH, LEGACY_HEIGHT, LEGACY_SCALE)
+        .expect("legacy qualification viewport must be valid")
+}
+
+fn active_viewport() -> ViewportMetrics {
+    *ACTIVE_VIEWPORT.get_or_init(legacy_viewport)
+}
 
 /// Resolve a semantic viewport-relative declaration for a generated fixture.
 /// R6 replaces the legacy fixed CLI profile with a profile-selected value;
 /// keeping the resolution behind this boundary prevents the porter from ever
 /// baking 800x600 constants into generated source again.
 pub fn fixture_viewport_length(value: LengthValue) -> Length {
-    value.resolve((W as f32, H as f32), 16.0, 16.0)
+    let viewport = active_viewport();
+    value.resolve(
+        (
+            viewport.logical_width() as f32,
+            viewport.logical_height() as f32,
+        ),
+        16.0,
+        16.0,
+    )
+}
+
+fn parse_viewport_options(options: &[String]) -> Result<ViewportMetrics, String> {
+    let mut logical_width = LEGACY_WIDTH;
+    let mut logical_height = LEGACY_HEIGHT;
+    let mut scale = LEGACY_SCALE;
+    let mut index = 0;
+    while index < options.len() {
+        match options[index].as_str() {
+            "--viewport" => {
+                let value = options
+                    .get(index + 1)
+                    .ok_or_else(|| "--viewport requires WIDTHxHEIGHT".to_string())?;
+                (logical_width, logical_height) = parse_logical_size(value)?;
+                index += 2;
+            }
+            "--scale" => {
+                let value = options
+                    .get(index + 1)
+                    .ok_or_else(|| "--scale requires a number".to_string())?;
+                scale = value
+                    .parse::<f64>()
+                    .map_err(|_| format!("invalid device scale: {value}"))?;
+                index += 2;
+            }
+            option => return Err(format!("unknown render option: {option}")),
+        }
+    }
+    ViewportMetrics::from_logical_size(logical_width, logical_height, scale)
+        .map_err(|error| error.to_string())
+}
+
+fn parse_logical_size(value: &str) -> Result<(f64, f64), String> {
+    let (width, height) = value
+        .split_once(['x', 'X'])
+        .ok_or_else(|| format!("invalid viewport {value:?}; expected WIDTHxHEIGHT"))?;
+    let width = width
+        .parse::<f64>()
+        .map_err(|_| format!("invalid viewport width: {width}"))?;
+    let height = height
+        .parse::<f64>()
+        .map_err(|_| format!("invalid viewport height: {height}"))?;
+    Ok((width, height))
+}
+
+fn install_viewport(options: &[String]) -> ViewportMetrics {
+    let viewport = parse_viewport_options(options).unwrap_or_else(|error| {
+        eprintln!("Invalid render profile: {error}");
+        std::process::exit(2);
+    });
+    if let Err(existing) = ACTIVE_VIEWPORT.set(viewport) {
+        if existing != active_viewport() {
+            eprintln!("A process may render only one viewport profile");
+            std::process::exit(2);
+        }
+    }
+    viewport
 }
 
 fn main() {
@@ -37,6 +115,7 @@ fn main() {
         }
         Some("debug") => {
             let test_id = args.get(2).expect("Usage: pixel_compare debug <test_id>");
+            let viewport = install_viewport(&args[3..]);
             let tests = registry();
             if let Some((_, builder)) = tests.iter().find(|(id, _)| *id == test_id) {
                 let doc = builder();
@@ -65,8 +144,8 @@ fn main() {
                     .direction
                     .writing_direction(root_style.writing_mode);
                 let space = openui_layout::ConstraintSpace::for_root_with_writing_direction(
-                    openui_geometry::LayoutUnit::from_i32(800),
-                    openui_geometry::LayoutUnit::from_i32(600),
+                    openui_geometry::LayoutUnit::from_f32(viewport.logical_width() as f32),
+                    openui_geometry::LayoutUnit::from_f32(viewport.logical_height() as f32),
                     writing_direction,
                 );
                 let fragment = openui_layout::block_layout(&doc, root, &space);
@@ -118,36 +197,35 @@ fn main() {
             let output = args
                 .get(3)
                 .expect("Usage: pixel_compare render <test_id> <output.png>");
-            render_test(test_id, output);
+            let viewport = install_viewport(&args[4..]);
+            render_test(test_id, output, viewport);
         }
         Some("render-all") => {
             let dir = args
                 .get(2)
                 .expect("Usage: pixel_compare render-all <output_dir>");
+            let viewport = install_viewport(&args[3..]);
             std::fs::create_dir_all(dir).unwrap();
             for (id, _) in registry() {
                 let path = format!("{}/{}.png", dir, id);
-                render_test(id, &path);
+                render_test(id, &path, viewport);
             }
             println!("Rendered {} tests to {}/", registry().len(), dir);
         }
         _ => {
-            eprintln!("Usage: pixel_compare <list|render|render-all> ...");
+            eprintln!(
+                "Usage: pixel_compare <list|render|render-all> ... [--viewport WxH] [--scale N]"
+            );
             std::process::exit(1);
         }
     }
 }
 
-fn render_test(test_id: &str, output: &str) {
+fn render_test(test_id: &str, output: &str, viewport: ViewportMetrics) {
     let tests = registry();
     if let Some((_, builder)) = tests.iter().find(|(id, _)| *id == test_id) {
         let doc = builder();
-        render_to_png(
-            &doc,
-            openui_geometry::ViewportMetrics::from_logical_size(W as f64, H as f64, 1.0).unwrap(),
-            output,
-        )
-        .expect("render failed");
+        render_to_png(&doc, viewport, output).expect("render failed");
         println!("OK: {} → {}", test_id, output);
     } else {
         eprintln!("Unknown test ID: {}", test_id);
@@ -3771,4 +3849,30 @@ fn sp13_inline_with_float() -> Document {
     );
     doc.append_child(div, text);
     doc
+}
+
+#[cfg(test)]
+mod profile_tests {
+    use super::*;
+
+    #[test]
+    fn qualification_profile_uses_logical_authority_and_winit_rounding() {
+        let options = vec![
+            "--viewport".to_string(),
+            "375x667".to_string(),
+            "--scale".to_string(),
+            "1.25".to_string(),
+        ];
+        let viewport = parse_viewport_options(&options).unwrap();
+        assert_eq!(viewport.logical_size(), (375.0, 667.0));
+        assert_eq!(viewport.physical_size(), (469, 834));
+        assert_eq!(viewport.device_scale_factor(), 1.25);
+    }
+
+    #[test]
+    fn qualification_profile_rejects_invalid_or_unknown_options() {
+        assert!(parse_viewport_options(&["--viewport".into(), "800".into()]).is_err());
+        assert!(parse_viewport_options(&["--scale".into(), "0".into()]).is_err());
+        assert!(parse_viewport_options(&["--device-pixel-ratio".into()]).is_err());
+    }
 }

@@ -428,21 +428,29 @@ def chrome_environment(chrome_dir, use_ahem_noaa=False, use_real_font=False):
 def render_chrome(
     html_file, output_png, chrome_bin, chrome_dir, use_ahem_noaa=False,
     use_real_font=False, use_freetype_backend=False, use_sp18_features=False,
+    logical_width=800, logical_height=600, device_scale=1.0,
 ):
     """Render HTML with Chrome headless.
 
-    Chrome headless reserves 87px for virtual UI, so we use a taller window
-    (800×687) to get an actual 800×600 viewport, then crop to 800×600.
+    Chrome headless reserves 87 logical pixels for virtual UI, so the window
+    is made taller and the screenshot is cropped to the profile's exact
+    physical surface. This preserves the historical 800x600@1 behavior.
     """
     try:
         env = chrome_environment(chrome_dir, use_ahem_noaa, use_real_font)
     except FileNotFoundError:
         return False
-    # Use 687 height so the viewport content area is exactly 600px.
+    if logical_width <= 0 or logical_height <= 0 or device_scale <= 0:
+        return False
+    window_width = int(logical_width)
+    window_height = int(logical_height) + 87
+    physical_width = int(logical_width * device_scale + 0.5)
+    physical_height = int(logical_height * device_scale + 0.5)
     raw_png = output_png + ".raw.png"
     cmd = [
         chrome_bin, "--headless", "--disable-gpu", "--no-sandbox",
-        "--force-device-scale-factor=1", "--window-size=800,687",
+        f"--force-device-scale-factor={device_scale}",
+        f"--window-size={window_width},{window_height}",
         f"--screenshot={raw_png}", f"file://{html_file}"
     ]
     if use_sp18_features:
@@ -465,12 +473,17 @@ def render_chrome(
         result = subprocess.run(cmd, env=env, capture_output=True, timeout=30)
         if result.returncode != 0 or not os.path.isfile(raw_png):
             return False
-        # Crop to 800×600 (discard the 87px virtual-toolbar area at the bottom)
+        # Discard the scaled virtual-toolbar area at the bottom. Reject an
+        # undersized capture rather than silently resampling it.
         from PIL import Image
-        img = Image.open(raw_png)
-        if img.size[1] > 600:
-            img = img.crop((0, 0, 800, 600))
-        img.save(output_png)
+        with Image.open(raw_png) as captured:
+            if captured.size[0] < physical_width or captured.size[1] < physical_height:
+                os.remove(raw_png)
+                return False
+            img = captured
+            if captured.size != (physical_width, physical_height):
+                img = captured.crop((0, 0, physical_width, physical_height))
+            img.save(output_png)
         os.remove(raw_png)
         return True
     except subprocess.TimeoutExpired:
@@ -515,11 +528,24 @@ def render_openui(
     use_ahem_noaa=False,
     use_real_font=False,
     preserve_subpixel_positioning=False,
+    logical_width=800,
+    logical_height=600,
+    device_scale=1.0,
 ):
     """Render test pattern with our engine."""
     try:
+        command = [PIXEL_COMPARE, "render", test_id, output_png]
+        if (logical_width, logical_height, device_scale) != (800, 600, 1.0):
+            command.extend(
+                [
+                    "--viewport",
+                    f"{logical_width}x{logical_height}",
+                    "--scale",
+                    str(device_scale),
+                ]
+            )
         result = subprocess.run(
-            [PIXEL_COMPARE, "render", test_id, output_png],
+            command,
             env=openui_environment(
                 use_ahem_noaa,
                 use_real_font,

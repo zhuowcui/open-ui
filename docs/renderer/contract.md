@@ -9,6 +9,9 @@ The generated v1 contract records four complete-suite profiles and the
 40-profile focused viewport/scale cross-product. The 800×600@1 profile refers
 to the existing 5,731-case baseline by hash. The generator refuses to rewrite
 or accept drift in that legacy baseline.
+The Chromium source/API inventory remains pinned to `147.0.7727.24`; Linux
+pixel qualification records and verifies the installed `147.0.7727.50`
+Chrome-for-Testing raster oracle used by the frozen comparison harness.
 
 Layout, input, hit testing, scrolling, selection, and accessibility use logical
 CSS pixels. Paint commands are recorded in logical coordinates and replayed to
@@ -30,3 +33,12 @@ lifetime rules are documented in [font collections](font-collections.md).
 Font selection and shaping precedence is documented in
 [font selection and shaping](font-selection-and-shaping.md), and the shared
 layout/paint flow is documented in [text layout and paint](text-layout-and-paint.md).
+
+`tools/qualification/run_renderer_matrix.py` is the executable gate for the
+four complete profiles and the 40-profile focused cross-product. It verifies
+the installed Chromium raster-oracle build, rejects incomplete IDs and missing
+templates, checks physical PNG dimensions, compares decoded RGBA pixels with
+zero tolerance, and records binary, resource, font, PNG, and pixel hashes. A
+partial `--profile` or `--test-id` run is marked incomplete in its report and
+cannot be represented as full contract evidence. Use `--plan` to inspect the
+case count without producing or mutating qualification evidence.

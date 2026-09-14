@@ -6,6 +6,12 @@ and locale-aware system fallback last. Vendored parity fonts are available
 only through `FontCollection::deterministic_test()`; creating a production
 document never installs or overrides a family globally.
 
+The deterministic collection attempts every vendored face independently.
+When an explicitly selected legacy raster backend cannot decode an optional
+newer color-font table, that face is omitted and normal fallback continues;
+collection construction never panics. Direct application registration still
+returns the precise validation or decode error.
+
 Rust applications register immutable `Arc<[u8]>` data with a validated
 `FontFaceDescriptor`. Descriptors include the family, collection face index,
 style/weight/stretch ranges, Unicode ranges, OpenType defaults, size

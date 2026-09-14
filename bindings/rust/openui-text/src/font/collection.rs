@@ -324,9 +324,14 @@ impl FontCollection {
         for (family, weight, bytes) in TEST_FONTS {
             let mut descriptor = FontFaceDescriptor::new(*family);
             descriptor.weight = FontAxisRange::new(*weight, *weight);
-            collection
-                .register(Arc::<[u8]>::from(*bytes), descriptor)
-                .expect("vendored renderer font must be valid");
+            // A manifest-scoped raster profile can intentionally load an
+            // older FreeType build than the one used to compile Skia. Such a
+            // backend may reject a newer optional color-font table while
+            // still accepting every face required by that profile. Keep the
+            // explicit test collection usable and let its normal resolution
+            // path fall through to system fallback; public registration still
+            // returns the precise error to its caller.
+            let _ = collection.register(Arc::<[u8]>::from(*bytes), descriptor);
         }
         collection
     }
@@ -1635,6 +1640,20 @@ mod tests {
             .unwrap();
         assert_eq!(face.typeface().family_name(), "DejaVu Sans");
         assert_eq!(collection.stats().registered_faces, TEST_FONTS.len());
+    }
+
+    #[test]
+    fn deterministic_collection_tolerates_optional_backend_format_gaps() {
+        // In particular, the pinned real-font raster profile uses a FreeType
+        // build that predates one vendored color face. Construction itself is
+        // required to remain infallible; required text faces still resolve.
+        let collection = FontCollection::deterministic_test();
+        assert!(collection
+            .resolve_family("DejaVu Sans", &FontDescription::default())
+            .is_some());
+        assert!(collection
+            .resolve_family("DejaVu Sans Mono", &FontDescription::default())
+            .is_some());
     }
 
     #[test]

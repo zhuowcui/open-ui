@@ -55,6 +55,7 @@ fn configure_line_breaker(
     style: &ComputedStyle,
     space: &ConstraintSpace,
     first_float_text_offset: Option<usize>,
+    locale: Option<&str>,
 ) {
     breaker.set_first_float_text_offset(first_float_text_offset);
     breaker.set_writing_direction(space.writing_direction);
@@ -68,8 +69,29 @@ fn configure_line_breaker(
     breaker.set_hyphenation(
         style.hyphens,
         style.hyphenate_limit_chars,
-        style.locale.as_deref(),
+        locale,
     );
+}
+
+fn effective_locale<'a>(
+    doc: &'a Document,
+    node_id: NodeId,
+    style: &'a ComputedStyle,
+) -> Option<&'a str> {
+    if let Some(locale) = style.locale.as_deref() {
+        return Some(locale);
+    }
+    let mut current = node_id;
+    while !current.is_none() {
+        if let Some(locale) = doc
+            .attribute(current, "lang")
+            .or_else(|| doc.attribute(current, "xml:lang"))
+        {
+            return Some(locale);
+        }
+        current = doc.node(current).parent;
+    }
+    None
 }
 
 fn line_count_at_width(
@@ -79,9 +101,16 @@ fn line_count_at_width(
     style: &ComputedStyle,
     space: &ConstraintSpace,
     first_float_text_offset: Option<usize>,
+    locale: Option<&str>,
 ) -> usize {
     let mut breaker = LineBreaker::new(items_data, containing_width);
-    configure_line_breaker(&mut breaker, style, space, first_float_text_offset);
+    configure_line_breaker(
+        &mut breaker,
+        style,
+        space,
+        first_float_text_offset,
+        locale,
+    );
     let mut count = 0;
     while !breaker.is_finished() && count <= 7 {
         if breaker.next_line(line_width).is_none() {
@@ -101,6 +130,7 @@ fn balanced_wrap_width(
     style: &ComputedStyle,
     space: &ConstraintSpace,
     first_float_text_offset: Option<usize>,
+    locale: Option<&str>,
 ) -> Option<LayoutUnit> {
     if style.text_wrap != openui_style::TextWrap::Balance
         || style.first_line_style.is_some()
@@ -120,6 +150,7 @@ fn balanced_wrap_width(
         style,
         space,
         first_float_text_offset,
+        locale,
     );
     if !(2..=6).contains(&line_count) {
         return None;
@@ -137,6 +168,7 @@ fn balanced_wrap_width(
             style,
             space,
             first_float_text_offset,
+            locale,
         );
         if candidate_lines <= line_count {
             high = mid;
@@ -308,7 +340,13 @@ pub(crate) fn inline_float_source_positions(
     data.shape_text();
 
     let mut breaker = LineBreaker::new(&data, available_inline_size);
-    configure_line_breaker(&mut breaker, style, space, None);
+    configure_line_breaker(
+        &mut breaker,
+        style,
+        space,
+        None,
+        effective_locale(doc, node_id, style),
+    );
     let reservations = float_line_break_reservations(doc, floats, available_inline_size, space);
     let mut consumed = HashSet::new();
     let font = doc.resolve_font(style_to_font_description(style));
@@ -1695,15 +1733,23 @@ pub fn inline_layout_from_items(
         .filter(|float| !inline_float_reservations.contains_key(&float.node_id))
         .map(|float| float.text_offset)
         .min();
+    let locale = effective_locale(doc, node_id, style);
     let balanced_width = balanced_wrap_width(
         &working_items_data,
         available_inline_size,
         style,
         space,
         first_float_text_offset,
+        locale,
     );
     let mut line_breaker = LineBreaker::new(&working_items_data, available_inline_size);
-    configure_line_breaker(&mut line_breaker, style, space, first_float_text_offset);
+    configure_line_breaker(
+        &mut line_breaker,
+        style,
+        space,
+        first_float_text_offset,
+        locale,
+    );
     let inherited_first_line_style = space
         .first_line_context
         .as_ref()
@@ -1720,7 +1766,13 @@ pub fn inline_layout_from_items(
     });
     let mut first_line_breaker = first_line_items_data.as_ref().map(|data| {
         let mut breaker = LineBreaker::new(data, available_inline_size);
-        configure_line_breaker(&mut breaker, style, space, first_float_text_offset);
+        configure_line_breaker(
+            &mut breaker,
+            style,
+            space,
+            first_float_text_offset,
+            locale,
+        );
         breaker
     });
 

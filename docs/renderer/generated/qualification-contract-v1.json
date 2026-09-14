@@ -1,7 +1,8 @@
 {
   "chromium": {
     "build_identity": "147.0.7727.24",
-    "pin_sha256": "58fea0f408f25bb556040cb338f0e33936421253d3beaa913e7544bf7d40b952"
+    "pin_sha256": "58fea0f408f25bb556040cb338f0e33936421253d3beaa913e7544bf7d40b952",
+    "raster_oracle_build_identity": "147.0.7727.50"
   },
   "focused_cross_product": [
     {

@@ -1832,6 +1832,37 @@ mod hyphens {
     }
 
     #[test]
+    fn auto_hyphenation_uses_ancestor_language_attribute() {
+        let mut doc = Document::new_with_font_collection(
+            openui_text::FontCollection::deterministic_test(),
+        );
+        let root = doc.root();
+        doc.set_attribute(root, "lang", "en-US");
+        let block = doc.create_node(ElementTag::Div);
+        doc.node_mut(block).style.display = Display::Block;
+        doc.node_mut(block).style.hyphens = Hyphens::Auto;
+        doc.append_child(root, block);
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).style.display = Display::Inline;
+        doc.node_mut(text).style.hyphens = Hyphens::Auto;
+        doc.node_mut(text).text = Some("comprehension".to_string());
+        doc.append_child(block, text);
+        let space = ConstraintSpace::for_block_child(
+            lu_i(75),
+            lu_i(600),
+            lu_i(75),
+            lu_i(600),
+            false,
+        );
+        let fragment = inline_layout(&doc, block, &space);
+        assert!(
+            collect_text_fragments(&fragment)
+                .iter()
+                .any(|fragment| fragment.text_content.as_deref() == Some("-"))
+        );
+    }
+
+    #[test]
     fn none_empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 800, |s| {
             s.hyphens = Hyphens::None;
