@@ -72,19 +72,19 @@ fn make_box_fragment(
     border: f32,
 ) -> (openui_dom::NodeId, Fragment) {
     let node = doc.create_node(ElementTag::Div);
-    doc.node_mut(node).style.display = Display::Block;
-    doc.node_mut(node).style.width = Length::px(width);
-    doc.node_mut(node).style.height = Length::px(height);
+    doc.update_resolved_style(node, |style| style.display = Display::Block);
+    doc.update_resolved_style(node, |style| style.width = Length::px(width));
+    doc.update_resolved_style(node, |style| style.height = Length::px(height));
     if border > 0.0 {
         let bw = border as i32;
-        doc.node_mut(node).style.border_top_width = bw;
-        doc.node_mut(node).style.border_right_width = bw;
-        doc.node_mut(node).style.border_bottom_width = bw;
-        doc.node_mut(node).style.border_left_width = bw;
-        doc.node_mut(node).style.border_top_style = BorderStyle::Solid;
-        doc.node_mut(node).style.border_right_style = BorderStyle::Solid;
-        doc.node_mut(node).style.border_bottom_style = BorderStyle::Solid;
-        doc.node_mut(node).style.border_left_style = BorderStyle::Solid;
+        doc.update_resolved_style(node, |style| style.border_top_width = bw);
+        doc.update_resolved_style(node, |style| style.border_right_width = bw);
+        doc.update_resolved_style(node, |style| style.border_bottom_width = bw);
+        doc.update_resolved_style(node, |style| style.border_left_width = bw);
+        doc.update_resolved_style(node, |style| style.border_top_style = BorderStyle::Solid);
+        doc.update_resolved_style(node, |style| style.border_right_style = BorderStyle::Solid);
+        doc.update_resolved_style(node, |style| style.border_bottom_style = BorderStyle::Solid);
+        doc.update_resolved_style(node, |style| style.border_left_style = BorderStyle::Solid);
     }
     doc.append_child(parent, node);
     let mut frag = Fragment::new_box(
@@ -108,7 +108,7 @@ fn make_text_child(doc: &mut Document, parent_node: openui_dom::NodeId, text: &s
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let text_node = doc.create_node(ElementTag::Text);
     doc.node_mut(text_node).text = Some(text.to_string());
-    doc.node_mut(text_node).style.color = Color::BLACK;
+    doc.update_resolved_style(text_node, |style| style.color = Color::BLACK);
     doc.append_child(parent_node, text_node);
 
     let text_width = sr.width;
@@ -135,8 +135,8 @@ fn overflow_hidden_clips_to_padding_box() {
     let vp = doc.root();
 
     let (node, mut frag) = make_box_fragment(&mut doc, vp, 50.0, 30.0, 0.0);
-    doc.node_mut(node).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(node).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(node, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(node, |style| style.overflow_y = Overflow::Hidden);
     frag.has_overflow_clip = true;
 
     let text_frag = make_text_child(&mut doc, node, "XXXXXXXXXXXXXXXXXXXX");
@@ -164,8 +164,8 @@ fn overflow_visible_does_not_clip() {
     let vp = doc.root();
 
     let (node, mut frag) = make_box_fragment(&mut doc, vp, 50.0, 30.0, 0.0);
-    doc.node_mut(node).style.overflow_x = Overflow::Visible;
-    doc.node_mut(node).style.overflow_y = Overflow::Visible;
+    doc.update_resolved_style(node, |style| style.overflow_x = Overflow::Visible);
+    doc.update_resolved_style(node, |style| style.overflow_y = Overflow::Visible);
     // has_overflow_clip remains false
 
     let text_frag = make_text_child(&mut doc, node, "XXXXXXXXXXXXXXXXXXXX");
@@ -188,8 +188,8 @@ fn overflow_scroll_clips_children() {
     let vp = doc.root();
 
     let (node, mut frag) = make_box_fragment(&mut doc, vp, 50.0, 30.0, 0.0);
-    doc.node_mut(node).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(node).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(node, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(node, |style| style.overflow_y = Overflow::Scroll);
     frag.has_overflow_clip = true;
 
     let text_frag = make_text_child(&mut doc, node, "XXXXXXXXXXXXXXXXXXXX");
@@ -211,8 +211,8 @@ fn overflow_auto_clips_children() {
     let vp = doc.root();
 
     let (node, mut frag) = make_box_fragment(&mut doc, vp, 50.0, 30.0, 0.0);
-    doc.node_mut(node).style.overflow_x = Overflow::Auto;
-    doc.node_mut(node).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(node, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(node, |style| style.overflow_y = Overflow::Auto);
     frag.has_overflow_clip = true;
 
     let text_frag = make_text_child(&mut doc, node, "XXXXXXXXXXXXXXXXXXXX");
@@ -234,8 +234,8 @@ fn overflow_clip_keyword_clips_without_scrolling() {
     let vp = doc.root();
 
     let (node, mut frag) = make_box_fragment(&mut doc, vp, 50.0, 30.0, 0.0);
-    doc.node_mut(node).style.overflow_x = Overflow::Clip;
-    doc.node_mut(node).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(node, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(node, |style| style.overflow_y = Overflow::Clip);
     frag.has_overflow_clip = true;
 
     let text_frag = make_text_child(&mut doc, node, "XXXXXXXXXXXXXXXXXXXX");
@@ -261,8 +261,8 @@ fn canvas_save_restore_balanced() {
     let vp = doc.root();
 
     let (node, mut frag) = make_box_fragment(&mut doc, vp, 50.0, 30.0, 0.0);
-    doc.node_mut(node).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(node).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(node, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(node, |style| style.overflow_y = Overflow::Hidden);
     frag.has_overflow_clip = true;
 
     let text_frag = make_text_child(&mut doc, node, "ABC");
@@ -290,20 +290,24 @@ fn border_radius_with_overflow_hidden_clips_corners() {
 
     // 100×100 box with a large border-radius (50px = circle) and overflow:hidden.
     let (node, mut frag) = make_box_fragment(&mut doc, vp, 100.0, 100.0, 0.0);
-    doc.node_mut(node).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(node).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(node).style.border_top_left_radius = (50.0, 50.0);
-    doc.node_mut(node).style.border_top_right_radius = (50.0, 50.0);
-    doc.node_mut(node).style.border_bottom_right_radius = (50.0, 50.0);
-    doc.node_mut(node).style.border_bottom_left_radius = (50.0, 50.0);
+    doc.update_resolved_style(node, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(node, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(node, |style| style.border_top_left_radius = (50.0, 50.0));
+    doc.update_resolved_style(node, |style| style.border_top_right_radius = (50.0, 50.0));
+    doc.update_resolved_style(node, |style| {
+        style.border_bottom_right_radius = (50.0, 50.0)
+    });
+    doc.update_resolved_style(node, |style| style.border_bottom_left_radius = (50.0, 50.0));
     frag.has_overflow_clip = true;
 
     // Child box that fills the entire parent with a colored background.
     let child_node = doc.create_node(ElementTag::Div);
-    doc.node_mut(child_node).style.display = Display::Block;
-    doc.node_mut(child_node).style.width = Length::px(100.0);
-    doc.node_mut(child_node).style.height = Length::px(100.0);
-    doc.node_mut(child_node).style.background_color = Color::from_rgba_f32(1.0, 0.0, 0.0, 1.0);
+    doc.update_resolved_style(child_node, |style| style.display = Display::Block);
+    doc.update_resolved_style(child_node, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(child_node, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(child_node, |style| {
+        style.background_color = Color::from_rgba_f32(1.0, 0.0, 0.0, 1.0)
+    });
     doc.append_child(node, child_node);
 
     let child_frag = Fragment::new_box(
@@ -337,14 +341,14 @@ fn nested_overflow_containers() {
 
     // Outer box: 100×100 with overflow:hidden
     let (outer_node, mut outer_frag) = make_box_fragment(&mut doc, vp, 100.0, 100.0, 0.0);
-    doc.node_mut(outer_node).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(outer_node).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(outer_node, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(outer_node, |style| style.overflow_y = Overflow::Hidden);
     outer_frag.has_overflow_clip = true;
 
     // Inner box: 60×60 at offset (20,20) with overflow:hidden
     let (inner_node, mut inner_frag) = make_box_fragment(&mut doc, outer_node, 60.0, 60.0, 0.0);
-    doc.node_mut(inner_node).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(inner_node).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(inner_node, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(inner_node, |style| style.overflow_y = Overflow::Hidden);
     inner_frag.has_overflow_clip = true;
     inner_frag.offset = PhysicalOffset::new(LayoutUnit::from_f32(20.0), LayoutUnit::from_f32(20.0));
 
@@ -382,8 +386,8 @@ fn overflow_x_hidden_overflow_y_visible_clips() {
     // Per CSS spec, when one axis is not visible, the other computes to auto.
     // But in our model we test the painter's behavior: if overflow_x != visible,
     // the fragment gets has_overflow_clip and the painter clips in both axes.
-    doc.node_mut(node).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(node).style.overflow_y = Overflow::Visible;
+    doc.update_resolved_style(node, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(node, |style| style.overflow_y = Overflow::Visible);
     frag.has_overflow_clip = true; // layout would set this
 
     let text_frag = make_text_child(&mut doc, node, "XXXXXXXXXXXXXXXXXXXX");
@@ -410,14 +414,24 @@ fn paint_order_background_border_clip_children_restore() {
 
     // 100×100 box with 10px red borders, overflow:hidden, blue background.
     let (node, mut frag) = make_box_fragment(&mut doc, vp, 100.0, 100.0, 10.0);
-    doc.node_mut(node).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(node).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(node).style.background_color = Color::from_rgba_f32(0.0, 0.0, 1.0, 1.0); // blue
+    doc.update_resolved_style(node, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(node, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(node, |style| {
+        style.background_color = Color::from_rgba_f32(0.0, 0.0, 1.0, 1.0)
+    }); // blue
     let red = Color::from_rgba_f32(1.0, 0.0, 0.0, 1.0);
-    doc.node_mut(node).style.border_top_color = StyleColor::Resolved(red);
-    doc.node_mut(node).style.border_right_color = StyleColor::Resolved(red);
-    doc.node_mut(node).style.border_bottom_color = StyleColor::Resolved(red);
-    doc.node_mut(node).style.border_left_color = StyleColor::Resolved(red);
+    doc.update_resolved_style(node, |style| {
+        style.border_top_color = StyleColor::Resolved(red)
+    });
+    doc.update_resolved_style(node, |style| {
+        style.border_right_color = StyleColor::Resolved(red)
+    });
+    doc.update_resolved_style(node, |style| {
+        style.border_bottom_color = StyleColor::Resolved(red)
+    });
+    doc.update_resolved_style(node, |style| {
+        style.border_left_color = StyleColor::Resolved(red)
+    });
     frag.has_overflow_clip = true;
 
     // Text child that extends beyond the box
@@ -515,14 +529,14 @@ fn has_border_radius_helper() {
         "Initial style should have no border-radius"
     );
 
-    style.border_top_left_radius = (10.0, 10.0);
+    style.update_derived(|computed| computed.border_top_left_radius = (10.0, 10.0));
     assert!(
         style.has_border_radius(),
         "Should detect non-zero top-left radius"
     );
 
     let mut style2 = ComputedStyle::initial();
-    style2.border_bottom_right_radius = (5.0, 0.0);
+    style2.update_derived(|computed| computed.border_bottom_right_radius = (5.0, 0.0));
     assert!(
         style2.has_border_radius(),
         "Should detect partial non-zero radius"
@@ -536,13 +550,15 @@ fn save_restore_balanced_with_border_radius_and_opacity() {
     let vp = doc.root();
 
     let (node, mut frag) = make_box_fragment(&mut doc, vp, 80.0, 80.0, 0.0);
-    doc.node_mut(node).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(node).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(node).style.border_top_left_radius = (10.0, 10.0);
-    doc.node_mut(node).style.border_top_right_radius = (10.0, 10.0);
-    doc.node_mut(node).style.border_bottom_right_radius = (10.0, 10.0);
-    doc.node_mut(node).style.border_bottom_left_radius = (10.0, 10.0);
-    doc.node_mut(node).style.opacity = 0.5; // also adds a layer
+    doc.update_resolved_style(node, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(node, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(node, |style| style.border_top_left_radius = (10.0, 10.0));
+    doc.update_resolved_style(node, |style| style.border_top_right_radius = (10.0, 10.0));
+    doc.update_resolved_style(node, |style| {
+        style.border_bottom_right_radius = (10.0, 10.0)
+    });
+    doc.update_resolved_style(node, |style| style.border_bottom_left_radius = (10.0, 10.0));
+    doc.update_resolved_style(node, |style| style.opacity = 0.5); // also adds a layer
     frag.has_overflow_clip = true;
 
     let text_frag = make_text_child(&mut doc, node, "ABC");

@@ -132,8 +132,9 @@ pub use openui_engine::{
     AccessibilityAction, AccessibilityLive, AccessibilityNode, AccessibilityNodeId,
     AccessibilityPlatformAction, AccessibilityRelation, AccessibilityRole, AccessibilityTreeUpdate,
     AnimationEvent, AnimationEventKind, AnimationId, AnimationState, ControlAdjustment,
-    EditCommand, FocusOrigin, PointerEventKind, ScrollAnimationId, TextDirection, TextUnit,
-    ViewportAuthority, ViewportMetrics, ViewportMetricsError,
+    EditCommand, EngineOptions, FocusOrigin, PointerEventKind, RasterConfiguration,
+    ScrollAnimationId, TextDirection, TextUnit, ViewportAuthority, ViewportMetrics,
+    ViewportMetricsError,
 };
 
 // ─── Re-exports: proc macros ────────────────────────────────

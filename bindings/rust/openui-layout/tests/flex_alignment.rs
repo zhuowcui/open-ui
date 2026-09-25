@@ -17,10 +17,11 @@ use openui_style::{
 fn make_flex(doc: &mut Document, width: i32, height: i32) -> NodeId {
     let container = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(container).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(width as f32);
-        s.height = Length::px(height as f32);
+        doc.update_resolved_style(container, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(width as f32);
+            s.height = Length::px(height as f32);
+        });
     }
     doc.append_child(doc.root(), container);
     container
@@ -30,10 +31,11 @@ fn make_flex(doc: &mut Document, width: i32, height: i32) -> NodeId {
 fn add_child(doc: &mut Document, parent: NodeId, w: i32, h: i32) -> NodeId {
     let child = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(child).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(w as f32);
-        s.height = Length::px(h as f32);
+        doc.update_resolved_style(child, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(w as f32);
+            s.height = Length::px(h as f32);
+        });
     }
     doc.append_child(parent, child);
     child
@@ -43,9 +45,10 @@ fn add_child(doc: &mut Document, parent: NodeId, w: i32, h: i32) -> NodeId {
 fn add_auto_height_child(doc: &mut Document, parent: NodeId, w: i32) -> NodeId {
     let child = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(child).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(w as f32);
+        doc.update_resolved_style(child, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(w as f32);
+        });
         // height stays auto — will stretch
     }
     doc.append_child(parent, child);
@@ -56,9 +59,10 @@ fn add_auto_height_child(doc: &mut Document, parent: NodeId, w: i32) -> NodeId {
 fn add_auto_width_child(doc: &mut Document, parent: NodeId, h: i32) -> NodeId {
     let child = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(child).style_mut();
-        s.display = Display::Block;
-        s.height = Length::px(h as f32);
+        doc.update_resolved_style(child, |s| {
+            s.display = Display::Block;
+            s.height = Length::px(h as f32);
+        });
         // width stays auto — will stretch in column direction
     }
     doc.append_child(parent, child);
@@ -100,7 +104,9 @@ fn jc_flex_end() {
     // justify-content: flex-end — items packed at end
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content = ContentAlignment::new(ContentPosition::FlexEnd);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content = ContentAlignment::new(ContentPosition::FlexEnd)
+    });
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
@@ -116,7 +122,9 @@ fn jc_center() {
     // justify-content: center — items centered
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content = ContentAlignment::new(ContentPosition::Center);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content = ContentAlignment::new(ContentPosition::Center)
+    });
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
     let f = lay(&doc, c, 400, 100);
@@ -130,8 +138,10 @@ fn jc_space_between_2_items() {
     // space-between with 2 items: one at start, one at end
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content =
-        ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content =
+            ContentAlignment::with_distribution(ContentDistribution::SpaceBetween)
+    });
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
     let f = lay(&doc, c, 400, 100);
@@ -145,8 +155,10 @@ fn jc_space_between_3_items() {
     // space-between with 3 items: equal spacing between
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content =
-        ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content =
+            ContentAlignment::with_distribution(ContentDistribution::SpaceBetween)
+    });
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
@@ -162,8 +174,10 @@ fn jc_space_between_1_item() {
     // space-between with 1 item: falls back to flex-start
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content =
-        ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content =
+            ContentAlignment::with_distribution(ContentDistribution::SpaceBetween)
+    });
     add_child(&mut doc, c, 50, 50);
     let f = lay(&doc, c, 400, 100);
     assert_eq!(f.children[0].offset.left, lu(0));
@@ -174,8 +188,10 @@ fn jc_space_around_2_items() {
     // space-around: half-space before first, full between, half after last
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content =
-        ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content =
+            ContentAlignment::with_distribution(ContentDistribution::SpaceAround)
+    });
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
     let f = lay(&doc, c, 400, 100);
@@ -190,8 +206,10 @@ fn jc_space_around_3_items() {
     // space-around with 3 items
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().justify_content =
-        ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content =
+            ContentAlignment::with_distribution(ContentDistribution::SpaceAround)
+    });
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
@@ -208,8 +226,10 @@ fn jc_space_around_1_item() {
     // space-around with 1 item: centered
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().justify_content =
-        ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content =
+            ContentAlignment::with_distribution(ContentDistribution::SpaceAround)
+    });
     add_child(&mut doc, c, 50, 50);
     let f = lay(&doc, c, 300, 100);
     // Free = 250. Per_item = 250. Half = 125. Item at 125.
@@ -221,8 +241,10 @@ fn jc_space_evenly_2_items() {
     // space-evenly: equal space before, between, and after
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content =
-        ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content =
+            ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly)
+    });
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
     let f = lay(&doc, c, 400, 100);
@@ -237,8 +259,10 @@ fn jc_space_evenly_3_items() {
     // space-evenly with 3 items
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content =
-        ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content =
+            ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly)
+    });
     add_child(&mut doc, c, 60, 50);
     add_child(&mut doc, c, 60, 50);
     add_child(&mut doc, c, 60, 50);
@@ -255,8 +279,10 @@ fn jc_space_evenly_1_item() {
     // space-evenly with 1 item: centered
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().justify_content =
-        ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content =
+            ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly)
+    });
     add_child(&mut doc, c, 50, 50);
     let f = lay(&doc, c, 300, 100);
     // Free = 250. Slots = 2. Per = 125. Item at 125.
@@ -269,9 +295,10 @@ fn jc_center_column() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 400);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_direction = FlexDirection::Column;
-        s.justify_content = ContentAlignment::new(ContentPosition::Center);
+        doc.update_resolved_style(c, |s| {
+            s.flex_direction = FlexDirection::Column;
+            s.justify_content = ContentAlignment::new(ContentPosition::Center);
+        });
     }
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
@@ -287,9 +314,10 @@ fn jc_flex_end_column() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 400);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_direction = FlexDirection::Column;
-        s.justify_content = ContentAlignment::new(ContentPosition::FlexEnd);
+        doc.update_resolved_style(c, |s| {
+            s.flex_direction = FlexDirection::Column;
+            s.justify_content = ContentAlignment::new(ContentPosition::FlexEnd);
+        });
     }
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
@@ -305,9 +333,11 @@ fn jc_space_between_column() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 400);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_direction = FlexDirection::Column;
-        s.justify_content = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        doc.update_resolved_style(c, |s| {
+            s.flex_direction = FlexDirection::Column;
+            s.justify_content =
+                ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        });
     }
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
@@ -322,7 +352,7 @@ fn jc_row_reverse() {
     // row-reverse: flex-start means items pack at the right side
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().flex_direction = FlexDirection::RowReverse;
+    doc.update_resolved_style(c, |style| style.flex_direction = FlexDirection::RowReverse);
     let c1 = add_child(&mut doc, c, 50, 50);
     let c2 = add_child(&mut doc, c, 80, 50);
     let f = lay(&doc, c, 300, 100);
@@ -339,7 +369,9 @@ fn jc_center_different_sizes() {
     // center with different sized items
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content = ContentAlignment::new(ContentPosition::Center);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content = ContentAlignment::new(ContentPosition::Center)
+    });
     add_child(&mut doc, c, 30, 50);
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 70, 50);
@@ -356,9 +388,11 @@ fn jc_flex_end_with_margins() {
     // flex-end with margin on first item
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content = ContentAlignment::new(ContentPosition::FlexEnd);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content = ContentAlignment::new(ContentPosition::FlexEnd)
+    });
     let c1 = add_child(&mut doc, c, 50, 50);
-    doc.node_mut(c1).style_mut().margin_left = Length::px(10.0);
+    doc.update_resolved_style(c1, |style| style.margin_left = Length::px(10.0));
     add_child(&mut doc, c, 50, 50);
     let f = lay(&doc, c, 400, 100);
     // Total margin-box = (10+50) + 50 = 110. Free = 290.
@@ -372,8 +406,10 @@ fn jc_space_between_unequal() {
     // space-between with unequal item sizes
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content =
-        ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content =
+            ContentAlignment::with_distribution(ContentDistribution::SpaceBetween)
+    });
     add_child(&mut doc, c, 60, 50);
     add_child(&mut doc, c, 40, 50);
     add_child(&mut doc, c, 100, 50);
@@ -391,13 +427,15 @@ fn jc_no_free_space() {
     // Must set flex-shrink=0 to prevent shrink-mode edge case
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().justify_content = ContentAlignment::new(ContentPosition::Center);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content = ContentAlignment::new(ContentPosition::Center)
+    });
     let c1 = add_child(&mut doc, c, 100, 50);
     let c2 = add_child(&mut doc, c, 100, 50);
     let c3 = add_child(&mut doc, c, 100, 50);
-    doc.node_mut(c1).style_mut().flex_shrink = 0.0;
-    doc.node_mut(c2).style_mut().flex_shrink = 0.0;
-    doc.node_mut(c3).style_mut().flex_shrink = 0.0;
+    doc.update_resolved_style(c1, |style| style.flex_shrink = 0.0);
+    doc.update_resolved_style(c2, |style| style.flex_shrink = 0.0);
+    doc.update_resolved_style(c3, |style| style.flex_shrink = 0.0);
     let f = lay(&doc, c, 300, 100);
     // Free = 0. Center offset = 0.
     assert_eq!(f.children[0].offset.left, lu(0));
@@ -411,13 +449,15 @@ fn jc_overflow() {
     // flex-shrink=0 keeps items at full size so center has negative offset
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 100);
-    doc.node_mut(c).style_mut().justify_content = ContentAlignment::new(ContentPosition::Center);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content = ContentAlignment::new(ContentPosition::Center)
+    });
     let c1 = add_child(&mut doc, c, 100, 50);
     let c2 = add_child(&mut doc, c, 100, 50);
     let c3 = add_child(&mut doc, c, 100, 50);
-    doc.node_mut(c1).style_mut().flex_shrink = 0.0;
-    doc.node_mut(c2).style_mut().flex_shrink = 0.0;
-    doc.node_mut(c3).style_mut().flex_shrink = 0.0;
+    doc.update_resolved_style(c1, |style| style.flex_shrink = 0.0);
+    doc.update_resolved_style(c2, |style| style.flex_shrink = 0.0);
+    doc.update_resolved_style(c3, |style| style.flex_shrink = 0.0);
     let f = lay(&doc, c, 200, 100);
     // Free = -100. Center offset = -50. Items at -50, 50, 150.
     assert_eq!(f.children[0].offset.left, lu(-50));
@@ -430,7 +470,9 @@ fn jc_center_single_item() {
     // center with a single item
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().justify_content = ContentAlignment::new(ContentPosition::Center);
+    doc.update_resolved_style(c, |style| {
+        style.justify_content = ContentAlignment::new(ContentPosition::Center)
+    });
     add_child(&mut doc, c, 100, 50);
     let f = lay(&doc, c, 400, 100);
     // Free = 300. Center = 150.
@@ -442,7 +484,7 @@ fn jc_flex_start_with_gap() {
     // flex-start with column-gap
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().column_gap = Some(Length::px(20.0));
+    doc.update_resolved_style(c, |style| style.column_gap = Some(Length::px(20.0)));
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
@@ -459,9 +501,11 @@ fn jc_space_between_with_gap() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.justify_content = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
-        s.column_gap = Some(Length::px(20.0));
+        doc.update_resolved_style(c, |s| {
+            s.justify_content =
+                ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+            s.column_gap = Some(Length::px(20.0));
+        });
     }
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
@@ -480,9 +524,10 @@ fn jc_center_with_column_gap() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.justify_content = ContentAlignment::new(ContentPosition::Center);
-        s.column_gap = Some(Length::px(20.0));
+        doc.update_resolved_style(c, |s| {
+            s.justify_content = ContentAlignment::new(ContentPosition::Center);
+            s.column_gap = Some(Length::px(20.0));
+        });
     }
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 50);
@@ -533,7 +578,9 @@ fn ai_flex_start() {
     // align-items: flex-start — items at top of cross axis
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::FlexStart);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::FlexStart)
+    });
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 40);
     let f = lay(&doc, c, 300, 100);
@@ -546,7 +593,9 @@ fn ai_flex_end() {
     // align-items: flex-end — items at bottom of cross axis
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::FlexEnd);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::FlexEnd)
+    });
     add_child(&mut doc, c, 50, 50);
     add_child(&mut doc, c, 50, 40);
     let f = lay(&doc, c, 300, 100);
@@ -560,7 +609,9 @@ fn ai_center() {
     // align-items: center — items vertically centered
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::Center)
+    });
     add_child(&mut doc, c, 50, 40);
     let f = lay(&doc, c, 300, 100);
     // cross_space = 60. Center = 30.
@@ -573,7 +624,7 @@ fn ai_stretch_column() {
     // align-items: stretch in column direction — auto-width items stretch to container width
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 200);
-    doc.node_mut(c).style_mut().flex_direction = FlexDirection::Column;
+    doc.update_resolved_style(c, |style| style.flex_direction = FlexDirection::Column);
     add_auto_width_child(&mut doc, c, 50);
     add_auto_width_child(&mut doc, c, 50);
     let f = lay(&doc, c, 300, 200);
@@ -589,9 +640,10 @@ fn ai_center_column() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 400);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_direction = FlexDirection::Column;
-        s.align_items = ItemAlignment::new(ItemPosition::Center);
+        doc.update_resolved_style(c, |s| {
+            s.flex_direction = FlexDirection::Column;
+            s.align_items = ItemAlignment::new(ItemPosition::Center);
+        });
     }
     add_child(&mut doc, c, 50, 50);
     let f = lay(&doc, c, 200, 400);
@@ -605,9 +657,10 @@ fn ai_flex_start_column() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 400);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_direction = FlexDirection::Column;
-        s.align_items = ItemAlignment::new(ItemPosition::FlexStart);
+        doc.update_resolved_style(c, |s| {
+            s.flex_direction = FlexDirection::Column;
+            s.align_items = ItemAlignment::new(ItemPosition::FlexStart);
+        });
     }
     add_child(&mut doc, c, 50, 50);
     let f = lay(&doc, c, 200, 400);
@@ -620,9 +673,10 @@ fn ai_flex_end_column() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 400);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_direction = FlexDirection::Column;
-        s.align_items = ItemAlignment::new(ItemPosition::FlexEnd);
+        doc.update_resolved_style(c, |s| {
+            s.flex_direction = FlexDirection::Column;
+            s.align_items = ItemAlignment::new(ItemPosition::FlexEnd);
+        });
     }
     add_child(&mut doc, c, 50, 50);
     let f = lay(&doc, c, 200, 400);
@@ -635,7 +689,9 @@ fn ai_center_diff_heights() {
     // center with different height items — each centered independently
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::Center)
+    });
     add_child(&mut doc, c, 50, 30);
     add_child(&mut doc, c, 50, 60);
     let f = lay(&doc, c, 300, 100);
@@ -649,7 +705,9 @@ fn ai_flex_end_diff_heights() {
     // flex-end with different height items
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::FlexEnd);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::FlexEnd)
+    });
     add_child(&mut doc, c, 50, 30);
     add_child(&mut doc, c, 50, 60);
     let f = lay(&doc, c, 300, 100);
@@ -664,9 +722,10 @@ fn ai_stretch_with_padding() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.padding_top = Length::px(10.0);
-        s.padding_bottom = Length::px(10.0);
+        doc.update_resolved_style(c, |s| {
+            s.padding_top = Length::px(10.0);
+            s.padding_bottom = Length::px(10.0);
+        });
     }
     add_child(&mut doc, c, 50, 40);
     // border-box height = 100 + 20 (padding) = 120 (content-box sizing)
@@ -683,9 +742,11 @@ fn ai_center_with_margins() {
     // center with item margins
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::Center)
+    });
     let ch = add_child(&mut doc, c, 50, 40);
-    doc.node_mut(ch).style_mut().margin_top = Length::px(10.0);
+    doc.update_resolved_style(ch, |style| style.margin_top = Length::px(10.0));
     let f = lay(&doc, c, 300, 100);
     // cross_margin_box = 40 + 10 = 50. cross_space = 50. center offset = 25.
     // y = 0 + 25 + 10 (margin_top) = 35.
@@ -698,12 +759,15 @@ fn ai_flex_start_with_border() {
     // flex-start with item border — border adds to item size
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::FlexStart);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::FlexStart)
+    });
     let ch = add_child(&mut doc, c, 50, 40);
     {
-        let s = doc.node_mut(ch).style_mut();
-        s.border_top_width = 5;
-        s.border_top_style = BorderStyle::Solid;
+        doc.update_resolved_style(ch, |s| {
+            s.border_top_width = 5;
+            s.border_top_style = BorderStyle::Solid;
+        });
     }
     let f = lay(&doc, c, 300, 100);
     // Content-box: border-box height = 40 + 5 = 45.
@@ -717,9 +781,10 @@ fn ai_center_row_reverse() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_direction = FlexDirection::RowReverse;
-        s.align_items = ItemAlignment::new(ItemPosition::Center);
+        doc.update_resolved_style(c, |s| {
+            s.flex_direction = FlexDirection::RowReverse;
+            s.align_items = ItemAlignment::new(ItemPosition::Center);
+        });
     }
     add_child(&mut doc, c, 50, 40);
     let f = lay(&doc, c, 300, 100);
@@ -733,9 +798,10 @@ fn ai_center_column_reverse() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 400);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_direction = FlexDirection::ColumnReverse;
-        s.align_items = ItemAlignment::new(ItemPosition::Center);
+        doc.update_resolved_style(c, |s| {
+            s.flex_direction = FlexDirection::ColumnReverse;
+            s.align_items = ItemAlignment::new(ItemPosition::Center);
+        });
     }
     let c1 = add_child(&mut doc, c, 50, 50);
     let c2 = add_child(&mut doc, c, 50, 50);
@@ -756,7 +822,7 @@ fn ai_stretch_with_wrap() {
     // items with explicit height keep their size but lines are larger
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
-    doc.node_mut(c).style_mut().flex_wrap = FlexWrap::Wrap;
+    doc.update_resolved_style(c, |style| style.flex_wrap = FlexWrap::Wrap);
     // Line 1: 60px and 30px → line cross = 60
     add_child(&mut doc, c, 100, 60);
     add_child(&mut doc, c, 100, 30);
@@ -781,9 +847,10 @@ fn ai_center_with_wrap() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_items = ItemAlignment::new(ItemPosition::Center);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_items = ItemAlignment::new(ItemPosition::Center);
+        });
     }
     // Line 1: items h=60 and h=30 → line cross = 60
     add_child(&mut doc, c, 100, 60);
@@ -804,7 +871,9 @@ fn ai_flex_start_varying_heights() {
     // flex-start with varying heights — all at top
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::FlexStart);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::FlexStart)
+    });
     add_child(&mut doc, c, 50, 20);
     add_child(&mut doc, c, 50, 80);
     add_child(&mut doc, c, 50, 50);
@@ -819,7 +888,9 @@ fn ai_flex_end_varying_heights() {
     // flex-end with varying heights — all at bottom
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::FlexEnd);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::FlexEnd)
+    });
     add_child(&mut doc, c, 50, 20);
     add_child(&mut doc, c, 50, 80);
     add_child(&mut doc, c, 50, 50);
@@ -841,7 +912,9 @@ fn as_override_single() {
     let c = make_flex(&mut doc, 300, 100);
     // Container uses default (stretch)
     let ch = add_child(&mut doc, c, 50, 40);
-    doc.node_mut(ch).style_mut().align_self = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(ch, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Center)
+    });
     let f = lay(&doc, c, 300, 100);
     // cross_space = 60. Center = 30.
     assert_eq!(f.children[0].offset.top, lu(30));
@@ -856,7 +929,9 @@ fn as_center_one_others_stretch() {
     add_child(&mut doc, c, 50, 50);
     let c2 = add_child(&mut doc, c, 50, 40);
     add_child(&mut doc, c, 50, 50);
-    doc.node_mut(c2).style_mut().align_self = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(c2, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Center)
+    });
     let f = lay(&doc, c, 300, 100);
     // c1: stretch alignment but explicit h=50 → y=0, h=50.
     assert_eq!(f.children[0].height(), lu(50));
@@ -874,10 +949,14 @@ fn as_flex_start_in_center_container() {
     // align-self: flex-start overrides container's align-items: center
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::Center)
+    });
     let c1 = add_child(&mut doc, c, 50, 40);
     let c2 = add_child(&mut doc, c, 50, 40);
-    doc.node_mut(c2).style_mut().align_self = ItemAlignment::new(ItemPosition::FlexStart);
+    doc.update_resolved_style(c2, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::FlexStart)
+    });
     let _ = c1;
     let f = lay(&doc, c, 300, 100);
     // c1: center → y=30. c2: flex-start → y=0.
@@ -890,10 +969,14 @@ fn as_flex_end_in_flex_start_container() {
     // align-self: flex-end in a flex-start container
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::FlexStart);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::FlexStart)
+    });
     let c1 = add_child(&mut doc, c, 50, 40);
     let c2 = add_child(&mut doc, c, 50, 40);
-    doc.node_mut(c2).style_mut().align_self = ItemAlignment::new(ItemPosition::FlexEnd);
+    doc.update_resolved_style(c2, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::FlexEnd)
+    });
     let _ = c1;
     let f = lay(&doc, c, 300, 100);
     // c1: flex-start → y=0. c2: flex-end → cross_space=60, y=60.
@@ -906,10 +989,14 @@ fn as_stretch_in_center_container() {
     // align-self: stretch on one item in a center-aligned container (explicit heights)
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::Center)
+    });
     add_child(&mut doc, c, 50, 40);
     let c2 = add_child(&mut doc, c, 50, 60);
-    doc.node_mut(c2).style_mut().align_self = ItemAlignment::new(ItemPosition::Stretch);
+    doc.update_resolved_style(c2, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Stretch)
+    });
     let f = lay(&doc, c, 300, 100);
     // c1: center → cross_space=60, y=30.
     assert_eq!(f.children[0].offset.top, lu(30));
@@ -926,9 +1013,15 @@ fn as_all_different() {
     let c1 = add_child(&mut doc, c, 50, 40);
     let c2 = add_child(&mut doc, c, 50, 40);
     let c3 = add_child(&mut doc, c, 50, 40);
-    doc.node_mut(c1).style_mut().align_self = ItemAlignment::new(ItemPosition::FlexStart);
-    doc.node_mut(c2).style_mut().align_self = ItemAlignment::new(ItemPosition::Center);
-    doc.node_mut(c3).style_mut().align_self = ItemAlignment::new(ItemPosition::FlexEnd);
+    doc.update_resolved_style(c1, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::FlexStart)
+    });
+    doc.update_resolved_style(c2, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Center)
+    });
+    doc.update_resolved_style(c3, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::FlexEnd)
+    });
     let f = lay(&doc, c, 300, 100);
     // cross_space = 60 for all.
     assert_eq!(f.children[0].offset.top, lu(0)); // flex-start
@@ -941,9 +1034,11 @@ fn as_column_direction() {
     // align-self: center in column direction
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 400);
-    doc.node_mut(c).style_mut().flex_direction = FlexDirection::Column;
+    doc.update_resolved_style(c, |style| style.flex_direction = FlexDirection::Column);
     let ch = add_child(&mut doc, c, 50, 50);
-    doc.node_mut(ch).style_mut().align_self = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(ch, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Center)
+    });
     let f = lay(&doc, c, 200, 400);
     // Cross = width = 200. cross_space = 150. Center = 75.
     assert_eq!(f.children[0].offset.left, lu(75));
@@ -956,9 +1051,10 @@ fn as_center_with_margins() {
     let c = make_flex(&mut doc, 300, 100);
     let ch = add_child(&mut doc, c, 50, 40);
     {
-        let s = doc.node_mut(ch).style_mut();
-        s.align_self = ItemAlignment::new(ItemPosition::Center);
-        s.margin_top = Length::px(10.0);
+        doc.update_resolved_style(ch, |s| {
+            s.align_self = ItemAlignment::new(ItemPosition::Center);
+            s.margin_top = Length::px(10.0);
+        });
     }
     let f = lay(&doc, c, 300, 100);
     // cross_margin_box = 40+10 = 50. cross_space = 50. center = 25.
@@ -973,10 +1069,11 @@ fn as_flex_end_with_border() {
     let c = make_flex(&mut doc, 300, 100);
     let ch = add_child(&mut doc, c, 50, 40);
     {
-        let s = doc.node_mut(ch).style_mut();
-        s.align_self = ItemAlignment::new(ItemPosition::FlexEnd);
-        s.border_top_width = 5;
-        s.border_top_style = BorderStyle::Solid;
+        doc.update_resolved_style(ch, |s| {
+            s.align_self = ItemAlignment::new(ItemPosition::FlexEnd);
+            s.border_top_width = 5;
+            s.border_top_style = BorderStyle::Solid;
+        });
     }
     let f = lay(&doc, c, 300, 100);
     // border-box height = 45. cross_space = 55. flex-end → y=55.
@@ -989,9 +1086,11 @@ fn as_in_row_reverse() {
     // align-self in row-reverse — cross axis unaffected
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().flex_direction = FlexDirection::RowReverse;
+    doc.update_resolved_style(c, |style| style.flex_direction = FlexDirection::RowReverse);
     let ch = add_child(&mut doc, c, 50, 40);
-    doc.node_mut(ch).style_mut().align_self = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(ch, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Center)
+    });
     let f = lay(&doc, c, 300, 100);
     // Cross behavior same as normal row. cross_space=60, y=30.
     assert_eq!(f.children[0].offset.top, lu(30));
@@ -1006,10 +1105,18 @@ fn as_multiple_unique() {
     let c2 = add_child(&mut doc, c, 50, 40);
     let c3 = add_child(&mut doc, c, 50, 40);
     let c4 = add_child(&mut doc, c, 50, 40);
-    doc.node_mut(c1).style_mut().align_self = ItemAlignment::new(ItemPosition::FlexStart);
-    doc.node_mut(c2).style_mut().align_self = ItemAlignment::new(ItemPosition::FlexEnd);
-    doc.node_mut(c3).style_mut().align_self = ItemAlignment::new(ItemPosition::Center);
-    doc.node_mut(c4).style_mut().align_self = ItemAlignment::new(ItemPosition::FlexStart);
+    doc.update_resolved_style(c1, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::FlexStart)
+    });
+    doc.update_resolved_style(c2, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::FlexEnd)
+    });
+    doc.update_resolved_style(c3, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Center)
+    });
+    doc.update_resolved_style(c4, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::FlexStart)
+    });
     let f = lay(&doc, c, 400, 100);
     assert_eq!(f.children[0].offset.top, lu(0)); // flex-start
     assert_eq!(f.children[1].offset.top, lu(60)); // flex-end
@@ -1022,7 +1129,9 @@ fn as_auto_inherits_align_items() {
     // Default align-self is auto, which inherits from align-items
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_items = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(c, |style| {
+        style.align_items = ItemAlignment::new(ItemPosition::Center)
+    });
     add_child(&mut doc, c, 50, 40);
     add_child(&mut doc, c, 50, 40);
     let f = lay(&doc, c, 300, 100);
@@ -1037,7 +1146,9 @@ fn as_stretch_explicit_cross() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
     let ch = add_child(&mut doc, c, 50, 40);
-    doc.node_mut(ch).style_mut().align_self = ItemAlignment::new(ItemPosition::Stretch);
+    doc.update_resolved_style(ch, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Stretch)
+    });
     let f = lay(&doc, c, 300, 100);
     // Explicit h=40 → no stretch despite Stretch alignment. Placed at top.
     assert_eq!(f.children[0].height(), lu(40));
@@ -1052,7 +1163,9 @@ fn as_stretch_auto_cross() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
     let ch = add_child(&mut doc, c, 50, 80);
-    doc.node_mut(ch).style_mut().align_self = ItemAlignment::new(ItemPosition::Stretch);
+    doc.update_resolved_style(ch, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Stretch)
+    });
     let f = lay(&doc, c, 300, 100);
     // Explicit h=80, stretch doesn't change it. Placed at y=0.
     assert_eq!(f.children[0].height(), lu(80));
@@ -1064,14 +1177,16 @@ fn as_center_multiline() {
     // align-self: center on an item in a multi-line flex
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
-    doc.node_mut(c).style_mut().flex_wrap = FlexWrap::Wrap;
+    doc.update_resolved_style(c, |style| style.flex_wrap = FlexWrap::Wrap);
     // Line 1: two items (100px wide each fill 200px line)
     add_child(&mut doc, c, 100, 60);
     add_child(&mut doc, c, 100, 60);
     // Line 2: 60px tall + 30px tall centered
     add_child(&mut doc, c, 100, 60);
     let c4 = add_child(&mut doc, c, 100, 30);
-    doc.node_mut(c4).style_mut().align_self = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(c4, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Center)
+    });
     let f = lay(&doc, c, 200, 200);
     assert_eq!(f.children.len(), 4);
     // align-content: normal → stretch. Free=200-60-60=80. +40 per line.
@@ -1094,9 +1209,10 @@ fn ac_flex_start() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        });
     }
     // Line 1: 2 items of h50. Line 2: 1 item of h40.
     add_child(&mut doc, c, 100, 50);
@@ -1115,9 +1231,10 @@ fn ac_flex_end() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::new(ContentPosition::FlexEnd);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::new(ContentPosition::FlexEnd);
+        });
     }
     add_child(&mut doc, c, 100, 50);
     add_child(&mut doc, c, 100, 50);
@@ -1136,9 +1253,10 @@ fn ac_center() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::new(ContentPosition::Center);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::new(ContentPosition::Center);
+        });
     }
     add_child(&mut doc, c, 100, 50);
     add_child(&mut doc, c, 100, 50);
@@ -1156,9 +1274,11 @@ fn ac_space_between_2_lines() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content =
+                ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        });
     }
     add_child(&mut doc, c, 100, 50);
     add_child(&mut doc, c, 100, 50);
@@ -1177,9 +1297,11 @@ fn ac_space_between_3_lines() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 300);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content =
+                ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        });
     }
     // 6 items, 100px wide each → 2 per line → 3 lines of h=40
     for _ in 0..6 {
@@ -1199,9 +1321,10 @@ fn ac_space_around_2_lines() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
+        });
     }
     // 3 items → 2 lines of h=50
     add_child(&mut doc, c, 100, 50);
@@ -1221,9 +1344,10 @@ fn ac_space_around_3_lines() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 300);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceAround);
+        });
     }
     for _ in 0..6 {
         add_child(&mut doc, c, 100, 40);
@@ -1242,9 +1366,10 @@ fn ac_space_evenly_2_lines() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 220);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceEvenly);
+        });
     }
     add_child(&mut doc, c, 100, 50);
     add_child(&mut doc, c, 100, 50);
@@ -1263,9 +1388,10 @@ fn ac_stretch() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::with_distribution(ContentDistribution::Stretch);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::with_distribution(ContentDistribution::Stretch);
+        });
     }
     // 3 items → 2 lines of natural h=50
     add_child(&mut doc, c, 100, 50);
@@ -1287,10 +1413,11 @@ fn ac_center_column() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_direction = FlexDirection::Column;
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::new(ContentPosition::Center);
+        doc.update_resolved_style(c, |s| {
+            s.flex_direction = FlexDirection::Column;
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::new(ContentPosition::Center);
+        });
     }
     // Column: main=height(200), cross=width(400).
     // Items h=100 → 2 per column line. 3 items → 2 lines.
@@ -1311,10 +1438,11 @@ fn ac_flex_end_column() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_direction = FlexDirection::Column;
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::new(ContentPosition::FlexEnd);
+        doc.update_resolved_style(c, |s| {
+            s.flex_direction = FlexDirection::Column;
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::new(ContentPosition::FlexEnd);
+        });
     }
     add_child(&mut doc, c, 50, 100);
     add_child(&mut doc, c, 50, 100);
@@ -1332,10 +1460,12 @@ fn ac_space_between_column() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 400, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_direction = FlexDirection::Column;
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        doc.update_resolved_style(c, |s| {
+            s.flex_direction = FlexDirection::Column;
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content =
+                ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        });
     }
     add_child(&mut doc, c, 50, 100);
     add_child(&mut doc, c, 50, 100);
@@ -1352,9 +1482,10 @@ fn ac_wrap_reverse() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::WrapReverse;
-        s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::WrapReverse;
+            s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        });
     }
     let c1 = add_child(&mut doc, c, 100, 50);
     let c2 = add_child(&mut doc, c, 100, 50);
@@ -1377,9 +1508,10 @@ fn ac_center_wrap_reverse() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::WrapReverse;
-        s.align_content = ContentAlignment::new(ContentPosition::Center);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::WrapReverse;
+            s.align_content = ContentAlignment::new(ContentPosition::Center);
+        });
     }
     let _c1 = add_child(&mut doc, c, 100, 50);
     let _c2 = add_child(&mut doc, c, 100, 50);
@@ -1398,7 +1530,9 @@ fn ac_flex_start_single_line() {
     // align-content on single line (nowrap) — no visible effect
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 100);
-    doc.node_mut(c).style_mut().align_content = ContentAlignment::new(ContentPosition::FlexStart);
+    doc.update_resolved_style(c, |style| {
+        style.align_content = ContentAlignment::new(ContentPosition::FlexStart)
+    });
     add_child(&mut doc, c, 50, 40);
     add_child(&mut doc, c, 50, 40);
     add_child(&mut doc, c, 50, 40);
@@ -1414,10 +1548,11 @@ fn ac_with_row_gap() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 300);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.row_gap = Some(Length::px(20.0));
-        s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.row_gap = Some(Length::px(20.0));
+            s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        });
     }
     // 4 items → 2 lines of h=50
     add_child(&mut doc, c, 100, 50);
@@ -1438,9 +1573,11 @@ fn ac_space_between_single_line() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 300, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content =
+                ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        });
     }
     // 2 items fit on one line (100+100=200 ≤ 300)
     add_child(&mut doc, c, 100, 50);
@@ -1457,9 +1594,10 @@ fn ac_stretch_explicit_height() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 200);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::with_distribution(ContentDistribution::Stretch);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::with_distribution(ContentDistribution::Stretch);
+        });
     }
     add_child(&mut doc, c, 100, 50);
     add_child(&mut doc, c, 100, 50);
@@ -1479,9 +1617,10 @@ fn ac_center_diff_line_heights() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 300);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::new(ContentPosition::Center);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::new(ContentPosition::Center);
+        });
     }
     // Line 1: two items h=60 → line cross = 60.
     add_child(&mut doc, c, 100, 60);
@@ -1502,10 +1641,11 @@ fn ac_flex_end_with_row_gap() {
     let mut doc = Document::new();
     let c = make_flex(&mut doc, 200, 300);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.flex_wrap = FlexWrap::Wrap;
-        s.row_gap = Some(Length::px(20.0));
-        s.align_content = ContentAlignment::new(ContentPosition::FlexEnd);
+        doc.update_resolved_style(c, |s| {
+            s.flex_wrap = FlexWrap::Wrap;
+            s.row_gap = Some(Length::px(20.0));
+            s.align_content = ContentAlignment::new(ContentPosition::FlexEnd);
+        });
     }
     add_child(&mut doc, c, 100, 50);
     add_child(&mut doc, c, 100, 50);

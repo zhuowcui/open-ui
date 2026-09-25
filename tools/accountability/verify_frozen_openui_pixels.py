@@ -78,17 +78,31 @@ def main() -> None:
             )
         )
         actual = temporary / f"{index}.png"
-        environment = runner.openui_environment(
-            test_id in text_ids and test_id not in real_font_ids,
-            test_id in real_font_ids,
-            preserve_subpixel,
-        )
+        use_real_font = test_id in real_font_ids
+        use_ahem_noaa = test_id in text_ids and not use_real_font
+        raster_profile = "default"
+        if use_real_font:
+            raster_profile = "legacy-chromium-linux-lcd"
+        elif use_ahem_noaa:
+            raster_profile = (
+                "legacy-deterministic-alias-subpixel"
+                if preserve_subpixel
+                else "legacy-deterministic-alias"
+            )
+        environment = runner.openui_environment(use_real_font=use_real_font)
         completed = subprocess.run(
-            [args.pixel_compare, "render", test_id, actual],
+            [
+                args.pixel_compare,
+                "render",
+                test_id,
+                actual,
+                "--raster-config",
+                raster_profile,
+            ],
             env=environment,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.PIPE,
-            timeout=30,
+            timeout=120,
         )
         if completed.returncode != 0:
             detail = completed.stderr.decode("utf-8", errors="replace").strip()

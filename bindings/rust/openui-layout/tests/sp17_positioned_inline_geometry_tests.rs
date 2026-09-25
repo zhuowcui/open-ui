@@ -17,10 +17,11 @@ fn add_text(
     direction: Direction,
 ) -> NodeId {
     let node = doc.create_node(ElementTag::Text);
-    let style = &mut doc.node_mut(node).style;
-    style.writing_mode = mode;
-    style.direction = direction;
-    style.font_size = 10.0;
+    doc.update_resolved_style(node, |style| {
+        style.writing_mode = mode;
+        style.direction = direction;
+        style.font_size = 10.0;
+    });
     doc.node_mut(node).text = Some(text.to_string());
     doc.append_child(parent, node);
     node
@@ -63,47 +64,45 @@ fn direct_positioned_inline_geometry_covers_three_modes_and_both_directions() {
         for direction in [Direction::Ltr, Direction::Rtl] {
             let mut doc = Document::new();
             let root = doc.root();
-            {
-                let style = &mut doc.node_mut(root).style;
-                style.display = Display::Block;
-                style.writing_mode = mode;
-                style.direction = direction;
-                style.width = Length::px(240.0);
-                style.height = Length::px(180.0);
-                style.text_indent = Length::px(7.0);
-                style.border_top_width = 2;
-                style.border_right_width = 3;
-                style.border_bottom_width = 5;
-                style.border_left_width = 7;
-                style.border_top_style = BorderStyle::Solid;
-                style.border_right_style = BorderStyle::Solid;
-                style.border_bottom_style = BorderStyle::Solid;
-                style.border_left_style = BorderStyle::Solid;
-                style.padding_top = Length::px(11.0);
-                style.padding_right = Length::px(13.0);
-                style.padding_bottom = Length::px(17.0);
-                style.padding_left = Length::px(19.0);
-            }
+            doc.update_resolved_style(root, |style| {
+                style.update_derived(|computed| computed.display = Display::Block);
+                style.update_derived(|computed| computed.writing_mode = mode);
+                style.update_derived(|computed| computed.direction = direction);
+                style.update_derived(|computed| computed.width = Length::px(240.0));
+                style.update_derived(|computed| computed.height = Length::px(180.0));
+                style.update_derived(|computed| computed.text_indent = Length::px(7.0));
+                style.update_derived(|computed| computed.border_top_width = 2);
+                style.update_derived(|computed| computed.border_right_width = 3);
+                style.update_derived(|computed| computed.border_bottom_width = 5);
+                style.update_derived(|computed| computed.border_left_width = 7);
+                style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+                style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+                style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+                style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+                style.update_derived(|computed| computed.padding_top = Length::px(11.0));
+                style.update_derived(|computed| computed.padding_right = Length::px(13.0));
+                style.update_derived(|computed| computed.padding_bottom = Length::px(17.0));
+                style.update_derived(|computed| computed.padding_left = Length::px(19.0));
+            });
 
             add_text(&mut doc, root, "AA ", mode, direction);
             let containing_inline = doc.create_node(ElementTag::Span);
-            {
-                let style = &mut doc.node_mut(containing_inline).style;
-                style.display = Display::Inline;
-                style.position = Position::Relative;
-                style.writing_mode = mode;
-                style.direction = direction;
-                style.left = Length::px(3.0);
-                style.top = Length::px(4.0);
-                style.margin_left = Length::px(2.0);
-                style.margin_right = Length::px(5.0);
-                style.padding_left = Length::px(1.0);
-                style.padding_right = Length::px(4.0);
-                style.border_left_width = 1;
-                style.border_right_width = 2;
-                style.border_left_style = BorderStyle::Solid;
-                style.border_right_style = BorderStyle::Solid;
-            }
+            doc.update_resolved_style(containing_inline, |style| {
+                style.update_derived(|computed| computed.display = Display::Inline);
+                style.update_derived(|computed| computed.position = Position::Relative);
+                style.update_derived(|computed| computed.writing_mode = mode);
+                style.update_derived(|computed| computed.direction = direction);
+                style.update_derived(|computed| computed.left = Length::px(3.0));
+                style.update_derived(|computed| computed.top = Length::px(4.0));
+                style.update_derived(|computed| computed.margin_left = Length::px(2.0));
+                style.update_derived(|computed| computed.margin_right = Length::px(5.0));
+                style.update_derived(|computed| computed.padding_left = Length::px(1.0));
+                style.update_derived(|computed| computed.padding_right = Length::px(4.0));
+                style.update_derived(|computed| computed.border_left_width = 1);
+                style.update_derived(|computed| computed.border_right_width = 2);
+                style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+                style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+            });
             doc.append_child(root, containing_inline);
             add_text(
                 &mut doc,
@@ -114,19 +113,18 @@ fn direct_positioned_inline_geometry_covers_three_modes_and_both_directions() {
             );
 
             let inline_hypothetical = doc.create_node(ElementTag::Div);
-            {
-                let style = &mut doc.node_mut(inline_hypothetical).style;
-                style.display = Display::Inline;
-                style.position = Position::Absolute;
-                style.writing_mode = mode;
-                style.direction = direction;
-                style.width = Length::px(12.0);
-                style.height = Length::px(18.0);
-                style.margin_top = Length::px(2.0);
-                style.margin_right = Length::px(3.0);
-                style.margin_bottom = Length::px(5.0);
-                style.margin_left = Length::px(7.0);
-            }
+            doc.update_resolved_style(inline_hypothetical, |style| {
+                style.update_derived(|computed| computed.display = Display::Inline);
+                style.update_derived(|computed| computed.position = Position::Absolute);
+                style.update_derived(|computed| computed.writing_mode = mode);
+                style.update_derived(|computed| computed.direction = direction);
+                style.update_derived(|computed| computed.width = Length::px(12.0));
+                style.update_derived(|computed| computed.height = Length::px(18.0));
+                style.update_derived(|computed| computed.margin_top = Length::px(2.0));
+                style.update_derived(|computed| computed.margin_right = Length::px(3.0));
+                style.update_derived(|computed| computed.margin_bottom = Length::px(5.0));
+                style.update_derived(|computed| computed.margin_left = Length::px(7.0));
+            });
             doc.append_child(containing_inline, inline_hypothetical);
             add_text(
                 &mut doc,
@@ -137,15 +135,14 @@ fn direct_positioned_inline_geometry_covers_three_modes_and_both_directions() {
             );
 
             let block_hypothetical = doc.create_node(ElementTag::Div);
-            {
-                let style = &mut doc.node_mut(block_hypothetical).style;
-                style.display = Display::Block;
-                style.position = Position::Absolute;
-                style.writing_mode = mode;
-                style.direction = direction;
-                style.width = Length::px(20.0);
-                style.height = Length::px(10.0);
-            }
+            doc.update_resolved_style(block_hypothetical, |style| {
+                style.update_derived(|computed| computed.display = Display::Block);
+                style.update_derived(|computed| computed.position = Position::Absolute);
+                style.update_derived(|computed| computed.writing_mode = mode);
+                style.update_derived(|computed| computed.direction = direction);
+                style.update_derived(|computed| computed.width = Length::px(20.0));
+                style.update_derived(|computed| computed.height = Length::px(10.0));
+            });
             doc.append_child(containing_inline, block_hypothetical);
             add_text(&mut doc, containing_inline, " DD", mode, direction);
 
@@ -195,50 +192,52 @@ fn atomic_and_block_in_inline_descendants_keep_one_inline_containing_block_owner
         for direction in [Direction::Ltr, Direction::Rtl] {
             let mut doc = Document::new();
             let root = doc.root();
-            doc.node_mut(root).style.display = Display::Block;
-            doc.node_mut(root).style.writing_mode = mode;
-            doc.node_mut(root).style.direction = direction;
-            doc.node_mut(root).style.width = Length::px(160.0);
-            doc.node_mut(root).style.height = Length::px(120.0);
+            doc.update_resolved_style(root, |style| style.display = Display::Block);
+            doc.update_resolved_style(root, |style| style.writing_mode = mode);
+            doc.update_resolved_style(root, |style| style.direction = direction);
+            doc.update_resolved_style(root, |style| style.width = Length::px(160.0));
+            doc.update_resolved_style(root, |style| style.height = Length::px(120.0));
 
             let containing_inline = doc.create_node(ElementTag::Span);
-            doc.node_mut(containing_inline).style.display = Display::Inline;
-            doc.node_mut(containing_inline).style.position = Position::Relative;
-            doc.node_mut(containing_inline).style.writing_mode = mode;
-            doc.node_mut(containing_inline).style.direction = direction;
+            doc.update_resolved_style(containing_inline, |style| style.display = Display::Inline);
+            doc.update_resolved_style(containing_inline, |style| {
+                style.position = Position::Relative
+            });
+            doc.update_resolved_style(containing_inline, |style| style.writing_mode = mode);
+            doc.update_resolved_style(containing_inline, |style| style.direction = direction);
             doc.append_child(root, containing_inline);
             add_text(&mut doc, containing_inline, "AA ", mode, direction);
 
             let atomic = doc.create_node(ElementTag::Div);
-            doc.node_mut(atomic).style.display = Display::InlineBlock;
-            doc.node_mut(atomic).style.writing_mode = mode;
-            doc.node_mut(atomic).style.direction = direction;
-            doc.node_mut(atomic).style.width = Length::px(30.0);
-            doc.node_mut(atomic).style.height = Length::px(20.0);
+            doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+            doc.update_resolved_style(atomic, |style| style.writing_mode = mode);
+            doc.update_resolved_style(atomic, |style| style.direction = direction);
+            doc.update_resolved_style(atomic, |style| style.width = Length::px(30.0));
+            doc.update_resolved_style(atomic, |style| style.height = Length::px(20.0));
             doc.append_child(containing_inline, atomic);
             let atomic_abs = doc.create_node(ElementTag::Div);
-            doc.node_mut(atomic_abs).style.display = Display::Inline;
-            doc.node_mut(atomic_abs).style.position = Position::Absolute;
-            doc.node_mut(atomic_abs).style.writing_mode = mode;
-            doc.node_mut(atomic_abs).style.direction = direction;
-            doc.node_mut(atomic_abs).style.width = Length::px(7.0);
-            doc.node_mut(atomic_abs).style.height = Length::px(9.0);
+            doc.update_resolved_style(atomic_abs, |style| style.display = Display::Inline);
+            doc.update_resolved_style(atomic_abs, |style| style.position = Position::Absolute);
+            doc.update_resolved_style(atomic_abs, |style| style.writing_mode = mode);
+            doc.update_resolved_style(atomic_abs, |style| style.direction = direction);
+            doc.update_resolved_style(atomic_abs, |style| style.width = Length::px(7.0));
+            doc.update_resolved_style(atomic_abs, |style| style.height = Length::px(9.0));
             doc.append_child(atomic, atomic_abs);
 
             let interruption = doc.create_node(ElementTag::Div);
-            doc.node_mut(interruption).style.display = Display::Block;
-            doc.node_mut(interruption).style.writing_mode = mode;
-            doc.node_mut(interruption).style.direction = direction;
-            doc.node_mut(interruption).style.width = Length::px(40.0);
-            doc.node_mut(interruption).style.height = Length::px(20.0);
+            doc.update_resolved_style(interruption, |style| style.display = Display::Block);
+            doc.update_resolved_style(interruption, |style| style.writing_mode = mode);
+            doc.update_resolved_style(interruption, |style| style.direction = direction);
+            doc.update_resolved_style(interruption, |style| style.width = Length::px(40.0));
+            doc.update_resolved_style(interruption, |style| style.height = Length::px(20.0));
             doc.append_child(containing_inline, interruption);
             let interrupted_abs = doc.create_node(ElementTag::Div);
-            doc.node_mut(interrupted_abs).style.display = Display::Block;
-            doc.node_mut(interrupted_abs).style.position = Position::Absolute;
-            doc.node_mut(interrupted_abs).style.writing_mode = mode;
-            doc.node_mut(interrupted_abs).style.direction = direction;
-            doc.node_mut(interrupted_abs).style.width = Length::px(11.0);
-            doc.node_mut(interrupted_abs).style.height = Length::px(13.0);
+            doc.update_resolved_style(interrupted_abs, |style| style.display = Display::Block);
+            doc.update_resolved_style(interrupted_abs, |style| style.position = Position::Absolute);
+            doc.update_resolved_style(interrupted_abs, |style| style.writing_mode = mode);
+            doc.update_resolved_style(interrupted_abs, |style| style.direction = direction);
+            doc.update_resolved_style(interrupted_abs, |style| style.width = Length::px(11.0));
+            doc.update_resolved_style(interrupted_abs, |style| style.height = Length::px(13.0));
             doc.append_child(interruption, interrupted_abs);
             add_text(&mut doc, containing_inline, " BB", mode, direction);
 
@@ -271,37 +270,38 @@ fn vertical_multicol_maps_inline_endpoints_once_for_outer_and_inner_direction() 
                 for inline_containing_block in [false, true] {
                     let mut doc = Document::new();
                     let root = doc.root();
-                    {
-                        let style = &mut doc.node_mut(root).style;
-                        style.display = Display::Block;
-                        style.writing_mode = mode;
-                        style.direction = Direction::Ltr;
-                        style.width = Length::px(60.0);
-                        style.height = Length::px(160.0);
-                        style.column_count = Some(2);
-                        style.column_fill = ColumnFill::Auto;
-                        style.column_gap = Some(Length::px(0.0));
-                    }
+                    doc.update_resolved_style(root, |style| {
+                        style.update_derived(|computed| computed.display = Display::Block);
+                        style.update_derived(|computed| computed.writing_mode = mode);
+                        style.update_derived(|computed| computed.direction = Direction::Ltr);
+                        style.update_derived(|computed| computed.width = Length::px(60.0));
+                        style.update_derived(|computed| computed.height = Length::px(160.0));
+                        style.update_derived(|computed| computed.column_count = Some(2));
+                        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+                        style
+                            .update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+                    });
 
                     let container = doc.create_node(ElementTag::Div);
-                    {
-                        let style = &mut doc.node_mut(container).style;
-                        style.display = Display::Block;
-                        style.position = Position::Relative;
-                        style.writing_mode = mode;
-                        style.direction = outer_direction;
-                        style.width = Length::px(120.0);
-                        style.height = Length::px(80.0);
-                        style.font_size = 10.0;
-                    }
+                    doc.update_resolved_style(container, |style| {
+                        style.update_derived(|computed| computed.display = Display::Block);
+                        style.update_derived(|computed| computed.position = Position::Relative);
+                        style.update_derived(|computed| computed.writing_mode = mode);
+                        style.update_derived(|computed| computed.direction = outer_direction);
+                        style.update_derived(|computed| computed.width = Length::px(120.0));
+                        style.update_derived(|computed| computed.height = Length::px(80.0));
+                        style.update_derived(|computed| computed.font_size = 10.0);
+                    });
                     doc.append_child(root, container);
 
                     let inline = doc.create_node(ElementTag::Span);
-                    doc.node_mut(inline).style.display = Display::Inline;
-                    doc.node_mut(inline).style.writing_mode = mode;
-                    doc.node_mut(inline).style.direction = inner_direction;
+                    doc.update_resolved_style(inline, |style| style.display = Display::Inline);
+                    doc.update_resolved_style(inline, |style| style.writing_mode = mode);
+                    doc.update_resolved_style(inline, |style| style.direction = inner_direction);
                     if inline_containing_block {
-                        doc.node_mut(inline).style.position = Position::Relative;
+                        doc.update_resolved_style(inline, |style| {
+                            style.position = Position::Relative
+                        });
                     }
                     doc.append_child(container, inline);
                     add_text(
@@ -313,17 +313,16 @@ fn vertical_multicol_maps_inline_endpoints_once_for_outer_and_inner_direction() 
                     );
 
                     let inset_start = doc.create_node(ElementTag::Div);
-                    {
-                        let style = &mut doc.node_mut(inset_start).style;
-                        style.display = Display::Inline;
-                        style.position = Position::Absolute;
-                        style.writing_mode = mode;
-                        style.direction = inner_direction;
-                        style.width = Length::px(20.0);
-                        style.height = Length::px(20.0);
-                        style.left = Length::px(0.0);
-                        style.top = Length::px(0.0);
-                    }
+                    doc.update_resolved_style(inset_start, |style| {
+                        style.update_derived(|computed| computed.display = Display::Inline);
+                        style.update_derived(|computed| computed.position = Position::Absolute);
+                        style.update_derived(|computed| computed.writing_mode = mode);
+                        style.update_derived(|computed| computed.direction = inner_direction);
+                        style.update_derived(|computed| computed.width = Length::px(20.0));
+                        style.update_derived(|computed| computed.height = Length::px(20.0));
+                        style.update_derived(|computed| computed.left = Length::px(0.0));
+                        style.update_derived(|computed| computed.top = Length::px(0.0));
+                    });
                     doc.append_child(inline, inset_start);
                     add_text(
                         &mut doc,
@@ -334,17 +333,16 @@ fn vertical_multicol_maps_inline_endpoints_once_for_outer_and_inner_direction() 
                     );
 
                     let inset_end = doc.create_node(ElementTag::Div);
-                    {
-                        let style = &mut doc.node_mut(inset_end).style;
-                        style.display = Display::Block;
-                        style.position = Position::Absolute;
-                        style.writing_mode = mode;
-                        style.direction = inner_direction;
-                        style.width = Length::px(20.0);
-                        style.height = Length::px(20.0);
-                        style.right = Length::px(0.0);
-                        style.bottom = Length::px(0.0);
-                    }
+                    doc.update_resolved_style(inset_end, |style| {
+                        style.update_derived(|computed| computed.display = Display::Block);
+                        style.update_derived(|computed| computed.position = Position::Absolute);
+                        style.update_derived(|computed| computed.writing_mode = mode);
+                        style.update_derived(|computed| computed.direction = inner_direction);
+                        style.update_derived(|computed| computed.width = Length::px(20.0));
+                        style.update_derived(|computed| computed.height = Length::px(20.0));
+                        style.update_derived(|computed| computed.right = Length::px(0.0));
+                        style.update_derived(|computed| computed.bottom = Length::px(0.0));
+                    });
                     doc.append_child(inline, inset_end);
                     add_text(&mut doc, inline, " CC", mode, inner_direction);
 

@@ -17,6 +17,7 @@ mod min_max_sizes;
 mod physical_offset;
 mod physical_rect;
 mod physical_size;
+mod raster;
 mod viewport;
 mod writing_mode;
 
@@ -32,5 +33,9 @@ pub use min_max_sizes::MinMaxSizes;
 pub use physical_offset::PhysicalOffset;
 pub use physical_rect::PhysicalRect;
 pub use physical_size::PhysicalSize;
+pub use raster::{
+    physical_font_size, snap_logical, PhysicalSnap, RasterBackend, RasterConfiguration,
+    RasterPixelGeometry, RasterSnapping, TextEdging, TextHinting, TextRasterConfiguration,
+};
 pub use viewport::{ViewportAuthority, ViewportMetrics, ViewportMetricsError};
 pub use writing_mode::{WritingDirectionMode, WritingModeConverter};

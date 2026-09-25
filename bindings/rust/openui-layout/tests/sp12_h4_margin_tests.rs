@@ -618,8 +618,10 @@ fn parent_child_integration_border_prevents_collapse() {
     builder.add_child().height(50.0).margin(30, 0, 0, 0).done();
     let result = builder
         .with_container_style(|s| {
-            s.border_top_width = 1;
-            s.border_top_style = openui_style::BorderStyle::Solid;
+            s.update_derived(|computed| computed.border_top_width = 1);
+            s.update_derived(|computed| {
+                computed.border_top_style = openui_style::BorderStyle::Solid
+            });
         })
         .build();
 
@@ -633,7 +635,7 @@ fn parent_child_integration_padding_prevents_collapse() {
     builder.add_child().height(50.0).margin(30, 0, 0, 0).done();
     let result = builder
         .with_container_style(|s| {
-            s.padding_top = openui_geometry::Length::px(5.0);
+            s.update_derived(|computed| computed.padding_top = openui_geometry::Length::px(5.0));
         })
         .build();
 
@@ -651,7 +653,7 @@ fn parent_child_both_margins_collapse() {
     builder.add_child().height(50.0).margin(20, 0, 0, 0).done();
     let result = builder
         .with_container_style(|s| {
-            s.margin_top = openui_geometry::Length::px(10.0);
+            s.update_derived(|computed| computed.margin_top = openui_geometry::Length::px(10.0));
         })
         .build();
 

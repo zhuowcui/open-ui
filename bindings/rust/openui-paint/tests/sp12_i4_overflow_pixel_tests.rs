@@ -179,16 +179,16 @@ fn region_is_white(surface: &mut Surface, x: i32, y: i32, w: i32, h: i32) -> boo
 /// Set up a minimal viewport root with Block display.
 fn setup_viewport(doc: &mut Document) -> NodeId {
     let vp = doc.root();
-    doc.node_mut(vp).style.display = Display::Block;
+    doc.update_resolved_style(vp, |style| style.display = Display::Block);
     vp
 }
 
 /// Create a block div with a given width and append to parent.
 fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
     if width_px > 0.0 {
-        doc.node_mut(div).style.width = Length::px(width_px);
+        doc.update_resolved_style(div, |style| style.width = Length::px(width_px));
     }
     doc.append_child(parent, div);
     div
@@ -197,10 +197,10 @@ fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
 /// Create a colored block box with specified dimensions and background.
 fn add_colored_box(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: Color) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(w);
-    doc.node_mut(div).style.height = Length::px(h);
-    doc.node_mut(div).style.background_color = color;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(w));
+    doc.update_resolved_style(div, |style| style.height = Length::px(h));
+    doc.update_resolved_style(div, |style| style.background_color = color);
     doc.append_child(parent, div);
     div
 }
@@ -217,19 +217,23 @@ fn build_overflow_test(
     let vp = setup_viewport(&mut doc);
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(parent_w);
-    doc.node_mut(parent).style.height = Length::px(parent_h);
-    doc.node_mut(parent).style.overflow_x = overflow;
-    doc.node_mut(parent).style.overflow_y = overflow;
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(parent_w));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(parent_h));
+    doc.update_resolved_style(parent, |style| style.overflow_x = overflow);
+    doc.update_resolved_style(parent, |style| style.overflow_y = overflow);
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, parent);
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(child_w);
-    doc.node_mut(child).style.height = Length::px(child_h);
-    doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(child_w));
+    doc.update_resolved_style(child, |style| style.height = Length::px(child_h));
+    doc.update_resolved_style(child, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(parent, child);
 
     let surface = render_to_surface(&doc, test_viewport()).unwrap();
@@ -377,12 +381,14 @@ fn overflow_hidden_parent_bg_renders_fully() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, parent);
     // No children
 
@@ -404,24 +410,28 @@ fn overflow_hidden_with_padding_clips_inside_padding_box() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.padding_top = Length::px(10.0);
-    doc.node_mut(parent).style.padding_right = Length::px(10.0);
-    doc.node_mut(parent).style.padding_bottom = Length::px(10.0);
-    doc.node_mut(parent).style.padding_left = Length::px(10.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(parent, |style| style.padding_right = Length::px(10.0));
+    doc.update_resolved_style(parent, |style| style.padding_bottom = Length::px(10.0));
+    doc.update_resolved_style(parent, |style| style.padding_left = Length::px(10.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, parent);
 
     // Child larger than content area
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(400.0);
-    doc.node_mut(child).style.height = Length::px(300.0);
-    doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(300.0));
+    doc.update_resolved_style(child, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(parent, child);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -443,11 +453,11 @@ fn overflow_hidden_multiple_children_clipped() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(60.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(60.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, parent);
 
     // Three children, each 30px tall → total 90px, parent only 60px
@@ -508,24 +518,38 @@ fn overflow_hidden_with_border_clips_inside_border() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(parent).style.border_top_width = 5;
-    doc.node_mut(parent).style.border_right_width = 5;
-    doc.node_mut(parent).style.border_bottom_width = 5;
-    doc.node_mut(parent).style.border_left_width = 5;
-    doc.node_mut(parent).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_top_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(parent).style.border_right_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(parent).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(parent).style.border_left_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.border_top_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_right_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_left_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(parent, |style| {
+        style.border_right_style = BorderStyle::Solid
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_bottom_style = BorderStyle::Solid
+    });
+    doc.update_resolved_style(parent, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(parent, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, parent);
 
     // Child extends well beyond parent
@@ -563,12 +587,14 @@ fn overflow_hidden_child_wider_parent_bg_still_visible() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, parent);
 
     // Child only 100px wide, 50px tall — doesn't fill parent
@@ -594,12 +620,14 @@ fn overflow_hidden_clips_bottom_right_corner_only() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(200.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, parent);
 
     // Child taller than parent
@@ -716,10 +744,12 @@ fn overflow_visible_parent_bg_visible() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, parent);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -734,9 +764,9 @@ fn overflow_visible_multiple_children() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(200.0);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(200.0));
     doc.append_child(vp, parent);
 
     add_colored_box(
@@ -791,12 +821,14 @@ fn overflow_visible_explicit_setting_same_as_default() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Visible;
-    doc.node_mut(parent).style.overflow_y = Overflow::Visible;
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Visible);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Visible);
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, parent);
 
     add_colored_box(
@@ -1019,11 +1051,13 @@ fn min_width_prevents_element_from_being_too_narrow() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(100.0);
-    doc.node_mut(div).style.min_width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(50.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.min_width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1039,11 +1073,13 @@ fn min_width_no_effect_when_smaller_than_width() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(300.0);
-    doc.node_mut(div).style.min_width = Length::px(100.0);
-    doc.node_mut(div).style.height = Length::px(50.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(div, |style| style.min_width = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1059,11 +1095,13 @@ fn max_width_caps_element_size() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(400.0);
-    doc.node_mut(div).style.max_width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(50.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(div, |style| style.max_width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1083,11 +1121,13 @@ fn max_width_no_effect_when_larger_than_width() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.max_width = Length::px(400.0);
-    doc.node_mut(div).style.height = Length::px(50.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.max_width = Length::px(400.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1106,14 +1146,16 @@ fn min_width_with_auto_width_in_constrained_parent() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_block(&mut doc, vp, 150.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
     // width: auto, min-width: 200px
-    doc.node_mut(child).style.min_width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(50.0);
-    doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(child, |style| style.min_width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(child, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(parent, child);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1130,14 +1172,16 @@ fn max_width_constrains_auto_width() {
     let vp = setup_viewport(&mut doc);
     // Parent is 400px wide
     let parent = add_block(&mut doc, vp, 400.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
     // width: auto (would fill parent's 400px), max-width: 200px
-    doc.node_mut(child).style.max_width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(50.0);
-    doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(child, |style| style.max_width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(child, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(parent, child);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1156,12 +1200,14 @@ fn min_max_width_both_set() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(50.0);
-    doc.node_mut(div).style.min_width = Length::px(150.0);
-    doc.node_mut(div).style.max_width = Length::px(300.0);
-    doc.node_mut(div).style.height = Length::px(50.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.min_width = Length::px(150.0));
+    doc.update_resolved_style(div, |style| style.max_width = Length::px(300.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1181,11 +1227,13 @@ fn min_width_zero_has_no_effect() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.min_width = Length::px(0.0);
-    doc.node_mut(div).style.height = Length::px(50.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.min_width = Length::px(0.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1209,14 +1257,16 @@ fn min_width_on_nested_child() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_block(&mut doc, vp, 300.0);
-    doc.node_mut(parent).style.height = Length::px(200.0);
+    doc.update_resolved_style(parent, |style| style.height = Length::px(200.0));
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(100.0);
-    doc.node_mut(child).style.min_width = Length::px(250.0);
-    doc.node_mut(child).style.height = Length::px(80.0);
-    doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(child, |style| style.min_width = Length::px(250.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(80.0));
+    doc.update_resolved_style(child, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(parent, child);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1231,14 +1281,16 @@ fn max_width_on_nested_child() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_block(&mut doc, vp, 400.0);
-    doc.node_mut(parent).style.height = Length::px(200.0);
+    doc.update_resolved_style(parent, |style| style.height = Length::px(200.0));
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
     // width: auto (fills 400px), max-width: 150px
-    doc.node_mut(child).style.max_width = Length::px(150.0);
-    doc.node_mut(child).style.height = Length::px(80.0);
-    doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(child, |style| style.max_width = Length::px(150.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(80.0));
+    doc.update_resolved_style(child, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(parent, child);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1257,13 +1309,15 @@ fn min_width_with_padding() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(100.0);
-    doc.node_mut(div).style.min_width = Length::px(200.0);
-    doc.node_mut(div).style.padding_left = Length::px(20.0);
-    doc.node_mut(div).style.padding_right = Length::px(20.0);
-    doc.node_mut(div).style.height = Length::px(50.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.min_width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1283,17 +1337,23 @@ fn max_width_with_border() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(400.0);
-    doc.node_mut(div).style.max_width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(50.0);
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_right_width = 5;
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(div, |style| style.max_width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| style.border_right_width = 5);
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1317,11 +1377,13 @@ fn min_height_prevents_element_from_being_too_short() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(50.0);
-    doc.node_mut(div).style.min_height = Length::px(150.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.min_height = Length::px(150.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1337,11 +1399,13 @@ fn min_height_no_effect_when_smaller_than_height() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(200.0);
-    doc.node_mut(div).style.min_height = Length::px(50.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.min_height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1357,11 +1421,13 @@ fn max_height_caps_element_size() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(400.0);
-    doc.node_mut(div).style.max_height = Length::px(150.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(400.0));
+    doc.update_resolved_style(div, |style| style.max_height = Length::px(150.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1380,11 +1446,13 @@ fn max_height_no_effect_when_larger_than_height() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(100.0);
-    doc.node_mut(div).style.max_height = Length::px(300.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.max_height = Length::px(300.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1403,11 +1471,13 @@ fn min_height_with_auto_height() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
     // height: auto (default), min-height: 100px
-    doc.node_mut(div).style.min_height = Length::px(100.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(div, |style| style.min_height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, div);
     // No children, so auto height would be 0
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1423,11 +1493,13 @@ fn max_height_with_auto_height_and_tall_content() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
     // height: auto, max-height: 100px
-    doc.node_mut(parent).style.max_height = Length::px(100.0);
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(parent, |style| style.max_height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, parent);
 
     // Child is 300px tall → parent would grow but max-height caps it
@@ -1453,12 +1525,14 @@ fn min_max_height_both_set() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(30.0);
-    doc.node_mut(div).style.min_height = Length::px(100.0);
-    doc.node_mut(div).style.max_height = Length::px(250.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.min_height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.max_height = Length::px(250.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1474,11 +1548,13 @@ fn min_height_zero_no_effect() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(100.0);
-    doc.node_mut(div).style.min_height = Length::px(0.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.min_height = Length::px(0.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1502,12 +1578,14 @@ fn max_height_with_overflow_hidden_clips_content() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.max_height = Length::px(80.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.max_height = Length::px(80.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, parent);
 
     add_colored_box(
@@ -1534,14 +1612,16 @@ fn min_height_on_nested_element() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_block(&mut doc, vp, 300.0);
-    doc.node_mut(parent).style.height = Length::px(300.0);
+    doc.update_resolved_style(parent, |style| style.height = Length::px(300.0));
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(30.0);
-    doc.node_mut(child).style.min_height = Length::px(120.0);
-    doc.node_mut(child).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(30.0));
+    doc.update_resolved_style(child, |style| style.min_height = Length::px(120.0));
+    doc.update_resolved_style(child, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(parent, child);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1556,14 +1636,16 @@ fn max_height_on_nested_element() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_block(&mut doc, vp, 300.0);
-    doc.node_mut(parent).style.height = Length::px(400.0);
+    doc.update_resolved_style(parent, |style| style.height = Length::px(400.0));
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(300.0);
-    doc.node_mut(child).style.max_height = Length::px(100.0);
-    doc.node_mut(child).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(300.0));
+    doc.update_resolved_style(child, |style| style.max_height = Length::px(100.0));
+    doc.update_resolved_style(child, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(parent, child);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1582,10 +1664,12 @@ fn min_height_with_colored_background() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.min_height = Length::px(80.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.min_height = Length::px(80.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1615,13 +1699,15 @@ fn content_box_padding_adds_to_total_size() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(100.0);
-    doc.node_mut(div).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(div).style.padding_left = Length::px(20.0);
-    doc.node_mut(div).style.padding_right = Length::px(20.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.box_sizing = BoxSizing::ContentBox);
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(20.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1637,13 +1723,15 @@ fn border_box_padding_included_in_width() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(100.0);
-    doc.node_mut(div).style.box_sizing = BoxSizing::BorderBox;
-    doc.node_mut(div).style.padding_left = Length::px(20.0);
-    doc.node_mut(div).style.padding_right = Length::px(20.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.box_sizing = BoxSizing::BorderBox);
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(20.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1663,17 +1751,23 @@ fn content_box_border_adds_to_total_size() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(100.0);
-    doc.node_mut(div).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(div).style.border_left_width = 10;
-    doc.node_mut(div).style.border_right_width = 10;
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.box_sizing = BoxSizing::ContentBox);
+    doc.update_resolved_style(div, |style| style.border_left_width = 10);
+    doc.update_resolved_style(div, |style| style.border_right_width = 10);
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1689,17 +1783,23 @@ fn border_box_border_included_in_width() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(100.0);
-    doc.node_mut(div).style.box_sizing = BoxSizing::BorderBox;
-    doc.node_mut(div).style.border_left_width = 10;
-    doc.node_mut(div).style.border_right_width = 10;
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.box_sizing = BoxSizing::BorderBox);
+    doc.update_resolved_style(div, |style| style.border_left_width = 10);
+    doc.update_resolved_style(div, |style| style.border_right_width = 10);
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1719,19 +1819,25 @@ fn content_box_padding_and_border_cumulative() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(100.0);
-    doc.node_mut(div).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(div).style.padding_left = Length::px(15.0);
-    doc.node_mut(div).style.padding_right = Length::px(15.0);
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_right_width = 5;
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.box_sizing = BoxSizing::ContentBox);
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| style.border_right_width = 5);
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1747,19 +1853,25 @@ fn border_box_padding_and_border_included() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(100.0);
-    doc.node_mut(div).style.box_sizing = BoxSizing::BorderBox;
-    doc.node_mut(div).style.padding_left = Length::px(15.0);
-    doc.node_mut(div).style.padding_right = Length::px(15.0);
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_right_width = 5;
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.box_sizing = BoxSizing::BorderBox);
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| style.border_right_width = 5);
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1780,26 +1892,30 @@ fn content_box_vs_border_box_different_total_size() {
     let mut doc1 = Document::new();
     let vp1 = setup_viewport(&mut doc1);
     let div1 = doc1.create_node(ElementTag::Div);
-    doc1.node_mut(div1).style.display = Display::Block;
-    doc1.node_mut(div1).style.width = Length::px(200.0);
-    doc1.node_mut(div1).style.height = Length::px(50.0);
-    doc1.node_mut(div1).style.box_sizing = BoxSizing::ContentBox;
-    doc1.node_mut(div1).style.padding_left = Length::px(20.0);
-    doc1.node_mut(div1).style.padding_right = Length::px(20.0);
-    doc1.node_mut(div1).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc1.update_resolved_style(div1, |style| style.display = Display::Block);
+    doc1.update_resolved_style(div1, |style| style.width = Length::px(200.0));
+    doc1.update_resolved_style(div1, |style| style.height = Length::px(50.0));
+    doc1.update_resolved_style(div1, |style| style.box_sizing = BoxSizing::ContentBox);
+    doc1.update_resolved_style(div1, |style| style.padding_left = Length::px(20.0));
+    doc1.update_resolved_style(div1, |style| style.padding_right = Length::px(20.0));
+    doc1.update_resolved_style(div1, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc1.append_child(vp1, div1);
     let mut s1 = render_to_surface(&doc1, test_viewport()).unwrap();
 
     let mut doc2 = Document::new();
     let vp2 = setup_viewport(&mut doc2);
     let div2 = doc2.create_node(ElementTag::Div);
-    doc2.node_mut(div2).style.display = Display::Block;
-    doc2.node_mut(div2).style.width = Length::px(200.0);
-    doc2.node_mut(div2).style.height = Length::px(50.0);
-    doc2.node_mut(div2).style.box_sizing = BoxSizing::BorderBox;
-    doc2.node_mut(div2).style.padding_left = Length::px(20.0);
-    doc2.node_mut(div2).style.padding_right = Length::px(20.0);
-    doc2.node_mut(div2).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc2.update_resolved_style(div2, |style| style.display = Display::Block);
+    doc2.update_resolved_style(div2, |style| style.width = Length::px(200.0));
+    doc2.update_resolved_style(div2, |style| style.height = Length::px(50.0));
+    doc2.update_resolved_style(div2, |style| style.box_sizing = BoxSizing::BorderBox);
+    doc2.update_resolved_style(div2, |style| style.padding_left = Length::px(20.0));
+    doc2.update_resolved_style(div2, |style| style.padding_right = Length::px(20.0));
+    doc2.update_resolved_style(div2, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc2.append_child(vp2, div2);
     let mut s2 = render_to_surface(&doc2, test_viewport()).unwrap();
 
@@ -1818,13 +1934,15 @@ fn border_box_vertical_sizing() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(100.0);
-    doc.node_mut(div).style.box_sizing = BoxSizing::BorderBox;
-    doc.node_mut(div).style.padding_top = Length::px(15.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(15.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.box_sizing = BoxSizing::BorderBox);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(15.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -1850,22 +1968,26 @@ fn nested_overflow_hidden_inner_clips_further() {
 
     // Outer: 300x200, overflow:hidden
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
-    doc.node_mut(outer).style.width = Length::px(300.0);
-    doc.node_mut(outer).style.height = Length::px(200.0);
-    doc.node_mut(outer).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(outer).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(outer).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
+    doc.update_resolved_style(outer, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(outer, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(outer, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(outer, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(outer, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, outer);
 
     // Inner: 200x100, overflow:hidden
     let inner = doc.create_node(ElementTag::Div);
-    doc.node_mut(inner).style.display = Display::Block;
-    doc.node_mut(inner).style.width = Length::px(200.0);
-    doc.node_mut(inner).style.height = Length::px(100.0);
-    doc.node_mut(inner).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(inner).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(inner).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(inner, |style| style.display = Display::Block);
+    doc.update_resolved_style(inner, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(inner, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(inner, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(inner, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(inner, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(outer, inner);
 
     // Grandchild: large, red
@@ -1897,19 +2019,21 @@ fn nested_overflow_outer_hidden_inner_visible() {
 
     // Outer: overflow:hidden
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
-    doc.node_mut(outer).style.width = Length::px(200.0);
-    doc.node_mut(outer).style.height = Length::px(100.0);
-    doc.node_mut(outer).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(outer).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(outer).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
+    doc.update_resolved_style(outer, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(outer, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(outer, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(outer, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(outer, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, outer);
 
     // Inner: overflow:visible (default)
     let inner = doc.create_node(ElementTag::Div);
-    doc.node_mut(inner).style.display = Display::Block;
-    doc.node_mut(inner).style.width = Length::px(200.0);
-    doc.node_mut(inner).style.height = Length::px(50.0);
+    doc.update_resolved_style(inner, |style| style.display = Display::Block);
+    doc.update_resolved_style(inner, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(inner, |style| style.height = Length::px(50.0));
     doc.append_child(outer, inner);
 
     add_colored_box(
@@ -1934,27 +2058,27 @@ fn three_level_nesting_overflow_hidden() {
     let vp = setup_viewport(&mut doc);
 
     let l1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(l1).style.display = Display::Block;
-    doc.node_mut(l1).style.width = Length::px(300.0);
-    doc.node_mut(l1).style.height = Length::px(250.0);
-    doc.node_mut(l1).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(l1).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(l1, |style| style.display = Display::Block);
+    doc.update_resolved_style(l1, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(l1, |style| style.height = Length::px(250.0));
+    doc.update_resolved_style(l1, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(l1, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, l1);
 
     let l2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(l2).style.display = Display::Block;
-    doc.node_mut(l2).style.width = Length::px(250.0);
-    doc.node_mut(l2).style.height = Length::px(200.0);
-    doc.node_mut(l2).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(l2).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(l2, |style| style.display = Display::Block);
+    doc.update_resolved_style(l2, |style| style.width = Length::px(250.0));
+    doc.update_resolved_style(l2, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(l2, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(l2, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(l1, l2);
 
     let l3 = doc.create_node(ElementTag::Div);
-    doc.node_mut(l3).style.display = Display::Block;
-    doc.node_mut(l3).style.width = Length::px(200.0);
-    doc.node_mut(l3).style.height = Length::px(150.0);
-    doc.node_mut(l3).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(l3).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(l3, |style| style.display = Display::Block);
+    doc.update_resolved_style(l3, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(l3, |style| style.height = Length::px(150.0));
+    doc.update_resolved_style(l3, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(l3, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(l2, l3);
 
     add_colored_box(
@@ -1982,25 +2106,39 @@ fn overflow_hidden_with_colored_borders_visible() {
     let vp = setup_viewport(&mut doc);
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(parent).style.border_top_width = 5;
-    doc.node_mut(parent).style.border_right_width = 5;
-    doc.node_mut(parent).style.border_bottom_width = 5;
-    doc.node_mut(parent).style.border_left_width = 5;
-    doc.node_mut(parent).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_left_style = BorderStyle::Solid;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.border_top_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_right_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_left_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(parent, |style| {
+        style.border_right_style = BorderStyle::Solid
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_bottom_style = BorderStyle::Solid
+    });
+    doc.update_resolved_style(parent, |style| style.border_left_style = BorderStyle::Solid);
     let bcolor = Color::from_rgba8(200, 0, 0, 255);
-    doc.node_mut(parent).style.border_top_color = StyleColor::Resolved(bcolor);
-    doc.node_mut(parent).style.border_right_color = StyleColor::Resolved(bcolor);
-    doc.node_mut(parent).style.border_bottom_color = StyleColor::Resolved(bcolor);
-    doc.node_mut(parent).style.border_left_color = StyleColor::Resolved(bcolor);
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(parent, |style| {
+        style.border_top_color = StyleColor::Resolved(bcolor)
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_right_color = StyleColor::Resolved(bcolor)
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_bottom_color = StyleColor::Resolved(bcolor)
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_left_color = StyleColor::Resolved(bcolor)
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, parent);
 
     add_colored_box(
@@ -2035,12 +2173,14 @@ fn overflow_scroll_with_nested_boxes() {
     let vp = setup_viewport(&mut doc);
 
     let scroll_box = doc.create_node(ElementTag::Div);
-    doc.node_mut(scroll_box).style.display = Display::Block;
-    doc.node_mut(scroll_box).style.width = Length::px(200.0);
-    doc.node_mut(scroll_box).style.height = Length::px(100.0);
-    doc.node_mut(scroll_box).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(scroll_box).style.overflow_y = Overflow::Scroll;
-    doc.node_mut(scroll_box).style.background_color = Color::from_rgba8(200, 200, 200, 255);
+    doc.update_resolved_style(scroll_box, |style| style.display = Display::Block);
+    doc.update_resolved_style(scroll_box, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(scroll_box, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(scroll_box, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(scroll_box, |style| style.overflow_y = Overflow::Scroll);
+    doc.update_resolved_style(scroll_box, |style| {
+        style.background_color = Color::from_rgba8(200, 200, 200, 255)
+    });
     doc.append_child(vp, scroll_box);
 
     add_colored_box(
@@ -2087,11 +2227,11 @@ fn overflow_auto_with_tall_content() {
     let vp = setup_viewport(&mut doc);
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(80.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Auto;
-    doc.node_mut(parent).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(80.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, parent);
 
     add_colored_box(
@@ -2142,12 +2282,14 @@ fn multiple_overflow_containers_stacked() {
 
     // Two stacked overflow:hidden containers
     let box1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(box1).style.display = Display::Block;
-    doc.node_mut(box1).style.width = Length::px(200.0);
-    doc.node_mut(box1).style.height = Length::px(80.0);
-    doc.node_mut(box1).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(box1).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(box1).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(box1, |style| style.display = Display::Block);
+    doc.update_resolved_style(box1, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(box1, |style| style.height = Length::px(80.0));
+    doc.update_resolved_style(box1, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(box1, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(box1, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, box1);
     add_colored_box(
         &mut doc,
@@ -2158,12 +2300,14 @@ fn multiple_overflow_containers_stacked() {
     );
 
     let box2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(box2).style.display = Display::Block;
-    doc.node_mut(box2).style.width = Length::px(200.0);
-    doc.node_mut(box2).style.height = Length::px(80.0);
-    doc.node_mut(box2).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(box2).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(box2).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(box2, |style| style.display = Display::Block);
+    doc.update_resolved_style(box2, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(box2, |style| style.height = Length::px(80.0));
+    doc.update_resolved_style(box2, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(box2, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(box2, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, box2);
     add_colored_box(
         &mut doc,
@@ -2198,12 +2342,14 @@ fn overflow_hidden_with_zero_dimension_element() {
     let vp = setup_viewport(&mut doc);
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, parent);
 
     // Zero-height child
@@ -2228,12 +2374,14 @@ fn overflow_hidden_with_bg_and_no_children() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(128, 128, 128, 255);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(128, 128, 128, 255)
+    });
     doc.append_child(vp, parent);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -2272,11 +2420,11 @@ fn overflow_hidden_child_partially_visible() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, parent);
 
     // First child takes 70px, second child 80px → 150px total, parent is 100px
@@ -2317,13 +2465,15 @@ fn overflow_hidden_with_max_height_combined() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
     // height: auto, max-height: 100px, overflow: hidden
-    doc.node_mut(parent).style.max_height = Length::px(100.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(parent).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(parent, |style| style.max_height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, parent);
 
     add_colored_box(
@@ -2352,12 +2502,14 @@ fn overflow_hidden_preserves_sibling_after_clipped_box() {
     let vp = setup_viewport(&mut doc);
 
     let hidden_box = doc.create_node(ElementTag::Div);
-    doc.node_mut(hidden_box).style.display = Display::Block;
-    doc.node_mut(hidden_box).style.width = Length::px(200.0);
-    doc.node_mut(hidden_box).style.height = Length::px(50.0);
-    doc.node_mut(hidden_box).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(hidden_box).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(hidden_box).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(hidden_box, |style| style.display = Display::Block);
+    doc.update_resolved_style(hidden_box, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(hidden_box, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(hidden_box, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(hidden_box, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(hidden_box, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(vp, hidden_box);
     add_colored_box(
         &mut doc,
@@ -2369,10 +2521,12 @@ fn overflow_hidden_preserves_sibling_after_clipped_box() {
 
     // Sibling after the overflow:hidden box
     let sibling = doc.create_node(ElementTag::Div);
-    doc.node_mut(sibling).style.display = Display::Block;
-    doc.node_mut(sibling).style.width = Length::px(200.0);
-    doc.node_mut(sibling).style.height = Length::px(50.0);
-    doc.node_mut(sibling).style.background_color = Color::from_rgba8(0, 0, 200, 255);
+    doc.update_resolved_style(sibling, |style| style.display = Display::Block);
+    doc.update_resolved_style(sibling, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(sibling, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(sibling, |style| {
+        style.background_color = Color::from_rgba8(0, 0, 200, 255)
+    });
     doc.append_child(vp, sibling);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -2426,15 +2580,17 @@ fn box_sizing_border_box_with_height_and_padding() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(200.0);
-    doc.node_mut(div).style.height = Length::px(100.0);
-    doc.node_mut(div).style.box_sizing = BoxSizing::BorderBox;
-    doc.node_mut(div).style.padding_top = Length::px(20.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(20.0);
-    doc.node_mut(div).style.padding_left = Length::px(20.0);
-    doc.node_mut(div).style.padding_right = Length::px(20.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(0, 200, 0, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.box_sizing = BoxSizing::BorderBox);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(20.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(0, 200, 0, 255)
+    });
     doc.append_child(vp, div);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();
@@ -2475,12 +2631,12 @@ fn overflow_hidden_parent_and_child_same_bg_color() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(200.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(parent).style.background_color = color;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.background_color = color);
     doc.append_child(vp, parent);
 
     add_colored_box(&mut doc, parent, 200.0, 200.0, color);
@@ -2504,19 +2660,21 @@ fn overflow_hidden_with_min_width_child() {
     let vp = setup_viewport(&mut doc);
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.width = Length::px(100.0);
-    doc.node_mut(parent).style.height = Length::px(100.0);
-    doc.node_mut(parent).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(parent).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(parent, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(parent, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, parent);
 
     // Child with min-width wider than parent
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.min_width = Length::px(300.0);
-    doc.node_mut(child).style.height = Length::px(50.0);
-    doc.node_mut(child).style.background_color = Color::from_rgba8(200, 0, 0, 255);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.min_width = Length::px(300.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(child, |style| {
+        style.background_color = Color::from_rgba8(200, 0, 0, 255)
+    });
     doc.append_child(parent, child);
 
     let mut s = render_to_surface(&doc, test_viewport()).unwrap();

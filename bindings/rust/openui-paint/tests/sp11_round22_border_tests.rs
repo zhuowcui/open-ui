@@ -46,45 +46,55 @@ fn has_non_white_pixels_in_region(surface: &mut Surface, x: i32, y: i32, w: i32,
     false
 }
 
-fn make_bordered_box(doc: &mut Document, style_fn: impl FnOnce(&mut ComputedStyle)) -> Fragment {
+fn make_bordered_box(
+    doc: &mut Document,
+    style_fn: impl FnOnce(&mut openui_style::ComputedStyleFields),
+) -> Fragment {
     let vp = doc.root();
     let div = doc.create_node(ElementTag::Div);
-    {
-        let s = &mut doc.node_mut(div).style;
-        s.display = Display::Block;
-        s.width = Length::px(60.0);
-        s.height = Length::px(60.0);
+    doc.update_resolved_style(div, |s| {
+        s.update_derived(|computed| computed.display = Display::Block);
+        s.update_derived(|computed| computed.width = Length::px(60.0));
+        s.update_derived(|computed| computed.height = Length::px(60.0));
         // 4px red border on all sides.
-        s.border_top_width = 4;
-        s.border_right_width = 4;
-        s.border_bottom_width = 4;
-        s.border_left_width = 4;
-        s.border_top_color = StyleColor::Resolved(Color {
-            r: 1.0,
-            g: 0.0,
-            b: 0.0,
-            a: 1.0,
+        s.update_derived(|computed| computed.border_top_width = 4);
+        s.update_derived(|computed| computed.border_right_width = 4);
+        s.update_derived(|computed| computed.border_bottom_width = 4);
+        s.update_derived(|computed| computed.border_left_width = 4);
+        s.update_derived(|computed| {
+            computed.border_top_color = StyleColor::Resolved(Color {
+                r: 1.0,
+                g: 0.0,
+                b: 0.0,
+                a: 1.0,
+            })
         });
-        s.border_right_color = StyleColor::Resolved(Color {
-            r: 1.0,
-            g: 0.0,
-            b: 0.0,
-            a: 1.0,
+        s.update_derived(|computed| {
+            computed.border_right_color = StyleColor::Resolved(Color {
+                r: 1.0,
+                g: 0.0,
+                b: 0.0,
+                a: 1.0,
+            })
         });
-        s.border_bottom_color = StyleColor::Resolved(Color {
-            r: 1.0,
-            g: 0.0,
-            b: 0.0,
-            a: 1.0,
+        s.update_derived(|computed| {
+            computed.border_bottom_color = StyleColor::Resolved(Color {
+                r: 1.0,
+                g: 0.0,
+                b: 0.0,
+                a: 1.0,
+            })
         });
-        s.border_left_color = StyleColor::Resolved(Color {
-            r: 1.0,
-            g: 0.0,
-            b: 0.0,
-            a: 1.0,
+        s.update_derived(|computed| {
+            computed.border_left_color = StyleColor::Resolved(Color {
+                r: 1.0,
+                g: 0.0,
+                b: 0.0,
+                a: 1.0,
+            })
         });
         style_fn(s);
-    }
+    });
     doc.append_child(vp, div);
 
     Fragment::new_box(
@@ -99,10 +109,10 @@ fn make_bordered_box(doc: &mut Document, style_fn: impl FnOnce(&mut ComputedStyl
 fn dashed_border_paints_something() {
     let mut doc = Document::new();
     let frag = make_bordered_box(&mut doc, |s| {
-        s.border_top_style = BorderStyle::Dashed;
-        s.border_right_style = BorderStyle::Dashed;
-        s.border_bottom_style = BorderStyle::Dashed;
-        s.border_left_style = BorderStyle::Dashed;
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Dashed);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Dashed);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Dashed);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Dashed);
     });
 
     let mut surface = make_surface(80, 80);
@@ -119,10 +129,10 @@ fn dashed_border_paints_something() {
 fn dotted_border_paints_something() {
     let mut doc = Document::new();
     let frag = make_bordered_box(&mut doc, |s| {
-        s.border_top_style = BorderStyle::Dotted;
-        s.border_right_style = BorderStyle::Dotted;
-        s.border_bottom_style = BorderStyle::Dotted;
-        s.border_left_style = BorderStyle::Dotted;
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Dotted);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Dotted);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Dotted);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Dotted);
     });
 
     let mut surface = make_surface(80, 80);
@@ -138,10 +148,10 @@ fn dotted_border_paints_something() {
 fn double_border_paints_something() {
     let mut doc = Document::new();
     let frag = make_bordered_box(&mut doc, |s| {
-        s.border_top_style = BorderStyle::Double;
-        s.border_right_style = BorderStyle::Double;
-        s.border_bottom_style = BorderStyle::Double;
-        s.border_left_style = BorderStyle::Double;
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Double);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Double);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Double);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Double);
     });
 
     let mut surface = make_surface(80, 80);
@@ -157,10 +167,10 @@ fn double_border_paints_something() {
 fn groove_border_paints_something() {
     let mut doc = Document::new();
     let frag = make_bordered_box(&mut doc, |s| {
-        s.border_top_style = BorderStyle::Groove;
-        s.border_right_style = BorderStyle::Groove;
-        s.border_bottom_style = BorderStyle::Groove;
-        s.border_left_style = BorderStyle::Groove;
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Groove);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Groove);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Groove);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Groove);
     });
 
     let mut surface = make_surface(80, 80);
@@ -176,10 +186,10 @@ fn groove_border_paints_something() {
 fn ridge_border_paints_something() {
     let mut doc = Document::new();
     let frag = make_bordered_box(&mut doc, |s| {
-        s.border_top_style = BorderStyle::Ridge;
-        s.border_right_style = BorderStyle::Ridge;
-        s.border_bottom_style = BorderStyle::Ridge;
-        s.border_left_style = BorderStyle::Ridge;
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Ridge);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Ridge);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Ridge);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Ridge);
     });
 
     let mut surface = make_surface(80, 80);
@@ -195,10 +205,10 @@ fn ridge_border_paints_something() {
 fn inset_border_paints_something() {
     let mut doc = Document::new();
     let frag = make_bordered_box(&mut doc, |s| {
-        s.border_top_style = BorderStyle::Inset;
-        s.border_right_style = BorderStyle::Inset;
-        s.border_bottom_style = BorderStyle::Inset;
-        s.border_left_style = BorderStyle::Inset;
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Inset);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Inset);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Inset);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Inset);
     });
 
     let mut surface = make_surface(80, 80);
@@ -214,10 +224,10 @@ fn inset_border_paints_something() {
 fn outset_border_paints_something() {
     let mut doc = Document::new();
     let frag = make_bordered_box(&mut doc, |s| {
-        s.border_top_style = BorderStyle::Outset;
-        s.border_right_style = BorderStyle::Outset;
-        s.border_bottom_style = BorderStyle::Outset;
-        s.border_left_style = BorderStyle::Outset;
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Outset);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Outset);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Outset);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Outset);
     });
 
     let mut surface = make_surface(80, 80);
@@ -233,10 +243,10 @@ fn outset_border_paints_something() {
 fn none_border_paints_nothing() {
     let mut doc = Document::new();
     let frag = make_bordered_box(&mut doc, |s| {
-        s.border_top_style = BorderStyle::None;
-        s.border_right_style = BorderStyle::None;
-        s.border_bottom_style = BorderStyle::None;
-        s.border_left_style = BorderStyle::None;
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::None);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::None);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::None);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::None);
     });
 
     let mut surface = make_surface(80, 80);
@@ -252,10 +262,10 @@ fn none_border_paints_nothing() {
 fn solid_border_still_works_after_refactor() {
     let mut doc = Document::new();
     let frag = make_bordered_box(&mut doc, |s| {
-        s.border_top_style = BorderStyle::Solid;
-        s.border_right_style = BorderStyle::Solid;
-        s.border_bottom_style = BorderStyle::Solid;
-        s.border_left_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
     });
 
     let mut surface = make_surface(80, 80);

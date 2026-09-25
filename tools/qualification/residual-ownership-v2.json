@@ -1,0 +1,37 @@
+{
+  "entries": [
+    {
+      "test_id": "wpt/css_flexbox/stretch-flex-item-radio-input",
+      "root_cause": "external-backend-discrepancy",
+      "owning_subsystem": "external",
+      "minimized_reproducer": {
+        "kind": "html-native-control-primitive",
+        "identity": "tools/qualification/reproducers/ganesh-radio-analytic-aa.html",
+        "sha256": "2a50ff63227a28d3062fac2d7e9b463eaea426ae89dfa14cc43844215de03c8b"
+      },
+      "evidence": {
+        "profile": "800x600@1",
+        "cpu_skia_mismatched_pixels": 90,
+        "cpu_skia_maximum_channel_delta": 2,
+        "ganesh_gl_mismatched_pixels": 588,
+        "ganesh_gl_maximum_channel_delta": 52,
+        "residual_sweep_profiles": 12,
+        "cpu_skia_residual_sweep": {
+          "exact": 1,
+          "different": 11,
+          "errors": 0,
+          "report_sha256": "66227a8f655f4015670159a1d7a6c818e04ea523cf07c8192ea54903283b2194"
+        },
+        "ganesh_gl_residual_sweep": {
+          "exact": 0,
+          "different": 12,
+          "errors": 0,
+          "report_sha256": "81c1ce1aa5a1d02c2a022df00bf4234074ef15b9fd75790cdab2f1712e7dce23"
+        }
+      }
+    }
+  ],
+  "qualification_status": "nonqualifying-external-backend-discrepancy",
+  "policy": "Every non-exact test requires a reviewed root cause, owner, and minimized reproducer. Test names and fixture keywords are not evidence.",
+  "schema_version": 2
+}

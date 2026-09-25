@@ -264,7 +264,10 @@ class TransactionalMulticolPorterTests(unittest.TestCase):
         generated = port_wpt.generate_rust_fn(
             'menu_uses_ua_block_display', parser.root, parser.html_styles
         )
-        self.assertIn('style.display = Display::Block;', generated)
+        self.assertIn(
+            'RendererStyleValue::Display(Display::Block)',
+            generated,
+        )
 
     def test_nonbreaking_space_is_not_pruned_as_source_whitespace(self):
         port_wpt.set_porter_profile(port_wpt.PorterProfile.DETERMINISTIC_AHEM)
@@ -337,8 +340,12 @@ class TransactionalMulticolPorterTests(unittest.TestCase):
         generated = port_wpt.generate_rust_fn(
             "inherited_widows_orphans", parser.root, parser.html_styles
         )
-        self.assertGreaterEqual(generated.count(".widows = 3_u32;"), 2)
-        self.assertGreaterEqual(generated.count(".orphans = 4_u32;"), 2)
+        self.assertGreaterEqual(
+            generated.count("RendererStyleValue::Widows(3_u32)"), 2
+        )
+        self.assertGreaterEqual(
+            generated.count("RendererStyleValue::Orphans(4_u32)"), 2
+        )
 
     def test_chained_adjacent_sibling_selector_keeps_full_specificity(self):
         siblings = [("span", [], ""), ("span", [], "")]
@@ -479,7 +486,9 @@ class TransactionalMulticolPorterTests(unittest.TestCase):
             "font_shorthand_inheritance", parser.root, parser.html_styles
         )
 
-        self.assertGreaterEqual(generated.count(".style.font_size = 20.0;"), 4)
+        self.assertGreaterEqual(
+            generated.count("RendererStyleValue::FontSize(20.0)"), 4
+        )
 
 
 class GenerationAndRunnerTests(unittest.TestCase):
@@ -523,10 +532,10 @@ class GenerationAndRunnerTests(unittest.TestCase):
         self.assertEqual(generated[0].rust_code, explicit[0].rust_code)
         self.assertTrue(changes)
 
-    def test_real_font_runner_profile_keeps_precedence(self):
-        env = runner.openui_environment(use_ahem_noaa=True, use_real_font=True)
-        self.assertEqual(env["OPENUI_EDGING"], "subpixel")
-        self.assertEqual(env["OPENUI_HINTING"], "slight")
+    def test_real_font_runner_environment_only_selects_pinned_library(self):
+        env = runner.openui_environment(use_real_font=True)
+        self.assertNotIn("OPENUI_EDGING", env)
+        self.assertNotIn("OPENUI_HINTING", env)
         self.assertTrue(
             env["LD_LIBRARY_PATH"].startswith(runner.REAL_FONT_FREETYPE_DIR + ":")
         )
@@ -541,6 +550,7 @@ class GenerationAndRunnerTests(unittest.TestCase):
             set(closure.LATER_EXACT_PROMOTIONS)
             | closure.sp19_live_promotions(mapping)
         )
+        candidate_promotions = closure.lowered_candidate_promotions(mapping)
         owned = {
             test_id
             for test_id, row in mapping.items()
@@ -548,14 +558,14 @@ class GenerationAndRunnerTests(unittest.TestCase):
         }
         self.assertEqual(
             owned,
-            set(residual_by_id) - live_promotions,
+            set(residual_by_id) - live_promotions - candidate_promotions,
         )
         self.assertEqual(len(closure.LATER_EXACT_PROMOTIONS), 80)
         for test_id in targets:
             self.assertEqual(mapping[test_id]["ported"], "yes")
         for test_id, item in residual_by_id.items():
             row = mapping[test_id]
-            if test_id in live_promotions:
+            if test_id in live_promotions | candidate_promotions:
                 self.assertEqual(row["ported"], "yes")
                 self.assertNotIn(
                     closure.OWNER,

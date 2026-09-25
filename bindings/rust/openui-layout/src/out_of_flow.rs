@@ -2148,8 +2148,36 @@ pub fn compute_shrink_to_fit_width(
     node_id: NodeId,
     available: LayoutUnit,
 ) -> LayoutUnit {
-    let intrinsic = compute_intrinsic_block_sizes(doc, node_id);
     let style = &doc.node(node_id).style;
+    let direction = style.direction.writing_direction(style.writing_mode);
+    let intrinsic = if direction.is_horizontal()
+        && style.height.is_fixed()
+        && crate::intrinsic_sizing::has_nested_block_dependent_replaced_descendant(doc, node_id)
+    {
+        let border = resolve_border(style);
+        let padding = resolve_padding(style, available);
+        let block_edges = border.top + border.bottom + padding.top + padding.bottom;
+        let specified = LayoutUnit::from_f32(style.height.value());
+        let border_box_block_size = if style.box_sizing == BoxSizing::BorderBox {
+            specified.max_of(block_edges)
+        } else {
+            specified + block_edges
+        };
+        let inline = crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+            doc,
+            node_id,
+            border_box_block_size,
+            available,
+        );
+        crate::intrinsic_sizing::IntrinsicSizes {
+            min_content_inline_size: inline.min,
+            max_content_inline_size: inline.max,
+            min_content_block_size: border_box_block_size,
+            max_content_block_size: border_box_block_size,
+        }
+    } else {
+        compute_intrinsic_block_sizes(doc, node_id)
+    };
     let preferred = if style.float != openui_style::Float::None
         && crate::multicol::ColumnLayoutAlgorithm::from_style(style).is_some()
         && (style.margin_left.is_percent() || style.margin_right.is_percent())
@@ -2178,8 +2206,8 @@ mod tests {
 
     fn make_abs_style() -> ComputedStyle {
         let mut s = ComputedStyle::initial();
-        s.display = Display::Block;
-        s.position = Position::Absolute;
+        s.update_derived(|computed| computed.display = Display::Block);
+        s.update_derived(|computed| computed.position = Position::Absolute);
         s
     }
 
@@ -2194,9 +2222,9 @@ mod tests {
     #[test]
     fn resolve_horizontal_all_specified() {
         let mut style = make_abs_style();
-        style.left = Length::px(10.0);
-        style.right = Length::px(20.0);
-        style.width = Length::px(100.0);
+        style.update_derived(|computed| computed.left = Length::px(10.0));
+        style.update_derived(|computed| computed.right = Length::px(20.0));
+        style.update_derived(|computed| computed.width = Length::px(100.0));
         let border = BoxStrut::zero();
         let padding = BoxStrut::zero();
         let stf_min = LayoutUnit::from_i32(800);
@@ -2218,11 +2246,11 @@ mod tests {
     #[test]
     fn resolve_horizontal_auto_margins_center() {
         let mut style = make_abs_style();
-        style.left = Length::px(0.0);
-        style.right = Length::px(0.0);
-        style.width = Length::px(200.0);
-        style.margin_left = Length::auto();
-        style.margin_right = Length::auto();
+        style.update_derived(|computed| computed.left = Length::px(0.0));
+        style.update_derived(|computed| computed.right = Length::px(0.0));
+        style.update_derived(|computed| computed.width = Length::px(200.0));
+        style.update_derived(|computed| computed.margin_left = Length::auto());
+        style.update_derived(|computed| computed.margin_right = Length::auto());
         let border = BoxStrut::zero();
         let padding = BoxStrut::zero();
         let stf_min = LayoutUnit::from_i32(800);
@@ -2248,9 +2276,9 @@ mod tests {
     #[test]
     fn resolve_vertical_all_specified() {
         let mut style = make_abs_style();
-        style.top = Length::px(50.0);
-        style.bottom = Length::px(30.0);
-        style.height = Length::px(200.0);
+        style.update_derived(|computed| computed.top = Length::px(50.0));
+        style.update_derived(|computed| computed.bottom = Length::px(30.0));
+        style.update_derived(|computed| computed.height = Length::px(200.0));
         let border = BoxStrut::zero();
         let padding = BoxStrut::zero();
         let (top, height, mt, mb) = resolve_vertical(
@@ -2271,8 +2299,8 @@ mod tests {
     #[test]
     fn resolve_vertical_auto_height() {
         let mut style = make_abs_style();
-        style.top = Length::px(10.0);
-        style.bottom = Length::px(20.0);
+        style.update_derived(|computed| computed.top = Length::px(10.0));
+        style.update_derived(|computed| computed.bottom = Length::px(20.0));
         // height is auto
         let border = BoxStrut::zero();
         let padding = BoxStrut::zero();
@@ -2375,10 +2403,10 @@ mod tests {
     #[test]
     fn physical_auto_margins_and_overconstraint_follow_axis_start() {
         let mut style = make_abs_style();
-        style.left = Length::px(0.0);
-        style.right = Length::px(0.0);
-        style.margin_left = Length::auto();
-        style.margin_right = Length::auto();
+        style.update_derived(|computed| computed.left = Length::px(0.0));
+        style.update_derived(|computed| computed.right = Length::px(0.0));
+        style.update_derived(|computed| computed.margin_left = Length::auto());
+        style.update_derived(|computed| computed.margin_right = Length::auto());
         let zero = BoxStrut::zero();
 
         for (auto_left, auto_right, expected_left, expected_ml, expected_mr) in [
@@ -2386,16 +2414,20 @@ mod tests {
             (true, false, 380, 380, 0),
             (false, true, 0, 0, 380),
         ] {
-            style.margin_left = if auto_left {
-                Length::auto()
-            } else {
-                Length::px(0.0)
-            };
-            style.margin_right = if auto_right {
-                Length::auto()
-            } else {
-                Length::px(0.0)
-            };
+            style.update_derived(|computed| {
+                computed.margin_left = if auto_left {
+                    Length::auto()
+                } else {
+                    Length::px(0.0)
+                }
+            });
+            style.update_derived(|computed| {
+                computed.margin_right = if auto_right {
+                    Length::auto()
+                } else {
+                    Length::px(0.0)
+                }
+            });
             let (left, _, ml, mr) = resolve_horizontal_with_known_width(
                 &style,
                 LayoutUnit::from_i32(500),
@@ -2412,8 +2444,8 @@ mod tests {
             assert_eq!(mr.to_i32(), expected_mr);
         }
 
-        style.margin_left = Length::px(10.0);
-        style.margin_right = Length::px(20.0);
+        style.update_derived(|computed| computed.margin_left = Length::px(10.0));
+        style.update_derived(|computed| computed.margin_right = Length::px(20.0));
         let (left, _, _, _) = resolve_horizontal_with_known_width(
             &style,
             LayoutUnit::from_i32(500),
@@ -2431,10 +2463,10 @@ mod tests {
     #[test]
     fn negative_vertical_auto_margins_remain_symmetric() {
         let mut style = make_abs_style();
-        style.top = Length::px(0.0);
-        style.bottom = Length::px(0.0);
-        style.margin_top = Length::auto();
-        style.margin_bottom = Length::auto();
+        style.update_derived(|computed| computed.top = Length::px(0.0));
+        style.update_derived(|computed| computed.bottom = Length::px(0.0));
+        style.update_derived(|computed| computed.margin_top = Length::auto());
+        style.update_derived(|computed| computed.margin_bottom = Length::auto());
         let zero = BoxStrut::zero();
 
         for start_is_top in [true, false] {

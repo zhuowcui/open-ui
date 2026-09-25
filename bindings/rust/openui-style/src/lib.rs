@@ -18,13 +18,15 @@ pub use color::{Color, StyleColor};
 pub use computed::{
     AspectRatio, BackgroundLayer, BackgroundPosition, BackgroundRepeat, BackgroundSize,
     BlockEllipsis, BorderImage, BorderImageLength, BorderImageRepeat, BoxShadow, ComputedStyle,
-    ConicGradient, CounterOperation, CounterStyle, CssImage, CssLinearGradient,
-    GeneratedContentItem, GradientColorSpace, GradientStop, GradientStopPosition, ImageResourceId,
-    LineClamp, LinearGradient, LinearGradientStop, PositionArea, QuotePair, RadialGradient,
-    RadialGradientShape, RadialGradientSize, WebkitBoxOrient,
+    ComputedStyleBuilder, ComputedStyleFields, ConicGradient, CounterOperation, CounterStyle,
+    CssImage, CssLinearGradient, GeneratedContentItem, GradientColorSpace, GradientStop,
+    GradientStopPosition, ImageResourceId, LineClamp, LinearGradient, LinearGradientStop,
+    PositionArea, QuotePair, RadialGradient, RadialGradientShape, RadialGradientSize,
+    WebkitBoxOrient,
 };
 pub use enums::*;
 pub use font_types::*;
 pub use layout_systems::*;
+pub use openui_geometry::Length;
 pub use property::*;
 pub use typography::*;

@@ -3378,6 +3378,128 @@ mod tests {
     }
 
     #[test]
+    fn c_font_metadata_matches_pinned_multiformat_fixtures() {
+        fn hash(hex: &str) -> [u8; 32] {
+            let mut result = [0_u8; 32];
+            for (index, byte) in result.iter_mut().enumerate() {
+                *byte = u8::from_str_radix(&hex[index * 2..index * 2 + 2], 16).unwrap();
+            }
+            result
+        }
+
+        let fixtures: &[(&str, &[u8], u32, &str)] = &[
+            (
+                "C certification TTF",
+                include_bytes!("../../openui-text/fonts/certification/fixture.ttf"),
+                OUI_FONT_CONTAINER_TTF,
+                "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+            ),
+            (
+                "C certification OTF",
+                include_bytes!("../../openui-text/fonts/certification/fixture.otf"),
+                OUI_FONT_CONTAINER_OTF,
+                "235f7207a202026a0a73c38c64713d58eace082bdf605f5abd2a28166fab61aa",
+            ),
+            (
+                "C certification WOFF",
+                include_bytes!("../../openui-text/fonts/certification/fixture.woff"),
+                OUI_FONT_CONTAINER_WOFF,
+                "4e0e5135fa60f01e456e74ea50af23537d39cfc7822ab01dfa499a6efd8544e0",
+            ),
+            (
+                "C certification WOFF2",
+                include_bytes!("../../openui-text/fonts/certification/fixture.woff2"),
+                OUI_FONT_CONTAINER_WOFF2,
+                "984e2d1e7062a65a5ac746f38520a9ce0e1058e33533bfddd243bb5cfba061d4",
+            ),
+            (
+                "C certification TTC",
+                include_bytes!("../../openui-text/fonts/certification/fixture.ttc"),
+                OUI_FONT_CONTAINER_COLLECTION,
+                "29456016c3d05578b3702eb38258f2872e82048c811ae7e5927406ec8048dc55",
+            ),
+            (
+                "C certification OTC",
+                include_bytes!("../../openui-text/fonts/certification/fixture.otc"),
+                OUI_FONT_CONTAINER_COLLECTION,
+                "d646722927f94b620e35e3ed3a99ad34e856b400dd2fb191a51d3d357a97d216",
+            ),
+        ];
+        let document = create_document(64, 64);
+        for (family, bytes, expected_format, expected_hash) in fixtures {
+            let descriptor = OuiFontFaceDescriptor {
+                struct_size: size_of::<OuiFontFaceDescriptor>() as u32,
+                abi_version: OUI_ABI_VERSION,
+                family: text(family),
+                face_index: 0,
+                style: OUI_FONT_FACE_STYLE_NORMAL,
+                style_min: 0.0,
+                style_max: 0.0,
+                weight_min: 400.0,
+                weight_max: 400.0,
+                stretch_min: 100.0,
+                stretch_max: 100.0,
+                unicode_ranges: ptr::null(),
+                unicode_range_count: 0,
+                feature_defaults: ptr::null(),
+                feature_default_count: 0,
+                size_adjust: 0.0,
+                ascent_override: 0.0,
+                descent_override: 0.0,
+                line_gap_override: 0.0,
+                flags: 0,
+                reserved: 0,
+            };
+            let mut face = ptr::null_mut();
+            assert_eq!(
+                oui_document_register_font(
+                    document,
+                    bytes.as_ptr(),
+                    bytes.len(),
+                    &descriptor,
+                    &mut face,
+                ),
+                OuiStatus::Ok,
+                "{family}",
+            );
+            let mut info = OuiFontFaceInfo {
+                struct_size: size_of::<OuiFontFaceInfo>() as u32,
+                abi_version: OUI_ABI_VERSION,
+                collection_id: 0,
+                face_id: 0,
+                collection_generation: 0,
+                byte_length: 0,
+                format: 0,
+                face_index: u32::MAX,
+                style: 0,
+                flags: 0,
+                style_min: 0.0,
+                style_max: 0.0,
+                weight_min: 0.0,
+                weight_max: 0.0,
+                stretch_min: 0.0,
+                stretch_max: 0.0,
+                size_adjust: 0.0,
+                ascent_override: 0.0,
+                descent_override: 0.0,
+                line_gap_override: 0.0,
+                family_length: 0,
+                unicode_range_count: 0,
+                feature_default_count: 0,
+                sha256: [0; 32],
+            };
+            assert_eq!(oui_font_face_get_info(face, &mut info), OuiStatus::Ok);
+            assert_eq!(info.format, *expected_format, "{family}");
+            assert_eq!(info.face_index, 0, "{family}");
+            assert_eq!(info.byte_length, bytes.len(), "{family}");
+            assert_eq!(info.sha256, hash(expected_hash), "{family}");
+            assert_eq!(oui_font_face_unregister(face), OuiStatus::Ok);
+            assert_eq!(oui_font_face_destroy(face), OuiStatus::Ok);
+        }
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
     fn c_animation_api_samples_controls_and_reports_events() {
         let document = create_document(100, 100);
         let mut root = ptr::null_mut();

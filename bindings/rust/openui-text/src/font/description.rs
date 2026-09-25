@@ -4,6 +4,7 @@
 //! This is the input to font resolution: it carries all CSS font properties
 //! needed to select and configure a typeface.
 
+use openui_geometry::RasterConfiguration;
 use openui_style::{
     FontFamilyList, FontFeature, FontKerning, FontLanguageOverride, FontOpticalSizing,
     FontOrientation, FontPalette, FontSizeAdjust, FontSmoothing, FontStretch, FontStyleEnum,
@@ -18,6 +19,10 @@ use openui_style::{
 /// the `FontCache` maps a `FontDescription` to a resolved `FontPlatformData`.
 #[derive(Debug, Clone)]
 pub struct FontDescription {
+    /// Immutable raster policy participating in font-instance identity.
+    pub raster_configuration: RasterConfiguration,
+    /// Device scale selects physical hinting/strike size, never layout size.
+    pub device_scale_factor: f64,
     /// Ordered list of font families (CSS `font-family`).
     pub family: FontFamilyList,
     /// Computed font size in pixels (CSS `font-size`, after cascade/inheritance).
@@ -103,6 +108,8 @@ impl FontDescription {
     /// Create a description with CSS initial values.
     pub fn new() -> Self {
         Self {
+            raster_configuration: RasterConfiguration::default(),
+            device_scale_factor: 1.0,
             family: FontFamilyList::default(),
             size: 16.0,
             specified_size: 16.0,
@@ -165,6 +172,8 @@ impl FontDescription {
             }
         };
         Self {
+            raster_configuration: style.raster_configuration,
+            device_scale_factor: style.device_scale_factor,
             family: style.font_family.clone(),
             size: adjusted_size,
             specified_size: style.font_size,
@@ -217,9 +226,10 @@ mod tests {
 
     #[test]
     fn percentage_text_size_adjust_changes_used_not_specified_size() {
-        let mut style = openui_style::ComputedStyle::initial();
-        style.font_size = 20.0;
-        style.text_size_adjust = TextSizeAdjust::Percentage(150.0);
+        let style = openui_style::ComputedStyle::initial().derive(|style| {
+            style.font_size = 20.0;
+            style.text_size_adjust = TextSizeAdjust::Percentage(150.0);
+        });
         let description = FontDescription::from_computed_style(&style);
         assert_eq!(description.specified_size, 20.0);
         assert_eq!(description.size, 30.0);
@@ -227,9 +237,10 @@ mod tests {
 
     #[test]
     fn none_text_size_adjust_preserves_used_size() {
-        let mut style = openui_style::ComputedStyle::initial();
-        style.font_size = 20.0;
-        style.text_size_adjust = TextSizeAdjust::None;
+        let style = openui_style::ComputedStyle::initial().derive(|style| {
+            style.font_size = 20.0;
+            style.text_size_adjust = TextSizeAdjust::None;
+        });
         let description = FontDescription::from_computed_style(&style);
         assert_eq!(description.size, 20.0);
     }

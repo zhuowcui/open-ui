@@ -4,6 +4,9 @@
 //! Each instance owns an `SkTypeface`, a configured `SkFont`, and pre-computed
 //! `FontMetrics` for the resolved size.
 
+use openui_geometry::{
+    physical_font_size, RasterConfiguration, TextEdging, TextHinting, TextRasterConfiguration,
+};
 use skia_safe::{
     font_style::Slant as SkSlant, Font as SkFont, FontHinting, FontMetrics as SkFontMetrics,
     FontStyle as SkFontStyle, GlyphId, Rect, Typeface,
@@ -107,27 +110,56 @@ fn read_i16(data: &[u8], offset: usize) -> Option<i16> {
 }
 
 fn resolve_hinting(
-    requested_hinting: Option<&str>,
-    requested_edging: Option<&str>,
-    is_ahem: bool,
+    requested_hinting: TextHinting,
+    requested_edging: TextEdging,
+    family_name: &str,
     size: f32,
+    device_scale_factor: f64,
 ) -> FontHinting {
+    let is_ahem = family_name.eq_ignore_ascii_case("Ahem");
+    let computed_size = size / device_scale_factor as f32;
+    // The unit-scale 20px proportional strike is light-fitted by the pinned
+    // Chromium font profile. Its unhinted outline moves the first ink row,
+    // while a 20px physical strike reached from a fractional device scale
+    // follows the unfitted policy.
+    let unit_scale_20px_strike =
+        (device_scale_factor - 1.0).abs() <= f64::EPSILON && (computed_size - 20.0).abs() <= 1.0e-4;
     match requested_hinting {
         // Chromium's Fontconfig `hinting=false` path still grid-fits the
         // aliased 8px Ahem face. Skia's direct API needs slight hinting to
         // reproduce those glyph bounds, while larger Ahem sizes remain truly
         // unhinted. Select by face and computed size, not by test identity.
-        Some("none") if requested_edging == Some("alias") && is_ahem && size <= 8.0 => {
+        TextHinting::None if requested_edging == TextEdging::Alias && is_ahem && size <= 8.0 => {
             FontHinting::Slight
         }
         // Chromium also grid-fits glyphs supplied by a fallback face (for
         // example arrows absent from Ahem) before applying the same aliased
         // coverage threshold.
-        Some("none") if requested_edging == Some("alias") && !is_ahem => FontHinting::Slight,
-        Some("none") => FontHinting::None,
-        Some("normal") => FontHinting::Normal,
-        Some("full") => FontHinting::Full,
-        _ => FontHinting::Slight,
+        TextHinting::None if requested_edging == TextEdging::Alias && !is_ahem => {
+            FontHinting::Slight
+        }
+        TextHinting::None => FontHinting::None,
+        // Chromium asks Fontconfig for render parameters for every resolved
+        // family and physical strike. The pinned proportional Sans/Serif
+        // faces are generally returned without outline fitting, while the
+        // exact 16px and 24px strikes remain lightly fitted. The pinned
+        // monospace face keeps light fitting at every strike. Preserve those
+        // family/strike distinctions instead of applying one global SkFont
+        // hinting mode to all document-owned fonts.
+        TextHinting::Slight
+            if requested_edging == TextEdging::SubpixelAntiAlias
+                && (family_name.eq_ignore_ascii_case("DejaVu Sans")
+                    || family_name.eq_ignore_ascii_case("DejaVu Serif"))
+                && (computed_size >= 16.0 || device_scale_factor > 1.0)
+                && (size - 16.0).abs() > 1.0e-4
+                && (size - 24.0).abs() > 1.0e-4
+                && !unit_scale_20px_strike =>
+        {
+            FontHinting::None
+        }
+        TextHinting::Slight => FontHinting::Slight,
+        TextHinting::Normal => FontHinting::Normal,
+        TextHinting::Full => FontHinting::Full,
     }
 }
 
@@ -190,6 +222,8 @@ impl FontPlatformData {
             native_control_text,
             embedded_document_text,
             native_button_text_metrics,
+            RasterConfiguration::default(),
+            1.0,
             ResolvedFontConfiguration {
                 allow_synthetic_weight: true,
                 allow_synthetic_style: true,
@@ -206,6 +240,8 @@ impl FontPlatformData {
         native_control_text: bool,
         embedded_document_text: bool,
         native_button_text_metrics: bool,
+        raster_configuration: RasterConfiguration,
+        device_scale_factor: f64,
         configuration: ResolvedFontConfiguration,
     ) -> Self {
         // Font matching may return a regular face when a family has no bold
@@ -220,10 +256,6 @@ impl FontPlatformData {
         }
         let mut sk_font = SkFont::from_typeface(&typeface, size);
         sk_font.set_embolden(synthetic_bold);
-        // SP14 parity experiment: allow overriding rasterization settings via env
-        // vars so we can match headless Chromium without recompiling per combo.
-        // OPENUI_SUBPIXEL=0/1, OPENUI_HINTING=none/slight/normal/full,
-        // OPENUI_EDGING=alias/aa/subpixel, OPENUI_AUTOHINT=0/1, OPENUI_FORCE_AA=0/1.
         let family_name = typeface.family_name();
         let deterministic_aliased_face = [
             "Ahem",
@@ -240,62 +272,41 @@ impl FontPlatformData {
         // still receives Chromium's ordinary LCD/subpixel raster policy.
         let escapes_aliased_profile = !native_control_text
             && !embedded_document_text
-            && std::env::var("OPENUI_EDGING").ok().as_deref() == Some("alias")
+            && raster_configuration.author_text.edging == TextEdging::Alias
             && !deterministic_aliased_face;
-        let subpixel = native_control_text
-            || embedded_document_text
-            || escapes_aliased_profile
-            || (!native_button_text_metrics
-                && std::env::var("OPENUI_SUBPIXEL").ok().as_deref() != Some("0"));
+        let settings = if native_control_text {
+            raster_configuration.native_text
+        } else if embedded_document_text {
+            raster_configuration.embedded_text
+        } else if escapes_aliased_profile {
+            TextRasterConfiguration::chromium_lcd()
+        } else {
+            raster_configuration.author_text
+        };
+        let subpixel = settings.subpixel_positioning && !native_button_text_metrics;
         sk_font.set_subpixel(subpixel);
-        let requested_hinting = if native_control_text {
-            std::env::var("OPENUI_NATIVE_HINTING")
-                .ok()
-                .or_else(|| Some("slight".to_string()))
-        } else if escapes_aliased_profile {
-            Some("slight".to_string())
-        } else {
-            std::env::var("OPENUI_HINTING").ok()
-        };
-        let requested_edging = if native_control_text {
-            std::env::var("OPENUI_NATIVE_EDGING")
-                .ok()
-                .or_else(|| Some("subpixel".to_string()))
-        } else if escapes_aliased_profile {
-            Some("subpixel".to_string())
-        } else {
-            std::env::var("OPENUI_EDGING").ok()
-        };
-        let is_ahem = family_name.eq_ignore_ascii_case("Ahem");
         let hinting = resolve_hinting(
-            requested_hinting.as_deref(),
-            requested_edging.as_deref(),
-            is_ahem,
-            size,
+            settings.hinting,
+            settings.edging,
+            family_name.as_str(),
+            physical_font_size(size, device_scale_factor),
+            device_scale_factor,
         );
         sk_font.set_hinting(hinting);
         sk_font.set_linear_metrics(subpixel);
         sk_font.set_embedded_bitmaps(true);
-        match requested_edging.as_deref() {
-            Some("alias") => {
+        match settings.edging {
+            TextEdging::Alias => {
                 sk_font.set_edging(skia_safe::font::Edging::Alias);
             }
-            Some("subpixel") => {
+            TextEdging::SubpixelAntiAlias => {
                 sk_font.set_edging(skia_safe::font::Edging::SubpixelAntiAlias);
             }
-            Some("aa") => {
+            TextEdging::AntiAlias => {
                 sk_font.set_edging(skia_safe::font::Edging::AntiAlias);
             }
-            _ => {}
         }
-        if std::env::var("OPENUI_AUTOHINT").ok().as_deref() == Some("1") {
-            sk_font.set_force_auto_hinting(true);
-        }
-        if native_control_text {
-            sk_font.set_force_auto_hinting(
-                std::env::var("OPENUI_NATIVE_AUTOHINT").ok().as_deref() == Some("1"),
-            );
-        }
+        sk_font.set_force_auto_hinting(settings.force_autohint);
 
         // Apply synthetic oblique via skew if angle is non-zero.
         if oblique_angle != 0.0 {
@@ -493,11 +504,113 @@ mod tests {
     #[test]
     fn aliased_ahem_hinting_tracks_computed_font_size() {
         assert_eq!(
-            resolve_hinting(Some("none"), Some("alias"), true, 8.0),
+            resolve_hinting(TextHinting::None, TextEdging::Alias, "Ahem", 8.0, 1.0),
             FontHinting::Slight
         );
         assert_eq!(
-            resolve_hinting(Some("none"), Some("alias"), true, 10.0),
+            resolve_hinting(TextHinting::None, TextEdging::Alias, "Ahem", 10.0, 1.0),
+            FontHinting::None
+        );
+        // An 8 CSS-pixel face at 2x selects the 16 physical-pixel strike; it
+        // must not take the special 8px grid-fit path.
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::None,
+                TextEdging::Alias,
+                "Ahem",
+                physical_font_size(8.0, 2.0),
+                2.0,
+            ),
+            FontHinting::None
+        );
+    }
+
+    #[test]
+    fn author_lcd_light_hinting_is_immutable_across_device_scales() {
+        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+            assert_eq!(
+                resolve_hinting(
+                    TextHinting::Slight,
+                    TextEdging::SubpixelAntiAlias,
+                    "DejaVu Sans Mono",
+                    16.0 * scale as f32,
+                    scale,
+                ),
+                FontHinting::Slight
+            );
+        }
+    }
+
+    #[test]
+    fn chromium_lcd_hinting_tracks_pinned_fontconfig_family_policy() {
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans",
+                20.0,
+                1.0,
+            ),
+            FontHinting::Slight
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans",
+                20.0,
+                1.25,
+            ),
+            FontHinting::None
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Serif",
+                20.0,
+                1.25,
+            ),
+            FontHinting::None
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans Mono",
+                20.0,
+                1.25,
+            ),
+            FontHinting::Slight
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans",
+                30.0,
+                1.25,
+            ),
+            FontHinting::None
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans",
+                24.0,
+                1.0,
+            ),
+            FontHinting::Slight
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans",
+                12.5,
+                1.25,
+            ),
             FontHinting::None
         );
     }

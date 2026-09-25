@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import contextlib
+import base64
 import csv
 import io
 import json
@@ -61,7 +62,9 @@ class TextPorterTests(unittest.TestCase):
         self.assertNotIn("alpha", rust)
         self.assertNotIn("alpha", template)
         self.assertNotIn(port_wpt.TEXT_TEMPLATE_OVERRIDE, template)
-        self.assertNotIn("doc.node_mut(vp).style.display = Display::Block", rust)
+        self.assertNotIn(
+            "doc.set_style(vp, RendererStyleValue::Display(Display::Block))", rust
+        )
 
     def test_nested_whitespace_entities_break_and_inherited_text_styles(self):
         path = self.html(
@@ -79,26 +82,29 @@ class TextPorterTests(unittest.TestCase):
 
         self.assertIn(port_wpt.DETERMINISTIC_FONT_FAMILY_RUST, rust)
         self.assertIn(
-            'doc.node_mut(vp).style.font_family = '
-            + port_wpt.DETERMINISTIC_FONT_FAMILY_RUST,
+            'doc.set_style(vp, RendererStyleValue::FontFamily('
+            + port_wpt.DETERMINISTIC_FONT_FAMILY_RUST
+            + '));',
             rust,
         )
-        self.assertNotIn("doc.node_mut(vp).style.display = Display::Block", rust)
+        self.assertNotIn(
+            "doc.set_style(vp, RendererStyleValue::Display(Display::Block))", rust
+        )
         self.assertIn(
-            "doc.node_mut(vp).style.list_style_type = ListStyleType::None",
+            "doc.set_style(vp, RendererStyleValue::ListStyleType(ListStyleType::None))",
             rust,
         )
         self.assertIn(
-            "style.list_style_type = ListStyleType::None",
+            "RendererStyleValue::ListStyleType(ListStyleType::None)",
             rust,
         )
-        self.assertIn("font_size = 20.0", rust)
-        self.assertIn("color = Color::from_rgba8(255, 0, 0, 255)", rust)
-        self.assertIn("white_space = WhiteSpace::PreWrap", rust)
-        self.assertIn("line_height = LineHeight::Number(1.0)", rust)
-        self.assertIn("text_transform = TextTransform::Uppercase", rust)
-        self.assertIn("letter_spacing = 2.0", rust)
-        self.assertIn("word_spacing = 3.0", rust)
+        self.assertIn("RendererStyleValue::FontSize(20.0)", rust)
+        self.assertIn("RendererStyleValue::Color(Color::from_rgba8(255, 0, 0, 255))", rust)
+        self.assertIn("RendererStyleValue::WhiteSpace(WhiteSpace::PreWrap)", rust)
+        self.assertIn("RendererStyleValue::LineHeight(LineHeight::Number(1.0))", rust)
+        self.assertIn("RendererStyleValue::TextTransform(TextTransform::Uppercase)", rust)
+        self.assertIn("RendererStyleValue::LetterSpacing(2.0)", rust)
+        self.assertIn("RendererStyleValue::WordSpacing(3.0)", rust)
         self.assertIn('Some("alpha &  ".to_string())', rust)
         self.assertIn('Some(" beta".to_string())', rust)
         self.assertEqual(rust.count("ElementTag::Break"), 1)
@@ -174,14 +180,14 @@ class TextPorterTests(unittest.TestCase):
         # The child receives the parent's two explicit corners and zero for
         # the other computed longhands. Percentages resolve on the child box.
         self.assertGreaterEqual(
-            rust.count("border_top_left_radius = (20.0_f32, 25.0_f32)"), 2
+            rust.count("RendererStyleValue::BorderTopLeftRadius((20.0_f32, 25.0_f32))"), 2
         )
         self.assertGreaterEqual(
-            rust.count("border_bottom_right_radius = (26.666666666666664_f32, 48.0_f32)"),
+            rust.count("RendererStyleValue::BorderBottomRightRadius((26.666666666666664_f32, 48.0_f32))"),
             2,
         )
-        self.assertIn("border_top_right_radius = (0.0_f32, 0.0_f32)", rust)
-        self.assertIn("border_bottom_left_radius = (0.0_f32, 0.0_f32)", rust)
+        self.assertIn("RendererStyleValue::BorderTopRightRadius((0.0_f32, 0.0_f32))", rust)
+        self.assertIn("RendererStyleValue::BorderBottomLeftRadius((0.0_f32, 0.0_f32))", rust)
 
         shorthand = self.html(
             """<!doctype html><body><div style="border-radius:20% 25px">
@@ -192,10 +198,10 @@ class TextPorterTests(unittest.TestCase):
         parser = port_wpt.parse_wpt_html(str(shorthand))
         rust = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
         self.assertGreaterEqual(
-            rust.count("border_top_left_radius = (20.0_f32, 20.0_f32)"), 2
+            rust.count("RendererStyleValue::BorderTopLeftRadius((20.0_f32, 20.0_f32))"), 2
         )
         self.assertGreaterEqual(
-            rust.count("border_radius_percent[0] = (true, true)"), 1
+            rust.count("RendererStyleValue::BorderRadiusPercent([(true, true)"), 1
         )
 
     def test_display_contents_reparents_text_without_painting_a_box(self):
@@ -213,12 +219,12 @@ class TextPorterTests(unittest.TestCase):
         # custom-property boundaries remain observable. Layout, rather than
         # the porter, suppresses its principal box and border painting.
         self.assertIn("Display::Contents", rust)
-        self.assertIn("border_top_width = 10", rust)
+        self.assertIn("RendererStyleValue::BorderTopWidth(10)", rust)
         self.assertIn('Some("P".to_string())', rust)
         self.assertIn('Some("A".to_string())', rust)
         self.assertIn('Some("SS".to_string())', rust)
-        self.assertGreaterEqual(rust.count("font_size = 20.0"), 3)
-        self.assertGreaterEqual(rust.count("color = Color::BLUE"), 3)
+        self.assertGreaterEqual(rust.count("RendererStyleValue::FontSize(20.0)"), 3)
+        self.assertGreaterEqual(rust.count("RendererStyleValue::Color(Color::BLUE)"), 3)
 
     def test_flex_inter_element_whitespace_does_not_become_an_item(self):
         path = self.html(
@@ -245,16 +251,16 @@ class TextPorterTests(unittest.TestCase):
         parser = port_wpt.parse_wpt_html(str(path))
         rust = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
 
-        self.assertIn("font_size = 32.0", rust)
-        self.assertIn("height = Length::px(128.0)", rust)
+        self.assertIn("RendererStyleValue::FontSize(32.0)", rust)
+        self.assertIn("RendererStyleValue::Height(Length::px(128.0))", rust)
 
         # The UA compatibility path is text-mode-only.
         port_wpt.EMIT_TEXT_NODES = False
         port_wpt.RETAIN_TEXT = False
         parser = port_wpt.parse_wpt_html(str(path))
         legacy = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
-        self.assertNotIn("font_size = 32.0", legacy)
-        self.assertIn("height = Length::px(64.0)", legacy)
+        self.assertNotIn("RendererStyleValue::FontSize(32.0)", legacy)
+        self.assertIn("RendererStyleValue::Height(Length::px(64.0))", legacy)
 
     def test_real_font_heading_ua_size_wins_over_inherited_size(self):
         port_wpt.set_porter_profile(
@@ -270,9 +276,9 @@ class TextPorterTests(unittest.TestCase):
         rust = port_wpt.generate_rust_fn(
             "real_font_heading_ua_size", parser.root, parser.html_styles
         )
-        h1_start = rust.index("style.column_span = ColumnSpan::All")
-        h1_prefix = rust[max(0, h1_start - 800):h1_start]
-        self.assertIn("style.font_size = 32.0", h1_prefix)
+        h1_start = rust.index("RendererStyleValue::ColumnSpan(ColumnSpan::All)")
+        h1_prefix = rust[max(0, h1_start - 2000):h1_start]
+        self.assertIn("RendererStyleValue::FontSize(32.0)", h1_prefix)
 
     def test_clearing_break_emits_semantic_zero_height_break(self):
         path = self.html(
@@ -284,8 +290,8 @@ class TextPorterTests(unittest.TestCase):
         parser = port_wpt.parse_wpt_html(str(path))
         rust = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
         self.assertIn("ElementTag::Break", rust)
-        self.assertIn("clear = Clear::Both", rust)
-        self.assertNotIn("height = Length::px(16.0)", rust)
+        self.assertIn("RendererStyleValue::Clear(Clear::Both)", rust)
+        self.assertNotIn("RendererStyleValue::Height(Length::px(16.0))", rust)
 
 
 class SpliceTransactionTests(unittest.TestCase):
@@ -303,14 +309,14 @@ class SpliceTransactionTests(unittest.TestCase):
             "<!doctype html><body><div>sample text</div></body>", encoding="utf-8"
         )
         (self.rust_dir / "wpt_demo.rs").write_text(
-            "fn demo_sample() -> Document {\n"
+            "fn demo_sample(viewport: ViewportMetrics) -> Result<Engine, EngineError> {\n"
             "    let literal = \"} retained source brace\";\n"
-            "    old_doc(literal)\n"
+            "    old_engine(viewport, literal)\n"
             "}\n\n"
-            "pub fn demo_registry() -> Vec<(&'static str, fn() -> Document)> {\n"
+            "pub fn demo_registry() -> Vec<(&'static str, fn(ViewportMetrics) -> Result<Engine, EngineError>)> {\n"
             "    vec![(\n"
             "        \"wpt/demo/sample\",\n"
-            "        demo_sample as fn() -> Document\n"
+            "        demo_sample as fn(ViewportMetrics) -> Result<Engine, EngineError>\n"
             "    )]\n"
             "}\n",
             encoding="utf-8",
@@ -401,6 +407,44 @@ class SpliceTransactionTests(unittest.TestCase):
         self.assertEqual(once, self.snapshot())
         self.assertEqual(json.loads(self.manifest.read_text()), ["wpt/demo/sample"])
 
+    def test_preserve_templates_regenerates_from_frozen_markup_and_font_order(self):
+        frozen = (
+            "<div>frozen<br>fixture</div>"
+            '<style style="display:none!important">body, body * {'
+            ' font-family: Ahem, "DejaVu Sans" !important; }</style>'
+        )
+        template_paths = [
+            self.template_dir / "all_wpt_templates.json",
+            self.template_dir / "wpt_demo_templates.json",
+        ]
+        for path in template_paths:
+            path.write_text(
+                json.dumps({"wpt/demo/sample": frozen}, indent=2) + "\n",
+                encoding="utf-8",
+            )
+        template_before = {path: path.read_bytes() for path in template_paths}
+
+        generated, originals, changes = splice_text_port.prepare_changes(
+            ["wpt/demo/sample"],
+            self.mapping,
+            preserve_templates=True,
+        )
+
+        self.assertEqual(len(generated), 1)
+        rust = generated[0].rust_code
+        self.assertIn("ElementTag::Break", rust)
+        self.assertIn("frozen", rust)
+        self.assertNotIn("sample text", rust)
+        self.assertIn('FontFamily::Named("DejaVu Sans".to_string())', rust)
+        self.assertNotIn('FontFamily::Named("Droid Sans Fallback".to_string())', rust)
+        self.assertTrue(all(str(path) not in changes for path in template_paths))
+
+        splice_text_port.commit_changes(originals, changes)
+        self.assertEqual(
+            template_before,
+            {path: path.read_bytes() for path in template_paths},
+        )
+
     def test_surgical_report_update_preserves_untouched_crlf_records(self):
         report = self.template_dir / "wpt_demo_report.csv"
         report.write_bytes(
@@ -423,12 +467,13 @@ class SpliceTransactionTests(unittest.TestCase):
         splice_text_port.commit_changes(originals, changes)
 
         rust = (self.rust_dir / "wpt_demo.rs").read_text(encoding="utf-8")
-        self.assertEqual(rust.count("fn demo_added() -> Document"), 1)
+        self.assertEqual(
+            rust.count("fn demo_added(viewport: ViewportMetrics) -> Result<Engine, EngineError>"),
+            1,
+        )
         self.assertEqual(rust.count(f'"{added}"'), 1)
         self.assertNotIn("vec![\n\n", rust)
-        self.assertIn(
-            f'("{added}", demo_added as fn() -> Document)', rust
-        )
+        self.assertIn("demo_added as fn(ViewportMetrics) -> Result<Engine, EngineError>", rust)
         for filename in ("all_wpt_templates.json", "wpt_demo_templates.json"):
             templates = json.loads((self.template_dir / filename).read_text())
             self.assertIn(added, templates)
@@ -647,16 +692,37 @@ class RunnerScopeTests(unittest.TestCase):
         self.assertIn('<style style="display:none!important">', document)
         self.assertEqual(document.count(run_all_pixel_comparisons.BODY_STYLE), 1)
 
-    def test_openui_alias_mode_is_only_added_for_manifest_opt_in(self):
+    def test_final_state_directives_set_attributes_and_scroll_without_leaking(self):
+        def directive(name, value):
+            payload = base64.urlsafe_b64encode(
+                json.dumps(value, separators=(",", ":")).encode()
+            ).decode()
+            return f"<!--OPENUI_{name}:{payload}-->\n"
+
+        template = (
+            directive("FINAL_HTML_ATTRS", {"class": "root"})
+            + directive("FINAL_BODY_ATTRS", {"data-state": "ready"})
+            + directive(
+                "FINAL_SCROLLS",
+                [{"marker": "0", "left": 4.0, "top": 12.0}],
+            )
+            + '<div data-openui-final-scroll="0"></div>'
+        )
+        document = run_all_pixel_comparisons.build_html_document(template)
+        self.assertIn('<html class="root">', document)
+        self.assertIn('<body data-state="ready">', document)
+        self.assertIn("n.scrollTop=s.top}}</script>", document)
+        self.assertNotIn("n.scrollTop=s.top}}}</script>", document)
+        self.assertNotIn("OPENUI_FINAL", document)
+
+    def test_openui_raster_policy_is_not_taken_from_the_environment(self):
         with mock.patch.dict(
             os.environ, {"PATH": os.environ.get("PATH", "")}, clear=True
         ):
             ordinary = run_all_pixel_comparisons.openui_environment(False)
-            text_ported = run_all_pixel_comparisons.openui_environment(True)
         self.assertNotIn("OPENUI_EDGING", ordinary)
-        self.assertEqual(text_ported["OPENUI_EDGING"], "alias")
-        self.assertEqual(text_ported["OPENUI_SUBPIXEL"], "0")
-        self.assertEqual(text_ported["OPENUI_HINTING"], "none")
+        self.assertNotIn("OPENUI_SUBPIXEL", ordinary)
+        self.assertNotIn("OPENUI_HINTING", ordinary)
 
 
 class TextClosureLedgerTests(unittest.TestCase):

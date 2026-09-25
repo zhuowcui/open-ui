@@ -66,11 +66,7 @@ fn configure_line_breaker(
             || style.text_wrap == openui_style::TextWrap::Balance
             || space.line_clamp_context.is_some(),
     );
-    breaker.set_hyphenation(
-        style.hyphens,
-        style.hyphenate_limit_chars,
-        locale,
-    );
+    breaker.set_hyphenation(style.hyphens, style.hyphenate_limit_chars, locale);
 }
 
 fn effective_locale<'a>(
@@ -104,13 +100,7 @@ fn line_count_at_width(
     locale: Option<&str>,
 ) -> usize {
     let mut breaker = LineBreaker::new(items_data, containing_width);
-    configure_line_breaker(
-        &mut breaker,
-        style,
-        space,
-        first_float_text_offset,
-        locale,
-    );
+    configure_line_breaker(&mut breaker, style, space, first_float_text_offset, locale);
     let mut count = 0;
     while !breaker.is_finished() && count <= 7 {
         if breaker.next_line(line_width).is_none() {
@@ -719,6 +709,13 @@ fn inline_block_last_line_baseline(doc: &Document, fragment: &Fragment) -> Optio
         }
     }
     for child in fragment.children.iter().rev() {
+        // A block-in-inline reconstruction may place a synthetic anonymous
+        // line around a block that owns the actual last in-flow line box.
+        // Prefer that descendant baseline; the wrapper's synthesized atomic
+        // baseline is only a fallback when no deeper line exists.
+        if let Some(baseline) = inline_block_last_line_baseline(doc, child) {
+            return Some(child.offset.top + baseline);
+        }
         if child.node_id.is_none() {
             if let Some(baseline) = child.last_baseline.or(child.first_baseline) {
                 return Some(child.offset.top + baseline);
@@ -729,9 +726,6 @@ fn inline_block_last_line_baseline(doc: &Document, fragment: &Fragment) -> Optio
             if child.kind == FragmentKind::Box && child.baseline_offset > 0.0 {
                 return Some(child.offset.top + LayoutUnit::from_f32(child.baseline_offset));
             }
-        }
-        if let Some(baseline) = inline_block_last_line_baseline(doc, child) {
-            return Some(child.offset.top + baseline);
         }
     }
     None
@@ -1766,13 +1760,7 @@ pub fn inline_layout_from_items(
     });
     let mut first_line_breaker = first_line_items_data.as_ref().map(|data| {
         let mut breaker = LineBreaker::new(data, available_inline_size);
-        configure_line_breaker(
-            &mut breaker,
-            style,
-            space,
-            first_float_text_offset,
-            locale,
-        );
+        configure_line_breaker(&mut breaker, style, space, first_float_text_offset, locale);
         breaker
     });
 
@@ -5201,7 +5189,6 @@ fn create_line_box(
                     percentage_base,
                     space.percentage_resolution_block_size,
                 );
-
                 let containing_inline = inline_box_record_stack.iter().rev().find_map(|index| {
                     let inline_box = &inline_boxes[*index];
                     items_data.styles[inline_box.style_index]
@@ -5350,6 +5337,7 @@ fn create_line_box(
             ellipsis_fragment.offset =
                 PhysicalOffset::new(text_align_offset + physical_text_indent, ellipsis_top);
             ellipsis_fragment.inherited_style = Some(block_style.clone());
+            ellipsis_fragment.is_line_clamp_marker = line_info.ellipsis_is_line_clamp;
             ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
             ellipsis_fragment.text_run_orientation =
                 resolve_text_run_orientation(block_style, ellipsis_text);
@@ -5374,6 +5362,7 @@ fn create_line_box(
                 ellipsis_top,
             );
             ellipsis_fragment.inherited_style = Some(block_style.clone());
+            ellipsis_fragment.is_line_clamp_marker = line_info.ellipsis_is_line_clamp;
             ellipsis_fragment.baseline_offset = (baseline - ellipsis_top).to_f32();
             ellipsis_fragment.text_run_orientation =
                 resolve_text_run_orientation(block_style, ellipsis_text);
@@ -5614,6 +5603,7 @@ fn apply_text_overflow_ellipsis(
         "\u{2026}",
         false,
         false,
+        false,
     );
 }
 
@@ -5662,6 +5652,7 @@ fn apply_ellipsis_marker(
     items_data: &InlineItemsData,
     block_style: &ComputedStyle,
     marker: &str,
+    is_line_clamp: bool,
     force: bool,
     prefer_soft_wrap: bool,
 ) {
@@ -5777,6 +5768,7 @@ fn apply_ellipsis_marker(
         line_info.used_width = LayoutUnit::zero();
         line_info.has_ellipsis = true;
         line_info.ellipsis_text = Some(marker.to_string());
+        line_info.ellipsis_is_line_clamp = is_line_clamp;
         line_info.has_forced_hyphen = false;
         if is_rtl {
             line_info.ellipsis_at_start = true;
@@ -6092,6 +6084,7 @@ fn apply_ellipsis_marker(
 
     line_info.has_ellipsis = true;
     line_info.ellipsis_text = Some(marker.to_string());
+    line_info.ellipsis_is_line_clamp = is_line_clamp;
     line_info.has_forced_hyphen = false;
     line_info.ellipsis_at_start = is_rtl;
 }
@@ -6193,6 +6186,7 @@ fn apply_line_clamp_marker(
         items_data,
         block_style,
         marker,
+        true,
         true,
         true,
     );
@@ -6435,10 +6429,13 @@ pub(crate) fn append_clamp_marker_to_last_line(
             });
         if unbreakable_text_overflow {
             let mut marker_fragment = line.children.remove(marker_index);
+            marker_fragment.is_line_clamp_marker = true;
             line.children
                 .retain(|child| child.kind != FragmentKind::Text);
             marker_fragment.offset.left = LayoutUnit::zero();
             line.children.push(marker_fragment);
+        } else {
+            line.children[marker_index].is_line_clamp_marker = true;
         }
         return;
     }
@@ -6475,6 +6472,7 @@ pub(crate) fn append_clamp_marker_to_last_line(
     );
     marker_fragment.offset = PhysicalOffset::new(inline_end, top);
     marker_fragment.inherited_style = Some(marker_style.clone());
+    marker_fragment.is_line_clamp_marker = true;
     marker_fragment.baseline_offset = (baseline - top).to_f32();
     marker_fragment.text_run_orientation = resolve_text_run_orientation(&marker_style, marker);
     line.children.push(marker_fragment);
@@ -6530,17 +6528,64 @@ mod tests {
     }
 
     #[test]
+    fn inline_block_baseline_descends_through_block_in_inline_wrapper() {
+        let mut doc = Document::new();
+        let inline_block = doc.create_node(ElementTag::Div);
+        let block = doc.create_node(ElementTag::Div);
+
+        let mut root = Fragment::new_box(
+            inline_block,
+            PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(38)),
+        );
+        let mut reconstructed_line = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(41)),
+        );
+        reconstructed_line.baseline_offset = 38.0;
+        let mut nested_block = Fragment::new_box(
+            block,
+            PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(38)),
+        );
+        let mut actual_last_line = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(19)),
+        );
+        actual_last_line.offset.top = LayoutUnit::from_i32(19);
+        actual_last_line.baseline_offset = 15.0;
+        nested_block.children.push(actual_last_line);
+        reconstructed_line.children.push(nested_block);
+        root.children.push(reconstructed_line);
+
+        assert_eq!(
+            inline_block_last_line_baseline(&doc, &root.children[0].children[0]),
+            Some(LayoutUnit::from_i32(34))
+        );
+        assert_eq!(
+            inline_block_last_line_baseline(&doc, &root.children[0]),
+            Some(LayoutUnit::from_i32(34))
+        );
+        assert_eq!(
+            inline_block_last_line_baseline(&doc, &root),
+            Some(LayoutUnit::from_i32(34))
+        );
+    }
+
+    #[test]
     fn float_after_forced_break_uses_the_following_line_source_position() {
         let mut doc = Document::new();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.font_size = 5.0;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| style.font_size = 5.0);
         doc.append_child(doc.root(), block);
 
         let leading = doc.create_node(ElementTag::Div);
-        doc.node_mut(leading).style.float = Float::Left;
-        doc.node_mut(leading).style.width = openui_geometry::Length::px(100.0);
-        doc.node_mut(leading).style.height = openui_geometry::Length::px(100.0);
+        doc.update_resolved_style(leading, |style| style.float = Float::Left);
+        doc.update_resolved_style(leading, |style| {
+            style.width = openui_geometry::Length::px(100.0)
+        });
+        doc.update_resolved_style(leading, |style| {
+            style.height = openui_geometry::Length::px(100.0)
+        });
         doc.append_child(block, leading);
         let text = doc.create_node(ElementTag::Text);
         doc.node_mut(text).text = Some("H".into());
@@ -6548,9 +6593,13 @@ mod tests {
         let forced_break = doc.create_node(ElementTag::Break);
         doc.append_child(block, forced_break);
         let following = doc.create_node(ElementTag::Div);
-        doc.node_mut(following).style.float = Float::Left;
-        doc.node_mut(following).style.width = openui_geometry::Length::px(100.0);
-        doc.node_mut(following).style.height = openui_geometry::Length::px(100.0);
+        doc.update_resolved_style(following, |style| style.float = Float::Left);
+        doc.update_resolved_style(following, |style| {
+            style.width = openui_geometry::Length::px(100.0)
+        });
+        doc.update_resolved_style(following, |style| {
+            style.height = openui_geometry::Length::px(100.0)
+        });
         doc.append_child(block, following);
 
         let (items, floats) = InlineItemsBuilder::collect_with_floats(&doc, block);
@@ -6653,7 +6702,7 @@ mod tests {
         let mut doc = Document::new();
         let leading_oof = doc.create_node(ElementTag::Span);
         let abs = doc.create_node(ElementTag::Div);
-        doc.node_mut(abs).style.position = Position::Absolute;
+        doc.update_resolved_style(abs, |style| style.position = Position::Absolute);
         doc.append_child(leading_oof, abs);
         let following_text = doc.create_node(ElementTag::Text);
         doc.node_mut(following_text).text = Some("content".to_string());
@@ -6665,7 +6714,7 @@ mod tests {
         doc.node_mut(text).text = Some("content".to_string());
         doc.append_child(leading_text, text);
         let later_abs = doc.create_node(ElementTag::Div);
-        doc.node_mut(later_abs).style.position = Position::Absolute;
+        doc.update_resolved_style(later_abs, |style| style.position = Position::Absolute);
         doc.append_child(leading_text, later_abs);
         assert!(!positioned_inline_starts_with_out_of_flow(
             &doc,
@@ -6677,23 +6726,31 @@ mod tests {
     fn float_after_ported_preserved_newline_uses_the_following_line_source_position() {
         let mut doc = Document::new();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.font_size = 5.0;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| style.font_size = 5.0);
         doc.append_child(doc.root(), block);
 
         let leading = doc.create_node(ElementTag::Div);
-        doc.node_mut(leading).style.float = Float::Left;
-        doc.node_mut(leading).style.width = openui_geometry::Length::px(100.0);
-        doc.node_mut(leading).style.height = openui_geometry::Length::px(100.0);
+        doc.update_resolved_style(leading, |style| style.float = Float::Left);
+        doc.update_resolved_style(leading, |style| {
+            style.width = openui_geometry::Length::px(100.0)
+        });
+        doc.update_resolved_style(leading, |style| {
+            style.height = openui_geometry::Length::px(100.0)
+        });
         doc.append_child(block, leading);
         let text = doc.create_node(ElementTag::Text);
-        doc.node_mut(text).style.white_space = WhiteSpace::PreLine;
+        doc.update_resolved_style(text, |style| style.white_space = WhiteSpace::PreLine);
         doc.node_mut(text).text = Some("H\n".into());
         doc.append_child(block, text);
         let following = doc.create_node(ElementTag::Div);
-        doc.node_mut(following).style.float = Float::Left;
-        doc.node_mut(following).style.width = openui_geometry::Length::px(100.0);
-        doc.node_mut(following).style.height = openui_geometry::Length::px(100.0);
+        doc.update_resolved_style(following, |style| style.float = Float::Left);
+        doc.update_resolved_style(following, |style| {
+            style.width = openui_geometry::Length::px(100.0)
+        });
+        doc.update_resolved_style(following, |style| {
+            style.height = openui_geometry::Length::px(100.0)
+        });
         doc.append_child(block, following);
 
         let (items, floats) = InlineItemsBuilder::collect_with_floats(&doc, block);
@@ -6719,24 +6776,28 @@ mod tests {
     fn float_after_multiple_preserved_newlines_uses_the_final_source_line() {
         let mut doc = Document::new();
         let block = doc.create_node(ElementTag::Div);
-        let block_style = doc.node_mut(block).style_mut();
-        block_style.display = Display::Block;
-        block_style.font_size = 16.0;
-        block_style.line_height = openui_style::LineHeight::Length(32.0);
-        block_style.white_space = WhiteSpace::PreWrap;
+        doc.update_resolved_style(block, |block_style| {
+            block_style.display = Display::Block;
+            block_style.font_size = 16.0;
+            block_style.line_height = openui_style::LineHeight::Length(32.0);
+            block_style.white_space = WhiteSpace::PreWrap;
+        });
         doc.append_child(doc.root(), block);
 
         let text = doc.create_node(ElementTag::Text);
-        let text_style = doc.node_mut(text).style_mut();
-        text_style.font_size = 16.0;
-        text_style.line_height = openui_style::LineHeight::Length(32.0);
-        text_style.white_space = WhiteSpace::PreWrap;
+        doc.update_resolved_style(text, |text_style| {
+            text_style.font_size = 16.0;
+            text_style.line_height = openui_style::LineHeight::Length(32.0);
+            text_style.white_space = WhiteSpace::PreWrap;
+        });
         doc.node_mut(text).text = Some("Line 1\nLine 2\nLine 3\nLine 4\n".into());
         doc.append_child(block, text);
 
         let following = doc.create_node(ElementTag::Div);
-        doc.node_mut(following).style.float = Float::Left;
-        doc.node_mut(following).style.width = openui_geometry::Length::px(300.0);
+        doc.update_resolved_style(following, |style| style.float = Float::Left);
+        doc.update_resolved_style(following, |style| {
+            style.width = openui_geometry::Length::px(300.0)
+        });
         doc.append_child(block, following);
 
         let (items, floats) = InlineItemsBuilder::collect_with_floats(&doc, block);
@@ -6759,22 +6820,30 @@ mod tests {
     fn float_after_clearing_break_defers_block_progression_to_clearance() {
         let mut doc = Document::new();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.font_size = 16.0;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| style.font_size = 16.0);
         doc.append_child(doc.root(), block);
 
         let leading = doc.create_node(ElementTag::Div);
-        doc.node_mut(leading).style.float = Float::Left;
-        doc.node_mut(leading).style.width = openui_geometry::Length::px(16.0);
-        doc.node_mut(leading).style.height = openui_geometry::Length::px(10.0);
+        doc.update_resolved_style(leading, |style| style.float = Float::Left);
+        doc.update_resolved_style(leading, |style| {
+            style.width = openui_geometry::Length::px(16.0)
+        });
+        doc.update_resolved_style(leading, |style| {
+            style.height = openui_geometry::Length::px(10.0)
+        });
         doc.append_child(block, leading);
         let forced_break = doc.create_node(ElementTag::Break);
-        doc.node_mut(forced_break).style.clear = Clear::Both;
+        doc.update_resolved_style(forced_break, |style| style.clear = Clear::Both);
         doc.append_child(block, forced_break);
         let following = doc.create_node(ElementTag::Div);
-        doc.node_mut(following).style.float = Float::Left;
-        doc.node_mut(following).style.width = openui_geometry::Length::px(16.0);
-        doc.node_mut(following).style.height = openui_geometry::Length::px(10.0);
+        doc.update_resolved_style(following, |style| style.float = Float::Left);
+        doc.update_resolved_style(following, |style| {
+            style.width = openui_geometry::Length::px(16.0)
+        });
+        doc.update_resolved_style(following, |style| {
+            style.height = openui_geometry::Length::px(10.0)
+        });
         doc.append_child(block, following);
 
         let (items, floats) = InlineItemsBuilder::collect_with_floats(&doc, block);
@@ -7078,7 +7147,7 @@ mod tests {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         doc.append_child(root, block);
 
         let text = doc.create_node(ElementTag::Text);
@@ -7093,11 +7162,11 @@ mod tests {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         doc.append_child(root, block);
 
         let span = doc.create_node(ElementTag::Span);
-        doc.node_mut(span).style.display = Display::Inline;
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
         doc.append_child(block, span);
 
         assert!(has_inline_children(&doc, block));
@@ -7108,11 +7177,11 @@ mod tests {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         doc.append_child(root, block);
 
         let child = doc.create_node(ElementTag::Div);
-        doc.node_mut(child).style.display = Display::Block;
+        doc.update_resolved_style(child, |style| style.display = Display::Block);
         doc.append_child(block, child);
 
         assert!(!has_inline_children(&doc, block));
@@ -7123,13 +7192,13 @@ mod tests {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         doc.append_child(root, block);
 
         for _ in 0..3 {
             let span = doc.create_node(ElementTag::Span);
-            doc.node_mut(span).style.display = Display::Inline;
-            doc.node_mut(span).style.font_size = 40.0;
+            doc.update_resolved_style(span, |style| style.display = Display::Inline);
+            doc.update_resolved_style(span, |style| style.font_size = 40.0);
             doc.append_child(block, span);
         }
 
@@ -7192,6 +7261,33 @@ mod tests {
 
         // Line should be flagged with ellipsis.
         assert!(line_info.has_ellipsis);
+        assert!(!line_info.ellipsis_is_line_clamp);
+    }
+
+    #[test]
+    fn generated_line_clamp_marker_retains_its_semantic_role() {
+        let block_style = ComputedStyle::default();
+        let mut line_info = LineInfo::new(LayoutUnit::from_f32(100.0));
+        line_info.used_width = LayoutUnit::from_f32(150.0);
+        let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
+            text: String::new(),
+            items: Vec::new(),
+            styles: Vec::new(),
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+
+        apply_line_clamp_marker(
+            &mut line_info,
+            LayoutUnit::from_f32(100.0),
+            &items_data,
+            &block_style,
+            &openui_style::BlockEllipsis::Auto,
+        );
+
+        assert!(line_info.has_ellipsis);
+        assert!(line_info.ellipsis_is_line_clamp);
     }
 
     // ── Issue 2: Half-leading-adjusted metrics for baseline shift ────
@@ -7248,7 +7344,7 @@ mod tests {
         // For RTL, ellipsis should be placed at the start (left) and
         // content should be truncated from the left side.
         let mut block_style = ComputedStyle::default();
-        block_style.direction = Direction::Rtl;
+        block_style.update_derived(|computed| computed.direction = Direction::Rtl);
 
         let mut line_info = LineInfo::new(LayoutUnit::from_f32(100.0));
         line_info.used_width = LayoutUnit::from_f32(150.0);
@@ -7317,8 +7413,10 @@ mod tests {
         let vp = doc.root();
 
         let div = doc.create_node(ElementTag::Div);
-        doc.node_mut(div).style.display = Display::Block;
-        doc.node_mut(div).style.width = openui_geometry::Length::px(200.0);
+        doc.update_resolved_style(div, |style| style.display = Display::Block);
+        doc.update_resolved_style(div, |style| {
+            style.width = openui_geometry::Length::px(200.0)
+        });
         doc.append_child(vp, div);
 
         let text = doc.create_node(ElementTag::Text);
@@ -7410,27 +7508,31 @@ mod tests {
         let vp = doc.root();
 
         let div = doc.create_node(ElementTag::Div);
-        doc.node_mut(div).style.display = Display::Block;
-        doc.node_mut(div).style.font_size = 16.0;
-        doc.node_mut(div).style.width = openui_geometry::Length::px(400.0);
+        doc.update_resolved_style(div, |style| style.display = Display::Block);
+        doc.update_resolved_style(div, |style| style.font_size = 16.0);
+        doc.update_resolved_style(div, |style| {
+            style.width = openui_geometry::Length::px(400.0)
+        });
         doc.append_child(vp, div);
 
         // Outer span with 30px font
         let outer_span = doc.create_node(ElementTag::Span);
-        doc.node_mut(outer_span).style.display = Display::Inline;
-        doc.node_mut(outer_span).style.font_size = 30.0;
+        doc.update_resolved_style(outer_span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(outer_span, |style| style.font_size = 30.0);
         doc.append_child(div, outer_span);
 
         let outer_text = doc.create_node(ElementTag::Text);
         doc.node_mut(outer_text).text = Some("A".to_string());
-        doc.node_mut(outer_text).style.font_size = 30.0;
+        doc.update_resolved_style(outer_text, |style| style.font_size = 30.0);
         doc.append_child(outer_span, outer_text);
 
         // Text with text-top inside the outer span (no intermediate span)
         let inner_text = doc.create_node(ElementTag::Text);
         doc.node_mut(inner_text).text = Some("X".to_string());
-        doc.node_mut(inner_text).style.font_size = 12.0;
-        doc.node_mut(inner_text).style.vertical_align = VerticalAlign::TextTop;
+        doc.update_resolved_style(inner_text, |style| style.font_size = 12.0);
+        doc.update_resolved_style(inner_text, |style| {
+            style.vertical_align = VerticalAlign::TextTop
+        });
         doc.append_child(outer_span, inner_text);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
@@ -7509,15 +7611,21 @@ mod tests {
         let vp = doc.root();
 
         let div = doc.create_node(ElementTag::Div);
-        doc.node_mut(div).style.display = Display::Block;
-        doc.node_mut(div).style.font_size = 16.0;
-        doc.node_mut(div).style.width = openui_geometry::Length::px(400.0);
+        doc.update_resolved_style(div, |style| style.display = Display::Block);
+        doc.update_resolved_style(div, |style| style.font_size = 16.0);
+        doc.update_resolved_style(div, |style| {
+            style.width = openui_geometry::Length::px(400.0)
+        });
         doc.append_child(vp, div);
 
         let inline_block = doc.create_node(ElementTag::Div);
-        doc.node_mut(inline_block).style.display = Display::InlineBlock;
-        doc.node_mut(inline_block).style.width = openui_geometry::Length::px(80.0);
-        doc.node_mut(inline_block).style.height = openui_geometry::Length::px(30.0);
+        doc.update_resolved_style(inline_block, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline_block, |style| {
+            style.width = openui_geometry::Length::px(80.0)
+        });
+        doc.update_resolved_style(inline_block, |style| {
+            style.height = openui_geometry::Length::px(30.0)
+        });
         doc.append_child(div, inline_block);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(600));
@@ -7547,19 +7655,29 @@ mod tests {
         let vp = doc.root();
 
         let div = doc.create_node(ElementTag::Div);
-        doc.node_mut(div).style.display = Display::Block;
-        doc.node_mut(div).style.font_size = 16.0;
-        doc.node_mut(div).style.width = openui_geometry::Length::px(400.0);
+        doc.update_resolved_style(div, |style| style.display = Display::Block);
+        doc.update_resolved_style(div, |style| style.font_size = 16.0);
+        doc.update_resolved_style(div, |style| {
+            style.width = openui_geometry::Length::px(400.0)
+        });
         doc.append_child(vp, div);
 
         let inline_block = doc.create_node(ElementTag::Div);
-        doc.node_mut(inline_block).style.display = Display::InlineBlock;
-        doc.node_mut(inline_block).style.width = openui_geometry::Length::px(60.0);
-        doc.node_mut(inline_block).style.height = openui_geometry::Length::px(30.0);
-        doc.node_mut(inline_block).style.border_left_width = 5;
-        doc.node_mut(inline_block).style.border_right_width = 5;
-        doc.node_mut(inline_block).style.border_left_style = openui_style::BorderStyle::Solid;
-        doc.node_mut(inline_block).style.border_right_style = openui_style::BorderStyle::Solid;
+        doc.update_resolved_style(inline_block, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline_block, |style| {
+            style.width = openui_geometry::Length::px(60.0)
+        });
+        doc.update_resolved_style(inline_block, |style| {
+            style.height = openui_geometry::Length::px(30.0)
+        });
+        doc.update_resolved_style(inline_block, |style| style.border_left_width = 5);
+        doc.update_resolved_style(inline_block, |style| style.border_right_width = 5);
+        doc.update_resolved_style(inline_block, |style| {
+            style.border_left_style = openui_style::BorderStyle::Solid
+        });
+        doc.update_resolved_style(inline_block, |style| {
+            style.border_right_style = openui_style::BorderStyle::Solid
+        });
         doc.append_child(div, inline_block);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(600));
@@ -7585,16 +7703,24 @@ mod tests {
         let vp = doc.root();
 
         let div = doc.create_node(ElementTag::Div);
-        doc.node_mut(div).style.display = Display::Block;
-        doc.node_mut(div).style.font_size = 16.0;
-        doc.node_mut(div).style.width = openui_geometry::Length::px(400.0);
-        doc.node_mut(div).style.height = openui_geometry::Length::px(200.0);
+        doc.update_resolved_style(div, |style| style.display = Display::Block);
+        doc.update_resolved_style(div, |style| style.font_size = 16.0);
+        doc.update_resolved_style(div, |style| {
+            style.width = openui_geometry::Length::px(400.0)
+        });
+        doc.update_resolved_style(div, |style| {
+            style.height = openui_geometry::Length::px(200.0)
+        });
         doc.append_child(vp, div);
 
         let inline_block = doc.create_node(ElementTag::Div);
-        doc.node_mut(inline_block).style.display = Display::InlineBlock;
-        doc.node_mut(inline_block).style.width = openui_geometry::Length::px(50.0);
-        doc.node_mut(inline_block).style.height = openui_geometry::Length::percent(50.0);
+        doc.update_resolved_style(inline_block, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline_block, |style| {
+            style.width = openui_geometry::Length::px(50.0)
+        });
+        doc.update_resolved_style(inline_block, |style| {
+            style.height = openui_geometry::Length::percent(50.0)
+        });
         doc.append_child(div, inline_block);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::from_i32(600));
@@ -7624,16 +7750,22 @@ mod tests {
         let vp = doc.root();
 
         let div = doc.create_node(ElementTag::Div);
-        doc.node_mut(div).style.display = Display::Block;
-        doc.node_mut(div).style.font_size = 16.0;
-        doc.node_mut(div).style.width = openui_geometry::Length::px(400.0);
+        doc.update_resolved_style(div, |style| style.display = Display::Block);
+        doc.update_resolved_style(div, |style| style.font_size = 16.0);
+        doc.update_resolved_style(div, |style| {
+            style.width = openui_geometry::Length::px(400.0)
+        });
         // height: auto (default)
         doc.append_child(vp, div);
 
         let inline_block = doc.create_node(ElementTag::Div);
-        doc.node_mut(inline_block).style.display = Display::InlineBlock;
-        doc.node_mut(inline_block).style.width = openui_geometry::Length::px(50.0);
-        doc.node_mut(inline_block).style.height = openui_geometry::Length::percent(50.0);
+        doc.update_resolved_style(inline_block, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline_block, |style| {
+            style.width = openui_geometry::Length::px(50.0)
+        });
+        doc.update_resolved_style(inline_block, |style| {
+            style.height = openui_geometry::Length::percent(50.0)
+        });
         doc.append_child(div, inline_block);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(400), LayoutUnit::max());
@@ -7814,15 +7946,21 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.width = openui_geometry::Length::px(200.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| {
+            style.width = openui_geometry::Length::px(200.0)
+        });
         doc.append_child(vp, block);
 
         let span = doc.create_node(ElementTag::Span);
-        doc.node_mut(span).style.display = Display::Inline;
-        doc.node_mut(span).style.padding_left = openui_geometry::Length::px(4.0);
-        doc.node_mut(span).style.padding_right = openui_geometry::Length::px(6.0);
-        doc.node_mut(span).style.background_color = Color::RED;
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(span, |style| {
+            style.padding_left = openui_geometry::Length::px(4.0)
+        });
+        doc.update_resolved_style(span, |style| {
+            style.padding_right = openui_geometry::Length::px(6.0)
+        });
+        doc.update_resolved_style(span, |style| style.background_color = Color::RED);
         doc.append_child(block, span);
         let text = doc.create_node(ElementTag::Text);
         doc.node_mut(text).text = Some("XX".to_string());
@@ -7844,12 +7982,14 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.width = openui_geometry::Length::px(18.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| {
+            style.width = openui_geometry::Length::px(18.0)
+        });
         doc.append_child(vp, block);
         let span = doc.create_node(ElementTag::Span);
-        doc.node_mut(span).style.display = Display::Inline;
-        doc.node_mut(span).style.background_color = Color::BLUE;
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(span, |style| style.background_color = Color::BLUE);
         doc.append_child(block, span);
         let text = doc.create_node(ElementTag::Text);
         doc.node_mut(text).text = Some("X X X".to_string());
@@ -7876,11 +8016,11 @@ mod tests {
     fn bidi_reordering_splits_and_rebalances_inline_fragments() {
         let mut doc = Document::new();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         doc.append_child(doc.root(), block);
         for content in ["\u{202e}a\u{202d}bc", "d\u{202e}e\u{202d}f"] {
             let span = doc.create_node(ElementTag::Span);
-            doc.node_mut(span).style.display = Display::Inline;
+            doc.update_resolved_style(span, |style| style.display = Display::Inline);
             doc.append_child(block, span);
             let text = doc.create_node(ElementTag::Text);
             doc.node_mut(text).text = Some(content.to_string());

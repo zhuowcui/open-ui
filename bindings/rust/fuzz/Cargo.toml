@@ -53,8 +53,8 @@ bench = false
 members = ["."]
 
 [patch.crates-io]
-skia-safe = { git = "https://github.com/rust-skia/rust-skia.git", rev = "c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09" }
-skia-bindings = { git = "https://github.com/rust-skia/rust-skia.git", rev = "c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09" }
+skia-safe = { git = "https://github.com/rust-skia/rust-skia.git", rev = "a31b86ba3b767344d39af3b8c30043003d8fc991" }
+skia-bindings = { git = "https://github.com/rust-skia/rust-skia.git", rev = "a31b86ba3b767344d39af3b8c30043003d8fc991" }
 skrifa = { path = "../vendor/skrifa-v0_40" }
 read-fonts = { path = "../vendor/read-fonts-v0_37" }
 font-types = { path = "../vendor/font-types-v0_11" }

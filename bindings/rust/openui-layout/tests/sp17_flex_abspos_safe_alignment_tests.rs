@@ -69,56 +69,58 @@ fn add_flex_case(
     child_content_size: PhysicalSize,
 ) -> (NodeId, NodeId) {
     let container = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(container).style;
-        style.display = Display::Flex;
-        style.position = Position::Relative;
-        style.writing_mode = mode;
-        style.direction = direction;
-        style.flex_direction = flex_direction;
-        style.width = Length::px(CONTENT_WIDTH as f32);
-        style.height = Length::px(CONTENT_HEIGHT as f32);
-        style.border_left_width = 3;
-        style.border_right_width = 7;
-        style.border_top_width = 11;
-        style.border_bottom_width = 13;
-        style.border_left_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-        style.border_top_style = BorderStyle::Solid;
-        style.border_bottom_style = BorderStyle::Solid;
-        style.padding_left = Length::px(17.0);
-        style.padding_right = Length::px(19.0);
-        style.padding_top = Length::px(23.0);
-        style.padding_bottom = Length::px(29.0);
-    }
+    doc.update_resolved_style(container, |style| {
+        style.update_derived(|computed| computed.display = Display::Flex);
+        style.update_derived(|computed| computed.position = Position::Relative);
+        style.update_derived(|computed| computed.writing_mode = mode);
+        style.update_derived(|computed| computed.direction = direction);
+        style.update_derived(|computed| computed.flex_direction = flex_direction);
+        style.update_derived(|computed| computed.width = Length::px(CONTENT_WIDTH as f32));
+        style.update_derived(|computed| computed.height = Length::px(CONTENT_HEIGHT as f32));
+        style.update_derived(|computed| computed.border_left_width = 3);
+        style.update_derived(|computed| computed.border_right_width = 7);
+        style.update_derived(|computed| computed.border_top_width = 11);
+        style.update_derived(|computed| computed.border_bottom_width = 13);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_left = Length::px(17.0));
+        style.update_derived(|computed| computed.padding_right = Length::px(19.0));
+        style.update_derived(|computed| computed.padding_top = Length::px(23.0));
+        style.update_derived(|computed| computed.padding_bottom = Length::px(29.0));
+    });
     doc.append_child(doc.root(), container);
 
     let child = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(child).style;
-        style.display = Display::Block;
-        style.position = Position::Absolute;
-        style.writing_mode = mode;
-        style.direction = direction;
-        style.width = Length::px(child_content_size.width.to_f32());
-        style.height = Length::px(child_content_size.height.to_f32());
-        style.border_left_width = 1;
-        style.border_right_width = 2;
-        style.border_top_width = 3;
-        style.border_bottom_width = 4;
-        style.border_left_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-        style.border_top_style = BorderStyle::Solid;
-        style.border_bottom_style = BorderStyle::Solid;
-        style.padding_left = Length::px(5.0);
-        style.padding_right = Length::px(6.0);
-        style.padding_top = Length::px(7.0);
-        style.padding_bottom = Length::px(8.0);
-        style.margin_left = Length::px(9.0);
-        style.margin_right = Length::px(10.0);
-        style.margin_top = Length::px(11.0);
-        style.margin_bottom = Length::px(12.0);
-    }
+    doc.update_resolved_style(child, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.position = Position::Absolute);
+        style.update_derived(|computed| computed.writing_mode = mode);
+        style.update_derived(|computed| computed.direction = direction);
+        style.update_derived(|computed| {
+            computed.width = Length::px(child_content_size.width.to_f32())
+        });
+        style.update_derived(|computed| {
+            computed.height = Length::px(child_content_size.height.to_f32())
+        });
+        style.update_derived(|computed| computed.border_left_width = 1);
+        style.update_derived(|computed| computed.border_right_width = 2);
+        style.update_derived(|computed| computed.border_top_width = 3);
+        style.update_derived(|computed| computed.border_bottom_width = 4);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_left = Length::px(5.0));
+        style.update_derived(|computed| computed.padding_right = Length::px(6.0));
+        style.update_derived(|computed| computed.padding_top = Length::px(7.0));
+        style.update_derived(|computed| computed.padding_bottom = Length::px(8.0));
+        style.update_derived(|computed| computed.margin_left = Length::px(9.0));
+        style.update_derived(|computed| computed.margin_right = Length::px(10.0));
+        style.update_derived(|computed| computed.margin_top = Length::px(11.0));
+        style.update_derived(|computed| computed.margin_bottom = Length::px(12.0));
+    });
     doc.append_child(container, child);
     (container, child)
 }
@@ -231,10 +233,14 @@ fn oversized_safe_center_falls_back_to_logical_start_for_every_flex_axis() {
             let mut doc = Document::new();
             let (container, child) =
                 add_flex_case(&mut doc, mode, direction, flex_direction, child_size);
-            doc.node_mut(container).style.justify_content =
-                content_alignment(ContentPosition::Center, OverflowAlignment::Safe);
-            doc.node_mut(child).style.align_self =
-                ItemAlignment::with_overflow(ItemPosition::Center, OverflowAlignment::Safe);
+            doc.update_resolved_style(container, |style| {
+                style.justify_content =
+                    content_alignment(ContentPosition::Center, OverflowAlignment::Safe)
+            });
+            doc.update_resolved_style(child, |style| {
+                style.align_self =
+                    ItemAlignment::with_overflow(ItemPosition::Center, OverflowAlignment::Safe)
+            });
             let expected = expected_child_offset(
                 mode,
                 direction,
@@ -280,10 +286,12 @@ fn oversized_default_and_unsafe_center_retain_signed_offsets() {
                 let mut doc = Document::new();
                 let (container, child) =
                     add_flex_case(&mut doc, mode, direction, flex_direction, child_size);
-                doc.node_mut(container).style.justify_content =
-                    content_alignment(ContentPosition::Center, overflow);
-                doc.node_mut(child).style.align_self =
-                    ItemAlignment::with_overflow(ItemPosition::Center, overflow);
+                doc.update_resolved_style(container, |style| {
+                    style.justify_content = content_alignment(ContentPosition::Center, overflow)
+                });
+                doc.update_resolved_style(child, |style| {
+                    style.align_self = ItemAlignment::with_overflow(ItemPosition::Center, overflow)
+                });
                 let expected =
                     expected_child_offset(mode, direction, child_size, inline_center, block_center);
                 assert_case_offset(
@@ -321,10 +329,14 @@ fn fitting_safe_end_and_safe_flex_end_preserve_end_and_reverse_semantics() {
                 let mut doc = Document::new();
                 let (container, child) =
                     add_flex_case(&mut doc, mode, direction, flex_direction, child_size);
-                doc.node_mut(container).style.justify_content =
-                    content_alignment(main_position, OverflowAlignment::Safe);
-                doc.node_mut(child).style.align_self =
-                    ItemAlignment::with_overflow(ItemPosition::End, OverflowAlignment::Safe);
+                doc.update_resolved_style(container, |style| {
+                    style.justify_content =
+                        content_alignment(main_position, OverflowAlignment::Safe)
+                });
+                doc.update_resolved_style(child, |style| {
+                    style.align_self =
+                        ItemAlignment::with_overflow(ItemPosition::End, OverflowAlignment::Safe)
+                });
 
                 let main_free = if flex_direction.is_column() {
                     block_free
@@ -382,21 +394,26 @@ fn align_self_auto_inherits_position_and_overflow_from_align_items() {
                 let mut doc = Document::new();
                 let (container, child) =
                     add_flex_case(&mut doc, mode, direction, flex_direction, child_size);
-                {
-                    let style = &mut doc.node_mut(container).style;
-                    style.justify_content =
-                        content_alignment(ContentPosition::Start, OverflowAlignment::Safe);
-                    style.align_items =
-                        ItemAlignment::with_overflow(ItemPosition::Center, parent_overflow);
-                }
-                doc.node_mut(child).style.align_self = ItemAlignment::with_overflow(
-                    ItemPosition::Auto,
-                    if parent_overflow == OverflowAlignment::Safe {
-                        OverflowAlignment::Unsafe
-                    } else {
-                        OverflowAlignment::Safe
-                    },
-                );
+                doc.update_resolved_style(container, |style| {
+                    style.update_derived(|computed| {
+                        computed.justify_content =
+                            content_alignment(ContentPosition::Start, OverflowAlignment::Safe)
+                    });
+                    style.update_derived(|computed| {
+                        computed.align_items =
+                            ItemAlignment::with_overflow(ItemPosition::Center, parent_overflow)
+                    });
+                });
+                doc.update_resolved_style(child, |style| {
+                    style.align_self = ItemAlignment::with_overflow(
+                        ItemPosition::Auto,
+                        if parent_overflow == OverflowAlignment::Safe {
+                            OverflowAlignment::Unsafe
+                        } else {
+                            OverflowAlignment::Safe
+                        },
+                    )
+                });
 
                 let cross_free = if flex_direction.is_column() {
                     content_logical.inline_size - child_logical.inline_size
@@ -438,14 +455,17 @@ fn wrap_reverse_safe_flex_start_overflow_falls_back_before_projection() {
             let mut doc = Document::new();
             let (container, child) =
                 add_flex_case(&mut doc, mode, direction, flex_direction, child_size);
-            {
-                let style = &mut doc.node_mut(container).style;
-                style.flex_wrap = FlexWrap::WrapReverse;
-                style.justify_content =
-                    content_alignment(ContentPosition::Start, OverflowAlignment::Safe);
-            }
-            doc.node_mut(child).style.align_self =
-                ItemAlignment::with_overflow(ItemPosition::FlexStart, OverflowAlignment::Safe);
+            doc.update_resolved_style(container, |style| {
+                style.update_derived(|computed| computed.flex_wrap = FlexWrap::WrapReverse);
+                style.update_derived(|computed| {
+                    computed.justify_content =
+                        content_alignment(ContentPosition::Start, OverflowAlignment::Safe)
+                });
+            });
+            doc.update_resolved_style(child, |style| {
+                style.align_self =
+                    ItemAlignment::with_overflow(ItemPosition::FlexStart, OverflowAlignment::Safe)
+            });
             let expected = expected_child_offset(
                 mode,
                 direction,

@@ -10,11 +10,17 @@ homepage.workspace = true
 categories.workspace = true
 keywords.workspace = true
 
+[features]
+default = []
+ganesh-gl = ["dep:gl", "dep:glutin", "skia-safe/gl"]
+
 [dependencies]
 openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
 openui-layout = { version = "=0.2.0", path = "../openui-layout" }
 openui-paint = { version = "=0.2.0", path = "../openui-paint" }
 skia-safe = "0.94"
+gl = { version = "=0.14.0", optional = true }
+glutin = { version = "=0.32.3", default-features = false, features = ["egl"], optional = true }
 
 [dev-dependencies]
 openui-dom = { version = "=0.2.0", path = "../openui-dom" }

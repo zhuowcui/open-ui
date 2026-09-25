@@ -158,13 +158,17 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
         )
         for role in ("Table", "TableCaption", "TableRowGroup", "TableRow", "TableCell"):
             self.assertIn(f"Display::{role}", rust)
-        self.assertNotIn("style.display = Display::Block", rust)
+        self.assertNotIn("doc.node_mut", rust)
         self.assertIn("TableLayout::Fixed", rust)
         self.assertIn("BorderCollapse::Collapse", rust)
         self.assertIn("VerticalAlign::Middle", rust)
         anonymous = self.generate("div{display:table}", "<div>a<br>b</div>")
-        self.assertEqual(anonymous.count("Display::TableRow;"), 1)
-        self.assertEqual(anonymous.count("Display::TableCell;"), 1)
+        self.assertEqual(
+            anonymous.count("RendererStyleValue::Display(Display::TableRow)"), 1
+        )
+        self.assertEqual(
+            anonymous.count("RendererStyleValue::Display(Display::TableCell)"), 1
+        )
         orphan = self.parse("", "<div><td>a</td><tbody>b</tbody></div>")
         div = next(node for node in orphan.root.children if node.tag == "div")
         self.assertTrue(all(child.is_text for child in div.children))
@@ -189,16 +193,16 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
             "",
             '<table width="300" align="left"><tr><td height="20" valign="top">x</td></tr></table>',
         )
-        self.assertIn("style.width = Length::px(300.0)", presentational)
-        self.assertIn("style.height = Length::px(20.0)", presentational)
-        self.assertIn("style.float = Float::Left", presentational)
+        self.assertIn("RendererStyleValue::Width(Length::px(300.0))", presentational)
+        self.assertIn("RendererStyleValue::Height(Length::px(20.0))", presentational)
+        self.assertIn("RendererStyleValue::Float(Float::Left)", presentational)
         self.assertIn("VerticalAlign::Top", presentational)
-        self.assertNotIn("style.display = Display::Block", presentational)
+        self.assertNotIn("doc.node_mut", presentational)
 
     def test_10_table_spans_emit_normalized_metadata(self):
         rust = self.generate("", "<table><tr><td colspan=3 rowspan=0></td></tr></table>")
-        self.assertIn("table_col_span = 3", rust)
-        self.assertIn("table_row_span = 0", rust)
+        self.assertIn("RendererNodeState::TableColumnSpan(3)", rust)
+        self.assertIn("RendererNodeState::TableRowSpan(0)", rust)
 
     def test_11_grid_track_grammar_emits_intrinsic_and_flex_tracks(self):
         value = port_wpt.parse_grid_track_list("min-content minmax(10px, 1fr)")
@@ -260,8 +264,8 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
         )
         self.assertIn("ReplacedResourceKind::Image", image)
         self.assertIn("3f08031eb1f4aa651ed4b94e383920d3", image)
-        self.assertIn("style.width = Length::px(40.0)", image)
-        self.assertIn("style.height = Length::px(30.0)", image)
+        self.assertIn("RendererStyleValue::Width(Length::px(40.0))", image)
+        self.assertIn("RendererStyleValue::Height(Length::px(30.0))", image)
         template = port_wpt._embed_paint_asset_urls(
             "<img src='support/black20x20.png' width='40' height='30'>"
         )
@@ -314,7 +318,7 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
             "#x{mask-image:linear-gradient(black,transparent);"
             "transform:translateX(0) rotate(0deg);shape-outside:margin-box circle(10px)}"
         )
-        self.assertIn("mask_layers = vec!", rust)
+        self.assertIn("RendererStyleValue::MaskLayers(vec!", rust)
         self.assertIn("Transform2D", rust)
         self.assertIn("a: 1.0", rust)
         self.assertIn("f: 0.0", rust)
@@ -368,9 +372,9 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
             "#x{display:flex} #y{flex:6ch}",
             "<div id=x><div id=y>text</div></div>",
         )
-        self.assertIn("style.flex_grow = 1.0", single_basis)
-        self.assertIn("style.flex_shrink = 1.0", single_basis)
-        self.assertIn("style.flex_basis = Length::px(96.0)", single_basis)
+        self.assertIn("RendererStyleValue::FlexGrow(1.0)", single_basis)
+        self.assertIn("RendererStyleValue::FlexShrink(1.0)", single_basis)
+        self.assertIn("RendererStyleValue::FlexBasis(Length::px(96.0))", single_basis)
         structural = self.generate(
             "*:only-of-type{white-space:pre-line;margin-bottom:76%}"
             "*:last-of-type{float:inline-end}",
@@ -397,13 +401,11 @@ class Sp19ClosureAndPorterTests(unittest.TestCase):
             visible_style = port_wpt.generate_rust_fn(
                 "visible_style", parser.root, parser.html_styles, root_aware=True
             )
-        self.assertIn('text = Some("\\n".to_string())', visible_style)
+        self.assertEqual(parser.root.children[0].tag, "style")
         self.assertIn("*:last-of-type{display:flow}", visible_style)
-        control_env = pixel_runner.openui_environment(
-            use_ahem_noaa=True, preserve_subpixel_positioning=True
-        )
-        self.assertEqual(control_env["OPENUI_EDGING"], "alias")
-        self.assertEqual(control_env["OPENUI_SUBPIXEL"], "1")
+        control_env = pixel_runner.openui_environment()
+        self.assertNotIn("OPENUI_EDGING", control_env)
+        self.assertNotIn("OPENUI_SUBPIXEL", control_env)
 
 
 if __name__ == "__main__":

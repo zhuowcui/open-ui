@@ -542,6 +542,21 @@ impl ExclusionSpace {
         !self.left_floats.is_empty() || !self.right_floats.is_empty()
     }
 
+    /// Whether a float exclusion intersects the shelf at `block_offset`.
+    ///
+    /// An inherited exclusion space can retain floats that ended above a
+    /// cleared descendant. Those historical entries must not make the
+    /// descendant use ancestor-wide float fitting rules at its new shelf.
+    pub fn has_active_float_at(&self, block_offset: LayoutUnit) -> bool {
+        self.left_floats
+            .iter()
+            .chain(&self.right_floats)
+            .any(|float| {
+                float.rect.block_start_offset() <= block_offset
+                    && float.rect.block_end_offset() > block_offset
+            })
+    }
+
     /// Number of float exclusions tracked.
     #[inline]
     pub fn num_exclusions(&self) -> usize {
@@ -765,6 +780,17 @@ mod tests {
         assert!(!space.has_floats());
         space.add(make_float(ExclusionType::Left, 0, 0, 100, 50));
         assert!(space.has_floats());
+    }
+
+    #[test]
+    fn active_float_query_excludes_ended_shelves() {
+        let mut space = ExclusionSpace::new();
+        space.add(make_float(ExclusionType::Left, 0, 10, 100, 50));
+
+        assert!(!space.has_active_float_at(lu(9)));
+        assert!(space.has_active_float_at(lu(10)));
+        assert!(space.has_active_float_at(lu(49)));
+        assert!(!space.has_active_float_at(lu(50)));
     }
 
     #[test]

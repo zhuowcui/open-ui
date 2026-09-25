@@ -28,18 +28,21 @@ fn make_column_flex(
     direction: Direction,
 ) -> NodeId {
     let container = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(container).style;
-        style.display = Display::Flex;
-        style.width = Length::px(physical_width as f32);
-        style.height = Length::px(physical_height as f32);
-        style.flex_direction = FlexDirection::Column;
-        style.flex_wrap = FlexWrap::Wrap;
-        style.align_items = ItemAlignment::new(ItemPosition::FlexStart);
-        style.align_content = ContentAlignment::new(ContentPosition::FlexStart);
-        style.writing_mode = writing_mode;
-        style.direction = direction;
-    }
+    doc.update_resolved_style(container, |style| {
+        style.update_derived(|computed| computed.display = Display::Flex);
+        style.update_derived(|computed| computed.width = Length::px(physical_width as f32));
+        style.update_derived(|computed| computed.height = Length::px(physical_height as f32));
+        style.update_derived(|computed| computed.flex_direction = FlexDirection::Column);
+        style.update_derived(|computed| computed.flex_wrap = FlexWrap::Wrap);
+        style.update_derived(|computed| {
+            computed.align_items = ItemAlignment::new(ItemPosition::FlexStart)
+        });
+        style.update_derived(|computed| {
+            computed.align_content = ContentAlignment::new(ContentPosition::FlexStart)
+        });
+        style.update_derived(|computed| computed.writing_mode = writing_mode);
+        style.update_derived(|computed| computed.direction = direction);
+    });
     doc.append_child(doc.root(), container);
     container
 }
@@ -54,38 +57,41 @@ fn add_intrinsic_item(
     atom_count: usize,
 ) -> NodeId {
     let item = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(item).style;
-        style.display = Display::Block;
-        style.writing_mode = writing_mode;
-        style.direction = direction;
-        style.flex_grow = 0.0;
-        style.flex_shrink = 0.0;
+    doc.update_resolved_style(item, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.writing_mode = writing_mode);
+        style.update_derived(|computed| computed.direction = direction);
+        style.update_derived(|computed| computed.flex_grow = 0.0);
+        style.update_derived(|computed| computed.flex_shrink = 0.0);
         if writing_mode == WritingMode::HorizontalTb {
-            style.height = Length::px(physical_main_size as f32);
-            style.min_height = Length::zero();
+            style
+                .update_derived(|computed| computed.height = Length::px(physical_main_size as f32));
+            style.update_derived(|computed| computed.min_height = Length::zero());
         } else {
-            style.width = Length::px(physical_main_size as f32);
-            style.min_width = Length::zero();
+            style.update_derived(|computed| computed.width = Length::px(physical_main_size as f32));
+            style.update_derived(|computed| computed.min_width = Length::zero());
         }
-    }
+    });
     doc.append_child(container, item);
 
     for _ in 0..atom_count {
         let atom = doc.create_node(ElementTag::Div);
-        {
-            let style = &mut doc.node_mut(atom).style;
-            style.display = Display::InlineBlock;
-            style.writing_mode = writing_mode;
-            style.direction = direction;
+        doc.update_resolved_style(atom, |style| {
+            style.update_derived(|computed| computed.display = Display::InlineBlock);
+            style.update_derived(|computed| computed.writing_mode = writing_mode);
+            style.update_derived(|computed| computed.direction = direction);
             if writing_mode == WritingMode::HorizontalTb {
-                style.width = Length::px(atom_inline_size as f32);
-                style.height = Length::zero();
+                style.update_derived(|computed| {
+                    computed.width = Length::px(atom_inline_size as f32)
+                });
+                style.update_derived(|computed| computed.height = Length::zero());
             } else {
-                style.width = Length::zero();
-                style.height = Length::px(atom_inline_size as f32);
+                style.update_derived(|computed| computed.width = Length::zero());
+                style.update_derived(|computed| {
+                    computed.height = Length::px(atom_inline_size as f32)
+                });
             }
-        }
+        });
         doc.append_child(item, atom);
     }
     item
@@ -132,7 +138,7 @@ fn auto_cross_size_clamps_available_space_to_intrinsic_bounds() {
 fn indefinite_cross_space_uses_max_content() {
     let mut doc = Document::new();
     let container = make_column_flex(&mut doc, 0, 100, WritingMode::HorizontalTb, Direction::Ltr);
-    doc.node_mut(container).style.width = Length::auto();
+    doc.update_resolved_style(container, |style| style.width = Length::auto());
     let item = add_intrinsic_item(
         &mut doc,
         container,
@@ -208,8 +214,9 @@ fn wrapped_lines_and_centered_line_group_keep_fit_content_widths() {
         WritingMode::HorizontalTb,
         Direction::Ltr,
     );
-    centered_doc.node_mut(container).style.align_content =
-        ContentAlignment::new(ContentPosition::Center);
+    centered_doc.update_resolved_style(container, |style| {
+        style.align_content = ContentAlignment::new(ContentPosition::Center)
+    });
     let narrow = add_intrinsic_item(
         &mut centered_doc,
         container,
@@ -253,11 +260,13 @@ fn specified_cross_margins_reduce_fit_space_and_auto_margins_are_zero() {
             50,
             5,
         );
-        doc.node_mut(item).style.margin_right = if auto_margin {
-            Length::auto()
-        } else {
-            Length::px(25.0)
-        };
+        doc.update_resolved_style(item, |style| {
+            style.margin_right = if auto_margin {
+                Length::auto()
+            } else {
+                Length::px(25.0)
+            }
+        });
 
         let fragment = layout(&doc, WritingMode::HorizontalTb, Direction::Ltr);
         assert_eq!(fragment_for(&fragment, item).width(), lu(expected_width),);
@@ -284,18 +293,17 @@ fn border_padding_and_cross_min_max_are_applied_once() {
             50,
             5,
         );
-        {
-            let style = &mut doc.node_mut(item).style;
-            style.box_sizing = BoxSizing::ContentBox;
-            style.min_width = Length::px(120.0);
-            style.max_width = Length::px(160.0);
-            style.padding_left = Length::px(5.0);
-            style.padding_right = Length::px(5.0);
-            style.border_left_style = BorderStyle::Solid;
-            style.border_right_style = BorderStyle::Solid;
-            style.border_left_width = 2;
-            style.border_right_width = 2;
-        }
+        doc.update_resolved_style(item, |style| {
+            style.update_derived(|computed| computed.box_sizing = BoxSizing::ContentBox);
+            style.update_derived(|computed| computed.min_width = Length::px(120.0));
+            style.update_derived(|computed| computed.max_width = Length::px(160.0));
+            style.update_derived(|computed| computed.padding_left = Length::px(5.0));
+            style.update_derived(|computed| computed.padding_right = Length::px(5.0));
+            style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+            style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+            style.update_derived(|computed| computed.border_left_width = 2);
+            style.update_derived(|computed| computed.border_right_width = 2);
+        });
 
         let fragment = layout(&doc, WritingMode::HorizontalTb, Direction::Ltr);
         assert_eq!(
@@ -335,11 +343,10 @@ fn logical_cross_axis_is_preserved_across_flow_reversals_and_writing_modes() {
                         writing_mode,
                         direction,
                     );
-                    {
-                        let style = &mut doc.node_mut(container).style;
-                        style.flex_direction = flex_direction;
-                        style.flex_wrap = flex_wrap;
-                    }
+                    doc.update_resolved_style(container, |style| {
+                        style.update_derived(|computed| computed.flex_direction = flex_direction);
+                        style.update_derived(|computed| computed.flex_wrap = flex_wrap);
+                    });
                     let first =
                         add_intrinsic_item(&mut doc, container, writing_mode, direction, 60, 25, 5);
                     let second =

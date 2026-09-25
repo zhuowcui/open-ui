@@ -71,9 +71,13 @@ mod tests {
     #[test]
     fn size_containment_uses_physical_fallbacks() {
         let mut style = ComputedStyle::initial();
-        style.contain = Containment::SIZE;
-        style.contain_intrinsic_width = ContainIntrinsicLength::length(Length::px(111.0));
-        style.contain_intrinsic_height = ContainIntrinsicLength::length(Length::px(222.0));
+        style.update_derived(|computed| computed.contain = Containment::SIZE);
+        style.update_derived(|computed| {
+            computed.contain_intrinsic_width = ContainIntrinsicLength::length(Length::px(111.0))
+        });
+        style.update_derived(|computed| {
+            computed.contain_intrinsic_height = ContainIntrinsicLength::length(Length::px(222.0))
+        });
         assert_eq!(
             logical_inline_fallback(&style),
             Some(LayoutUnit::from_i32(111))
@@ -83,7 +87,7 @@ mod tests {
             Some(LayoutUnit::from_i32(222))
         );
 
-        style.writing_mode = WritingMode::VerticalRl;
+        style.update_derived(|computed| computed.writing_mode = WritingMode::VerticalRl);
         assert_eq!(
             logical_inline_fallback(&style),
             Some(LayoutUnit::from_i32(222))
@@ -97,8 +101,10 @@ mod tests {
     #[test]
     fn inline_size_container_substitutes_only_its_inline_axis() {
         let mut style = ComputedStyle::initial();
-        style.container_type = ContainerType::InlineSize;
-        style.contain_intrinsic_width = ContainIntrinsicLength::length(Length::px(42.0));
+        style.update_derived(|computed| computed.container_type = ContainerType::InlineSize);
+        style.update_derived(|computed| {
+            computed.contain_intrinsic_width = ContainIntrinsicLength::length(Length::px(42.0))
+        });
         assert_eq!(
             logical_inline_fallback(&style),
             Some(LayoutUnit::from_i32(42))

@@ -16,6 +16,6 @@ pub mod text_painter;
 pub use painter::compute_clip_rect;
 pub use painter::paint_fragment;
 pub use render::{
-    rasterize_picture, record_document, record_fragment, render_to_png, render_to_surface,
-    RecordedPicture,
+    raster_surface_properties, rasterize_picture, record_document, record_fragment, render_to_png,
+    render_to_surface, RecordedPicture,
 };

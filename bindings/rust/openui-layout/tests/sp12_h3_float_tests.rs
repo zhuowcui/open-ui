@@ -38,7 +38,7 @@ fn pos_float_right_at_right_edge() {
 #[test]
 fn pos_float_left_respects_container_padding_left() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.padding_left = openui_geometry::Length::px(20.0);
+        s.update_derived(|computed| computed.padding_left = openui_geometry::Length::px(20.0));
     });
     b.add_child().width(100.0).height(50.0).float_left().done();
     let r = b.build();
@@ -48,7 +48,7 @@ fn pos_float_left_respects_container_padding_left() {
 #[test]
 fn pos_float_left_respects_container_padding_top() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.padding_top = openui_geometry::Length::px(15.0);
+        s.update_derived(|computed| computed.padding_top = openui_geometry::Length::px(15.0));
     });
     b.add_child().width(100.0).height(50.0).float_left().done();
     let r = b.build();
@@ -59,7 +59,7 @@ fn pos_float_left_respects_container_padding_top() {
 fn pos_float_right_respects_container_padding_right() {
     // container 800 + padding-right 30 => content box 770, float 200 => left = 770 - 200 = 570
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.padding_right = openui_geometry::Length::px(30.0);
+        s.update_derived(|computed| computed.padding_right = openui_geometry::Length::px(30.0));
     });
     b.add_child().width(200.0).height(50.0).float_right().done();
     let r = b.build();
@@ -690,7 +690,7 @@ fn flow_block_with_clear_none_no_effect() {
     b.add_child().width(200.0).height(100.0).float_left().done();
     b.add_child()
         .height(50.0)
-        .with_style(|s| s.clear = Clear::None)
+        .with_style(|s| s.update_derived(|computed| computed.clear = Clear::None))
         .done();
     let r = b.build();
     // clear:none has no effect, block beside float
@@ -1223,7 +1223,9 @@ fn bfc_element_with_margin_beside_float() {
     b.add_child()
         .height(80.0)
         .overflow_hidden()
-        .with_style(|s| s.margin_left = openui_geometry::Length::px(10.0))
+        .with_style(|s| {
+            s.update_derived(|computed| computed.margin_left = openui_geometry::Length::px(10.0))
+        })
         .done();
     let r = b.build();
     let c = r.child(1);
@@ -1687,14 +1689,14 @@ fn edge_float_right_wider_than_container() {
 #[test]
 fn edge_float_in_container_with_border() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 5;
-        s.border_left_width = 10;
-        s.border_right_width = 10;
-        s.border_bottom_width = 5;
-        s.border_top_style = BorderStyle::Solid;
-        s.border_left_style = BorderStyle::Solid;
-        s.border_right_style = BorderStyle::Solid;
-        s.border_bottom_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 5);
+        s.update_derived(|computed| computed.border_left_width = 10);
+        s.update_derived(|computed| computed.border_right_width = 10);
+        s.update_derived(|computed| computed.border_bottom_width = 5);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
     });
     b.add_child().width(200.0).height(100.0).float_left().done();
     let r = b.build();
@@ -1705,8 +1707,8 @@ fn edge_float_in_container_with_border() {
 #[test]
 fn edge_float_in_container_with_padding() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.padding_top = openui_geometry::Length::px(10.0);
-        s.padding_left = openui_geometry::Length::px(15.0);
+        s.update_derived(|computed| computed.padding_top = openui_geometry::Length::px(10.0));
+        s.update_derived(|computed| computed.padding_left = openui_geometry::Length::px(15.0));
     });
     b.add_child().width(200.0).height(100.0).float_left().done();
     let r = b.build();
@@ -1721,7 +1723,9 @@ fn edge_negative_margin_left_float() {
         .width(200.0)
         .height(100.0)
         .float_left()
-        .with_style(|s| s.margin_left = openui_geometry::Length::px(-10.0))
+        .with_style(|s| {
+            s.update_derived(|computed| computed.margin_left = openui_geometry::Length::px(-10.0))
+        })
         .done();
     let r = b.build();
     r.assert_child_position(0, -10, 0);
@@ -1734,7 +1738,9 @@ fn edge_negative_margin_top_float() {
         .width(200.0)
         .height(100.0)
         .float_left()
-        .with_style(|s| s.margin_top = openui_geometry::Length::px(-10.0))
+        .with_style(|s| {
+            s.update_derived(|computed| computed.margin_top = openui_geometry::Length::px(-10.0))
+        })
         .done();
     let r = b.build();
     r.assert_child_position(0, 0, -10);
@@ -1747,7 +1753,9 @@ fn edge_negative_margin_right_on_left_float() {
         .width(200.0)
         .height(100.0)
         .float_left()
-        .with_style(|s| s.margin_right = openui_geometry::Length::px(-20.0))
+        .with_style(|s| {
+            s.update_derived(|computed| computed.margin_right = openui_geometry::Length::px(-20.0))
+        })
         .done();
     b.add_child().width(200.0).height(100.0).float_left().done();
     let r = b.build();
@@ -1792,7 +1800,9 @@ fn edge_float_with_percentage_margins() {
         .height(100.0)
         .float_left()
         .with_style(|s| {
-            s.margin_left = openui_geometry::Length::percent(5.0);
+            s.update_derived(|computed| {
+                computed.margin_left = openui_geometry::Length::percent(5.0)
+            });
         })
         .done();
     let r = b.build();
@@ -2036,7 +2046,9 @@ fn edge_negative_margin_bottom_float() {
         .width(200.0)
         .height(100.0)
         .float_left()
-        .with_style(|s| s.margin_bottom = openui_geometry::Length::px(-20.0))
+        .with_style(|s| {
+            s.update_derived(|computed| computed.margin_bottom = openui_geometry::Length::px(-20.0))
+        })
         .done();
     let r = b.build();
     r.assert_child_size(0, 200, 100);
@@ -2049,7 +2061,7 @@ fn edge_negative_margin_bottom_float() {
 #[test]
 fn margin_float_doesnt_collapse_with_parent() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.margin_top = openui_geometry::Length::px(20.0);
+        s.update_derived(|computed| computed.margin_top = openui_geometry::Length::px(20.0));
     });
     b.add_child()
         .width(200.0)
@@ -2076,8 +2088,8 @@ fn margin_block_margin_after_float() {
 #[test]
 fn margin_block_margin_before_float() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(30.0).margin_bottom(20).done();
     b.add_child().width(200.0).height(100.0).float_left().done();
@@ -2090,8 +2102,8 @@ fn margin_block_margin_before_float() {
 #[test]
 fn margin_adjacent_siblings_dont_collapse_through_float() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(30.0).margin_bottom(20).done();
     b.add_child().height(30.0).margin_top(15).done();
@@ -2105,8 +2117,8 @@ fn margin_adjacent_siblings_dont_collapse_through_float() {
 fn margin_float_between_blocks_prevents_nothing() {
     // Float doesn't affect margin collapsing between normal flow blocks
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(30.0).margin_bottom(20).done();
     b.add_child().width(100.0).height(50.0).float_left().done();
@@ -2121,8 +2133,8 @@ fn margin_float_between_blocks_prevents_nothing() {
 #[test]
 fn margin_float_margin_top_doesnt_collapse_with_sibling() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(30.0).margin_bottom(20).done();
     b.add_child()
@@ -2162,8 +2174,8 @@ fn margin_no_collapse_between_floats() {
 #[test]
 fn margin_block_after_cleared_float_no_collapse() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().width(200.0).height(100.0).float_left().done();
     b.add_child()
@@ -2202,8 +2214,8 @@ fn margin_float_inside_bfc_no_collapse_with_outer() {
 #[test]
 fn margin_two_blocks_with_margin_around_float_region() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(40.0).margin_bottom(30).done();
     b.add_child().width(200.0).height(50.0).float_left().done();
@@ -2217,8 +2229,8 @@ fn margin_two_blocks_with_margin_around_float_region() {
 #[test]
 fn margin_clear_prevents_collapse_through() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().width(200.0).height(100.0).float_left().done();
     b.add_child()
@@ -2252,8 +2264,8 @@ fn margin_float_margin_bottom_doesnt_affect_next_block() {
 #[test]
 fn margin_two_non_float_blocks_collapse_normally() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(40.0).margin_bottom(30).done();
     b.add_child().height(40.0).margin_top(20).done();
@@ -2279,8 +2291,8 @@ fn margin_container_with_float_only_zero_height() {
 #[test]
 fn margin_float_doesnt_participate_in_collapse_between_siblings() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(30.0).margin_bottom(50).done();
     b.add_child().width(100.0).height(40.0).float_left().done();
@@ -2603,8 +2615,8 @@ fn combo_float_left_then_bfc_then_clear() {
 #[test]
 fn combo_block_with_margin_collapse_then_float() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(40.0).margin_bottom(20).done();
     b.add_child().height(40.0).margin_top(10).done();
@@ -2685,10 +2697,10 @@ fn combo_float_with_padding_margin_border() {
 #[test]
 fn combo_container_border_and_float_with_margin() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_left_width = 10;
-        s.border_top_width = 10;
-        s.border_left_style = BorderStyle::Solid;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_left_width = 10);
+        s.update_derived(|computed| computed.border_top_width = 10);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(200.0)
@@ -3310,7 +3322,7 @@ fn bfc2_overflow_hidden_with_clear_inside() {
         .done()
         .add_child()
         .height(30.0)
-        .with_style(|s| s.clear = Clear::Left)
+        .with_style(|s| s.update_derived(|computed| computed.clear = Clear::Left))
         .done()
         .done();
     let r = b.build();
@@ -3593,7 +3605,9 @@ fn edge2_float_right_negative_margin_right() {
         .width(200.0)
         .height(100.0)
         .float_right()
-        .with_style(|s| s.margin_right = openui_geometry::Length::px(-20.0))
+        .with_style(|s| {
+            s.update_derived(|computed| computed.margin_right = openui_geometry::Length::px(-20.0))
+        })
         .done();
     let r = b.build();
     // 800 - (-20) - 200 = 620
@@ -3665,8 +3679,8 @@ fn margin2_float_bottom_margin_independent() {
 #[test]
 fn margin2_two_blocks_no_float_margins_collapse() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(30.0).margin_bottom(40).done();
     b.add_child().height(30.0).margin_top(25).done();
@@ -3677,8 +3691,8 @@ fn margin2_two_blocks_no_float_margins_collapse() {
 #[test]
 fn margin2_float_between_blocks_margins_still_collapse() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(30.0).margin_bottom(40).done();
     b.add_child().width(100.0).height(50.0).float_left().done();
@@ -3707,8 +3721,8 @@ fn margin2_block_after_float_margin_not_collapsed_with_float() {
 #[test]
 fn margin2_overflow_hidden_margin_not_collapsed() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .height(30.0)
@@ -3740,8 +3754,8 @@ fn margin2_clear_and_margin_interaction() {
 #[test]
 fn margin2_three_blocks_middle_with_float() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(20.0).margin_bottom(15).done();
     b.add_child().width(100.0).height(30.0).float_left().done();
@@ -3911,8 +3925,12 @@ fn reg_float_pct_margins_both_sides() {
         .height(50.0)
         .float_left()
         .with_style(|s| {
-            s.margin_left = openui_geometry::Length::percent(10.0);
-            s.margin_right = openui_geometry::Length::percent(5.0);
+            s.update_derived(|computed| {
+                computed.margin_left = openui_geometry::Length::percent(10.0)
+            });
+            s.update_derived(|computed| {
+                computed.margin_right = openui_geometry::Length::percent(5.0)
+            });
         })
         .done();
     b.add_child().width(200.0).height(50.0).float_left().done();
@@ -4071,8 +4089,8 @@ fn pos3_left_float_with_border_top_only() {
         .height(100.0)
         .float_left()
         .with_style(|s| {
-            s.border_top_width = 10;
-            s.border_top_style = BorderStyle::Solid;
+            s.update_derived(|computed| computed.border_top_width = 10);
+            s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
         })
         .done();
     let r = b.build();
@@ -4087,7 +4105,7 @@ fn pos3_left_float_with_padding_left_only() {
         .height(100.0)
         .float_left()
         .with_style(|s| {
-            s.padding_left = openui_geometry::Length::px(30.0);
+            s.update_derived(|computed| computed.padding_left = openui_geometry::Length::px(30.0));
         })
         .done();
     let r = b.build();
@@ -4097,10 +4115,10 @@ fn pos3_left_float_with_padding_left_only() {
 #[test]
 fn pos3_container_padding_all_sides_with_float() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.padding_top = openui_geometry::Length::px(10.0);
-        s.padding_right = openui_geometry::Length::px(10.0);
-        s.padding_bottom = openui_geometry::Length::px(10.0);
-        s.padding_left = openui_geometry::Length::px(10.0);
+        s.update_derived(|computed| computed.padding_top = openui_geometry::Length::px(10.0));
+        s.update_derived(|computed| computed.padding_right = openui_geometry::Length::px(10.0));
+        s.update_derived(|computed| computed.padding_bottom = openui_geometry::Length::px(10.0));
+        s.update_derived(|computed| computed.padding_left = openui_geometry::Length::px(10.0));
     });
     b.add_child().width(200.0).height(50.0).float_left().done();
     let r = b.build();
@@ -4198,7 +4216,7 @@ fn flow3_block_beside_left_float_with_margin_left() {
     b.add_child()
         .height(40.0)
         .with_style(|s| {
-            s.margin_left = openui_geometry::Length::px(20.0);
+            s.update_derived(|computed| computed.margin_left = openui_geometry::Length::px(20.0));
         })
         .done();
     let r = b.build();
@@ -4296,7 +4314,9 @@ fn bfc3_overflow_hidden_with_margin_and_float() {
     b.add_child()
         .height(60.0)
         .overflow_hidden()
-        .with_style(|s| s.margin_top = openui_geometry::Length::px(10.0))
+        .with_style(|s| {
+            s.update_derived(|computed| computed.margin_top = openui_geometry::Length::px(10.0))
+        })
         .done();
     let r = b.build();
     let c = r.child(1);
@@ -4536,8 +4556,8 @@ fn edge3_grid_of_16_floats() {
 #[test]
 fn margin3_equal_margins_collapse_to_larger() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(30.0).margin_bottom(20).done();
     b.add_child().height(30.0).margin_top(20).done();
@@ -4569,8 +4589,8 @@ fn margin3_float_with_large_margins_no_collapse() {
 #[test]
 fn margin3_three_blocks_with_floats_interspersed() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(20.0).margin_bottom(15).done();
     b.add_child().width(50.0).height(10.0).float_left().done();
@@ -4615,8 +4635,8 @@ fn margin3_clear_element_margins_dont_collapse_with_float() {
 #[test]
 fn final_complex_layout_with_all_features() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(30.0).done();
     b.add_child().width(200.0).height(100.0).float_left().done();
@@ -4648,7 +4668,7 @@ fn final_nested_bfc_with_float_and_clear() {
         .done()
         .add_child()
         .height(40.0)
-        .with_style(|s| s.clear = Clear::Left)
+        .with_style(|s| s.update_derived(|computed| computed.clear = Clear::Left))
         .done()
         .add_child()
         .height(20.0)
@@ -4800,8 +4820,8 @@ fn extra_left_float_then_block_then_right_float() {
 #[test]
 fn extra_container_padding_and_multiple_floats() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.padding_left = openui_geometry::Length::px(20.0);
-        s.padding_top = openui_geometry::Length::px(10.0);
+        s.update_derived(|computed| computed.padding_left = openui_geometry::Length::px(20.0));
+        s.update_derived(|computed| computed.padding_top = openui_geometry::Length::px(10.0));
     });
     b.add_child().width(100.0).height(40.0).float_left().done();
     b.add_child().width(100.0).height(40.0).float_left().done();
@@ -4868,7 +4888,7 @@ fn extra_three_equal_left_floats_pct() {
 #[test]
 fn extra_float_inside_padded_container_right() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.padding_right = openui_geometry::Length::px(50.0);
+        s.update_derived(|computed| computed.padding_right = openui_geometry::Length::px(50.0));
     });
     b.add_child().width(200.0).height(50.0).float_right().done();
     let r = b.build();
@@ -4949,8 +4969,8 @@ fn extra_float_right_then_overflow_auto() {
 #[test]
 fn extra_two_blocks_margin_collapse_after_float_clear() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().width(200.0).height(50.0).float_left().done();
     b.add_child()
@@ -5064,7 +5084,7 @@ fn extra_right_float_beside_block_with_margin_right() {
     b.add_child()
         .height(40.0)
         .with_style(|s| {
-            s.margin_right = openui_geometry::Length::px(10.0);
+            s.update_derived(|computed| computed.margin_right = openui_geometry::Length::px(10.0));
         })
         .done();
     let r = b.build();

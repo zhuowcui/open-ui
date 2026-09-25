@@ -72,17 +72,17 @@ fn overflow_hidden_clips_text_beyond_box() {
 
     // Create a narrow box (50px wide) with overflow:hidden
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(50.0);
-    doc.node_mut(div).style.height = Length::px(30.0);
-    doc.node_mut(div).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(div).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(div, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, div);
 
     // Text child that extends beyond the box
     let text_node = doc.create_node(ElementTag::Text);
     doc.node_mut(text_node).text = Some("XXXXXXXXXXXXX".to_string());
-    doc.node_mut(text_node).style.color = Color::BLACK;
+    doc.update_resolved_style(text_node, |style| style.color = Color::BLACK);
     doc.append_child(div, text_node);
 
     let sr = Arc::new(shape_text("XXXXXXXXXXXXX"));

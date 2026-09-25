@@ -278,6 +278,25 @@ fn active_clone_end_edges(stack: &[IntrinsicInlineBox]) -> LayoutUnit {
         .fold(LayoutUnit::zero(), |sum, entry| sum + entry.end_edge)
 }
 
+/// Convert a shaped advance to Blink's 1/64px intrinsic-size grid.
+///
+/// Font backends can return an advance a few floating-point ulps above an
+/// exact LayoutUnit boundary (for example, 48.000004px). Ceil-converting that
+/// value creates a synthetic 1/64px intrinsic contribution. Normalize only
+/// values already within 1/4096px of the fixed-point grid; other advances
+/// retain the conservative ceil used to avoid unintended wrapping.
+fn intrinsic_text_width(width: f32) -> LayoutUnit {
+    let nearest = LayoutUnit::from_f32_round(width);
+    let backend_roundoff = (32.0 * f32::EPSILON * width.abs().max(1.0))
+        .max(1.0 / 4096.0)
+        .min(1.0 / 256.0);
+    if (width - nearest.to_f32()).abs() <= backend_roundoff {
+        nearest
+    } else {
+        LayoutUnit::from_f32_ceil(width)
+    }
+}
+
 fn intrinsic_close_rounding_excess(data: &InlineItemsData, close_item_index: usize) -> LayoutUnit {
     let next_starts_non_whitespace = data.items[close_item_index + 1..]
         .iter()
@@ -321,11 +340,11 @@ fn intrinsic_close_rounding_excess(data: &InlineItemsData, close_item_index: usi
             break;
         };
         exact_width += shape_result.width;
-        allocated_width = allocated_width + LayoutUnit::from_f32_ceil(shape_result.width);
+        allocated_width = allocated_width + intrinsic_text_width(shape_result.width);
         run_count += 1;
     }
     if run_count > 1 {
-        (allocated_width - LayoutUnit::from_f32_ceil(exact_width)).clamp_negative_to_zero()
+        (allocated_width - intrinsic_text_width(exact_width)).clamp_negative_to_zero()
     } else {
         LayoutUnit::zero()
     }
@@ -543,9 +562,9 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
 
                     if byte_index > run_start {
                         let width =
-                            LayoutUnit::from_f32_ceil(shape.width_for_range(run_start_char, index));
-                        let max_width = LayoutUnit::from_f32_ceil(shape.width_for_range(0, index))
-                            - LayoutUnit::from_f32_ceil(shape.width_for_range(0, run_start_char));
+                            intrinsic_text_width(shape.width_for_range(run_start_char, index));
+                        let max_width = intrinsic_text_width(shape.width_for_range(0, index))
+                            - intrinsic_text_width(shape.width_for_range(0, run_start_char));
                         min_segment = min_segment + pending_min_collapsible_space;
                         pending_min_collapsible_space = LayoutUnit::zero();
                         if soft_break_pending {
@@ -591,11 +610,9 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                             &mut pending_collapsible_space,
                         );
                     } else if is_break_all_character {
-                        let width =
-                            LayoutUnit::from_f32_ceil(shape.width_for_range(index, char_end));
-                        let max_width =
-                            LayoutUnit::from_f32_ceil(shape.width_for_range(0, char_end))
-                                - LayoutUnit::from_f32_ceil(shape.width_for_range(0, index));
+                        let width = intrinsic_text_width(shape.width_for_range(index, char_end));
+                        let max_width = intrinsic_text_width(shape.width_for_range(0, char_end))
+                            - intrinsic_text_width(shape.width_for_range(0, index));
                         min_segment = min_segment + pending_min_collapsible_space;
                         pending_min_collapsible_space = LayoutUnit::zero();
                         if soft_break_pending {
@@ -619,11 +636,9 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                         soft_break_after_pending_edges = false;
                         last_content_was_text = true;
                     } else {
-                        let width =
-                            LayoutUnit::from_f32_ceil(shape.width_for_range(index, char_end));
-                        let max_width =
-                            LayoutUnit::from_f32_ceil(shape.width_for_range(0, char_end))
-                                - LayoutUnit::from_f32_ceil(shape.width_for_range(0, index));
+                        let width = intrinsic_text_width(shape.width_for_range(index, char_end));
+                        let max_width = intrinsic_text_width(shape.width_for_range(0, char_end))
+                            - intrinsic_text_width(shape.width_for_range(0, index));
                         if collapses {
                             pending_collapsible_space = max_width;
                         } else {
@@ -654,12 +669,12 @@ fn compute_inline_sequence_intrinsic_sizes(doc: &Document, node_id: NodeId) -> M
                 }
 
                 if run_start < text.len() {
-                    let width = LayoutUnit::from_f32_ceil(
+                    let width = intrinsic_text_width(
                         shape.width_for_range(run_start_char, shape.num_characters),
                     );
                     let max_width =
-                        LayoutUnit::from_f32_ceil(shape.width_for_range(0, shape.num_characters))
-                            - LayoutUnit::from_f32_ceil(shape.width_for_range(0, run_start_char));
+                        intrinsic_text_width(shape.width_for_range(0, shape.num_characters))
+                            - intrinsic_text_width(shape.width_for_range(0, run_start_char));
                     min_segment = min_segment + pending_min_collapsible_space;
                     pending_min_collapsible_space = LayoutUnit::zero();
                     if soft_break_pending {
@@ -727,7 +742,10 @@ pub fn compute_intrinsic_block_sizes(doc: &Document, node_id: NodeId) -> Intrins
     // Flex containers have their own intrinsic sizing algorithm.
     // CSS Flexbox §9.9: Flex container intrinsic sizes.
     if style.display.is_flex() {
-        return apply_size_containment(style, compute_flex_intrinsic_sizes(doc, node_id, style));
+        return apply_size_containment(
+            style,
+            compute_flex_intrinsic_sizes(doc, node_id, style, None),
+        );
     }
 
     if style.display.is_grid() {
@@ -1261,6 +1279,7 @@ fn compute_flex_intrinsic_sizes(
     doc: &Document,
     node_id: NodeId,
     style: &ComputedStyle,
+    definite_border_box_block_size: Option<LayoutUnit>,
 ) -> IntrinsicSizes {
     let axes = IntrinsicAxisMapping::for_style(style);
     let writing_direction = axes.writing_direction;
@@ -1349,45 +1368,93 @@ fn compute_flex_intrinsic_sizes(
 
     // Resolve the container's definite cross size (if any) for aspect-ratio children.
     // Row flex: cross = block (height); Column flex: cross = inline (width).
+    let definite_content_block =
+        definite_border_box_block_size.map(|size| (size - bp_block).clamp_negative_to_zero());
     let container_definite_cross = {
-        let cross_prop = axes.cross_size(style, is_column);
-        if !cross_prop.is_auto() && cross_prop.is_fixed() {
-            let val = resolve_length(
-                cross_prop,
-                LayoutUnit::zero(),
-                LayoutUnit::zero(),
-                LayoutUnit::zero(),
-            );
-            let content_val = if style.box_sizing == BoxSizing::BorderBox {
-                if is_column {
-                    (val - bp_inline).clamp_negative_to_zero()
-                } else {
-                    (val - bp_block).clamp_negative_to_zero()
-                }
+        if !is_column {
+            if let Some(size) = definite_content_block {
+                size
             } else {
-                val
-            };
-            content_val
+                let cross_prop = axes.cross_size(style, is_column);
+                if !cross_prop.is_auto() && cross_prop.is_fixed() {
+                    let val = resolve_length(
+                        cross_prop,
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                    );
+                    if style.box_sizing == BoxSizing::BorderBox {
+                        (val - bp_block).clamp_negative_to_zero()
+                    } else {
+                        val
+                    }
+                } else {
+                    LayoutUnit::zero()
+                }
+            }
         } else {
-            LayoutUnit::zero()
+            let cross_prop = axes.cross_size(style, is_column);
+            if !cross_prop.is_auto() && cross_prop.is_fixed() {
+                let val = resolve_length(
+                    cross_prop,
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                );
+                let content_val = if style.box_sizing == BoxSizing::BorderBox {
+                    if is_column {
+                        (val - bp_inline).clamp_negative_to_zero()
+                    } else {
+                        (val - bp_block).clamp_negative_to_zero()
+                    }
+                } else {
+                    val
+                };
+                content_val
+            } else {
+                LayoutUnit::zero()
+            }
         }
     };
     let container_definite_main = {
-        let main_prop = axes.main_size(style, is_column);
-        if main_prop.is_fixed() {
-            let value = resolve_length(
-                main_prop,
-                LayoutUnit::zero(),
-                LayoutUnit::zero(),
-                LayoutUnit::zero(),
-            );
-            if style.box_sizing == BoxSizing::BorderBox {
-                (value - if is_column { bp_block } else { bp_inline }).clamp_negative_to_zero()
+        if is_column {
+            if let Some(size) = definite_content_block {
+                size
             } else {
-                value
+                let main_prop = axes.main_size(style, is_column);
+                if main_prop.is_fixed() {
+                    let value = resolve_length(
+                        main_prop,
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                        LayoutUnit::zero(),
+                    );
+                    if style.box_sizing == BoxSizing::BorderBox {
+                        (value - bp_block).clamp_negative_to_zero()
+                    } else {
+                        value
+                    }
+                } else {
+                    LayoutUnit::zero()
+                }
             }
         } else {
-            LayoutUnit::zero()
+            let main_prop = axes.main_size(style, is_column);
+            if main_prop.is_fixed() {
+                let value = resolve_length(
+                    main_prop,
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                    LayoutUnit::zero(),
+                );
+                if style.box_sizing == BoxSizing::BorderBox {
+                    (value - if is_column { bp_block } else { bp_inline }).clamp_negative_to_zero()
+                } else {
+                    value
+                }
+            } else {
+                LayoutUnit::zero()
+            }
         }
     };
 
@@ -1964,7 +2031,7 @@ fn compute_flex_intrinsic_sizes(
     // simulate wrapping to determine the sum of column widths.
     let (min_cross_total, max_cross_total) = if is_column && is_wrap && !items.is_empty() {
         let main_constraint = {
-            let mut c = LayoutUnit::from_i32(33554431);
+            let mut c = definite_content_block.unwrap_or_else(|| LayoutUnit::from_i32(33554431));
             let main_size = axes.main_size(style, true);
             let max_main_size = axes.max_main_size(style, true);
             if main_size.is_fixed() {
@@ -2423,6 +2490,58 @@ pub(crate) fn has_block_dependent_replaced_descendant(doc: &Document, node_id: N
     })
 }
 
+/// Whether the block-dependent replaced box is below a non-replaced child.
+///
+/// A directly contained replaced box keeps its ordinary intrinsic inline
+/// contribution while its percentage block size resolves during layout. A
+/// nested box, however, participates in the containing block's intrinsic
+/// walk and can transfer the now-definite block size through its ratio.
+pub(crate) fn has_nested_block_dependent_replaced_descendant(
+    doc: &Document,
+    node_id: NodeId,
+) -> bool {
+    fn branch_uses_transferred_block_size(doc: &Document, child_id: NodeId) -> bool {
+        let child = doc.node(child_id);
+        if child.style.display == openui_style::Display::None
+            || child.style.position.is_absolutely_positioned()
+            || child.replaced.is_some()
+            || is_replaced_element(child.tag)
+        {
+            return false;
+        }
+        let direction = child
+            .style
+            .direction
+            .writing_direction(child.style.writing_mode);
+        let block_lengths = if direction.is_horizontal() {
+            [
+                &child.style.height,
+                &child.style.min_height,
+                &child.style.max_height,
+            ]
+        } else {
+            [
+                &child.style.width,
+                &child.style.min_width,
+                &child.style.max_width,
+            ]
+        };
+        let owns_definite_transfer = block_lengths
+            .iter()
+            .any(|length| length.is_percent() || length.length_type() == LengthType::Calculated)
+            && has_block_dependent_replaced_descendant(doc, child_id);
+        owns_definite_transfer
+            || ((is_inline_level(&child.style)
+                || child.style.display == openui_style::Display::Contents)
+                && doc
+                    .children(child_id)
+                    .any(|nested| branch_uses_transferred_block_size(doc, nested)))
+    }
+
+    doc.children(node_id)
+        .any(|child_id| branch_uses_transferred_block_size(doc, child_id))
+}
+
 fn compute_logical_intrinsic_inline_sizes_impl(
     doc: &Document,
     node_id: NodeId,
@@ -2655,6 +2774,19 @@ pub fn compute_intrinsic_inline_sizes_with_block_size(
             .to_logical_size(fragment.size);
         return MinMaxSizes::new(logical.inline_size, logical.inline_size);
     }
+    if style.display.is_flex()
+        && style
+            .direction
+            .writing_direction(style.writing_mode)
+            .is_horizontal()
+    {
+        let intrinsic =
+            compute_flex_intrinsic_sizes(doc, node_id, style, Some(border_box_block_size));
+        return MinMaxSizes::new(
+            intrinsic.min_content_inline_size,
+            intrinsic.max_content_inline_size,
+        );
+    }
     let border = resolve_border(style);
     let padding = resolve_padding(style, containing_inline_size);
     let bp_inline = border.inline_sum() + padding.inline_sum();
@@ -2812,6 +2944,22 @@ fn compute_child_intrinsic_contribution_with_block_size(
         }
     }
 
+    // Inline wrappers do not establish a containing block for an inner block
+    // that was split out by block-in-inline layout. Carry the definite block
+    // basis through that transparent wrapper so a nested percentage-sized
+    // replaced box can transfer its used block size through its ratio.
+    if is_inline_level(child_style) && has_block_dependent_replaced_descendant(doc, child_id) {
+        let nested = compute_intrinsic_inline_sizes_with_block_size(
+            doc,
+            child_id,
+            parent_content_block_size,
+            LayoutUnit::zero(),
+        );
+        let min = apply_min_max_inline(child_style, nested.min, (nested.min, nested.max), false);
+        let max = apply_min_max_inline(child_style, nested.max, (nested.min, nested.max), true);
+        return MinMaxSizes::new(min + margin_inline, max + margin_inline);
+    }
+
     let intrinsic = compute_child_intrinsic_contribution(doc, child_id);
     MinMaxSizes::new(
         intrinsic.min_content_inline_size,
@@ -2861,7 +3009,7 @@ fn compute_text_intrinsic_sizes_impl(
     }
 
     let font = doc.resolve_font(style_to_font_description(style));
-    let measure = |run: &str| LayoutUnit::from_f32_ceil(font.width(run));
+    let measure = |run: &str| intrinsic_text_width(font.width(run));
     let forced_lines = processed.split('\n');
     let max_content = forced_lines
         .clone()
@@ -3811,12 +3959,26 @@ mod tests {
     use super::*;
 
     #[test]
+    fn intrinsic_text_width_normalizes_backend_roundoff_at_layout_unit_boundaries() {
+        assert_eq!(
+            intrinsic_text_width(208.000_396_729),
+            LayoutUnit::from_i32(208)
+        );
+        assert_eq!(
+            intrinsic_text_width(48.01),
+            LayoutUnit::from_raw(48 * 64 + 1)
+        );
+    }
+
+    #[test]
     fn degenerate_preferred_ratio_preserves_replaced_natural_ratio() {
         let mut style = ComputedStyle::default();
-        style.width = Length::px(100.0);
-        style.aspect_ratio = Some(openui_style::AspectRatio {
-            ratio: (0.0, 1.0),
-            auto_flag: false,
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| {
+            computed.aspect_ratio = Some(openui_style::AspectRatio {
+                ratio: (0.0, 1.0),
+                auto_flag: false,
+            })
         });
 
         let sizes =
@@ -3867,7 +4029,7 @@ mod tests {
     #[test]
     fn intrinsic_calc_min_width_keeps_definite_term() {
         let mut style = ComputedStyle::default();
-        style.min_width = Length::calc_percent_px(0.0, 160.0);
+        style.update_derived(|computed| computed.min_width = Length::calc_percent_px(0.0, 160.0));
         let size = apply_min_max_inline(
             &style,
             LayoutUnit::from_i32(60),
@@ -3902,7 +4064,9 @@ mod tests {
     #[test]
     fn collapsible_boundary_whitespace_does_not_inflate_intrinsic_width() {
         let mut style = ComputedStyle::default();
-        style.font_family.families = vec![FontFamily::Named("Droid Sans Fallback".into())];
+        style.update_derived(|computed| {
+            computed.font_family.families = vec![FontFamily::Named("Droid Sans Fallback".into())]
+        });
         assert_eq!(
             compute_text_intrinsic_sizes(&Document::new(), "\n  vertical-rl:\n  ", &style),
             compute_text_intrinsic_sizes(&Document::new(), "vertical-rl:", &style)
@@ -3920,7 +4084,9 @@ mod tests {
     #[test]
     fn non_breaking_space_is_not_trimmed_as_css_whitespace() {
         let mut style = ComputedStyle::default();
-        style.font_family.families = vec![FontFamily::Named("Droid Sans Fallback".into())];
+        style.update_derived(|computed| {
+            computed.font_family.families = vec![FontFamily::Named("Droid Sans Fallback".into())]
+        });
         let sizes = compute_text_intrinsic_sizes(&Document::new(), "\u{00a0}", &style);
         assert!(sizes.min > LayoutUnit::zero());
         assert_eq!(sizes.min, sizes.max);
@@ -3929,8 +4095,8 @@ mod tests {
     #[test]
     fn fit_content_minimum_preserves_both_intrinsic_endpoints() {
         let mut style = ComputedStyle::default();
-        style.width = Length::px(10.0);
-        style.min_width = Length::fit_content();
+        style.update_derived(|computed| computed.width = Length::px(10.0));
+        style.update_derived(|computed| computed.min_width = Length::fit_content());
         let endpoints = (LayoutUnit::from_i32(50), LayoutUnit::from_i32(100));
         assert_eq!(
             apply_min_max_inline(&style, LayoutUnit::from_i32(10), endpoints, false),
@@ -3949,13 +4115,17 @@ mod tests {
         doc.append_child(doc.root(), container);
 
         let fixed = doc.create_node(ElementTag::Span);
-        doc.node_mut(fixed).style.display = openui_style::Display::InlineBlock;
-        doc.node_mut(fixed).style.width = Length::px(100.0);
+        doc.update_resolved_style(fixed, |style| {
+            style.display = openui_style::Display::InlineBlock
+        });
+        doc.update_resolved_style(fixed, |style| style.width = Length::px(100.0));
         doc.append_child(container, fixed);
 
         let negative = doc.create_node(ElementTag::Span);
-        doc.node_mut(negative).style.display = openui_style::Display::InlineBlock;
-        doc.node_mut(negative).style.margin_right = Length::px(-50.0);
+        doc.update_resolved_style(negative, |style| {
+            style.display = openui_style::Display::InlineBlock
+        });
+        doc.update_resolved_style(negative, |style| style.margin_right = Length::px(-50.0));
         doc.append_child(container, negative);
 
         let sizes = compute_intrinsic_block_sizes(&doc, container);
@@ -3966,7 +4136,7 @@ mod tests {
     #[test]
     fn intrinsic_calc_max_width_with_percentage_is_unconstrained() {
         let mut style = ComputedStyle::default();
-        style.max_width = Length::calc_percent_px(0.0, 40.0);
+        style.update_derived(|computed| computed.max_width = Length::calc_percent_px(0.0, 40.0));
         let size = apply_min_max_inline(
             &style,
             LayoutUnit::from_i32(80),
@@ -3983,9 +4153,10 @@ mod tests {
         doc.append_child(doc.root(), container);
         for _ in 0..5 {
             let atomic = doc.create_node(ElementTag::Span);
-            let style = doc.node_mut(atomic).style_mut();
-            style.display = openui_style::Display::InlineBlock;
-            style.width = Length::px(25.0);
+            doc.update_resolved_style(atomic, |style| {
+                style.display = openui_style::Display::InlineBlock;
+                style.width = Length::px(25.0);
+            });
             doc.append_child(container, atomic);
         }
 
@@ -4002,17 +4173,19 @@ mod tests {
         doc.append_child(doc.root(), container);
 
         let float = doc.create_node(ElementTag::Div);
-        let float_style = doc.node_mut(float).style_mut();
-        float_style.float = openui_style::Float::Right;
-        float_style.width = Length::px(100.0);
-        float_style.height = Length::px(200.0);
+        doc.update_resolved_style(float, |float_style| {
+            float_style.float = openui_style::Float::Right;
+            float_style.width = Length::px(100.0);
+            float_style.height = Length::px(200.0);
+        });
         doc.append_child(container, float);
 
         let atomic = doc.create_node(ElementTag::Span);
-        let atomic_style = doc.node_mut(atomic).style_mut();
-        atomic_style.display = openui_style::Display::InlineBlock;
-        atomic_style.width = Length::px(100.0);
-        atomic_style.height = Length::px(200.0);
+        doc.update_resolved_style(atomic, |atomic_style| {
+            atomic_style.display = openui_style::Display::InlineBlock;
+            atomic_style.width = Length::px(100.0);
+            atomic_style.height = Length::px(200.0);
+        });
         doc.append_child(container, atomic);
 
         let sizes = compute_intrinsic_block_sizes(&doc, container);
@@ -4027,18 +4200,20 @@ mod tests {
         doc.append_child(doc.root(), container);
 
         let first = doc.create_node(ElementTag::Div);
-        let first_style = doc.node_mut(first).style_mut();
-        first_style.float = openui_style::Float::Left;
-        first_style.width = Length::px(100.0);
+        doc.update_resolved_style(first, |first_style| {
+            first_style.float = openui_style::Float::Left;
+            first_style.width = Length::px(100.0);
+        });
         doc.append_child(container, first);
 
         let br = doc.create_node(ElementTag::Break);
         doc.append_child(container, br);
 
         let second = doc.create_node(ElementTag::Div);
-        let second_style = doc.node_mut(second).style_mut();
-        second_style.float = openui_style::Float::Left;
-        second_style.width = Length::px(60.0);
+        doc.update_resolved_style(second, |second_style| {
+            second_style.float = openui_style::Float::Left;
+            second_style.width = Length::px(60.0);
+        });
         doc.append_child(container, second);
 
         let sizes = compute_intrinsic_block_sizes(&doc, container);
@@ -4053,16 +4228,18 @@ mod tests {
         doc.append_child(doc.root(), container);
 
         let first = doc.create_node(ElementTag::Div);
-        let first_style = doc.node_mut(first).style_mut();
-        first_style.float = openui_style::Float::Left;
-        first_style.width = Length::px(68.0);
+        doc.update_resolved_style(first, |first_style| {
+            first_style.float = openui_style::Float::Left;
+            first_style.width = Length::px(68.0);
+        });
         doc.append_child(container, first);
 
         let second = doc.create_node(ElementTag::Div);
-        let second_style = doc.node_mut(second).style_mut();
-        second_style.float = openui_style::Float::Left;
-        second_style.clear = Clear::Both;
-        second_style.width = Length::px(44.0);
+        doc.update_resolved_style(second, |second_style| {
+            second_style.float = openui_style::Float::Left;
+            second_style.clear = Clear::Both;
+            second_style.width = Length::px(44.0);
+        });
         doc.append_child(container, second);
 
         let sizes = compute_intrinsic_block_sizes(&doc, container);
@@ -4073,21 +4250,26 @@ mod tests {
     fn vertical_inline_intrinsic_uses_atomic_height_and_forced_lines() {
         let mut doc = Document::new();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.writing_mode = openui_style::WritingMode::VerticalLr;
+        doc.update_resolved_style(container, |style| {
+            style.writing_mode = openui_style::WritingMode::VerticalLr
+        });
         doc.append_child(doc.root(), container);
 
         for index in 0..2 {
             let atomic = doc.create_node(ElementTag::Span);
-            let style = doc.node_mut(atomic).style_mut();
-            style.display = openui_style::Display::InlineBlock;
-            style.writing_mode = openui_style::WritingMode::VerticalLr;
-            style.width = Length::px(15.0);
-            style.height = Length::px(45.0);
+            doc.update_resolved_style(atomic, |style| {
+                style.display = openui_style::Display::InlineBlock;
+                style.writing_mode = openui_style::WritingMode::VerticalLr;
+                style.width = Length::px(15.0);
+                style.height = Length::px(45.0);
+            });
             doc.append_child(container, atomic);
 
             if index == 0 {
                 let line_break = doc.create_node(ElementTag::Break);
-                doc.node_mut(line_break).style.writing_mode = openui_style::WritingMode::VerticalLr;
+                doc.update_resolved_style(line_break, |style| {
+                    style.writing_mode = openui_style::WritingMode::VerticalLr
+                });
                 doc.append_child(container, line_break);
             }
         }
@@ -4103,15 +4285,18 @@ mod tests {
     fn vertical_inline_intrinsic_maxes_normal_flow_block_children() {
         let mut doc = Document::new();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.writing_mode = openui_style::WritingMode::VerticalLr;
+        doc.update_resolved_style(container, |style| {
+            style.writing_mode = openui_style::WritingMode::VerticalLr
+        });
         doc.append_child(doc.root(), container);
 
         for _ in 0..2 {
             let child = doc.create_node(ElementTag::Div);
-            let style = doc.node_mut(child).style_mut();
-            style.display = openui_style::Display::Flex;
-            style.writing_mode = openui_style::WritingMode::VerticalLr;
-            style.height = Length::px(48.0);
+            doc.update_resolved_style(child, |style| {
+                style.display = openui_style::Display::Flex;
+                style.writing_mode = openui_style::WritingMode::VerticalLr;
+                style.height = Length::px(48.0);
+            });
             doc.append_child(container, child);
         }
 
@@ -4125,10 +4310,12 @@ mod tests {
     #[test]
     fn line_break_anywhere_uses_character_min_content_opportunities() {
         let mut style = ComputedStyle::default();
-        style.font_family.families = vec![FontFamily::Named("Droid Sans Fallback".into())];
+        style.update_derived(|computed| {
+            computed.font_family.families = vec![FontFamily::Named("Droid Sans Fallback".into())]
+        });
         let normal = compute_text_intrinsic_sizes(&Document::new(), "fragmentation", &style);
 
-        style.line_break = LineBreak::Anywhere;
+        style.update_derived(|computed| computed.line_break = LineBreak::Anywhere);
         let anywhere = compute_text_intrinsic_sizes(&Document::new(), "fragmentation", &style);
 
         assert!(anywhere.min < normal.min);
@@ -4139,14 +4326,15 @@ mod tests {
     fn zero_column_width_does_not_add_hypothetical_min_content_gaps() {
         let mut doc = Document::new();
         let multicol = doc.create_node(ElementTag::Div);
-        let multicol_style = doc.node_mut(multicol).style_mut();
-        multicol_style.column_count = Some(3);
-        multicol_style.column_width = Some(Length::px(0.0));
-        multicol_style.column_gap = Some(Length::px(20.0));
+        doc.update_resolved_style(multicol, |multicol_style| {
+            multicol_style.column_count = Some(3);
+            multicol_style.column_width = Some(Length::px(0.0));
+            multicol_style.column_gap = Some(Length::px(20.0));
+        });
         doc.append_child(doc.root(), multicol);
 
         let child = doc.create_node(ElementTag::Div);
-        doc.node_mut(child).style.width = Length::px(100.0);
+        doc.update_resolved_style(child, |style| style.width = Length::px(100.0));
         doc.append_child(multicol, child);
 
         let sizes = compute_intrinsic_block_sizes(&doc, multicol);

@@ -129,13 +129,13 @@ fn make_text_fragment(
 
 /// Create a minimal Document with one text node for testing.
 fn make_doc_with_text_style(
-    style_fn: impl FnOnce(&mut ComputedStyle),
+    style_fn: impl FnOnce(&mut openui_style::ComputedStyleFields),
 ) -> (Document, openui_dom::NodeId) {
     let mut doc = Document::new();
     let vp = doc.root();
     let text_node = doc.create_node(ElementTag::Text);
     doc.node_mut(text_node).text = Some("Hello".to_string());
-    style_fn(&mut doc.node_mut(text_node).style);
+    doc.update_resolved_style(text_node, style_fn);
     doc.append_child(vp, text_node);
     (doc, text_node)
 }
@@ -199,13 +199,13 @@ fn text_color_is_applied() {
     // Red text
     let mut surface_red = make_surface(100, 100);
     let mut style_red = default_style();
-    style_red.color = Color::RED;
+    style_red.update_derived(|computed| computed.color = Color::RED);
     text_painter::paint_text(surface_red.canvas(), &sr, (10.0, 50.0), &style_red);
 
     // Blue text
     let mut surface_blue = make_surface(100, 100);
     let mut style_blue = default_style();
-    style_blue.color = Color::BLUE;
+    style_blue.update_derived(|computed| computed.color = Color::BLUE);
     text_painter::paint_text(surface_blue.canvas(), &sr, (10.0, 50.0), &style_blue);
 
     // Both should produce visible output
@@ -224,7 +224,7 @@ fn transparent_text_produces_no_visible_output() {
     let sr = Arc::new(shape_text("Hello"));
     let mut surface = make_surface(200, 100);
     let mut style = default_style();
-    style.color = Color::TRANSPARENT;
+    style.update_derived(|computed| computed.color = Color::TRANSPARENT);
     text_painter::paint_text(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(
         !has_non_white_pixels(&mut surface),
@@ -237,7 +237,7 @@ fn white_text_on_white_background_is_invisible() {
     let sr = Arc::new(shape_text("Hello"));
     let mut surface = make_surface(200, 100);
     let mut style = default_style();
-    style.color = Color::WHITE;
+    style.update_derived(|computed| computed.color = Color::WHITE);
     text_painter::paint_text(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(
         !has_non_white_pixels(&mut surface),
@@ -342,7 +342,7 @@ fn paint_text_with_custom_rgba_color() {
     let sr = Arc::new(shape_text("Hello"));
     let mut surface = make_surface(200, 100);
     let mut style = default_style();
-    style.color = Color::from_rgba8(128, 64, 32, 255);
+    style.update_derived(|computed| computed.color = Color::from_rgba8(128, 64, 32, 255));
     text_painter::paint_text(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -352,7 +352,7 @@ fn paint_text_with_partial_opacity_color() {
     let sr = Arc::new(shape_text("Hello"));
     let mut surface = make_surface(200, 100);
     let mut style = default_style();
-    style.color = Color::from_rgba8(0, 0, 0, 128); // semi-transparent black
+    style.update_derived(|computed| computed.color = Color::from_rgba8(0, 0, 0, 128)); // semi-transparent black
     text_painter::paint_text(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -388,13 +388,15 @@ fn paint_text_shadow_produces_output() {
     let sr = Arc::new(shape_text("Hello"));
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.color = Color::WHITE; // text invisible, only shadow visible
-    style.text_shadow = vec![TextShadow {
-        offset_x: 2.0,
-        offset_y: 2.0,
-        blur_radius: 0.0,
-        color: Color::BLACK,
-    }];
+    style.update_derived(|computed| computed.color = Color::WHITE); // text invisible, only shadow visible
+    style.update_derived(|computed| {
+        computed.text_shadow = vec![TextShadow {
+            offset_x: 2.0,
+            offset_y: 2.0,
+            blur_radius: 0.0,
+            color: Color::BLACK,
+        }]
+    });
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(
         has_non_white_pixels(&mut surface),
@@ -407,12 +409,14 @@ fn paint_text_shadow_with_blur() {
     let sr = Arc::new(shape_text("Hello"));
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_shadow = vec![TextShadow {
-        offset_x: 3.0,
-        offset_y: 3.0,
-        blur_radius: 4.0,
-        color: Color::BLACK,
-    }];
+    style.update_derived(|computed| {
+        computed.text_shadow = vec![TextShadow {
+            offset_x: 3.0,
+            offset_y: 3.0,
+            blur_radius: 4.0,
+            color: Color::BLACK,
+        }]
+    });
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -439,7 +443,7 @@ fn underline_draws_visible_line() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -461,7 +465,7 @@ fn overline_draws_visible_line() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::OVERLINE;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::OVERLINE);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -483,7 +487,9 @@ fn line_through_draws_visible_line() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine::LINE_THROUGH
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -505,7 +511,7 @@ fn no_decoration_when_none() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::NONE;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::NONE);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -527,9 +533,9 @@ fn decoration_color_matches_current_color() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.color = Color::RED;
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_color = StyleColor::CurrentColor;
+    style.update_derived(|computed| computed.color = Color::RED);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| computed.text_decoration_color = StyleColor::CurrentColor);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -548,8 +554,10 @@ fn decoration_color_explicit() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_color = StyleColor::Resolved(Color::BLUE);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| {
+        computed.text_decoration_color = StyleColor::Resolved(Color::BLUE)
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -568,8 +576,8 @@ fn decoration_style_solid() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_style = TextDecorationStyle::Solid;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Solid);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -588,8 +596,8 @@ fn decoration_style_double() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_style = TextDecorationStyle::Double;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Double);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -608,8 +616,8 @@ fn decoration_style_dotted() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_style = TextDecorationStyle::Dotted;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dotted);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -628,8 +636,8 @@ fn decoration_style_dashed() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_style = TextDecorationStyle::Dashed;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dashed);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -648,8 +656,8 @@ fn decoration_style_wavy() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_style = TextDecorationStyle::Wavy;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Wavy);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -668,8 +676,10 @@ fn decoration_thickness_auto() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_thickness = TextDecorationThickness::Auto;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::Auto
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -688,8 +698,10 @@ fn decoration_thickness_from_font() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_thickness = TextDecorationThickness::FromFont;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::FromFont
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -708,8 +720,10 @@ fn decoration_thickness_explicit_length() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_thickness = TextDecorationThickness::Length(3.0);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::Length(3.0)
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -729,8 +743,10 @@ fn multiple_decorations_underline_and_line_through() {
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
     // Combine underline + line-through via bitwise OR
-    style.text_decoration_line =
-        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0);
+    style.update_derived(|computed| {
+        computed.text_decoration_line =
+            TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0)
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -749,11 +765,13 @@ fn all_three_decorations_combined() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine(
-        TextDecorationLine::UNDERLINE.0
-            | TextDecorationLine::OVERLINE.0
-            | TextDecorationLine::LINE_THROUGH.0,
-    );
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine(
+            TextDecorationLine::UNDERLINE.0
+                | TextDecorationLine::OVERLINE.0
+                | TextDecorationLine::LINE_THROUGH.0,
+        )
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -772,8 +790,10 @@ fn decoration_transparent_color_not_visible() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_color = StyleColor::Resolved(Color::TRANSPARENT);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| {
+        computed.text_decoration_color = StyleColor::Resolved(Color::TRANSPARENT)
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -795,7 +815,7 @@ fn decoration_on_empty_text_does_not_crash() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(100, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -814,8 +834,8 @@ fn decoration_wavy_overline() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::OVERLINE;
-    style.text_decoration_style = TextDecorationStyle::Wavy;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::OVERLINE);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Wavy);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -834,8 +854,10 @@ fn decoration_dashed_line_through() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
-    style.text_decoration_style = TextDecorationStyle::Dashed;
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine::LINE_THROUGH
+    });
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dashed);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -854,8 +876,8 @@ fn decoration_dotted_overline() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::OVERLINE;
-    style.text_decoration_style = TextDecorationStyle::Dotted;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::OVERLINE);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dotted);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -874,8 +896,10 @@ fn decoration_double_line_through() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
-    style.text_decoration_style = TextDecorationStyle::Double;
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine::LINE_THROUGH
+    });
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Double);
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -894,8 +918,10 @@ fn decoration_thick_underline() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = default_style();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_thickness = TextDecorationThickness::Length(5.0);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::Length(5.0)
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -915,7 +941,7 @@ fn decoration_thick_underline() {
 #[test]
 fn paint_text_fragment_full_pipeline() {
     let (doc, text_node) = make_doc_with_text_style(|s| {
-        s.color = Color::BLACK;
+        s.update_derived(|computed| computed.color = Color::BLACK);
     });
 
     let sr = Arc::new(shape_text("Hello World"));
@@ -933,7 +959,7 @@ fn paint_text_fragment_full_pipeline() {
 #[test]
 fn paint_text_fragment_with_offset() {
     let (doc, text_node) = make_doc_with_text_style(|s| {
-        s.color = Color::BLACK;
+        s.update_derived(|computed| computed.color = Color::BLACK);
     });
 
     let sr = Arc::new(shape_text("Hello"));
@@ -982,8 +1008,8 @@ fn text_logically_outside_hard_clip_has_no_lcd_filter_leak() {
 #[test]
 fn paint_text_fragment_with_opacity() {
     let (doc, text_node) = make_doc_with_text_style(|s| {
-        s.color = Color::BLACK;
-        s.opacity = 0.5;
+        s.update_derived(|computed| computed.color = Color::BLACK);
+        s.update_derived(|computed| computed.opacity = 0.5);
     });
 
     let sr = Arc::new(shape_text("Hello"));
@@ -1001,8 +1027,8 @@ fn paint_text_fragment_with_opacity() {
 #[test]
 fn paint_text_fragment_hidden_visibility() {
     let (doc, text_node) = make_doc_with_text_style(|s| {
-        s.color = Color::BLACK;
-        s.visibility = Visibility::Hidden;
+        s.update_derived(|computed| computed.color = Color::BLACK);
+        s.update_derived(|computed| computed.visibility = Visibility::Hidden);
     });
 
     let sr = Arc::new(shape_text("Hello"));
@@ -1024,16 +1050,18 @@ fn paint_mixed_box_and_text_fragment_tree() {
 
     // Create a div with a red background
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(300.0);
-    doc.node_mut(div).style.height = Length::px(50.0);
-    doc.node_mut(div).style.background_color = Color::from_rgba8(200, 200, 200, 255);
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| {
+        style.background_color = Color::from_rgba8(200, 200, 200, 255)
+    });
     doc.append_child(vp, div);
 
     // Create a text node
     let text_node = doc.create_node(ElementTag::Text);
     doc.node_mut(text_node).text = Some("Hello".to_string());
-    doc.node_mut(text_node).style.color = Color::BLACK;
+    doc.update_resolved_style(text_node, |style| style.color = Color::BLACK);
     doc.append_child(div, text_node);
 
     let sr = Arc::new(shape_text("Hello"));
@@ -1056,9 +1084,9 @@ fn paint_mixed_box_and_text_fragment_tree() {
 #[test]
 fn paint_text_fragment_with_decorations() {
     let (doc, text_node) = make_doc_with_text_style(|s| {
-        s.color = Color::BLACK;
-        s.text_decoration_line = TextDecorationLine::UNDERLINE;
-        s.text_decoration_color = StyleColor::CurrentColor;
+        s.update_derived(|computed| computed.color = Color::BLACK);
+        s.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+        s.update_derived(|computed| computed.text_decoration_color = StyleColor::CurrentColor);
     });
 
     let sr = Arc::new(shape_text("Decorated"));
@@ -1088,6 +1116,7 @@ fn paint_text_fragment_no_shape_result() {
         text_content: None,
         text_run_orientation: openui_layout::TextRunOrientation::Horizontal,
         inherited_style: None,
+        is_line_clamp_marker: false,
         paint_background_color_override: None,
         baseline_offset: 0.0,
         text_combine: None,
@@ -1142,25 +1171,27 @@ fn paint_nested_boxes_with_text_child() {
 
     // Outer box with padding
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
-    doc.node_mut(outer).style.width = Length::px(400.0);
-    doc.node_mut(outer).style.height = Length::px(100.0);
-    doc.node_mut(outer).style.padding_top = Length::px(10.0);
-    doc.node_mut(outer).style.padding_left = Length::px(10.0);
-    doc.node_mut(outer).style.background_color = Color::from_rgba8(240, 240, 240, 255);
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
+    doc.update_resolved_style(outer, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(outer, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(outer, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(outer, |style| style.padding_left = Length::px(10.0));
+    doc.update_resolved_style(outer, |style| {
+        style.background_color = Color::from_rgba8(240, 240, 240, 255)
+    });
     doc.append_child(vp, outer);
 
     // Inner box
     let inner = doc.create_node(ElementTag::Div);
-    doc.node_mut(inner).style.display = Display::Block;
-    doc.node_mut(inner).style.width = Length::px(380.0);
-    doc.node_mut(inner).style.height = Length::px(30.0);
+    doc.update_resolved_style(inner, |style| style.display = Display::Block);
+    doc.update_resolved_style(inner, |style| style.width = Length::px(380.0));
+    doc.update_resolved_style(inner, |style| style.height = Length::px(30.0));
     doc.append_child(outer, inner);
 
     // Text inside inner
     let text_node = doc.create_node(ElementTag::Text);
     doc.node_mut(text_node).text = Some("Nested text".to_string());
-    doc.node_mut(text_node).style.color = Color::BLACK;
+    doc.update_resolved_style(text_node, |style| style.color = Color::BLACK);
     doc.append_child(inner, text_node);
 
     let sr = Arc::new(shape_text("Nested text"));
@@ -1192,19 +1223,19 @@ fn paint_multiple_text_fragments_in_sequence() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(600.0);
-    doc.node_mut(container).style.height = Length::px(50.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(600.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(50.0));
     doc.append_child(vp, container);
 
     let t1 = doc.create_node(ElementTag::Text);
     doc.node_mut(t1).text = Some("Hello ".to_string());
-    doc.node_mut(t1).style.color = Color::BLACK;
+    doc.update_resolved_style(t1, |style| style.color = Color::BLACK);
     doc.append_child(container, t1);
 
     let t2 = doc.create_node(ElementTag::Text);
     doc.node_mut(t2).text = Some("World".to_string());
-    doc.node_mut(t2).style.color = Color::RED;
+    doc.update_resolved_style(t2, |style| style.color = Color::RED);
     doc.append_child(container, t2);
 
     let sr1 = Arc::new(shape_text("Hello "));
@@ -1239,8 +1270,8 @@ fn paint_multiple_text_fragments_in_sequence() {
 #[test]
 fn paint_text_fragment_zero_opacity() {
     let (doc, text_node) = make_doc_with_text_style(|s| {
-        s.color = Color::BLACK;
-        s.opacity = 0.0;
+        s.update_derived(|computed| computed.color = Color::BLACK);
+        s.update_derived(|computed| computed.opacity = 0.0);
     });
 
     let sr = Arc::new(shape_text("Hello"));
@@ -1258,13 +1289,15 @@ fn paint_text_fragment_zero_opacity() {
 #[test]
 fn paint_text_fragment_with_text_shadow() {
     let (doc, text_node) = make_doc_with_text_style(|s| {
-        s.color = Color::BLACK;
-        s.text_shadow = vec![TextShadow {
-            offset_x: 2.0,
-            offset_y: 2.0,
-            blur_radius: 1.0,
-            color: Color::from_rgba8(128, 128, 128, 255),
-        }];
+        s.update_derived(|computed| computed.color = Color::BLACK);
+        s.update_derived(|computed| {
+            computed.text_shadow = vec![TextShadow {
+                offset_x: 2.0,
+                offset_y: 2.0,
+                blur_radius: 1.0,
+                color: Color::from_rgba8(128, 128, 128, 255),
+            }]
+        });
     });
 
     let sr = Arc::new(shape_text("Shadow"));
@@ -1283,24 +1316,33 @@ fn rotated_run_paints_one_clipped_stack_and_restores_canvas() {
         openui_layout::TextRunOrientation::CounterClockwise,
     ] {
         let (doc, text_node) = make_doc_with_text_style(|style| {
-            style.color = Color::BLACK;
-            style.text_shadow = vec![TextShadow {
-                offset_x: 3.0,
-                offset_y: 2.0,
-                blur_radius: 1.0,
-                color: Color::from_rgba8(128, 128, 128, 255),
-            }];
-            style.text_decoration_line = TextDecorationLine(
-                TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0,
-            );
-            style.text_decoration_color = StyleColor::CurrentColor;
-            style.text_emphasis_mark = TextEmphasisMark::Dot;
-            style.text_emphasis_fill = TextEmphasisFill::Filled;
-            style.text_emphasis_position = TextEmphasisPosition {
-                over: true,
-                right: true,
-            };
-            style.text_emphasis_color = StyleColor::CurrentColor;
+            style.update_derived(|computed| computed.color = Color::BLACK);
+            style.update_derived(|computed| {
+                computed.text_shadow = vec![TextShadow {
+                    offset_x: 3.0,
+                    offset_y: 2.0,
+                    blur_radius: 1.0,
+                    color: Color::from_rgba8(128, 128, 128, 255),
+                }]
+            });
+            style.update_derived(|computed| {
+                computed.text_decoration_line = TextDecorationLine(
+                    TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0,
+                )
+            });
+            style.update_derived(|computed| {
+                computed.text_decoration_color = StyleColor::CurrentColor
+            });
+            style.update_derived(|computed| computed.text_emphasis_mark = TextEmphasisMark::Dot);
+            style.update_derived(|computed| computed.text_emphasis_fill = TextEmphasisFill::Filled);
+            style.update_derived(|computed| {
+                computed.text_emphasis_position = TextEmphasisPosition {
+                    over: true,
+                    right: true,
+                }
+            });
+            style
+                .update_derived(|computed| computed.text_emphasis_color = StyleColor::CurrentColor);
         });
         let shape = Arc::new(shape_text("Stack"));
         let metrics = text_painter::metrics_from_shape_result(&shape);
@@ -1333,7 +1375,9 @@ fn rotated_run_paints_one_clipped_stack_and_restores_canvas() {
 
 #[test]
 fn clockwise_and_counterclockwise_use_opposite_physical_origins() {
-    let (doc, text_node) = make_doc_with_text_style(|style| style.color = Color::BLACK);
+    let (doc, text_node) = make_doc_with_text_style(|style| {
+        style.update_derived(|computed| computed.color = Color::BLACK)
+    });
     let shape = Arc::new(shape_text("Handed"));
     let metrics = text_painter::metrics_from_shape_result(&shape);
     let mut bounds = Vec::new();
@@ -1401,8 +1445,8 @@ fn paint_text_with_all_decoration_styles_does_not_crash() {
         for &deco_line in &lines {
             let mut surface = make_surface(300, 100);
             let mut style = default_style();
-            style.text_decoration_line = deco_line;
-            style.text_decoration_style = deco_style;
+            style.update_derived(|computed| computed.text_decoration_line = deco_line);
+            style.update_derived(|computed| computed.text_decoration_style = deco_style);
             decoration_painter::paint_text_decorations(
                 surface.canvas(),
                 &sr,
@@ -1420,8 +1464,8 @@ fn paint_text_with_all_decoration_styles_does_not_crash() {
 #[test]
 fn paint_text_fragment_large_font() {
     let (doc, text_node) = make_doc_with_text_style(|s| {
-        s.color = Color::BLACK;
-        s.font_size = 48.0;
+        s.update_derived(|computed| computed.color = Color::BLACK);
+        s.update_derived(|computed| computed.font_size = 48.0);
     });
 
     let sr = Arc::new(shape_text_with_size("Big", 48.0));
@@ -1457,10 +1501,11 @@ fn paint_ellipsis_hidden_visibility_no_output() {
         text_run_orientation: openui_layout::TextRunOrientation::Horizontal,
         inherited_style: Some({
             let mut s = ComputedStyle::default();
-            s.color = Color::BLACK;
-            s.visibility = Visibility::Hidden;
+            s.update_derived(|computed| computed.color = Color::BLACK);
+            s.update_derived(|computed| computed.visibility = Visibility::Hidden);
             s
         }),
+        is_line_clamp_marker: false,
         paint_background_color_override: None,
         baseline_offset: metrics.ascent,
         text_combine: None,

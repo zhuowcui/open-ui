@@ -70,6 +70,32 @@ class Sp13PPaintClosureTests(unittest.TestCase):
         self.assertIn("BackgroundRepeat::Space", emitted)
         self.assertIn("BackgroundClip::ContentBox", emitted)
 
+    def test_flex_alignment_fixtures_retain_complete_gradient_shorthands(self):
+        rust_path = (
+            ROOT
+            / "bindings/rust/pixel-compare/src/wpt/wpt_css_flexbox.rs"
+        )
+        rust = rust_path.read_text(encoding="utf-8")
+        expected_stops = {
+            "css_flexbox_align_content_001": 6,
+            "css_flexbox_align_content_003": 4,
+            "css_flexbox_align_content_005": 10,
+            "css_flexbox_align_items_001": 6,
+            "css_flexbox_align_items_003": 4,
+            "css_flexbox_align_items_004": 10,
+            "css_flexbox_justify_content_003": 4,
+        }
+        for function, stop_count in expected_stops.items():
+            with self.subTest(function=function):
+                start, end = splice_text_port._rust_function_span(rust, function)
+                builder = rust[start:end]
+                self.assertIn(
+                    "RendererStyleValue::BackgroundLinearGradient", builder
+                )
+                self.assertEqual(
+                    builder.count("LinearGradientStop {"), stop_count
+                )
+
     def test_border_shadow_and_canvas_metadata(self):
         previous = port_wpt.EMIT_PAINT_LAYERS
         port_wpt.set_paint_layer_emission(True)
@@ -130,7 +156,10 @@ class Sp13PPaintClosureTests(unittest.TestCase):
         self.assertEqual([row.test_id for row in generated], sorted(test_ids))
         changed_rust = changes[str(rust_path)]
         for row in generated:
-            self.assertEqual(changed_rust.count(f"fn {row.fn_name}()"), 1)
+            self.assertEqual(
+                changed_rust.count(f"fn {row.fn_name}(viewport: ViewportMetrics)"),
+                1,
+            )
         self.assertEqual(originals[str(rust_path)], rust_path.read_text())
         self.assertEqual(before, hashlib.sha256(rust_path.read_bytes()).hexdigest())
 

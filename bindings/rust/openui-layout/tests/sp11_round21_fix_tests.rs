@@ -72,11 +72,11 @@ fn div_display_inline_creates_inline_box_not_atomic() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let inline_div = doc.create_node(ElementTag::Div);
-    doc.node_mut(inline_div).style.display = Display::Inline;
+    doc.update_resolved_style(inline_div, |style| style.display = Display::Inline);
     doc.append_child(block, inline_div);
 
     let text = doc.create_node(ElementTag::Text);
@@ -111,11 +111,11 @@ fn div_display_inline_block_still_atomic() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let ib_div = doc.create_node(ElementTag::Div);
-    doc.node_mut(ib_div).style.display = Display::InlineBlock;
+    doc.update_resolved_style(ib_div, |style| style.display = Display::InlineBlock);
     doc.append_child(block, ib_div);
 
     let text = doc.create_node(ElementTag::Text);
@@ -149,8 +149,8 @@ fn atomic_inline_percentage_width_resolves() {
 fn atomic_inline_auto_with_min_width_uses_floor() {
     // width:auto with min-width:100px should use 100px as a floor.
     let mut style = ComputedStyle::default();
-    style.width = Length::auto();
-    style.min_width = Length::px(100.0);
+    style.update_derived(|computed| computed.width = Length::auto());
+    style.update_derived(|computed| computed.min_width = Length::px(100.0));
     assert!(style.width.is_auto());
     assert!(style.min_width.is_fixed());
     assert_eq!(style.min_width.value(), 100.0);
@@ -160,8 +160,8 @@ fn atomic_inline_auto_with_min_width_uses_floor() {
 fn atomic_inline_max_width_clamps() {
     // An element with width:300px and max-width:200px should clamp to 200px.
     let mut style = ComputedStyle::default();
-    style.width = Length::px(300.0);
-    style.max_width = Length::px(200.0);
+    style.update_derived(|computed| computed.width = Length::px(300.0));
+    style.update_derived(|computed| computed.max_width = Length::px(200.0));
     let w = if style.width.is_fixed() {
         style.width.value()
     } else {

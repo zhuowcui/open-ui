@@ -10,6 +10,7 @@ Usage:
   python3 tools/wpt/splice_text_port.py wpt/css2_floats/example [...]
   python3 tools/wpt/splice_text_port.py --dry-run wpt/css2_floats/example
   python3 tools/wpt/splice_text_port.py --ids-file targets.json [--dry-run]
+  python3 tools/wpt/splice_text_port.py --preserve-templates --ids-file targets.json
 """
 
 from __future__ import annotations
@@ -48,6 +49,7 @@ SP16_REAL_LIST = os.path.join(WPT_PORTED_DIR, "sp16_real_font_tests.json")
 SP14_W4_LIST = os.path.join(WPT_PORTED_DIR, "sp14_w4_residuals.json")
 SP18_TARGETS_LIST = os.path.join(SCRIPT_DIR, "sp18_targets.json")
 REPORT_COLUMNS = ["filename", "status", "fn_name", "reason"]
+RUST_RAW_STRING_START = re.compile(r'r(#{0,255})"')
 
 sys.path.insert(0, SCRIPT_DIR)
 import port_wpt  # noqa: E402
@@ -195,23 +197,56 @@ def requires_distinct_root_box(parser: port_wpt.WptHtmlParser) -> bool:
     return False
 
 
+_ENGINE_FUNCTION_HEADER = re.compile(
+    r"(?m)^fn\s+(?P<name>\w+)\s*\(\s*"
+    r"viewport:\s*ViewportMetrics\s*,?\s*\)\s*->\s*"
+    r"Result<Engine,\s*EngineError>\s*\{"
+)
+
+_FROZEN_FONT_OVERRIDE = re.compile(
+    r"body\s*,\s*body\s*\*\s*\{[^}]*?font-family\s*:\s*"
+    r"(?P<family>.*?)\s*!important",
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _frozen_font_family_rust(template: str) -> str | None:
+    """Return the exact deterministic family encoded by a frozen fixture.
+
+    Earlier qualification templates intentionally use a smaller fallback set
+    than newly generated fixtures.  Rust-only regeneration must retain that
+    order: changing it alters fallback glyph metrics and therefore changes the
+    oracle even when the authored WPT markup is untouched.
+    """
+    matches = list(_FROZEN_FONT_OVERRIDE.finditer(template))
+    if not matches:
+        return None
+    return port_wpt._font_family_to_rust(matches[-1].group("family"))
+
+
 def _rust_function_span(rust_src: str, fn_name: str) -> tuple[int, int]:
     """Find exactly one Rust function and return its brace-balanced span.
 
     Braces inside strings and comments are ignored, so retained source text
     such as ``"{"`` cannot make surgical replacement consume adjacent code.
     """
-    pattern = re.compile(
-        rf"(?m)^fn\s+{re.escape(fn_name)}\s*\(\s*\)\s*->\s*Document\s*\{{"
-    )
-    matches = list(pattern.finditer(rust_src))
+    matches = [
+        match
+        for match in _ENGINE_FUNCTION_HEADER.finditer(rust_src)
+        if match.group("name") == fn_name
+    ]
     if len(matches) != 1:
         raise KeyError(
             f"expected exactly one function {fn_name}, found {len(matches)}"
         )
+    return _rust_function_span_from_header(rust_src, fn_name, matches[0])
 
-    start = matches[0].start()
-    i = rust_src.find("{", matches[0].start(), matches[0].end())
+
+def _rust_function_span_from_header(
+    rust_src: str, fn_name: str, header: re.Match[str]
+) -> tuple[int, int]:
+    start = header.start()
+    i = rust_src.find("{", header.start(), header.end())
     depth = 0
     state = "code"
     block_depth = 0
@@ -259,7 +294,7 @@ def _rust_function_span(rust_src: str, fn_name: str) -> tuple[int, int]:
             elif c == "'":
                 state = "char"
             elif c == "r":
-                raw = re.match(r'r(#{0,255})"', rust_src[i:])
+                raw = RUST_RAW_STRING_START.match(rust_src, i)
                 if raw:
                     raw_hashes = len(raw.group(1))
                     i += len(raw.group(0)) - 1
@@ -287,6 +322,7 @@ def _generate_one(
     modern_line_clamp_ids: set[str],
     *,
     paint_layers: bool = False,
+    frozen_template: str | None = None,
 ) -> GeneratedReplacement:
     parts = test_id.split("/")
     if len(parts) != 3 or parts[0] != "wpt" or not parts[1] or not parts[2]:
@@ -320,10 +356,33 @@ def _generate_one(
     )
     port_wpt.set_porter_profile(profile, retain_text=retains_text)
     port_wpt.set_modern_line_clamp_enabled(test_id in modern_line_clamp_ids)
-    parser = port_wpt.parse_wpt_html(upstream, root_aware=root_aware)
+    mutation_ir = port_wpt._candidate_mutation_ir(test_id)
+    if frozen_template is None:
+        parser = port_wpt.parse_wpt_html(
+            upstream,
+            root_aware=root_aware,
+            mutation_ir=mutation_ir,
+        )
+    else:
+        parser = port_wpt._parse_wpt_markup(
+            frozen_template,
+            os.path.dirname(upstream),
+            root_aware=root_aware,
+        )
     if not root_aware and requires_distinct_root_box(parser):
         root_aware = True
-        parser = port_wpt.parse_wpt_html(upstream, root_aware=True)
+        if frozen_template is None:
+            parser = port_wpt.parse_wpt_html(
+                upstream,
+                root_aware=True,
+                mutation_ir=mutation_ir,
+            )
+        else:
+            parser = port_wpt._parse_wpt_markup(
+                frozen_template,
+                os.path.dirname(upstream),
+                root_aware=True,
+            )
     portable, reason = port_wpt.analyze_portability(parser)
     if not root_aware and not portable and not paint_layers:
         raise ValueError(f"{test_id}: not text-portable ({reason})")
@@ -331,15 +390,38 @@ def _generate_one(
         raise ValueError(f"{test_id}: not text-portable (no_layout_content)")
 
     fn_name = f"{module}_{port_wpt.sanitize_fn_name(name)}"
+    previous_font_family = port_wpt.DETERMINISTIC_FONT_FAMILY_RUST
+    frozen_font_family = (
+        _frozen_font_family_rust(frozen_template)
+        if frozen_template is not None
+        else None
+    )
+    if frozen_font_family is not None:
+        port_wpt.DETERMINISTIC_FONT_FAMILY_RUST = frozen_font_family
+    try:
+        rust_code = port_wpt.generate_rust_fn(
+            fn_name, parser.root, parser.html_styles, root_aware=root_aware
+        )
+    finally:
+        port_wpt.DETERMINISTIC_FONT_FAMILY_RUST = previous_font_family
+    rust_code = _rustfmt_source(rust_code, f"{fn_name}.rs").rstrip("\n")
     return GeneratedReplacement(
         test_id=test_id,
         module=module,
         fn_name=fn_name,
         chromium_path=upstream_rel,
-        rust_code=port_wpt.generate_rust_fn(
-            fn_name, parser.root, parser.html_styles, root_aware=root_aware
+        rust_code=rust_code,
+        template=(
+            frozen_template
+            if frozen_template is not None
+            else port_wpt.generate_html_template(
+                upstream,
+                root_aware=root_aware,
+                final_state_parser=(
+                    parser if parser.lowered_final_state is not None else None
+                ),
+            )
         ),
-        template=port_wpt.generate_html_template(upstream, root_aware=root_aware),
         root_aware=root_aware,
         retains_text=retains_text,
     )
@@ -462,13 +544,20 @@ def _function_count(rust_src: str, fn_name: str) -> int:
     )
 
 
+_ENGINE_REGISTRY_ENTRY = re.compile(
+    r'\(\s*"(?P<test_id>[^"]+)"\s*,\s*'
+    r'(?P<fn_name>\w+)\s+as\s+fn\(ViewportMetrics\)\s*->\s*'
+    r'Result<Engine,\s*EngineError>\s*,?\s*\)',
+    re.DOTALL,
+)
+
+
 def _registry_identities(rust_src: str, test_id: str) -> list[str]:
-    pattern = re.compile(
-        rf'\(\s*"{re.escape(test_id)}"\s*,\s*'
-        rf'(\w+)\s+as\s+fn\(\)\s*->\s*Document\s*,?\s*\)',
-        re.DOTALL,
-    )
-    return pattern.findall(rust_src)
+    return [
+        match.group("fn_name")
+        for match in _ENGINE_REGISTRY_ENTRY.finditer(rust_src)
+        if match.group("test_id") == test_id
+    ]
 
 
 def _insert_rust_additions(
@@ -477,7 +566,8 @@ def _insert_rust_additions(
     """Insert builders and registry entries without rewriting the module."""
     registry = re.compile(
         rf"(?ms)^(pub fn {re.escape(module)}_registry\(\)\s*"
-        rf"->\s*Vec<\(&'static str, fn\(\) -> Document\)>\s*\{{\s*"
+        rf"->\s*Vec<\(\s*&'static str,\s*fn\(ViewportMetrics\)\s*"
+        rf"->\s*Result<Engine,\s*EngineError>,?\s*\)>\s*\{{\s*"
         rf"vec!\[)(.*?)(\s*\]\s*\}}\s*)\Z"
     )
     matches = list(registry.finditer(rust_src))
@@ -497,7 +587,7 @@ def _insert_rust_additions(
         entries.append(
             "        (\n"
             f'            "{replacement.test_id}",\n'
-            f"            {replacement.fn_name} as fn() -> Document,\n"
+            f"            {replacement.fn_name} as fn(ViewportMetrics) -> Result<Engine, EngineError>,\n"
             "        ),"
         )
 
@@ -533,11 +623,12 @@ def _preserve_existing_builder_profile(existing_fn: str, generated_fn: str) -> s
     surgical re-port preserves the explicit marker when it exists instead of
     silently migrating the historical builder.
     """
-    body_display = "doc.node_mut(vp).style.display = Display::Block;"
+    body_display = "doc.set_style(vp, RendererStyleValue::Display(Display::Block));"
     if body_display not in existing_fn or body_display in generated_fn:
         return generated_fn
     constructor = re.search(
-        r"(?m)^(\s*let \(mut doc, (?:html, )?vp\) = (?:base|root)_doc\(\);\s*)$",
+        r"(?m)^(\s*let \(mut doc, (?:html, )?vp\) = "
+        r"(?:base|root)_doc\(viewport\);\s*)$",
         generated_fn,
     )
     if constructor is None:
@@ -557,6 +648,7 @@ def prepare_changes(
     *,
     profile: port_wpt.PorterProfile = port_wpt.PorterProfile.DETERMINISTIC_AHEM,
     paint_layers: bool = False,
+    preserve_templates: bool = False,
 ) -> tuple[list[GeneratedReplacement], dict[str, str], dict[str, str]]:
     """Generate and validate a complete transaction without writing files."""
     if len(test_ids) != len(set(test_ids)):
@@ -572,6 +664,19 @@ def prepare_changes(
     ):
         raise ValueError(f"invalid text-port manifest: {TEXT_PORTED_LIST}")
     text_manifest = set(ported)
+
+    frozen_templates: dict[str, str] = {}
+    if preserve_templates:
+        frozen_template_path = os.path.join(
+            WPT_PORTED_DIR, "all_wpt_templates.json"
+        )
+        _, frozen_templates = _load_json_object(frozen_template_path)
+        missing_frozen = sorted(set(test_ids) - set(frozen_templates))
+        if missing_frozen:
+            raise ValueError(
+                "--preserve-templates IDs missing from frozen template ledger: "
+                + ", ".join(missing_frozen)
+            )
 
     real_font_ids = (
         set(load_ids_file(SP16_REAL_LIST))
@@ -607,6 +712,7 @@ def prepare_changes(
                 text_manifest,
                 modern_line_clamp_ids,
                 paint_layers=paint_layers,
+                frozen_template=frozen_templates.get(test_id),
             )
             for test_id in sorted(test_ids)
         ]
@@ -643,13 +749,23 @@ def prepare_changes(
         with open(rust_path, encoding="utf-8") as f:
             original = f.read()
         updated = original
+        function_headers: dict[str, list[re.Match[str]]] = defaultdict(list)
+        for header in _ENGINE_FUNCTION_HEADER.finditer(original):
+            function_headers[header.group("name")].append(header)
+        registry_identities: dict[str, list[str]] = defaultdict(list)
+        for entry in _ENGINE_REGISTRY_ENTRY.finditer(original):
+            registry_identities[entry.group("test_id")].append(
+                entry.group("fn_name")
+            )
         module_template_path = os.path.join(
             WPT_PORTED_DIR, f"wpt_{module}_templates.json"
         )
         additions: list[GeneratedReplacement] = []
+        planned_replacements: list[tuple[int, int, str]] = []
         for replacement in replacements:
-            fn_count = _function_count(original, replacement.fn_name)
-            identities = _registry_identities(original, replacement.test_id)
+            headers = function_headers.get(replacement.fn_name, [])
+            fn_count = len(headers)
+            identities = registry_identities.get(replacement.test_id, [])
             global_has = replacement.test_id in template_data[global_path]
             module_has = replacement.test_id in template_data[module_template_path]
             if fn_count > 1 or len(identities) > 1:
@@ -668,27 +784,41 @@ def prepare_changes(
                 and not global_has
                 and not module_has
             )
+            if preserve_templates and not fully_present:
+                raise ValueError(
+                    f"{replacement.test_id}: --preserve-templates requires an "
+                    "existing frozen template and registry entry"
+                )
             if not fully_present and not fully_absent:
                 raise ValueError(
                     f"{replacement.test_id}: partial template/registry state"
-                )
+            )
             if fully_present:
-                existing_start, existing_end = _rust_function_span(
-                    original, replacement.fn_name
+                existing_start, existing_end = _rust_function_span_from_header(
+                    original, replacement.fn_name, headers[0]
                 )
                 replacement_code = _preserve_existing_builder_profile(
                     original[existing_start:existing_end], replacement.rust_code
                 )
-                updated = replace_fn(
-                    updated, replacement.fn_name, replacement_code
-                )
+                if replacement_code != original[existing_start:existing_end]:
+                    planned_replacements.append(
+                        (existing_start, existing_end, replacement_code.rstrip("\n"))
+                    )
             else:
                 additions.append(replacement)
 
-            template_data[global_path][replacement.test_id] = replacement.template
-            template_data[module_template_path][replacement.test_id] = (
-                replacement.template
-            )
+            if not preserve_templates:
+                template_data[global_path][replacement.test_id] = replacement.template
+                template_data[module_template_path][replacement.test_id] = (
+                    replacement.template
+                )
+        # Apply offsets from the end once. Replacing one function at a time
+        # repeatedly copied multi-megabyte modules and made a 132-item
+        # no-write verification quadratic in module size.
+        for start, end, replacement_code in sorted(
+            planned_replacements, reverse=True
+        ):
+            updated = updated[:start] + replacement_code + updated[end:]
         if additions:
             updated = _insert_rust_additions(updated, module, additions)
         if any(replacement.root_aware for replacement in replacements):
@@ -696,7 +826,11 @@ def prepare_changes(
                 "use crate::base_doc;", "use crate::{base_doc, root_doc};", 1
             )
         originals[rust_path] = original
-        changes[rust_path] = _rustfmt_source(updated, rust_path)
+        # Generated functions are canonicalized individually in `_generate_one`.
+        # Formatting the complete multi-megabyte area module here made a
+        # surgical no-op rewrite every unrelated builder and turned an
+        # idempotence check into minutes of redundant work.
+        changes[rust_path] = updated
 
         report_path = os.path.join(WPT_PORTED_DIR, f"wpt_{module}_report.csv")
         if os.path.exists(report_path):
@@ -706,8 +840,9 @@ def prepare_changes(
             originals[report_path] = report_original
             changes[report_path] = report_updated
 
-    for path in sorted(template_paths):
-        changes[path] = json.dumps(template_data[path], indent=2) + "\n"
+    if not preserve_templates:
+        for path in sorted(template_paths):
+            changes[path] = json.dumps(template_data[path], indent=2) + "\n"
 
     # Paint-layer emission is orthogonal to the authored-content profile.  In
     # particular, SP20 background/overflow rows still retain their text while
@@ -738,12 +873,10 @@ def _stage_text(path: str, content: str, mode: int) -> str:
 
 
 def _rustfmt_source(source: str, path: str) -> str:
-    """Format a generated Rust module before the transaction compares it.
+    """Format one generated Rust item before the transaction compares it.
 
-    Splicing an unformatted expression and formatting it later made a second
-    generation appear non-idempotent.  Running the workspace formatter on the
-    in-memory module keeps generation, verification, and committed artifacts
-    on the same canonical representation.
+    Canonicalizing the replacement before insertion makes repeat generation
+    byte-idempotent without formatting megabytes of unrelated builders.
     """
     rustfmt_env = os.environ.copy()
     # Large generated WPT modules contain thousands of builder functions;
@@ -805,6 +938,7 @@ def main() -> int:
     partition = None
     profile = port_wpt.PorterProfile.DETERMINISTIC_AHEM
     paint_layers = False
+    preserve_templates = False
     positional = []
     index = 0
     while index < len(args):
@@ -813,6 +947,8 @@ def main() -> int:
             dry_run = True
         elif arg == "--paint-layers":
             paint_layers = True
+        elif arg == "--preserve-templates":
+            preserve_templates = True
         elif arg == "--ids-file":
             index += 1
             if index >= len(args) or ids_path is not None:
@@ -860,7 +996,11 @@ def main() -> int:
             raise ValueError("no test IDs supplied")
         mapping = load_mapping_rows()
         generated, originals, changes = prepare_changes(
-            test_ids, mapping, profile=profile, paint_layers=paint_layers
+            test_ids,
+            mapping,
+            profile=profile,
+            paint_layers=paint_layers,
+            preserve_templates=preserve_templates,
         )
         if dry_run:
             for replacement in generated:

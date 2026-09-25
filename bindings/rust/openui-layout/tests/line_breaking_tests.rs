@@ -27,16 +27,16 @@ fn make_shaped_items(
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
-        doc.node_mut(t).style.white_space = white_space;
-        doc.node_mut(t).style.word_break = word_break;
-        doc.node_mut(t).style.overflow_wrap = overflow_wrap;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t, |style| style.white_space = white_space);
+        doc.update_resolved_style(t, |style| style.word_break = word_break);
+        doc.update_resolved_style(t, |style| style.overflow_wrap = overflow_wrap);
         doc.append_child(block, t);
     }
 
@@ -369,11 +369,11 @@ fn span_open_close_on_same_line() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(block, span);
 
     let t = doc.create_node(ElementTag::Text);

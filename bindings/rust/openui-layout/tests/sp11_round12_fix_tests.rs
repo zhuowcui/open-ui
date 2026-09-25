@@ -47,13 +47,13 @@ fn prewrap_forced_overlong_before_newline_no_extra_blank_line() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("LONGWORD\nafter".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
-    doc.node_mut(text).style.white_space = WhiteSpace::PreWrap;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
+    doc.update_resolved_style(text, |style| style.white_space = WhiteSpace::PreWrap);
     doc.append_child(block, text);
 
     // Use a very narrow width (20px) so "LONGWORD" can't fit and must be forced
@@ -85,14 +85,14 @@ fn text_indent_with_text_align_right_no_overflow() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Right;
-    doc.node_mut(block).style.text_indent = Length::px(20.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Right);
+    doc.update_resolved_style(block, |style| style.text_indent = Length::px(20.0));
     doc.append_child(root, block);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Hi".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     doc.append_child(block, text);
 
     let constraint = make_constraint_width(100);
@@ -127,14 +127,14 @@ fn text_indent_with_text_align_center_content_centered_in_remaining() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Center;
-    doc.node_mut(block).style.text_indent = Length::px(40.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Center);
+    doc.update_resolved_style(block, |style| style.text_indent = Length::px(40.0));
     doc.append_child(root, block);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Hi".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     doc.append_child(block, text);
 
     let constraint = make_constraint_width(200);
@@ -173,17 +173,17 @@ fn inline_span_padding_causes_earlier_line_break() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
-    doc.node_mut(span).style.padding_left = Length::px(40.0);
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
+    doc.update_resolved_style(span, |style| style.padding_left = Length::px(40.0));
     doc.append_child(block, span);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Hello World".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     doc.append_child(span, text);
 
     let constraint = make_constraint_width(100);
@@ -209,20 +209,24 @@ fn inline_span_border_contributes_to_used_width() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
-    doc.node_mut(span).style.border_left_width = 20;
-    doc.node_mut(span).style.border_left_style = openui_style::BorderStyle::Solid;
-    doc.node_mut(span).style.border_right_width = 20;
-    doc.node_mut(span).style.border_right_style = openui_style::BorderStyle::Solid;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
+    doc.update_resolved_style(span, |style| style.border_left_width = 20);
+    doc.update_resolved_style(span, |style| {
+        style.border_left_style = openui_style::BorderStyle::Solid
+    });
+    doc.update_resolved_style(span, |style| style.border_right_width = 20);
+    doc.update_resolved_style(span, |style| {
+        style.border_right_style = openui_style::BorderStyle::Solid
+    });
     doc.append_child(block, span);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Hello World".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     doc.append_child(span, text);
 
     let constraint = make_constraint_width(60);
@@ -247,25 +251,25 @@ fn cross_node_trailing_leading_spaces_collapse_to_single() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let span1 = doc.create_node(ElementTag::Span);
-    doc.node_mut(span1).style.display = Display::Inline;
+    doc.update_resolved_style(span1, |style| style.display = Display::Inline);
     doc.append_child(block, span1);
 
     let t1 = doc.create_node(ElementTag::Text);
     doc.node_mut(t1).text = Some("foo ".to_string());
-    doc.node_mut(t1).style.display = Display::Inline;
+    doc.update_resolved_style(t1, |style| style.display = Display::Inline);
     doc.append_child(span1, t1);
 
     let span2 = doc.create_node(ElementTag::Span);
-    doc.node_mut(span2).style.display = Display::Inline;
+    doc.update_resolved_style(span2, |style| style.display = Display::Inline);
     doc.append_child(block, span2);
 
     let t2 = doc.create_node(ElementTag::Text);
     doc.node_mut(t2).text = Some(" bar".to_string());
-    doc.node_mut(t2).style.display = Display::Inline;
+    doc.update_resolved_style(t2, |style| style.display = Display::Inline);
     doc.append_child(span2, t2);
 
     let data = InlineItemsBuilder::collect(&doc, block);
@@ -290,25 +294,25 @@ fn cross_node_space_collapse_preserves_non_space_boundary() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let span1 = doc.create_node(ElementTag::Span);
-    doc.node_mut(span1).style.display = Display::Inline;
+    doc.update_resolved_style(span1, |style| style.display = Display::Inline);
     doc.append_child(block, span1);
 
     let t1 = doc.create_node(ElementTag::Text);
     doc.node_mut(t1).text = Some("foo".to_string());
-    doc.node_mut(t1).style.display = Display::Inline;
+    doc.update_resolved_style(t1, |style| style.display = Display::Inline);
     doc.append_child(span1, t1);
 
     let span2 = doc.create_node(ElementTag::Span);
-    doc.node_mut(span2).style.display = Display::Inline;
+    doc.update_resolved_style(span2, |style| style.display = Display::Inline);
     doc.append_child(block, span2);
 
     let t2 = doc.create_node(ElementTag::Text);
     doc.node_mut(t2).text = Some(" bar".to_string());
-    doc.node_mut(t2).style.display = Display::Inline;
+    doc.update_resolved_style(t2, |style| style.display = Display::Inline);
     doc.append_child(span2, t2);
 
     let data = InlineItemsBuilder::collect(&doc, block);
@@ -327,27 +331,27 @@ fn cross_node_prewrap_does_not_collapse_spaces() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let span1 = doc.create_node(ElementTag::Span);
-    doc.node_mut(span1).style.display = Display::Inline;
+    doc.update_resolved_style(span1, |style| style.display = Display::Inline);
     doc.append_child(block, span1);
 
     let t1 = doc.create_node(ElementTag::Text);
     doc.node_mut(t1).text = Some("foo ".to_string());
-    doc.node_mut(t1).style.display = Display::Inline;
-    doc.node_mut(t1).style.white_space = WhiteSpace::PreWrap;
+    doc.update_resolved_style(t1, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t1, |style| style.white_space = WhiteSpace::PreWrap);
     doc.append_child(span1, t1);
 
     let span2 = doc.create_node(ElementTag::Span);
-    doc.node_mut(span2).style.display = Display::Inline;
+    doc.update_resolved_style(span2, |style| style.display = Display::Inline);
     doc.append_child(block, span2);
 
     let t2 = doc.create_node(ElementTag::Text);
     doc.node_mut(t2).text = Some(" bar".to_string());
-    doc.node_mut(t2).style.display = Display::Inline;
-    doc.node_mut(t2).style.white_space = WhiteSpace::PreWrap;
+    doc.update_resolved_style(t2, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t2, |style| style.white_space = WhiteSpace::PreWrap);
     doc.append_child(span2, t2);
 
     let data = InlineItemsBuilder::collect(&doc, block);

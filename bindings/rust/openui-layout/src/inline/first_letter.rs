@@ -237,10 +237,11 @@ impl FirstLetterStyle {
 
     /// Apply common drop-cap styling: large font, left float, right margin.
     pub fn with_drop_cap(base: &ComputedStyle, font_size: f32, margin_right: f32) -> Self {
-        let mut style = base.clone();
-        style.font_size = font_size;
-        style.float = openui_style::Float::Left;
-        style.margin_right = openui_geometry::Length::px(margin_right);
+        let style = base.derive(|style| {
+            style.font_size = font_size;
+            style.float = openui_style::Float::Left;
+            style.margin_right = openui_geometry::Length::px(margin_right);
+        });
         Self { style }
     }
 }
@@ -286,8 +287,7 @@ impl FirstLetterMetrics {
     /// Queries actual font metrics from the default font at the requested
     /// size. Prefer `from_style()` when a `ComputedStyle` is available.
     pub fn from_font_size(font_size: f32) -> Self {
-        let mut style = ComputedStyle::default();
-        style.font_size = font_size;
+        let style = ComputedStyle::default().derive(|style| style.font_size = font_size);
         Self::from_style(&style)
     }
 }

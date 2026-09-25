@@ -42,16 +42,18 @@ fn atomic_inline_valign_percentage_uses_line_height_not_box_height() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     // Atomic inline: 100px tall, line-height: 20px, vertical-align: 50%
     let atomic = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic).style.display = Display::InlineBlock;
-    doc.node_mut(atomic).style.width = Length::px(50.0);
-    doc.node_mut(atomic).style.height = Length::px(100.0);
-    doc.node_mut(atomic).style.line_height = LineHeight::Length(20.0);
-    doc.node_mut(atomic).style.vertical_align = VerticalAlign::Percentage(50.0);
+    doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(atomic, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(atomic, |style| style.line_height = LineHeight::Length(20.0));
+    doc.update_resolved_style(atomic, |style| {
+        style.vertical_align = VerticalAlign::Percentage(50.0)
+    });
     doc.append_child(block, atomic);
 
     let sp = ConstraintSpace::for_block_child(lu_i(400), lu_i(600), lu_i(400), lu_i(600), false);
@@ -86,28 +88,36 @@ fn atomic_inline_valign_percentage_different_line_heights() {
 
     // Block A: atomic with line-height: 10px
     let block_a = doc.create_node(ElementTag::Div);
-    doc.node_mut(block_a).style.display = Display::Block;
+    doc.update_resolved_style(block_a, |style| style.display = Display::Block);
     doc.append_child(root, block_a);
 
     let atomic_a = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic_a).style.display = Display::InlineBlock;
-    doc.node_mut(atomic_a).style.width = Length::px(40.0);
-    doc.node_mut(atomic_a).style.height = Length::px(60.0);
-    doc.node_mut(atomic_a).style.line_height = LineHeight::Length(10.0);
-    doc.node_mut(atomic_a).style.vertical_align = VerticalAlign::Percentage(100.0);
+    doc.update_resolved_style(atomic_a, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic_a, |style| style.width = Length::px(40.0));
+    doc.update_resolved_style(atomic_a, |style| style.height = Length::px(60.0));
+    doc.update_resolved_style(atomic_a, |style| {
+        style.line_height = LineHeight::Length(10.0)
+    });
+    doc.update_resolved_style(atomic_a, |style| {
+        style.vertical_align = VerticalAlign::Percentage(100.0)
+    });
     doc.append_child(block_a, atomic_a);
 
     // Block B: atomic with line-height: 80px
     let block_b = doc.create_node(ElementTag::Div);
-    doc.node_mut(block_b).style.display = Display::Block;
+    doc.update_resolved_style(block_b, |style| style.display = Display::Block);
     doc.append_child(root, block_b);
 
     let atomic_b = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic_b).style.display = Display::InlineBlock;
-    doc.node_mut(atomic_b).style.width = Length::px(40.0);
-    doc.node_mut(atomic_b).style.height = Length::px(60.0);
-    doc.node_mut(atomic_b).style.line_height = LineHeight::Length(80.0);
-    doc.node_mut(atomic_b).style.vertical_align = VerticalAlign::Percentage(100.0);
+    doc.update_resolved_style(atomic_b, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic_b, |style| style.width = Length::px(40.0));
+    doc.update_resolved_style(atomic_b, |style| style.height = Length::px(60.0));
+    doc.update_resolved_style(atomic_b, |style| {
+        style.line_height = LineHeight::Length(80.0)
+    });
+    doc.update_resolved_style(atomic_b, |style| {
+        style.vertical_align = VerticalAlign::Percentage(100.0)
+    });
     doc.append_child(block_b, atomic_b);
 
     let sp = ConstraintSpace::for_block_child(lu_i(400), lu_i(600), lu_i(400), lu_i(600), false);
@@ -137,21 +147,21 @@ fn atomic_inline_middle_with_text_no_overflow_above() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     // Normal text
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("text".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     // Large atomic inline with middle alignment
     let atomic = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic).style.display = Display::InlineBlock;
-    doc.node_mut(atomic).style.width = Length::px(50.0);
-    doc.node_mut(atomic).style.height = Length::px(200.0);
-    doc.node_mut(atomic).style.vertical_align = VerticalAlign::Middle;
+    doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(atomic, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(atomic, |style| style.vertical_align = VerticalAlign::Middle);
     doc.append_child(block, atomic);
 
     let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
@@ -187,20 +197,20 @@ fn atomic_inline_middle_small_centered() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     // Normal text to establish strut metrics
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("Hx".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let atomic = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic).style.display = Display::InlineBlock;
-    doc.node_mut(atomic).style.width = Length::px(20.0);
-    doc.node_mut(atomic).style.height = Length::px(20.0);
-    doc.node_mut(atomic).style.vertical_align = VerticalAlign::Middle;
+    doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic, |style| style.width = Length::px(20.0));
+    doc.update_resolved_style(atomic, |style| style.height = Length::px(20.0));
+    doc.update_resolved_style(atomic, |style| style.vertical_align = VerticalAlign::Middle);
     doc.append_child(block, atomic);
 
     let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);

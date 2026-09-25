@@ -1,25 +1,35 @@
 //! Canonical public property schema and typed declaration values.
 
 use crate::{
-    BlockEllipsis, BorderStyle, Color, ComputedStyle, ContentAlignment, ContentDistribution,
-    ContentPosition, Direction, Display, FlexDirection, FlexWrap, FontFamilyList, FontKerning,
-    FontLanguageOverride, FontOpticalSizing, FontPalette, FontShorthand, FontSizeAdjust,
-    FontSmoothing, FontStretch, FontStyleEnum, FontSynthesis, FontSynthesisShorthand,
-    FontVariantAlternates, FontVariantCaps, FontVariantEastAsian, FontVariantEmoji,
-    FontVariantLigatures, FontVariantNumeric, FontVariantPosition, FontVariantShorthand,
-    FontVariationList, FontWeight, GenericFontFamily, HangingPunctuation, HyphenateCharacter,
-    HyphenationLimits, Hyphens, InitialLetterValue, ItemAlignment, ItemPosition, LineBreak,
-    LineClamp, LineHeight, ListStyleType, OpenTypeFeatureList, Overflow, OverflowWrap, Position,
-    RubyAlign, RubyOverhang, RubyPosition, StyleColor, TabSize, TextAlign, TextAlignLast,
-    TextAutospace, TextBoxEdge, TextBoxShorthand, TextBoxTrim, TextCombineUpright,
-    TextDecorationLine, TextDecorationShorthand, TextDecorationSkipInk, TextDecorationStyle,
-    TextDecorationThickness, TextEmphasisMark, TextEmphasisPosition, TextEmphasisShorthand,
-    TextEmphasisStyle, TextJustify, TextOrientation, TextOverflow, TextRendering, TextShadowList,
-    TextSizeAdjust, TextSpacingTrim, TextTransform, TextUnderlinePosition, TextWrapMode,
-    TextWrapShorthand, TextWrapStyle, Transform2D, TypographyValue, UnicodeBidi, VerticalAlign,
-    WhiteSpaceCollapse, WhiteSpaceShorthand, WordBreak, WritingMode,
+    AnimationSnapshot, AspectRatio, BackgroundAttachment, BackgroundClip, BackgroundLayer,
+    BlockEllipsis, BorderCollapse, BorderImage, BorderStyle, BoxDecorationBreak, BoxShadow,
+    BoxSizing, BreakInside, BreakValue, CaptionSide, Clear, Color, ColumnFill, ColumnSpan,
+    ColumnWrap, ComputedStyle, ContainIntrinsicLength, ContainerType, Containment,
+    ContentAlignment, ContentDistribution, ContentPosition, ContentVisibility, CounterOperation,
+    Direction, Display, EmptyCells, FlexDirection, FlexWrap, Float, FontFamilyList, FontFeature,
+    FontKerning, FontLanguageOverride, FontOpticalSizing, FontPalette, FontShorthand,
+    FontSizeAdjust, FontSmoothing, FontStretch, FontStyleEnum, FontSynthesis,
+    FontSynthesisShorthand, FontVariantAlternates, FontVariantCaps, FontVariantEastAsian,
+    FontVariantEmoji, FontVariantLigatures, FontVariantNumeric, FontVariantPosition,
+    FontVariantShorthand, FontVariation, FontVariationList, FontWeight, GeneratedContentItem,
+    GenericFontFamily, GridAutoFlow, GridPlacement, GridTemplateAreas, GridTrackList,
+    GridTrackSize, HangingPunctuation, HyphenateCharacter, HyphenationLimits, Hyphens,
+    InitialLetter, InitialLetterValue, ItemAlignment, ItemPosition, LineBreak, LineClamp,
+    LineHeight, LinearGradient, ListStylePosition, ListStyleType, MarginTrim, ObjectFit,
+    ObjectPosition, OpenTypeFeatureList, Overflow, OverflowClipBox, OverflowWrap, Position,
+    PositionArea, QuotePair, Resize, RubyAlign, RubyOverhang, RubyPosition, ScrollMarkerGroup,
+    ScrollSnapAlign, ScrollSnapAxis, ScrollTargetGroup, ScrollbarGutter, ScrollbarWidth,
+    ShapeOutside, StyleColor, TabSize, TableLayout, TextAlign, TextAlignLast, TextAutospace,
+    TextBoxEdge, TextBoxShorthand, TextBoxTrim, TextCombineUpright, TextDecorationLine,
+    TextDecorationShorthand, TextDecorationSkipInk, TextDecorationStyle, TextDecorationThickness,
+    TextEmphasisFill, TextEmphasisMark, TextEmphasisPosition, TextEmphasisShorthand,
+    TextEmphasisStyle, TextJustify, TextOrientation, TextOverflow, TextRendering, TextShadow,
+    TextShadowList, TextSizeAdjust, TextSpacingTrim, TextTransform, TextUnderlinePosition,
+    TextWrap, TextWrapMode, TextWrapShorthand, TextWrapStyle, Transform2D, TypographyValue,
+    UnicodeBidi, VerticalAlign, Visibility, WebkitBoxOrient, WhiteSpace, WhiteSpaceCollapse,
+    WhiteSpaceShorthand, WordBreak, WritingMode,
 };
-use openui_geometry::{Length, LengthType};
+use openui_geometry::{Length, LengthType, RasterConfiguration};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ValueKind {
@@ -270,6 +280,7 @@ pub enum StyleValue {
     Transform(TransformList),
     PointerEvents(PointerEvents),
     Typography(TypographyValue),
+    Renderer(RendererStyleValue),
 }
 
 macro_rules! impl_style_value {
@@ -405,6 +416,14 @@ impl Style {
         self.declarations.push(Declaration {
             property,
             value: value.into(),
+        });
+        self
+    }
+
+    fn with_renderer(mut self, property: StyleProperty, value: RendererStyleValue) -> Self {
+        self.declarations.push(Declaration {
+            property,
+            value: StyleValue::Renderer(value),
         });
         self
     }
@@ -1718,240 +1737,266 @@ fn apply_typography_to_computed(
 ) -> bool {
     use StyleProperty as P;
     match (property, value) {
-        (P::Direction, TypographyValue::Direction(value)) => style.direction = *value,
-        (P::FontKerning, TypographyValue::FontKerning(value)) => style.font_kerning = *value,
+        (P::Direction, TypographyValue::Direction(value)) => style.fields.direction = *value,
+        (P::FontKerning, TypographyValue::FontKerning(value)) => style.fields.font_kerning = *value,
         (P::FontOpticalSizing, TypographyValue::FontOpticalSizing(value)) => {
-            style.font_optical_sizing = *value
+            style.fields.font_optical_sizing = *value
         }
-        (P::FontPalette, TypographyValue::FontPalette(value)) => style.font_palette = value.clone(),
+        (P::FontPalette, TypographyValue::FontPalette(value)) => {
+            style.fields.font_palette = value.clone()
+        }
         (P::FontSizeAdjust, TypographyValue::FontSizeAdjust(value)) => {
-            style.font_size_adjust = *value
+            style.fields.font_size_adjust = *value
         }
         (P::FontStretch, TypographyValue::FontStretch(value)) => {
-            style.font_stretch = FontStretch(value.0.clamp(50.0, 200.0))
+            style.fields.font_stretch = FontStretch(value.0.clamp(50.0, 200.0))
         }
         (P::FontStyle, TypographyValue::FontStyle(value)) => {
-            style.font_style = match value {
+            style.fields.font_style = match value {
                 FontStyleEnum::Oblique(angle) => FontStyleEnum::Oblique(angle.clamp(-90.0, 90.0)),
                 value => *value,
             }
         }
         (P::FontVariantLigatures, TypographyValue::FontVariantLigatures(value)) => {
-            style.font_variant_ligatures = *value
+            style.fields.font_variant_ligatures = *value
         }
         (P::FontVariantCaps, TypographyValue::FontVariantCaps(value)) => {
-            style.font_variant_caps = *value
+            style.fields.font_variant_caps = *value
         }
         (P::FontVariantEastAsian, TypographyValue::FontVariantEastAsian(value)) => {
-            style.font_variant_east_asian = *value
+            style.fields.font_variant_east_asian = *value
         }
         (P::FontVariantNumeric, TypographyValue::FontVariantNumeric(value)) => {
-            style.font_variant_numeric = *value
+            style.fields.font_variant_numeric = *value
         }
         (P::FontVariantAlternates, TypographyValue::FontVariantAlternates(value)) => {
-            style.font_variant_alternates = *value
+            style.fields.font_variant_alternates = *value
         }
         (P::FontVariantPosition, TypographyValue::FontVariantPosition(value)) => {
-            style.font_variant_position = *value
+            style.fields.font_variant_position = *value
         }
         (P::FontVariantEmoji, TypographyValue::FontVariantEmoji(value)) => {
-            style.font_variant_emoji = *value
+            style.fields.font_variant_emoji = *value
         }
         (P::FontSynthesisWeight, TypographyValue::FontSynthesis(value)) => {
-            style.font_synthesis_weight = *value
+            style.fields.font_synthesis_weight = *value
         }
         (P::FontSynthesisStyle, TypographyValue::FontSynthesis(value)) => {
-            style.font_synthesis_style = *value
+            style.fields.font_synthesis_style = *value
         }
         (P::FontSynthesisSmallCaps, TypographyValue::FontSynthesis(value)) => {
-            style.font_synthesis_small_caps = *value
+            style.fields.font_synthesis_small_caps = *value
         }
         (P::FontSynthesisPosition, TypographyValue::FontSynthesis(value)) => {
-            style.font_synthesis_position = *value
+            style.fields.font_synthesis_position = *value
         }
         (P::FontFeatureSettings, TypographyValue::OpenTypeFeatures(value)) => {
-            style.font_feature_settings = value.0.clone()
+            style.fields.font_feature_settings = value.0.clone()
         }
         (P::FontVariationSettings, TypographyValue::FontVariations(value)) => {
             if !value.0.iter().all(|axis| axis.value.is_finite()) {
                 return false;
             }
-            style.font_variation_settings = value.0.clone()
+            style.fields.font_variation_settings = value.0.clone()
         }
         (P::FontLanguageOverride, TypographyValue::FontLanguageOverride(value)) => {
-            style.font_language_override = *value
+            style.fields.font_language_override = *value
         }
-        (P::LineHeight, TypographyValue::LineHeight(value)) => style.line_height = *value,
-        (P::TextAlign, TypographyValue::TextAlign(value)) => style.text_align = *value,
-        (P::TextAlignLast, TypographyValue::TextAlignLast(value)) => style.text_align_last = *value,
-        (P::TextJustify, TypographyValue::TextJustify(value)) => style.text_justify = *value,
-        (P::WordBreak, TypographyValue::WordBreak(value)) => style.word_break = *value,
+        (P::LineHeight, TypographyValue::LineHeight(value)) => style.fields.line_height = *value,
+        (P::TextAlign, TypographyValue::TextAlign(value)) => style.fields.text_align = *value,
+        (P::TextAlignLast, TypographyValue::TextAlignLast(value)) => {
+            style.fields.text_align_last = *value
+        }
+        (P::TextJustify, TypographyValue::TextJustify(value)) => style.fields.text_justify = *value,
+        (P::WordBreak, TypographyValue::WordBreak(value)) => style.fields.word_break = *value,
         (P::OverflowWrap | P::WordWrap, TypographyValue::OverflowWrap(value)) => {
-            style.overflow_wrap = *value
+            style.fields.overflow_wrap = *value
         }
-        (P::LineBreak, TypographyValue::LineBreak(value)) => style.line_break = *value,
-        (P::Hyphens, TypographyValue::Hyphens(value)) => style.hyphens = *value,
+        (P::LineBreak, TypographyValue::LineBreak(value)) => style.fields.line_break = *value,
+        (P::Hyphens, TypographyValue::Hyphens(value)) => style.fields.hyphens = *value,
         (P::HyphenateLimitChars, TypographyValue::HyphenationLimits(value)) => {
-            style.hyphenate_limit_chars = (value.word, value.before, value.after)
+            style.fields.hyphenate_limit_chars = (value.word, value.before, value.after)
         }
         (P::HyphenateCharacter, TypographyValue::HyphenateCharacter(value)) => {
-            style.hyphenate_character = value.0.clone()
+            style.fields.hyphenate_character = value.0.clone()
         }
         (P::WhiteSpaceCollapse, TypographyValue::WhiteSpaceCollapse(value)) => {
-            style.white_space_collapse = *value;
-            style.white_space = normalized_white_space(*value, style.text_wrap_mode);
+            style.fields.white_space_collapse = *value;
+            style.fields.white_space = normalized_white_space(*value, style.fields.text_wrap_mode);
         }
         (P::TextWrapMode, TypographyValue::TextWrapMode(value)) => {
-            style.text_wrap_mode = *value;
-            style.white_space = normalized_white_space(style.white_space_collapse, *value);
-            style.text_wrap = normalized_text_wrap(*value, style.text_wrap_style);
+            style.fields.text_wrap_mode = *value;
+            style.fields.white_space =
+                normalized_white_space(style.fields.white_space_collapse, *value);
+            style.fields.text_wrap = normalized_text_wrap(*value, style.fields.text_wrap_style);
         }
         (P::TextWrapStyle, TypographyValue::TextWrapStyle(value)) => {
-            style.text_wrap_style = *value;
-            style.text_wrap = normalized_text_wrap(style.text_wrap_mode, *value);
+            style.fields.text_wrap_style = *value;
+            style.fields.text_wrap = normalized_text_wrap(style.fields.text_wrap_mode, *value);
         }
-        (P::TextAutospace, TypographyValue::TextAutospace(value)) => style.text_autospace = *value,
+        (P::TextAutospace, TypographyValue::TextAutospace(value)) => {
+            style.fields.text_autospace = *value
+        }
         (P::TextSpacingTrim, TypographyValue::TextSpacingTrim(value)) => {
-            style.text_spacing_trim = *value
+            style.fields.text_spacing_trim = *value
         }
-        (P::TabSize, TypographyValue::TabSize(value)) => style.tab_size = *value,
-        (P::TextTransform, TypographyValue::TextTransform(value)) => style.text_transform = *value,
+        (P::TabSize, TypographyValue::TabSize(value)) => style.fields.tab_size = *value,
+        (P::TextTransform, TypographyValue::TextTransform(value)) => {
+            style.fields.text_transform = *value
+        }
         (P::TextDecorationLine, TypographyValue::TextDecorationLine(value)) => {
-            style.text_decoration_line = *value
+            style.fields.text_decoration_line = *value
         }
         (P::TextDecorationStyle, TypographyValue::TextDecorationStyle(value)) => {
-            style.text_decoration_style = *value
+            style.fields.text_decoration_style = *value
         }
         (P::TextDecorationThickness, TypographyValue::TextDecorationThickness(value)) => {
-            style.text_decoration_thickness = *value
+            style.fields.text_decoration_thickness = *value
         }
         (P::TextDecorationColor, TypographyValue::StyleColor(value)) => {
-            style.text_decoration_color = *value
+            style.fields.text_decoration_color = *value
         }
         (P::TextEmphasisColor, TypographyValue::StyleColor(value)) => {
-            style.text_emphasis_color = *value
+            style.fields.text_emphasis_color = *value
         }
         (P::TextDecorationSkipInk, TypographyValue::TextDecorationSkipInk(value)) => {
-            style.text_decoration_skip_ink = *value
+            style.fields.text_decoration_skip_ink = *value
         }
         (P::TextUnderlinePosition, TypographyValue::TextUnderlinePosition(value)) => {
-            style.text_underline_position = *value
+            style.fields.text_underline_position = *value
         }
         (P::TextEmphasisStyle, TypographyValue::TextEmphasisStyle(value)) => {
-            style.text_emphasis_mark = value.mark;
-            style.text_emphasis_fill = value.fill;
+            style.fields.text_emphasis_mark = value.mark;
+            style.fields.text_emphasis_fill = value.fill;
         }
         (P::TextEmphasisPosition, TypographyValue::TextEmphasisPosition(value)) => {
-            style.text_emphasis_position = *value
+            style.fields.text_emphasis_position = *value
         }
-        (P::TextShadow, TypographyValue::TextShadows(value)) => style.text_shadow = value.0.clone(),
-        (P::TextOverflow, TypographyValue::TextOverflow(value)) => style.text_overflow = *value,
+        (P::TextShadow, TypographyValue::TextShadows(value)) => {
+            style.fields.text_shadow = value.0.clone()
+        }
+        (P::TextOverflow, TypographyValue::TextOverflow(value)) => {
+            style.fields.text_overflow = *value
+        }
         (P::TextSizeAdjust, TypographyValue::TextSizeAdjust(value)) => {
-            style.text_size_adjust = *value
+            style.fields.text_size_adjust = *value
         }
         (P::TextCombineUpright, TypographyValue::TextCombineUpright(value)) => {
-            style.text_combine_upright = *value
+            style.fields.text_combine_upright = *value
         }
-        (P::WritingMode, TypographyValue::WritingMode(value)) => style.writing_mode = *value,
+        (P::WritingMode, TypographyValue::WritingMode(value)) => style.fields.writing_mode = *value,
         (P::TextOrientation, TypographyValue::TextOrientation(value)) => {
-            style.text_orientation = *value
+            style.fields.text_orientation = *value
         }
-        (P::UnicodeBidi, TypographyValue::UnicodeBidi(value)) => style.unicode_bidi = *value,
-        (P::VerticalAlign, TypographyValue::VerticalAlign(value)) => style.vertical_align = *value,
-        (P::RubyAlign, TypographyValue::RubyAlign(value)) => style.ruby_align = *value,
-        (P::RubyPosition, TypographyValue::RubyPosition(value)) => style.ruby_position = *value,
-        (P::RubyOverhang, TypographyValue::RubyOverhang(value)) => style.ruby_overhang = *value,
+        (P::UnicodeBidi, TypographyValue::UnicodeBidi(value)) => style.fields.unicode_bidi = *value,
+        (P::VerticalAlign, TypographyValue::VerticalAlign(value)) => {
+            style.fields.vertical_align = *value
+        }
+        (P::RubyAlign, TypographyValue::RubyAlign(value)) => style.fields.ruby_align = *value,
+        (P::RubyPosition, TypographyValue::RubyPosition(value)) => {
+            style.fields.ruby_position = *value
+        }
+        (P::RubyOverhang, TypographyValue::RubyOverhang(value)) => {
+            style.fields.ruby_overhang = *value
+        }
         (P::HangingPunctuation, TypographyValue::HangingPunctuation(value)) => {
-            style.hanging_punctuation = *value
+            style.fields.hanging_punctuation = *value
         }
         (P::InitialLetter, TypographyValue::InitialLetter(value)) => {
-            style.initial_letter = match value {
+            style.fields.initial_letter = match value {
                 InitialLetterValue::Normal => None,
                 InitialLetterValue::Value(value) => Some(*value),
             }
         }
-        (P::TextRendering, TypographyValue::TextRendering(value)) => style.text_rendering = *value,
+        (P::TextRendering, TypographyValue::TextRendering(value)) => {
+            style.fields.text_rendering = *value
+        }
         (P::WebkitFontSmoothing, TypographyValue::FontSmoothing(value)) => {
-            style.font_smoothing = *value
+            style.fields.font_smoothing = *value
         }
-        (P::LineClamp, TypographyValue::LineClamp(value)) => style.line_clamp = *value,
+        (P::LineClamp, TypographyValue::LineClamp(value)) => style.fields.line_clamp = *value,
         (P::BlockEllipsis, TypographyValue::BlockEllipsis(value)) => {
-            style.block_ellipsis = value.clone()
+            style.fields.block_ellipsis = value.clone()
         }
-        (P::TextBoxEdge, TypographyValue::TextBoxEdge(value)) => style.text_box_edge = *value,
-        (P::TextBoxTrim, TypographyValue::TextBoxTrim(value)) => style.text_box_trim = *value,
+        (P::TextBoxEdge, TypographyValue::TextBoxEdge(value)) => {
+            style.fields.text_box_edge = *value
+        }
+        (P::TextBoxTrim, TypographyValue::TextBoxTrim(value)) => {
+            style.fields.text_box_trim = *value
+        }
         (P::TextBox, TypographyValue::TextBox(value)) => {
-            style.text_box_trim = value.trim;
-            style.text_box_edge = value.edge;
+            style.fields.text_box_trim = value.trim;
+            style.fields.text_box_edge = value.edge;
         }
         (P::Font, TypographyValue::Font(value)) => {
-            style.font_style = value.style;
-            style.font_variant_caps = value.variant_caps;
-            style.font_weight = value.weight;
-            style.font_stretch = value.stretch;
-            style.font_size = value.size_px;
-            style.line_height = value.line_height;
-            style.font_family = value.family.clone();
+            style.fields.font_style = value.style;
+            style.fields.font_variant_caps = value.variant_caps;
+            style.fields.font_weight = value.weight;
+            style.fields.font_stretch = value.stretch;
+            style.fields.font_size = value.size_px;
+            style.fields.line_height = value.line_height;
+            style.fields.font_family = value.family.clone();
             // CSS Fonts requires omitted and non-shorthand font longhands to
             // reset atomically when `font` is accepted.
-            style.font_variant_ligatures = FontVariantLigatures::default();
-            style.font_variant_numeric = FontVariantNumeric::default();
-            style.font_variant_east_asian = FontVariantEastAsian::default();
-            style.font_variant_alternates = FontVariantAlternates::default();
-            style.font_variant_position = FontVariantPosition::default();
-            style.font_variant_emoji = FontVariantEmoji::default();
-            style.font_optical_sizing = FontOpticalSizing::Auto;
-            style.font_size_adjust = FontSizeAdjust::None;
-            style.font_kerning = FontKerning::Auto;
-            style.font_feature_settings.clear();
-            style.font_variation_settings.clear();
-            style.font_language_override = FontLanguageOverride::NORMAL;
+            style.fields.font_variant_ligatures = FontVariantLigatures::default();
+            style.fields.font_variant_numeric = FontVariantNumeric::default();
+            style.fields.font_variant_east_asian = FontVariantEastAsian::default();
+            style.fields.font_variant_alternates = FontVariantAlternates::default();
+            style.fields.font_variant_position = FontVariantPosition::default();
+            style.fields.font_variant_emoji = FontVariantEmoji::default();
+            style.fields.font_optical_sizing = FontOpticalSizing::Auto;
+            style.fields.font_size_adjust = FontSizeAdjust::None;
+            style.fields.font_kerning = FontKerning::Auto;
+            style.fields.font_feature_settings.clear();
+            style.fields.font_variation_settings.clear();
+            style.fields.font_language_override = FontLanguageOverride::NORMAL;
         }
         (P::FontVariant, TypographyValue::FontVariant(value)) => {
-            style.font_variant_ligatures = value.ligatures;
-            style.font_variant_caps = value.caps;
-            style.font_variant_alternates = value.alternates;
-            style.font_variant_numeric = value.numeric;
-            style.font_variant_east_asian = value.east_asian;
-            style.font_variant_position = value.position;
-            style.font_variant_emoji = value.emoji;
+            style.fields.font_variant_ligatures = value.ligatures;
+            style.fields.font_variant_caps = value.caps;
+            style.fields.font_variant_alternates = value.alternates;
+            style.fields.font_variant_numeric = value.numeric;
+            style.fields.font_variant_east_asian = value.east_asian;
+            style.fields.font_variant_position = value.position;
+            style.fields.font_variant_emoji = value.emoji;
         }
         (P::FontSynthesis, TypographyValue::FontSynthesisShorthand(value)) => {
-            style.font_synthesis_weight = value.weight;
-            style.font_synthesis_style = value.style;
-            style.font_synthesis_small_caps = value.small_caps;
-            style.font_synthesis_position = value.position;
+            style.fields.font_synthesis_weight = value.weight;
+            style.fields.font_synthesis_style = value.style;
+            style.fields.font_synthesis_small_caps = value.small_caps;
+            style.fields.font_synthesis_position = value.position;
         }
         (P::WhiteSpace, TypographyValue::WhiteSpace(value)) => {
-            style.white_space_collapse = value.collapse;
-            style.text_wrap_mode = value.wrap;
-            style.white_space = normalized_white_space(value.collapse, value.wrap);
-            style.text_wrap = normalized_text_wrap(value.wrap, style.text_wrap_style);
+            style.fields.white_space_collapse = value.collapse;
+            style.fields.text_wrap_mode = value.wrap;
+            style.fields.white_space = normalized_white_space(value.collapse, value.wrap);
+            style.fields.text_wrap = normalized_text_wrap(value.wrap, style.fields.text_wrap_style);
         }
         (P::TextWrap, TypographyValue::TextWrap(value)) => {
-            style.text_wrap_mode = value.mode;
-            style.text_wrap_style = value.style;
-            style.text_wrap = normalized_text_wrap(value.mode, value.style);
-            style.white_space = normalized_white_space(style.white_space_collapse, value.mode);
+            style.fields.text_wrap_mode = value.mode;
+            style.fields.text_wrap_style = value.style;
+            style.fields.text_wrap = normalized_text_wrap(value.mode, value.style);
+            style.fields.white_space =
+                normalized_white_space(style.fields.white_space_collapse, value.mode);
         }
         (P::TextDecoration, TypographyValue::TextDecoration(value)) => {
-            style.text_decoration_line = value.line;
-            style.text_decoration_style = value.style;
-            style.text_decoration_color = value.color;
-            style.text_decoration_thickness = value.thickness;
+            style.fields.text_decoration_line = value.line;
+            style.fields.text_decoration_style = value.style;
+            style.fields.text_decoration_color = value.color;
+            style.fields.text_decoration_thickness = value.thickness;
         }
         (P::TextEmphasis, TypographyValue::TextEmphasis(value)) => {
-            style.text_emphasis_mark = value.style.mark;
-            style.text_emphasis_fill = value.style.fill;
-            style.text_emphasis_color = value.color;
-            style.text_emphasis_position = value.position;
+            style.fields.text_emphasis_mark = value.style.mark;
+            style.fields.text_emphasis_fill = value.style.fill;
+            style.fields.text_emphasis_color = value.color;
+            style.fields.text_emphasis_position = value.position;
         }
         _ => return false,
     }
     true
 }
 
-/// Apply a typed declaration to the renderer's computed style.
+/// Apply a typed declaration to the renderer's computed style.fields.
 pub fn apply_to_computed(
     style: &mut ComputedStyle,
     property: StyleProperty,
@@ -1959,74 +2004,80 @@ pub fn apply_to_computed(
     viewport: (f32, f32),
 ) -> Result<InvalidationClass, PropertyTypeError> {
     use StyleProperty as P;
-    let resolve = |v: LengthValue| v.resolve(viewport, style.font_size, 16.0);
+    let resolve = |v: LengthValue| v.resolve(viewport, style.fields.font_size, 16.0);
     let mismatch = || PropertyTypeError {
         property,
         expected: property.metadata().value_kind,
     };
+    if let StyleValue::Renderer(value) = value {
+        return value
+            .apply(style, property)
+            .then_some(property.metadata().invalidation)
+            .ok_or_else(mismatch);
+    }
     if let StyleValue::Typography(value) = value {
         return apply_typography_to_computed(style, property, value)
             .then_some(property.metadata().invalidation)
             .ok_or_else(mismatch);
     }
     match (property, value) {
-        (P::Display, StyleValue::Display(v)) => style.display = *v,
-        (P::Position, StyleValue::Position(v)) => style.position = *v,
+        (P::Display, StyleValue::Display(v)) => style.fields.display = *v,
+        (P::Position, StyleValue::Position(v)) => style.fields.position = *v,
         (P::Overflow, StyleValue::Overflow(v)) => {
-            style.overflow_x = *v;
-            style.overflow_y = *v;
+            style.fields.overflow_x = *v;
+            style.fields.overflow_y = *v;
         }
-        (P::Width, StyleValue::Length(v)) => style.width = resolve(*v),
-        (P::Height, StyleValue::Length(v)) => style.height = resolve(*v),
-        (P::MinWidth, StyleValue::Length(v)) => style.min_width = resolve(*v),
-        (P::MinHeight, StyleValue::Length(v)) => style.min_height = resolve(*v),
-        (P::MaxWidth, StyleValue::Length(v)) => style.max_width = resolve(*v),
-        (P::MaxHeight, StyleValue::Length(v)) => style.max_height = resolve(*v),
+        (P::Width, StyleValue::Length(v)) => style.fields.width = resolve(*v),
+        (P::Height, StyleValue::Length(v)) => style.fields.height = resolve(*v),
+        (P::MinWidth, StyleValue::Length(v)) => style.fields.min_width = resolve(*v),
+        (P::MinHeight, StyleValue::Length(v)) => style.fields.min_height = resolve(*v),
+        (P::MaxWidth, StyleValue::Length(v)) => style.fields.max_width = resolve(*v),
+        (P::MaxHeight, StyleValue::Length(v)) => style.fields.max_height = resolve(*v),
         (P::Margin, StyleValue::Edges(v)) => {
-            style.margin_top = resolve(v.top);
-            style.margin_right = resolve(v.right);
-            style.margin_bottom = resolve(v.bottom);
-            style.margin_left = resolve(v.left);
+            style.fields.margin_top = resolve(v.top);
+            style.fields.margin_right = resolve(v.right);
+            style.fields.margin_bottom = resolve(v.bottom);
+            style.fields.margin_left = resolve(v.left);
         }
-        (P::MarginTop, StyleValue::Length(v)) => style.margin_top = resolve(*v),
-        (P::MarginRight, StyleValue::Length(v)) => style.margin_right = resolve(*v),
-        (P::MarginBottom, StyleValue::Length(v)) => style.margin_bottom = resolve(*v),
-        (P::MarginLeft, StyleValue::Length(v)) => style.margin_left = resolve(*v),
+        (P::MarginTop, StyleValue::Length(v)) => style.fields.margin_top = resolve(*v),
+        (P::MarginRight, StyleValue::Length(v)) => style.fields.margin_right = resolve(*v),
+        (P::MarginBottom, StyleValue::Length(v)) => style.fields.margin_bottom = resolve(*v),
+        (P::MarginLeft, StyleValue::Length(v)) => style.fields.margin_left = resolve(*v),
         (P::Padding, StyleValue::Edges(v)) => {
-            style.padding_top = resolve(v.top);
-            style.padding_right = resolve(v.right);
-            style.padding_bottom = resolve(v.bottom);
-            style.padding_left = resolve(v.left);
+            style.fields.padding_top = resolve(v.top);
+            style.fields.padding_right = resolve(v.right);
+            style.fields.padding_bottom = resolve(v.bottom);
+            style.fields.padding_left = resolve(v.left);
         }
-        (P::PaddingTop, StyleValue::Length(v)) => style.padding_top = resolve(*v),
-        (P::PaddingRight, StyleValue::Length(v)) => style.padding_right = resolve(*v),
-        (P::PaddingBottom, StyleValue::Length(v)) => style.padding_bottom = resolve(*v),
-        (P::PaddingLeft, StyleValue::Length(v)) => style.padding_left = resolve(*v),
-        (P::BackgroundColor, StyleValue::Color(v)) => style.background_color = *v,
-        (P::Color, StyleValue::Color(v)) => style.color = *v,
-        (P::Opacity, StyleValue::Number(v)) => style.opacity = v.clamp(0.0, 1.0),
-        (P::ZIndex, StyleValue::Integer(v)) => style.z_index = Some(*v),
-        (P::FlexDirection, StyleValue::FlexDirection(v)) => style.flex_direction = *v,
-        (P::FlexWrap, StyleValue::FlexWrap(v)) => style.flex_wrap = *v,
-        (P::FlexGrow, StyleValue::Number(v)) => style.flex_grow = *v,
-        (P::FlexShrink, StyleValue::Number(v)) => style.flex_shrink = *v,
-        (P::FlexBasis, StyleValue::Length(v)) => style.flex_basis = resolve(*v),
-        (P::AlignItems, StyleValue::ItemAlignment(v)) => style.align_items = *v,
-        (P::JustifyContent, StyleValue::ContentAlignment(v)) => style.justify_content = *v,
+        (P::PaddingTop, StyleValue::Length(v)) => style.fields.padding_top = resolve(*v),
+        (P::PaddingRight, StyleValue::Length(v)) => style.fields.padding_right = resolve(*v),
+        (P::PaddingBottom, StyleValue::Length(v)) => style.fields.padding_bottom = resolve(*v),
+        (P::PaddingLeft, StyleValue::Length(v)) => style.fields.padding_left = resolve(*v),
+        (P::BackgroundColor, StyleValue::Color(v)) => style.fields.background_color = *v,
+        (P::Color, StyleValue::Color(v)) => style.fields.color = *v,
+        (P::Opacity, StyleValue::Number(v)) => style.fields.opacity = v.clamp(0.0, 1.0),
+        (P::ZIndex, StyleValue::Integer(v)) => style.fields.z_index = Some(*v),
+        (P::FlexDirection, StyleValue::FlexDirection(v)) => style.fields.flex_direction = *v,
+        (P::FlexWrap, StyleValue::FlexWrap(v)) => style.fields.flex_wrap = *v,
+        (P::FlexGrow, StyleValue::Number(v)) => style.fields.flex_grow = *v,
+        (P::FlexShrink, StyleValue::Number(v)) => style.fields.flex_shrink = *v,
+        (P::FlexBasis, StyleValue::Length(v)) => style.fields.flex_basis = resolve(*v),
+        (P::AlignItems, StyleValue::ItemAlignment(v)) => style.fields.align_items = *v,
+        (P::JustifyContent, StyleValue::ContentAlignment(v)) => style.fields.justify_content = *v,
         (P::Gap, StyleValue::Gap(v)) => {
-            style.row_gap = Some(resolve(v.row));
-            style.column_gap = Some(resolve(v.column));
+            style.fields.row_gap = Some(resolve(v.row));
+            style.fields.column_gap = Some(resolve(v.column));
         }
-        (P::RowGap, StyleValue::Length(v)) => style.row_gap = Some(resolve(*v)),
-        (P::ColumnGap, StyleValue::Length(v)) => style.column_gap = Some(resolve(*v)),
-        (P::FontFamily, StyleValue::FontFamily(v)) => style.font_family = v.clone(),
-        (P::FontSize, StyleValue::Length(v)) => style.font_size = resolve(*v).value(),
-        (P::FontWeight, StyleValue::FontWeight(v)) => style.font_weight = *v,
-        (P::LetterSpacing, StyleValue::Number(v)) => style.letter_spacing = *v,
-        (P::WordSpacing, StyleValue::Number(v)) => style.word_spacing = *v,
-        (P::TextIndent, StyleValue::Length(v)) => style.text_indent = resolve(*v),
+        (P::RowGap, StyleValue::Length(v)) => style.fields.row_gap = Some(resolve(*v)),
+        (P::ColumnGap, StyleValue::Length(v)) => style.fields.column_gap = Some(resolve(*v)),
+        (P::FontFamily, StyleValue::FontFamily(v)) => style.fields.font_family = v.clone(),
+        (P::FontSize, StyleValue::Length(v)) => style.fields.font_size = resolve(*v).value(),
+        (P::FontWeight, StyleValue::FontWeight(v)) => style.fields.font_weight = *v,
+        (P::LetterSpacing, StyleValue::Number(v)) => style.fields.letter_spacing = *v,
+        (P::WordSpacing, StyleValue::Number(v)) => style.fields.word_spacing = *v,
+        (P::TextIndent, StyleValue::Length(v)) => style.fields.text_indent = resolve(*v),
         (P::TextUnderlineOffset, StyleValue::Length(v)) => {
-            style.text_underline_offset = resolve(*v)
+            style.fields.text_underline_offset = resolve(*v)
         }
         (
             P::Border | P::BorderTop | P::BorderRight | P::BorderBottom | P::BorderLeft,
@@ -2040,34 +2091,34 @@ pub fn apply_to_computed(
                 _ => [false, false, false, true],
             };
             if targets[0] {
-                style.border_top_width = v.width as i32;
-                style.border_top_style = v.style;
-                style.border_top_color = StyleColor::Resolved(v.color);
+                style.fields.border_top_width = v.width as i32;
+                style.fields.border_top_style = v.style;
+                style.fields.border_top_color = StyleColor::Resolved(v.color);
             }
             if targets[1] {
-                style.border_right_width = v.width as i32;
-                style.border_right_style = v.style;
-                style.border_right_color = StyleColor::Resolved(v.color);
+                style.fields.border_right_width = v.width as i32;
+                style.fields.border_right_style = v.style;
+                style.fields.border_right_color = StyleColor::Resolved(v.color);
             }
             if targets[2] {
-                style.border_bottom_width = v.width as i32;
-                style.border_bottom_style = v.style;
-                style.border_bottom_color = StyleColor::Resolved(v.color);
+                style.fields.border_bottom_width = v.width as i32;
+                style.fields.border_bottom_style = v.style;
+                style.fields.border_bottom_color = StyleColor::Resolved(v.color);
             }
             if targets[3] {
-                style.border_left_width = v.width as i32;
-                style.border_left_style = v.style;
-                style.border_left_color = StyleColor::Resolved(v.color);
+                style.fields.border_left_width = v.width as i32;
+                style.fields.border_left_style = v.style;
+                style.fields.border_left_color = StyleColor::Resolved(v.color);
             }
         }
         (P::BorderRadius, StyleValue::CornerRadii(v)) => {
             let px = |value: LengthValue| resolve(value).value();
-            style.border_top_left_radius = (px(v.0.top), px(v.0.top));
-            style.border_top_right_radius = (px(v.0.right), px(v.0.right));
-            style.border_bottom_right_radius = (px(v.0.bottom), px(v.0.bottom));
-            style.border_bottom_left_radius = (px(v.0.left), px(v.0.left));
+            style.fields.border_top_left_radius = (px(v.0.top), px(v.0.top));
+            style.fields.border_top_right_radius = (px(v.0.right), px(v.0.right));
+            style.fields.border_bottom_right_radius = (px(v.0.bottom), px(v.0.bottom));
+            style.fields.border_bottom_left_radius = (px(v.0.left), px(v.0.left));
         }
-        (P::ListStyleType, StyleValue::ListStyle(v)) => style.list_style_type = *v,
+        (P::ListStyleType, StyleValue::ListStyle(v)) => style.fields.list_style_type = *v,
         (P::Transform, StyleValue::Transform(v)) => {
             let mut matrix = Transform2D::IDENTITY;
             for op in &v.0 {
@@ -2120,121 +2171,124 @@ pub fn apply_to_computed(
                     TransformOperation::Matrix3d(value) => matrix = value.projected_2d(),
                 }
             }
-            style.transform = matrix;
+            style.fields.transform = matrix;
         }
         (P::Cursor, StyleValue::Cursor(_)) => {}
-        (P::PointerEvents, StyleValue::PointerEvents(v)) => style.pointer_events = *v,
+        (P::PointerEvents, StyleValue::PointerEvents(v)) => style.fields.pointer_events = *v,
         _ => return Err(mismatch()),
     }
     Ok(property.metadata().invalidation)
 }
 
-/// Read a schema value back from a computed style.
+/// Read a schema value back from a computed style.fields.
 ///
 /// Relative lengths have already been resolved by this point and are returned
 /// as pixel values. This is primarily used to capture an animation's
 /// underlying value without maintaining a second handwritten style model.
 pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> StyleValue {
     use StyleProperty as P;
+    if let Some(value) = RendererStyleValue::from_computed(style, property) {
+        return StyleValue::Renderer(value);
+    }
     let length = |value: Length| StyleValue::Length(LengthValue::Computed(value));
     let border = |width: i32, border_style: BorderStyle, color: StyleColor| {
         StyleValue::Border(Border {
             width: width as f32,
             style: border_style,
-            color: color.resolve(&style.color),
+            color: color.resolve(&style.fields.color),
         })
     };
     match property {
-        P::Display => StyleValue::Display(style.display),
-        P::Position => StyleValue::Position(style.position),
-        P::Overflow => StyleValue::Overflow(style.overflow_x),
-        P::Width => length(style.width),
-        P::Height => length(style.height),
-        P::MinWidth => length(style.min_width),
-        P::MinHeight => length(style.min_height),
-        P::MaxWidth => length(style.max_width),
-        P::MaxHeight => length(style.max_height),
+        P::Display => StyleValue::Display(style.fields.display),
+        P::Position => StyleValue::Position(style.fields.position),
+        P::Overflow => StyleValue::Overflow(style.fields.overflow_x),
+        P::Width => length(style.fields.width),
+        P::Height => length(style.fields.height),
+        P::MinWidth => length(style.fields.min_width),
+        P::MinHeight => length(style.fields.min_height),
+        P::MaxWidth => length(style.fields.max_width),
+        P::MaxHeight => length(style.fields.max_height),
         P::Margin => StyleValue::Edges(Edges {
-            top: style.margin_top.into(),
-            right: style.margin_right.into(),
-            bottom: style.margin_bottom.into(),
-            left: style.margin_left.into(),
+            top: style.fields.margin_top.into(),
+            right: style.fields.margin_right.into(),
+            bottom: style.fields.margin_bottom.into(),
+            left: style.fields.margin_left.into(),
         }),
-        P::MarginTop => length(style.margin_top),
-        P::MarginRight => length(style.margin_right),
-        P::MarginBottom => length(style.margin_bottom),
-        P::MarginLeft => length(style.margin_left),
+        P::MarginTop => length(style.fields.margin_top),
+        P::MarginRight => length(style.fields.margin_right),
+        P::MarginBottom => length(style.fields.margin_bottom),
+        P::MarginLeft => length(style.fields.margin_left),
         P::Padding => StyleValue::Edges(Edges {
-            top: style.padding_top.into(),
-            right: style.padding_right.into(),
-            bottom: style.padding_bottom.into(),
-            left: style.padding_left.into(),
+            top: style.fields.padding_top.into(),
+            right: style.fields.padding_right.into(),
+            bottom: style.fields.padding_bottom.into(),
+            left: style.fields.padding_left.into(),
         }),
-        P::PaddingTop => length(style.padding_top),
-        P::PaddingRight => length(style.padding_right),
-        P::PaddingBottom => length(style.padding_bottom),
-        P::PaddingLeft => length(style.padding_left),
-        P::BackgroundColor => StyleValue::Color(style.background_color),
-        P::Color => StyleValue::Color(style.color),
-        P::Opacity => StyleValue::Number(style.opacity),
-        P::ZIndex => StyleValue::Integer(style.z_index.unwrap_or_default()),
-        P::FlexDirection => StyleValue::FlexDirection(style.flex_direction),
-        P::FlexWrap => StyleValue::FlexWrap(style.flex_wrap),
-        P::FlexGrow => StyleValue::Number(style.flex_grow),
-        P::FlexShrink => StyleValue::Number(style.flex_shrink),
-        P::FlexBasis => length(style.flex_basis),
-        P::AlignItems => StyleValue::ItemAlignment(style.align_items),
-        P::JustifyContent => StyleValue::ContentAlignment(style.justify_content),
+        P::PaddingTop => length(style.fields.padding_top),
+        P::PaddingRight => length(style.fields.padding_right),
+        P::PaddingBottom => length(style.fields.padding_bottom),
+        P::PaddingLeft => length(style.fields.padding_left),
+        P::BackgroundColor => StyleValue::Color(style.fields.background_color),
+        P::Color => StyleValue::Color(style.fields.color),
+        P::Opacity => StyleValue::Number(style.fields.opacity),
+        P::ZIndex => StyleValue::Integer(style.fields.z_index.unwrap_or_default()),
+        P::FlexDirection => StyleValue::FlexDirection(style.fields.flex_direction),
+        P::FlexWrap => StyleValue::FlexWrap(style.fields.flex_wrap),
+        P::FlexGrow => StyleValue::Number(style.fields.flex_grow),
+        P::FlexShrink => StyleValue::Number(style.fields.flex_shrink),
+        P::FlexBasis => length(style.fields.flex_basis),
+        P::AlignItems => StyleValue::ItemAlignment(style.fields.align_items),
+        P::JustifyContent => StyleValue::ContentAlignment(style.fields.justify_content),
         P::Gap => StyleValue::Gap(Gap {
-            row: style.row_gap.unwrap_or_else(Length::zero).into(),
-            column: style.column_gap.unwrap_or_else(Length::zero).into(),
+            row: style.fields.row_gap.unwrap_or_else(Length::zero).into(),
+            column: style.fields.column_gap.unwrap_or_else(Length::zero).into(),
         }),
-        P::RowGap => length(style.row_gap.unwrap_or_else(Length::zero)),
-        P::ColumnGap => length(style.column_gap.unwrap_or_else(Length::zero)),
-        P::FontFamily => StyleValue::FontFamily(style.font_family.clone()),
-        P::FontSize => StyleValue::Length(LengthValue::px(style.font_size)),
-        P::FontWeight => StyleValue::FontWeight(style.font_weight),
-        P::LetterSpacing => StyleValue::Number(style.letter_spacing),
-        P::WordSpacing => StyleValue::Number(style.word_spacing),
-        P::TextIndent => length(style.text_indent),
-        P::TextUnderlineOffset => length(style.text_underline_offset),
+        P::RowGap => length(style.fields.row_gap.unwrap_or_else(Length::zero)),
+        P::ColumnGap => length(style.fields.column_gap.unwrap_or_else(Length::zero)),
+        P::FontFamily => StyleValue::FontFamily(style.fields.font_family.clone()),
+        P::FontSize => StyleValue::Length(LengthValue::px(style.fields.font_size)),
+        P::FontWeight => StyleValue::FontWeight(style.fields.font_weight),
+        P::LetterSpacing => StyleValue::Number(style.fields.letter_spacing),
+        P::WordSpacing => StyleValue::Number(style.fields.word_spacing),
+        P::TextIndent => length(style.fields.text_indent),
+        P::TextUnderlineOffset => length(style.fields.text_underline_offset),
         P::Border => border(
-            style.border_top_width,
-            style.border_top_style,
-            style.border_top_color,
+            style.fields.border_top_width,
+            style.fields.border_top_style,
+            style.fields.border_top_color,
         ),
         P::BorderTop => border(
-            style.border_top_width,
-            style.border_top_style,
-            style.border_top_color,
+            style.fields.border_top_width,
+            style.fields.border_top_style,
+            style.fields.border_top_color,
         ),
         P::BorderRight => border(
-            style.border_right_width,
-            style.border_right_style,
-            style.border_right_color,
+            style.fields.border_right_width,
+            style.fields.border_right_style,
+            style.fields.border_right_color,
         ),
         P::BorderBottom => border(
-            style.border_bottom_width,
-            style.border_bottom_style,
-            style.border_bottom_color,
+            style.fields.border_bottom_width,
+            style.fields.border_bottom_style,
+            style.fields.border_bottom_color,
         ),
         P::BorderLeft => border(
-            style.border_left_width,
-            style.border_left_style,
-            style.border_left_color,
+            style.fields.border_left_width,
+            style.fields.border_left_style,
+            style.fields.border_left_color,
         ),
         P::BorderRadius => StyleValue::CornerRadii(CornerRadii(Edges {
-            top: LengthValue::px(style.border_top_left_radius.0),
-            right: LengthValue::px(style.border_top_right_radius.0),
-            bottom: LengthValue::px(style.border_bottom_right_radius.0),
-            left: LengthValue::px(style.border_bottom_left_radius.0),
+            top: LengthValue::px(style.fields.border_top_left_radius.0),
+            right: LengthValue::px(style.fields.border_top_right_radius.0),
+            bottom: LengthValue::px(style.fields.border_bottom_right_radius.0),
+            left: LengthValue::px(style.fields.border_bottom_left_radius.0),
         })),
         P::Cursor => StyleValue::Cursor(Cursor::Auto),
-        P::ListStyleType => StyleValue::ListStyle(style.list_style_type),
+        P::ListStyleType => StyleValue::ListStyle(style.fields.list_style_type),
         P::Transform => StyleValue::Transform(TransformList(vec![TransformOperation::Matrix(
-            style.transform,
+            style.fields.transform,
         )])),
-        P::PointerEvents => StyleValue::PointerEvents(style.pointer_events),
+        P::PointerEvents => StyleValue::PointerEvents(style.fields.pointer_events),
         _ => typography_from_computed(style, property),
     }
 }
@@ -2242,51 +2296,61 @@ pub fn value_from_computed(style: &ComputedStyle, property: StyleProperty) -> St
 fn typography_from_computed(style: &ComputedStyle, property: StyleProperty) -> StyleValue {
     use StyleProperty as P;
     let value = match property {
-        P::Direction => TypographyValue::Direction(style.direction),
-        P::FontKerning => TypographyValue::FontKerning(style.font_kerning),
-        P::FontOpticalSizing => TypographyValue::FontOpticalSizing(style.font_optical_sizing),
-        P::FontPalette => TypographyValue::FontPalette(style.font_palette.clone()),
-        P::FontSizeAdjust => TypographyValue::FontSizeAdjust(style.font_size_adjust),
-        P::FontStretch => TypographyValue::FontStretch(style.font_stretch),
-        P::FontStyle => TypographyValue::FontStyle(style.font_style),
+        P::Direction => TypographyValue::Direction(style.fields.direction),
+        P::FontKerning => TypographyValue::FontKerning(style.fields.font_kerning),
+        P::FontOpticalSizing => {
+            TypographyValue::FontOpticalSizing(style.fields.font_optical_sizing)
+        }
+        P::FontPalette => TypographyValue::FontPalette(style.fields.font_palette.clone()),
+        P::FontSizeAdjust => TypographyValue::FontSizeAdjust(style.fields.font_size_adjust),
+        P::FontStretch => TypographyValue::FontStretch(style.fields.font_stretch),
+        P::FontStyle => TypographyValue::FontStyle(style.fields.font_style),
         P::FontVariantLigatures => {
-            TypographyValue::FontVariantLigatures(style.font_variant_ligatures)
+            TypographyValue::FontVariantLigatures(style.fields.font_variant_ligatures)
         }
-        P::FontVariantCaps => TypographyValue::FontVariantCaps(style.font_variant_caps),
+        P::FontVariantCaps => TypographyValue::FontVariantCaps(style.fields.font_variant_caps),
         P::FontVariantEastAsian => {
-            TypographyValue::FontVariantEastAsian(style.font_variant_east_asian)
+            TypographyValue::FontVariantEastAsian(style.fields.font_variant_east_asian)
         }
-        P::FontVariantNumeric => TypographyValue::FontVariantNumeric(style.font_variant_numeric),
+        P::FontVariantNumeric => {
+            TypographyValue::FontVariantNumeric(style.fields.font_variant_numeric)
+        }
         P::FontVariantAlternates => {
-            TypographyValue::FontVariantAlternates(style.font_variant_alternates)
+            TypographyValue::FontVariantAlternates(style.fields.font_variant_alternates)
         }
-        P::FontVariantPosition => TypographyValue::FontVariantPosition(style.font_variant_position),
-        P::FontVariantEmoji => TypographyValue::FontVariantEmoji(style.font_variant_emoji),
-        P::FontSynthesisWeight => TypographyValue::FontSynthesis(style.font_synthesis_weight),
-        P::FontSynthesisStyle => TypographyValue::FontSynthesis(style.font_synthesis_style),
+        P::FontVariantPosition => {
+            TypographyValue::FontVariantPosition(style.fields.font_variant_position)
+        }
+        P::FontVariantEmoji => TypographyValue::FontVariantEmoji(style.fields.font_variant_emoji),
+        P::FontSynthesisWeight => {
+            TypographyValue::FontSynthesis(style.fields.font_synthesis_weight)
+        }
+        P::FontSynthesisStyle => TypographyValue::FontSynthesis(style.fields.font_synthesis_style),
         P::FontSynthesisSmallCaps => {
-            TypographyValue::FontSynthesis(style.font_synthesis_small_caps)
+            TypographyValue::FontSynthesis(style.fields.font_synthesis_small_caps)
         }
-        P::FontSynthesisPosition => TypographyValue::FontSynthesis(style.font_synthesis_position),
+        P::FontSynthesisPosition => {
+            TypographyValue::FontSynthesis(style.fields.font_synthesis_position)
+        }
         P::FontFeatureSettings => TypographyValue::OpenTypeFeatures(OpenTypeFeatureList(
-            style.font_feature_settings.clone(),
+            style.fields.font_feature_settings.clone(),
         )),
         P::FontVariationSettings => TypographyValue::FontVariations(FontVariationList(
-            style.font_variation_settings.clone(),
+            style.fields.font_variation_settings.clone(),
         )),
         P::FontLanguageOverride => {
-            TypographyValue::FontLanguageOverride(style.font_language_override)
+            TypographyValue::FontLanguageOverride(style.fields.font_language_override)
         }
-        P::LineHeight => TypographyValue::LineHeight(style.line_height),
-        P::TextAlign => TypographyValue::TextAlign(style.text_align),
-        P::TextAlignLast => TypographyValue::TextAlignLast(style.text_align_last),
-        P::TextJustify => TypographyValue::TextJustify(style.text_justify),
-        P::WordBreak => TypographyValue::WordBreak(style.word_break),
-        P::OverflowWrap | P::WordWrap => TypographyValue::OverflowWrap(style.overflow_wrap),
-        P::LineBreak => TypographyValue::LineBreak(style.line_break),
-        P::Hyphens => TypographyValue::Hyphens(style.hyphens),
+        P::LineHeight => TypographyValue::LineHeight(style.fields.line_height),
+        P::TextAlign => TypographyValue::TextAlign(style.fields.text_align),
+        P::TextAlignLast => TypographyValue::TextAlignLast(style.fields.text_align_last),
+        P::TextJustify => TypographyValue::TextJustify(style.fields.text_justify),
+        P::WordBreak => TypographyValue::WordBreak(style.fields.word_break),
+        P::OverflowWrap | P::WordWrap => TypographyValue::OverflowWrap(style.fields.overflow_wrap),
+        P::LineBreak => TypographyValue::LineBreak(style.fields.line_break),
+        P::Hyphens => TypographyValue::Hyphens(style.fields.hyphens),
         P::HyphenateLimitChars => {
-            let (word, before, after) = style.hyphenate_limit_chars;
+            let (word, before, after) = style.fields.hyphenate_limit_chars;
             TypographyValue::HyphenationLimits(HyphenationLimits {
                 word,
                 before,
@@ -2294,107 +2358,119 @@ fn typography_from_computed(style: &ComputedStyle, property: StyleProperty) -> S
             })
         }
         P::HyphenateCharacter => TypographyValue::HyphenateCharacter(HyphenateCharacter(
-            style.hyphenate_character.clone(),
+            style.fields.hyphenate_character.clone(),
         )),
-        P::WhiteSpaceCollapse => TypographyValue::WhiteSpaceCollapse(style.white_space_collapse),
-        P::TextWrapMode => TypographyValue::TextWrapMode(style.text_wrap_mode),
-        P::TextWrapStyle => TypographyValue::TextWrapStyle(style.text_wrap_style),
-        P::TextAutospace => TypographyValue::TextAutospace(style.text_autospace),
-        P::TextSpacingTrim => TypographyValue::TextSpacingTrim(style.text_spacing_trim),
-        P::TabSize => TypographyValue::TabSize(style.tab_size),
-        P::TextTransform => TypographyValue::TextTransform(style.text_transform),
-        P::TextDecorationLine => TypographyValue::TextDecorationLine(style.text_decoration_line),
-        P::TextDecorationStyle => TypographyValue::TextDecorationStyle(style.text_decoration_style),
-        P::TextDecorationThickness => {
-            TypographyValue::TextDecorationThickness(style.text_decoration_thickness)
+        P::WhiteSpaceCollapse => {
+            TypographyValue::WhiteSpaceCollapse(style.fields.white_space_collapse)
         }
-        P::TextDecorationColor => TypographyValue::StyleColor(style.text_decoration_color),
-        P::TextEmphasisColor => TypographyValue::StyleColor(style.text_emphasis_color),
+        P::TextWrapMode => TypographyValue::TextWrapMode(style.fields.text_wrap_mode),
+        P::TextWrapStyle => TypographyValue::TextWrapStyle(style.fields.text_wrap_style),
+        P::TextAutospace => TypographyValue::TextAutospace(style.fields.text_autospace),
+        P::TextSpacingTrim => TypographyValue::TextSpacingTrim(style.fields.text_spacing_trim),
+        P::TabSize => TypographyValue::TabSize(style.fields.tab_size),
+        P::TextTransform => TypographyValue::TextTransform(style.fields.text_transform),
+        P::TextDecorationLine => {
+            TypographyValue::TextDecorationLine(style.fields.text_decoration_line)
+        }
+        P::TextDecorationStyle => {
+            TypographyValue::TextDecorationStyle(style.fields.text_decoration_style)
+        }
+        P::TextDecorationThickness => {
+            TypographyValue::TextDecorationThickness(style.fields.text_decoration_thickness)
+        }
+        P::TextDecorationColor => TypographyValue::StyleColor(style.fields.text_decoration_color),
+        P::TextEmphasisColor => TypographyValue::StyleColor(style.fields.text_emphasis_color),
         P::TextDecorationSkipInk => {
-            TypographyValue::TextDecorationSkipInk(style.text_decoration_skip_ink)
+            TypographyValue::TextDecorationSkipInk(style.fields.text_decoration_skip_ink)
         }
         P::TextUnderlinePosition => {
-            TypographyValue::TextUnderlinePosition(style.text_underline_position)
+            TypographyValue::TextUnderlinePosition(style.fields.text_underline_position)
         }
         P::TextEmphasisStyle => TypographyValue::TextEmphasisStyle(TextEmphasisStyle {
-            mark: style.text_emphasis_mark,
-            fill: style.text_emphasis_fill,
+            mark: style.fields.text_emphasis_mark,
+            fill: style.fields.text_emphasis_fill,
         }),
         P::TextEmphasisPosition => {
-            TypographyValue::TextEmphasisPosition(style.text_emphasis_position)
+            TypographyValue::TextEmphasisPosition(style.fields.text_emphasis_position)
         }
-        P::TextShadow => TypographyValue::TextShadows(TextShadowList(style.text_shadow.clone())),
-        P::TextOverflow => TypographyValue::TextOverflow(style.text_overflow),
-        P::TextSizeAdjust => TypographyValue::TextSizeAdjust(style.text_size_adjust),
-        P::TextCombineUpright => TypographyValue::TextCombineUpright(style.text_combine_upright),
-        P::WritingMode => TypographyValue::WritingMode(style.writing_mode),
-        P::TextOrientation => TypographyValue::TextOrientation(style.text_orientation),
-        P::UnicodeBidi => TypographyValue::UnicodeBidi(style.unicode_bidi),
-        P::VerticalAlign => TypographyValue::VerticalAlign(style.vertical_align),
-        P::RubyAlign => TypographyValue::RubyAlign(style.ruby_align),
-        P::RubyPosition => TypographyValue::RubyPosition(style.ruby_position),
-        P::RubyOverhang => TypographyValue::RubyOverhang(style.ruby_overhang),
-        P::HangingPunctuation => TypographyValue::HangingPunctuation(style.hanging_punctuation),
+        P::TextShadow => {
+            TypographyValue::TextShadows(TextShadowList(style.fields.text_shadow.clone()))
+        }
+        P::TextOverflow => TypographyValue::TextOverflow(style.fields.text_overflow),
+        P::TextSizeAdjust => TypographyValue::TextSizeAdjust(style.fields.text_size_adjust),
+        P::TextCombineUpright => {
+            TypographyValue::TextCombineUpright(style.fields.text_combine_upright)
+        }
+        P::WritingMode => TypographyValue::WritingMode(style.fields.writing_mode),
+        P::TextOrientation => TypographyValue::TextOrientation(style.fields.text_orientation),
+        P::UnicodeBidi => TypographyValue::UnicodeBidi(style.fields.unicode_bidi),
+        P::VerticalAlign => TypographyValue::VerticalAlign(style.fields.vertical_align),
+        P::RubyAlign => TypographyValue::RubyAlign(style.fields.ruby_align),
+        P::RubyPosition => TypographyValue::RubyPosition(style.fields.ruby_position),
+        P::RubyOverhang => TypographyValue::RubyOverhang(style.fields.ruby_overhang),
+        P::HangingPunctuation => {
+            TypographyValue::HangingPunctuation(style.fields.hanging_punctuation)
+        }
         P::InitialLetter => TypographyValue::InitialLetter(
             style
                 .initial_letter
                 .map_or(InitialLetterValue::Normal, InitialLetterValue::Value),
         ),
-        P::TextRendering => TypographyValue::TextRendering(style.text_rendering),
-        P::WebkitFontSmoothing => TypographyValue::FontSmoothing(style.font_smoothing),
-        P::LineClamp => TypographyValue::LineClamp(style.line_clamp),
-        P::BlockEllipsis => TypographyValue::BlockEllipsis(style.block_ellipsis.clone()),
-        P::TextBoxEdge => TypographyValue::TextBoxEdge(style.text_box_edge),
-        P::TextBoxTrim => TypographyValue::TextBoxTrim(style.text_box_trim),
+        P::TextRendering => TypographyValue::TextRendering(style.fields.text_rendering),
+        P::WebkitFontSmoothing => TypographyValue::FontSmoothing(style.fields.font_smoothing),
+        P::LineClamp => TypographyValue::LineClamp(style.fields.line_clamp),
+        P::BlockEllipsis => TypographyValue::BlockEllipsis(style.fields.block_ellipsis.clone()),
+        P::TextBoxEdge => TypographyValue::TextBoxEdge(style.fields.text_box_edge),
+        P::TextBoxTrim => TypographyValue::TextBoxTrim(style.fields.text_box_trim),
         P::TextBox => TypographyValue::TextBox(TextBoxShorthand {
-            trim: style.text_box_trim,
-            edge: style.text_box_edge,
+            trim: style.fields.text_box_trim,
+            edge: style.fields.text_box_edge,
         }),
         P::Font => TypographyValue::Font(FontShorthand {
-            style: style.font_style,
-            variant_caps: style.font_variant_caps,
-            weight: style.font_weight,
-            stretch: style.font_stretch,
-            size_px: style.font_size,
-            line_height: style.line_height,
-            family: style.font_family.clone(),
+            style: style.fields.font_style,
+            variant_caps: style.fields.font_variant_caps,
+            weight: style.fields.font_weight,
+            stretch: style.fields.font_stretch,
+            size_px: style.fields.font_size,
+            line_height: style.fields.line_height,
+            family: style.fields.font_family.clone(),
         }),
         P::FontVariant => TypographyValue::FontVariant(FontVariantShorthand {
-            ligatures: style.font_variant_ligatures,
-            caps: style.font_variant_caps,
-            alternates: style.font_variant_alternates,
-            numeric: style.font_variant_numeric,
-            east_asian: style.font_variant_east_asian,
-            position: style.font_variant_position,
-            emoji: style.font_variant_emoji,
+            ligatures: style.fields.font_variant_ligatures,
+            caps: style.fields.font_variant_caps,
+            alternates: style.fields.font_variant_alternates,
+            numeric: style.fields.font_variant_numeric,
+            east_asian: style.fields.font_variant_east_asian,
+            position: style.fields.font_variant_position,
+            emoji: style.fields.font_variant_emoji,
         }),
         P::FontSynthesis => TypographyValue::FontSynthesisShorthand(FontSynthesisShorthand {
-            weight: style.font_synthesis_weight,
-            style: style.font_synthesis_style,
-            small_caps: style.font_synthesis_small_caps,
-            position: style.font_synthesis_position,
+            weight: style.fields.font_synthesis_weight,
+            style: style.fields.font_synthesis_style,
+            small_caps: style.fields.font_synthesis_small_caps,
+            position: style.fields.font_synthesis_position,
         }),
         P::WhiteSpace => TypographyValue::WhiteSpace(WhiteSpaceShorthand {
-            collapse: style.white_space_collapse,
-            wrap: style.text_wrap_mode,
+            collapse: style.fields.white_space_collapse,
+            wrap: style.fields.text_wrap_mode,
         }),
         P::TextWrap => TypographyValue::TextWrap(TextWrapShorthand {
-            mode: style.text_wrap_mode,
-            style: style.text_wrap_style,
+            mode: style.fields.text_wrap_mode,
+            style: style.fields.text_wrap_style,
         }),
         P::TextDecoration => TypographyValue::TextDecoration(TextDecorationShorthand {
-            line: style.text_decoration_line,
-            style: style.text_decoration_style,
-            color: style.text_decoration_color,
-            thickness: style.text_decoration_thickness,
+            line: style.fields.text_decoration_line,
+            style: style.fields.text_decoration_style,
+            color: style.fields.text_decoration_color,
+            thickness: style.fields.text_decoration_thickness,
         }),
         P::TextEmphasis => TypographyValue::TextEmphasis(TextEmphasisShorthand {
             style: TextEmphasisStyle {
-                mark: style.text_emphasis_mark,
-                fill: style.text_emphasis_fill,
+                mark: style.fields.text_emphasis_mark,
+                fill: style.fields.text_emphasis_fill,
             },
-            color: style.text_emphasis_color,
-            position: style.text_emphasis_position,
+            color: style.fields.text_emphasis_color,
+            position: style.fields.text_emphasis_position,
         }),
         _ => unreachable!("non-typography property routed to typography reader"),
     };
@@ -2415,7 +2491,19 @@ mod tests {
         assert_eq!(StyleProperty::Direction as u16, 47);
         assert_eq!(StyleProperty::TextEmphasis as u16, 124);
         assert_eq!(StyleProperty::TextBox as u16, 125);
-        assert_eq!(PROPERTY_METADATA.len(), 125);
+        assert_eq!(StyleProperty::ShapeOutside as u16, 237);
+        assert_eq!(PROPERTY_METADATA.len(), 237);
+        for (index, metadata) in PROPERTY_METADATA.iter().enumerate() {
+            let id = u16::try_from(index + 1).unwrap();
+            assert_eq!(StyleProperty::from_u16(id), Some(metadata.property));
+            assert_eq!(
+                StyleProperty::from_css_name(metadata.css_name),
+                Some(metadata.property)
+            );
+            assert_eq!(metadata.property.metadata(), metadata);
+        }
+        assert_eq!(StyleProperty::from_u16(0), None);
+        assert_eq!(StyleProperty::from_u16(238), None);
         assert_eq!(
             StyleProperty::Opacity.metadata().invalidation,
             InvalidationClass::Composite
@@ -2427,8 +2515,8 @@ mod tests {
         let padding = parse_literal(StyleProperty::Padding, "8px 16px").unwrap();
         let mut style = ComputedStyle::initial();
         apply_to_computed(&mut style, StyleProperty::Padding, &padding, (800.0, 600.0)).unwrap();
-        assert_eq!(style.padding_top, Length::px(8.0));
-        assert_eq!(style.padding_right, Length::px(16.0));
+        assert_eq!(style.fields.padding_top, Length::px(8.0));
+        assert_eq!(style.fields.padding_right, Length::px(16.0));
         assert!(parse_literal(StyleProperty::Padding, "wat").is_err());
     }
 
@@ -2557,17 +2645,17 @@ mod tests {
     #[test]
     fn font_shorthand_is_atomic_and_resets_omitted_font_longhands() {
         let mut style = ComputedStyle::initial();
-        style.font_kerning = FontKerning::None;
-        style.font_feature_settings.push(crate::FontFeature {
+        style.fields.font_kerning = FontKerning::None;
+        style.fields.font_feature_settings.push(crate::FontFeature {
             tag: *b"liga",
             value: 0,
         });
         let value = parse_literal(StyleProperty::Font, "italic bold 20px serif").unwrap();
         apply_to_computed(&mut style, StyleProperty::Font, &value, (800.0, 600.0)).unwrap();
-        assert_eq!(style.font_style, FontStyleEnum::Italic);
-        assert_eq!(style.font_weight, FontWeight::BOLD);
-        assert_eq!(style.font_size, 20.0);
-        assert_eq!(style.font_kerning, FontKerning::Auto);
-        assert!(style.font_feature_settings.is_empty());
+        assert_eq!(style.fields.font_style, FontStyleEnum::Italic);
+        assert_eq!(style.fields.font_weight, FontWeight::BOLD);
+        assert_eq!(style.fields.font_size, 20.0);
+        assert_eq!(style.fields.font_kerning, FontKerning::Auto);
+        assert!(style.fields.font_feature_settings.is_empty());
     }
 }

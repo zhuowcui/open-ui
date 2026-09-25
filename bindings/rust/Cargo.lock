@@ -858,7 +858,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1201,7 +1201,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
 dependencies = [
  "hermit-abi",
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1773,6 +1773,8 @@ dependencies = [
 name = "openui-compositor"
 version = "0.2.0"
 dependencies = [
+ "gl",
+ "glutin",
  "openui-dom",
  "openui-geometry",
  "openui-layout",
@@ -2010,7 +2012,9 @@ dependencies = [
 name = "pixel-compare"
 version = "0.1.0"
 dependencies = [
+ "openui-compositor",
  "openui-dom",
+ "openui-engine",
  "openui-geometry",
  "openui-layout",
  "openui-paint",
@@ -2272,7 +2276,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys 0.12.1",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -2412,7 +2416,7 @@ checksum = "8ee5873ec9cce0195efcb7a4e9507a04cd49aec9c83d0389df45b1ef7ba2e649"
 [[package]]
 name = "skia-bindings"
 version = "0.94.0"
-source = "git+https://github.com/rust-skia/rust-skia.git?rev=c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09#c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09"
+source = "git+https://github.com/rust-skia/rust-skia.git?rev=a31b86ba3b767344d39af3b8c30043003d8fc991#a31b86ba3b767344d39af3b8c30043003d8fc991"
 dependencies = [
  "bindgen",
  "cc",
@@ -2428,7 +2432,7 @@ dependencies = [
 [[package]]
 name = "skia-safe"
 version = "0.94.0"
-source = "git+https://github.com/rust-skia/rust-skia.git?rev=c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09#c19a70ee1e5ea5a7790ee05a9b6f5fa3c05fae09"
+source = "git+https://github.com/rust-skia/rust-skia.git?rev=a31b86ba3b767344d39af3b8c30043003d8fc991#a31b86ba3b767344d39af3b8c30043003d8fc991"
 dependencies = [
  "bitflags 2.11.0",
  "skia-bindings",
@@ -2603,10 +2607,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.4.3",
+ "getrandom 0.3.4",
  "once_cell",
  "rustix 1.1.4",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -3055,7 +3059,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]

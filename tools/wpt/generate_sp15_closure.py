@@ -8,6 +8,8 @@ import json
 import sys
 from pathlib import Path
 
+from generate_sp13r_multicol_closure import lowered_candidate_promotions
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
 DATA_DIR = PROJECT_ROOT / "tools" / "accountability" / "data"
@@ -18,6 +20,7 @@ SUMMARY_JSON = DATA_DIR / "pixel_comparison" / "results" / "summary.json"
 BASELINE_JSON = PORTED_DIR / "sp15_baseline_exact.json"
 TARGETS_JSON = PORTED_DIR / "sp15_actionable_targets.json"
 RESIDUALS_JSON = PORTED_DIR / "sp15_residual_dispositions.json"
+SP16_RESIDUALS_JSON = PORTED_DIR / "sp16_residual_dispositions.json"
 
 SP15_CATEGORIES = {
     "needs_inline_box_decoration_break",
@@ -126,6 +129,13 @@ def validate_closed_snapshot(
 ) -> None:
     summary_by_id = {item["id"]: item for item in summary.get("tests", [])}
     mapping = {canonical_id(row): row for row in rows}
+    successors = {
+        item["test_id"]: item
+        for item in json.loads(SP16_RESIDUALS_JSON.read_text(encoding="utf-8"))
+    }
+    candidate_promotions = lowered_candidate_promotions(
+        mapping, require_complete=len(rows) == 7673
+    )
     for test_id in baseline:
         item = summary_by_id.get(test_id)
         if not item or item.get("status") != "pass" or item.get("mismatch_pct") != 0.0:
@@ -138,11 +148,26 @@ def validate_closed_snapshot(
             raise ValueError(f"SP15 actionable target has a render error: {test_id}")
     for item in residuals:
         row = mapping.get(item["test_id"])
+        if row and row.get("ported") == "yes":
+            result = summary_by_id.get(item["test_id"])
+            if row.get("our_test_id") != item["test_id"]:
+                raise ValueError(f"SP15 promotion has wrong identity: {item['test_id']}")
+            if item["test_id"] not in candidate_promotions and (
+                not result or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                raise ValueError(f"SP15 promotion is not exact: {item['test_id']}")
+            continue
         if not row or row.get("ported") != "no":
-            raise ValueError(f"SP15 residual unexpectedly became runnable: {item['test_id']}")
+            raise ValueError(f"SP15 residual has invalid state: {item['test_id']}")
+        disposition = successors.get(item["test_id"], item)
         mapped = categories(row.get("failure_category", ""))
-        if not set(item["owner_categories"]).issubset(mapped):
+        if not set(disposition["owner_categories"]).issubset(mapped):
             raise ValueError(f"SP15 residual ownership drift: {item['test_id']}")
+        if row.get("chromium_test_path") != disposition["chromium_test_path"]:
+            raise ValueError(f"SP15 residual Chromium path drift: {item['test_id']}")
+        if disposition["rejection_reason"] not in row.get("notes", ""):
+            raise ValueError(f"SP15 residual rejection-reason drift: {item['test_id']}")
     stale = [canonical_id(row) for row in rows if categories(row["failure_category"]) & SP15_CATEGORIES]
     if stale:
         raise ValueError(f"retired SP15 owner remains in mapping: {stale[0]}")

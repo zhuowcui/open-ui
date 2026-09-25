@@ -10,6 +10,8 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+from generate_sp13r_multicol_closure import lowered_candidate_promotions
+
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
 ACCOUNTABILITY_DIR = PROJECT_ROOT / "tools" / "accountability"
@@ -29,6 +31,8 @@ WPT_ROOT = Path(
 BASELINE_JSON = PORTED_DIR / "sp14_w3_baseline_exact.json"
 W3_JSON = PORTED_DIR / "sp14_w3_targets.json"
 W4_JSON = PORTED_DIR / "sp14_w4_residuals.json"
+SP15_RESIDUALS_JSON = PORTED_DIR / "sp15_residual_dispositions.json"
+SP16_RESIDUALS_JSON = PORTED_DIR / "sp16_residual_dispositions.json"
 
 EXPECTED_ORIGINAL = 4045
 EXPECTED_BASELINE = 2715
@@ -234,6 +238,14 @@ def validate_closed_snapshot(
         raise ValueError(f"baseline exact-pass regression: {bad_baseline[0]}")
 
     mapping_by_id = {canonical_test_id(row): row for row in mapping_rows}
+    successors = {
+        item["test_id"]: item
+        for path in (SP15_RESIDUALS_JSON, SP16_RESIDUALS_JSON)
+        for item in json.loads(path.read_text(encoding="utf-8"))
+    }
+    candidate_promotions = lowered_candidate_promotions(
+        mapping_by_id, require_complete=len(mapping_rows) == 7673
+    )
     bad_w3 = [
         test_id
         for test_id in w3
@@ -245,12 +257,25 @@ def validate_closed_snapshot(
         if item["test_id"] not in mapping_by_id:
             raise ValueError(f"W4 residual is absent from mapping: {item['test_id']}")
         row = mapping_by_id[item["test_id"]]
+        if row["ported"] == "yes":
+            result = summary_by_id.get(item["test_id"])
+            if row.get("our_test_id") != item["test_id"]:
+                raise ValueError(f"W4 promotion has wrong identity: {item['test_id']}")
+            if item["test_id"] not in candidate_promotions and (
+                not result or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                raise ValueError(f"W4 promotion is not exact: {item['test_id']}")
+            continue
         if row["ported"] != "no":
-            raise ValueError(f"W4 residual became runnable: {item['test_id']}")
+            raise ValueError(f"W4 residual has invalid state: {item['test_id']}")
+        disposition = successors.get(item["test_id"], item)
         categories = _categories(row.get("failure_category", ""))
-        if not set(item["owner_categories"]).issubset(categories):
+        if not set(disposition["owner_categories"]).issubset(categories):
             raise ValueError(f"W4 ownership drift: {item['test_id']}")
-        if item["rejection_reason"] not in row.get("notes", ""):
+        if row.get("chromium_test_path") != disposition["chromium_test_path"]:
+            raise ValueError(f"W4 Chromium path drift: {item['test_id']}")
+        if disposition["rejection_reason"] not in row.get("notes", ""):
             raise ValueError(f"W4 rejection-reason drift: {item['test_id']}")
 
 

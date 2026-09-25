@@ -22,14 +22,17 @@ pub use interaction::{
 
 use openui_compositor::{SceneGeneration, SceneRect, SceneSnapshot};
 use openui_dom::{
-    Document as NativeDocument, ElementTag, NodeId, ReplacedContent, ReplacedResourceKind,
+    Document as NativeDocument, ElementTag, FormControlRole, NodeId, PseudoElementKind,
+    ReplacedContent, ReplacedResourceKind,
 };
-pub use openui_geometry::{ViewportAuthority, ViewportMetrics, ViewportMetricsError};
+pub use openui_geometry::{
+    RasterConfiguration, ViewportAuthority, ViewportMetrics, ViewportMetricsError,
+};
 use openui_layout::Fragment;
 use openui_paint::record_fragment;
 use openui_style::{
-    apply_to_computed, ImageResourceId, InvalidationClass, PseudoStyleTarget, Style, StyleProperty,
-    StyleValue,
+    apply_to_computed, Color, ComputedStyle, ImageResourceId, InvalidationClass, PseudoStyleTarget,
+    RendererInternalStyleValue, RendererStyleValue, Style, StyleProperty, StyleValue,
 };
 pub use openui_text::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
@@ -70,6 +73,27 @@ impl NodeHandle {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct WeakNode(NodeHandle);
+
+/// Non-author DOM state used by deterministic renderer fixtures. Style
+/// declarations are intentionally excluded and must use `set_property` or
+/// `set_renderer_style`.
+#[doc(hidden)]
+#[derive(Debug, Clone)]
+pub enum RendererNodeState {
+    Text(Option<String>),
+    Replaced(Option<ReplacedContent>),
+    TableColumnSpan(u32),
+    TableRowSpan(u32),
+    FormControl(Option<FormControlRole>),
+    FormControlDisabled(bool),
+    FormControlNativeAppearance(bool),
+    EmbeddedDocument(Option<ImageResourceId>),
+    EmbeddedCanvasColor(Option<Color>),
+    ScrollLeft(f32),
+    ScrollTop(f32),
+    ScrollMarkerInactiveBackground(Option<Color>),
+    SvgForeignObject(bool),
+}
 
 impl WeakNode {
     pub fn upgrade(self, engine: &Engine) -> Result<NodeHandle, EngineError> {
@@ -152,6 +176,11 @@ pub struct LifecycleStats {
     pub layouts: u64,
     pub paints: u64,
     pub scenes: u64,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub struct EngineOptions {
+    pub raster_configuration: RasterConfiguration,
 }
 
 /// Counts of document-owned objects used by leak and soak qualification.
@@ -292,6 +321,7 @@ impl DirtyState {
 pub struct Engine {
     id: u64,
     viewport: ViewportMetrics,
+    raster_configuration: RasterConfiguration,
     document: NativeDocument,
     slots: Vec<Slot>,
     free_slots: Vec<u32>,
@@ -325,14 +355,37 @@ pub struct Engine {
 
 impl Engine {
     pub fn new(viewport: ViewportMetrics) -> Result<Self, EngineError> {
-        Self::new_with_font_collection(viewport, FontCollection::system())
+        Self::new_with_options(viewport, EngineOptions::default())
+    }
+
+    pub fn new_with_options(
+        viewport: ViewportMetrics,
+        options: EngineOptions,
+    ) -> Result<Self, EngineError> {
+        Self::new_with_font_collection_and_options(viewport, FontCollection::system(), options)
     }
 
     pub fn new_with_font_collection(
         viewport: ViewportMetrics,
         font_collection: Arc<FontCollection>,
     ) -> Result<Self, EngineError> {
-        let document = NativeDocument::new_with_font_collection(font_collection);
+        Self::new_with_font_collection_and_options(
+            viewport,
+            font_collection,
+            EngineOptions::default(),
+        )
+    }
+
+    pub fn new_with_font_collection_and_options(
+        viewport: ViewportMetrics,
+        font_collection: Arc<FontCollection>,
+        options: EngineOptions,
+    ) -> Result<Self, EngineError> {
+        let document = NativeDocument::new_with_raster_configuration(
+            font_collection,
+            options.raster_configuration,
+            viewport.device_scale_factor(),
+        );
         let root_node = document.root();
         let root_slot = Slot {
             generation: 1,
@@ -342,6 +395,7 @@ impl Engine {
         Ok(Self {
             id: NEXT_DOCUMENT_ID.fetch_add(1, Ordering::Relaxed),
             viewport,
+            raster_configuration: options.raster_configuration,
             document,
             slots: vec![root_slot],
             free_slots: Vec::new(),
@@ -385,6 +439,9 @@ impl Engine {
     }
     pub fn viewport(&self) -> ViewportMetrics {
         self.viewport
+    }
+    pub fn raster_configuration(&self) -> RasterConfiguration {
+        self.raster_configuration
     }
     pub fn font_collection(&self) -> &Arc<FontCollection> {
         self.document.font_collection()
@@ -491,6 +548,8 @@ impl Engine {
         let scale_changed = self.viewport.device_scale_factor() != viewport.device_scale_factor();
         let physical_changed = self.viewport.physical_size() != viewport.physical_size();
         self.viewport = viewport;
+        self.document
+            .set_raster_context(self.raster_configuration, viewport.device_scale_factor());
         if logical_changed {
             self.recompute_authored_styles()?;
             self.mark_dirty(InvalidationClass::Intrinsic);
@@ -529,13 +588,9 @@ impl Engine {
             for (raw_property, value) in authored {
                 let property = StyleProperty::from_u16(raw_property)
                     .ok_or(EngineError::InvalidInput("authored property ID is invalid"))?;
-                apply_to_computed(
-                    &mut self.document.node_mut(node).style,
-                    property,
-                    &value,
-                    viewport,
-                )
-                .map_err(|_| EngineError::PropertyType { property })?;
+                self.document
+                    .apply_style_property(node, property, &value, viewport)
+                    .map_err(|_| EngineError::PropertyType { property })?;
             }
         }
         Ok(())
@@ -550,6 +605,13 @@ impl Engine {
 
     pub fn create_element(&mut self, tag: ElementTag) -> Result<NodeHandle, EngineError> {
         let node = self.document.create_node(tag);
+        let handle = self.register_native_node(node);
+        self.initialize_control(handle, tag);
+        self.mark_dirty(InvalidationClass::Subtree);
+        Ok(handle)
+    }
+
+    fn register_native_node(&mut self, node: NodeId) -> NodeHandle {
         let index = if let Some(index) = self.free_slots.pop() {
             let slot = &mut self.slots[index as usize];
             slot.node = Some(node);
@@ -565,10 +627,7 @@ impl Engine {
             index
         };
         self.node_slots.insert(node, index);
-        let handle = self.handle_for_slot(index);
-        self.initialize_control(handle, tag);
-        self.mark_dirty(InvalidationClass::Subtree);
-        Ok(handle)
+        self.handle_for_slot(index)
     }
 
     pub fn create_text(&mut self, text: impl Into<String>) -> Result<NodeHandle, EngineError> {
@@ -762,8 +821,11 @@ impl Engine {
         self.document
             .set_attribute(node, name.clone(), value.clone());
         if name == "lang" {
-            self.document.node_mut(node).style.locale = Some(value.clone());
-            self.mark_dirty(InvalidationClass::Intrinsic);
+            self.set_property(
+                handle,
+                StyleProperty::Locale,
+                StyleValue::Renderer(RendererStyleValue::Locale(Some(value.clone()))),
+            )?;
         }
         self.sync_control_attribute(handle, &name, &value);
         self.mark_dirty(InvalidationClass::Accessibility);
@@ -789,8 +851,11 @@ impl Engine {
             .is_some();
         if removed {
             if name.eq_ignore_ascii_case("lang") {
-                self.document.node_mut(node).style.locale = None;
-                self.mark_dirty(InvalidationClass::Intrinsic);
+                self.set_property(
+                    handle,
+                    StyleProperty::Locale,
+                    StyleValue::Renderer(RendererStyleValue::Locale(None)),
+                )?;
             }
             self.remove_control_attribute(handle, &name.to_ascii_lowercase());
             self.mark_dirty(InvalidationClass::Accessibility);
@@ -812,16 +877,17 @@ impl Engine {
         {
             return Ok(());
         }
-        apply_to_computed(
-            &mut self.document.node_mut(node).style,
-            property,
-            &value,
-            (
-                self.viewport.logical_width() as f32,
-                self.viewport.logical_height() as f32,
-            ),
-        )
-        .map_err(|_| EngineError::PropertyType { property })?;
+        self.document
+            .apply_style_property(
+                node,
+                property,
+                &value,
+                (
+                    self.viewport.logical_width() as f32,
+                    self.viewport.logical_height() as f32,
+                ),
+            )
+            .map_err(|_| EngineError::PropertyType { property })?;
         self.slots[handle.index as usize]
             .authored
             .insert(property as u16, value.clone());
@@ -838,6 +904,164 @@ impl Engine {
         if has_animation {
             self.sample_animations()?;
         }
+        Ok(())
+    }
+
+    /// Apply a schema-generated computed longhand value. This is used by
+    /// generated renderer fixtures whose values are already resolved; normal
+    /// applications should prefer `set_property` or generated framework
+    /// setters.
+    #[doc(hidden)]
+    pub fn set_renderer_style(
+        &mut self,
+        handle: NodeHandle,
+        value: RendererStyleValue,
+    ) -> Result<(), EngineError> {
+        self.set_property(handle, value.property(), StyleValue::Renderer(value))
+    }
+
+    /// Apply engine-owned derived style state. These values are explicitly
+    /// excluded from the author-property inventory.
+    #[doc(hidden)]
+    pub fn set_internal_style(
+        &mut self,
+        handle: NodeHandle,
+        value: RendererInternalStyleValue,
+    ) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        self.document.apply_internal_style(node, value);
+        self.dirty.hit_test = true;
+        self.mark_dirty(InvalidationClass::Subtree);
+        Ok(())
+    }
+
+    /// Install a detached style produced for an anonymous or pseudo box.
+    #[doc(hidden)]
+    pub fn install_derived_style(
+        &mut self,
+        handle: NodeHandle,
+        style: ComputedStyle,
+    ) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        self.document.install_resolved_style(node, style);
+        self.dirty.hit_test = true;
+        self.mark_dirty(InvalidationClass::Subtree);
+        Ok(())
+    }
+
+    /// Mutate validated non-style state needed by static renderer fixtures.
+    #[doc(hidden)]
+    pub fn set_renderer_node_state(
+        &mut self,
+        handle: NodeHandle,
+        state: RendererNodeState,
+    ) -> Result<(), EngineError> {
+        let node = self.resolve(handle)?;
+        match state {
+            RendererNodeState::Text(value) => self.document.node_mut(node).text = value,
+            RendererNodeState::Replaced(value) => {
+                if let Some(content) = value {
+                    let resource = match content.resource {
+                        ReplacedResourceKind::Image(id)
+                        | ReplacedResourceKind::StaticSvg(id)
+                        | ReplacedResourceKind::MediaPoster(id)
+                        | ReplacedResourceKind::PackagedDocument(id) => Some(id),
+                        ReplacedResourceKind::TransparentCanvas => None,
+                    };
+                    if resource.is_some_and(|id| self.document.image_resource(id).is_none()) {
+                        return Err(EngineError::UnknownResource);
+                    }
+                }
+                self.document.node_mut(node).replaced = value;
+            }
+            RendererNodeState::TableColumnSpan(value) => {
+                if value == 0 {
+                    return Err(EngineError::Render(
+                        "table column span must be positive".into(),
+                    ));
+                }
+                self.document.node_mut(node).table_col_span = value;
+            }
+            RendererNodeState::TableRowSpan(value) => {
+                self.document.node_mut(node).table_row_span = value;
+            }
+            RendererNodeState::FormControl(value) => {
+                self.document.node_mut(node).form_control = value;
+            }
+            RendererNodeState::FormControlDisabled(value) => {
+                self.document.node_mut(node).form_control_disabled = value;
+            }
+            RendererNodeState::FormControlNativeAppearance(value) => {
+                self.document.node_mut(node).form_control_native_appearance = value;
+            }
+            RendererNodeState::EmbeddedDocument(value) => {
+                if value.is_some_and(|id| self.document.image_resource(id).is_none()) {
+                    return Err(EngineError::UnknownResource);
+                }
+                self.document.node_mut(node).embedded_document = value;
+            }
+            RendererNodeState::EmbeddedCanvasColor(value) => {
+                self.document.node_mut(node).embedded_canvas_color = value;
+            }
+            RendererNodeState::ScrollLeft(value) => {
+                if !value.is_finite() {
+                    return Err(EngineError::Render("scroll offset must be finite".into()));
+                }
+                self.document.node_mut(node).scroll_left = value;
+            }
+            RendererNodeState::ScrollTop(value) => {
+                if !value.is_finite() {
+                    return Err(EngineError::Render("scroll offset must be finite".into()));
+                }
+                self.document.node_mut(node).scroll_top = value;
+            }
+            RendererNodeState::ScrollMarkerInactiveBackground(value) => {
+                self.document
+                    .node_mut(node)
+                    .scroll_marker_inactive_background = value;
+            }
+            RendererNodeState::SvgForeignObject(value) => {
+                self.document.node_mut(node).is_svg_foreign_object = value;
+            }
+        }
+        self.dirty.hit_test = true;
+        self.mark_dirty(InvalidationClass::Subtree);
+        Ok(())
+    }
+
+    #[doc(hidden)]
+    pub fn insert_renderer_pseudo(
+        &mut self,
+        origin: NodeHandle,
+        kind: PseudoElementKind,
+    ) -> Result<NodeHandle, EngineError> {
+        let origin = self.resolve(origin)?;
+        let node = self.document.insert_pseudo_element(origin, kind);
+        let handle = self.register_native_node(node);
+        self.mark_dirty(InvalidationClass::Subtree);
+        Ok(handle)
+    }
+
+    #[doc(hidden)]
+    pub fn materialize_generated_content(&mut self) -> Result<(), EngineError> {
+        let first_new = self.document.node_count();
+        self.document.materialize_generated_content();
+        for index in first_new..self.document.node_count() {
+            let node = self
+                .document
+                .node_id_at(index)
+                .ok_or_else(|| EngineError::Render("generated node disappeared".into()))?;
+            self.register_native_node(node);
+        }
+        self.mark_dirty(InvalidationClass::Subtree);
+        Ok(())
+    }
+
+    #[doc(hidden)]
+    pub fn set_legacy_canvas_body(&mut self, body: NodeHandle) -> Result<(), EngineError> {
+        let body = self.resolve(body)?;
+        self.document.set_legacy_canvas_body(body);
+        self.mark_dirty(InvalidationClass::Paint);
         Ok(())
     }
 
@@ -866,14 +1090,16 @@ impl Engine {
                 property: declaration.property,
             })?;
         }
-        let style = &mut self.document.node_mut(node).style;
-        let destination = match target {
-            PseudoStyleTarget::FirstLine => &mut style.first_line_style,
-            PseudoStyleTarget::FirstLetter => &mut style.first_letter_style,
-            PseudoStyleTarget::Marker => &mut style.marker_style,
-            PseudoStyleTarget::Placeholder => &mut style.placeholder_style,
-        };
-        *destination = Some(Box::new(pseudo));
+        let resolved = origin.derive(|style| {
+            let destination = match target {
+                PseudoStyleTarget::FirstLine => &mut style.first_line_style,
+                PseudoStyleTarget::FirstLetter => &mut style.first_letter_style,
+                PseudoStyleTarget::Marker => &mut style.marker_style,
+                PseudoStyleTarget::Placeholder => &mut style.placeholder_style,
+            };
+            *destination = Some(Box::new(pseudo));
+        });
+        self.document.install_resolved_style(node, resolved);
         self.dirty.hit_test = true;
         self.mark_dirty(InvalidationClass::Subtree);
         Ok(())
@@ -1502,6 +1728,7 @@ mod tests {
         let frame = SoftwareCompositor::default().render(&scene).unwrap();
         assert_eq!((frame.width, frame.height), (128, 96));
         assert_eq!(frame.viewport, scene.viewport());
+        assert_eq!(frame.raster_configuration, scene.raster_configuration());
     }
 
     #[test]
@@ -1539,6 +1766,7 @@ mod tests {
         assert_eq!(after.layout, before.layout + 1);
         assert_eq!(after.paint, before.paint + 1);
         assert_eq!(after.compositing, before.compositing + 1);
+        assert_eq!(engine.computed_style(div).unwrap().device_scale_factor, 2.0);
         assert_eq!(engine.bounds(div).unwrap().unwrap().width, 100.0);
         assert_eq!(
             engine.scene().unwrap().viewport().physical_size(),

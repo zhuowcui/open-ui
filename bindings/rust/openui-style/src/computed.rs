@@ -6,7 +6,8 @@
 //! Every property here has the exact same initial value as Blink's. Fields
 //! that Blink bit-packs are stored as typed enums. Lengths use `openui_geometry::Length`.
 
-use openui_geometry::Length;
+use openui_geometry::{Length, RasterConfiguration};
+use std::ops::{Deref, DerefMut};
 
 use crate::color::{Color, StyleColor};
 use crate::enums::*;
@@ -138,7 +139,17 @@ pub enum GradientStopPosition {
     Auto,
     Percent(f32),
     Px(f32),
-    Calc { percent: f32, px: f32 },
+    Calc {
+        percent: f32,
+        px: f32,
+    },
+    /// A standalone CSS color-hint position between adjacent color stops.
+    HintPercent(f32),
+    HintPx(f32),
+    HintCalc {
+        percent: f32,
+        px: f32,
+    },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -355,6 +366,19 @@ pub struct BorderImage {
 /// All initial values match Blink's `computed_style_initial_values.h`.
 #[derive(Debug, Clone)]
 pub struct ComputedStyle {
+    pub(crate) fields: ComputedStyleFields,
+}
+
+/// Publicly readable storage reached only through [`ComputedStyle`]'s
+/// immutable `Deref`. A mutable view is intentionally never implemented.
+/// Author changes are applied by the schema-validated style boundary.
+#[doc(hidden)]
+#[derive(Debug, Clone)]
+pub struct ComputedStyleFields {
+    /// Engine-owned raster context; never an author declaration.
+    pub raster_configuration: RasterConfiguration,
+    /// Device scale used only for physical strike and snapping selection.
+    pub device_scale_factor: f64,
     // ── Display & Positioning (bit-packed in Blink) ──────────────────
     /// CSS `display`. Initial: `inline` (Blink's `EDisplay::kInline`).
     pub display: Display,
@@ -1052,316 +1076,403 @@ pub struct ComputedStyle {
     pub text_box_trim: TextBoxTrim,
 }
 
+impl ComputedStyleFields {
+    /// Compose nested derived-style setup while the DOM owns the only mutable
+    /// borrow. This cannot be used to obtain or retain a mutable snapshot.
+    #[doc(hidden)]
+    pub fn update_derived(&mut self, update: impl FnOnce(&mut Self)) {
+        update(self);
+    }
+}
+
+/// Mutable working copy for style resolution and layout normalization.
+/// It is a distinct type, so a mutable reference to a computed snapshot can
+/// never escape. Call [`ComputedStyleBuilder::build`] to freeze the result.
+#[derive(Debug, Clone)]
+pub struct ComputedStyleBuilder {
+    fields: ComputedStyleFields,
+}
+
+impl From<&ComputedStyle> for ComputedStyleBuilder {
+    fn from(style: &ComputedStyle) -> Self {
+        Self {
+            fields: style.fields.clone(),
+        }
+    }
+}
+
+impl Deref for ComputedStyleBuilder {
+    type Target = ComputedStyleFields;
+
+    fn deref(&self) -> &Self::Target {
+        &self.fields
+    }
+}
+
+impl DerefMut for ComputedStyleBuilder {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.fields
+    }
+}
+
+impl ComputedStyleBuilder {
+    pub fn build(self) -> ComputedStyle {
+        ComputedStyle {
+            fields: self.fields,
+        }
+    }
+}
+
 impl ComputedStyle {
+    #[doc(hidden)]
+    pub fn set_raster_context(
+        &mut self,
+        raster_configuration: RasterConfiguration,
+        device_scale_factor: f64,
+    ) {
+        self.update_derived(|style| {
+            style.raster_configuration = raster_configuration;
+            style.device_scale_factor = device_scale_factor;
+        });
+    }
+
+    /// Apply an internal, derived-style adjustment without exposing a mutable
+    /// computed-style reference to callers. Author declarations must use the
+    /// generated property API; this hook is reserved for layout/style
+    /// normalization of detached snapshots.
+    #[doc(hidden)]
+    pub fn update_derived(&mut self, update: impl FnOnce(&mut ComputedStyleFields)) {
+        update(&mut self.fields);
+    }
+
+    /// Clone this snapshot and apply an internal derived-style adjustment.
+    #[doc(hidden)]
+    pub fn derive(&self, update: impl FnOnce(&mut ComputedStyleFields)) -> Self {
+        let mut result = self.clone();
+        result.update_derived(update);
+        result
+    }
+
     /// Create a style with all initial values matching Blink's defaults.
     pub fn initial() -> Self {
         Self {
-            display: Display::INITIAL, // inline
-            list_item_is_flow_root: false,
-            list_style_position: ListStylePosition::Outside,
-            list_style_type: ListStyleType::Disc,
-            position: Position::INITIAL, // static
-            anchor_name: None,
-            position_anchor: None,
-            position_area: PositionArea::None,
-            establishes_transform_containing_block: false,
-            will_change_transform: false,
-            float: Float::INITIAL,         // none
-            clear: Clear::INITIAL,         // none
-            overflow_x: Overflow::INITIAL, // visible
-            overflow_y: Overflow::INITIAL, // visible
-            resize: Resize::INITIAL,
-            scrollbar_width: ScrollbarWidth::INITIAL,
-            scrollbar_gutter: ScrollbarGutter::INITIAL,
-            overflow_clip_margin: 0.0,
-            overflow_clip_box: OverflowClipBox::default(),
-            scrollbar_thumb_color: None,
-            scrollbar_track_color: None,
-            box_sizing: BoxSizing::INITIAL,  // content-box
-            visibility: Visibility::INITIAL, // visible
-            pointer_events: crate::PointerEvents::Auto,
-            direction: Direction::INITIAL, // ltr
+            fields: ComputedStyleFields {
+                raster_configuration: RasterConfiguration::default(),
+                device_scale_factor: 1.0,
+                display: Display::INITIAL, // inline
+                list_item_is_flow_root: false,
+                list_style_position: ListStylePosition::Outside,
+                list_style_type: ListStyleType::Disc,
+                position: Position::INITIAL, // static
+                anchor_name: None,
+                position_anchor: None,
+                position_area: PositionArea::None,
+                establishes_transform_containing_block: false,
+                will_change_transform: false,
+                float: Float::INITIAL,         // none
+                clear: Clear::INITIAL,         // none
+                overflow_x: Overflow::INITIAL, // visible
+                overflow_y: Overflow::INITIAL, // visible
+                resize: Resize::INITIAL,
+                scrollbar_width: ScrollbarWidth::INITIAL,
+                scrollbar_gutter: ScrollbarGutter::INITIAL,
+                overflow_clip_margin: 0.0,
+                overflow_clip_box: OverflowClipBox::default(),
+                scrollbar_thumb_color: None,
+                scrollbar_track_color: None,
+                box_sizing: BoxSizing::INITIAL,  // content-box
+                visibility: Visibility::INITIAL, // visible
+                pointer_events: crate::PointerEvents::Auto,
+                direction: Direction::INITIAL, // ltr
 
-            width: Length::auto(),
-            height: Length::auto(),
-            min_width: Length::auto(),
-            min_height: Length::auto(),
-            max_width: Length::none(),  // NOT auto — Blink uses kNone
-            max_height: Length::none(), // NOT auto
+                width: Length::auto(),
+                height: Length::auto(),
+                min_width: Length::auto(),
+                min_height: Length::auto(),
+                max_width: Length::none(),  // NOT auto — Blink uses kNone
+                max_height: Length::none(), // NOT auto
 
-            margin_top: Length::zero(),
-            margin_right: Length::zero(),
-            margin_bottom: Length::zero(),
-            margin_left: Length::zero(),
+                margin_top: Length::zero(),
+                margin_right: Length::zero(),
+                margin_bottom: Length::zero(),
+                margin_left: Length::zero(),
 
-            top: Length::auto(),
-            right: Length::auto(),
-            bottom: Length::auto(),
-            left: Length::auto(),
+                top: Length::auto(),
+                right: Length::auto(),
+                bottom: Length::auto(),
+                left: Length::auto(),
 
-            padding_top: Length::zero(),
-            padding_right: Length::zero(),
-            padding_bottom: Length::zero(),
-            padding_left: Length::zero(),
+                padding_top: Length::zero(),
+                padding_right: Length::zero(),
+                padding_bottom: Length::zero(),
+                padding_left: Length::zero(),
 
-            // Blink initial border width is 3 (medium), but since border-style
-            // defaults to none, the used width is 0. We store 3 to match Blink's
-            // computed value; the layout/paint code checks border-style.
-            border_top_width: 3,
-            border_right_width: 3,
-            border_bottom_width: 3,
-            border_left_width: 3,
+                // Blink initial border width is 3 (medium), but since border-style
+                // defaults to none, the used width is 0. We store 3 to match Blink's
+                // computed value; the layout/paint code checks border-style.fields.
+                border_top_width: 3,
+                border_right_width: 3,
+                border_bottom_width: 3,
+                border_left_width: 3,
 
-            border_top_style: BorderStyle::INITIAL, // none
-            border_right_style: BorderStyle::INITIAL,
-            border_bottom_style: BorderStyle::INITIAL,
-            border_left_style: BorderStyle::INITIAL,
+                border_top_style: BorderStyle::INITIAL, // none
+                border_right_style: BorderStyle::INITIAL,
+                border_bottom_style: BorderStyle::INITIAL,
+                border_left_style: BorderStyle::INITIAL,
 
-            border_top_color: StyleColor::default(), // currentColor
-            border_right_color: StyleColor::default(),
-            border_bottom_color: StyleColor::default(),
-            border_left_color: StyleColor::default(),
+                border_top_color: StyleColor::default(), // currentColor
+                border_right_color: StyleColor::default(),
+                border_bottom_color: StyleColor::default(),
+                border_left_color: StyleColor::default(),
 
-            outline_width: 3,                     // medium (3px)
-            outline_style: BorderStyle::INITIAL,  // none
-            outline_color: StyleColor::default(), // currentColor
-            outline_offset: 0,
+                outline_width: 3,                     // medium (3px)
+                outline_style: BorderStyle::INITIAL,  // none
+                outline_color: StyleColor::default(), // currentColor
+                outline_offset: 0,
 
-            border_top_left_radius: (0.0, 0.0),
-            border_top_right_radius: (0.0, 0.0),
-            border_bottom_right_radius: (0.0, 0.0),
-            border_bottom_left_radius: (0.0, 0.0),
-            border_radius_percent: [(false, false); 4],
+                border_top_left_radius: (0.0, 0.0),
+                border_top_right_radius: (0.0, 0.0),
+                border_bottom_right_radius: (0.0, 0.0),
+                border_bottom_left_radius: (0.0, 0.0),
+                border_radius_percent: [(false, false); 4],
 
-            background_color: Color::TRANSPARENT,
-            background_linear_gradient: None,
-            background_layers: Vec::new(),
-            mask_layers: Vec::new(),
-            background_clip: BackgroundClip::BorderBox,
-            background_attachment: BackgroundAttachment::Scroll,
-            border_image: None,
-            color: Color::BLACK,
-            opacity: 1.0,
-            box_shadow: Vec::new(),
-            z_index: None, // auto
+                background_color: Color::TRANSPARENT,
+                background_linear_gradient: None,
+                background_layers: Vec::new(),
+                mask_layers: Vec::new(),
+                background_clip: BackgroundClip::BorderBox,
+                background_attachment: BackgroundAttachment::Scroll,
+                border_image: None,
+                color: Color::BLACK,
+                opacity: 1.0,
+                box_shadow: Vec::new(),
+                z_index: None, // auto
 
-            // Flexbox — container properties
-            flex_direction: FlexDirection::INITIAL,     // row
-            flex_wrap: FlexWrap::INITIAL,               // nowrap
-            justify_content: ContentAlignment::INITIAL, // normal
-            align_items: ItemAlignment::INITIAL_ITEMS,  // normal (→ stretch in flex)
-            align_content: ContentAlignment::INITIAL,   // normal
-            row_gap: None,                              // normal = 0px for flex
-            column_gap: None,                           // normal = 0px for flex
+                // Flexbox — container properties
+                flex_direction: FlexDirection::INITIAL, // row
+                flex_wrap: FlexWrap::INITIAL,           // nowrap
+                justify_content: ContentAlignment::INITIAL, // normal
+                align_items: ItemAlignment::INITIAL_ITEMS, // normal (→ stretch in flex)
+                align_content: ContentAlignment::INITIAL, // normal
+                row_gap: None,                          // normal = 0px for flex
+                column_gap: None,                       // normal = 0px for flex
 
-            // Flexbox — item properties
-            flex_grow: 0.0,
-            flex_shrink: 1.0,
-            flex_basis: Length::auto(),
-            align_self: ItemAlignment::INITIAL_SELF, // auto (→ inherits align-items)
-            order: 0,
+                // Flexbox — item properties
+                flex_grow: 0.0,
+                flex_shrink: 1.0,
+                flex_basis: Length::auto(),
+                align_self: ItemAlignment::INITIAL_SELF, // auto (→ inherits align-items)
+                order: 0,
 
-            // Tables
-            table_layout: TableLayout::Auto,
-            border_collapse: BorderCollapse::Separate,
-            // CSS Tables initial value. HTML's 2px spacing is a UA rule for
-            // semantic <table> elements, not the computed-style initial.
-            border_spacing: (Length::zero(), Length::zero()),
-            caption_side: CaptionSide::Top,
-            empty_cells: EmptyCells::Show,
+                // Tables
+                table_layout: TableLayout::Auto,
+                border_collapse: BorderCollapse::Separate,
+                // CSS Tables initial value. HTML's 2px spacing is a UA rule for
+                // semantic <table> elements, not the computed-style initial.
+                border_spacing: (Length::zero(), Length::zero()),
+                caption_side: CaptionSide::Top,
+                empty_cells: EmptyCells::Show,
 
-            // Grid
-            grid_template_columns: GridTrackList::None,
-            grid_template_rows: GridTrackList::None,
-            grid_auto_columns: vec![GridTrackSize::auto()],
-            grid_auto_rows: vec![GridTrackSize::auto()],
-            grid_auto_flow: GridAutoFlow::default(),
-            grid_column: GridPlacement::default(),
-            grid_row: GridPlacement::default(),
-            grid_template_areas: GridTemplateAreas::default(),
-            justify_items: ItemAlignment::INITIAL_ITEMS,
-            justify_self: ItemAlignment::INITIAL_SELF,
-            margin_trim: MarginTrim::NONE,
+                // Grid
+                grid_template_columns: GridTrackList::None,
+                grid_template_rows: GridTrackList::None,
+                grid_auto_columns: vec![GridTrackSize::auto()],
+                grid_auto_rows: vec![GridTrackSize::auto()],
+                grid_auto_flow: GridAutoFlow::default(),
+                grid_column: GridPlacement::default(),
+                grid_row: GridPlacement::default(),
+                grid_template_areas: GridTemplateAreas::default(),
+                justify_items: ItemAlignment::INITIAL_ITEMS,
+                justify_self: ItemAlignment::INITIAL_SELF,
+                margin_trim: MarginTrim::NONE,
 
-            // Containment and static container queries
-            contain: Containment::NONE,
-            content_visibility: ContentVisibility::Visible,
-            contain_intrinsic_width: ContainIntrinsicLength::NONE,
-            contain_intrinsic_height: ContainIntrinsicLength::NONE,
-            container_type: ContainerType::Normal,
-            container_names: Vec::new(),
-            scroll_marker_group: ScrollMarkerGroup::None,
-            scroll_target_group: ScrollTargetGroup::None,
-            scroll_snap_align: ScrollSnapAlign::None,
-            scroll_snap_axis: ScrollSnapAxis::None,
+                // Containment and static container queries
+                contain: Containment::NONE,
+                content_visibility: ContentVisibility::Visible,
+                contain_intrinsic_width: ContainIntrinsicLength::NONE,
+                contain_intrinsic_height: ContainIntrinsicLength::NONE,
+                container_type: ContainerType::Normal,
+                container_names: Vec::new(),
+                scroll_marker_group: ScrollMarkerGroup::None,
+                scroll_target_group: ScrollTargetGroup::None,
+                scroll_snap_align: ScrollSnapAlign::None,
+                scroll_snap_axis: ScrollSnapAxis::None,
 
-            // Replaced content and deterministic effects
-            object_fit: ObjectFit::Fill,
-            object_position: ObjectPosition::default(),
-            transform: Transform2D::IDENTITY,
-            transform_origin: (Length::percent(50.0), Length::percent(50.0)),
-            filter_blur: 0.0,
-            filter_grayscale: 0.0,
-            clip_path_inset: None,
-            shape_outside: ShapeOutside::None,
-            shape_margin: Length::zero(),
-            shape_image_threshold: 0.0,
-            animation_snapshot: None,
+                // Replaced content and deterministic effects
+                object_fit: ObjectFit::Fill,
+                object_position: ObjectPosition::default(),
+                transform: Transform2D::IDENTITY,
+                transform_origin: (Length::percent(50.0), Length::percent(50.0)),
+                filter_blur: 0.0,
+                filter_grayscale: 0.0,
+                clip_path_inset: None,
+                shape_outside: ShapeOutside::None,
+                shape_margin: Length::zero(),
+                shape_image_threshold: 0.0,
+                animation_snapshot: None,
 
-            // Text & Font — inherited text properties
-            text_align: TextAlign::INITIAL,   // start
-            white_space: WhiteSpace::INITIAL, // normal
+                // Text & Font — inherited text properties
+                text_align: TextAlign::INITIAL,   // start
+                white_space: WhiteSpace::INITIAL, // normal
 
-            // Font properties
-            font_family: FontFamilyList::default(), // sans-serif
-            font_size: 16.0,                        // CSS medium
-            font_weight: FontWeight::NORMAL,        // 400
-            font_style: FontStyleEnum::Normal,
-            font_stretch: FontStretch::NORMAL, // 100%
-            font_kerning: FontKerning::Auto,
-            native_control_text: false,
-            embedded_document_text: false,
-            native_button_text_metrics: false,
-            font_variant_caps: FontVariantCaps::Normal,
-            font_variant_ligatures: FontVariantLigatures::NORMAL,
-            font_variant_numeric: FontVariantNumeric::NORMAL,
-            font_variant_east_asian: FontVariantEastAsian::NORMAL,
-            font_variant_position: FontVariantPosition::Normal,
-            font_variant_alternates: FontVariantAlternates::Normal,
-            font_variant_emoji: FontVariantEmoji::Normal,
-            font_size_adjust: FontSizeAdjust::None,
-            font_optical_sizing: FontOpticalSizing::Auto,
-            font_synthesis_weight: FontSynthesis::Auto,
-            font_synthesis_style: FontSynthesis::Auto,
-            font_synthesis_small_caps: FontSynthesis::Auto,
-            font_synthesis_position: FontSynthesis::Auto,
-            font_feature_settings: Vec::new(),
-            font_variation_settings: Vec::new(),
-            font_language_override: FontLanguageOverride::NORMAL,
+                // Font properties
+                font_family: FontFamilyList::default(), // sans-serif
+                font_size: 16.0,                        // CSS medium
+                font_weight: FontWeight::NORMAL,        // 400
+                font_style: FontStyleEnum::Normal,
+                font_stretch: FontStretch::NORMAL, // 100%
+                font_kerning: FontKerning::Auto,
+                native_control_text: false,
+                embedded_document_text: false,
+                native_button_text_metrics: false,
+                font_variant_caps: FontVariantCaps::Normal,
+                font_variant_ligatures: FontVariantLigatures::NORMAL,
+                font_variant_numeric: FontVariantNumeric::NORMAL,
+                font_variant_east_asian: FontVariantEastAsian::NORMAL,
+                font_variant_position: FontVariantPosition::Normal,
+                font_variant_alternates: FontVariantAlternates::Normal,
+                font_variant_emoji: FontVariantEmoji::Normal,
+                font_size_adjust: FontSizeAdjust::None,
+                font_optical_sizing: FontOpticalSizing::Auto,
+                font_synthesis_weight: FontSynthesis::Auto,
+                font_synthesis_style: FontSynthesis::Auto,
+                font_synthesis_small_caps: FontSynthesis::Auto,
+                font_synthesis_position: FontSynthesis::Auto,
+                font_feature_settings: Vec::new(),
+                font_variation_settings: Vec::new(),
+                font_language_override: FontLanguageOverride::NORMAL,
 
-            // Line height
-            line_height: LineHeight::Normal,
+                // Line height
+                line_height: LineHeight::Normal,
 
-            // Text spacing
-            letter_spacing: 0.0,
-            word_spacing: 0.0,
-            text_indent: Length::zero(),
+                // Text spacing
+                letter_spacing: 0.0,
+                word_spacing: 0.0,
+                text_indent: Length::zero(),
 
-            // Text layout
-            text_align_last: TextAlignLast::INITIAL, // auto
-            text_justify: TextJustify::INITIAL,      // auto
-            word_break: WordBreak::INITIAL,          // normal
-            overflow_wrap: OverflowWrap::INITIAL,    // normal
-            line_break: LineBreak::INITIAL,          // auto
-            hyphens: Hyphens::INITIAL,               // manual
-            hyphenate_limit_chars: (5, 2, 2),        // Blink defaults
-            hyphenate_character: None,
-            white_space_collapse: WhiteSpaceCollapse::Collapse,
-            text_wrap_mode: TextWrapMode::Wrap,
-            text_wrap_style: TextWrapStyle::Auto,
-            text_autospace: TextAutospace::Normal,
-            text_spacing_trim: TextSpacingTrim::Normal,
+                // Text layout
+                text_align_last: TextAlignLast::INITIAL, // auto
+                text_justify: TextJustify::INITIAL,      // auto
+                word_break: WordBreak::INITIAL,          // normal
+                overflow_wrap: OverflowWrap::INITIAL,    // normal
+                line_break: LineBreak::INITIAL,          // auto
+                hyphens: Hyphens::INITIAL,               // manual
+                hyphenate_limit_chars: (5, 2, 2),        // Blink defaults
+                hyphenate_character: None,
+                white_space_collapse: WhiteSpaceCollapse::Collapse,
+                text_wrap_mode: TextWrapMode::Wrap,
+                text_wrap_style: TextWrapStyle::Auto,
+                text_autospace: TextAutospace::Normal,
+                text_spacing_trim: TextSpacingTrim::Normal,
 
-            // Text decoration
-            text_decoration_line: TextDecorationLine::NONE,
-            text_decoration_style: TextDecorationStyle::INITIAL, // solid
-            text_decoration_color: StyleColor::CurrentColor,
-            text_decoration_thickness: TextDecorationThickness::Auto,
-            text_underline_offset: Length::auto(),
-            text_underline_position: TextUnderlinePosition::INITIAL, // auto
-            text_decoration_skip_ink: TextDecorationSkipInk::INITIAL, // auto
+                // Text decoration
+                text_decoration_line: TextDecorationLine::NONE,
+                text_decoration_style: TextDecorationStyle::INITIAL, // solid
+                text_decoration_color: StyleColor::CurrentColor,
+                text_decoration_thickness: TextDecorationThickness::Auto,
+                text_underline_offset: Length::auto(),
+                text_underline_position: TextUnderlinePosition::INITIAL, // auto
+                text_decoration_skip_ink: TextDecorationSkipInk::INITIAL, // auto
 
-            // Text transform
-            text_transform: TextTransform::INITIAL, // none
-            text_overflow: TextOverflow::INITIAL,   // clip
-            text_size_adjust: TextSizeAdjust::Auto,
-            content: None,
-            counter_reset: Vec::new(),
-            counter_set: Vec::new(),
-            counter_increment: Vec::new(),
-            quotes: Vec::new(),
-            line_clamp: LineClamp::None,
-            block_ellipsis: BlockEllipsis::Auto,
-            webkit_box_orient: WebkitBoxOrient::Horizontal,
-            legacy_webkit_box: false,
-            legacy_webkit_line_clamp: false,
+                // Text transform
+                text_transform: TextTransform::INITIAL, // none
+                text_overflow: TextOverflow::INITIAL,   // clip
+                text_size_adjust: TextSizeAdjust::Auto,
+                content: None,
+                counter_reset: Vec::new(),
+                counter_set: Vec::new(),
+                counter_increment: Vec::new(),
+                quotes: Vec::new(),
+                line_clamp: LineClamp::None,
+                block_ellipsis: BlockEllipsis::Auto,
+                webkit_box_orient: WebkitBoxOrient::Horizontal,
+                legacy_webkit_box: false,
+                legacy_webkit_line_clamp: false,
 
-            // Vertical alignment
-            vertical_align: VerticalAlign::Baseline,
+                // Vertical alignment
+                vertical_align: VerticalAlign::Baseline,
 
-            // Writing & bidi
-            unicode_bidi: UnicodeBidi::INITIAL,         // normal
-            writing_mode: WritingMode::INITIAL,         // horizontal-tb
-            text_orientation: TextOrientation::INITIAL, // mixed
+                // Writing & bidi
+                unicode_bidi: UnicodeBidi::INITIAL, // normal
+                writing_mode: WritingMode::INITIAL, // horizontal-tb
+                text_orientation: TextOrientation::INITIAL, // mixed
 
-            // Text rendering
-            text_rendering: TextRendering::Auto,
-            font_smoothing: FontSmoothing::Auto,
+                // Text rendering
+                text_rendering: TextRendering::Auto,
+                font_smoothing: FontSmoothing::Auto,
 
-            // Text shadow
-            text_shadow: Vec::new(),
+                // Text shadow
+                text_shadow: Vec::new(),
 
-            // Hanging punctuation
-            hanging_punctuation: HangingPunctuation::NONE,
+                // Hanging punctuation
+                hanging_punctuation: HangingPunctuation::NONE,
 
-            // Text emphasis
-            text_emphasis_mark: TextEmphasisMark::INITIAL, // none
-            text_emphasis_fill: TextEmphasisFill::INITIAL, // filled
-            text_emphasis_position: TextEmphasisPosition::INITIAL, // over right
-            text_emphasis_color: StyleColor::CurrentColor,
-            text_combine_upright: TextCombineUpright::INITIAL, // none
+                // Text emphasis
+                text_emphasis_mark: TextEmphasisMark::INITIAL, // none
+                text_emphasis_fill: TextEmphasisFill::INITIAL, // filled
+                text_emphasis_position: TextEmphasisPosition::INITIAL, // over right
+                text_emphasis_color: StyleColor::CurrentColor,
+                text_combine_upright: TextCombineUpright::INITIAL, // none
 
-            // Ruby annotation
-            ruby_position: RubyPosition::INITIAL, // over
-            ruby_align: RubyAlign::INITIAL,       // space-around
-            ruby_overhang: RubyOverhang::Auto,
+                // Ruby annotation
+                ruby_position: RubyPosition::INITIAL, // over
+                ruby_align: RubyAlign::INITIAL,       // space-around
+                ruby_overhang: RubyOverhang::Auto,
 
-            // Tab size
-            tab_size: TabSize::Spaces(8),
+                // Tab size
+                tab_size: TabSize::Spaces(8),
 
-            // Font palette
-            font_palette: FontPalette::INITIAL, // normal
+                // Font palette
+                font_palette: FontPalette::INITIAL, // normal
 
-            // Locale
-            locale: None,
+                // Locale
+                locale: None,
 
-            // Fragmentation
-            orphans: 2,                                        // CSS initial
-            widows: 2,                                         // CSS initial
-            break_before: BreakValue::INITIAL,                 // auto
-            break_after: BreakValue::INITIAL,                  // auto
-            break_inside: BreakInside::INITIAL,                // auto
-            box_decoration_break: BoxDecorationBreak::INITIAL, // slice
+                // Fragmentation
+                orphans: 2,                                        // CSS initial
+                widows: 2,                                         // CSS initial
+                break_before: BreakValue::INITIAL,                 // auto
+                break_after: BreakValue::INITIAL,                  // auto
+                break_inside: BreakInside::INITIAL,                // auto
+                box_decoration_break: BoxDecorationBreak::INITIAL, // slice
 
-            // Multi-column layout
-            column_count: None,                       // auto
-            column_width: None,                       // auto
-            column_height: None,                      // auto
-            column_fill: ColumnFill::INITIAL,         // balance
-            column_wrap: ColumnWrap::INITIAL,         // wrap
-            column_span: ColumnSpan::INITIAL,         // none
-            column_rule_width: 3,                     // medium (3px)
-            column_rule_style: BorderStyle::INITIAL,  // none
-            column_rule_color: StyleColor::default(), // currentColor
+                // Multi-column layout
+                column_count: None,                       // auto
+                column_width: None,                       // auto
+                column_height: None,                      // auto
+                column_fill: ColumnFill::INITIAL,         // balance
+                column_wrap: ColumnWrap::INITIAL,         // wrap
+                column_span: ColumnSpan::INITIAL,         // none
+                column_rule_width: 3,                     // medium (3px)
+                column_rule_style: BorderStyle::INITIAL,  // none
+                column_rule_color: StyleColor::default(), // currentColor
 
-            // Aspect ratio
-            aspect_ratio: None, // auto (no specified ratio)
+                // Aspect ratio
+                aspect_ratio: None, // auto (no specified ratio)
 
-            // First-line pseudo
-            first_line_style: None,   // no ::first-line
-            first_letter_style: None, // no ::first-letter
-            marker_style: None,       // no ::marker
-            placeholder_style: None,  // no ::placeholder
-            is_first_letter_pseudo: false,
+                // First-line pseudo
+                first_line_style: None,   // no ::first-line
+                first_letter_style: None, // no ::first-letter
+                marker_style: None,       // no ::marker
+                placeholder_style: None,  // no ::placeholder
+                is_first_letter_pseudo: false,
 
-            // Text wrap
-            text_wrap: TextWrap::INITIAL, // wrap
+                // Text wrap
+                text_wrap: TextWrap::INITIAL, // wrap
 
-            // Initial letter
-            initial_letter: None, // normal (no drop-cap)
-            text_box_edge: TextBoxEdge::default(),
-            text_box_trim: TextBoxTrim::None,
+                // Initial letter
+                initial_letter: None, // normal (no drop-cap)
+                text_box_edge: TextBoxEdge::default(),
+                text_box_trim: TextBoxTrim::None,
+            },
         }
+    }
+
+    /// Initial style for the engine-owned viewport root.
+    pub fn for_viewport() -> Self {
+        let mut style = Self::initial();
+        style.fields.display = Display::Block;
+        style
     }
 
     /// Initial pseudo-element style with the inherited properties copied from
@@ -1369,78 +1480,80 @@ impl ComputedStyle {
     /// so they use this boundary before applying pseudo declarations.
     pub fn for_pseudo(origin: &Self) -> Self {
         let mut style = Self::initial();
-        style.color = origin.color;
-        style.visibility = origin.visibility;
-        style.pointer_events = origin.pointer_events;
-        style.direction = origin.direction;
-        style.font_family = origin.font_family.clone();
-        style.font_size = origin.font_size;
-        style.font_weight = origin.font_weight;
-        style.font_style = origin.font_style;
-        style.font_stretch = origin.font_stretch;
-        style.font_kerning = origin.font_kerning;
-        style.native_control_text = origin.native_control_text;
-        style.embedded_document_text = origin.embedded_document_text;
-        style.native_button_text_metrics = origin.native_button_text_metrics;
-        style.font_variant_caps = origin.font_variant_caps;
-        style.font_variant_ligatures = origin.font_variant_ligatures;
-        style.font_variant_numeric = origin.font_variant_numeric;
-        style.font_variant_east_asian = origin.font_variant_east_asian;
-        style.font_variant_position = origin.font_variant_position;
-        style.font_variant_alternates = origin.font_variant_alternates;
-        style.font_variant_emoji = origin.font_variant_emoji;
-        style.font_size_adjust = origin.font_size_adjust;
-        style.font_optical_sizing = origin.font_optical_sizing;
-        style.font_synthesis_weight = origin.font_synthesis_weight;
-        style.font_synthesis_style = origin.font_synthesis_style;
-        style.font_synthesis_small_caps = origin.font_synthesis_small_caps;
-        style.font_synthesis_position = origin.font_synthesis_position;
-        style.font_feature_settings = origin.font_feature_settings.clone();
-        style.font_variation_settings = origin.font_variation_settings.clone();
-        style.font_language_override = origin.font_language_override;
-        style.line_height = origin.line_height;
-        style.letter_spacing = origin.letter_spacing;
-        style.word_spacing = origin.word_spacing;
-        style.text_align = origin.text_align;
-        style.white_space = origin.white_space;
-        style.text_align_last = origin.text_align_last;
-        style.text_justify = origin.text_justify;
-        style.word_break = origin.word_break;
-        style.overflow_wrap = origin.overflow_wrap;
-        style.line_break = origin.line_break;
-        style.hyphens = origin.hyphens;
-        style.hyphenate_limit_chars = origin.hyphenate_limit_chars;
-        style.hyphenate_character = origin.hyphenate_character.clone();
-        style.white_space_collapse = origin.white_space_collapse;
-        style.text_wrap_mode = origin.text_wrap_mode;
-        style.text_wrap_style = origin.text_wrap_style;
-        style.text_autospace = origin.text_autospace;
-        style.text_spacing_trim = origin.text_spacing_trim;
-        style.text_transform = origin.text_transform;
-        style.text_underline_position = origin.text_underline_position;
-        style.text_decoration_skip_ink = origin.text_decoration_skip_ink;
-        style.unicode_bidi = origin.unicode_bidi;
-        style.writing_mode = origin.writing_mode;
-        style.text_orientation = origin.text_orientation;
-        style.text_rendering = origin.text_rendering;
-        style.font_smoothing = origin.font_smoothing;
-        style.text_size_adjust = origin.text_size_adjust;
-        style.text_shadow = origin.text_shadow.clone();
-        style.quotes = origin.quotes.clone();
-        style.text_emphasis_mark = origin.text_emphasis_mark;
-        style.text_emphasis_fill = origin.text_emphasis_fill;
-        style.text_emphasis_position = origin.text_emphasis_position;
-        style.text_emphasis_color = origin.text_emphasis_color;
-        style.text_combine_upright = origin.text_combine_upright;
-        style.ruby_position = origin.ruby_position;
-        style.ruby_align = origin.ruby_align;
-        style.ruby_overhang = origin.ruby_overhang;
-        style.tab_size = origin.tab_size;
-        style.font_palette = origin.font_palette.clone();
-        style.locale = origin.locale.clone();
-        style.orphans = origin.orphans;
-        style.widows = origin.widows;
-        style.text_wrap = origin.text_wrap;
+        style.fields.raster_configuration = origin.raster_configuration;
+        style.fields.device_scale_factor = origin.device_scale_factor;
+        style.fields.color = origin.color;
+        style.fields.visibility = origin.visibility;
+        style.fields.pointer_events = origin.pointer_events;
+        style.fields.direction = origin.direction;
+        style.fields.font_family = origin.font_family.clone();
+        style.fields.font_size = origin.font_size;
+        style.fields.font_weight = origin.font_weight;
+        style.fields.font_style = origin.font_style;
+        style.fields.font_stretch = origin.font_stretch;
+        style.fields.font_kerning = origin.font_kerning;
+        style.fields.native_control_text = origin.native_control_text;
+        style.fields.embedded_document_text = origin.embedded_document_text;
+        style.fields.native_button_text_metrics = origin.native_button_text_metrics;
+        style.fields.font_variant_caps = origin.font_variant_caps;
+        style.fields.font_variant_ligatures = origin.font_variant_ligatures;
+        style.fields.font_variant_numeric = origin.font_variant_numeric;
+        style.fields.font_variant_east_asian = origin.font_variant_east_asian;
+        style.fields.font_variant_position = origin.font_variant_position;
+        style.fields.font_variant_alternates = origin.font_variant_alternates;
+        style.fields.font_variant_emoji = origin.font_variant_emoji;
+        style.fields.font_size_adjust = origin.font_size_adjust;
+        style.fields.font_optical_sizing = origin.font_optical_sizing;
+        style.fields.font_synthesis_weight = origin.font_synthesis_weight;
+        style.fields.font_synthesis_style = origin.font_synthesis_style;
+        style.fields.font_synthesis_small_caps = origin.font_synthesis_small_caps;
+        style.fields.font_synthesis_position = origin.font_synthesis_position;
+        style.fields.font_feature_settings = origin.font_feature_settings.clone();
+        style.fields.font_variation_settings = origin.font_variation_settings.clone();
+        style.fields.font_language_override = origin.font_language_override;
+        style.fields.line_height = origin.line_height;
+        style.fields.letter_spacing = origin.letter_spacing;
+        style.fields.word_spacing = origin.word_spacing;
+        style.fields.text_align = origin.text_align;
+        style.fields.white_space = origin.white_space;
+        style.fields.text_align_last = origin.text_align_last;
+        style.fields.text_justify = origin.text_justify;
+        style.fields.word_break = origin.word_break;
+        style.fields.overflow_wrap = origin.overflow_wrap;
+        style.fields.line_break = origin.line_break;
+        style.fields.hyphens = origin.hyphens;
+        style.fields.hyphenate_limit_chars = origin.hyphenate_limit_chars;
+        style.fields.hyphenate_character = origin.hyphenate_character.clone();
+        style.fields.white_space_collapse = origin.white_space_collapse;
+        style.fields.text_wrap_mode = origin.text_wrap_mode;
+        style.fields.text_wrap_style = origin.text_wrap_style;
+        style.fields.text_autospace = origin.text_autospace;
+        style.fields.text_spacing_trim = origin.text_spacing_trim;
+        style.fields.text_transform = origin.text_transform;
+        style.fields.text_underline_position = origin.text_underline_position;
+        style.fields.text_decoration_skip_ink = origin.text_decoration_skip_ink;
+        style.fields.unicode_bidi = origin.unicode_bidi;
+        style.fields.writing_mode = origin.writing_mode;
+        style.fields.text_orientation = origin.text_orientation;
+        style.fields.text_rendering = origin.text_rendering;
+        style.fields.font_smoothing = origin.font_smoothing;
+        style.fields.text_size_adjust = origin.text_size_adjust;
+        style.fields.text_shadow = origin.text_shadow.clone();
+        style.fields.quotes = origin.quotes.clone();
+        style.fields.text_emphasis_mark = origin.text_emphasis_mark;
+        style.fields.text_emphasis_fill = origin.text_emphasis_fill;
+        style.fields.text_emphasis_position = origin.text_emphasis_position;
+        style.fields.text_emphasis_color = origin.text_emphasis_color;
+        style.fields.text_combine_upright = origin.text_combine_upright;
+        style.fields.ruby_position = origin.ruby_position;
+        style.fields.ruby_align = origin.ruby_align;
+        style.fields.ruby_overhang = origin.ruby_overhang;
+        style.fields.tab_size = origin.tab_size;
+        style.fields.font_palette = origin.font_palette.clone();
+        style.fields.locale = origin.locale.clone();
+        style.fields.orphans = origin.orphans;
+        style.fields.widows = origin.widows;
+        style.fields.text_wrap = origin.text_wrap;
         style
     }
 
@@ -1593,6 +1706,16 @@ impl Default for ComputedStyle {
     }
 }
 
+impl Deref for ComputedStyle {
+    type Target = ComputedStyleFields;
+
+    fn deref(&self) -> &Self::Target {
+        &self.fields
+    }
+}
+
+include!("generated_computed_accessors.rs");
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1676,17 +1799,17 @@ mod tests {
         assert!(!s.creates_new_formatting_context());
 
         // Flex creates new FC
-        s.display = Display::Flex;
+        s.fields.display = Display::Flex;
         assert!(s.creates_new_formatting_context());
 
         // Absolutely positioned creates new FC
         let mut s2 = ComputedStyle::initial();
-        s2.position = Position::Absolute;
+        s2.fields.position = Position::Absolute;
         assert!(s2.creates_new_formatting_context());
 
         // Overflow hidden creates new FC
         let mut s3 = ComputedStyle::initial();
-        s3.overflow_x = Overflow::Hidden;
+        s3.fields.overflow_x = Overflow::Hidden;
         assert!(s3.creates_new_formatting_context());
     }
 
@@ -1695,7 +1818,7 @@ mod tests {
         let mut s = ComputedStyle::initial();
         assert!(s.is_in_flow());
 
-        s.position = Position::Absolute;
+        s.fields.position = Position::Absolute;
         assert!(!s.is_in_flow());
         assert!(s.is_out_of_flow());
     }
@@ -1800,7 +1923,7 @@ mod tests {
     #[test]
     fn hanging_punctuation_stored_on_style() {
         let mut s = ComputedStyle::initial();
-        s.hanging_punctuation = HangingPunctuation {
+        s.fields.hanging_punctuation = HangingPunctuation {
             first: true,
             last: true,
             force_end: false,
@@ -1829,21 +1952,21 @@ mod tests {
     #[test]
     fn text_emphasis_mark_set_dot() {
         let mut s = ComputedStyle::initial();
-        s.text_emphasis_mark = TextEmphasisMark::Dot;
+        s.fields.text_emphasis_mark = TextEmphasisMark::Dot;
         assert_eq!(s.text_emphasis_mark, TextEmphasisMark::Dot);
     }
 
     #[test]
     fn text_emphasis_fill_open() {
         let mut s = ComputedStyle::initial();
-        s.text_emphasis_fill = TextEmphasisFill::Open;
+        s.fields.text_emphasis_fill = TextEmphasisFill::Open;
         assert_eq!(s.text_emphasis_fill, TextEmphasisFill::Open);
     }
 
     #[test]
     fn text_emphasis_position_under_left() {
         let mut s = ComputedStyle::initial();
-        s.text_emphasis_position = TextEmphasisPosition {
+        s.fields.text_emphasis_position = TextEmphasisPosition {
             over: false,
             right: false,
         };
@@ -1855,7 +1978,7 @@ mod tests {
     fn text_emphasis_color_custom() {
         let mut s = ComputedStyle::initial();
         let red = Color::from_rgba8(255, 0, 0, 255);
-        s.text_emphasis_color = StyleColor::Resolved(red);
+        s.fields.text_emphasis_color = StyleColor::Resolved(red);
         match s.text_emphasis_color {
             StyleColor::Resolved(c) => assert_eq!(c, Color::from_rgba8(255, 0, 0, 255)),
             _ => panic!("expected Resolved color"),
@@ -1865,7 +1988,7 @@ mod tests {
     #[test]
     fn text_emphasis_custom_char() {
         let mut s = ComputedStyle::initial();
-        s.text_emphasis_mark = TextEmphasisMark::Custom('★');
+        s.fields.text_emphasis_mark = TextEmphasisMark::Custom('★');
         assert_eq!(s.text_emphasis_mark, TextEmphasisMark::Custom('★'));
     }
 
@@ -1880,7 +2003,7 @@ mod tests {
     #[test]
     fn text_combine_upright_all() {
         let mut s = ComputedStyle::initial();
-        s.text_combine_upright = TextCombineUpright::All;
+        s.fields.text_combine_upright = TextCombineUpright::All;
         assert_eq!(s.text_combine_upright, TextCombineUpright::All);
     }
 

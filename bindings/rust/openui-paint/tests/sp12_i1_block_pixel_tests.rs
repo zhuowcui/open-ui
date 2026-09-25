@@ -138,28 +138,30 @@ fn has_visible_content(surface: &mut Surface) -> bool {
 
 fn setup_viewport(doc: &mut Document) -> NodeId {
     let vp = doc.root();
-    doc.node_mut(vp).style.display = Display::Block;
-    doc.node_mut(vp).style.background_color = Color::WHITE;
-    doc.node_mut(vp).style.padding_top = Length::px(20.0);
-    doc.node_mut(vp).style.padding_right = Length::px(20.0);
-    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
-    doc.node_mut(vp).style.padding_left = Length::px(20.0);
-    doc.node_mut(vp).style.font_family = FontFamilyList::single("DejaVu Sans");
-    doc.node_mut(vp).style.font_size = 16.0;
-    doc.node_mut(vp).style.color = Color::BLACK;
+    doc.update_resolved_style(vp, |style| style.display = Display::Block);
+    doc.update_resolved_style(vp, |style| style.background_color = Color::WHITE);
+    doc.update_resolved_style(vp, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_right = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_bottom = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_left = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| {
+        style.font_family = FontFamilyList::single("DejaVu Sans")
+    });
+    doc.update_resolved_style(vp, |style| style.font_size = 16.0);
+    doc.update_resolved_style(vp, |style| style.color = Color::BLACK);
     vp
 }
 
 fn add_colored_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: Color) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
     if w > 0.0 {
-        doc.node_mut(div).style.width = Length::px(w);
+        doc.update_resolved_style(div, |style| style.width = Length::px(w));
     }
     if h > 0.0 {
-        doc.node_mut(div).style.height = Length::px(h);
+        doc.update_resolved_style(div, |style| style.height = Length::px(h));
     }
-    doc.node_mut(div).style.background_color = color;
+    doc.update_resolved_style(div, |style| style.background_color = color);
     doc.append_child(parent, div);
     div
 }
@@ -505,7 +507,7 @@ fn padding_top_shifts() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.padding_top = Length::px(20.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(20.0));
     let mut s = render(&doc);
     // bg covers padding: (20,20) to (119,89), total h=20+50=70
     assert_pixel_color(&mut s, 70, 30, RED, "padding area is bg color");
@@ -517,7 +519,7 @@ fn padding_left_shifts() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
-    doc.node_mut(div).style.padding_left = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(30.0));
     let mut s = render(&doc);
     // bg covers (20,20) to (149,69), total w=30+100=130
     assert_pixel_color(&mut s, 35, 45, BLUE, "left padding area");
@@ -529,7 +531,7 @@ fn padding_right_extends() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(div).style.padding_right = Length::px(40.0);
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(40.0));
     let mut s = render(&doc);
     // total w=100+40=140, bg to x=20+140-1=159
     assert_pixel_color(&mut s, 155, 45, GREEN, "right padding area");
@@ -540,7 +542,7 @@ fn padding_bottom_extends() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.padding_bottom = Length::px(25.0);
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(25.0));
     let mut s = render(&doc);
     // total h=50+25=75, bg to y=20+75-1=94
     assert_pixel_color(&mut s, 70, 90, RED, "bottom padding area");
@@ -551,10 +553,10 @@ fn padding_all_10px() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
-    doc.node_mut(div).style.padding_top = Length::px(10.0);
-    doc.node_mut(div).style.padding_right = Length::px(10.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(10.0);
-    doc.node_mut(div).style.padding_left = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(10.0));
     let mut s = render(&doc);
     // total 120x70, bg from (20,20) to (139,89)
     assert_pixel_color(&mut s, 25, 25, BLUE, "top-left padding");
@@ -567,10 +569,10 @@ fn padding_all_20px() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::RED);
-    doc.node_mut(div).style.padding_top = Length::px(20.0);
-    doc.node_mut(div).style.padding_right = Length::px(20.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(20.0);
-    doc.node_mut(div).style.padding_left = Length::px(20.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(20.0));
     let mut s = render(&doc);
     // total 120x80, bg from (20,20) to (139,99)
     assert_pixel_color(&mut s, 80, 60, RED, "center of padded block");
@@ -581,7 +583,7 @@ fn padding_top_50px() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(div).style.padding_top = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(50.0));
     let mut s = render(&doc);
     // total h=50+50=100, bg covers (20,20) to (119,119)
     assert_pixel_color(&mut s, 70, 45, GREEN, "deep in top padding");
@@ -593,7 +595,7 @@ fn padding_left_30px() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::BLUE);
-    doc.node_mut(div).style.padding_left = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(30.0));
     let mut s = render(&doc);
     // total w=30+80=110, bg (20,20) to (129,59)
     assert_pixel_color(&mut s, 35, 40, BLUE, "in left padding");
@@ -604,10 +606,10 @@ fn padding_asymmetric() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.padding_top = Length::px(10.0);
-    doc.node_mut(div).style.padding_right = Length::px(20.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(30.0);
-    doc.node_mut(div).style.padding_left = Length::px(40.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(40.0));
     let mut s = render(&doc);
     // total 160x90, bg (20,20) to (179,109)
     assert_pixel_color(&mut s, 100, 65, RED, "center of asymmetric padded");
@@ -618,7 +620,7 @@ fn padding_bg_in_padding_area() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 60.0, 30.0, Color::RED);
-    doc.node_mut(div).style.padding_left = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(50.0));
     let mut s = render(&doc);
     // padding area at x=25 (inside 50px padding), should be bg color
     assert_pixel_color(&mut s, 25, 35, RED, "bg in padding area");
@@ -629,8 +631,8 @@ fn padding_top_and_bottom() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 30.0, Color::BLUE);
-    doc.node_mut(div).style.padding_top = Length::px(15.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(15.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(15.0));
     let mut s = render(&doc);
     // total h=15+30+15=60
     assert_pixel_color(&mut s, 70, 25, BLUE, "top padding");
@@ -642,8 +644,8 @@ fn padding_left_and_right() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::GREEN);
-    doc.node_mut(div).style.padding_left = Length::px(20.0);
-    doc.node_mut(div).style.padding_right = Length::px(20.0);
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(20.0));
     let mut s = render(&doc);
     // total w=20+80+20=120, bg (20,20) to (139,59)
     assert_pixel_color(&mut s, 25, 40, GREEN, "left padding");
@@ -655,10 +657,10 @@ fn padding_large_50_all() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 60.0, 30.0, Color::RED);
-    doc.node_mut(div).style.padding_top = Length::px(50.0);
-    doc.node_mut(div).style.padding_right = Length::px(50.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(50.0);
-    doc.node_mut(div).style.padding_left = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(50.0));
     let mut s = render(&doc);
     // total 160x130
     assert_pixel_color(&mut s, 100, 85, RED, "center of large padded");
@@ -680,10 +682,10 @@ fn padding_1px_all() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
-    doc.node_mut(div).style.padding_top = Length::px(1.0);
-    doc.node_mut(div).style.padding_right = Length::px(1.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(1.0);
-    doc.node_mut(div).style.padding_left = Length::px(1.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(1.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(1.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(1.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(1.0));
     let mut s = render(&doc);
     // total 102x52
     assert_pixel_color(&mut s, 71, 46, BLUE, "center of 1px padded");
@@ -694,7 +696,7 @@ fn padding_increases_box_height() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.padding_bottom = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(30.0));
     // total h=50+30=80, second block at y=20+80=100
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
@@ -706,8 +708,8 @@ fn padding_stacking_after_padded() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 30.0, Color::RED);
-    doc.node_mut(div).style.padding_top = Length::px(10.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(10.0));
     // total h=10+30+10=50
     add_colored_block(&mut doc, vp, 100.0, 30.0, Color::BLUE);
     let mut s = render(&doc);
@@ -720,8 +722,8 @@ fn padding_nested_child() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_colored_block(&mut doc, vp, 200.0, 100.0, Color::RED);
-    doc.node_mut(parent).style.padding_top = Length::px(20.0);
-    doc.node_mut(parent).style.padding_left = Length::px(20.0);
+    doc.update_resolved_style(parent, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(parent, |style| style.padding_left = Length::px(20.0));
     // child inside parent's content area at (20+20, 20+20) = (40, 40)
     add_colored_block(&mut doc, parent, 80.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
@@ -734,7 +736,7 @@ fn padding_only_top() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 40.0, Color::GREEN);
-    doc.node_mut(div).style.padding_top = Length::px(25.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(25.0));
     let mut s = render(&doc);
     // total h=25+40=65
     assert_pixel_color(&mut s, 70, 30, GREEN, "top padding");
@@ -746,7 +748,7 @@ fn padding_only_bottom() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 40.0, Color::GREEN);
-    doc.node_mut(div).style.padding_bottom = Length::px(25.0);
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(25.0));
     let mut s = render(&doc);
     // total h=40+25=65, bottom padding area at y=60+20-1=79
     assert_pixel_color(&mut s, 70, 80, GREEN, "bottom padding");
@@ -757,7 +759,7 @@ fn padding_only_left() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::BLUE);
-    doc.node_mut(div).style.padding_left = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(30.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 30, 40, BLUE, "left padding");
 }
@@ -767,7 +769,7 @@ fn padding_only_right() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::BLUE);
-    doc.node_mut(div).style.padding_right = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(30.0));
     let mut s = render(&doc);
     // total w=80+30=110, right padding area at x ~105+20=125
     assert_pixel_color(&mut s, 125, 40, BLUE, "right padding");
@@ -778,8 +780,8 @@ fn padding_top_left_combo() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.padding_top = Length::px(15.0);
-    doc.node_mut(div).style.padding_left = Length::px(15.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(15.0));
     let mut s = render(&doc);
     // bg covers (20,20) to (134,84), total 115x65
     assert_pixel_color(&mut s, 25, 25, RED, "top-left padding corner");
@@ -790,10 +792,10 @@ fn padding_different_each_side() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(div).style.padding_top = Length::px(5.0);
-    doc.node_mut(div).style.padding_right = Length::px(10.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(15.0);
-    doc.node_mut(div).style.padding_left = Length::px(20.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(5.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(20.0));
     let mut s = render(&doc);
     // total 130x70
     assert_pixel_color(&mut s, 85, 55, GREEN, "center of varied padding");
@@ -808,9 +810,11 @@ fn border_top_1px_red() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 1;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 1);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 20, RED, "1px top border");
 }
@@ -822,24 +826,32 @@ fn border_all_1px_black() {
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
     for setter in [
         |d: &mut Document, id: NodeId| {
-            d.node_mut(id).style.border_top_style = BorderStyle::Solid;
-            d.node_mut(id).style.border_top_width = 1;
-            d.node_mut(id).style.border_top_color = StyleColor::Resolved(Color::BLACK);
+            d.update_resolved_style(id, |style| style.border_top_style = BorderStyle::Solid);
+            d.update_resolved_style(id, |style| style.border_top_width = 1);
+            d.update_resolved_style(id, |style| {
+                style.border_top_color = StyleColor::Resolved(Color::BLACK)
+            });
         },
         |d: &mut Document, id: NodeId| {
-            d.node_mut(id).style.border_right_style = BorderStyle::Solid;
-            d.node_mut(id).style.border_right_width = 1;
-            d.node_mut(id).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+            d.update_resolved_style(id, |style| style.border_right_style = BorderStyle::Solid);
+            d.update_resolved_style(id, |style| style.border_right_width = 1);
+            d.update_resolved_style(id, |style| {
+                style.border_right_color = StyleColor::Resolved(Color::BLACK)
+            });
         },
         |d: &mut Document, id: NodeId| {
-            d.node_mut(id).style.border_bottom_style = BorderStyle::Solid;
-            d.node_mut(id).style.border_bottom_width = 1;
-            d.node_mut(id).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+            d.update_resolved_style(id, |style| style.border_bottom_style = BorderStyle::Solid);
+            d.update_resolved_style(id, |style| style.border_bottom_width = 1);
+            d.update_resolved_style(id, |style| {
+                style.border_bottom_color = StyleColor::Resolved(Color::BLACK)
+            });
         },
         |d: &mut Document, id: NodeId| {
-            d.node_mut(id).style.border_left_style = BorderStyle::Solid;
-            d.node_mut(id).style.border_left_width = 1;
-            d.node_mut(id).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+            d.update_resolved_style(id, |style| style.border_left_style = BorderStyle::Solid);
+            d.update_resolved_style(id, |style| style.border_left_width = 1);
+            d.update_resolved_style(id, |style| {
+                style.border_left_color = StyleColor::Resolved(Color::BLACK)
+            });
         },
     ] {
         setter(&mut doc, div);
@@ -856,18 +868,26 @@ fn border_all_2px_red() {
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
     let c = Color::RED;
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 2;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 2;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 2;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 2;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(c);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 2);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 2);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 2);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 2);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(c)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 20, RED, "top border row 0");
     assert_pixel_color(&mut s, 70, 21, RED, "top border row 1");
@@ -879,18 +899,26 @@ fn border_all_5px_blue() {
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
     let c = Color::BLUE;
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 5;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 5;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 5;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(c);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(c)
+    });
     let mut s = render(&doc);
     // total 110x60, border occupies 5px each side
     assert_pixel_color(&mut s, 70, 22, BLUE, "top border mid");
@@ -904,9 +932,11 @@ fn border_left_5px_red() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 22, 45, RED, "left border");
     assert_pixel_color(&mut s, 27, 45, WHITE, "content after left border");
@@ -917,9 +947,11 @@ fn border_right_5px_green() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 5;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::GREEN);
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::GREEN)
+    });
     let mut s = render(&doc);
     // content 100px at x=[20,119], border at x=[120,124]
     assert_pixel_color(&mut s, 122, 45, GREEN, "right border");
@@ -930,9 +962,11 @@ fn border_top_10px_red() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 10;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 10);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 25, RED, "10px top border mid");
     assert_pixel_color(&mut s, 70, 35, WHITE, "content below border");
@@ -943,9 +977,11 @@ fn border_bottom_10px_blue() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 10;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 10);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::BLUE)
+    });
     let mut s = render(&doc);
     // content y=[20,69], border y=[70,79]
     assert_pixel_color(&mut s, 70, 75, BLUE, "10px bottom border");
@@ -957,18 +993,26 @@ fn border_all_10px_red() {
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::WHITE);
     let c = Color::RED;
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 10;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 10;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 10;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 10;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(c);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 10);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 10);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 10);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 10);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(c)
+    });
     let mut s = render(&doc);
     // total 100x60, border 10px each side
     assert_pixel_color(&mut s, 25, 25, RED, "top-left border area");
@@ -980,12 +1024,16 @@ fn border_top_and_bottom() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 5;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 5;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::BLUE)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 22, RED, "top border");
     // bottom border: y = 20 + 5(top) + 50(content) = 75..79
@@ -997,12 +1045,16 @@ fn border_left_and_right() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::GREEN);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 5;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::GREEN)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     // left border x=[20,24], content x=[25,124], right border x=[125,129]
     assert_pixel_color(&mut s, 22, 45, GREEN, "left border");
@@ -1014,19 +1066,26 @@ fn border_different_colors() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::WHITE);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 5;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 5;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::GREEN);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 5;
-    doc.node_mut(div).style.border_right_color =
-        StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255));
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::BLUE)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::GREEN)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::from_rgba8(255, 255, 0, 255))
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 60, 22, RED, "top red");
     // bottom border: y = 20 + 5(top) + 60(content) = 85..89
@@ -1040,9 +1099,11 @@ fn border_shifts_content_right() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_colored_block(&mut doc, vp, 200.0, 80.0, Color::WHITE);
-    doc.node_mut(parent).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_left_width = 10;
-    doc.node_mut(parent).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(parent, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(parent, |style| style.border_left_width = 10);
+    doc.update_resolved_style(parent, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::RED)
+    });
     add_colored_block(&mut doc, parent, 50.0, 30.0, Color::BLUE);
     let mut s = render(&doc);
     // child content starts at x=20+10=30
@@ -1055,9 +1116,11 @@ fn border_shifts_content_down() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_colored_block(&mut doc, vp, 200.0, 80.0, Color::WHITE);
-    doc.node_mut(parent).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_top_width = 10;
-    doc.node_mut(parent).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(parent, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(parent, |style| style.border_top_width = 10);
+    doc.update_resolved_style(parent, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
     add_colored_block(&mut doc, parent, 50.0, 30.0, Color::BLUE);
     let mut s = render(&doc);
     // child at y=20+10=30
@@ -1077,18 +1140,26 @@ fn border_1px_all_sides() {
         Color::from_rgba8(192, 192, 192, 255),
     );
     let c = Color::BLACK;
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 1;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 1;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 1;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 1;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(c);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 1);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 1);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 1);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 1);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(c)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 50, 20, BLACK, "top border 1px");
     assert_pixel_color(&mut s, 50, 35, SILVER, "content center");
@@ -1099,9 +1170,11 @@ fn border_2px_left_only() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::WHITE);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 2;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::GREEN);
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 2);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::GREEN)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 20, 40, GREEN, "left border px0");
     assert_pixel_color(&mut s, 21, 40, GREEN, "left border px1");
@@ -1113,9 +1186,11 @@ fn border_affects_stacking() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 40.0, Color::RED);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 10;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 10);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::BLACK)
+    });
     // total h = 40+10=50, second block at y=70
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
@@ -1134,14 +1209,18 @@ fn border_with_padding() {
         40.0,
         Color::from_rgba8(192, 192, 192, 255),
     );
-    doc.node_mut(div).style.padding_top = Length::px(10.0);
-    doc.node_mut(div).style.padding_left = Length::px(10.0);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 5;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     // border top y=[20,24], padding y=[25,34], content y=[35,74]
     // border left x=[20,24], padding x=[25,34], content x=[35,114]
@@ -1156,18 +1235,26 @@ fn border_thick_5px() {
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 120.0, 60.0, Color::WHITE);
     let c = Color::BLUE;
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 5;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 5;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 5;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(c);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(c)
+    });
     let mut s = render(&doc);
     // total 130x70
     assert_pixel_color(&mut s, 85, 22, BLUE, "top border");
@@ -1179,12 +1266,16 @@ fn border_top_red_bottom_blue() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 40.0, Color::WHITE);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 5;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 5;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(Color::BLUE);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::BLUE)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 22, RED, "top red");
     assert_pixel_color(&mut s, 70, 67, BLUE, "bottom blue");
@@ -1195,12 +1286,16 @@ fn border_left_green_right_red() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::GREEN);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 5;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::GREEN)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 22, 45, GREEN, "left green");
     assert_pixel_color(&mut s, 127, 45, RED, "right red");
@@ -1211,12 +1306,16 @@ fn border_nested_with_border() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_colored_block(&mut doc, vp, 200.0, 100.0, Color::WHITE);
-    doc.node_mut(parent).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_top_width = 5;
-    doc.node_mut(parent).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(parent).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_left_width = 5;
-    doc.node_mut(parent).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(parent, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(parent, |style| style.border_top_width = 5);
+    doc.update_resolved_style(parent, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(parent, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(parent, |style| style.border_left_width = 5);
+    doc.update_resolved_style(parent, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::RED)
+    });
     // child starts at (25, 25) inside parent
     add_colored_block(&mut doc, parent, 80.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
@@ -1237,18 +1336,26 @@ fn border_3px_all_red() {
         Color::from_rgba8(128, 128, 128, 255),
     );
     let c = Color::RED;
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 3;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 3;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 3;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 3;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(c);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(c)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 21, 21, RED, "border corner");
     assert_pixel_color(&mut s, 73, 48, GRAY, "content center");
@@ -1259,12 +1366,16 @@ fn border_asymmetric_widths() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 2;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 8;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 2);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 8);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLUE)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 20, RED, "thin top");
     assert_pixel_color(&mut s, 24, 40, BLUE, "thick left");
@@ -1276,18 +1387,26 @@ fn border_content_center_bg() {
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::GREEN);
     let c = Color::RED;
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 5;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 5;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 5;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(c);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(c);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(c)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(c)
+    });
     let mut s = render(&doc);
     // content center: (25+50, 25+30) = (75, 55)
     assert_pixel_color(&mut s, 75, 55, GREEN, "bg shows through content");
@@ -1302,7 +1421,7 @@ fn margin_top_10px() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.margin_top = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(10.0));
     let mut s = render(&doc);
     // block at y=20+10=30, center y=55
     assert_pixel_color(&mut s, 70, 55, RED, "margin-top shifts block");
@@ -1314,7 +1433,7 @@ fn margin_top_20px() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
-    doc.node_mut(div).style.margin_top = Length::px(20.0);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(20.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 65, BLUE, "center after 20px margin");
 }
@@ -1324,7 +1443,7 @@ fn margin_top_50px() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(div).style.margin_top = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(50.0));
     let mut s = render(&doc);
     // block at y=70, center y=95
     assert_pixel_color(&mut s, 70, 95, GREEN, "center after 50px margin");
@@ -1335,7 +1454,7 @@ fn margin_bottom_10px() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.margin_bottom = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.margin_bottom = Length::px(10.0));
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
     let mut s = render(&doc);
     // blue at y=20+50+10=80, center y=105
@@ -1347,7 +1466,7 @@ fn margin_left_10px() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.margin_left = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(10.0));
     let mut s = render(&doc);
     // block at x=30, center x=80
     assert_pixel_color(&mut s, 80, 45, RED, "shifted by left margin");
@@ -1359,7 +1478,7 @@ fn margin_left_30px() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
-    doc.node_mut(div).style.margin_left = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(30.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 100, 45, BLUE, "center after left 30");
 }
@@ -1369,8 +1488,8 @@ fn margin_auto_center_200() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 200.0, 50.0, Color::RED);
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
     let mut s = render(&doc);
     // centered: x=20+(760-200)/2=300, center x=400
     assert_pixel_color(&mut s, 400, 45, RED, "centered 200px");
@@ -1381,8 +1500,8 @@ fn margin_auto_center_400() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 400.0, 50.0, Color::BLUE);
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
     let mut s = render(&doc);
     // centered: x=20+(760-400)/2=200, center x=400
     assert_pixel_color(&mut s, 400, 45, BLUE, "centered 400px");
@@ -1393,8 +1512,8 @@ fn margin_auto_center_100() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
     let mut s = render(&doc);
     // centered: x=20+(760-100)/2=350, center x=400
     assert_pixel_color(&mut s, 400, 45, GREEN, "centered 100px");
@@ -1405,10 +1524,10 @@ fn margin_all_10px() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.margin_top = Length::px(10.0);
-    doc.node_mut(div).style.margin_right = Length::px(10.0);
-    doc.node_mut(div).style.margin_bottom = Length::px(10.0);
-    doc.node_mut(div).style.margin_left = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.margin_right = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.margin_bottom = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(10.0));
     let mut s = render(&doc);
     // block at (30, 30), center (80, 55)
     assert_pixel_color(&mut s, 80, 55, RED, "all margins 10px");
@@ -1420,7 +1539,7 @@ fn margin_top_pushes_second() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::RED);
     let div2 = add_colored_block(&mut doc, vp, 100.0, 40.0, Color::BLUE);
-    doc.node_mut(div2).style.margin_top = Length::px(20.0);
+    doc.update_resolved_style(div2, |style| style.margin_top = Length::px(20.0));
     let mut s = render(&doc);
     // blue at y=20+40+20=80, center y=100
     assert_pixel_color(&mut s, 70, 100, BLUE, "margin-top pushes second");
@@ -1431,7 +1550,7 @@ fn margin_bottom_separates() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div1 = add_colored_block(&mut doc, vp, 100.0, 40.0, Color::RED);
-    doc.node_mut(div1).style.margin_bottom = Length::px(30.0);
+    doc.update_resolved_style(div1, |style| style.margin_bottom = Length::px(30.0));
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
     // blue at y=20+40+30=90, center y=110
@@ -1443,7 +1562,7 @@ fn margin_left_shifts_block() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::GREEN);
-    doc.node_mut(div).style.margin_left = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(50.0));
     let mut s = render(&doc);
     // block at x=70, center x=110
     assert_pixel_color(&mut s, 110, 40, GREEN, "left margin shift");
@@ -1454,7 +1573,7 @@ fn margin_large_top() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.margin_top = Length::px(100.0);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(100.0));
     let mut s = render(&doc);
     // block at y=120, center y=145
     assert_pixel_color(&mut s, 70, 145, RED, "large margin top");
@@ -1465,9 +1584,9 @@ fn margin_between_blocks() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 30.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(15.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(15.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 30.0, Color::BLUE);
-    doc.node_mut(d2).style.margin_top = Length::px(15.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(15.0));
     let mut s = render(&doc);
     // Margins collapse: gap = max(15,15) = 15, d2 at y=20+30+15=65
     assert_pixel_color(&mut s, 70, 35, RED, "first block");
@@ -1479,8 +1598,8 @@ fn margin_auto_centers() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 300.0, 40.0, Color::RED);
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
     let mut s = render(&doc);
     // centered: x=20+(760-300)/2=250, center x=400
     assert_pixel_color(&mut s, 400, 40, RED, "auto center");
@@ -1502,8 +1621,8 @@ fn margin_1px_all() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
-    doc.node_mut(div).style.margin_top = Length::px(1.0);
-    doc.node_mut(div).style.margin_left = Length::px(1.0);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(1.0));
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(1.0));
     let mut s = render(&doc);
     // block at (21, 21), center (71, 46)
     assert_pixel_color(&mut s, 71, 46, BLUE, "1px margins");
@@ -1514,7 +1633,7 @@ fn margin_top_only() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 40.0, Color::GREEN);
-    doc.node_mut(div).style.margin_top = Length::px(25.0);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(25.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 65, GREEN, "margin-top only");
 }
@@ -1524,7 +1643,7 @@ fn margin_bottom_only() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 30.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(40.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(40.0));
     add_colored_block(&mut doc, vp, 100.0, 30.0, Color::BLUE);
     let mut s = render(&doc);
     // blue at y=20+30+40=90, center y=105
@@ -1536,7 +1655,7 @@ fn margin_left_only() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::RED);
-    doc.node_mut(div).style.margin_left = Length::px(40.0);
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(40.0));
     let mut s = render(&doc);
     // block at x=60, center x=100
     assert_pixel_color(&mut s, 100, 40, RED, "margin-left only");
@@ -1547,8 +1666,8 @@ fn margin_auto_narrow() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 60.0, 30.0, Color::BLUE);
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
     let mut s = render(&doc);
     // centered: x=20+(760-60)/2=370, center x=400
     assert_pixel_color(&mut s, 400, 35, BLUE, "narrow centered");
@@ -1559,8 +1678,8 @@ fn margin_auto_wide() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 600.0, 30.0, Color::GREEN);
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
     let mut s = render(&doc);
     // centered: x=20+(760-600)/2=100, center x=400
     assert_pixel_color(&mut s, 400, 35, GREEN, "wide centered");
@@ -1571,8 +1690,8 @@ fn margin_top_and_bottom() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 40.0, Color::RED);
-    doc.node_mut(div).style.margin_top = Length::px(15.0);
-    doc.node_mut(div).style.margin_bottom = Length::px(15.0);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.margin_bottom = Length::px(15.0));
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
     // red at y=35, center y=55
@@ -1586,8 +1705,8 @@ fn margin_auto_center_exact() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 200.0, 40.0, Color::RED);
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
     let mut s = render(&doc);
     // block starts at x=300, ends at x=499
     assert_pixel_color(&mut s, 302, 40, RED, "just inside left edge");
@@ -1600,8 +1719,8 @@ fn margin_combined_top_left() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::BLUE);
-    doc.node_mut(div).style.margin_top = Length::px(30.0);
-    doc.node_mut(div).style.margin_left = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(30.0));
     let mut s = render(&doc);
     // block at (50, 50), center (90, 70)
     assert_pixel_color(&mut s, 90, 70, BLUE, "top+left margins");
@@ -1696,10 +1815,10 @@ fn size_width_50_percent() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::percent(50.0);
-    doc.node_mut(div).style.height = Length::px(40.0);
-    doc.node_mut(div).style.background_color = Color::RED;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::percent(50.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(40.0));
+    doc.update_resolved_style(div, |style| style.background_color = Color::RED);
     doc.append_child(vp, div);
     let mut s = render(&doc);
     // 50% of 760 = 380, center x = 20+190 = 210
@@ -1712,10 +1831,10 @@ fn size_width_100_percent() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::percent(100.0);
-    doc.node_mut(div).style.height = Length::px(40.0);
-    doc.node_mut(div).style.background_color = Color::BLUE;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::percent(100.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(40.0));
+    doc.update_resolved_style(div, |style| style.background_color = Color::BLUE);
     doc.append_child(vp, div);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 400, 40, BLUE, "100% fills container");
@@ -1726,10 +1845,10 @@ fn size_width_25_percent() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::percent(25.0);
-    doc.node_mut(div).style.height = Length::px(40.0);
-    doc.node_mut(div).style.background_color = Color::GREEN;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::percent(25.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(40.0));
+    doc.update_resolved_style(div, |style| style.background_color = Color::GREEN);
     doc.append_child(vp, div);
     let mut s = render(&doc);
     // 25% of 760 = 190, center x = 20+95 = 115
@@ -1741,10 +1860,10 @@ fn size_width_75_percent() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::percent(75.0);
-    doc.node_mut(div).style.height = Length::px(40.0);
-    doc.node_mut(div).style.background_color = Color::RED;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::percent(75.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(40.0));
+    doc.update_resolved_style(div, |style| style.background_color = Color::RED);
     doc.append_child(vp, div);
     let mut s = render(&doc);
     // 75% of 760 = 570, center x = 20+285 = 305
@@ -1848,10 +1967,10 @@ fn size_50_percent_is_380() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::percent(50.0);
-    doc.node_mut(div).style.height = Length::px(30.0);
-    doc.node_mut(div).style.background_color = Color::RED;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::percent(50.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.background_color = Color::RED);
     doc.append_child(vp, div);
     let mut s = render(&doc);
     // 380px wide, right edge at x=20+380-1=399
@@ -1864,10 +1983,10 @@ fn size_10_percent_is_76() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::percent(10.0);
-    doc.node_mut(div).style.height = Length::px(30.0);
-    doc.node_mut(div).style.background_color = Color::BLUE;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::percent(10.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.background_color = Color::BLUE);
     doc.append_child(vp, div);
     let mut s = render(&doc);
     // 10% of 760 = 76, center x=20+38=58
@@ -1896,9 +2015,9 @@ fn collapse_adjacent_render() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 80.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(20.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(20.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 80.0, Color::BLUE);
-    doc.node_mut(d2).style.margin_top = Length::px(30.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(30.0));
     let mut s = render(&doc);
     assert!(has_visible_content(&mut s), "should render content");
     assert_pixel_color(&mut s, 70, 60, RED, "first block center");
@@ -1912,9 +2031,9 @@ fn collapse_first_visible() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(25.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(25.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::BLUE);
-    doc.node_mut(d2).style.margin_top = Length::px(25.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(25.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 50, RED, "first block");
 }
@@ -1924,9 +2043,9 @@ fn collapse_second_visible() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(25.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(25.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::BLUE);
-    doc.node_mut(d2).style.margin_top = Length::px(25.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(25.0));
     let mut s = render(&doc);
     // second at y>=105 (collapsed) or y>=130 (not), center at >= 135 or >= 160
     // y=160 is inside in both cases
@@ -1938,9 +2057,9 @@ fn collapse_both_colored() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 120.0, 70.0, Color::GREEN);
-    doc.node_mut(d1).style.margin_bottom = Length::px(40.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(40.0));
     let d2 = add_colored_block(&mut doc, vp, 120.0, 70.0, Color::RED);
-    doc.node_mut(d2).style.margin_top = Length::px(40.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(40.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 80, 55, GREEN, "first green");
     // Collapsed gap=40, d2 at y=20+70+40=130, center=165
@@ -1952,12 +2071,12 @@ fn collapse_three_blocks_render() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(15.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(15.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(d2).style.margin_top = Length::px(15.0);
-    doc.node_mut(d2).style.margin_bottom = Length::px(15.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(15.0));
+    doc.update_resolved_style(d2, |style| style.margin_bottom = Length::px(15.0));
     let d3 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
-    doc.node_mut(d3).style.margin_top = Length::px(15.0);
+    doc.update_resolved_style(d3, |style| style.margin_top = Length::px(15.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 45, RED, "first");
     // Collapsed: d2 at y=85, d3 at y=150
@@ -1970,9 +2089,9 @@ fn collapse_large_margins_render() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(50.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(50.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::BLUE);
-    doc.node_mut(d2).style.margin_top = Length::px(50.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(50.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 50, RED, "first");
     // Collapsed gap=50, d2 at y=130, center=160
@@ -1984,9 +2103,9 @@ fn collapse_small_margins_render() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::GREEN);
-    doc.node_mut(d1).style.margin_bottom = Length::px(5.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(5.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::RED);
-    doc.node_mut(d2).style.margin_top = Length::px(5.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(5.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 50, GREEN, "first");
     assert_pixel_color(&mut s, 70, 130, RED, "second");
@@ -2014,7 +2133,7 @@ fn collapse_different_colors() {
         60.0,
         Color::from_rgba8(255, 165, 0, 255),
     );
-    doc.node_mut(d1).style.margin_bottom = Length::px(20.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(20.0));
     let d2 = add_colored_block(
         &mut doc,
         vp,
@@ -2022,7 +2141,7 @@ fn collapse_different_colors() {
         60.0,
         Color::from_rgba8(0, 255, 255, 255),
     );
-    doc.node_mut(d2).style.margin_top = Length::px(20.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(20.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 95, 50, ORANGE, "orange block");
     // Collapsed gap=20, d2 at y=100, center=130
@@ -2034,9 +2153,9 @@ fn collapse_red_blue() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 80.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(30.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(30.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 80.0, Color::BLUE);
-    doc.node_mut(d2).style.margin_top = Length::px(30.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(30.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 60, RED, "red center");
     assert_pixel_color(&mut s, 70, 200, BLUE, "blue deep");
@@ -2047,9 +2166,9 @@ fn collapse_green_red() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 70.0, Color::GREEN);
-    doc.node_mut(d1).style.margin_bottom = Length::px(20.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(20.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 70.0, Color::RED);
-    doc.node_mut(d2).style.margin_top = Length::px(20.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(20.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 55, GREEN, "green");
     assert_pixel_color(&mut s, 70, 175, RED, "red deep");
@@ -2060,9 +2179,9 @@ fn collapse_10px_margins() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(10.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(10.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
-    doc.node_mut(d2).style.margin_top = Length::px(10.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(10.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 45, RED, "first");
     assert_pixel_color(&mut s, 70, 115, BLUE, "second");
@@ -2073,9 +2192,9 @@ fn collapse_20px_margins() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(d1).style.margin_bottom = Length::px(20.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(20.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(d2).style.margin_top = Length::px(20.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(20.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 45, GREEN, "first");
     assert_pixel_color(&mut s, 70, 135, RED, "second deep");
@@ -2086,9 +2205,9 @@ fn collapse_50px_margins() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::BLUE);
-    doc.node_mut(d1).style.margin_bottom = Length::px(50.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(50.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 60.0, Color::RED);
-    doc.node_mut(d2).style.margin_top = Length::px(50.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(50.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 50, BLUE, "first");
     // Collapsed gap=50, d2 at y=130, center=160
@@ -2100,9 +2219,9 @@ fn collapse_nested_render() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_colored_block(&mut doc, vp, 200.0, 0.0, Color::WHITE);
-    doc.node_mut(parent).style.margin_top = Length::px(10.0);
+    doc.update_resolved_style(parent, |style| style.margin_top = Length::px(10.0));
     let child = add_colored_block(&mut doc, parent, 100.0, 50.0, Color::RED);
-    doc.node_mut(child).style.margin_top = Length::px(20.0);
+    doc.update_resolved_style(child, |style| style.margin_top = Length::px(20.0));
     let mut s = render(&doc);
     assert!(has_visible_content(&mut s), "nested should render");
 }
@@ -2112,9 +2231,9 @@ fn collapse_parent_child_render() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_colored_block(&mut doc, vp, 300.0, 0.0, Color::WHITE);
-    doc.node_mut(parent).style.margin_top = Length::px(15.0);
+    doc.update_resolved_style(parent, |style| style.margin_top = Length::px(15.0));
     let child = add_colored_block(&mut doc, parent, 100.0, 60.0, Color::GREEN);
-    doc.node_mut(child).style.margin_top = Length::px(15.0);
+    doc.update_resolved_style(child, |style| style.margin_top = Length::px(15.0));
     let mut s = render(&doc);
     // child should be visible regardless of collapse behavior
     assert!(has_visible_content(&mut s), "parent-child renders");
@@ -2125,12 +2244,12 @@ fn collapse_three_colors() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(10.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(10.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(d2).style.margin_top = Length::px(10.0);
-    doc.node_mut(d2).style.margin_bottom = Length::px(10.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(10.0));
+    doc.update_resolved_style(d2, |style| style.margin_bottom = Length::px(10.0));
     let d3 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
-    doc.node_mut(d3).style.margin_top = Length::px(10.0);
+    doc.update_resolved_style(d3, |style| style.margin_top = Length::px(10.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 45, RED, "red");
     // green and blue centers are inside their blocks regardless of collapse
@@ -2143,9 +2262,9 @@ fn collapse_visible_check() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 200.0, 100.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(40.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(40.0));
     let d2 = add_colored_block(&mut doc, vp, 200.0, 100.0, Color::BLUE);
-    doc.node_mut(d2).style.margin_top = Length::px(40.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(40.0));
     let mut s = render(&doc);
     assert!(has_visible_content(&mut s), "two blocks visible");
 }
@@ -2162,8 +2281,8 @@ fn collapse_all_render() {
             Color::from_rgba8(255, 255, 0, 255),
         ][i];
         let d = add_colored_block(&mut doc, vp, 100.0, 40.0, c);
-        doc.node_mut(d).style.margin_top = Length::px(10.0);
-        doc.node_mut(d).style.margin_bottom = Length::px(10.0);
+        doc.update_resolved_style(d, |style| style.margin_top = Length::px(10.0));
+        doc.update_resolved_style(d, |style| style.margin_bottom = Length::px(10.0));
     }
     let mut s = render(&doc);
     assert!(has_visible_content(&mut s), "four blocks visible");
@@ -2174,9 +2293,9 @@ fn collapse_mixed_sizes() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 80.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(10.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(10.0));
     let d2 = add_colored_block(&mut doc, vp, 150.0, 40.0, Color::BLUE);
-    doc.node_mut(d2).style.margin_top = Length::px(20.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(20.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 60, RED, "tall red");
     assert_pixel_color(&mut s, 95, 140, BLUE, "short blue");
@@ -2187,12 +2306,12 @@ fn collapse_red_green_blue() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 80.0, 60.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(15.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(15.0));
     let d2 = add_colored_block(&mut doc, vp, 80.0, 60.0, Color::GREEN);
-    doc.node_mut(d2).style.margin_top = Length::px(15.0);
-    doc.node_mut(d2).style.margin_bottom = Length::px(15.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(15.0));
+    doc.update_resolved_style(d2, |style| style.margin_bottom = Length::px(15.0));
     let d3 = add_colored_block(&mut doc, vp, 80.0, 60.0, Color::BLUE);
-    doc.node_mut(d3).style.margin_top = Length::px(15.0);
+    doc.update_resolved_style(d3, |style| style.margin_top = Length::px(15.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 60, 50, RED, "red");
     // Collapsed: d2 at y=95, d3 at y=170, center=200
@@ -2205,9 +2324,9 @@ fn collapse_blocks_not_empty() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::from_rgba8(128, 0, 0, 255));
-    doc.node_mut(d1).style.margin_bottom = Length::px(20.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(20.0));
     let d2 = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::from_rgba8(0, 0, 128, 255));
-    doc.node_mut(d2).style.margin_top = Length::px(20.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(20.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 70, 45, MAROON, "maroon block");
     // Collapsed gap=20, d2 at y=90, center=115
@@ -2227,7 +2346,7 @@ fn collapse_stacked_four() {
     let expected = [RED, GREEN, BLUE, ORANGE];
     for &c in &colors {
         let d = add_colored_block(&mut doc, vp, 80.0, 40.0, c);
-        doc.node_mut(d).style.margin_bottom = Length::px(10.0);
+        doc.update_resolved_style(d, |style| style.margin_bottom = Length::px(10.0));
     }
     let mut s = render(&doc);
     // just check first and last are correct colors at approximate centers
@@ -2240,9 +2359,9 @@ fn collapse_narrow_blocks() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 40.0, 40.0, Color::RED);
-    doc.node_mut(d1).style.margin_bottom = Length::px(20.0);
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(20.0));
     let d2 = add_colored_block(&mut doc, vp, 40.0, 40.0, Color::BLUE);
-    doc.node_mut(d2).style.margin_top = Length::px(20.0);
+    doc.update_resolved_style(d2, |style| style.margin_top = Length::px(20.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 40, 40, RED, "narrow red");
     // Collapsed gap=20, d2 at y=80, center=100
@@ -2332,8 +2451,8 @@ fn bg_parent_visible_around() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_colored_block(&mut doc, vp, 200.0, 100.0, Color::RED);
-    doc.node_mut(parent).style.padding_top = Length::px(20.0);
-    doc.node_mut(parent).style.padding_left = Length::px(20.0);
+    doc.update_resolved_style(parent, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(parent, |style| style.padding_left = Length::px(20.0));
     add_colored_block(&mut doc, parent, 80.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
     // parent padding at (25,25) should be red
@@ -2347,8 +2466,8 @@ fn bg_with_padding() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(div).style.padding_top = Length::px(20.0);
-    doc.node_mut(div).style.padding_left = Length::px(20.0);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(20.0));
     let mut s = render(&doc);
     // padding area shows bg color
     assert_pixel_color(&mut s, 30, 30, GREEN, "bg in padding");
@@ -2359,9 +2478,11 @@ fn bg_with_border() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 5;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     // border at top, bg below
     assert_pixel_color(&mut s, 70, 22, RED, "border");
@@ -2483,11 +2604,11 @@ fn bg_nested_two_levels() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let outer = add_colored_block(&mut doc, vp, 300.0, 200.0, Color::RED);
-    doc.node_mut(outer).style.padding_top = Length::px(30.0);
-    doc.node_mut(outer).style.padding_left = Length::px(30.0);
+    doc.update_resolved_style(outer, |style| style.padding_top = Length::px(30.0));
+    doc.update_resolved_style(outer, |style| style.padding_left = Length::px(30.0));
     let inner = add_colored_block(&mut doc, outer, 150.0, 80.0, Color::GREEN);
-    doc.node_mut(inner).style.padding_top = Length::px(15.0);
-    doc.node_mut(inner).style.padding_left = Length::px(15.0);
+    doc.update_resolved_style(inner, |style| style.padding_top = Length::px(15.0));
+    doc.update_resolved_style(inner, |style| style.padding_left = Length::px(15.0));
     add_colored_block(&mut doc, inner, 60.0, 30.0, Color::BLUE);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 25, 25, RED, "outer padding");
@@ -2594,16 +2715,20 @@ fn combo_margin_border_padding() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(div).style.margin_top = Length::px(10.0);
-    doc.node_mut(div).style.margin_left = Length::px(10.0);
-    doc.node_mut(div).style.padding_top = Length::px(10.0);
-    doc.node_mut(div).style.padding_left = Length::px(10.0);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 3;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 3;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     // box starts at (30, 30) due to margins
     // border top y=[30,32], border left x=[30,32]
@@ -2619,11 +2744,11 @@ fn combo_nested_three_levels() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let l1 = add_colored_block(&mut doc, vp, 400.0, 300.0, Color::RED);
-    doc.node_mut(l1).style.padding_top = Length::px(20.0);
-    doc.node_mut(l1).style.padding_left = Length::px(20.0);
+    doc.update_resolved_style(l1, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(l1, |style| style.padding_left = Length::px(20.0));
     let l2 = add_colored_block(&mut doc, l1, 200.0, 150.0, Color::GREEN);
-    doc.node_mut(l2).style.padding_top = Length::px(15.0);
-    doc.node_mut(l2).style.padding_left = Length::px(15.0);
+    doc.update_resolved_style(l2, |style| style.padding_top = Length::px(15.0));
+    doc.update_resolved_style(l2, |style| style.padding_left = Length::px(15.0));
     let l3 = add_colored_block(&mut doc, l2, 80.0, 60.0, Color::BLUE);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 30, 30, RED, "level 1 padding");
@@ -2637,21 +2762,29 @@ fn combo_centered_with_border() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 200.0, 60.0, Color::WHITE);
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
     let bc = Color::BLUE;
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 3;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(bc);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 3;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(bc);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 3;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(bc);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 3;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(bc);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(bc)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(bc)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(bc)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(bc)
+    });
     let mut s = render(&doc);
     // total width = 3+200+3=206, centered: x=20+(760-206)/2=297
     // border at x=297, content at x=300
@@ -2663,10 +2796,10 @@ fn combo_centered_with_padding() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 200.0, 60.0, Color::RED);
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
-    doc.node_mut(div).style.padding_top = Length::px(15.0);
-    doc.node_mut(div).style.padding_left = Length::px(15.0);
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(15.0));
     let mut s = render(&doc);
     // total w=15+200+0=215 (only left padding), centered: x=20+(760-215)/2=292
     // or rather, background covers from x=292 for 215px
@@ -2678,18 +2811,22 @@ fn combo_full_box_model() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::GREEN);
-    doc.node_mut(div).style.margin_top = Length::px(10.0);
-    doc.node_mut(div).style.margin_left = Length::px(10.0);
-    doc.node_mut(div).style.padding_top = Length::px(15.0);
-    doc.node_mut(div).style.padding_left = Length::px(15.0);
-    doc.node_mut(div).style.padding_right = Length::px(15.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(15.0);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 5;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     // margin shifts to (30, 30)
     // border top at y=[30,34], border left at x=[30,34]
@@ -2706,10 +2843,12 @@ fn combo_two_blocks_border_margin() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 40.0, Color::RED);
-    doc.node_mut(d1).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(d1).style.border_bottom_width = 5;
-    doc.node_mut(d1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(d1).style.margin_bottom = Length::px(10.0);
+    doc.update_resolved_style(d1, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(d1, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(d1, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(d1, |style| style.margin_bottom = Length::px(10.0));
     // d1 total h = 40+5=45, then 10px margin
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
@@ -2724,12 +2863,12 @@ fn combo_nested_centered() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let outer = add_colored_block(&mut doc, vp, 400.0, 200.0, Color::RED);
-    doc.node_mut(outer).style.margin_left = Length::auto();
-    doc.node_mut(outer).style.margin_right = Length::auto();
+    doc.update_resolved_style(outer, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(outer, |style| style.margin_right = Length::auto());
     // outer centered: x=20+(760-400)/2=200
     let inner = add_colored_block(&mut doc, outer, 100.0, 50.0, Color::BLUE);
-    doc.node_mut(inner).style.margin_left = Length::auto();
-    doc.node_mut(inner).style.margin_right = Length::auto();
+    doc.update_resolved_style(inner, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(inner, |style| style.margin_right = Length::auto());
     // inner centered in 400px: x=200+(400-100)/2=350
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 400, 45, BLUE, "inner centered");
@@ -2748,18 +2887,26 @@ fn combo_border_and_bg() {
         Color::from_rgba8(0, 255, 255, 255),
     );
     let bc = Color::from_rgba8(128, 0, 0, 255);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 4;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(bc);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 4;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(bc);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 4;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(bc);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 4;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(bc);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 4);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(bc)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 4);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(bc)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 4);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(bc)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 4);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(bc)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 22, 22, MAROON, "border");
     assert_pixel_color(&mut s, 95, 55, CYAN, "bg inside border");
@@ -2770,8 +2917,8 @@ fn combo_padding_and_bg_overlap() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_colored_block(&mut doc, vp, 200.0, 100.0, Color::RED);
-    doc.node_mut(parent).style.padding_top = Length::px(25.0);
-    doc.node_mut(parent).style.padding_left = Length::px(25.0);
+    doc.update_resolved_style(parent, |style| style.padding_top = Length::px(25.0));
+    doc.update_resolved_style(parent, |style| style.padding_left = Length::px(25.0));
     let child = add_colored_block(&mut doc, parent, 100.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
     // parent bg in padding: (25, 25)
@@ -2785,8 +2932,8 @@ fn combo_margin_and_bg() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 200.0, 80.0, Color::GREEN);
-    doc.node_mut(div).style.margin_top = Length::px(30.0);
-    doc.node_mut(div).style.margin_left = Length::px(40.0);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(40.0));
     let mut s = render(&doc);
     // block at (60, 50), center (160, 90)
     assert_pixel_color(&mut s, 160, 90, GREEN, "shifted green");
@@ -2798,24 +2945,32 @@ fn combo_all_properties() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 120.0, 60.0, Color::BLUE);
-    doc.node_mut(div).style.margin_top = Length::px(10.0);
-    doc.node_mut(div).style.margin_left = Length::px(10.0);
-    doc.node_mut(div).style.padding_top = Length::px(10.0);
-    doc.node_mut(div).style.padding_left = Length::px(10.0);
-    doc.node_mut(div).style.padding_right = Length::px(10.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(10.0);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 2;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 2;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 2;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 2;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 2);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 2);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 2);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 2);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     // margin→(30,30), border→(30,30)-(31,31), pad→(32,32), content→(42,42)
     assert_pixel_color(&mut s, 30, 30, RED, "border");
@@ -2833,12 +2988,16 @@ fn combo_wide_block_border() {
         60.0,
         Color::from_rgba8(192, 192, 192, 255),
     );
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 3;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 3;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::BLACK)
+    });
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 300, 21, BLACK, "top border wide");
     assert_pixel_color(&mut s, 300, 55, SILVER, "content wide");
@@ -2849,10 +3008,10 @@ fn combo_narrow_centered_padded() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 80.0, 40.0, Color::RED);
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
-    doc.node_mut(div).style.padding_top = Length::px(10.0);
-    doc.node_mut(div).style.padding_left = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(10.0));
     let mut s = render(&doc);
     // total w=10+80=90, centered: x=20+(760-90)/2=355
     assert_pixel_color(&mut s, 400, 35, RED, "centered padded narrow");
@@ -2863,13 +3022,17 @@ fn combo_stacked_with_borders() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 100.0, 30.0, Color::RED);
-    doc.node_mut(d1).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(d1).style.border_bottom_width = 3;
-    doc.node_mut(d1).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.update_resolved_style(d1, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(d1, |style| style.border_bottom_width = 3);
+    doc.update_resolved_style(d1, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::BLACK)
+    });
     let d2 = add_colored_block(&mut doc, vp, 100.0, 30.0, Color::BLUE);
-    doc.node_mut(d2).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(d2).style.border_bottom_width = 3;
-    doc.node_mut(d2).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
+    doc.update_resolved_style(d2, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(d2, |style| style.border_bottom_width = 3);
+    doc.update_resolved_style(d2, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::BLACK)
+    });
     let mut s = render(&doc);
     // d1 content y=[20,49], border y=[50,52]
     // d2 content y=[53,82], border y=[83,85]
@@ -2883,15 +3046,19 @@ fn combo_nested_padding_border() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let parent = add_colored_block(&mut doc, vp, 300.0, 200.0, Color::RED);
-    doc.node_mut(parent).style.padding_top = Length::px(20.0);
-    doc.node_mut(parent).style.padding_left = Length::px(20.0);
+    doc.update_resolved_style(parent, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(parent, |style| style.padding_left = Length::px(20.0));
     let child = add_colored_block(&mut doc, parent, 120.0, 60.0, Color::BLUE);
-    doc.node_mut(child).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(child).style.border_top_width = 3;
-    doc.node_mut(child).style.border_top_color = StyleColor::Resolved(Color::GREEN);
-    doc.node_mut(child).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(child).style.border_left_width = 3;
-    doc.node_mut(child).style.border_left_color = StyleColor::Resolved(Color::GREEN);
+    doc.update_resolved_style(child, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(child, |style| style.border_top_width = 3);
+    doc.update_resolved_style(child, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::GREEN)
+    });
+    doc.update_resolved_style(child, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(child, |style| style.border_left_width = 3);
+    doc.update_resolved_style(child, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::GREEN)
+    });
     let mut s = render(&doc);
     // parent padding at (25, 25) → RED
     assert_pixel_color(&mut s, 25, 25, RED, "parent padding");
@@ -2906,12 +3073,12 @@ fn combo_percent_width_margin() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::percent(50.0);
-    doc.node_mut(div).style.height = Length::px(50.0);
-    doc.node_mut(div).style.background_color = Color::RED;
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::percent(50.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.background_color = Color::RED);
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
     doc.append_child(vp, div);
     let mut s = render(&doc);
     // 50% of 760 = 380, centered: x=20+(760-380)/2=210
@@ -2923,8 +3090,8 @@ fn combo_auto_width_padding() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 0.0, 50.0, Color::GREEN);
-    doc.node_mut(div).style.padding_left = Length::px(30.0);
-    doc.node_mut(div).style.padding_right = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(30.0));
     let mut s = render(&doc);
     // auto width: box fills 760, padding inside, bg covers full width
     assert_pixel_color(&mut s, 25, 45, GREEN, "left padding area");
@@ -2936,15 +3103,19 @@ fn combo_border_box() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 200.0, 100.0, Color::RED);
-    doc.node_mut(div).style.box_sizing = BoxSizing::BorderBox;
-    doc.node_mut(div).style.padding_top = Length::px(20.0);
-    doc.node_mut(div).style.padding_left = Length::px(20.0);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 5;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 5;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.update_resolved_style(div, |style| style.box_sizing = BoxSizing::BorderBox);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 5);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLACK)
+    });
     let mut s = render(&doc);
     // border-box: total = 200x100 including border+padding
     // border top 5px, pad 20px, content = 200-5-20=175 wide, 100-5-20=75 tall
@@ -2960,9 +3131,9 @@ fn combo_content_box_explicit() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 200.0, 100.0, Color::BLUE);
-    doc.node_mut(div).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(div).style.padding_top = Length::px(10.0);
-    doc.node_mut(div).style.padding_left = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.box_sizing = BoxSizing::ContentBox);
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(10.0));
     let mut s = render(&doc);
     // content-box: total = 10+200=210 wide, 10+100=110 tall
     // right edge at x=20+210-1=229
@@ -2981,8 +3152,8 @@ fn combo_multi_child() {
         300.0,
         Color::from_rgba8(192, 192, 192, 255),
     );
-    doc.node_mut(parent).style.padding_top = Length::px(10.0);
-    doc.node_mut(parent).style.padding_left = Length::px(10.0);
+    doc.update_resolved_style(parent, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(parent, |style| style.padding_left = Length::px(10.0));
     add_colored_block(&mut doc, parent, 200.0, 50.0, Color::RED);
     add_colored_block(&mut doc, parent, 200.0, 50.0, Color::GREEN);
     add_colored_block(&mut doc, parent, 200.0, 50.0, Color::BLUE);
@@ -3000,14 +3171,14 @@ fn combo_deep_nesting() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let l1 = add_colored_block(&mut doc, vp, 500.0, 400.0, Color::RED);
-    doc.node_mut(l1).style.padding_top = Length::px(10.0);
-    doc.node_mut(l1).style.padding_left = Length::px(10.0);
+    doc.update_resolved_style(l1, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(l1, |style| style.padding_left = Length::px(10.0));
     let l2 = add_colored_block(&mut doc, l1, 300.0, 250.0, Color::GREEN);
-    doc.node_mut(l2).style.padding_top = Length::px(10.0);
-    doc.node_mut(l2).style.padding_left = Length::px(10.0);
+    doc.update_resolved_style(l2, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(l2, |style| style.padding_left = Length::px(10.0));
     let l3 = add_colored_block(&mut doc, l2, 150.0, 100.0, Color::BLUE);
-    doc.node_mut(l3).style.padding_top = Length::px(10.0);
-    doc.node_mut(l3).style.padding_left = Length::px(10.0);
+    doc.update_resolved_style(l3, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(l3, |style| style.padding_left = Length::px(10.0));
     let l4 = add_colored_block(
         &mut doc,
         l3,
@@ -3056,10 +3227,10 @@ fn combo_full_page() {
     let h = add_colored_block(&mut doc, vp, 0.0, 60.0, Color::from_rgba8(0, 0, 128, 255));
     // content with margin
     let c = add_colored_block(&mut doc, vp, 0.0, 300.0, Color::WHITE);
-    doc.node_mut(c).style.margin_top = Length::px(10.0);
+    doc.update_resolved_style(c, |style| style.margin_top = Length::px(10.0));
     // footer
     let f = add_colored_block(&mut doc, vp, 0.0, 40.0, Color::from_rgba8(128, 0, 0, 255));
-    doc.node_mut(f).style.margin_top = Length::px(10.0);
+    doc.update_resolved_style(f, |style| style.margin_top = Length::px(10.0));
     let mut s = render(&doc);
     // header at y=20, h=60
     assert_pixel_color(&mut s, 400, 50, NAVY, "header");
@@ -3074,19 +3245,27 @@ fn combo_three_level_nesting_borders() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let l1 = add_colored_block(&mut doc, vp, 300.0, 200.0, Color::RED);
-    doc.node_mut(l1).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(l1).style.border_top_width = 3;
-    doc.node_mut(l1).style.border_top_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(l1).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(l1).style.border_left_width = 3;
-    doc.node_mut(l1).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.update_resolved_style(l1, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(l1, |style| style.border_top_width = 3);
+    doc.update_resolved_style(l1, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(l1, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(l1, |style| style.border_left_width = 3);
+    doc.update_resolved_style(l1, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLACK)
+    });
     let l2 = add_colored_block(&mut doc, l1, 200.0, 100.0, Color::GREEN);
-    doc.node_mut(l2).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(l2).style.border_top_width = 2;
-    doc.node_mut(l2).style.border_top_color = StyleColor::Resolved(Color::BLUE);
-    doc.node_mut(l2).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(l2).style.border_left_width = 2;
-    doc.node_mut(l2).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.update_resolved_style(l2, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(l2, |style| style.border_top_width = 2);
+    doc.update_resolved_style(l2, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::BLUE)
+    });
+    doc.update_resolved_style(l2, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(l2, |style| style.border_left_width = 2);
+    doc.update_resolved_style(l2, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLUE)
+    });
     let mut s = render(&doc);
     // Check border away from corner to avoid anti-aliasing
     assert_pixel_color(&mut s, 100, 21, BLACK, "l1 border top");
@@ -3105,25 +3284,33 @@ fn combo_everything() {
         80.0,
         Color::from_rgba8(0, 255, 255, 255),
     );
-    doc.node_mut(div).style.margin_top = Length::px(20.0);
-    doc.node_mut(div).style.margin_left = Length::auto();
-    doc.node_mut(div).style.margin_right = Length::auto();
-    doc.node_mut(div).style.padding_top = Length::px(10.0);
-    doc.node_mut(div).style.padding_left = Length::px(10.0);
-    doc.node_mut(div).style.padding_right = Length::px(10.0);
-    doc.node_mut(div).style.padding_bottom = Length::px(10.0);
-    doc.node_mut(div).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_top_width = 3;
-    doc.node_mut(div).style.border_top_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_right_width = 3;
-    doc.node_mut(div).style.border_right_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_bottom_width = 3;
-    doc.node_mut(div).style.border_bottom_color = StyleColor::Resolved(Color::RED);
-    doc.node_mut(div).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(div).style.border_left_width = 3;
-    doc.node_mut(div).style.border_left_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(div, |style| style.margin_right = Length::auto());
+    doc.update_resolved_style(div, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_right = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.padding_bottom = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_top_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_right_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_bottom_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::RED)
+    });
+    doc.update_resolved_style(div, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(div, |style| style.border_left_width = 3);
+    doc.update_resolved_style(div, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     // total w=3+10+160+10+3=186, centered: x=20+(760-186)/2=307
     // margin_top=20: y=40
@@ -3152,22 +3339,30 @@ fn combo_border_box_vs_content_box_width() {
     let vp = setup_viewport(&mut doc);
     // border-box block: total width = 200 including 5px border each side
     let bb = add_colored_block(&mut doc, vp, 200.0, 40.0, Color::RED);
-    doc.node_mut(bb).style.box_sizing = BoxSizing::BorderBox;
-    doc.node_mut(bb).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(bb).style.border_left_width = 5;
-    doc.node_mut(bb).style.border_left_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(bb).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(bb).style.border_right_width = 5;
-    doc.node_mut(bb).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.update_resolved_style(bb, |style| style.box_sizing = BoxSizing::BorderBox);
+    doc.update_resolved_style(bb, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(bb, |style| style.border_left_width = 5);
+    doc.update_resolved_style(bb, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(bb, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(bb, |style| style.border_right_width = 5);
+    doc.update_resolved_style(bb, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::BLACK)
+    });
     // content-box block: total width = 200 + 5 + 5 = 210
     let cb = add_colored_block(&mut doc, vp, 200.0, 40.0, Color::BLUE);
-    doc.node_mut(cb).style.box_sizing = BoxSizing::ContentBox;
-    doc.node_mut(cb).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(cb).style.border_left_width = 5;
-    doc.node_mut(cb).style.border_left_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(cb).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(cb).style.border_right_width = 5;
-    doc.node_mut(cb).style.border_right_color = StyleColor::Resolved(Color::BLACK);
+    doc.update_resolved_style(cb, |style| style.box_sizing = BoxSizing::ContentBox);
+    doc.update_resolved_style(cb, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(cb, |style| style.border_left_width = 5);
+    doc.update_resolved_style(cb, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(cb, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(cb, |style| style.border_right_width = 5);
+    doc.update_resolved_style(cb, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::BLACK)
+    });
     let mut s = render(&doc);
     // border-box: right edge at x=219, x=220 is white
     assert_pixel_color(&mut s, 221, 40, WHITE, "bb right outside");
@@ -3180,7 +3375,7 @@ fn bg_opacity_renders() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 200.0, 80.0, Color::RED);
-    doc.node_mut(div).style.opacity = 0.5;
+    doc.update_resolved_style(div, |style| style.opacity = 0.5);
     let mut s = render(&doc);
     // semi-transparent red over white: ~(255, 128, 128)
     let (r, g, b, _) = get_pixel(&mut s, 120, 60);
@@ -3194,11 +3389,11 @@ fn combo_two_centered_stacked() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let d1 = add_colored_block(&mut doc, vp, 300.0, 50.0, Color::RED);
-    doc.node_mut(d1).style.margin_left = Length::auto();
-    doc.node_mut(d1).style.margin_right = Length::auto();
+    doc.update_resolved_style(d1, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(d1, |style| style.margin_right = Length::auto());
     let d2 = add_colored_block(&mut doc, vp, 200.0, 50.0, Color::BLUE);
-    doc.node_mut(d2).style.margin_left = Length::auto();
-    doc.node_mut(d2).style.margin_right = Length::auto();
+    doc.update_resolved_style(d2, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(d2, |style| style.margin_right = Length::auto());
     let mut s = render(&doc);
     // both centered at x=400
     assert_pixel_color(&mut s, 400, 45, RED, "first centered");
@@ -3214,11 +3409,11 @@ fn padding_nested_double() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let outer = add_colored_block(&mut doc, vp, 300.0, 200.0, Color::RED);
-    doc.node_mut(outer).style.padding_top = Length::px(30.0);
-    doc.node_mut(outer).style.padding_left = Length::px(30.0);
+    doc.update_resolved_style(outer, |style| style.padding_top = Length::px(30.0));
+    doc.update_resolved_style(outer, |style| style.padding_left = Length::px(30.0));
     let inner = add_colored_block(&mut doc, outer, 120.0, 80.0, Color::GREEN);
-    doc.node_mut(inner).style.padding_top = Length::px(20.0);
-    doc.node_mut(inner).style.padding_left = Length::px(20.0);
+    doc.update_resolved_style(inner, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(inner, |style| style.padding_left = Length::px(20.0));
     add_colored_block(&mut doc, inner, 40.0, 20.0, Color::BLUE);
     let mut s = render(&doc);
     // outer padding at (25, 25) → RED

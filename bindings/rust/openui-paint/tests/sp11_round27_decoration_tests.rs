@@ -80,9 +80,13 @@ fn paint_decorations_with_distinct_thicknesses_no_panic() {
     let metrics = metrics_with_distinct_thicknesses(1.0, 3.0);
 
     let mut style = ComputedStyle::initial();
-    style.text_decoration_line = openui_style::TextDecorationLine(7); // underline|overline|line-through
-    style.text_decoration_thickness = TextDecorationThickness::FromFont;
-    style.font_size = 16.0;
+    style.update_derived(|computed| {
+        computed.text_decoration_line = openui_style::TextDecorationLine(7)
+    }); // underline|overline|line-through
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::FromFont
+    });
+    style.update_derived(|computed| computed.font_size = 16.0);
 
     let mut surface =
         surfaces::raster_n32_premul((200, 50)).expect("Failed to create Skia surface");

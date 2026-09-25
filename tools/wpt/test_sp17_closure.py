@@ -240,7 +240,7 @@ class AssertionOnlyCheckLayoutPorterTests(unittest.TestCase):
         self.assertNotIn("onload", template)
         self.assertNotIn("div')", template)
         self.assertIn('<div class="box" data-offset-x="0"></div>', template)
-        self.assertIn("style.width = Length::px(10.0)", rust)
+        self.assertIn("RendererStyleValue::Width(Length::px(10.0))", rust)
 
     def test_mutation_unknown_scripts_handlers_and_dynamic_alignment_stay_rejected(self):
         cases = {
@@ -537,17 +537,18 @@ class LedgerTests(unittest.TestCase):
         fontconfig = (
             ROOT / "tools/accountability/data/fonts/ahem_noaa.conf"
         ).read_text(encoding="utf-8")
-        cache = (
-            ROOT / "bindings/rust/openui-text/src/font/cache.rs"
+        platform = (
+            ROOT / "bindings/rust/openui-text/src/font/platform.rs"
         ).read_text(encoding="utf-8")
         self.assertEqual(
             families,
             re.findall(r"<string>([^<]+)</string>", fontconfig),
         )
-        self.assertEqual(
-            families,
-            sorted(families, key=cache.index),
+        fallback = re.search(
+            r"let deterministic_aliased_face = \[(.*?)\]", platform, re.S
         )
+        self.assertIsNotNone(fallback)
+        self.assertEqual(families, re.findall(r'"([^"]+)"', fallback.group(1)))
         self.assertEqual(
             families,
             sorted(families, key=port_wpt.TEXT_TEMPLATE_OVERRIDE.index),
@@ -844,11 +845,13 @@ class TransactionalSp17CssTests(unittest.TestCase):
         port_wpt.set_porter_profile(port_wpt.PorterProfile.DETERMINISTIC_AHEM)
         output = port_wpt.generate_rust_fn("sp17_inheritance", root)
         self.assertGreaterEqual(
-            output.count("writing_mode = WritingMode::VerticalLr"), 3
+            output.count("RendererStyleValue::WritingMode(WritingMode::VerticalLr)"), 3
         )
-        self.assertGreaterEqual(output.count("direction = Direction::Rtl"), 3)
         self.assertGreaterEqual(
-            output.count("text_orientation = TextOrientation::Sideways"), 3
+            output.count("RendererStyleValue::Direction(Direction::Rtl)"), 3
+        )
+        self.assertGreaterEqual(
+            output.count("RendererStyleValue::TextOrientation(TextOrientation::Sideways)"), 3
         )
 
     def test_w2a_sideways_inheritance_emission_and_fragment_metadata(self):
@@ -867,10 +870,14 @@ class TransactionalSp17CssTests(unittest.TestCase):
         root.children.append(child)
         port_wpt.set_porter_profile(port_wpt.PorterProfile.DETERMINISTIC_AHEM)
         output = port_wpt.generate_rust_fn("w2a_sideways", root)
-        self.assertGreaterEqual(output.count("writing_mode = WritingMode::SidewaysLr"), 3)
-        self.assertGreaterEqual(output.count("direction = Direction::Rtl"), 3)
         self.assertGreaterEqual(
-            output.count("text_orientation = TextOrientation::Sideways"), 3
+            output.count("RendererStyleValue::WritingMode(WritingMode::SidewaysLr)"), 3
+        )
+        self.assertGreaterEqual(
+            output.count("RendererStyleValue::Direction(Direction::Rtl)"), 3
+        )
+        self.assertGreaterEqual(
+            output.count("RendererStyleValue::TextOrientation(TextOrientation::Sideways)"), 3
         )
 
         fragment = (ROOT / "bindings/rust/openui-layout/src/fragment.rs").read_text()
@@ -954,15 +961,15 @@ class TransactionalSp17CssTests(unittest.TestCase):
             "doc.append_child", 1
         )[0]
         for line in (
-            "font_size = 22.0",
-            "font_family = FontFamilyList",
-            "line_height = LineHeight::Length(30.0)",
-            "writing_mode = WritingMode::VerticalRl",
-            "direction = Direction::Rtl",
-            "text_orientation = TextOrientation::Upright",
+            "RendererStyleValue::FontSize(22.0)",
+            "RendererStyleValue::FontFamily(FontFamilyList",
+            "RendererStyleValue::LineHeight(LineHeight::Length(30.0))",
+            "RendererStyleValue::WritingMode(WritingMode::VerticalRl)",
+            "RendererStyleValue::Direction(Direction::Rtl)",
+            "RendererStyleValue::TextOrientation(TextOrientation::Upright)",
         ):
             self.assertIn(line, first_break)
-        self.assertIn("style.clear = Clear::Both", rust)
+        self.assertIn("RendererStyleValue::Clear(Clear::Both)", rust)
 
     def test_dir_presentational_hint_is_lower_priority_than_author_css(self):
         node = port_wpt.DomNode("div", {"dir": "rtl", "class": "x"}, OrderedDict())

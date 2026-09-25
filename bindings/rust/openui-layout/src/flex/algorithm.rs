@@ -43,6 +43,7 @@ struct FlexItemAxisMapping {
     main_axis_is_horizontal: bool,
     main_axis_is_child_inline: bool,
     child_writing_direction: WritingDirectionMode,
+    percentage_edges_use_container_inline: bool,
 }
 
 impl FlexItemAxisMapping {
@@ -54,12 +55,29 @@ impl FlexItemAxisMapping {
         let child_writing_direction = child_style
             .direction
             .writing_direction(child_style.writing_mode);
+        let container_inline_is_horizontal = main_axis_is_horizontal ^ is_column;
+        let is_orthogonal =
+            container_inline_is_horizontal != child_writing_direction.is_horizontal();
+        let percentage_edges_use_container_inline = is_orthogonal
+            && [
+                &child_style.margin_top,
+                &child_style.margin_right,
+                &child_style.margin_bottom,
+                &child_style.margin_left,
+                &child_style.padding_top,
+                &child_style.padding_right,
+                &child_style.padding_bottom,
+                &child_style.padding_left,
+            ]
+            .iter()
+            .any(|length| length.is_percent() || length.is_calculated());
         Self {
             is_column,
             main_axis_is_horizontal,
             main_axis_is_child_inline: main_axis_is_horizontal
                 == child_writing_direction.is_horizontal(),
             child_writing_direction,
+            percentage_edges_use_container_inline,
         }
     }
 
@@ -98,13 +116,22 @@ impl FlexItemAxisMapping {
             percentage_container_block,
         );
         let percentage = self.child_logical_size(percentage_main, percentage_cross);
-        ConstraintSpace::for_flex_child_with_writing_direction(
+        let mut space = ConstraintSpace::for_flex_child_with_writing_direction(
             available.inline_size,
             available.block_size,
             percentage.inline_size,
             percentage.block_size,
             self.child_writing_direction,
-        )
+        );
+        // Like ordinary block children, percentage margins and padding on an
+        // orthogonal flex item resolve against the containing block's logical
+        // inline size. Width/height bases still follow the axis projection
+        // above; this field is shared by the compact constraint model, so only
+        // override it when an edge actually needs that containing measure.
+        if self.percentage_edges_use_container_inline {
+            space.percentage_resolution_inline_size = percentage_container_inline;
+        }
+        space
     }
 
     #[inline]
@@ -885,7 +912,12 @@ fn resolve_container_inline_size(
 ) -> LayoutUnit {
     let logical_sizes = crate::ResolvedLogicalBox::from_style(style).sizes;
     let inline_size = logical_sizes.inline_size;
-    let resolved = if inline_size.is_auto() {
+    let resolved = if space.is_fixed_inline_size || space.stretch_inline_size {
+        // The parent flex algorithm has already resolved this container's
+        // post-flexing border-box inline size. That used size replaces even
+        // an authored intrinsic keyword during final child layout.
+        space.available_inline_size
+    } else if inline_size.is_auto() {
         if space.available_inline_size.is_indefinite() {
             // Shrink-to-fit: compute max-content inline size from children
             let sizes = compute_intrinsic_block_sizes(doc, node_id);
@@ -1768,13 +1800,42 @@ fn resolve_flex_basis(
 
         // Handle intrinsic sizing keywords on width/height
         if main_length.is_content_or_intrinsic() {
-            let sizes = compute_intrinsic_block_sizes(doc, child_id);
             let intrinsic = if is_main_axis_horizontal {
-                match main_length.length_type() {
-                    LengthType::MinContent => sizes.min_content_inline_size,
-                    _ => sizes.max_content_inline_size,
+                let is_wrapping_column_flex = child_style.display.is_flex()
+                    && child_style.flex_direction.is_column()
+                    && child_style.flex_wrap != openui_style::FlexWrap::Nowrap;
+                let has_cross_auto_margin =
+                    child_style.margin_top.is_auto() || child_style.margin_bottom.is_auto();
+                let stretched_block_size = (is_wrapping_column_flex
+                    && !child_percentage_block.is_indefinite()
+                    && resolved_alignment == ItemPosition::Stretch
+                    && (child_style.height.is_auto() || child_style.height.is_stretch())
+                    && !has_cross_auto_margin)
+                    .then(|| {
+                        let margin = resolve_margins(child_style, child_percentage_inline);
+                        (child_percentage_block - margin.block_sum()).clamp_negative_to_zero()
+                    });
+                if let Some(block_size) = stretched_block_size {
+                    let sizes =
+                        crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+                            doc,
+                            child_id,
+                            block_size,
+                            child_percentage_inline,
+                        );
+                    match main_length.length_type() {
+                        LengthType::MinContent => sizes.min,
+                        _ => sizes.max,
+                    }
+                } else {
+                    let sizes = compute_intrinsic_block_sizes(doc, child_id);
+                    match main_length.length_type() {
+                        LengthType::MinContent => sizes.min_content_inline_size,
+                        _ => sizes.max_content_inline_size,
+                    }
                 }
             } else {
+                let sizes = compute_intrinsic_block_sizes(doc, child_id);
                 match main_length.length_type() {
                     LengthType::MinContent => sizes.min_content_block_size,
                     _ => sizes.max_content_block_size,
@@ -2499,17 +2560,20 @@ fn resolve_content_based_size(
             }
         }
 
-        let main_size = if replaces_main_size {
+        let mut main_size = if replaces_main_size {
             // Size the item with its used flex basis substituted for the main
             // size. A measurement document provides that style override while
             // retaining the actual cross size, so wrapping, floats, controls,
             // and replaced descendants all contribute through normal layout.
             let mut measurement_doc = doc.clone();
-            if is_main_axis_horizontal {
-                measurement_doc.node_mut(child_id).style.width = Length::auto();
-            } else {
-                measurement_doc.node_mut(child_id).style.height = Length::auto();
-            }
+            let measurement_style = measurement_doc.node(child_id).style.derive(|style| {
+                if is_main_axis_horizontal {
+                    style.width = Length::auto();
+                } else {
+                    style.height = Length::auto();
+                }
+            });
+            measurement_doc.install_resolved_style(child_id, measurement_style);
             let child_fragment = layout_flex_item(&measurement_doc, child_id, &child_space);
             if is_main_axis_horizontal {
                 child_fragment.width()
@@ -2534,6 +2598,27 @@ fn resolve_content_based_size(
             }
             .clamp_indefinite_to_zero()
         };
+        if axis_mapping.main_axis_is_child_inline
+            && axis_mapping.percentage_edges_use_container_inline
+        {
+            // The unconstrained block-layout probe shrink-wraps using an
+            // intrinsic contribution where cyclic percentage edges are zero.
+            // Once the containing inline size is known, the used flex base
+            // keeps the same content contribution and adds the resolved edge
+            // delta to its border box before converting back to content-box.
+            let intrinsic =
+                crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(doc, child_id);
+            let border = resolve_border(child_style);
+            let zero_padding = resolve_padding(child_style, LayoutUnit::zero());
+            let zero_main_edges = if is_main_axis_horizontal {
+                border.inline_sum() + zero_padding.inline_sum()
+            } else {
+                border.block_sum() + zero_padding.block_sum()
+            };
+            let resolved_edge_delta =
+                (main_axis_border_padding - zero_main_edges).clamp_negative_to_zero();
+            main_size = main_size.max_of(intrinsic.max + resolved_edge_delta);
+        }
         return (main_size - main_axis_border_padding).clamp_negative_to_zero();
     }
 
@@ -3762,7 +3847,7 @@ fn resolve_cross_size(
             // automatic cross size is fit-content in the container's cross
             // space, with specified margins reducing that space and auto
             // margins contributing zero during hypothetical sizing.
-            let intrinsic = if doc.node(item.node_id).tag == ElementTag::Text {
+            let mut intrinsic = if doc.node(item.node_id).tag == ElementTag::Text {
                 let max = anonymous_flex_text_run_max_inline_size(doc, item.node_id)
                     .unwrap_or(LayoutUnit::zero());
                 openui_geometry::MinMaxSizes { min: max, max }
@@ -3786,6 +3871,22 @@ fn resolve_cross_size(
             } else {
                 crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(doc, item.node_id)
             };
+            // Intrinsic contributions treat cyclic percentage padding as zero.
+            // At this point, however, the flex container's inline size is
+            // definite and the item's logical-inline padding has a real used
+            // value. Add only that newly resolvable edge delta; fixed padding
+            // and borders are already part of the intrinsic contribution.
+            let child_border = resolve_border(child_style);
+            let zero_base_padding = resolve_padding(child_style, LayoutUnit::zero());
+            let zero_base_cross_border_padding = if is_main_axis_horizontal {
+                child_border.block_sum() + zero_base_padding.block_sum()
+            } else {
+                child_border.inline_sum() + zero_base_padding.inline_sum()
+            };
+            let resolved_percentage_edge_delta =
+                (cross_border_padding - zero_base_cross_border_padding).clamp_negative_to_zero();
+            intrinsic.min = intrinsic.min + resolved_percentage_edge_delta;
+            intrinsic.max = intrinsic.max + resolved_percentage_edge_delta;
             let available_cross = if is_column {
                 child_percentage_inline
             } else {
@@ -4830,9 +4931,63 @@ fn finalize_flex_fragment(
 ) {
     let border_box_rect = PhysicalRect::new(PhysicalOffset::zero(), fragment.size);
     let mut overflow = border_box_rect;
+    let writing_direction = style.direction.writing_direction(style.writing_mode);
+    let converter = WritingModeConverter::new(writing_direction, fragment.size);
+    let logical_padding = fragment.padding.to_logical(writing_direction);
+    let inline_end_is_reversed = if is_column {
+        style.flex_wrap.is_wrap_reverse()
+    } else {
+        style.flex_direction.is_reverse()
+    };
+    let block_end_is_reversed = if is_column {
+        style.flex_direction.is_reverse()
+    } else {
+        style.flex_wrap.is_wrap_reverse()
+    };
+    let is_scroll_container = !matches!(
+        (style.overflow_x, style.overflow_y),
+        (
+            openui_style::Overflow::Visible | openui_style::Overflow::Clip,
+            openui_style::Overflow::Visible | openui_style::Overflow::Clip
+        )
+    );
     for child in &fragment.children {
         let child_rect = PhysicalRect::new(child.offset, child.size);
         overflow = overflow.unite(&child_rect);
+        if is_scroll_container {
+            // CSS Overflow's flex-item contribution includes the item's
+            // resolved margin box followed by the container's end padding.
+            // On reversed main/cross axes that end padding precedes the item
+            // physically, so it extends the logical start instead. This is
+            // what makes row-reverse/column-reverse scroll areas symmetric
+            // with their non-reversed counterparts.
+            let margin_rect = PhysicalRect::new(
+                PhysicalOffset::new(
+                    child.offset.left - child.margin.left,
+                    child.offset.top - child.margin.top,
+                ),
+                PhysicalSize::new(
+                    child.size.width + child.margin.left + child.margin.right,
+                    child.size.height + child.margin.top + child.margin.bottom,
+                ),
+            );
+            let mut logical = converter.to_logical_rect(margin_rect);
+            if inline_end_is_reversed {
+                logical.offset.inline_offset =
+                    logical.offset.inline_offset - logical_padding.inline_start;
+                logical.size.inline_size = logical.size.inline_size + logical_padding.inline_start;
+            } else {
+                logical.size.inline_size = logical.size.inline_size + logical_padding.inline_end;
+            }
+            if block_end_is_reversed {
+                logical.offset.block_offset =
+                    logical.offset.block_offset - logical_padding.block_start;
+                logical.size.block_size = logical.size.block_size + logical_padding.block_start;
+            } else {
+                logical.size.block_size = logical.size.block_size + logical_padding.block_end;
+            }
+            overflow = overflow.unite(&converter.to_physical_rect(logical));
+        }
         if !child.has_overflow_clip {
             if let Some(child_overflow) = child.overflow_rect {
                 let shifted = PhysicalRect::new(
@@ -5175,17 +5330,18 @@ mod tests {
     use openui_geometry::{LayoutUnit, Length};
     use openui_style::{
         ComputedStyle, ContentPosition, Direction, Display, FlexDirection, FlexWrap, ItemAlignment,
-        ItemPosition, LineClamp, OverflowAlignment, WritingMode,
+        ItemPosition, LineClamp, Overflow, OverflowAlignment, WritingMode,
     };
 
     fn make_flex_container(doc: &mut Document, width: i32, height: i32) -> NodeId {
         let root = doc.root();
         let container = doc.create_node(openui_dom::ElementTag::Div);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.display = Display::Flex;
-            style.width = Length::px(width as f32);
-            style.height = Length::px(height as f32);
+            doc.update_resolved_style(container, |style| {
+                style.display = Display::Flex;
+                style.width = Length::px(width as f32);
+                style.height = Length::px(height as f32);
+            });
         }
         doc.append_child(root, container);
         container
@@ -5194,10 +5350,11 @@ mod tests {
     fn add_flex_child(doc: &mut Document, parent: NodeId, width: i32, height: i32) -> NodeId {
         let child = doc.create_node(openui_dom::ElementTag::Div);
         {
-            let style = doc.node_mut(child).style_mut();
-            style.display = Display::Block;
-            style.width = Length::px(width as f32);
-            style.height = Length::px(height as f32);
+            doc.update_resolved_style(child, |style| {
+                style.display = Display::Block;
+                style.width = Length::px(width as f32);
+                style.height = Length::px(height as f32);
+            });
         }
         doc.append_child(parent, child);
         child
@@ -5233,18 +5390,19 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(ElementTag::Div);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.display = Display::InlineFlex;
-            style.width = Length::px(100.0);
-            style.border_top_width = 1;
-            style.border_bottom_width = 1;
-            style.border_top_style = openui_style::BorderStyle::Solid;
-            style.border_bottom_style = openui_style::BorderStyle::Solid;
+            doc.update_resolved_style(container, |style| {
+                style.display = Display::InlineFlex;
+                style.width = Length::px(100.0);
+                style.border_top_width = 1;
+                style.border_bottom_width = 1;
+                style.border_top_style = openui_style::BorderStyle::Solid;
+                style.border_bottom_style = openui_style::BorderStyle::Solid;
+            });
         }
         doc.append_child(doc.root(), container);
 
         let nested = doc.create_node(ElementTag::Div);
-        doc.node_mut(nested).style.display = Display::Flex;
+        doc.update_resolved_style(nested, |style| style.display = Display::Flex);
         doc.append_child(container, nested);
         let sibling = doc.create_node(ElementTag::Div);
         doc.append_child(container, sibling);
@@ -5259,19 +5417,20 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(ElementTag::Div);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.display = Display::Flex;
-            style.width = Length::px(100.0);
-            style.flex_wrap = FlexWrap::Wrap;
-            style.align_items = ItemAlignment::new(ItemPosition::Baseline);
+            doc.update_resolved_style(container, |style| {
+                style.display = Display::Flex;
+                style.width = Length::px(100.0);
+                style.flex_wrap = FlexWrap::Wrap;
+                style.align_items = ItemAlignment::new(ItemPosition::Baseline);
+            });
         }
         doc.append_child(doc.root(), container);
 
         let tall = add_flex_child(&mut doc, container, 50, 12);
-        doc.node_mut(tall).style.min_width = Length::zero();
+        doc.update_resolved_style(tall, |style| style.min_width = Length::zero());
         let trailing = add_flex_child(&mut doc, container, 50, 2);
-        doc.node_mut(trailing).style.min_width = Length::zero();
-        doc.node_mut(trailing).style.margin_bottom = Length::px(8.0);
+        doc.update_resolved_style(trailing, |style| style.min_width = Length::zero());
+        doc.update_resolved_style(trailing, |style| style.margin_bottom = Length::px(8.0));
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
         let fragment = flex_layout(&doc, container, &space);
@@ -5283,20 +5442,21 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(ElementTag::Div);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.display = Display::Flex;
-            style.width = Length::px(100.0);
-            style.flex_wrap = FlexWrap::Wrap;
-            style.align_items = ItemAlignment::new(ItemPosition::Baseline);
+            doc.update_resolved_style(container, |style| {
+                style.display = Display::Flex;
+                style.width = Length::px(100.0);
+                style.flex_wrap = FlexWrap::Wrap;
+                style.align_items = ItemAlignment::new(ItemPosition::Baseline);
+            });
         }
         doc.append_child(doc.root(), container);
 
         let tall = add_flex_child(&mut doc, container, 50, 12);
-        doc.node_mut(tall).style.min_width = Length::zero();
+        doc.update_resolved_style(tall, |style| style.min_width = Length::zero());
         let clamped = add_flex_child(&mut doc, container, 50, 2);
-        doc.node_mut(clamped).style.min_width = Length::zero();
-        doc.node_mut(clamped).style.margin_bottom = Length::px(8.0);
-        doc.node_mut(clamped).style.line_clamp = LineClamp::Lines(3);
+        doc.update_resolved_style(clamped, |style| style.min_width = Length::zero());
+        doc.update_resolved_style(clamped, |style| style.margin_bottom = Length::px(8.0));
+        doc.update_resolved_style(clamped, |style| style.line_clamp = LineClamp::Lines(3));
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
         let fragment = flex_layout(&doc, container, &space);
@@ -5308,11 +5468,11 @@ mod tests {
         let mut doc = Document::new();
         let container = make_flex_container(&mut doc, 200, 20);
         let first = add_flex_child(&mut doc, container, 30, 10);
-        doc.node_mut(first).style.min_width = Length::zero();
-        doc.node_mut(first).style.margin_left = Length::auto();
-        doc.node_mut(first).style.margin_right = Length::px(20.0);
+        doc.update_resolved_style(first, |style| style.min_width = Length::zero());
+        doc.update_resolved_style(first, |style| style.margin_left = Length::auto());
+        doc.update_resolved_style(first, |style| style.margin_right = Length::px(20.0));
         let second = add_flex_child(&mut doc, container, 30, 10);
-        doc.node_mut(second).style.min_width = Length::zero();
+        doc.update_resolved_style(second, |style| style.min_width = Length::zero());
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(200));
         let fragment = flex_layout(&doc, container, &space);
@@ -5334,7 +5494,7 @@ mod tests {
         fragment.children.push(child);
 
         let mut style = ComputedStyle::default();
-        style.writing_mode = WritingMode::VerticalRl;
+        style.update_derived(|computed| computed.writing_mode = WritingMode::VerticalRl);
         assert_eq!(
             flex_baseline_from_child(&doc, &fragment, &style, false, true),
             None,
@@ -5499,7 +5659,7 @@ mod tests {
         ) in cases
         {
             let mut style = openui_style::ComputedStyle::default();
-            style.writing_mode = child_mode;
+            style.update_derived(|computed| computed.writing_mode = child_mode);
             let mapping = FlexItemAxisMapping::new(&style, is_column, main_axis_is_horizontal);
             let mut space = mapping.child_space(
                 LayoutUnit::from_i32(30),
@@ -5584,6 +5744,90 @@ mod tests {
     }
 
     #[test]
+    fn scrollable_flex_overflow_includes_margin_box_and_end_padding() {
+        let mut container = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(86), LayoutUnit::from_i32(86)),
+        );
+        container.padding = BoxStrut::new(
+            LayoutUnit::from_i32(10),
+            LayoutUnit::from_i32(10),
+            LayoutUnit::from_i32(10),
+            LayoutUnit::from_i32(10),
+        );
+        let mut item = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(30), LayoutUnit::from_i32(30)),
+        );
+        item.offset = PhysicalOffset::new(LayoutUnit::from_i32(33), LayoutUnit::from_i32(33));
+        item.margin = BoxStrut::new(
+            LayoutUnit::from_i32(20),
+            LayoutUnit::from_i32(20),
+            LayoutUnit::from_i32(20),
+            LayoutUnit::from_i32(20),
+        );
+        container.children.push(item);
+
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.overflow_x = Overflow::Scroll;
+            computed.overflow_y = Overflow::Scroll;
+        });
+        finalize_flex_fragment(&Document::new(), &mut container, &style, false);
+
+        assert_eq!(
+            container.overflow_rect,
+            Some(PhysicalRect::new(
+                PhysicalOffset::zero(),
+                PhysicalSize::new(LayoutUnit::from_i32(93), LayoutUnit::from_i32(93)),
+            ))
+        );
+    }
+
+    #[test]
+    fn reversed_scrollable_flex_overflow_puts_end_padding_at_start() {
+        let mut container = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(86), LayoutUnit::from_i32(86)),
+        );
+        container.padding = BoxStrut::new(
+            LayoutUnit::from_i32(10),
+            LayoutUnit::from_i32(10),
+            LayoutUnit::from_i32(10),
+            LayoutUnit::from_i32(10),
+        );
+        let mut item = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(30), LayoutUnit::from_i32(30)),
+        );
+        item.offset = PhysicalOffset::new(LayoutUnit::from_i32(23), LayoutUnit::from_i32(33));
+        item.margin = BoxStrut::new(
+            LayoutUnit::from_i32(20),
+            LayoutUnit::from_i32(20),
+            LayoutUnit::from_i32(20),
+            LayoutUnit::from_i32(20),
+        );
+        container.children.push(item);
+
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.display = Display::Flex;
+            computed.flex_direction = FlexDirection::RowReverse;
+            computed.overflow_x = Overflow::Scroll;
+            computed.overflow_y = Overflow::Scroll;
+        });
+        finalize_flex_fragment(&Document::new(), &mut container, &style, false);
+
+        assert_eq!(
+            container.overflow_rect,
+            Some(PhysicalRect::new(
+                PhysicalOffset::new(LayoutUnit::from_i32(-7), LayoutUnit::zero()),
+                PhysicalSize::new(LayoutUnit::from_i32(93), LayoutUnit::from_i32(93)),
+            ))
+        );
+    }
+
+    #[test]
     fn basic_row_flex_three_items() {
         let mut doc = Document::new();
         let container = make_flex_container(&mut doc, 300, 100);
@@ -5611,9 +5855,10 @@ mod tests {
         let mut doc = Document::new();
         let container = make_flex_container(&mut doc, 40, 30);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.writing_mode = WritingMode::VerticalLr;
-            style.flex_wrap = FlexWrap::Wrap;
+            doc.update_resolved_style(container, |style| {
+                style.writing_mode = WritingMode::VerticalLr;
+                style.flex_wrap = FlexWrap::Wrap;
+            });
         }
         for _ in 0..4 {
             add_flex_child(&mut doc, container, 20, 15);
@@ -5659,17 +5904,20 @@ mod tests {
         let mut doc = Document::new();
         let container = make_flex_container(&mut doc, 100, 100);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.writing_mode = WritingMode::VerticalLr;
-            style.align_items = ItemAlignment::new(ItemPosition::Baseline);
+            doc.update_resolved_style(container, |style| {
+                style.writing_mode = WritingMode::VerticalLr;
+                style.align_items = ItemAlignment::new(ItemPosition::Baseline);
+            });
         }
         let first = add_flex_child(&mut doc, container, 100, 50);
         let second = add_flex_child(&mut doc, container, 100, 50);
-        doc.node_mut(second).style.line_height = openui_style::LineHeight::Length(0.0);
+        doc.update_resolved_style(second, |style| {
+            style.line_height = openui_style::LineHeight::Length(0.0)
+        });
         let atomic = doc.create_node(openui_dom::ElementTag::Span);
-        doc.node_mut(atomic).style.display = Display::InlineBlock;
-        doc.node_mut(atomic).style.width = Length::px(10.0);
-        doc.node_mut(atomic).style.height = Length::px(10.0);
+        doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(atomic, |style| style.width = Length::px(10.0));
+        doc.update_resolved_style(atomic, |style| style.height = Length::px(10.0));
         doc.append_child(second, atomic);
 
         let direction = doc
@@ -5696,9 +5944,10 @@ mod tests {
         let mut doc = Document::new();
         let container = make_flex_container(&mut doc, 40, 30);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.writing_mode = WritingMode::VerticalRl;
-            style.flex_wrap = FlexWrap::Wrap;
+            doc.update_resolved_style(container, |style| {
+                style.writing_mode = WritingMode::VerticalRl;
+                style.flex_wrap = FlexWrap::Wrap;
+            });
         }
         for _ in 0..4 {
             add_flex_child(&mut doc, container, 20, 15);
@@ -5739,10 +5988,11 @@ mod tests {
         let mut doc = Document::new();
         let container = make_flex_container(&mut doc, 40, 30);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.writing_mode = WritingMode::VerticalLr;
-            style.direction = openui_style::Direction::Rtl;
-            style.flex_wrap = FlexWrap::Wrap;
+            doc.update_resolved_style(container, |style| {
+                style.writing_mode = WritingMode::VerticalLr;
+                style.direction = openui_style::Direction::Rtl;
+                style.flex_wrap = FlexWrap::Wrap;
+            });
         }
         for _ in 0..4 {
             add_flex_child(&mut doc, container, 20, 15);
@@ -5783,11 +6033,12 @@ mod tests {
         let mut doc = Document::new();
         let container = make_flex_container(&mut doc, 200, 100);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.direction = openui_style::Direction::Rtl;
-            style.flex_wrap = FlexWrap::Wrap;
-            style.row_gap = Some(Length::px(20.0));
-            style.column_gap = Some(Length::px(20.0));
+            doc.update_resolved_style(container, |style| {
+                style.direction = openui_style::Direction::Rtl;
+                style.flex_wrap = FlexWrap::Wrap;
+                style.row_gap = Some(Length::px(20.0));
+                style.column_gap = Some(Length::px(20.0));
+            });
         }
         add_flex_child(&mut doc, container, 120, 20);
         add_flex_child(&mut doc, container, 130, 20);
@@ -5823,18 +6074,20 @@ mod tests {
         let mut doc = Document::new();
         let container = make_flex_container(&mut doc, 200, 100);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.direction = openui_style::Direction::Rtl;
-            style.flex_wrap = FlexWrap::Wrap;
+            doc.update_resolved_style(container, |style| {
+                style.direction = openui_style::Direction::Rtl;
+                style.flex_wrap = FlexWrap::Wrap;
+            });
         }
         let first = add_flex_child(&mut doc, container, 120, 20);
         let second = add_flex_child(&mut doc, container, 130, 20);
         add_flex_child(&mut doc, container, 40, 20);
         add_flex_child(&mut doc, container, 40, 20);
         for child in [first, second] {
-            let style = doc.node_mut(child).style_mut();
-            style.margin_left = Length::px(20.0);
-            style.margin_bottom = Length::px(20.0);
+            doc.update_resolved_style(child, |style| {
+                style.margin_left = Length::px(20.0);
+                style.margin_bottom = Length::px(20.0);
+            });
         }
 
         let direction = doc
@@ -5867,13 +6120,14 @@ mod tests {
             let mut doc = Document::new();
             let container = make_flex_container(&mut doc, 200, 100);
             {
-                let style = doc.node_mut(container).style_mut();
-                style.direction = openui_style::Direction::Rtl;
-                style.flex_wrap = FlexWrap::Wrap;
-                if !reference {
-                    style.row_gap = Some(Length::px(20.0));
-                    style.column_gap = Some(Length::px(20.0));
-                }
+                doc.update_resolved_style(container, |style| {
+                    style.direction = openui_style::Direction::Rtl;
+                    style.flex_wrap = FlexWrap::Wrap;
+                    if !reference {
+                        style.row_gap = Some(Length::px(20.0));
+                        style.column_gap = Some(Length::px(20.0));
+                    }
+                });
             }
             for (index, (width, text)) in [
                 (120, "Black Panther"),
@@ -5885,13 +6139,19 @@ mod tests {
             .enumerate()
             {
                 let child = add_flex_child(&mut doc, container, width, 20);
-                doc.node_mut(child).style.direction = openui_style::Direction::Rtl;
+                doc.update_resolved_style(child, |style| {
+                    style.direction = openui_style::Direction::Rtl
+                });
                 if reference && index < 2 {
-                    doc.node_mut(child).style.margin_left = Length::px(20.0);
-                    doc.node_mut(child).style.margin_bottom = Length::px(20.0);
+                    doc.update_resolved_style(child, |style| style.margin_left = Length::px(20.0));
+                    doc.update_resolved_style(child, |style| {
+                        style.margin_bottom = Length::px(20.0)
+                    });
                 }
                 let text_node = doc.create_node(openui_dom::ElementTag::Text);
-                doc.node_mut(text_node).style.direction = openui_style::Direction::Rtl;
+                doc.update_resolved_style(text_node, |style| {
+                    style.direction = openui_style::Direction::Rtl
+                });
                 doc.node_mut(text_node).text = Some(text.to_string());
                 doc.append_child(child, text_node);
             }
@@ -5933,16 +6193,18 @@ mod tests {
         let c1 = doc.create_node(openui_dom::ElementTag::Div);
         let c2 = doc.create_node(openui_dom::ElementTag::Div);
         {
-            let s = doc.node_mut(c1).style_mut();
-            s.display = Display::Block;
-            s.flex_grow = 1.0;
-            s.height = Length::px(50.0);
+            doc.update_resolved_style(c1, |s| {
+                s.display = Display::Block;
+                s.flex_grow = 1.0;
+                s.height = Length::px(50.0);
+            });
         }
         {
-            let s = doc.node_mut(c2).style_mut();
-            s.display = Display::Block;
-            s.flex_grow = 1.0;
-            s.height = Length::px(50.0);
+            doc.update_resolved_style(c2, |s| {
+                s.display = Display::Block;
+                s.flex_grow = 1.0;
+                s.height = Length::px(50.0);
+            });
         }
         doc.append_child(container, c1);
         doc.append_child(container, c2);
@@ -5964,10 +6226,11 @@ mod tests {
         for (grow, _) in [(1.0, 50), (2.0, 50), (1.0, 50)] {
             let child = doc.create_node(openui_dom::ElementTag::Div);
             {
-                let s = doc.node_mut(child).style_mut();
-                s.display = Display::Block;
-                s.flex_grow = grow;
-                s.height = Length::px(50.0);
+                doc.update_resolved_style(child, |s| {
+                    s.display = Display::Block;
+                    s.flex_grow = grow;
+                    s.height = Length::px(50.0);
+                });
             }
             doc.append_child(container, child);
         }
@@ -5987,11 +6250,12 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(openui_dom::ElementTag::Div);
         {
-            let s = doc.node_mut(container).style_mut();
-            s.display = Display::Flex;
-            s.width = Length::px(400.0);
-            s.height = Length::px(100.0);
-            s.justify_content = ContentAlignment::new(openui_style::ContentPosition::Center);
+            doc.update_resolved_style(container, |s| {
+                s.display = Display::Flex;
+                s.width = Length::px(400.0);
+                s.height = Length::px(100.0);
+                s.justify_content = ContentAlignment::new(openui_style::ContentPosition::Center);
+            });
         }
         doc.append_child(doc.root(), container);
 
@@ -6012,12 +6276,13 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(openui_dom::ElementTag::Div);
         {
-            let s = doc.node_mut(container).style_mut();
-            s.display = Display::Flex;
-            s.width = Length::px(400.0);
-            s.height = Length::px(100.0);
-            s.justify_content =
-                ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+            doc.update_resolved_style(container, |s| {
+                s.display = Display::Flex;
+                s.width = Length::px(400.0);
+                s.height = Length::px(100.0);
+                s.justify_content =
+                    ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+            });
         }
         doc.append_child(doc.root(), container);
 
@@ -6041,10 +6306,11 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(openui_dom::ElementTag::Div);
         {
-            let s = doc.node_mut(container).style_mut();
-            s.display = Display::Flex;
-            s.width = Length::px(200.0);
-            s.flex_wrap = FlexWrap::Wrap;
+            doc.update_resolved_style(container, |s| {
+                s.display = Display::Flex;
+                s.width = Length::px(200.0);
+                s.flex_wrap = FlexWrap::Wrap;
+            });
         }
         doc.append_child(doc.root(), container);
 
@@ -6069,11 +6335,12 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(openui_dom::ElementTag::Div);
         {
-            let s = doc.node_mut(container).style_mut();
-            s.display = Display::Flex;
-            s.width = Length::px(200.0);
-            s.height = Length::px(300.0);
-            s.flex_direction = FlexDirection::Column;
+            doc.update_resolved_style(container, |s| {
+                s.display = Display::Flex;
+                s.width = Length::px(200.0);
+                s.height = Length::px(300.0);
+                s.flex_direction = FlexDirection::Column;
+            });
         }
         doc.append_child(doc.root(), container);
 
@@ -6096,19 +6363,21 @@ mod tests {
         let mut doc = Document::new();
         let container = make_flex_container(&mut doc, 100, 560);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.writing_mode = WritingMode::VerticalLr;
-            style.flex_direction = FlexDirection::Column;
-            style.flex_wrap = FlexWrap::Wrap;
-            style.row_gap = Some(Length::px(20.0));
-            style.column_gap = Some(Length::px(20.0));
+            doc.update_resolved_style(container, |style| {
+                style.writing_mode = WritingMode::VerticalLr;
+                style.flex_direction = FlexDirection::Column;
+                style.flex_wrap = FlexWrap::Wrap;
+                style.row_gap = Some(Length::px(20.0));
+                style.column_gap = Some(Length::px(20.0));
+            });
         }
         for _ in 0..4 {
             let child = add_flex_child(&mut doc, container, 40, 0);
-            let child_style = doc.node_mut(child).style_mut();
-            child_style.writing_mode = WritingMode::VerticalLr;
-            child_style.width = Length::calc_percent_px(50.0, -10.0);
-            child_style.height = Length::auto();
+            doc.update_resolved_style(child, |child_style| {
+                child_style.writing_mode = WritingMode::VerticalLr;
+                child_style.width = Length::calc_percent_px(50.0, -10.0);
+                child_style.height = Length::auto();
+            });
         }
 
         let direction = doc
@@ -6156,21 +6425,24 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(ElementTag::Div);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.display = Display::InlineFlex;
-            style.writing_mode = WritingMode::VerticalLr;
-            style.flex_direction = FlexDirection::Column;
-            style.row_gap = Some(Length::px(20.0));
-            style.column_gap = Some(Length::px(20.0));
+            doc.update_resolved_style(container, |style| {
+                style.display = Display::InlineFlex;
+                style.writing_mode = WritingMode::VerticalLr;
+                style.flex_direction = FlexDirection::Column;
+                style.row_gap = Some(Length::px(20.0));
+                style.column_gap = Some(Length::px(20.0));
+            });
         }
         doc.append_child(doc.root(), container);
         for text in ["Black Panther", "Wonder Woman", "Storm", "Flash"] {
             let child = doc.create_node(ElementTag::Div);
-            doc.node_mut(child).style.display = Display::Block;
-            doc.node_mut(child).style.writing_mode = WritingMode::VerticalLr;
+            doc.update_resolved_style(child, |style| style.display = Display::Block);
+            doc.update_resolved_style(child, |style| style.writing_mode = WritingMode::VerticalLr);
             doc.append_child(container, child);
             let text_node = doc.create_node(ElementTag::Text);
-            doc.node_mut(text_node).style.writing_mode = WritingMode::VerticalLr;
+            doc.update_resolved_style(text_node, |style| {
+                style.writing_mode = WritingMode::VerticalLr
+            });
             doc.node_mut(text_node).text = Some(text.to_string());
             doc.append_child(child, text_node);
         }
@@ -6228,19 +6500,21 @@ mod tests {
                 let mut doc = Document::new();
                 let container = make_flex_container(&mut doc, 100, 100);
                 {
-                    let style = doc.node_mut(container).style_mut();
-                    style.display = display;
-                    style.writing_mode = mode;
-                    style.flex_direction = direction;
-                    style.flex_wrap = wrap;
-                    style.row_gap = Some(Length::px(20.0));
-                    style.column_gap = Some(Length::px(20.0));
+                    doc.update_resolved_style(container, |style| {
+                        style.display = display;
+                        style.writing_mode = mode;
+                        style.flex_direction = direction;
+                        style.flex_wrap = wrap;
+                        style.row_gap = Some(Length::px(20.0));
+                        style.column_gap = Some(Length::px(20.0));
+                    });
                 }
                 for _ in 0..3 {
                     let child = add_flex_child(&mut doc, container, 40, 40);
-                    let style = doc.node_mut(child).style_mut();
-                    style.writing_mode = mode;
-                    style.flex_shrink = 0.0;
+                    doc.update_resolved_style(child, |style| {
+                        style.writing_mode = mode;
+                        style.flex_shrink = 0.0;
+                    });
                 }
 
                 let writing_direction = doc.node(container).style.direction.writing_direction(mode);
@@ -6308,15 +6582,16 @@ mod tests {
                 let mut doc = Document::new();
                 let container = make_flex_container(&mut doc, 40, 30);
                 {
-                    let style = doc.node_mut(container).style_mut();
-                    style.writing_mode = mode;
-                    style.flex_direction = flex_direction;
-                    style.flex_wrap = FlexWrap::Nowrap;
+                    doc.update_resolved_style(container, |style| {
+                        style.writing_mode = mode;
+                        style.flex_direction = flex_direction;
+                        style.flex_wrap = FlexWrap::Nowrap;
+                    });
                 }
                 let mut item_ids = Vec::new();
                 for _ in 0..4 {
                     let child = add_flex_child(&mut doc, container, 20, 15);
-                    doc.node_mut(child).style.writing_mode = mode;
+                    doc.update_resolved_style(child, |style| style.writing_mode = mode);
                     item_ids.push(child);
                 }
 
@@ -6382,19 +6657,21 @@ mod tests {
             let mut doc = Document::new();
             let item = doc.create_node(ElementTag::Div);
             {
-                let style = doc.node_mut(item).style_mut();
-                style.display = Display::Block;
-                style.writing_mode = WritingMode::VerticalLr;
-                style.margin_bottom = Length::px(cross_margin as f32);
+                doc.update_resolved_style(item, |style| {
+                    style.display = Display::Block;
+                    style.writing_mode = WritingMode::VerticalLr;
+                    style.margin_bottom = Length::px(cross_margin as f32);
+                });
             }
             doc.append_child(doc.root(), item);
             for _ in 0..2 {
                 let atomic = doc.create_node(ElementTag::Span);
-                let style = doc.node_mut(atomic).style_mut();
-                style.display = Display::InlineBlock;
-                style.writing_mode = WritingMode::VerticalLr;
-                style.width = Length::px(15.0);
-                style.height = Length::px(95.0);
+                doc.update_resolved_style(atomic, |style| {
+                    style.display = Display::InlineBlock;
+                    style.writing_mode = WritingMode::VerticalLr;
+                    style.width = Length::px(15.0);
+                    style.height = Length::px(95.0);
+                });
                 doc.append_child(item, atomic);
             }
 
@@ -6434,21 +6711,23 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(ElementTag::Div);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.display = Display::InlineFlex;
-            style.writing_mode = WritingMode::VerticalRl;
-            style.flex_direction = FlexDirection::Column;
-            style.flex_wrap = FlexWrap::Wrap;
-            style.max_width = Length::px(100.0);
+            doc.update_resolved_style(container, |style| {
+                style.display = Display::InlineFlex;
+                style.writing_mode = WritingMode::VerticalRl;
+                style.flex_direction = FlexDirection::Column;
+                style.flex_wrap = FlexWrap::Wrap;
+                style.max_width = Length::px(100.0);
+            });
         }
         doc.append_child(doc.root(), container);
         for size in [30.0, 40.0, 50.0] {
             let child = doc.create_node(ElementTag::Div);
-            let style = doc.node_mut(child).style_mut();
-            style.display = Display::Block;
-            style.writing_mode = WritingMode::VerticalRl;
-            style.width = Length::px(size);
-            style.height = Length::px(20.0);
+            doc.update_resolved_style(child, |style| {
+                style.display = Display::Block;
+                style.writing_mode = WritingMode::VerticalRl;
+                style.width = Length::px(size);
+                style.height = Length::px(20.0);
+            });
             doc.append_child(container, child);
         }
 
@@ -6461,14 +6740,17 @@ mod tests {
     fn stretch_cross_size_transfers_natural_ratio_to_flex_auto_minimum() {
         let mut doc = Document::new();
         let container = make_flex_container(&mut doc, 200, 200);
-        doc.node_mut(container).style.flex_direction = FlexDirection::Column;
+        doc.update_resolved_style(container, |style| {
+            style.flex_direction = FlexDirection::Column
+        });
         let item = doc.create_node(ElementTag::Canvas);
         {
-            let style = doc.node_mut(item).style_mut();
-            style.display = Display::InlineBlock;
-            style.width = Length::stretch();
-            style.flex_basis = Length::zero();
-            style.align_self = ItemAlignment::new(ItemPosition::Start);
+            doc.update_resolved_style(item, |style| {
+                style.display = Display::InlineBlock;
+                style.width = Length::stretch();
+                style.flex_basis = Length::zero();
+                style.align_self = ItemAlignment::new(ItemPosition::Start);
+            });
         }
         doc.node_mut(item).replaced = Some(openui_dom::ReplacedContent {
             resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
@@ -6504,19 +6786,21 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(ElementTag::Div);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.display = Display::InlineFlex;
-            style.height = Length::px(100.0);
+            doc.update_resolved_style(container, |style| {
+                style.display = Display::InlineFlex;
+                style.height = Length::px(100.0);
+            });
         }
         doc.append_child(doc.root(), container);
         let item = doc.create_node(ElementTag::Div);
-        doc.node_mut(item).style.display = Display::Block;
+        doc.update_resolved_style(item, |style| style.display = Display::Block);
         doc.append_child(container, item);
         let canvas = doc.create_node(ElementTag::Canvas);
         {
-            let style = doc.node_mut(canvas).style_mut();
-            style.display = Display::InlineBlock;
-            style.height = Length::percent(100.0);
+            doc.update_resolved_style(canvas, |style| {
+                style.display = Display::InlineBlock;
+                style.height = Length::percent(100.0);
+            });
         }
         doc.node_mut(canvas).replaced = Some(openui_dom::ReplacedContent {
             resource: openui_dom::ReplacedResourceKind::TransparentCanvas,
@@ -6536,16 +6820,17 @@ mod tests {
         let mut doc = Document::new();
         let container = make_flex_container(&mut doc, 90, 90);
         {
-            let style = doc.node_mut(container).style_mut();
-            style.flex_direction = FlexDirection::ColumnReverse;
-            style.justify_content = ContentAlignment {
-                position: ContentPosition::FlexStart,
-                distribution: ContentDistribution::Default,
-                overflow: OverflowAlignment::Safe,
-            };
+            doc.update_resolved_style(container, |style| {
+                style.flex_direction = FlexDirection::ColumnReverse;
+                style.justify_content = ContentAlignment {
+                    position: ContentPosition::FlexStart,
+                    distribution: ContentDistribution::Default,
+                    overflow: OverflowAlignment::Safe,
+                };
+            });
         }
         let child = add_flex_child(&mut doc, container, 100, 100);
-        doc.node_mut(child).style_mut().flex_shrink = 0.0;
+        doc.update_resolved_style(child, |style| style.flex_shrink = 0.0);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(90), LayoutUnit::from_i32(90));
         let fragment = flex_layout(&doc, container, &space);
@@ -6558,11 +6843,12 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(openui_dom::ElementTag::Div);
         {
-            let s = doc.node_mut(container).style_mut();
-            s.display = Display::Flex;
-            s.width = Length::px(400.0);
-            s.height = Length::px(100.0);
-            s.column_gap = Some(Length::px(20.0));
+            doc.update_resolved_style(container, |s| {
+                s.display = Display::Flex;
+                s.width = Length::px(400.0);
+                s.height = Length::px(100.0);
+                s.column_gap = Some(Length::px(20.0));
+            });
         }
         doc.append_child(doc.root(), container);
 
@@ -6589,9 +6875,9 @@ mod tests {
         let c2 = add_flex_child(&mut doc, container, 50, 50);
         let c3 = add_flex_child(&mut doc, container, 50, 50);
 
-        doc.node_mut(c1).style_mut().order = 3;
-        doc.node_mut(c2).style_mut().order = 1;
-        doc.node_mut(c3).style_mut().order = 2;
+        doc.update_resolved_style(c1, |style| style.order = 3);
+        doc.update_resolved_style(c2, |style| style.order = 1);
+        doc.update_resolved_style(c3, |style| style.order = 2);
 
         let space = ConstraintSpace::for_root(LayoutUnit::from_i32(300), LayoutUnit::from_i32(100));
 
@@ -6609,11 +6895,12 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(openui_dom::ElementTag::Div);
         {
-            let s = doc.node_mut(container).style_mut();
-            s.display = Display::Flex;
-            s.width = Length::px(300.0);
-            s.height = Length::px(100.0);
-            s.align_items = ItemAlignment::new(ItemPosition::Center);
+            doc.update_resolved_style(container, |s| {
+                s.display = Display::Flex;
+                s.width = Length::px(300.0);
+                s.height = Length::px(100.0);
+                s.align_items = ItemAlignment::new(ItemPosition::Center);
+            });
         }
         doc.append_child(doc.root(), container);
 
@@ -6633,11 +6920,12 @@ mod tests {
         let mut doc = Document::new();
         let container = doc.create_node(openui_dom::ElementTag::Div);
         {
-            let s = doc.node_mut(container).style_mut();
-            s.display = Display::Flex;
-            s.width = Length::px(300.0);
-            s.height = Length::px(100.0);
-            s.flex_direction = FlexDirection::RowReverse;
+            doc.update_resolved_style(container, |s| {
+                s.display = Display::Flex;
+                s.width = Length::px(300.0);
+                s.height = Length::px(100.0);
+                s.flex_direction = FlexDirection::RowReverse;
+            });
         }
         doc.append_child(doc.root(), container);
 

@@ -1,11 +1,41 @@
 //! Immutable, backend-independent scene snapshots.
 
-use openui_geometry::ViewportMetrics;
+use openui_geometry::{RasterConfiguration, RasterSnapping, ViewportMetrics};
 use openui_layout::Fragment;
 use openui_paint::{rasterize_picture, RecordedPicture};
 use skia_safe::image::CachingHint;
 use skia_safe::{Canvas, EncodedImageFormat};
 use std::sync::{Arc, Condvar, Mutex};
+
+#[cfg(feature = "ganesh-gl")]
+mod ganesh_gl;
+#[cfg(feature = "ganesh-gl")]
+pub use ganesh_gl::GaneshGlCompositor;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RasterBackendIdentity {
+    pub backend: &'static str,
+    pub gl_renderer: Option<String>,
+    pub gl_version: Option<String>,
+    pub driver: Option<String>,
+    pub color_type: &'static str,
+    pub sample_count: usize,
+    pub surface_properties: &'static str,
+}
+
+impl RasterBackendIdentity {
+    pub fn cpu_skia() -> Self {
+        Self {
+            backend: "cpu-skia",
+            gl_renderer: None,
+            gl_version: None,
+            driver: None,
+            color_type: "N32-premultiplied",
+            sample_count: 0,
+            surface_properties: "scene-raster-configuration-v1",
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct SceneRect {
@@ -32,6 +62,7 @@ pub struct SceneGeneration(pub u64);
 pub struct SceneSnapshot {
     generation: SceneGeneration,
     viewport: ViewportMetrics,
+    raster_configuration: RasterConfiguration,
     picture: Arc<RecordedPicture>,
     fragments: Arc<Fragment>,
     logical_damage: Arc<[SceneRect]>,
@@ -53,6 +84,7 @@ impl SceneSnapshot {
         Self {
             generation,
             viewport,
+            raster_configuration: picture.raster_configuration,
             picture: Arc::new(picture),
             fragments,
             logical_damage: damage.into(),
@@ -65,6 +97,9 @@ impl SceneSnapshot {
     }
     pub fn viewport(&self) -> ViewportMetrics {
         self.viewport
+    }
+    pub fn raster_configuration(&self) -> RasterConfiguration {
+        self.raster_configuration
     }
     pub fn fragments(&self) -> &Arc<Fragment> {
         &self.fragments
@@ -101,17 +136,15 @@ fn physical_damage_rect(rect: SceneRect, viewport: ViewportMetrics) -> Option<Ph
     {
         return None;
     }
-    let scale = viewport.device_scale_factor();
+    let snapping = RasterSnapping::new(viewport.device_scale_factor());
     let max_x = f64::from(viewport.physical_width());
     let max_y = f64::from(viewport.physical_height());
-    let left = (f64::from(rect.x) * scale).floor().clamp(0.0, max_x) as u32;
-    let top = (f64::from(rect.y) * scale).floor().clamp(0.0, max_y) as u32;
-    let right = ((f64::from(rect.x) + f64::from(rect.width)) * scale)
-        .ceil()
-        .clamp(0.0, max_x) as u32;
-    let bottom = ((f64::from(rect.y) + f64::from(rect.height)) * scale)
-        .ceil()
-        .clamp(0.0, max_y) as u32;
+    let (left, right) = snapping.outward_physical_span(rect.x, rect.width)?;
+    let (top, bottom) = snapping.outward_physical_span(rect.y, rect.height)?;
+    let left = (left as f64).clamp(0.0, max_x) as u32;
+    let top = (top as f64).clamp(0.0, max_y) as u32;
+    let right = (right as f64).clamp(0.0, max_x) as u32;
+    let bottom = (bottom as f64).clamp(0.0, max_y) as u32;
     (right > left && bottom > top).then_some(PhysicalSceneRect {
         x: left,
         y: top,
@@ -127,6 +160,8 @@ pub struct Frame {
     /// Physical raster height.
     pub height: u32,
     pub viewport: ViewportMetrics,
+    pub raster_configuration: RasterConfiguration,
+    pub raster_backend_identity: RasterBackendIdentity,
     pub stride: usize,
     pub pixels: Vec<u8>,
     pub scene_generation: SceneGeneration,
@@ -166,6 +201,11 @@ pub struct SoftwareCompositor {
 
 impl SoftwareCompositor {
     pub fn render(&mut self, scene: &SceneSnapshot) -> Result<Frame, CompositorError> {
+        if scene.raster_configuration.backend == openui_geometry::RasterBackend::GaneshGl {
+            return Err(CompositorError::Raster(
+                "Ganesh scene requires GaneshGlCompositor".into(),
+            ));
+        }
         self.stats.submitted += 1;
         if self.last_presented == Some(scene.generation) {
             if let Some(frame) = self.last_frame.clone() {
@@ -192,6 +232,8 @@ impl SoftwareCompositor {
             width,
             height,
             viewport: scene.viewport,
+            raster_configuration: scene.raster_configuration,
+            raster_backend_identity: RasterBackendIdentity::cpu_skia(),
             stride,
             pixels,
             scene_generation: scene.generation,
@@ -211,6 +253,11 @@ impl SoftwareCompositor {
     }
 
     pub fn render_png(&mut self, scene: &SceneSnapshot) -> Result<Vec<u8>, CompositorError> {
+        if scene.raster_configuration.backend == openui_geometry::RasterBackend::GaneshGl {
+            return Err(CompositorError::Raster(
+                "Ganesh scene requires GaneshGlCompositor".into(),
+            ));
+        }
         self.stats.submitted += 1;
         let mut surface = rasterize_picture(&scene.picture).map_err(CompositorError::Raster)?;
         let data = surface

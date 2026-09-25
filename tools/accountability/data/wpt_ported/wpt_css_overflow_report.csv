@@ -155,7 +155,7 @@ line-clamp_line-clamp-auto-034,ported,css_overflow_line_clamp_line_clamp_auto_03
 line-clamp_line-clamp-auto-035,ported,css_overflow_line_clamp_line_clamp_auto_035,
 line-clamp_line-clamp-auto-036,ported,css_overflow_line_clamp_line_clamp_auto_036,
 line-clamp_line-clamp-auto-037,ported,css_overflow_line_clamp_line_clamp_auto_037,
-line-clamp_line-clamp-auto-038,not_portable,,uses_javascript
+line-clamp_line-clamp-auto-038,ported,css_overflow_line_clamp_line_clamp_auto_038,
 line-clamp_line-clamp-auto-039,ported,css_overflow_line_clamp_line_clamp_auto_039,
 line-clamp_line-clamp-auto-040,ported,css_overflow_line_clamp_line_clamp_auto_040,
 line-clamp_line-clamp-auto-041,ported,css_overflow_line_clamp_line_clamp_auto_041,
@@ -182,7 +182,7 @@ line-clamp_line-clamp-balance-009,ported,css_overflow_line_clamp_line_clamp_bala
 line-clamp_line-clamp-balance-010,ported,css_overflow_line_clamp_line_clamp_balance_010,
 line-clamp_line-clamp-balance-011,ported,css_overflow_line_clamp_line_clamp_balance_011,
 line-clamp_line-clamp-balance-012,ported,css_overflow_line_clamp_line_clamp_balance_012,
-line-clamp_line-clamp-content-height-with-dynamic-change,not_portable,,uses_javascript
+line-clamp_line-clamp-content-height-with-dynamic-change,ported,css_overflow_line_clamp_line_clamp_content_height_with_dynamic_change,
 line-clamp_line-clamp-content-height-with-dynamic-change-ref,ported,css_overflow_line_clamp_line_clamp_content_height_with_dynamic_change_ref,
 line-clamp_line-clamp-with-abspos-001,ported,css_overflow_line_clamp_line_clamp_with_abspos_001,
 line-clamp_line-clamp-with-abspos-002,ported,css_overflow_line_clamp_line_clamp_with_abspos_002,
@@ -262,7 +262,7 @@ line-clamp_webkit-line-clamp-022,not_portable,,uses_javascript
 line-clamp_webkit-line-clamp-023,not_portable,,uses_javascript
 line-clamp_webkit-line-clamp-024,ported,css_overflow_line_clamp_webkit_line_clamp_024,
 line-clamp_webkit-line-clamp-025,ported,css_overflow_line_clamp_webkit_line_clamp_025,
-line-clamp_webkit-line-clamp-026,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-026,ported,css_overflow_line_clamp_webkit_line_clamp_026,
 line-clamp_webkit-line-clamp-027,ported,css_overflow_line_clamp_webkit_line_clamp_027,
 line-clamp_webkit-line-clamp-029,ported,css_overflow_line_clamp_webkit_line_clamp_029,
 line-clamp_webkit-line-clamp-030,ported,css_overflow_line_clamp_webkit_line_clamp_030,
@@ -292,7 +292,7 @@ line-clamp_webkit-line-clamp-053,ported,css_overflow_line_clamp_webkit_line_clam
 line-clamp_webkit-line-clamp-abspos-001,ported,css_overflow_line_clamp_webkit_line_clamp_abspos_001,
 line-clamp_webkit-line-clamp-block-in-inline-001,ported,css_overflow_line_clamp_webkit_line_clamp_block_in_inline_001,
 line-clamp_webkit-line-clamp-bug-1926732-crash,ported,css_overflow_line_clamp_webkit_line_clamp_bug_1926732_crash,
-line-clamp_webkit-line-clamp-dynamic-001,not_portable,,uses_javascript
+line-clamp_webkit-line-clamp-dynamic-001,ported,css_overflow_line_clamp_webkit_line_clamp_dynamic_001,
 line-clamp_webkit-line-clamp-with-line-height,ported,css_overflow_line_clamp_webkit_line_clamp_with_line_height,
 line-clamp_webkit-line-clamp-with-max-height.tentative,ported,css_overflow_line_clamp_webkit_line_clamp_with_max_height_tentative,
 logical-overflow-001,not_portable,,uses_javascript
@@ -438,7 +438,7 @@ overflow-img-svg-ref,ported,css_overflow_overflow_img_svg_ref,
 overflow-inline-block-with-opacity,ported,css_overflow_overflow_inline_block_with_opacity,
 overflow-inline-transform-relative,not_portable,,uses_javascript
 overflow-negative-margin,ported,css_overflow_overflow_negative_margin,
-overflow-negative-margin-dynamic,not_portable,,uses_javascript
+overflow-negative-margin-dynamic,ported,css_overflow_overflow_negative_margin_dynamic,
 overflow-no-frameset-propagation,ported,css_overflow_overflow_no_frameset_propagation,
 overflow-no-interpolation,not_portable,,uses_javascript
 overflow-outside-padding,not_portable,,uses_javascript
@@ -518,7 +518,7 @@ scroll-markers_column-scroll-marker-011,not_portable,,uses_javascript
 scroll-markers_column-scroll-marker-012,not_portable,,uses_javascript
 scroll-markers_column-scroll-marker-013,not_portable,,uses_javascript
 scroll-markers_column-scroll-marker-014,not_portable,,uses_javascript
-scroll-markers_column-scroll-marker-015-crash,not_portable,,uses_javascript
+scroll-markers_column-scroll-marker-015-crash,ported,css_overflow_scroll_markers_column_scroll_marker_015_crash,
 scroll-markers_column-scroll-marker-counters,ported,css_overflow_scroll_markers_column_scroll_marker_counters,
 scroll-markers_column-scroll-marker-counters-ref,ported,css_overflow_scroll_markers_column_scroll_marker_counters_ref,
 scroll-markers_column-scroll-marker-dynamic-style-update,not_portable,,uses_javascript
@@ -621,7 +621,7 @@ scroll-markers_scroll-marker-counters,ported,css_overflow_scroll_markers_scroll_
 scroll-markers_scroll-marker-counters-ref,ported,css_overflow_scroll_markers_scroll_marker_counters_ref,
 scroll-markers_scroll-marker-disposed-event-target,not_portable,,uses_javascript
 scroll-markers_scroll-marker-double-activation,not_portable,,uses_javascript
-scroll-markers_scroll-marker-dynamic,not_portable,,uses_javascript
+scroll-markers_scroll-marker-dynamic,ported,css_overflow_scroll_markers_scroll_marker_dynamic,
 scroll-markers_scroll-marker-dynamic-crash,not_portable,,uses_javascript
 scroll-markers_scroll-marker-dynamic-ref,ported,css_overflow_scroll_markers_scroll_marker_dynamic_ref,
 scroll-markers_scroll-marker-elementFromPoint,not_portable,,uses_javascript
@@ -695,7 +695,7 @@ scroll-markers_scroll-markers-focus-active-element,not_portable,,uses_javascript
 scroll-markers_scroll-markers-focus-on-scrolling,not_portable,,uses_javascript
 scroll-markers_scroll-markers-inside-canvas-crash,ported,css_overflow_scroll_markers_scroll_markers_inside_canvas_crash,
 scroll-markers_scroll-markers-inside-select-crash,ported,css_overflow_scroll_markers_scroll_markers_inside_select_crash,
-scroll-markers_scroll-markers-resize-crash,not_portable,,uses_javascript
+scroll-markers_scroll-markers-resize-crash,ported,css_overflow_scroll_markers_scroll_markers_resize_crash,
 scroll-markers_scroll-markers-under-content-visibility-auto,ported,css_overflow_scroll_markers_scroll_markers_under_content_visibility_auto,
 scroll-markers_scroll-markers-under-content-visibility-auto-ref,ported,css_overflow_scroll_markers_scroll_markers_under_content_visibility_auto_ref,
 scroll-markers_scroll-markers-updated-by-programmatic-scroll,not_portable,,uses_javascript
@@ -707,10 +707,10 @@ scroll-markers_scroll-target-group-002-ref,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-003,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-003-ref,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-004,ported,css_overflow_scroll_markers_scroll_target_group_004,
-scroll-markers_scroll-target-group-005,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-005,ported,css_overflow_scroll_markers_scroll_target_group_005,
 scroll-markers_scroll-target-group-006,not_portable,,uses_javascript
-scroll-markers_scroll-target-group-007,not_portable,,uses_javascript
-scroll-markers_scroll-target-group-008,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-007,ported,css_overflow_scroll_markers_scroll_target_group_007,
+scroll-markers_scroll-target-group-008,ported,css_overflow_scroll_markers_scroll_target_group_008,
 scroll-markers_scroll-target-group-008-ref,ported,css_overflow_scroll_markers_scroll_target_group_008_ref,
 scroll-markers_scroll-target-group-009,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-009-ref,not_portable,,uses_javascript
@@ -720,7 +720,7 @@ scroll-markers_scroll-target-group-012,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-012-ref,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-013,not_portable,,uses_javascript
 scroll-markers_scroll-target-group-inline-crash,ported,css_overflow_scroll_markers_scroll_target_group_inline_crash,
-scroll-markers_scroll-target-group-inline-targets,not_portable,,uses_javascript
+scroll-markers_scroll-target-group-inline-targets,ported,css_overflow_scroll_markers_scroll_target_group_inline_targets,
 scroll-markers_scroll-target-group-inline-targets-ref,not_portable,,uses_javascript
 scroll-markers_target-current-scroll-marker-update,not_portable,,uses_javascript
 scroll-markers_targeted-column-scroll-marker-selection-001,not_portable,,uses_javascript
@@ -785,7 +785,7 @@ scrollbar-gutter-002-ref,not_portable,,uses_javascript
 scrollbar-gutter-003,ported,css_overflow_scrollbar_gutter_003,
 scrollbar-gutter-abspos-001,ported,css_overflow_scrollbar_gutter_abspos_001,
 scrollbar-gutter-abspos-001-ref,ported,css_overflow_scrollbar_gutter_abspos_001_ref,
-scrollbar-gutter-dynamic-001,not_portable,,uses_javascript
+scrollbar-gutter-dynamic-001,ported,css_overflow_scrollbar_gutter_dynamic_001,
 scrollbar-gutter-dynamic-001-ref,ported,css_overflow_scrollbar_gutter_dynamic_001_ref,
 scrollbar-gutter-dynamic-002,not_portable,,uses_javascript
 scrollbar-gutter-dynamic-002-ref,ported,css_overflow_scrollbar_gutter_dynamic_002_ref,
@@ -827,7 +827,7 @@ scrollbar-gutter-with-background-gradient,ported,css_overflow_scrollbar_gutter_w
 scrollbar-gutter-with-background-gradient-ref,ported,css_overflow_scrollbar_gutter_with_background_gradient_ref,
 scrollbar-large-scale-in-iframe,ported,css_overflow_scrollbar_large_scale_in_iframe,
 scrollbar-large-scale-in-iframe-ref,ported,css_overflow_scrollbar_large_scale_in_iframe_ref,
-scrollbars-chrome-bug-001,not_portable,,uses_javascript
+scrollbars-chrome-bug-001,ported,css_overflow_scrollbars_chrome_bug_001,
 scrollbars-chrome-bug-001-ref,ported,css_overflow_scrollbars_chrome_bug_001_ref,
 scroller-covered-by-empty-svg,not_portable,,uses_javascript
 select-size-overflow-001,not_portable,,unsupported element: <select>

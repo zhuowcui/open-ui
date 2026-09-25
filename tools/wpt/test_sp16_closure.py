@@ -127,10 +127,10 @@ class RealFontPorterTests(unittest.TestCase):
 
 
 class RunnerAndOwnershipTests(unittest.TestCase):
-    def test_real_profile_precedes_ahem_and_pins_freetype(self):
-        env = runner.openui_environment(use_ahem_noaa=True, use_real_font=True)
-        self.assertEqual(env["OPENUI_EDGING"], "subpixel")
-        self.assertEqual(env["OPENUI_HINTING"], "slight")
+    def test_real_profile_pins_freetype_without_ambient_raster_state(self):
+        env = runner.openui_environment(use_real_font=True)
+        self.assertNotIn("OPENUI_EDGING", env)
+        self.assertNotIn("OPENUI_HINTING", env)
         self.assertTrue(
             env["LD_LIBRARY_PATH"].startswith(runner.REAL_FONT_FREETYPE_DIR + ":")
         )

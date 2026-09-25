@@ -41,6 +41,10 @@ pub struct LineInfo {
     /// Marker text for clamping. `None` uses U+2026 for text-overflow.
     pub ellipsis_text: Option<String>,
 
+    /// Whether the generated ellipsis is a block/line-clamp marker rather
+    /// than an ordinary `text-overflow` marker.
+    pub ellipsis_is_line_clamp: bool,
+
     /// Preserved logical-start spacing of a discarded atomic item at the
     /// truncation boundary, inserted immediately before an end ellipsis.
     pub ellipsis_inline_start_advance: LayoutUnit,
@@ -78,6 +82,7 @@ impl LineInfo {
             has_ellipsis: false,
             ellipsis_at_start: false,
             ellipsis_text: None,
+            ellipsis_is_line_clamp: false,
             ellipsis_inline_start_advance: LayoutUnit::zero(),
             hang_width: LayoutUnit::zero(),
             has_forced_hyphen: false,

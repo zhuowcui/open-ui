@@ -1,6 +1,6 @@
 filename,status,fn_name,reason
-adjoining-floats-dynamic,not_portable,,uses_javascript
-block-in-inline-become-float,not_portable,,uses_javascript
+adjoining-floats-dynamic,ported,css2_floats_adjoining_floats_dynamic,
+block-in-inline-become-float,ported,css2_floats_block_in_inline_become_float,
 computed-float-position-absolute,not_portable,,uses_javascript
 crashtests_float-rewind-parallel-flow-1-crash,ported,css2_floats_crashtests_float_rewind_parallel_flow_1_crash,
 crashtests_float-rewind-parallel-flow-2-crash,ported,css2_floats_crashtests_float_rewind_parallel_flow_2_crash,
@@ -28,7 +28,7 @@ float-nowrap-9,ported,css2_floats_float_nowrap_9,
 float-nowrap-hyphen-rewind-1,ported,css2_floats_float_nowrap_hyphen_rewind_1,
 float-nowrap-hyphen-rewind-1-ref,ported,css2_floats_float_nowrap_hyphen_rewind_1_ref,
 float-nowrap-hyphen-rewind-1-ref2,ported,css2_floats_float_nowrap_hyphen_rewind_1_ref2,
-float-paint-relayout,not_portable,,uses_javascript
+float-paint-relayout,ported,css2_floats_float_paint_relayout,
 float-root,ported,css2_floats_float_root,
 float-root-ref,ported,css2_floats_float_root_ref,
 float-table-align-left-quirk,ported,css2_floats_float_table_align_left_quirk,
@@ -169,7 +169,7 @@ overflow-scroll-float-paint-order,ported,css2_floats_overflow_scroll_float_paint
 overflow-scroll-float-paint-order-ref,ported,css2_floats_overflow_scroll_float_paint_order_ref,
 overhanging-float-paint-order,ported,css2_floats_overhanging_float_paint_order,
 overhanging-float-paint-order-ref,ported,css2_floats_overhanging_float_paint_order_ref,
-remove-block-between-inline-and-float,not_portable,,uses_javascript
+remove-block-between-inline-and-float,ported,css2_floats_remove_block_between_inline_and_float,
 remove-float-in-first-line,not_portable,,uses_javascript
 remove-float-then-abspos-in-inline,not_portable,,uses_javascript
 zero-available-space-float-positioning,ported,css2_floats_zero_available_space_float_positioning,
@@ -185,3 +185,8 @@ crashtests_firefox-bug-1904409,ported,css2_floats_crashtests_firefox_bug_1904409
 crashtests_firefox-bug-1906768,ported,css2_floats_crashtests_firefox_bug_1906768,
 crashtests_float-rewind-parallel-flow-3-crash,ported,css2_floats_crashtests_float_rewind_parallel_flow_3_crash,
 crashtests_huge-width-after-float,ported,css2_floats_crashtests_huge_width_after_float,
+crashtests_float-dynamic-change-1,ported,css2_floats_crashtests_float_dynamic_change_1,
+crashtests_float-dynamic-change-3,ported,css2_floats_crashtests_float_dynamic_change_3,
+crashtests_float-dynamic-change-4,ported,css2_floats_crashtests_float_dynamic_change_4,
+crashtests_float-dynamic-change-5,ported,css2_floats_crashtests_float_dynamic_change_5,
+crashtests_float-dynamic-change-6,ported,css2_floats_crashtests_float_dynamic_change_6,

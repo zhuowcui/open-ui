@@ -179,7 +179,9 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         self.assertIn("FormControlRole::TextArea", rust)
         self.assertIn("FormControlRole::Checkbox", rust)
         self.assertIn("intrinsic_width: Some(95.0)", rust)
-        self.assertIn("style.box_sizing = BoxSizing::BorderBox", rust)
+        self.assertIn(
+            "RendererStyleValue::BoxSizing(BoxSizing::BorderBox)", rust
+        )
 
     def test_18_select_option_optgroup_roles_emit(self):
         rust = self.generate("", "<select><optgroup><option>x</option></optgroup></select>")
@@ -190,6 +192,13 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         rust = self.generate("embed{width:10px}", "<form><embed></form>")
         self.assertIn("ElementTag::Form", rust)
         self.assertIn("ElementTag::Embed", rust)
+        reset_button = self.generate(
+            "button{all:unset;display:block}", "<button></button>"
+        )
+        self.assertIn("RendererNodeState::FormControlNativeAppearance(false)", reset_button)
+        self.assertNotIn("Color::from_rgba8(239, 239, 239, 255)", reset_button)
+        self.assertNotIn("RendererStyleValue::BorderTopWidth(2)", reset_button)
+        self.assertNotIn("RendererNodeState::Replaced", reset_button)
 
     def test_20_legacy_box_alignment_maps_compatibly(self):
         rust = self.generate("#x{display:flex;-webkit-box-align:end;-webkit-box-pack:center}")
@@ -213,7 +222,7 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
 
     def test_22_inset_clip_path_emits_public_style_contract(self):
         rust = self.generate("#x{clip-path:inset(1px 2px 3px 4px)}")
-        self.assertIn("clip_path_inset = Some([", rust)
+        self.assertIn("RendererStyleValue::ClipPathInset(Some([", rust)
         self.assertIn("Length::px(4.0)", rust)
 
     def test_23_individual_translate_lowers_to_transform(self):
@@ -245,6 +254,32 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
         )
         self.assertIn("ReplacedResourceKind::Image", picture)
         self.assertIn("intrinsic_width: Some(20.0)", picture)
+        video_path = (
+            port_wpt.WPT_SOURCE_ROOT
+            / "css/css-sizing/aspect-ratio/replaced-element-003.html"
+        )
+        video_parser = port_wpt.parse_wpt_html(str(video_path), root_aware=True)
+        video = port_wpt.generate_rust_fn(
+            "sp20_video", video_parser.root, video_parser.html_styles,
+            root_aware=True,
+        )
+        self.assertIn("ReplacedResourceKind::MediaPoster", video)
+        self.assertIn('"image/x-openui-rgba8"', video)
+        self.assertIn(
+            "5af842e2a6f10fac705d195ac11076b3dff249b01a5e285fb00f8cc4f3f64cff",
+            video,
+        )
+        self.assertIn("RendererStyleValue::ObjectFit(ObjectFit::Contain)", video)
+        self.assertNotIn("ReplacedResourceKind::TransparentCanvas", video)
+        failed_image = self.generate(
+            "img{columns:5;line-height:20px;background:red}",
+            '<img alt="XXXXX XXXXX" src="invalid.jpg" width="300" height="200">',
+        )
+        self.assertIn("ElementTag::Canvas", failed_image)
+        self.assertIn('Some("XXXXX XXXXX".to_string())', failed_image)
+        self.assertNotIn(
+            "style.display = Display::InlineBlock", failed_image
+        )
         with tempfile.TemporaryDirectory() as temp:
             iframe_path = Path(temp) / "iframe.html"
             iframe_path.write_text(
@@ -258,9 +293,16 @@ class Sp20ClosureAndPorterTests(unittest.TestCase):
                 "sp20_iframe", iframe_parser.root, iframe_parser.html_styles,
                 root_aware=True,
             )
-            self.assertIn("style.width = Length::px(300.0)", iframe_rust)
-            self.assertIn("style.height = Length::px(150.0)", iframe_rust)
-            self.assertIn("embedded_canvas_color = Some(Color::RED)", iframe_rust)
+            self.assertIn(
+                "RendererStyleValue::Width(Length::px(300.0))", iframe_rust
+            )
+            self.assertIn(
+                "RendererStyleValue::Height(Length::px(150.0))", iframe_rust
+            )
+            self.assertIn(
+                "RendererNodeState::EmbeddedCanvasColor(Some(Color::RED))",
+                iframe_rust,
+            )
 
     def test_25_packaged_local_resource_matches_manifest(self):
         resource = port_wpt._packaged_resource("/media/1x1-green.png", closure.WPT_BASE)

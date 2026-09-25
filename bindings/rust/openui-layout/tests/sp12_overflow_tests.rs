@@ -32,21 +32,25 @@ fn build_container_with_children(
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(container_width as f32);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| {
+        style.width = Length::px(container_width as f32)
+    });
     if let Some(h) = container_height {
-        doc.node_mut(container).style.height = Length::px(h as f32);
+        doc.update_resolved_style(container, |style| style.height = Length::px(h as f32));
     }
-    doc.node_mut(container).style.overflow_x = overflow;
-    doc.node_mut(container).style.overflow_y = overflow;
+    doc.update_resolved_style(container, |style| style.overflow_x = overflow);
+    doc.update_resolved_style(container, |style| style.overflow_y = overflow);
     doc.append_child(vp, container);
 
     let mut child_ids = Vec::new();
     for &ch in child_heights {
         let child = doc.create_node(ElementTag::Div);
-        doc.node_mut(child).style.display = Display::Block;
-        doc.node_mut(child).style.width = Length::px(container_width as f32);
-        doc.node_mut(child).style.height = Length::px(ch as f32);
+        doc.update_resolved_style(child, |style| style.display = Display::Block);
+        doc.update_resolved_style(child, |style| {
+            style.width = Length::px(container_width as f32)
+        });
+        doc.update_resolved_style(child, |style| style.height = Length::px(ch as f32));
         doc.append_child(container, child);
         child_ids.push(child);
     }
@@ -270,25 +274,25 @@ fn nested_overflow_containers() {
 
     // Outer container: 200×100, overflow:visible
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
-    doc.node_mut(outer).style.width = Length::px(200.0);
-    doc.node_mut(outer).style.height = Length::px(100.0);
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
+    doc.update_resolved_style(outer, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(outer, |style| style.height = Length::px(100.0));
     doc.append_child(vp, outer);
 
     // Inner container: 200×50, overflow:hidden
     let inner = doc.create_node(ElementTag::Div);
-    doc.node_mut(inner).style.display = Display::Block;
-    doc.node_mut(inner).style.width = Length::px(200.0);
-    doc.node_mut(inner).style.height = Length::px(50.0);
-    doc.node_mut(inner).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(inner).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(inner, |style| style.display = Display::Block);
+    doc.update_resolved_style(inner, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(inner, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(inner, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(inner, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(outer, inner);
 
     // Child inside inner: 200×200 (overflows inner)
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(200.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(200.0));
     doc.append_child(inner, child);
 
     let space = make_root_space(400, 600);
@@ -330,25 +334,29 @@ fn overflow_with_padding_and_border() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(200.0);
-    doc.node_mut(container).style.height = Length::px(100.0);
-    doc.node_mut(container).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(container).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(container).style.padding_top = Length::px(10.0);
-    doc.node_mut(container).style.padding_bottom = Length::px(10.0);
-    doc.node_mut(container).style.border_top_width = 5;
-    doc.node_mut(container).style.border_bottom_width = 5;
-    doc.node_mut(container).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(container).style.border_bottom_style = BorderStyle::Solid;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(container, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(container, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(container, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(container, |style| style.padding_bottom = Length::px(10.0));
+    doc.update_resolved_style(container, |style| style.border_top_width = 5);
+    doc.update_resolved_style(container, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(container, |style| {
+        style.border_top_style = BorderStyle::Solid
+    });
+    doc.update_resolved_style(container, |style| {
+        style.border_bottom_style = BorderStyle::Solid
+    });
     doc.append_child(vp, container);
 
     // Child that overflows the content box but fits the border-box
     // Container border-box height = 100px, content area = 100 - 10 - 10 - 5 - 5 = 70px
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(180.0);
-    doc.node_mut(child).style.height = Length::px(60.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(180.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(60.0));
     doc.append_child(container, child);
 
     let space = make_root_space(400, 600);
@@ -379,7 +387,7 @@ fn establishes_new_fc_overflow_hidden() {
     let mut s = ComputedStyle::initial();
     assert!(!establishes_new_fc(&s), "default should not establish FC");
 
-    s.overflow_x = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
     assert!(
         establishes_new_fc(&s),
         "overflow:hidden should establish FC"
@@ -389,7 +397,7 @@ fn establishes_new_fc_overflow_hidden() {
 #[test]
 fn establishes_new_fc_overflow_scroll() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
     assert!(
         establishes_new_fc(&s),
         "overflow:scroll should establish FC"
@@ -399,21 +407,21 @@ fn establishes_new_fc_overflow_scroll() {
 #[test]
 fn establishes_new_fc_flex() {
     let mut s = ComputedStyle::initial();
-    s.display = Display::Flex;
+    s.update_derived(|computed| computed.display = Display::Flex);
     assert!(establishes_new_fc(&s), "display:flex should establish FC");
 }
 
 #[test]
 fn establishes_new_fc_float() {
     let mut s = ComputedStyle::initial();
-    s.float = Float::Left;
+    s.update_derived(|computed| computed.float = Float::Left);
     assert!(establishes_new_fc(&s), "float:left should establish FC");
 }
 
 #[test]
 fn establishes_new_fc_absolute_position() {
     let mut s = ComputedStyle::initial();
-    s.position = Position::Absolute;
+    s.update_derived(|computed| computed.position = Position::Absolute);
     assert!(
         establishes_new_fc(&s),
         "position:absolute should establish FC"
@@ -496,17 +504,17 @@ fn overflow_x_only_sets_clip() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(200.0);
-    doc.node_mut(container).style.height = Length::px(100.0);
-    doc.node_mut(container).style.overflow_x = Overflow::Hidden;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(container, |style| style.overflow_x = Overflow::Hidden);
     // overflow_y stays visible
     doc.append_child(vp, container);
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(50.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(50.0));
     doc.append_child(container, child);
 
     let space = make_root_space(400, 600);

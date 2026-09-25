@@ -37,12 +37,12 @@ fn block_layout_text(texts: &[&str], width: i32) -> Fragment {
     let mut doc = Document::new();
     let vp = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(vp, block);
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         doc.append_child(block, t);
     }
     let sp = space(width, 600);
@@ -53,12 +53,12 @@ fn make_text_block(texts: &[&str], _width: i32) -> (Document, NodeId) {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         doc.append_child(block, t);
     }
     (doc, block)
@@ -66,27 +66,27 @@ fn make_text_block(texts: &[&str], _width: i32) -> (Document, NodeId) {
 
 fn make_span_block(
     span_texts: &[&str],
-    span_style_fn: impl Fn(&mut ComputedStyle),
+    span_style_fn: impl Fn(&mut openui_style::ComputedStyleFields),
 ) -> (Document, NodeId) {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
-    span_style_fn(&mut doc.node_mut(span).style);
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
+    doc.update_resolved_style(span, span_style_fn);
     doc.append_child(block, span);
 
     for text in span_texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         let span_style = doc.node(span).style.clone();
-        doc.node_mut(t).style.font_size = span_style.font_size;
-        doc.node_mut(t).style.line_height = span_style.line_height;
-        doc.node_mut(t).style.vertical_align = span_style.vertical_align;
+        doc.update_resolved_style(t, |style| style.font_size = span_style.font_size);
+        doc.update_resolved_style(t, |style| style.line_height = span_style.line_height);
+        doc.update_resolved_style(t, |style| style.vertical_align = span_style.vertical_align);
         doc.append_child(span, t);
     }
     (doc, block)
@@ -96,18 +96,18 @@ fn make_span_block(
 fn layout_text_with_style(
     texts: &[&str],
     width: i32,
-    text_style_fn: impl Fn(&mut ComputedStyle),
+    text_style_fn: impl Fn(&mut openui_style::ComputedStyleFields),
 ) -> Fragment {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
-        text_style_fn(&mut doc.node_mut(t).style);
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t, |style| text_style_fn(style));
         doc.append_child(block, t);
     }
     inline_layout(&doc, block, &inline_space(width))
@@ -194,7 +194,7 @@ mod vertical_align {
     fn sub_shifts_text_below_baseline() {
         let frag_bl = layout_text(&["ABC"], 800);
         let (doc, block) = make_span_block(&["ABC"], |s| {
-            s.vertical_align = VerticalAlign::Sub;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Sub);
         });
         let frag_sub = inline_layout(&doc, block, &inline_space(800));
 
@@ -216,22 +216,22 @@ mod vertical_align {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         doc.append_child(root, block);
 
         let t1 = doc.create_node(ElementTag::Text);
         doc.node_mut(t1).text = Some("base ".to_string());
-        doc.node_mut(t1).style.display = Display::Inline;
+        doc.update_resolved_style(t1, |style| style.display = Display::Inline);
         doc.append_child(block, t1);
 
         let span = doc.create_node(ElementTag::Span);
-        doc.node_mut(span).style.display = Display::Inline;
-        doc.node_mut(span).style.vertical_align = VerticalAlign::Super;
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(span, |style| style.vertical_align = VerticalAlign::Super);
         doc.append_child(block, span);
         let t2 = doc.create_node(ElementTag::Text);
         doc.node_mut(t2).text = Some("sup".to_string());
-        doc.node_mut(t2).style.display = Display::Inline;
-        doc.node_mut(t2).style.vertical_align = VerticalAlign::Super;
+        doc.update_resolved_style(t2, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t2, |style| style.vertical_align = VerticalAlign::Super);
         doc.append_child(span, t2);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -247,12 +247,12 @@ mod vertical_align {
     #[test]
     fn super_is_above_sub() {
         let (doc_sub, block_sub) = make_span_block(&["x"], |s| {
-            s.vertical_align = VerticalAlign::Sub;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Sub);
         });
         let frag_sub = inline_layout(&doc_sub, block_sub, &inline_space(800));
 
         let (doc_sup, block_sup) = make_span_block(&["x"], |s| {
-            s.vertical_align = VerticalAlign::Super;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Super);
         });
         let frag_sup = inline_layout(&doc_sup, block_sup, &inline_space(800));
 
@@ -271,7 +271,7 @@ mod vertical_align {
     #[test]
     fn text_top_produces_text_fragment() {
         let (doc, block) = make_span_block(&["Hello"], |s| {
-            s.vertical_align = VerticalAlign::TextTop;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::TextTop);
         });
         let frag = inline_layout(&doc, block, &inline_space(800));
         let texts = collect_text_fragments(&frag);
@@ -283,7 +283,7 @@ mod vertical_align {
     #[test]
     fn text_bottom_produces_text_fragment() {
         let (doc, block) = make_span_block(&["Hello"], |s| {
-            s.vertical_align = VerticalAlign::TextBottom;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::TextBottom);
         });
         let frag = inline_layout(&doc, block, &inline_space(800));
         let texts = collect_text_fragments(&frag);
@@ -295,7 +295,7 @@ mod vertical_align {
     #[test]
     fn middle_produces_valid_offset() {
         let (doc, block) = make_span_block(&["Hello"], |s| {
-            s.vertical_align = VerticalAlign::Middle;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Middle);
         });
         let frag = inline_layout(&doc, block, &inline_space(800));
         let texts = collect_text_fragments(&frag);
@@ -308,7 +308,7 @@ mod vertical_align {
     #[test]
     fn top_aligns_near_line_box_top() {
         let (doc, block) = make_span_block(&["Hello"], |s| {
-            s.vertical_align = VerticalAlign::Top;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Top);
         });
         let frag = inline_layout(&doc, block, &inline_space(800));
         let texts = collect_text_fragments(&frag);
@@ -324,7 +324,7 @@ mod vertical_align {
     #[test]
     fn bottom_produces_valid_layout() {
         let (doc, block) = make_span_block(&["Hello"], |s| {
-            s.vertical_align = VerticalAlign::Bottom;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Bottom);
         });
         let frag = inline_layout(&doc, block, &inline_space(800));
         let texts = collect_text_fragments(&frag);
@@ -338,22 +338,26 @@ mod vertical_align {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         doc.append_child(root, block);
 
         let t1 = doc.create_node(ElementTag::Text);
         doc.node_mut(t1).text = Some("base ".to_string());
-        doc.node_mut(t1).style.display = Display::Inline;
+        doc.update_resolved_style(t1, |style| style.display = Display::Inline);
         doc.append_child(block, t1);
 
         let span = doc.create_node(ElementTag::Span);
-        doc.node_mut(span).style.display = Display::Inline;
-        doc.node_mut(span).style.vertical_align = VerticalAlign::Length(5.0);
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(span, |style| {
+            style.vertical_align = VerticalAlign::Length(5.0)
+        });
         doc.append_child(block, span);
         let t2 = doc.create_node(ElementTag::Text);
         doc.node_mut(t2).text = Some("up".to_string());
-        doc.node_mut(t2).style.display = Display::Inline;
-        doc.node_mut(t2).style.vertical_align = VerticalAlign::Length(5.0);
+        doc.update_resolved_style(t2, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t2, |style| {
+            style.vertical_align = VerticalAlign::Length(5.0)
+        });
         doc.append_child(span, t2);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -372,7 +376,7 @@ mod vertical_align {
     fn length_negative_shifts_down() {
         let frag_bl = layout_text(&["x"], 800);
         let (doc, block) = make_span_block(&["x"], |s| {
-            s.vertical_align = VerticalAlign::Length(-5.0);
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Length(-5.0));
         });
         let frag_neg = inline_layout(&doc, block, &inline_space(800));
 
@@ -392,7 +396,7 @@ mod vertical_align {
     fn length_zero_equals_baseline() {
         let frag_bl = layout_text(&["Hello"], 800);
         let (doc, block) = make_span_block(&["Hello"], |s| {
-            s.vertical_align = VerticalAlign::Length(0.0);
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Length(0.0));
         });
         let frag_zero = inline_layout(&doc, block, &inline_space(800));
 
@@ -406,7 +410,7 @@ mod vertical_align {
     #[test]
     fn percentage_produces_valid_layout() {
         let (doc, block) = make_span_block(&["Hello"], |s| {
-            s.vertical_align = VerticalAlign::Percentage(50.0);
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Percentage(50.0));
         });
         let frag = inline_layout(&doc, block, &inline_space(800));
         let texts = collect_text_fragments(&frag);
@@ -420,22 +424,26 @@ mod vertical_align {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         doc.append_child(root, block);
 
         let t1 = doc.create_node(ElementTag::Text);
         doc.node_mut(t1).text = Some("base ".to_string());
-        doc.node_mut(t1).style.display = Display::Inline;
+        doc.update_resolved_style(t1, |style| style.display = Display::Inline);
         doc.append_child(block, t1);
 
         let span = doc.create_node(ElementTag::Span);
-        doc.node_mut(span).style.display = Display::Inline;
-        doc.node_mut(span).style.vertical_align = VerticalAlign::Percentage(100.0);
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(span, |style| {
+            style.vertical_align = VerticalAlign::Percentage(100.0)
+        });
         doc.append_child(block, span);
         let t2 = doc.create_node(ElementTag::Text);
         doc.node_mut(t2).text = Some("shifted".to_string());
-        doc.node_mut(t2).style.display = Display::Inline;
-        doc.node_mut(t2).style.vertical_align = VerticalAlign::Percentage(100.0);
+        doc.update_resolved_style(t2, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t2, |style| {
+            style.vertical_align = VerticalAlign::Percentage(100.0)
+        });
         doc.append_child(span, t2);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -453,7 +461,7 @@ mod vertical_align {
     fn does_not_affect_inline_size() {
         let frag_bl = layout_text(&["Hello"], 800);
         let (doc, block) = make_span_block(&["Hello"], |s| {
-            s.vertical_align = VerticalAlign::Super;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Super);
         });
         let frag_sup = inline_layout(&doc, block, &inline_space(800));
 
@@ -471,7 +479,7 @@ mod vertical_align {
     fn sub_expands_line_box() {
         let frag_normal = layout_text(&["Hello"], 800);
         let (doc, block) = make_span_block(&["Hello"], |s| {
-            s.vertical_align = VerticalAlign::Sub;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Sub);
         });
         let frag_sub = inline_layout(&doc, block, &inline_space(800));
         assert!(
@@ -485,7 +493,7 @@ mod vertical_align {
     fn super_expands_line_box() {
         let frag_normal = layout_text(&["Hello"], 800);
         let (doc, block) = make_span_block(&["Hello"], |s| {
-            s.vertical_align = VerticalAlign::Super;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Super);
         });
         let frag_sup = inline_layout(&doc, block, &inline_space(800));
         assert!(
@@ -500,24 +508,24 @@ mod vertical_align {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         doc.append_child(root, block);
 
         // Normal baseline text
         let t1 = doc.create_node(ElementTag::Text);
         doc.node_mut(t1).text = Some("normal ".to_string());
-        doc.node_mut(t1).style.display = Display::Inline;
+        doc.update_resolved_style(t1, |style| style.display = Display::Inline);
         doc.append_child(block, t1);
 
         // Super-aligned span
         let span = doc.create_node(ElementTag::Span);
-        doc.node_mut(span).style.display = Display::Inline;
-        doc.node_mut(span).style.vertical_align = VerticalAlign::Super;
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(span, |style| style.vertical_align = VerticalAlign::Super);
         doc.append_child(block, span);
         let t2 = doc.create_node(ElementTag::Text);
         doc.node_mut(t2).text = Some("super".to_string());
-        doc.node_mut(t2).style.display = Display::Inline;
-        doc.node_mut(t2).style.vertical_align = VerticalAlign::Super;
+        doc.update_resolved_style(t2, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t2, |style| style.vertical_align = VerticalAlign::Super);
         doc.append_child(span, t2);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -533,7 +541,7 @@ mod vertical_align {
     #[test]
     fn preserves_shape_result() {
         let (doc, block) = make_span_block(&["Hello"], |s| {
-            s.vertical_align = VerticalAlign::Super;
+            s.update_derived(|computed| computed.vertical_align = VerticalAlign::Super);
         });
         let frag = inline_layout(&doc, block, &inline_space(800));
         let texts = collect_text_fragments(&frag);
@@ -550,22 +558,26 @@ mod vertical_align {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         doc.append_child(root, block);
 
         let t1 = doc.create_node(ElementTag::Text);
         doc.node_mut(t1).text = Some("base ".to_string());
-        doc.node_mut(t1).style.display = Display::Inline;
+        doc.update_resolved_style(t1, |style| style.display = Display::Inline);
         doc.append_child(block, t1);
 
         let span = doc.create_node(ElementTag::Span);
-        doc.node_mut(span).style.display = Display::Inline;
-        doc.node_mut(span).style.vertical_align = VerticalAlign::Length(20.0);
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(span, |style| {
+            style.vertical_align = VerticalAlign::Length(20.0)
+        });
         doc.append_child(block, span);
         let t2 = doc.create_node(ElementTag::Text);
         doc.node_mut(t2).text = Some("raised".to_string());
-        doc.node_mut(t2).style.display = Display::Inline;
-        doc.node_mut(t2).style.vertical_align = VerticalAlign::Length(20.0);
+        doc.update_resolved_style(t2, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t2, |style| {
+            style.vertical_align = VerticalAlign::Length(20.0)
+        });
         doc.append_child(span, t2);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -609,14 +621,14 @@ mod line_height {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.line_height = LineHeight::Number(2.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| style.line_height = LineHeight::Number(2.0));
         doc.append_child(root, block);
 
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some("Hello".to_string());
-        doc.node_mut(t).style.display = Display::Inline;
-        doc.node_mut(t).style.line_height = LineHeight::Number(2.0);
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t, |style| style.line_height = LineHeight::Number(2.0));
         doc.append_child(block, t);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -634,14 +646,14 @@ mod line_height {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.line_height = LineHeight::Length(48.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| style.line_height = LineHeight::Length(48.0));
         doc.append_child(root, block);
 
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some("Test".to_string());
-        doc.node_mut(t).style.display = Display::Inline;
-        doc.node_mut(t).style.line_height = LineHeight::Length(48.0);
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t, |style| style.line_height = LineHeight::Length(48.0));
         doc.append_child(block, t);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -658,14 +670,16 @@ mod line_height {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.line_height = LineHeight::Percentage(150.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| {
+            style.line_height = LineHeight::Percentage(150.0)
+        });
         doc.append_child(root, block);
 
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some("Test".to_string());
-        doc.node_mut(t).style.display = Display::Inline;
-        doc.node_mut(t).style.line_height = LineHeight::Percentage(150.0);
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t, |style| style.line_height = LineHeight::Percentage(150.0));
         doc.append_child(block, t);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -683,14 +697,16 @@ mod line_height {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.line_height = LineHeight::Percentage(200.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| {
+            style.line_height = LineHeight::Percentage(200.0)
+        });
         doc.append_child(root, block);
 
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some("Test".to_string());
-        doc.node_mut(t).style.display = Display::Inline;
-        doc.node_mut(t).style.line_height = LineHeight::Percentage(200.0);
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t, |style| style.line_height = LineHeight::Percentage(200.0));
         doc.append_child(block, t);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -706,7 +722,7 @@ mod line_height {
     fn larger_line_height_produces_taller_box() {
         let frag_normal = layout_text(&["Hello"], 800);
         let frag_large = layout_text_with_style(&["Hello"], 800, |s| {
-            s.line_height = LineHeight::Length(60.0);
+            s.update_derived(|computed| computed.line_height = LineHeight::Length(60.0));
         });
         assert!(
             frag_large.size.height > frag_normal.size.height,
@@ -722,19 +738,19 @@ mod line_height {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         doc.append_child(root, block);
 
         let t1 = doc.create_node(ElementTag::Text);
         doc.node_mut(t1).text = Some("A ".to_string());
-        doc.node_mut(t1).style.display = Display::Inline;
-        doc.node_mut(t1).style.line_height = LineHeight::Length(20.0);
+        doc.update_resolved_style(t1, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t1, |style| style.line_height = LineHeight::Length(20.0));
         doc.append_child(block, t1);
 
         let t2 = doc.create_node(ElementTag::Text);
         doc.node_mut(t2).text = Some("B".to_string());
-        doc.node_mut(t2).style.display = Display::Inline;
-        doc.node_mut(t2).style.line_height = LineHeight::Length(60.0);
+        doc.update_resolved_style(t2, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t2, |style| style.line_height = LineHeight::Length(60.0));
         doc.append_child(block, t2);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -750,7 +766,7 @@ mod line_height {
     fn zero_does_not_crash_and_is_compact() {
         let frag_normal = layout_text(&["Hello"], 800);
         let frag_zero = layout_text_with_style(&["Hello"], 800, |s| {
-            s.line_height = LineHeight::Number(0.0);
+            s.update_derived(|computed| computed.line_height = LineHeight::Number(0.0));
         });
         assert!(
             frag_zero.size.height <= frag_normal.size.height,
@@ -764,14 +780,14 @@ mod line_height {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.line_height = LineHeight::Length(200.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| style.line_height = LineHeight::Length(200.0));
         doc.append_child(root, block);
 
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some("tall".to_string());
-        doc.node_mut(t).style.display = Display::Inline;
-        doc.node_mut(t).style.line_height = LineHeight::Length(200.0);
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t, |style| style.line_height = LineHeight::Length(200.0));
         doc.append_child(block, t);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -790,14 +806,14 @@ mod line_height {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.line_height = LineHeight::Number(0.5);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| style.line_height = LineHeight::Number(0.5));
         doc.append_child(root, block);
 
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some("Hello".to_string());
-        doc.node_mut(t).style.display = Display::Inline;
-        doc.node_mut(t).style.line_height = LineHeight::Number(0.5);
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t, |style| style.line_height = LineHeight::Number(0.5));
         doc.append_child(block, t);
 
         let frag_half = inline_layout(&doc, block, &inline_space(800));
@@ -815,14 +831,14 @@ mod line_height {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.line_height = LineHeight::Number(3.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| style.line_height = LineHeight::Number(3.0));
         doc.append_child(root, block);
 
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some("x".to_string());
-        doc.node_mut(t).style.display = Display::Inline;
-        doc.node_mut(t).style.line_height = LineHeight::Number(3.0);
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t, |style| style.line_height = LineHeight::Number(3.0));
         doc.append_child(block, t);
 
         let frag = inline_layout(&doc, block, &inline_space(800));
@@ -841,14 +857,16 @@ mod line_height {
         let mut doc = Document::new();
         let root = doc.root();
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.line_height = LineHeight::Percentage(50.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| {
+            style.line_height = LineHeight::Percentage(50.0)
+        });
         doc.append_child(root, block);
 
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some("Hello".to_string());
-        doc.node_mut(t).style.display = Display::Inline;
-        doc.node_mut(t).style.line_height = LineHeight::Percentage(50.0);
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
+        doc.update_resolved_style(t, |style| style.line_height = LineHeight::Percentage(50.0));
         doc.append_child(block, t);
 
         let frag_50 = inline_layout(&doc, block, &inline_space(800));
@@ -877,7 +895,7 @@ mod line_height {
         let frag_16 = layout_text(&["Hello"], 800);
 
         let frag_32 = layout_text_with_style(&["Hello"], 800, |s| {
-            s.font_size = 32.0;
+            s.update_derived(|computed| computed.font_size = 32.0);
         });
 
         // A 2× font size should produce a taller line box

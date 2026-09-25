@@ -273,26 +273,26 @@ mod tests {
 
     fn distinctive_style(writing_mode: WritingMode, direction: Direction) -> ComputedStyle {
         let mut style = ComputedStyle::default();
-        style.writing_mode = writing_mode;
-        style.direction = direction;
-        style.width = Length::px(10.0);
-        style.height = Length::px(20.0);
-        style.min_width = Length::px(30.0);
-        style.min_height = Length::px(40.0);
-        style.max_width = Length::px(50.0);
-        style.max_height = Length::px(60.0);
-        style.margin_top = Length::px(1.0);
-        style.margin_right = Length::px(2.0);
-        style.margin_bottom = Length::px(3.0);
-        style.margin_left = Length::px(4.0);
-        style.border_top_width = 5;
-        style.border_right_width = 6;
-        style.border_bottom_width = 7;
-        style.border_left_width = 8;
-        style.border_top_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-        style.border_bottom_style = BorderStyle::Solid;
-        style.border_left_style = BorderStyle::Solid;
+        style.update_derived(|computed| computed.writing_mode = writing_mode);
+        style.update_derived(|computed| computed.direction = direction);
+        style.update_derived(|computed| computed.width = Length::px(10.0));
+        style.update_derived(|computed| computed.height = Length::px(20.0));
+        style.update_derived(|computed| computed.min_width = Length::px(30.0));
+        style.update_derived(|computed| computed.min_height = Length::px(40.0));
+        style.update_derived(|computed| computed.max_width = Length::px(50.0));
+        style.update_derived(|computed| computed.max_height = Length::px(60.0));
+        style.update_derived(|computed| computed.margin_top = Length::px(1.0));
+        style.update_derived(|computed| computed.margin_right = Length::px(2.0));
+        style.update_derived(|computed| computed.margin_bottom = Length::px(3.0));
+        style.update_derived(|computed| computed.margin_left = Length::px(4.0));
+        style.update_derived(|computed| computed.border_top_width = 5);
+        style.update_derived(|computed| computed.border_right_width = 6);
+        style.update_derived(|computed| computed.border_bottom_width = 7);
+        style.update_derived(|computed| computed.border_left_width = 8);
+        style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
         style
     }
 

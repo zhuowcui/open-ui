@@ -31,6 +31,9 @@ import re
 import sys
 import csv
 import json
+import copy
+import colorsys
+import base64
 import hashlib
 import html as html_module
 import math
@@ -40,6 +43,14 @@ from enum import Enum
 from pathlib import Path
 from html.parser import HTMLParser
 from collections import OrderedDict
+
+try:
+    # Package import used by the repository's unittest modules.
+    from tools.wpt.engine_fixture_codegen import engineify_module
+except ModuleNotFoundError:
+    # Direct-script execution puts tools/wpt, rather than the repository root,
+    # on sys.path.
+    from engine_fixture_codegen import engineify_module
 
 
 class PorterProfile(Enum):
@@ -60,7 +71,48 @@ WPT_SOURCE_ROOT = Path(os.environ.get(
     os.path.expanduser('~/chromium/src/third_party/blink/web_tests/external/wpt'),
 )).resolve()
 SP20_ASSET_DIR = PROJECT_ROOT / 'tools' / 'accountability' / 'data' / 'wpt_assets' / 'sp20'
+MEDIA_FIRST_FRAME_MANIFEST = (
+    PROJECT_ROOT / 'docs' / 'renderer' / 'generated' / 'media-first-frames-v1.json'
+)
+JAVASCRIPT_MUTATION_AUDIT = (
+    PROJECT_ROOT / 'docs' / 'renderer' / 'generated' / 'javascript-mutation-audit-v2.json'
+)
 _ACTIVE_RESOURCE_BASE: Path | None = None
+_MUTATION_AUDIT_BY_TEST_ID: dict[str, dict] | None = None
+
+
+def _load_media_first_frames() -> dict[str, dict]:
+    manifest = json.loads(MEDIA_FIRST_FRAME_MANIFEST.read_text(encoding='utf-8'))
+    if manifest.get('schema_version') != 1:
+        raise ValueError('unsupported media first-frame manifest schema')
+    fixtures = manifest.get('fixtures', [])
+    if manifest.get('fixture_count') != len(fixtures):
+        raise ValueError('media first-frame fixture count does not match')
+    by_source_hash = {}
+    for fixture in fixtures:
+        transport = bytes.fromhex(fixture['transport_hex'])
+        if hashlib.sha256(transport).hexdigest() != fixture['output_sha256']:
+            raise ValueError('media first-frame output hash does not match')
+        width, height = fixture['coded_size']
+        expected_header = (
+            b'OUIR' + bytes((1, 0, 0, 0))
+            + int(width).to_bytes(4, 'little')
+            + int(height).to_bytes(4, 'little')
+        )
+        if (
+            not transport.startswith(expected_header)
+            or len(transport) != 16 + int(width) * int(height) * 4
+            or fixture['output_byte_length'] != len(transport)
+        ):
+            raise ValueError('invalid media first-frame RGBA8 transport')
+        source_hash = fixture['source_sha256']
+        if source_hash in by_source_hash:
+            raise ValueError('duplicate media first-frame source hash')
+        by_source_hash[source_hash] = fixture
+    return by_source_hash
+
+
+MEDIA_FIRST_FRAMES = _load_media_first_frames()
 
 
 def set_porter_profile(profile: PorterProfile, *, retain_text: bool | None = None) -> None:
@@ -475,6 +527,62 @@ def parse_color(value: str) -> str | None:
             + ', '.join(component_expr(token) for token in components)
             + f', {alpha_expr(alpha_token) if alpha_token is not None else "1.0"})'
         )
+    # CSS Color 4 HSL syntax, including legacy comma-separated hsla() and
+    # angle units. Resolve it to the style model's straight-alpha sRGB floats
+    # at fixture-generation time.
+    hsl = re.match(r'^hsla?\((.*)\)$', value)
+    if hsl:
+        content = hsl.group(1).strip()
+        alpha_token = None
+        if ',' in content:
+            components = [part.strip() for part in content.split(',')]
+            if len(components) not in (3, 4):
+                return None
+            if len(components) == 4:
+                alpha_token = components.pop()
+        else:
+            color_part, slash, alpha_part = content.partition('/')
+            components = color_part.split()
+            if len(components) != 3:
+                return None
+            if slash:
+                alpha_token = alpha_part.strip()
+
+        hue_token, saturation_token, lightness_token = components
+        hue_match = re.fullmatch(r'([-+]?[\d.]+)(deg|grad|rad|turn)?', hue_token)
+        saturation_match = re.fullmatch(r'([-+]?[\d.]+)%', saturation_token)
+        lightness_match = re.fullmatch(r'([-+]?[\d.]+)%', lightness_token)
+        if not hue_match or not saturation_match or not lightness_match:
+            return None
+        hue = float(hue_match.group(1))
+        hue_unit = hue_match.group(2) or 'deg'
+        hue_degrees = {
+            'deg': hue,
+            'grad': hue * 0.9,
+            'rad': hue * 180.0 / math.pi,
+            'turn': hue * 360.0,
+        }[hue_unit]
+        saturation = min(100.0, max(0.0, float(saturation_match.group(1)))) / 100.0
+        lightness = min(100.0, max(0.0, float(lightness_match.group(1)))) / 100.0
+        red, green, blue = colorsys.hls_to_rgb(
+            (hue_degrees % 360.0) / 360.0, lightness, saturation
+        )
+        if alpha_token is None:
+            alpha = 1.0
+        elif alpha_token.endswith('%'):
+            alpha = min(100.0, max(0.0, float(alpha_token[:-1]))) / 100.0
+        else:
+            alpha = min(1.0, max(0.0, float(alpha_token)))
+
+        def hsl_float(value: float) -> str:
+            literal = f'{value:.12g}'
+            return literal if '.' in literal else literal + '.0'
+
+        return (
+            'Color::from_rgba_f32('
+            f'{hsl_float(red)}, {hsl_float(green)}, {hsl_float(blue)}, '
+            f'{hsl_float(alpha)})'
+        )
     return None
 
 
@@ -590,6 +698,11 @@ def parse_length(value: str, font_size: float = 16.0) -> str | None:
     m = re.match(r'^(-?[\d.]+)mm$', value)
     if m:
         px_val = _zoomed_px(float(m.group(1)) * 3.77952755906)
+        return f'Length::px({round(px_val, 4)})'
+    # Q → quarter-millimeters (1Q = 96px / 101.6)
+    m = re.match(r'^(-?[\d.]+)q$', value, re.IGNORECASE)
+    if m:
+        px_val = _zoomed_px(float(m.group(1)) * (96.0 / 101.6))
         return f'Length::px({round(px_val, 4)})'
     # pt → points (1pt = 1.333px)
     m = re.match(r'^(-?[\d.]+)pt$', value)
@@ -1000,6 +1113,27 @@ def _contain_intrinsic_length_rust(value: str, font_size: float) -> str | None:
     return None
 
 
+def _viewport_px_rust(value: str) -> str | None:
+    """Return a runtime CSS-pixel expression for one viewport-relative unit."""
+    viewport = re.fullmatch(
+        r'(-?[\d.]+)(vw|vh|vmin|vmax)', value.strip().lower()
+    )
+    if not viewport:
+        return None
+    variants = {
+        'vw': 'ViewportWidth',
+        'vh': 'ViewportHeight',
+        'vmin': 'ViewportMin',
+        'vmax': 'ViewportMax',
+    }
+    return (
+        'crate::fixture_viewport_px('
+        f'LengthValue::{variants[viewport.group(2)]}'
+        f'({_zoomed_px(float(viewport.group(1)))})'
+        ')'
+    )
+
+
 def _transform_2d_rust(
     value: str,
     font_size: float,
@@ -1039,6 +1173,73 @@ def _transform_2d_rust(
             'rem': 16.0,
         }[match.group(2)]
         return _zoomed_px(float(match.group(1)) * scale)
+
+    # Translation-only lists can retain viewport terms symbolically because
+    # composing translations is simple addition. Percentage terms still use
+    # the element's known reference box, exactly as in the numeric path.
+    translation_x: list[str] = []
+    translation_y: list[str] = []
+    has_viewport_translation = False
+    translations_only = True
+    for function in functions:
+        name = function.group(1)
+        args = [
+            part
+            for part in re.split(r'\s*,\s*|\s+', function.group(2).strip())
+            if part
+        ]
+        if name not in ('translate', 'translatex', 'translatey'):
+            translations_only = False
+            break
+        if (name == 'translate' and len(args) not in (1, 2)) or (
+            name in ('translatex', 'translatey') and len(args) != 1
+        ):
+            translations_only = False
+            break
+
+        def translation_term(token: str, basis: float | None) -> str | None:
+            nonlocal has_viewport_translation
+            viewport = _viewport_px_rust(token)
+            if viewport:
+                has_viewport_translation = True
+                return viewport
+            numeric = length(token, basis)
+            if numeric is None:
+                return None
+            literal = f'{numeric:.9g}'
+            return literal if any(marker in literal for marker in '.eE') else literal + '.0'
+
+        if name in ('translate', 'translatex'):
+            x = translation_term(
+                args[0], reference_box[0] if reference_box else None
+            )
+            if x is None:
+                translations_only = False
+                break
+            translation_x.append(x)
+        if name == 'translate' and len(args) == 2:
+            y = translation_term(
+                args[1], reference_box[1] if reference_box else None
+            )
+            if y is None:
+                translations_only = False
+                break
+            translation_y.append(y)
+        elif name == 'translatey':
+            y = translation_term(
+                args[0], reference_box[1] if reference_box else None
+            )
+            if y is None:
+                translations_only = False
+                break
+            translation_y.append(y)
+    if translations_only and has_viewport_translation:
+        x = ' + '.join(f'({term})' for term in translation_x) or '0.0'
+        y = ' + '.join(f'({term})' for term in translation_y) or '0.0'
+        return (
+            'Transform2D { a: 1.0, b: 0.0, c: 0.0, d: 1.0, '
+            f'e: {x}, f: {y} }}'
+        )
 
     def angle(token: str) -> float | None:
         match = re.fullmatch(r'(-?[\d.]+)(deg|rad|grad|turn)', token.strip())
@@ -1204,6 +1405,38 @@ def _try_eval_calc(expr: str, font_size: float = 16.0) -> str | None:
     expr = expr.strip()
     if 'var(' in expr:
         return None
+
+    viewport_calc = re.fullmatch(
+        r'(-?[\d.]+)(vw|vh|vmin|vmax)\s*([+-])\s*([\d.]+)px', expr
+    )
+    if viewport_calc:
+        variants = {
+            'vw': 'ViewportWidth',
+            'vh': 'ViewportHeight',
+            'vmin': 'ViewportMin',
+            'vmax': 'ViewportMax',
+        }
+        amount = _zoomed_px(float(viewport_calc.group(1)))
+        offset = _zoomed_px(float(viewport_calc.group(4)))
+        if viewport_calc.group(3) == '-':
+            offset = -offset
+        return (
+            'crate::fixture_viewport_calc('
+            f'LengthValue::{variants[viewport_calc.group(2)]}({amount}), '
+            f'{offset:.6f})'
+        )
+    percentage_viewport_calc = re.fullmatch(
+        r'(-?[\d.]+)%\s*([+-])\s*(-?[\d.]+(?:vw|vh|vmin|vmax))', expr
+    )
+    if percentage_viewport_calc:
+        viewport = _viewport_px_rust(percentage_viewport_calc.group(3))
+        assert viewport is not None
+        if percentage_viewport_calc.group(2) == '-':
+            viewport = f'-({viewport})'
+        return (
+            f'Length::calc_percent_px({float(percentage_viewport_calc.group(1)):.6f}, '
+            f'{viewport})'
+        )
     # Try pure-px evaluation first: convert em/rem to px, then evaluate
     pure = re.sub(r'(\d+\.?\d*)rem', lambda m: str(float(m.group(1)) * 16.0), expr)
     pure = re.sub(r'(\d+\.?\d*)em', lambda m: str(float(m.group(1)) * font_size), pure)
@@ -2021,6 +2254,463 @@ class DomNode:
 
     def __repr__(self):
         return f"<{self.tag} style={self.styles}>"
+
+
+def _candidate_mutation_ir(test_id: str) -> dict | None:
+    """Return the checked-in AST mutation IR for one candidate, if lowerable."""
+    global _MUTATION_AUDIT_BY_TEST_ID
+    if _MUTATION_AUDIT_BY_TEST_ID is None:
+        audit = json.loads(JAVASCRIPT_MUTATION_AUDIT.read_text(encoding='utf-8'))
+        if audit.get('schema_version') != 2:
+            raise ValueError('unsupported JavaScript mutation audit schema')
+        _MUTATION_AUDIT_BY_TEST_ID = {
+            entry['test_id']: entry
+            for entry in audit['entries']
+        }
+    entry = _MUTATION_AUDIT_BY_TEST_ID.get(test_id)
+    if entry is None or entry.get('disposition') not in {
+        'ast-lowered-pending-exact', 'lowered-exact',
+    }:
+        return None
+    mutation_ir = entry.get('mutation_ir')
+    if not isinstance(mutation_ir, dict) or not mutation_ir.get('lowerable'):
+        raise ValueError(f'invalid lowerable mutation IR for {test_id}')
+    return mutation_ir
+
+
+def _apply_ast_mutation_ir(parser: 'WptHtmlParser') -> None:
+    """Apply bounded synchronous mutation IR to the parsed final-state DOM.
+
+    The operation list comes from Acorn, not JavaScript text matching. Layout
+    reads are explicit barriers in the ledger; because their values cannot
+    control subsequent behavior, the static builder retains their order while
+    materializing the same final DOM and cascade state.
+    """
+    mutation_ir = parser.mutation_ir
+    if mutation_ir is None:
+        return
+
+    html_target = object()
+    document_target = object()
+    bindings: dict[str, object] = {
+        'document': document_target,
+        'window': document_target,
+    }
+    created_by_offset: dict[int, DomNode] = {}
+
+    class StyleElementTarget:
+        def __init__(self, element_id):
+            self.element_id = element_id
+
+    def walk(node):
+        yield node
+        if not node.is_text:
+            for child in node.children:
+                yield from walk(child)
+
+    def find_parent(needle):
+        for candidate in walk(parser.root):
+            if not candidate.is_text and needle in candidate.children:
+                return candidate
+        return None
+
+    def find_id(identifier):
+        if not isinstance(identifier, str):
+            return None
+        node = next(
+            (
+                node for node in walk(parser.root)
+                if not node.is_text and node.attrs.get('id') == identifier
+            ),
+            None,
+        )
+        if node is not None:
+            return node
+        if any(attrs.get('id') == identifier for attrs, _text, _prefix in parser.author_style_blocks):
+            return StyleElementTarget(identifier)
+        return None
+
+    def query(selector, *, all_matches=False):
+        if not isinstance(selector, str):
+            return [] if all_matches else None
+        selector = selector.strip()
+        matches = []
+        for node in walk(parser.root):
+            if node.is_text:
+                continue
+            if selector.startswith('#'):
+                matched = node.attrs.get('id') == selector[1:]
+            elif selector.startswith('.'):
+                matched = selector[1:] in node.attrs.get('class', '').split()
+            else:
+                matched = node.tag.lower() == selector.lower()
+            if matched:
+                if not all_matches:
+                    return node
+                matches.append(node)
+        return matches if all_matches else None
+
+    def resolve(description):
+        if not isinstance(description, dict):
+            return None
+        kind = description.get('kind')
+        if kind == 'binding':
+            name = description.get('name')
+            if name in bindings:
+                return bindings[name]
+            resolved = parser.root if name == 'body' else find_id(name)
+            if resolved is not None:
+                bindings[name] = resolved
+            return resolved
+        if kind == 'dom-query':
+            method = description.get('method')
+            argument = description.get('argument')
+            if method == 'getElementById':
+                return find_id(argument)
+            if method == 'querySelector':
+                return query(argument)
+            if method in {'querySelectorAll', 'getElementsByClassName', 'getElementsByTagName'}:
+                selector = argument
+                if method == 'getElementsByClassName' and isinstance(argument, str):
+                    selector = '.' + argument
+                return query(selector, all_matches=True)
+            return None
+        if kind == 'created-node':
+            return created_by_offset.get(description.get('source_offset'))
+        if kind == 'member':
+            owner = resolve(description.get('object'))
+            member = description.get('property')
+            if owner is document_target:
+                if member == 'body':
+                    return parser.root
+                if member == 'documentElement':
+                    return html_target
+                return None
+            if member == 'classList':
+                return owner
+            if member in {'parentNode', 'parentElement'} and isinstance(owner, DomNode):
+                return find_parent(owner)
+            if member == 'children' and isinstance(owner, DomNode):
+                return [child for child in owner.children if not child.is_text]
+            if isinstance(owner, list) and isinstance(member, int):
+                return owner[member] if 0 <= member < len(owner) else None
+            return None
+        return None
+
+    def detach(node):
+        parent = find_parent(node)
+        if parent is not None:
+            parent.children.remove(node)
+
+    def append(parent, child):
+        if isinstance(parent, StyleElementTarget) and isinstance(child, DomNode):
+            detach(child)
+            return True
+        if not isinstance(parent, DomNode) or not isinstance(child, DomNode):
+            return False
+        detach(child)
+        if child.tag == '#document-fragment':
+            fragment_children = list(child.children)
+            child.children.clear()
+            for fragment_child in fragment_children:
+                append(parent, fragment_child)
+        else:
+            parent.children.append(child)
+        return True
+
+    def replace_text(node, value):
+        if not isinstance(node, DomNode) or not isinstance(value, str):
+            return False
+        if node.is_text:
+            node.text_content = value
+            return True
+        node.children.clear()
+        if value:
+            text = DomNode('#text', {}, CssDeclarations())
+            text.is_text = True
+            text.text_content = value
+            node.children.append(text)
+        return True
+
+    def replace_markup(node, markup):
+        if not isinstance(node, DomNode) or not isinstance(markup, str):
+            return False
+        fragment = WptHtmlParser(root_aware=parser.root_aware)
+        fragment.in_body = True
+        fragment.feed(markup)
+        node.children = fragment.root.children
+        return True
+
+    def style_target(target):
+        if target is html_target:
+            return parser.html_styles
+        return target.styles if isinstance(target, DomNode) and not target.is_text else None
+
+    def attributes_target(target):
+        if target is html_target:
+            return parser.html_attrs
+        return target.attrs if isinstance(target, DomNode) and not target.is_text else None
+
+    unsupported = []
+    barriers = []
+    for operation in mutation_ir.get('operations', []):
+        kind = operation.get('kind')
+        if kind == 'layout-barrier':
+            barriers.append({
+                'order': operation.get('order'),
+                'property': operation.get('property'),
+                'method': operation.get('method'),
+            })
+            continue
+        if kind == 'bind-target':
+            target = resolve(operation.get('target'))
+            if target is None:
+                unsupported.append((kind, operation.get('order'), 'unresolved target'))
+            else:
+                bindings[operation['binding']] = target
+            continue
+        if kind in {'create-element', 'create-fragment', 'create-text'}:
+            if kind == 'create-text':
+                node = DomNode('#text', {}, CssDeclarations())
+                node.is_text = True
+                node.text_content = operation.get('text') or ''
+            else:
+                tag = '#document-fragment' if kind == 'create-fragment' else operation.get('tag_name')
+                node = DomNode(str(tag).lower(), {}, CssDeclarations())
+            created_by_offset[operation['source_offset']] = node
+            if operation.get('binding'):
+                bindings[operation['binding']] = node
+            continue
+        if kind == 'clone-target':
+            source = resolve(operation.get('target'))
+            if not isinstance(source, DomNode):
+                unsupported.append((kind, operation.get('order'), 'invalid clone target'))
+                continue
+            node = copy.deepcopy(source)
+            if not operation.get('deep'):
+                node.children.clear()
+            created_by_offset[operation['source_offset']] = node
+            if operation.get('binding'):
+                bindings[operation['binding']] = node
+            continue
+
+        target = resolve(operation.get('target'))
+        if kind == 'set-style':
+            styles = style_target(target)
+            delta = operation.get('cascade_delta') or {}
+            name = delta.get('css_name')
+            value = delta.get('value')
+            if styles is None or not isinstance(name, str) or not isinstance(value, str):
+                unsupported.append((kind, operation.get('order'), 'invalid cascade delta'))
+            else:
+                styles[name] = value
+        elif kind == 'set-style-text':
+            styles = style_target(target)
+            if styles is None or not isinstance(operation.get('value'), str):
+                unsupported.append((kind, operation.get('order'), 'invalid style text'))
+            else:
+                parsed = parse_inline_styles(operation['value'])
+                styles.clear()
+                styles.update(parsed)
+        elif kind == 'set-attribute':
+            attrs = attributes_target(target)
+            name = operation.get('name')
+            value = operation.get('value')
+            if attrs is None or not isinstance(name, str):
+                unsupported.append((kind, operation.get('order'), 'invalid attribute target'))
+            elif name.lower() == 'style':
+                styles = style_target(target)
+                parsed = parse_inline_styles(value if isinstance(value, str) else '')
+                styles.clear()
+                styles.update(parsed)
+                attrs[name] = value if isinstance(value, str) else ''
+            else:
+                attrs[name] = '' if value is True else str(value)
+        elif kind == 'remove-attribute':
+            attrs = attributes_target(target)
+            name = operation.get('name')
+            if attrs is None or not isinstance(name, str):
+                unsupported.append((kind, operation.get('order'), 'invalid attribute target'))
+            else:
+                attrs.pop(name, None)
+                if name.lower() == 'style':
+                    styles = style_target(target)
+                    styles.clear()
+        elif kind == 'class-list':
+            attrs = attributes_target(target)
+            if attrs is None:
+                unsupported.append((kind, operation.get('order'), 'invalid class target'))
+                continue
+            classes = attrs.get('class', '').split()
+            action = operation.get('action')
+            tokens = [token for token in operation.get('tokens', []) if isinstance(token, str)]
+            if action == 'add':
+                classes.extend(token for token in tokens if token not in classes)
+            elif action == 'remove':
+                classes = [token for token in classes if token not in tokens]
+            elif action == 'toggle' and tokens:
+                token = tokens[0]
+                classes = [item for item in classes if item != token] if token in classes else classes + [token]
+            elif action == 'replace' and len(tokens) == 2:
+                classes = [tokens[1] if item == tokens[0] else item for item in classes]
+            else:
+                unsupported.append((kind, operation.get('order'), 'invalid class operation'))
+                continue
+            attrs['class'] = ' '.join(classes)
+        elif kind == 'replace-text':
+            if not replace_text(target, operation.get('value')):
+                unsupported.append((kind, operation.get('order'), 'invalid text target'))
+        elif kind == 'replace-children-markup':
+            if not replace_markup(target, operation.get('markup')):
+                unsupported.append((kind, operation.get('order'), 'invalid markup target'))
+        elif kind == 'append':
+            children = [resolve(child) for child in operation.get('children', [])]
+            if not children or any(not append(target, child) for child in children):
+                unsupported.append((kind, operation.get('order'), 'invalid append target'))
+        elif kind == 'insert-before':
+            child = resolve(operation.get('child'))
+            before = resolve(operation.get('before'))
+            if not isinstance(target, DomNode) or not isinstance(child, DomNode) or before not in target.children:
+                unsupported.append((kind, operation.get('order'), 'invalid insertion target'))
+            else:
+                detach(child)
+                target.children.insert(target.children.index(before), child)
+        elif kind == 'remove':
+            if isinstance(target, StyleElementTarget):
+                removed = False
+                retained = []
+                for attrs, text, prefix in parser.author_style_blocks:
+                    if not removed and attrs.get('id') == target.element_id:
+                        removed = True
+                        for rule in parse_simple_css_rules(text):
+                            try:
+                                parser.css_rules.remove(rule)
+                            except ValueError:
+                                pass
+                    else:
+                        retained.append((attrs, text, prefix))
+                parser.author_style_blocks = retained
+                if not removed:
+                    unsupported.append((kind, operation.get('order'), 'missing style element'))
+            elif not isinstance(target, DomNode) or find_parent(target) is None:
+                unsupported.append((kind, operation.get('order'), 'invalid removal target'))
+            else:
+                detach(target)
+        elif kind in {'scroll-axis', 'scroll-to'}:
+            if not isinstance(target, DomNode):
+                unsupported.append((kind, operation.get('order'), 'invalid scroll target'))
+            elif kind == 'scroll-axis':
+                field = 'scroll_top' if operation.get('axis') == 'scrollTop' else 'scroll_left'
+                setattr(target, field, float(operation.get('value') or 0.0))
+            else:
+                arguments = operation.get('arguments', [])
+                if len(arguments) >= 1:
+                    target.scroll_left = float(arguments[0])
+                if len(arguments) >= 2:
+                    target.scroll_top = float(arguments[1])
+        else:
+            unsupported.append((kind, operation.get('order'), 'unknown operation'))
+
+    parser.lowered_layout_barriers = barriers
+    parser.root.lowered_layout_barriers = list(barriers)
+    if unsupported:
+        detail = ', '.join(f'{kind}@{order}: {reason}' for kind, order, reason in unsupported)
+        raise ValueError(f'AST mutation IR could not be lowered: {detail}')
+
+
+def _serialize_mutation_styles(styles) -> str:
+    """Serialize the authored inline declarations before the final cascade."""
+    if styles is None:
+        return ''
+    declarations = []
+    for name, value in styles.items():
+        important = bool(
+            isinstance(styles, CssDeclarations)
+            and styles.important.get(name, False)
+        )
+        declarations.append(
+            f"{name}: {value}{' !important' if important else ''}"
+        )
+    return "; ".join(declarations)
+
+
+def _serialize_mutation_attrs(
+    attrs: dict,
+    styles,
+    *,
+    extra: dict[str, str] | None = None,
+) -> str:
+    """Serialize inert final-state attributes, excluding executable handlers."""
+    values = {
+        str(name): value
+        for name, value in attrs.items()
+        if not re.fullmatch(r'on[a-z]+', str(name), re.IGNORECASE)
+    }
+    if styles is not None:
+        inline = _serialize_mutation_styles(styles)
+        if inline:
+            values['style'] = inline
+        else:
+            values.pop('style', None)
+    if extra:
+        values.update(extra)
+    encoded = []
+    for name, value in values.items():
+        if value is None:
+            encoded.append(f" {name}")
+        else:
+            encoded.append(
+                f' {name}="{html_module.escape(str(value), quote=True)}"'
+            )
+    return ''.join(encoded)
+
+
+def _mutation_final_state(parser: 'WptHtmlParser') -> dict:
+    """Capture static post-mutation markup before stylesheet cascading.
+
+    The renderer builder consumes the same mutated ``DomNode`` tree.  The
+    Chromium side receives a script-free serialization of that tree so the
+    comparison does not depend on a browser JavaScript runtime.
+    """
+    scrolls = []
+
+    def serialize(node) -> str:
+        if node.is_text:
+            return html_module.escape(node.text_content, quote=False)
+        if node.tag == '#document-fragment':
+            return ''.join(serialize(child) for child in node.children)
+        extra = None
+        scroll_left = float(getattr(node, 'scroll_left', 0.0))
+        scroll_top = float(getattr(node, 'scroll_top', 0.0))
+        if scroll_left or scroll_top:
+            marker = str(len(scrolls))
+            extra = {'data-openui-final-scroll': marker}
+            scrolls.append({
+                'marker': marker,
+                'left': scroll_left,
+                'top': scroll_top,
+            })
+        attrs = _serialize_mutation_attrs(node.attrs, node.styles, extra=extra)
+        start = f'<{node.tag}{attrs}>'
+        if node.tag in WptHtmlParser.VOID_TAGS:
+            return start
+        return start + ''.join(serialize(child) for child in node.children) + f'</{node.tag}>'
+
+    return {
+        'body_markup': ''.join(serialize(child) for child in parser.root.children),
+        'body_attrs': {
+            name: value for name, value in parser.root.attrs.items()
+            if not re.fullmatch(r'on[a-z]+', str(name), re.IGNORECASE)
+        },
+        'body_style': _serialize_mutation_styles(parser.root.styles),
+        'html_attrs': {
+            name: value for name, value in parser.html_attrs.items()
+            if not re.fullmatch(r'on[a-z]+', str(name), re.IGNORECASE)
+        },
+        'html_style': _serialize_mutation_styles(parser.html_styles),
+        'author_style_blocks': copy.deepcopy(parser.author_style_blocks),
+        'scrolls': scrolls,
+    }
 
 
 _TERMINAL_PSEUDO_RE = re.compile(
@@ -3252,10 +3942,14 @@ class WptHtmlParser(HTMLParser):
         *,
         root_aware: bool = False,
         harness_rules: list | None = None,
+        mutation_ir: dict | None = None,
     ):
         super().__init__()
         self.root_aware = root_aware
         self.harness_rules = harness_rules
+        self.mutation_ir = mutation_ir
+        self.lowered_layout_barriers = []
+        self.lowered_final_state = None
         self.root = DomNode('body', {}, {})
         self.stack = [self.root]
         self.in_body = False
@@ -3591,7 +4285,10 @@ class WptHtmlParser(HTMLParser):
         BODY_STYLE_RULES come first (matching Chrome's BODY_STYLE wrapper),
         then external stylesheet rules, then inline <style> rules.
         Specificity-based cascade ensures body { padding:20px } beats * { padding:0 }."""
-        operations = _static_onload_operations(self)
+        if self.mutation_ir is not None:
+            _apply_ast_mutation_ir(self)
+            self.lowered_final_state = _mutation_final_state(self)
+        operations = _static_onload_operations(self) if self.mutation_ir is None else None
         if operations is not None:
             for operation, _node_id, _name, value in operations:
                 if operation == 'class':
@@ -3746,15 +4443,16 @@ class WptHtmlParser(HTMLParser):
             )
             self.html_pseudo_styles = html_pseudo_source.pseudo_styles
 
-            # A style element normally has UA ``display:none``.  If author CSS
+            # A style element normally has UA ``display:none``. If author CSS
             # changes that computed display, its raw stylesheet text becomes
-            # ordinary renderable text.  Retain it in source order ahead of
-            # body content, matching the comparison template.
+            # ordinary renderable text. Whitespace before the first style in
+            # the HTML head is ignored by the tree builder, even when that
+            # style later becomes visible; it must not create a body line box.
             visible_style_nodes = []
             style_sibling_count = trailing_harness_style + len(self.author_style_blocks) + sum(
                 1 for child in self.root.children if not child.is_text
             )
-            for style_index, (attrs, text, prefix) in enumerate(
+            for style_index, (attrs, text, _prefix) in enumerate(
                 self.author_style_blocks, 1
             ):
                 style_node = DomNode(
@@ -3773,11 +4471,6 @@ class WptHtmlParser(HTMLParser):
                 )
                 display = style_node.styles.get('display', '').strip().lower()
                 if display and display != 'none':
-                    if prefix:
-                        prefix_node = DomNode('#text', {}, {})
-                        prefix_node.is_text = True
-                        prefix_node.text_content = prefix
-                        visible_style_nodes.append(prefix_node)
                     text_node = DomNode('#text', {}, {})
                     text_node.is_text = True
                     text_node.text_content = text
@@ -3827,11 +4520,13 @@ def _parse_wpt_markup(
     *,
     root_aware: bool = False,
     harness_rules: list | None = None,
+    mutation_ir: dict | None = None,
 ) -> WptHtmlParser:
     """Parse one already-decoded HTML document under an explicit harness."""
     parser = WptHtmlParser(
         root_aware=root_aware,
         harness_rules=harness_rules,
+        mutation_ir=mutation_ir,
     )
     parser.html_dir = html_dir
     parser.root.resource_base = parser.html_dir
@@ -3851,7 +4546,12 @@ def _parse_wpt_markup(
     return parser
 
 
-def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser:
+def parse_wpt_html(
+    html_path: str,
+    *,
+    root_aware: bool = False,
+    mutation_ir: dict | None = None,
+) -> WptHtmlParser:
     """Parse a WPT HTML file and return the parser with DOM tree."""
     # Decode a leading UTF-8 BOM as an encoding signature.  Leaving U+FEFF in
     # the character stream makes HTMLParser synthesize body text before the
@@ -3863,6 +4563,7 @@ def parse_wpt_html(html_path: str, *, root_aware: bool = False) -> WptHtmlParser
         content,
         os.path.dirname(os.path.abspath(html_path)),
         root_aware=root_aware,
+        mutation_ir=mutation_ir,
     )
 
 
@@ -3961,9 +4662,12 @@ def analyze_portability(parser: WptHtmlParser) -> tuple[bool, str]:
     """Determine if a WPT test can be ported to our engine.
     Returns (portable, reason_if_not).
     """
+    has_lowered_ast_mutations = bool(
+        parser.mutation_ir is not None and parser.mutation_ir.get('lowerable')
+    )
     if (
         parser.has_script or parser.event_handlers
-    ) and not _is_assertion_only_check_layout(parser) and not _has_only_static_onload_assignments(parser):
+    ) and not has_lowered_ast_mutations and not _is_assertion_only_check_layout(parser) and not _has_only_static_onload_assignments(parser):
         return False, "uses_javascript"
 
     # Pseudo-classes/pseudo-elements we can handle
@@ -4112,7 +4816,7 @@ def _css_length_px(value: str, font_size: float = 16.0) -> float | None:
     value = value.strip()
     if value in ('0', '0px'):
         return 0.0
-    m = re.match(r'^(-?[\d.]+)(px|em|rem|in|cm|mm|pt|pc)$', value)
+    m = re.match(r'^(-?[\d.]+)(px|em|rem|in|cm|mm|q|pt|pc)$', value, re.IGNORECASE)
     if not m:
         return None
     num = float(m.group(1))
@@ -4124,6 +4828,7 @@ def _css_length_px(value: str, font_size: float = 16.0) -> float | None:
         'in': 96.0,
         'cm': 96.0 / 2.54,
         'mm': 96.0 / 25.4,
+        'q': 96.0 / 101.6,
         'pt': 96.0 / 72.0,
         'pc': 16.0,
     }
@@ -4579,7 +5284,7 @@ def _extract_css_image(value: str) -> tuple[str, str] | None:
     return None
 
 
-def _gradient_position_rust(value: str) -> str | None:
+def _gradient_position_rust(value: str, font_size: float = 16.0) -> str | None:
     value = value.strip().lower()
     if value in ('0', '0px'):
         return 'GradientStopPosition::Px(0.0)'
@@ -4589,6 +5294,9 @@ def _gradient_position_rust(value: str) -> str | None:
     match = re.fullmatch(r'(-?[\d.]+)px', value)
     if match:
         return f'GradientStopPosition::Px({_zoomed_px(float(match.group(1)))})'
+    absolute = _css_length_px(value, font_size)
+    if absolute is not None:
+        return f'GradientStopPosition::Px({absolute})'
     match = re.fullmatch(
         r'calc\(\s*(-?[\d.]+)%\s*([+-])\s*([\d.]+)px\s*\)', value
     )
@@ -4609,7 +5317,7 @@ def _style_color_rust(value: str) -> str | None:
     return f'StyleColor::Resolved({color})' if color else None
 
 
-def _gradient_stops_rust(parts: list[str]) -> list[str] | None:
+def _gradient_stops_rust(parts: list[str], font_size: float = 16.0) -> list[str] | None:
     stops = []
     for part in parts:
         tokens = _split_respecting_parens(part.strip())
@@ -4617,8 +5325,26 @@ def _gradient_stops_rust(parts: list[str]) -> list[str] | None:
             return None
         color = _style_color_rust(tokens[0])
         if color is None:
+            position = (
+                _gradient_position_rust(tokens[0], font_size)
+                if len(tokens) == 1
+                else None
+            )
+            if position:
+                hint_position = position.replace(
+                    'GradientStopPosition::',
+                    'GradientStopPosition::Hint',
+                    1,
+                )
+                stops.append(
+                    'GradientStop { '
+                    'color: StyleColor::Resolved(Color::TRANSPARENT), '
+                    f'position: {hint_position} '
+                    '}'
+                )
+                continue
             return None
-        positions = [_gradient_position_rust(token) for token in tokens[1:]]
+        positions = [_gradient_position_rust(token, font_size) for token in tokens[1:]]
         if any(position is None for position in positions):
             return None
         if not positions:
@@ -4733,7 +5459,11 @@ def _background_position_rust(value: str) -> tuple[str, str] | None:
     return horizontal or zero, vertical or zero
 
 
-def _css_image_rust(value: str, resource_var: str) -> tuple[list[str], str] | None:
+def _css_image_rust(
+    value: str,
+    resource_var: str,
+    font_size: float = 16.0,
+) -> tuple[list[str], str] | None:
     raw = value.strip()
     function = re.match(
         r'(?is)^(?P<repeating>repeating-)?(?P<kind>linear|radial|conic)-gradient\((.*)\)$',
@@ -4777,7 +5507,7 @@ def _css_image_rust(value: str, resource_var: str) -> tuple[list[str], str] | No
             elif direction:
                 has_prelude = False
             stop_parts = parts[1:] if has_prelude else parts
-            stops = _gradient_stops_rust(stop_parts)
+            stops = _gradient_stops_rust(stop_parts, font_size)
             if stops is None:
                 return None
             return [], (
@@ -4805,7 +5535,11 @@ def _css_image_rust(value: str, resource_var: str) -> tuple[list[str], str] | No
                 }.items():
                     if keyword in words:
                         size = rust
-                lengths = [parse_length(word) for word in words if parse_length(word)]
+                lengths = [
+                    parse_length(word, font_size)
+                    for word in words
+                    if parse_length(word, font_size)
+                ]
                 if lengths:
                     second = lengths[1] if len(lengths) > 1 else lengths[0]
                     size = f'RadialGradientSize::Explicit({lengths[0]}, {second})'
@@ -4813,7 +5547,9 @@ def _css_image_rust(value: str, resource_var: str) -> tuple[list[str], str] | No
                     position = _background_position_rust(after_at)
                     if position:
                         center_x, center_y = position
-            stops = _gradient_stops_rust(parts[1:] if has_prelude else parts)
+            stops = _gradient_stops_rust(
+                parts[1:] if has_prelude else parts, font_size
+            )
             if stops is None:
                 return None
             return [], (
@@ -4834,7 +5570,7 @@ def _css_image_rust(value: str, resource_var: str) -> tuple[list[str], str] | No
                 position = _background_position_rust(prelude.split(' at ', 1)[1])
                 if position:
                     center_x, center_y = position
-        stops = _gradient_stops_rust(parts[1:] if has_prelude else parts)
+        stops = _gradient_stops_rust(parts[1:] if has_prelude else parts, font_size)
         if stops is None:
             return None
         return [], (
@@ -5142,7 +5878,9 @@ def _background_layers_rust(styles: dict, s: str, font_size: float) -> list[str]
     for index, layer in enumerate(layers):
         if not layer['image']:
             continue
-        parsed = _css_image_rust(layer['image'], f'{prefix}_background_image_{index}')
+        parsed = _css_image_rust(
+            layer['image'], f'{prefix}_background_image_{index}', font_size
+        )
         if parsed is None:
             continue
         image_prereqs, image = parsed
@@ -5208,7 +5946,9 @@ def _mask_layers_rust(styles: dict, s: str, font_size: float) -> list[str]:
     for index, layer in enumerate(layers):
         if not layer['image']:
             continue
-        parsed = _css_image_rust(layer['image'], f'{prefix}_mask_image_{index}')
+        parsed = _css_image_rust(
+            layer['image'], f'{prefix}_mask_image_{index}', font_size
+        )
         if parsed is None:
             continue
         image_prereqs, image = parsed
@@ -8255,6 +8995,9 @@ def generate_single_style(
         v = val.strip()
         if v == '0':
             return f"{s}.font_size = 0.0;"
+        viewport = _viewport_px_rust(v)
+        if viewport:
+            return f"{s}.font_size = {viewport};"
         m = re.match(r'^(-?[\d.]+)px$', v)
         if m:
             return f"{s}.font_size = {float(m.group(1))};"
@@ -9337,10 +10080,13 @@ def generate_rust_fn(
                     # in the builder path), so set the effective inherited font
                     # and color explicitly on the emitted Text node.
                     ts = f"doc.node_mut({tvar}).style"
-                    lines.append(
-                        f"{ws}{ts}.font_size = "
-                        f"{round(float(parent_font_size) * parent_zoom, 12)};"
+                    inherited_viewport_font = _viewport_px_rust(
+                        str(inherited.get('font-size', ''))
                     )
+                    text_font_size = inherited_viewport_font or str(
+                        round(float(parent_font_size) * parent_zoom, 12)
+                    )
+                    lines.append(f"{ws}{ts}.font_size = {text_font_size};")
                     if isolated_document:
                         lines.append(f"{ws}{ts}.embedded_document_text = true;")
                     if (
@@ -9629,6 +10375,13 @@ def generate_rust_fn(
         var = f"n{counter[0]}"
         ws = "    " * indent
         render_children = node.children
+        image_source = node.attrs.get('src', '').strip() if node.tag == 'img' else ''
+        failed_image_with_alt = bool(
+            node.tag == 'img'
+            and image_source
+            and node.attrs.get('alt', '')
+            and _node_resource(image_source) is None
+        )
         if (
             node.tag == 'optgroup'
             and node.attrs.get('label', '')
@@ -9970,7 +10723,12 @@ def generate_rust_fn(
             'input', 'button', 'meter', 'progress', 'textarea', 'select', 'embed',
             'marquee',
         }:
-            lines.append(f"{ws}doc.node_mut({var}).style.display = Display::InlineBlock;")
+            # A failed image with alternative text generates an ordinary
+            # inline fallback when the author did not override `display`.
+            # Its width/height presentation hints consequently do not size an
+            # atomic replaced box; the fallback wraps in the containing line.
+            if not (failed_image_with_alt and 'display' not in node.styles):
+                lines.append(f"{ws}doc.node_mut({var}).style.display = Display::InlineBlock;")
 
         if node.tag == 'marquee':
             # The legacy scrolling host clips its anonymous scrolling box.
@@ -10058,7 +10816,8 @@ def generate_rust_fn(
             # font even though the filename label inherits the host font.
             lines.append(f"{ws}doc.node_mut({var}).style.native_control_text = true;")
 
-        control_all_initial = node.styles.get('all', '').strip().lower() == 'initial'
+        control_all_value = node.styles.get('all', '').strip().lower()
+        control_all_reset = control_all_value in {'initial', 'unset'}
         if node.tag in {'input', 'textarea', 'select'}:
             # Pinned Linux Chromium UA appearance. Intrinsic control metrics
             # are carried by ReplacedContent below, leaving computed width
@@ -10069,13 +10828,13 @@ def generate_rust_fn(
             )
             lines.append(
                 f"{ws}doc.node_mut({var}).style.box_sizing = "
-                f"BoxSizing::{'ContentBox' if control_all_initial else 'BorderBox'};"
+                f"BoxSizing::{'ContentBox' if control_all_reset else 'BorderBox'};"
             )
             if node.tag == 'textarea':
                 lines.append(f"{ws}doc.node_mut({var}).style.overflow_x = Overflow::Auto;")
                 lines.append(f"{ws}doc.node_mut({var}).style.overflow_y = Overflow::Auto;")
             input_type = node.attrs.get('type', 'text').lower() if node.tag == 'input' else ''
-            ua_border_width = 0 if control_all_initial else (
+            ua_border_width = 0 if control_all_reset else (
                 0 if input_type in {'checkbox', 'radio', 'file'}
                 or (input_type == 'range' and not appearance_none)
                 else 2 if node.tag == 'input'
@@ -10088,7 +10847,7 @@ def generate_rust_fn(
                 )
                 lines.append(
                     f"{ws}doc.node_mut({var}).style.border_{side}_style = "
-                    f"BorderStyle::{'None' if control_all_initial else 'Inset'};"
+                    f"BorderStyle::{'None' if control_all_reset else 'Inset'};"
                 )
                 if node.tag == 'select' and appearance_none:
                     lines.append(
@@ -10182,15 +10941,12 @@ def generate_rust_fn(
                 and node.tag == 'img'
                 and source
                 and node.attrs.get('alt', '')
-                and node.styles.get('display', '').strip().lower()
-                in {'block', 'flow-root', 'flex', 'grid'}
             ):
-                # A failed image with block-container display is non-replaced.
+                # A failed image with alternative text is non-replaced.
                 # Materialize its deterministic UA shadow fallback as a 16px
-                # icon slot followed by the alternative text. The principal
-                # image still paints the packaged broken-resource glyph over
-                # that transparent slot, while ordinary inline layout owns
-                # wrapping, height, padding, and scrollable overflow.
+                # icon slot followed by the alternative text. Ordinary inline
+                # or block-container layout (according to the computed
+                # display) owns wrapping, height, padding, and overflow.
                 icon = DomNode('canvas', {'width': '16', 'height': '16'}, CssDeclarations())
                 # Blink's anonymous broken-resource icon sits three pixels
                 # below the alternative text baseline at the pinned 16px UA
@@ -10227,12 +10983,40 @@ def generate_rust_fn(
                     f'Some(({intrinsic_width}, {intrinsic_height}))'
                     if dimensions is not None else 'None'
                 )
-                lines.append(
-                    f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
-                    "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
-                    f"intrinsic_width: Some({intrinsic_width}), intrinsic_height: Some({intrinsic_height}), "
-                    f"intrinsic_ratio: {ratio} }});"
+                decoded_frame = (
+                    MEDIA_FIRST_FRAMES.get(local[3]) if local is not None else None
                 )
+                if decoded_frame is not None:
+                    transport = bytes.fromhex(decoded_frame['transport_hex'])
+                    byte_expr = 'vec![' + ', '.join(
+                        f'0x{byte:02x}' for byte in transport
+                    ) + ']'
+                    lines.append(
+                        f'{ws}let {var}_frame = doc.register_image_resource('
+                        f'{json.dumps(local[1] + "#first-frame")}, '
+                        f'{json.dumps(decoded_frame["output_mime_type"])}, '
+                        f'{json.dumps(decoded_frame["output_sha256"])}, {byte_expr});'
+                    )
+                    lines.append(
+                        f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                        f"resource: openui_dom::ReplacedResourceKind::MediaPoster({var}_frame), "
+                        f"intrinsic_width: Some({intrinsic_width}), intrinsic_height: Some({intrinsic_height}), "
+                        f"intrinsic_ratio: {ratio} }});"
+                    )
+                    # The HTML video UA presentation contains its intrinsic
+                    # frame inside the concrete element viewport. Author
+                    # object-fit declarations are emitted later and override
+                    # this default through the normal cascade order.
+                    lines.append(
+                        f"{ws}doc.node_mut({var}).style.object_fit = ObjectFit::Contain;"
+                    )
+                else:
+                    lines.append(
+                        f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
+                        "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
+                        f"intrinsic_width: Some({intrinsic_width}), intrinsic_height: Some({intrinsic_height}), "
+                        f"intrinsic_ratio: {ratio} }});"
+                    )
         elif node.tag == 'svg':
             # An outer SVG viewport is atomic replaced content. Child-bearing
             # roots remain represented by the same viewport fragment; simple
@@ -10620,11 +11404,12 @@ def generate_rust_fn(
                 "intrinsic_width: Some(80.0), intrinsic_height: Some(16.0), "
                 "intrinsic_ratio: None });"
             )
-        elif node.tag == 'button' and not node.children:
+        elif node.tag == 'button' and not node.children and not control_all_reset:
             # With the comparison reset removing UA padding, an empty native
             # button has a zero-sized content area surrounded only by its 2px
-            # theme border. Non-empty buttons continue through normal
-            # text-driven intrinsic sizing.
+            # theme border. A button whose author-level `all` reset suppresses
+            # native appearance is an ordinary non-replaced CSS box, while
+            # non-empty native buttons continue through text-driven sizing.
             lines.append(
                 f"{ws}doc.node_mut({var}).replaced = Some(openui_dom::ReplacedContent {{ "
                 "resource: openui_dom::ReplacedResourceKind::TransparentCanvas, "
@@ -10663,7 +11448,7 @@ def generate_rust_fn(
                     intrinsic_height = (
                         authored_font_size
                         if authored_font_size is not None else
-                        16.0 if control_all_initial else 14.0
+                        16.0 if control_all_reset else 14.0
                     )
             elif node.tag == 'textarea':
                 try:
@@ -10830,15 +11615,20 @@ def generate_rust_fn(
                 and 'font' not in effective_styles
                 and not (
                     node.tag in {'button', 'input', 'textarea', 'select'}
-                    and control_all_initial
+                    and control_all_reset
                 )
             ):
                 effective_styles['font-size'] = '13.333333px'
                 uses_native_button_ahem_metrics = node.tag == 'button' or is_input_button
-            if (node.tag == 'button' or is_input_button) and 'text-align' not in effective_styles:
+            if (
+                not control_all_reset
+                and (node.tag == 'button' or is_input_button)
+                and 'text-align' not in effective_styles
+            ):
                 effective_styles['text-align'] = 'center'
             if (
-                (node.tag == 'button' or is_input_button)
+                not control_all_reset
+                and (node.tag == 'button' or is_input_button)
                 and 'white-space' not in effective_styles
             ):
                 # Form buttons use a non-wrapping anonymous label box. This is
@@ -10849,7 +11639,7 @@ def generate_rust_fn(
             prop in effective_styles
             for prop in {'background', 'background-color', 'background-image'}
         )
-        if node.tag == 'button' or is_input_button:
+        if (node.tag == 'button' or is_input_button) and not control_all_reset:
             # Passive Linux button appearance. The comparison harness resets
             # margin/padding/box-sizing as author CSS, but leaves these UA
             # paint declarations in force unless the test overrides them.
@@ -11157,6 +11947,14 @@ def generate_rust_fn(
                         # currentColor. Its CSS 3D shading yields #212121 on
                         # the recessed edges and #767676 on the raised edges.
                         effective_styles['border-color'] = '#767676'
+            elif control_all_reset:
+                # Author-level `all: initial` / `all: unset` resets
+                # `appearance` to its initial non-native value. UA button
+                # paint and metrics must not be reintroduced after the author
+                # cascade has already won.
+                lines.append(
+                    f"{ws}doc.node_mut({var}).form_control_native_appearance = false;"
+                )
 
         if (
             node.tag == 'button'
@@ -12304,7 +13102,20 @@ def generate_rust_fn(
     lines.append("    doc")
     lines.append("}")
 
-    return '\n'.join(lines)
+    generated = engineify_module('\n'.join(lines))
+    if getattr(root, 'lowered_layout_barriers', []):
+        needle = "    Ok(doc.into_engine())"
+        replacement = (
+            "    let mut engine = doc.into_engine();\n"
+            "    // The audited layout reads do not influence later control flow.\n"
+            "    // Flush the final Engine state through its geometry/scene API.\n"
+            "    let _ = engine.update()?;\n"
+            "    Ok(engine)"
+        )
+        if generated.count(needle) != 1:
+            raise ValueError('could not lower the audited Engine layout barrier')
+        generated = generated.replace(needle, replacement, 1)
+    return generated
 
 
 def _outer_html_sections(source: str):
@@ -12382,7 +13193,12 @@ def _embedded_text_override(markup: str) -> str:
     return override + markup
 
 
-def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
+def generate_html_template(
+    html_path: str,
+    *,
+    root_aware: bool = False,
+    final_state_parser: WptHtmlParser | None = None,
+) -> str:
     """Read an HTML file and extract body content + style blocks for Chrome rendering.
     The template must include <style> blocks so Chrome applies the same CSS rules
     that the Rust code generator parsed and encoded into Document builder code.
@@ -12400,10 +13216,22 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
 
     html_dir = os.path.dirname(os.path.abspath(html_path))
 
+    final_state = (
+        final_state_parser.lowered_final_state
+        if final_state_parser is not None else None
+    )
+    if final_state_parser is not None and final_state is None:
+        raise ValueError('final-state template requires a lowered mutation IR')
+
     has_embedded_markup = bool(re.search(r'\bsrcdoc\s*=', content, re.IGNORECASE))
     embedded_body = None
     embedded_body_attrs = None
-    if has_embedded_markup:
+    if final_state is not None:
+        style_blocks = []
+        for attrs, style_text, _prefix in final_state['author_style_blocks']:
+            encoded_attrs = _serialize_mutation_attrs(attrs, None)
+            style_blocks.append(f'<style{encoded_attrs}>{style_text}</style>')
+    elif has_embedded_markup:
         style_blocks, embedded_body, embedded_body_attrs = _outer_html_sections(content)
     else:
         # Extract <style> blocks from anywhere in the document (head or body)
@@ -12420,8 +13248,10 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     # visible body text in the comparison template.
     body_tag = r'<body\b((?:[^>"\']+|"[^"]*"|\'[^\']*\')*)>'
     body_open = re.search(body_tag, markup_content, re.IGNORECASE)
-    body_attrs = embedded_body_attrs if has_embedded_markup else (
-        body_open.group(1) if body_open else None
+    body_attrs = (
+        None if final_state is not None
+        else embedded_body_attrs if has_embedded_markup
+        else body_open.group(1) if body_open else None
     )
     if body_attrs is not None:
         style_attr = re.search(r'\bstyle=["\']([^"\']*)["\']', body_attrs, re.IGNORECASE)
@@ -12443,7 +13273,7 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
                     for block in style_blocks
                 ]
 
-    if root_aware:
+    if root_aware and final_state is None:
         html_open = re.search(r'<html\b([^>]*)>', markup_content, re.IGNORECASE)
         if html_open:
             style_attr = re.search(
@@ -12470,7 +13300,7 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     style_prefix = '\n'.join(style_blocks)
 
     # Extract body content
-    body_match = None if has_embedded_markup else re.search(
+    body_match = None if has_embedded_markup or final_state is not None else re.search(
         # Use the last body end tag. The HTML parser ignores an early stray
         # `</body>` when later body content follows, so stopping at the first
         # token would make the Chromium harness render a different document
@@ -12479,7 +13309,9 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
         markup_content,
         re.DOTALL | re.IGNORECASE,
     )
-    if embedded_body is not None:
+    if final_state is not None:
+        body = final_state['body_markup']
+    elif embedded_body is not None:
         body = embedded_body
     elif body_match:
         body = body_match.group(2)
@@ -12682,6 +13514,31 @@ def generate_html_template(html_path: str, *, root_aware: bool = False) -> str:
     # This is deliberately unconditional: the SP20 package is content
     # addressed, and historical hard-coded assets remain the fallback.
     template = _embed_paint_asset_urls(template, html_dir)
+    if final_state is not None:
+        def directive(name: str, value) -> str:
+            payload = base64.urlsafe_b64encode(
+                json.dumps(
+                    value, sort_keys=True, separators=(',', ':')
+                ).encode('utf-8')
+            ).decode('ascii')
+            return f'<!--OPENUI_{name}:{payload}-->'
+
+        body_final_attrs = dict(final_state['body_attrs'])
+        if final_state['body_style']:
+            body_final_attrs['style'] = final_state['body_style']
+        else:
+            body_final_attrs.pop('style', None)
+        html_final_attrs = dict(final_state['html_attrs'])
+        if final_state['html_style']:
+            html_final_attrs['style'] = final_state['html_style']
+        else:
+            html_final_attrs.pop('style', None)
+        directives = [
+            directive('FINAL_HTML_ATTRS', html_final_attrs),
+            directive('FINAL_BODY_ATTRS', body_final_attrs),
+            directive('FINAL_SCROLLS', final_state['scrolls']),
+        ]
+        template = '\n'.join(directives) + '\n' + template
     if root_aware:
         template = '<!--OPENUI_ROOT_AWARE-->\n' + template
     return template
@@ -12705,7 +13562,10 @@ def process_directory(wpt_dir: str, prefix: str = "wpt") -> dict:
     for html_path in html_files:
         filename = html_path.stem
         try:
-            parser = parse_wpt_html(str(html_path))
+            test_id = f"wpt/{prefix}/{filename}"
+            parser = parse_wpt_html(
+                str(html_path), mutation_ir=_candidate_mutation_ir(test_id)
+            )
             portable, reason = analyze_portability(parser)
 
             if not portable:
@@ -12735,8 +13595,11 @@ def write_rust_module(results: dict, output_path: str, module_name: str):
     lines.append(f"//! Auto-generated by tools/wpt/port_wpt.py")
     lines.append(f"//! DO NOT EDIT MANUALLY")
     lines.append("")
-    lines.append("use openui_dom::{Document, ElementTag, NodeId};")
-    lines.append("use openui_geometry::Length;")
+    lines.append("use openui_dom::ElementTag;")
+    lines.append(
+        "use openui_engine::{Engine, EngineError, NodeHandle as NodeId, RendererNodeState};"
+    )
+    lines.append("use openui_geometry::{Length, ViewportMetrics};")
     lines.append("use openui_style::*;")
     lines.append("")
     lines.append("use crate::base_doc;")
@@ -12758,7 +13621,7 @@ def write_rust_module(results: dict, output_path: str, module_name: str):
     lines.append("}")
 
     with open(output_path, 'w') as f:
-        f.write('\n'.join(lines) + '\n')
+        f.write(engineify_module('\n'.join(lines) + '\n'))
 
     print(f"Wrote {len(results['portable'])} test builders to {output_path}")
 

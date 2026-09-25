@@ -577,35 +577,21 @@ fn add_spanning_contribution(
         return;
     }
     let end = (start + span).min(tracks.len());
-    let count = (end - start) as i32;
     let internal_spacing =
         inline_spacing * LayoutUnit::from_i32((end - start).saturating_sub(1) as i32);
     let min = (min - internal_spacing).clamp_negative_to_zero();
     let max = (max - internal_spacing).clamp_negative_to_zero();
-    let current_min = tracks[start..end]
-        .iter()
-        .fold(LayoutUnit::zero(), |sum, track| sum + track.min);
-    let current_max = tracks[start..end]
-        .iter()
-        .fold(LayoutUnit::zero(), |sum, track| sum + track.max);
-    if min > current_min {
-        let deficit = (min - current_min).raw();
-        let share = LayoutUnit::from_raw(deficit / count);
-        for track in &mut tracks[start..end] {
-            track.min = track.min + share;
-        }
-        tracks[end - 1].min = tracks[end - 1].min + LayoutUnit::from_raw(deficit % count);
-    }
-    if max > current_max {
-        let deficit = (max - current_max).raw();
-        let share = LayoutUnit::from_raw(deficit / count);
-        for track in &mut tracks[start..end] {
-            track.max = track.max + share;
-        }
-        tracks[end - 1].max = tracks[end - 1].max + LayoutUnit::from_raw(deficit % count);
-    }
     for track in &mut tracks[start..end] {
         track.max = track.max.max_of(track.min);
+    }
+    let distributed_min = distribute_auto_tracks(&tracks[start..end], min);
+    for (track, distributed) in tracks[start..end].iter_mut().zip(distributed_min) {
+        track.min = track.min.max_of(distributed);
+        track.max = track.max.max_of(track.min);
+    }
+    let distributed_max = distribute_auto_tracks(&tracks[start..end], max);
+    for (track, distributed) in tracks[start..end].iter_mut().zip(distributed_max) {
+        track.max = track.max.max_of(distributed).max_of(track.min);
     }
 }
 
@@ -633,7 +619,15 @@ fn measure_tracks(
             tracks[index].max = tracks[index].max.max_of(width);
         }
     }
-    for slot in slots {
+    // Blink establishes originating single-column constraints before it
+    // redistributes colspan cells over those columns. DOM-order interleaving
+    // changes both the proportional shares and which final column receives
+    // the fixed-point rounding remainder.
+    for slot in slots
+        .iter()
+        .filter(|slot| slot.column_span == 1)
+        .chain(slots.iter().filter(|slot| slot.column_span > 1))
+    {
         let mut sizes = compute_intrinsic_block_sizes(doc, slot.node_id);
         if doc.node(slot.node_id).tag == ElementTag::Text {
             let inline = compute_intrinsic_inline_sizes(doc, slot.node_id);
@@ -928,39 +922,50 @@ fn distribute_auto_tracks(tracks: &[TrackContribution], target: LayoutUnit) -> V
     if tracks.is_empty() {
         return Vec::new();
     }
-    let mut widths: Vec<LayoutUnit> = tracks.iter().map(|track| track.min).collect();
-    let min_sum = widths
+    let min_sum = tracks
         .iter()
-        .copied()
-        .fold(LayoutUnit::zero(), |a, b| a + b);
+        .fold(LayoutUnit::zero(), |sum, track| sum + track.min);
     if target <= min_sum {
-        return widths;
+        return tracks.iter().map(|track| track.min).collect();
     }
     let max_sum = sum_tracks(tracks, true);
-    if max_sum > min_sum {
-        let fraction = ((target - min_sum).to_f32() / (max_sum - min_sum).to_f32()).clamp(0.0, 1.0);
-        for (width, track) in widths.iter_mut().zip(tracks) {
-            *width = *width + LayoutUnit::from_f32((track.max - track.min).to_f32() * fraction);
-        }
+    if target == max_sum {
+        return tracks.iter().map(|track| track.max).collect();
     }
-    let used = widths
-        .iter()
-        .copied()
-        .fold(LayoutUnit::zero(), |a, b| a + b);
-    if target > used {
-        // Preserve the requested grid width exactly. Converting a subpixel
-        // remainder through f32 can truncate every per-track share to zero
-        // (for example, one raw 1/64 unit split across two tracks), leaving
-        // the table one unit narrower than its resolved width. Distribute in
-        // raw fixed-point units and assign the indivisible remainder in track
-        // order, matching the stable logical-start bias used by track sizing.
-        let remaining = (target - used).raw();
-        let count = widths.len() as i32;
-        let share = remaining / count;
-        let remainder = remaining % count;
-        for (index, width) in widths.iter_mut().enumerate() {
-            *width = *width + LayoutUnit::from_raw(share + i32::from((index as i32) < remainder));
-        }
+    let (bases, distributable, total_increase): (Vec<_>, _, _) = if target < max_sum {
+        (
+            tracks.iter().map(|track| track.min).collect(),
+            target - min_sum,
+            max_sum - min_sum,
+        )
+    } else {
+        (
+            tracks.iter().map(|track| track.max).collect(),
+            target - max_sum,
+            max_sum,
+        )
+    };
+    let mut rounding_error = distributable;
+    let mut widths = Vec::with_capacity(tracks.len());
+    for (track, base) in tracks.iter().zip(bases) {
+        let increase = if target < max_sum {
+            track.max - track.min
+        } else {
+            track.max
+        };
+        let delta = if total_increase > LayoutUnit::zero() {
+            LayoutUnit::from_f32((distributable * increase.to_f32()) / total_increase.to_f32())
+        } else {
+            distributable / tracks.len() as i32
+        };
+        rounding_error = rounding_error - delta;
+        widths.push(base + delta);
+    }
+    // Blink assigns the accumulated LayoutUnit conversion error to the last
+    // computed auto column for both the max-content interpolation and the
+    // above-max growth stage.
+    if let Some(last) = widths.last_mut() {
+        *last = *last + rounding_error;
     }
     widths
 }
@@ -1175,13 +1180,18 @@ fn layout_cell(
         // Format that one-node inline sequence through a detached anonymous
         // block, then remap its text fragment back to the source node so paint
         // and hit testing retain DOM identity.
-        let mut anonymous_doc = Document::new();
+        let mut anonymous_doc = Document::new_with_raster_configuration(
+            doc.font_collection().clone(),
+            doc.raster_configuration(),
+            doc.device_scale_factor(),
+        );
         let wrapper = anonymous_doc.create_node(ElementTag::Div);
-        anonymous_doc.node_mut(wrapper).style = style.clone();
-        anonymous_doc.node_mut(wrapper).style.display = Display::Block;
+        let mut wrapper_style = openui_style::ComputedStyleBuilder::from(style);
+        wrapper_style.display = Display::Block;
+        anonymous_doc.install_resolved_style(wrapper, wrapper_style.build());
         anonymous_doc.append_child(anonymous_doc.root(), wrapper);
         let text = anonymous_doc.create_node(ElementTag::Text);
-        anonymous_doc.node_mut(text).style = style.clone();
+        anonymous_doc.install_resolved_style(text, style.clone());
         anonymous_doc.node_mut(text).text = doc.node(slot.node_id).text.clone();
         anonymous_doc.append_child(wrapper, text);
         let mut fragment = block_layout(&anonymous_doc, wrapper, &cell_space);
@@ -3042,17 +3052,17 @@ mod tests {
     fn places_colspan_and_rowspan_without_overlap() {
         let mut doc = Document::new();
         let table = doc.create_node(ElementTag::Table);
-        doc.node_mut(table).style.display = Display::Table;
+        doc.update_resolved_style(table, |style| style.display = Display::Table);
         doc.append_child(doc.root(), table);
         let body = doc.create_node(ElementTag::TableBody);
-        doc.node_mut(body).style.display = Display::TableRowGroup;
+        doc.update_resolved_style(body, |style| style.display = Display::TableRowGroup);
         doc.append_child(table, body);
         for row_index in 0..2 {
             let row = doc.create_node(ElementTag::TableRow);
-            doc.node_mut(row).style.display = Display::TableRow;
+            doc.update_resolved_style(row, |style| style.display = Display::TableRow);
             doc.append_child(body, row);
             let cell = doc.create_node(ElementTag::TableCell);
-            doc.node_mut(cell).style.display = Display::TableCell;
+            doc.update_resolved_style(cell, |style| style.display = Display::TableCell);
             if row_index == 0 {
                 doc.node_mut(cell).table_row_span = 2;
             }
@@ -3072,35 +3082,35 @@ mod tests {
     fn table_fixup_preserves_cell_runs_and_reorders_only_first_header_and_footer() {
         let mut doc = Document::new();
         let table = doc.create_node(ElementTag::Div);
-        doc.node_mut(table).style.display = Display::Table;
+        doc.update_resolved_style(table, |style| style.display = Display::Table);
         doc.append_child(doc.root(), table);
 
         let cell_a = doc.create_node(ElementTag::Div);
-        doc.node_mut(cell_a).style.display = Display::TableCell;
+        doc.update_resolved_style(cell_a, |style| style.display = Display::TableCell);
         doc.append_child(table, cell_a);
 
         let footer_a = doc.create_node(ElementTag::Div);
-        doc.node_mut(footer_a).style.display = Display::TableFooterGroup;
+        doc.update_resolved_style(footer_a, |style| style.display = Display::TableFooterGroup);
         doc.append_child(table, footer_a);
         let footer_a_text = doc.create_node(ElementTag::Text);
         doc.append_child(footer_a, footer_a_text);
 
         let cell_b = doc.create_node(ElementTag::Div);
-        doc.node_mut(cell_b).style.display = Display::TableCell;
+        doc.update_resolved_style(cell_b, |style| style.display = Display::TableCell);
         doc.append_child(table, cell_b);
 
         let footer_b = doc.create_node(ElementTag::Div);
-        doc.node_mut(footer_b).style.display = Display::TableFooterGroup;
+        doc.update_resolved_style(footer_b, |style| style.display = Display::TableFooterGroup);
         doc.append_child(table, footer_b);
         let footer_b_text = doc.create_node(ElementTag::Text);
         doc.append_child(footer_b, footer_b_text);
 
         let cell_c = doc.create_node(ElementTag::Div);
-        doc.node_mut(cell_c).style.display = Display::TableCell;
+        doc.update_resolved_style(cell_c, |style| style.display = Display::TableCell);
         doc.append_child(table, cell_c);
 
         let header = doc.create_node(ElementTag::Div);
-        doc.node_mut(header).style.display = Display::TableHeaderGroup;
+        doc.update_resolved_style(header, |style| style.display = Display::TableHeaderGroup);
         doc.append_child(table, header);
         let header_text = doc.create_node(ElementTag::Text);
         doc.append_child(header, header_text);
@@ -3119,11 +3129,11 @@ mod tests {
     fn fixed_layout_distributes_remaining_track_space() {
         let mut doc = Document::new();
         let table = doc.create_node(ElementTag::Table);
-        doc.node_mut(table).style.display = Display::Table;
+        doc.update_resolved_style(table, |style| style.display = Display::Table);
         doc.append_child(doc.root(), table);
         let col = doc.create_node(ElementTag::TableColumn);
-        doc.node_mut(col).style.display = Display::TableColumn;
-        doc.node_mut(col).style.width = Length::px(40.0);
+        doc.update_resolved_style(col, |style| style.display = Display::TableColumn);
+        doc.update_resolved_style(col, |style| style.width = Length::px(40.0));
         doc.append_child(table, col);
         let model = collect_table_model(&doc, table);
         let widths = distribute_fixed_tracks(
@@ -3162,8 +3172,38 @@ mod tests {
         );
         assert_eq!(
             widths,
-            vec![LayoutUnit::from_raw(4079), LayoutUnit::from_raw(3192)]
+            vec![LayoutUnit::from_raw(4078), LayoutUnit::from_raw(3193)]
         );
+    }
+
+    #[test]
+    fn auto_track_distribution_matches_chromium_max_guess_rounding() {
+        let max = [7060, 7060, 7060, 7060, 7060, 7068, 13312];
+        let cases = [
+            (
+                [3072, 3072, 3072, 3072, 3072, 3072, 6144],
+                [6026, 6026, 6026, 6026, 6026, 6032, 11454],
+            ),
+            (
+                [3072, 3072, 3072, 3072, 3072, 3072, 7168],
+                [5990, 5990, 5990, 5990, 5990, 5996, 11670],
+            ),
+        ];
+
+        for (min, expected) in cases {
+            let tracks = min
+                .into_iter()
+                .zip(max)
+                .map(|(min, max)| TrackContribution {
+                    min: LayoutUnit::from_raw(min),
+                    max: LayoutUnit::from_raw(max),
+                })
+                .collect::<Vec<_>>();
+            assert_eq!(
+                distribute_auto_tracks(&tracks, LayoutUnit::from_raw(47616)),
+                expected.map(LayoutUnit::from_raw)
+            );
+        }
     }
 
     #[test]
@@ -3172,20 +3212,22 @@ mod tests {
 
         let mut doc = Document::new();
         let table = doc.create_node(ElementTag::Div);
-        doc.node_mut(table).style.display = Display::Table;
-        doc.node_mut(table).style.width = Length::px(40.0);
+        doc.update_resolved_style(table, |style| style.display = Display::Table);
+        doc.update_resolved_style(table, |style| style.width = Length::px(40.0));
         doc.append_child(doc.root(), table);
         let row = doc.create_node(ElementTag::Div);
-        doc.node_mut(row).style.display = Display::TableRow;
+        doc.update_resolved_style(row, |style| style.display = Display::TableRow);
         doc.append_child(table, row);
         let cell = doc.create_node(ElementTag::Div);
-        doc.node_mut(cell).style.display = Display::TableCell;
+        doc.update_resolved_style(cell, |style| style.display = Display::TableCell);
         doc.append_child(row, cell);
         let text = doc.create_node(ElementTag::Text);
-        doc.node_mut(text).style.font_size = 10.0;
-        doc.node_mut(text).style.font_family = FontFamilyList {
-            families: vec![FontFamily::Named("Ahem".to_string())],
-        };
+        doc.update_resolved_style(text, |style| style.font_size = 10.0);
+        doc.update_resolved_style(text, |style| {
+            style.font_family = FontFamilyList {
+                families: vec![FontFamily::Named("Ahem".to_string())],
+            }
+        });
         doc.node_mut(text).text = Some("stretch".to_string());
         doc.append_child(cell, text);
 

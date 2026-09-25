@@ -30,10 +30,12 @@ fn text_fragments(fragment: &Fragment) -> Vec<&Fragment> {
 fn first_letter_crosses_nested_inline_and_includes_punctuation() {
     let mut doc = Document::new();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     let mut first_letter = openui_style::ComputedStyle::for_pseudo(&doc.node(block).style);
-    first_letter.color = Color::RED;
-    doc.node_mut(block).style.first_letter_style = Some(Box::new(first_letter));
+    first_letter.update_derived(|computed| computed.color = Color::RED);
+    doc.update_resolved_style(block, |style| {
+        style.first_letter_style = Some(Box::new(first_letter))
+    });
     doc.append_child(doc.root(), block);
 
     let span = doc.create_node(ElementTag::Span);
@@ -59,11 +61,14 @@ fn first_letter_crosses_nested_inline_and_includes_punctuation() {
 fn first_line_font_metrics_only_change_line_one() {
     let mut doc = Document::new();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     let mut first_line = openui_style::ComputedStyle::for_pseudo(&doc.node(block).style);
-    first_line.font_size = 32.0;
-    first_line.line_height = openui_style::LineHeight::Length(40.0);
-    doc.node_mut(block).style.first_line_style = Some(Box::new(first_line));
+    first_line.update_derived(|computed| computed.font_size = 32.0);
+    first_line
+        .update_derived(|computed| computed.line_height = openui_style::LineHeight::Length(40.0));
+    doc.update_resolved_style(block, |style| {
+        style.first_line_style = Some(Box::new(first_line))
+    });
     doc.append_child(doc.root(), block);
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("one two three four five six seven eight".into());
@@ -78,11 +83,13 @@ fn first_line_font_metrics_only_change_line_one() {
 fn modern_line_clamp_discards_later_lines_and_uses_custom_marker() {
     let mut doc = Document::new();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.width = Length::px(80.0);
-    doc.node_mut(block).style.white_space = WhiteSpace::Normal;
-    doc.node_mut(block).style.line_clamp = LineClamp::Lines(2);
-    doc.node_mut(block).style.block_ellipsis = BlockEllipsis::String("more".into());
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.width = Length::px(80.0));
+    doc.update_resolved_style(block, |style| style.white_space = WhiteSpace::Normal);
+    doc.update_resolved_style(block, |style| style.line_clamp = LineClamp::Lines(2));
+    doc.update_resolved_style(block, |style| {
+        style.block_ellipsis = BlockEllipsis::String("more".into())
+    });
     doc.append_child(doc.root(), block);
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text =
@@ -103,9 +110,11 @@ fn modern_line_clamp_discards_later_lines_and_uses_custom_marker() {
 fn line_clamp_no_ellipsis_still_discards_content() {
     let mut doc = Document::new();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.line_clamp = LineClamp::Lines(1);
-    doc.node_mut(block).style.block_ellipsis = BlockEllipsis::NoEllipsis;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.line_clamp = LineClamp::Lines(1));
+    doc.update_resolved_style(block, |style| {
+        style.block_ellipsis = BlockEllipsis::NoEllipsis
+    });
     doc.append_child(doc.root(), block);
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("one two three four five six seven".into());

@@ -21,6 +21,7 @@ TARGETS_JSON = PORTED_DIR / "sp13r_multicol_targets.json"
 RESIDUALS_JSON = PORTED_DIR / "sp13r_multicol_residuals.json"
 SP19_LAYOUT_TARGETS_JSON = SCRIPT_DIR / "sp19_layout_targets.json"
 SP20_TARGETS_JSON = SCRIPT_DIR / "sp20_targets.json"
+MUTATION_AUDIT_JSON = PROJECT_ROOT / "docs/renderer/generated/javascript-mutation-audit-v2.json"
 
 OWNER = "sp13_multicol"
 FALLBACK_CATEGORIES = {"sp12_layout_bug", "not_ported"}
@@ -224,6 +225,31 @@ def runnable_wpt_results(summary: dict) -> dict[str, dict]:
     }
 
 
+def lowered_candidate_promotions(
+    mapping: dict[str, dict[str, str]], *, require_complete: bool = True
+) -> set[str]:
+    """Identify later AST-lowered ports outside the immutable 5,731-case result set."""
+    audit = json.loads(MUTATION_AUDIT_JSON.read_text(encoding="utf-8"))
+    if audit.get("schema_version") != 2 or len(audit.get("entries", [])) != 393:
+        raise ValueError("JavaScript mutation audit inventory changed")
+    entries = audit["entries"]
+    if len({entry["test_id"] for entry in entries}) != len(entries):
+        raise ValueError("JavaScript mutation audit has duplicate identities")
+    promotions = {
+        entry["test_id"] for entry in entries
+        if entry["disposition"] in {"lowered-exact", "ast-lowered-pending-exact"}
+        and isinstance(entry.get("mutation_ir"), dict)
+        and entry["mutation_ir"].get("lowerable") is True
+    }
+    if not require_complete:
+        promotions &= mapping.keys()
+    for test_id in promotions:
+        row = mapping.get(test_id)
+        if not row or row.get("ported") != "yes" or row.get("our_test_id") != test_id:
+            raise ValueError(f"AST-lowered candidate is not a live port: {test_id}")
+    return promotions
+
+
 def validate_closed_snapshot(
     rows: list[dict[str, str]], summary: dict, baseline: list, targets: list,
     residuals: list,
@@ -236,6 +262,7 @@ def validate_closed_snapshot(
     summary_by_id = runnable_wpt_results(summary)
     mapping = {canonical_id(row): row for row in rows}
     live_promotions = set(LATER_EXACT_PROMOTIONS) | sp19_live_promotions(mapping)
+    candidate_promotions = lowered_candidate_promotions(mapping)
     if len(rows) != 7673:
         raise ValueError(f"SP13-R mapping inventory changed: {len(rows)}")
     if len(mapping) != len(rows):
@@ -246,7 +273,7 @@ def validate_closed_snapshot(
     unported = len(rows) - len(ported_ids)
     if (
         len(ported_ids) < EXPECTED_RUNNABLE
-        or set(summary_by_id) != ported_ids
+        or set(summary_by_id) != ported_ids - candidate_promotions
     ):
         raise ValueError(
             "SP13-R live runnable identity changed incompatibly: "
@@ -280,6 +307,10 @@ def validate_closed_snapshot(
     for item in residuals:
         test_id = item["test_id"]
         row = mapping.get(test_id)
+        if test_id in candidate_promotions:
+            if OWNER in categories(row.get("failure_category", "")):
+                raise ValueError(f"AST-lowered candidate retains multicol ownership: {test_id}")
+            continue
         if test_id in live_promotions:
             result = summary_by_id.get(test_id)
             if (

@@ -230,6 +230,11 @@ pub struct Fragment {
     /// no DOM node. Used by the painter to render with the correct color/font.
     pub inherited_style: Option<ComputedStyle>,
 
+    /// Whether anonymous text is the generated marker of a block/line clamp.
+    /// Paint consumes this after the anonymous fragment has lost its DOM
+    /// ancestry, so it can retain the same glyph-strike policy as its line.
+    pub is_line_clamp_marker: bool,
+
     /// Fragment-local generated-marker paint state. Column markers share one
     /// DOM pseudo node but produce one box per generated column.
     pub paint_background_color_override: Option<openui_style::Color>,
@@ -478,6 +483,7 @@ impl Fragment {
             text_content: None,
             text_run_orientation: TextRunOrientation::Horizontal,
             inherited_style: None,
+            is_line_clamp_marker: false,
             paint_background_color_override: None,
             baseline_offset: 0.0,
             text_combine: None,
@@ -541,6 +547,7 @@ impl Fragment {
             text_content: Some(text_content),
             text_run_orientation: TextRunOrientation::Horizontal,
             inherited_style: None,
+            is_line_clamp_marker: false,
             paint_background_color_override: None,
             baseline_offset: 0.0,
             text_combine: None,
@@ -662,29 +669,29 @@ mod tests {
                 TextOrientation::Sideways,
             ] {
                 let mut style = ComputedStyle::default();
-                style.direction = direction;
-                style.text_orientation = text_orientation;
+                style.update_derived(|computed| computed.direction = direction);
+                style.update_derived(|computed| computed.text_orientation = text_orientation);
 
-                style.writing_mode = WritingMode::HorizontalTb;
+                style.update_derived(|computed| computed.writing_mode = WritingMode::HorizontalTb);
                 assert_eq!(
                     resolve_text_run_orientation(&style, "AHEM"),
                     TextRunOrientation::Horizontal
                 );
 
-                style.writing_mode = WritingMode::SidewaysRl;
+                style.update_derived(|computed| computed.writing_mode = WritingMode::SidewaysRl);
                 assert_eq!(
                     resolve_text_run_orientation(&style, "AHEM"),
                     TextRunOrientation::Clockwise
                 );
 
-                style.writing_mode = WritingMode::SidewaysLr;
+                style.update_derived(|computed| computed.writing_mode = WritingMode::SidewaysLr);
                 assert_eq!(
                     resolve_text_run_orientation(&style, "AHEM"),
                     TextRunOrientation::CounterClockwise
                 );
 
                 for writing_mode in [WritingMode::VerticalRl, WritingMode::VerticalLr] {
-                    style.writing_mode = writing_mode;
+                    style.update_derived(|computed| computed.writing_mode = writing_mode);
                     let expected = match text_orientation {
                         TextOrientation::Mixed => TextRunOrientation::Clockwise,
                         TextOrientation::Upright => TextRunOrientation::Upright,
@@ -704,8 +711,8 @@ mod tests {
     fn vertical_mixed_keeps_upright_and_unsplit_mixed_runs_explicit() {
         for writing_mode in [WritingMode::VerticalRl, WritingMode::VerticalLr] {
             let mut style = ComputedStyle::default();
-            style.writing_mode = writing_mode;
-            style.text_orientation = TextOrientation::Mixed;
+            style.update_derived(|computed| computed.writing_mode = writing_mode);
+            style.update_derived(|computed| computed.text_orientation = TextOrientation::Mixed);
             assert_eq!(
                 resolve_text_run_orientation(&style, "文"),
                 TextRunOrientation::Upright

@@ -180,38 +180,40 @@ fn pixel_is_not_white(surface: &mut Surface, x: i32, y: i32) -> bool {
 
 fn setup_viewport(doc: &mut Document) -> NodeId {
     let vp = doc.root();
-    doc.node_mut(vp).style.display = Display::Block;
-    doc.node_mut(vp).style.background_color = Color::WHITE;
-    doc.node_mut(vp).style.padding_top = Length::px(20.0);
-    doc.node_mut(vp).style.padding_right = Length::px(20.0);
-    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
-    doc.node_mut(vp).style.padding_left = Length::px(20.0);
-    doc.node_mut(vp).style.font_family = FontFamilyList::single("DejaVu Sans");
-    doc.node_mut(vp).style.font_size = 16.0;
-    doc.node_mut(vp).style.color = Color::BLACK;
+    doc.update_resolved_style(vp, |style| style.display = Display::Block);
+    doc.update_resolved_style(vp, |style| style.background_color = Color::WHITE);
+    doc.update_resolved_style(vp, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_right = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_bottom = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_left = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| {
+        style.font_family = FontFamilyList::single("DejaVu Sans")
+    });
+    doc.update_resolved_style(vp, |style| style.font_size = 16.0);
+    doc.update_resolved_style(vp, |style| style.color = Color::BLACK);
     vp
 }
 
 fn add_colored_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: Color) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
     if w > 0.0 {
-        doc.node_mut(div).style.width = Length::px(w);
+        doc.update_resolved_style(div, |style| style.width = Length::px(w));
     }
     if h > 0.0 {
-        doc.node_mut(div).style.height = Length::px(h);
+        doc.update_resolved_style(div, |style| style.height = Length::px(h));
     }
-    doc.node_mut(div).style.background_color = color;
+    doc.update_resolved_style(div, |style| style.background_color = color);
     doc.append_child(parent, div);
     div
 }
 
 fn add_inline_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: Color) -> NodeId {
     let ib = doc.create_node(ElementTag::Div);
-    doc.node_mut(ib).style.display = Display::InlineBlock;
-    doc.node_mut(ib).style.width = Length::px(w);
-    doc.node_mut(ib).style.height = Length::px(h);
-    doc.node_mut(ib).style.background_color = color;
+    doc.update_resolved_style(ib, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(ib, |style| style.width = Length::px(w));
+    doc.update_resolved_style(ib, |style| style.height = Length::px(h));
+    doc.update_resolved_style(ib, |style| style.background_color = color);
     doc.append_child(parent, ib);
     ib
 }
@@ -225,18 +227,18 @@ fn add_float_box(
     color: Color,
 ) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(w);
-    doc.node_mut(div).style.height = Length::px(h);
-    doc.node_mut(div).style.float = float_dir;
-    doc.node_mut(div).style.background_color = color;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(w));
+    doc.update_resolved_style(div, |style| style.height = Length::px(h));
+    doc.update_resolved_style(div, |style| style.float = float_dir);
+    doc.update_resolved_style(div, |style| style.background_color = color);
     doc.append_child(parent, div);
     div
 }
 
 fn add_span(doc: &mut Document, parent: NodeId) -> NodeId {
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(parent, span);
     span
 }
@@ -245,47 +247,62 @@ fn add_text(doc: &mut Document, parent: NodeId, content: &str) -> NodeId {
     let parent_style = doc.node(parent).style.clone();
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some(content.to_string());
-    doc.node_mut(text).style.display = Display::Inline;
-    doc.node_mut(text).style.font_family = parent_style.font_family;
-    doc.node_mut(text).style.font_size = parent_style.font_size;
-    doc.node_mut(text).style.font_weight = parent_style.font_weight;
-    doc.node_mut(text).style.font_style = parent_style.font_style;
-    doc.node_mut(text).style.font_stretch = parent_style.font_stretch;
-    doc.node_mut(text).style.color = parent_style.color;
-    doc.node_mut(text).style.letter_spacing = parent_style.letter_spacing;
-    doc.node_mut(text).style.word_spacing = parent_style.word_spacing;
-    doc.node_mut(text).style.text_transform = parent_style.text_transform;
-    doc.node_mut(text).style.white_space = parent_style.white_space;
-    doc.node_mut(text).style.direction = parent_style.direction;
-    doc.node_mut(text).style.line_height = parent_style.line_height;
-    doc.node_mut(text).style.text_decoration_line = parent_style.text_decoration_line;
-    doc.node_mut(text).style.text_decoration_style = parent_style.text_decoration_style;
-    doc.node_mut(text).style.text_decoration_color = parent_style.text_decoration_color.clone();
-    doc.node_mut(text).style.vertical_align = parent_style.vertical_align;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
+    doc.update_resolved_style(text, |style| {
+        style.font_family = parent_style.font_family.clone()
+    });
+    doc.update_resolved_style(text, |style| style.font_size = parent_style.font_size);
+    doc.update_resolved_style(text, |style| style.font_weight = parent_style.font_weight);
+    doc.update_resolved_style(text, |style| style.font_style = parent_style.font_style);
+    doc.update_resolved_style(text, |style| style.font_stretch = parent_style.font_stretch);
+    doc.update_resolved_style(text, |style| style.color = parent_style.color);
+    doc.update_resolved_style(text, |style| {
+        style.letter_spacing = parent_style.letter_spacing
+    });
+    doc.update_resolved_style(text, |style| style.word_spacing = parent_style.word_spacing);
+    doc.update_resolved_style(text, |style| {
+        style.text_transform = parent_style.text_transform
+    });
+    doc.update_resolved_style(text, |style| style.white_space = parent_style.white_space);
+    doc.update_resolved_style(text, |style| style.direction = parent_style.direction);
+    doc.update_resolved_style(text, |style| style.line_height = parent_style.line_height);
+    doc.update_resolved_style(text, |style| {
+        style.text_decoration_line = parent_style.text_decoration_line
+    });
+    doc.update_resolved_style(text, |style| {
+        style.text_decoration_style = parent_style.text_decoration_style
+    });
+    doc.update_resolved_style(text, |style| {
+        style.text_decoration_color = parent_style.text_decoration_color.clone()
+    });
+    doc.update_resolved_style(text, |style| {
+        style.vertical_align = parent_style.vertical_align
+    });
     doc.append_child(parent, text);
     text
 }
 
 fn inherit_text_style(doc: &mut Document, parent: NodeId, child: NodeId) {
     let ps = doc.node(parent).style.clone();
-    let cs = &mut doc.node_mut(child).style;
-    cs.font_family = ps.font_family;
-    cs.font_size = ps.font_size;
-    cs.font_weight = ps.font_weight;
-    cs.font_style = ps.font_style;
-    cs.font_stretch = ps.font_stretch;
-    cs.color = ps.color;
-    cs.letter_spacing = ps.letter_spacing;
-    cs.word_spacing = ps.word_spacing;
-    cs.text_transform = ps.text_transform;
-    cs.white_space = ps.white_space;
-    cs.direction = ps.direction;
-    cs.line_height = ps.line_height;
-    cs.text_align = ps.text_align;
-    cs.text_decoration_line = ps.text_decoration_line;
-    cs.text_decoration_style = ps.text_decoration_style;
-    cs.text_decoration_color = ps.text_decoration_color;
-    cs.vertical_align = ps.vertical_align;
+    doc.update_resolved_style(child, |cs| {
+        cs.font_family = ps.font_family.clone();
+        cs.font_size = ps.font_size;
+        cs.font_weight = ps.font_weight;
+        cs.font_style = ps.font_style;
+        cs.font_stretch = ps.font_stretch;
+        cs.color = ps.color;
+        cs.letter_spacing = ps.letter_spacing;
+        cs.word_spacing = ps.word_spacing;
+        cs.text_transform = ps.text_transform;
+        cs.white_space = ps.white_space;
+        cs.direction = ps.direction;
+        cs.line_height = ps.line_height;
+        cs.text_align = ps.text_align;
+        cs.text_decoration_line = ps.text_decoration_line;
+        cs.text_decoration_style = ps.text_decoration_style;
+        cs.text_decoration_color = ps.text_decoration_color;
+        cs.vertical_align = ps.vertical_align;
+    });
 }
 
 fn render(doc: &Document) -> Surface {
@@ -469,18 +486,26 @@ fn inline_block_with_border_renders() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 100.0, 60.0, Color::WHITE);
-    doc.node_mut(ib).style.border_top_width = 3;
-    doc.node_mut(ib).style.border_right_width = 3;
-    doc.node_mut(ib).style.border_bottom_width = 3;
-    doc.node_mut(ib).style.border_left_width = 3;
-    doc.node_mut(ib).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(ib).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(ib).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(ib).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(ib).style.border_top_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(ib).style.border_right_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(ib).style.border_bottom_color = StyleColor::Resolved(Color::BLACK);
-    doc.node_mut(ib).style.border_left_color = StyleColor::Resolved(Color::BLACK);
+    doc.update_resolved_style(ib, |style| style.border_top_width = 3);
+    doc.update_resolved_style(ib, |style| style.border_right_width = 3);
+    doc.update_resolved_style(ib, |style| style.border_bottom_width = 3);
+    doc.update_resolved_style(ib, |style| style.border_left_width = 3);
+    doc.update_resolved_style(ib, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(ib, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(ib, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(ib, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(ib, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(ib, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(ib, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::BLACK)
+    });
+    doc.update_resolved_style(ib, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLACK)
+    });
     let mut s = render(&doc);
     assert!(
         has_visible_content(&mut s),
@@ -493,9 +518,11 @@ fn inline_block_border_top_mid_edge() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 100.0, 60.0, Color::WHITE);
-    doc.node_mut(ib).style.border_top_width = 4;
-    doc.node_mut(ib).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(ib).style.border_top_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(ib, |style| style.border_top_width = 4);
+    doc.update_resolved_style(ib, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(ib, |style| {
+        style.border_top_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     // Check top border mid-edge (away from corners)
     assert!(
@@ -509,9 +536,11 @@ fn inline_block_border_left_mid_edge() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 100.0, 60.0, Color::WHITE);
-    doc.node_mut(ib).style.border_left_width = 4;
-    doc.node_mut(ib).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(ib).style.border_left_color = StyleColor::Resolved(Color::BLUE);
+    doc.update_resolved_style(ib, |style| style.border_left_width = 4);
+    doc.update_resolved_style(ib, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(ib, |style| {
+        style.border_left_color = StyleColor::Resolved(Color::BLUE)
+    });
     let mut s = render(&doc);
     // Check left border mid-edge (away from corners)
     assert!(
@@ -525,9 +554,11 @@ fn inline_block_border_bottom_mid_edge() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 100.0, 60.0, Color::WHITE);
-    doc.node_mut(ib).style.border_bottom_width = 4;
-    doc.node_mut(ib).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(ib).style.border_bottom_color = StyleColor::Resolved(Color::GREEN);
+    doc.update_resolved_style(ib, |style| style.border_bottom_width = 4);
+    doc.update_resolved_style(ib, |style| style.border_bottom_style = BorderStyle::Solid);
+    doc.update_resolved_style(ib, |style| {
+        style.border_bottom_color = StyleColor::Resolved(Color::GREEN)
+    });
     let mut s = render(&doc);
     // Content-box: content is 60px, border is outside at y=PAD+60..PAD+63
     assert!(
@@ -541,9 +572,11 @@ fn inline_block_border_right_mid_edge() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 100.0, 60.0, Color::WHITE);
-    doc.node_mut(ib).style.border_right_width = 4;
-    doc.node_mut(ib).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(ib).style.border_right_color = StyleColor::Resolved(Color::RED);
+    doc.update_resolved_style(ib, |style| style.border_right_width = 4);
+    doc.update_resolved_style(ib, |style| style.border_right_style = BorderStyle::Solid);
+    doc.update_resolved_style(ib, |style| {
+        style.border_right_color = StyleColor::Resolved(Color::RED)
+    });
     let mut s = render(&doc);
     // Content-box: content is 100px, border is outside at x=PAD+100..PAD+103
     assert!(
@@ -562,10 +595,10 @@ fn float_left_with_inline_block_beside() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
     let ib = doc.create_node(ElementTag::Div);
-    doc.node_mut(ib).style.display = Display::InlineBlock;
-    doc.node_mut(ib).style.width = Length::px(200.0);
-    doc.node_mut(ib).style.height = Length::px(60.0);
-    doc.node_mut(ib).style.background_color = Color::BLUE;
+    doc.update_resolved_style(ib, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(ib, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ib, |style| style.height = Length::px(60.0));
+    doc.update_resolved_style(ib, |style| style.background_color = Color::BLUE);
     doc.append_child(vp, ib);
     let mut s = render(&doc);
     // Float at left edge, inline-block should appear
@@ -615,8 +648,8 @@ fn float_exclusion_inline_block_below_cleared() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 200.0, 80.0, Float::Left, Color::RED);
     let wrapper = doc.create_node(ElementTag::Div);
-    doc.node_mut(wrapper).style.display = Display::Block;
-    doc.node_mut(wrapper).style.clear = Clear::Both;
+    doc.update_resolved_style(wrapper, |style| style.display = Display::Block);
+    doc.update_resolved_style(wrapper, |style| style.clear = Clear::Both);
     doc.append_child(vp, wrapper);
     add_inline_block(&mut doc, wrapper, 200.0, 60.0, Color::BLUE);
     let mut s = render(&doc);
@@ -638,14 +671,14 @@ fn block_in_inline_renders_block() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
     doc.append_child(vp, container);
     let span = add_span(&mut doc, container);
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.width = Length::px(200.0);
-    doc.node_mut(block).style.height = Length::px(60.0);
-    doc.node_mut(block).style.background_color = Color::RED;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(block, |style| style.height = Length::px(60.0));
+    doc.update_resolved_style(block, |style| style.background_color = Color::RED);
     doc.append_child(span, block);
     let mut s = render(&doc);
     assert!(
@@ -659,14 +692,14 @@ fn block_in_inline_correct_color() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
     doc.append_child(vp, container);
     let span = add_span(&mut doc, container);
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.width = Length::px(150.0);
-    doc.node_mut(block).style.height = Length::px(50.0);
-    doc.node_mut(block).style.background_color = Color::BLUE;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.width = Length::px(150.0));
+    doc.update_resolved_style(block, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(block, |style| style.background_color = Color::BLUE);
     doc.append_child(span, block);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 75, PAD + 25, BLUE, "block-in-inline color");
@@ -678,18 +711,18 @@ fn block_in_inline_between_text_segments() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(400.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(400.0));
     inherit_text_style(&mut doc, vp, container);
     doc.append_child(vp, container);
     let span = add_span(&mut doc, container);
     inherit_text_style(&mut doc, container, span);
     add_text(&mut doc, span, "Before ");
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.width = Length::px(200.0);
-    doc.node_mut(block).style.height = Length::px(40.0);
-    doc.node_mut(block).style.background_color = Color::RED;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(block, |style| style.height = Length::px(40.0));
+    doc.update_resolved_style(block, |style| style.background_color = Color::RED);
     doc.append_child(span, block);
     add_text(&mut doc, span, " After");
     let mut s = render(&doc);
@@ -704,14 +737,14 @@ fn block_in_inline_white_after_block() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
     doc.append_child(vp, container);
     let span = add_span(&mut doc, container);
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.width = Length::px(100.0);
-    doc.node_mut(block).style.height = Length::px(50.0);
-    doc.node_mut(block).style.background_color = Color::RED;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(block, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(block, |style| style.background_color = Color::RED);
     doc.append_child(span, block);
     let mut s = render(&doc);
     // Right of block should be white
@@ -730,10 +763,10 @@ fn inline_block_with_padding_renders() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 100.0, 60.0, Color::RED);
-    doc.node_mut(ib).style.padding_top = Length::px(10.0);
-    doc.node_mut(ib).style.padding_right = Length::px(10.0);
-    doc.node_mut(ib).style.padding_bottom = Length::px(10.0);
-    doc.node_mut(ib).style.padding_left = Length::px(10.0);
+    doc.update_resolved_style(ib, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(ib, |style| style.padding_right = Length::px(10.0));
+    doc.update_resolved_style(ib, |style| style.padding_bottom = Length::px(10.0));
+    doc.update_resolved_style(ib, |style| style.padding_left = Length::px(10.0));
     let mut s = render(&doc);
     assert!(
         has_visible_content(&mut s),
@@ -754,8 +787,8 @@ fn inline_block_padding_extends_box() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 80.0, 40.0, Color::BLUE);
-    doc.node_mut(ib).style.padding_left = Length::px(20.0);
-    doc.node_mut(ib).style.padding_right = Length::px(20.0);
+    doc.update_resolved_style(ib, |style| style.padding_left = Length::px(20.0));
+    doc.update_resolved_style(ib, |style| style.padding_right = Length::px(20.0));
     let mut s = render(&doc);
     // Total width = 80 + 20 + 20 = 120, so at x=PAD+110 should still be blue
     assert_pixel_color(&mut s, PAD + 110, PAD + 20, BLUE, "right padding area");
@@ -766,8 +799,8 @@ fn inline_block_padding_top_bottom() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 80.0, 40.0, Color::GREEN);
-    doc.node_mut(ib).style.padding_top = Length::px(15.0);
-    doc.node_mut(ib).style.padding_bottom = Length::px(15.0);
+    doc.update_resolved_style(ib, |style| style.padding_top = Length::px(15.0));
+    doc.update_resolved_style(ib, |style| style.padding_bottom = Length::px(15.0));
     let mut s = render(&doc);
     // Total height = 40 + 15 + 15 = 70, top padding area at y=PAD+5
     assert_pixel_color(&mut s, PAD + 40, PAD + 5, GREEN, "top padding");
@@ -783,7 +816,7 @@ fn inline_block_margin_left_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(ib).style.margin_left = Length::px(30.0);
+    doc.update_resolved_style(ib, |style| style.margin_left = Length::px(30.0));
     let mut s = render(&doc);
     // Inline-block renders with margin applied (position depends on IFC)
     assert!(
@@ -799,7 +832,7 @@ fn inline_block_margin_between_two() {
     let vp = setup_viewport(&mut doc);
     add_inline_block(&mut doc, vp, 80.0, 40.0, Color::RED);
     let ib2 = add_inline_block(&mut doc, vp, 80.0, 40.0, Color::BLUE);
-    doc.node_mut(ib2).style.margin_left = Length::px(40.0);
+    doc.update_resolved_style(ib2, |style| style.margin_left = Length::px(40.0));
     let mut s = render(&doc);
     // First inline-block at PAD
     assert_pixel_color(&mut s, PAD + 40, PAD + 20, RED, "first inline-block");
@@ -820,7 +853,7 @@ fn inline_block_margin_top() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(ib).style.margin_top = Length::px(20.0);
+    doc.update_resolved_style(ib, |style| style.margin_top = Length::px(20.0));
     let mut s = render(&doc);
     assert!(
         has_visible_content(&mut s),
@@ -839,7 +872,7 @@ fn inline_block_after_block_element() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 200.0, 50.0, Color::RED);
     let wrapper = doc.create_node(ElementTag::Div);
-    doc.node_mut(wrapper).style.display = Display::Block;
+    doc.update_resolved_style(wrapper, |style| style.display = Display::Block);
     doc.append_child(vp, wrapper);
     add_inline_block(&mut doc, wrapper, 200.0, 50.0, Color::BLUE);
     let mut s = render(&doc);
@@ -856,7 +889,7 @@ fn block_after_inline_block_wrapper() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let wrapper = doc.create_node(ElementTag::Div);
-    doc.node_mut(wrapper).style.display = Display::Block;
+    doc.update_resolved_style(wrapper, |style| style.display = Display::Block);
     doc.append_child(vp, wrapper);
     add_inline_block(&mut doc, wrapper, 200.0, 50.0, Color::RED);
     add_colored_block(&mut doc, vp, 200.0, 50.0, Color::BLUE);
@@ -873,12 +906,12 @@ fn stacked_inline_block_wrappers() {
     let vp = setup_viewport(&mut doc);
     // Two wrappers each containing an inline-block
     let w1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(w1).style.display = Display::Block;
+    doc.update_resolved_style(w1, |style| style.display = Display::Block);
     doc.append_child(vp, w1);
     add_inline_block(&mut doc, w1, 150.0, 40.0, Color::RED);
 
     let w2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(w2).style.display = Display::Block;
+    doc.update_resolved_style(w2, |style| style.display = Display::Block);
     doc.append_child(vp, w2);
     add_inline_block(&mut doc, w2, 150.0, 40.0, Color::BLUE);
 
@@ -969,10 +1002,10 @@ fn inline_block_containing_block_child() {
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 200.0, 100.0, Color::BLUE);
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(100.0);
-    doc.node_mut(child).style.height = Length::px(50.0);
-    doc.node_mut(child).style.background_color = Color::RED;
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(child, |style| style.background_color = Color::RED);
     doc.append_child(ib, child);
     let mut s = render(&doc);
     // Red child inside blue inline-block
@@ -1003,16 +1036,16 @@ fn inline_block_with_multiple_children() {
     let vp = setup_viewport(&mut doc);
     let ib = add_inline_block(&mut doc, vp, 300.0, 120.0, color_from_rgb(200, 200, 200));
     let c1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(c1).style.display = Display::Block;
-    doc.node_mut(c1).style.width = Length::px(100.0);
-    doc.node_mut(c1).style.height = Length::px(40.0);
-    doc.node_mut(c1).style.background_color = Color::RED;
+    doc.update_resolved_style(c1, |style| style.display = Display::Block);
+    doc.update_resolved_style(c1, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(c1, |style| style.height = Length::px(40.0));
+    doc.update_resolved_style(c1, |style| style.background_color = Color::RED);
     doc.append_child(ib, c1);
     let c2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(c2).style.display = Display::Block;
-    doc.node_mut(c2).style.width = Length::px(100.0);
-    doc.node_mut(c2).style.height = Length::px(40.0);
-    doc.node_mut(c2).style.background_color = Color::BLUE;
+    doc.update_resolved_style(c2, |style| style.display = Display::Block);
+    doc.update_resolved_style(c2, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(c2, |style| style.height = Length::px(40.0));
+    doc.update_resolved_style(c2, |style| style.background_color = Color::BLUE);
     doc.append_child(ib, c2);
     let mut s = render(&doc);
     assert_pixel_color(

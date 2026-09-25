@@ -55,26 +55,28 @@ fn has_non_white_pixels(surface: &mut Surface) -> bool {
 }
 
 /// Build a style with underline enabled and the given overrides applied.
-fn underline_style(f: impl FnOnce(&mut ComputedStyle)) -> ComputedStyle {
+fn underline_style(f: impl FnOnce(&mut openui_style::ComputedStyleFields)) -> ComputedStyle {
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    f(&mut style);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(f);
     style
 }
 
 /// Build a style with overline enabled and the given overrides applied.
-fn overline_style(f: impl FnOnce(&mut ComputedStyle)) -> ComputedStyle {
+fn overline_style(f: impl FnOnce(&mut openui_style::ComputedStyleFields)) -> ComputedStyle {
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::OVERLINE;
-    f(&mut style);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::OVERLINE);
+    style.update_derived(f);
     style
 }
 
 /// Build a style with line-through enabled and the given overrides applied.
-fn line_through_style(f: impl FnOnce(&mut ComputedStyle)) -> ComputedStyle {
+fn line_through_style(f: impl FnOnce(&mut openui_style::ComputedStyleFields)) -> ComputedStyle {
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
-    f(&mut style);
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine::LINE_THROUGH
+    });
+    style.update_derived(f);
     style
 }
 
@@ -168,7 +170,9 @@ fn underline_with_custom_color() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 255));
+        s.update_derived(|computed| {
+            computed.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 255))
+        });
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -236,7 +240,9 @@ fn overline_with_custom_thickness() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = overline_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::Length(4.0);
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::Length(4.0)
+        });
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -300,7 +306,7 @@ fn line_through_with_dashed_style() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = line_through_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Dashed;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dashed);
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -324,7 +330,7 @@ fn solid_style_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Solid;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Solid);
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -344,7 +350,7 @@ fn double_style_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Double;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Double);
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -364,7 +370,7 @@ fn dotted_style_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Dotted;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dotted);
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -384,7 +390,7 @@ fn dashed_style_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Dashed;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dashed);
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -404,7 +410,7 @@ fn wavy_style_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Wavy;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Wavy);
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -428,8 +434,8 @@ fn current_color_resolves_to_element_color() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.color = Color::GREEN;
-        s.text_decoration_color = StyleColor::CurrentColor;
+        s.update_derived(|computed| computed.color = Color::GREEN);
+        s.update_derived(|computed| computed.text_decoration_color = StyleColor::CurrentColor);
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -452,7 +458,9 @@ fn specified_red_underline_color() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_color = StyleColor::Resolved(Color::RED);
+        s.update_derived(|computed| {
+            computed.text_decoration_color = StyleColor::Resolved(Color::RED)
+        });
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -475,7 +483,9 @@ fn transparent_decoration_produces_no_visible_pixels() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_color = StyleColor::Resolved(Color::TRANSPARENT);
+        s.update_derived(|computed| {
+            computed.text_decoration_color = StyleColor::Resolved(Color::TRANSPARENT)
+        });
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -502,8 +512,10 @@ fn underline_and_overline_simultaneously() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line =
-        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::OVERLINE.0);
+    style.update_derived(|computed| {
+        computed.text_decoration_line =
+            TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::OVERLINE.0)
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -525,8 +537,10 @@ fn underline_and_line_through_simultaneously() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line =
-        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0);
+    style.update_derived(|computed| {
+        computed.text_decoration_line =
+            TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0)
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,
@@ -555,7 +569,9 @@ fn auto_thickness_uses_font_metric_at_least_1px() {
     metrics.underline_thickness = 0.5;
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::Auto;
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::Auto
+        });
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -578,7 +594,9 @@ fn from_font_uses_underline_thickness() {
     let metrics = synthetic_metrics(); // underline_thickness = 1.0
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::FromFont;
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::FromFont
+        });
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -598,7 +616,9 @@ fn explicit_length_thickness() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::Length(3.0);
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::Length(3.0)
+        });
     });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
@@ -641,11 +661,13 @@ fn decoration_on_zero_width_text_does_not_crash() {
     let metrics = synthetic_metrics();
     let mut surface = make_surface(100, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine(
-        TextDecorationLine::UNDERLINE.0
-            | TextDecorationLine::OVERLINE.0
-            | TextDecorationLine::LINE_THROUGH.0,
-    );
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine(
+            TextDecorationLine::UNDERLINE.0
+                | TextDecorationLine::OVERLINE.0
+                | TextDecorationLine::LINE_THROUGH.0,
+        )
+    });
     decoration_painter::paint_text_decorations(
         surface.canvas(),
         &sr,

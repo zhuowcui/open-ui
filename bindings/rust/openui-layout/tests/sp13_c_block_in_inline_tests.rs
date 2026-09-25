@@ -27,7 +27,7 @@ fn space(width: i32, height: i32) -> ConstraintSpace {
 fn add_text(doc: &mut Document, parent: NodeId, content: &str) -> NodeId {
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some(content.to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(parent, t);
     t
 }
@@ -40,19 +40,19 @@ fn simple_block_in_inline() {
     let root = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
 
     add_text(&mut doc, span, "Hello ");
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(50.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(50.0));
     doc.append_child(span, block);
 
     add_text(&mut doc, span, " World");
@@ -81,26 +81,26 @@ fn multiple_blocks_in_inline() {
     let root = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
 
     add_text(&mut doc, span, "A");
 
     let block_b = doc.create_node(ElementTag::Div);
-    doc.node_mut(block_b).style.display = Display::Block;
-    doc.node_mut(block_b).style.height = Length::px(30.0);
+    doc.update_resolved_style(block_b, |style| style.display = Display::Block);
+    doc.update_resolved_style(block_b, |style| style.height = Length::px(30.0));
     doc.append_child(span, block_b);
 
     add_text(&mut doc, span, "C");
 
     let block_d = doc.create_node(ElementTag::Div);
-    doc.node_mut(block_d).style.display = Display::Block;
-    doc.node_mut(block_d).style.height = Length::px(40.0);
+    doc.update_resolved_style(block_d, |style| style.display = Display::Block);
+    doc.update_resolved_style(block_d, |style| style.height = Length::px(40.0));
     doc.append_child(span, block_d);
 
     add_text(&mut doc, span, "E");
@@ -122,23 +122,23 @@ fn nested_inline_with_block() {
     let root = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
 
     let outer_span = doc.create_node(ElementTag::Span);
-    doc.node_mut(outer_span).style.display = Display::Inline;
+    doc.update_resolved_style(outer_span, |style| style.display = Display::Inline);
     doc.append_child(container, outer_span);
 
     let inner_span = doc.create_node(ElementTag::Span);
-    doc.node_mut(inner_span).style.display = Display::Inline;
+    doc.update_resolved_style(inner_span, |style| style.display = Display::Inline);
     doc.append_child(outer_span, inner_span);
 
     add_text(&mut doc, inner_span, "text");
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(60.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(60.0));
     doc.append_child(inner_span, block);
 
     let frag = block_layout(&doc, container, &space(500, 500));
@@ -158,17 +158,17 @@ fn empty_before_block() {
     let root = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(50.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(50.0));
     doc.append_child(span, block);
 
     add_text(&mut doc, span, "text");
@@ -186,19 +186,19 @@ fn empty_after_block() {
     let root = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
 
     add_text(&mut doc, span, "text");
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(50.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(50.0));
     doc.append_child(span, block);
 
     let frag = block_layout(&doc, container, &space(500, 500));
@@ -214,19 +214,19 @@ fn block_with_height() {
     let root = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
 
     add_text(&mut doc, span, "X");
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(100.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(100.0));
     doc.append_child(span, block);
 
     add_text(&mut doc, span, "Y");
@@ -255,26 +255,26 @@ fn block_in_inline_stacking_order() {
     let root = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
 
     add_text(&mut doc, span, "A");
 
     let b1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(b1).style.display = Display::Block;
-    doc.node_mut(b1).style.height = Length::px(20.0);
+    doc.update_resolved_style(b1, |style| style.display = Display::Block);
+    doc.update_resolved_style(b1, |style| style.height = Length::px(20.0));
     doc.append_child(span, b1);
 
     add_text(&mut doc, span, "B");
 
     let b2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(b2).style.display = Display::Block;
-    doc.node_mut(b2).style.height = Length::px(30.0);
+    doc.update_resolved_style(b2, |style| style.display = Display::Block);
+    doc.update_resolved_style(b2, |style| style.height = Length::px(30.0));
     doc.append_child(span, b2);
 
     add_text(&mut doc, span, "C");
@@ -302,21 +302,21 @@ fn block_in_inline_with_padding() {
     let root = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
-    doc.node_mut(span).style.padding_left = Length::px(10.0);
-    doc.node_mut(span).style.padding_right = Length::px(10.0);
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
+    doc.update_resolved_style(span, |style| style.padding_left = Length::px(10.0));
+    doc.update_resolved_style(span, |style| style.padding_right = Length::px(10.0));
     doc.append_child(container, span);
 
     add_text(&mut doc, span, "before");
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(50.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(50.0));
     doc.append_child(span, block);
 
     add_text(&mut doc, span, "after");

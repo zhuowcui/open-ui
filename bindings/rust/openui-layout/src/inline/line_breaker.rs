@@ -601,7 +601,7 @@ impl<'a> LineBreaker<'a> {
     fn inline_box_min_content_width(&self, open_index: usize) -> LayoutUnit {
         let mut depth = 0usize;
         let mut edges = LayoutUnit::zero();
-        let mut widest_text = LayoutUnit::zero();
+        let mut widest_content = LayoutUnit::zero();
         for (relative_index, candidate) in self.items_data.items[open_index..].iter().enumerate() {
             let item_index = open_index + relative_index;
             let style = &self.items_data.styles[candidate.style_index];
@@ -658,17 +658,44 @@ impl<'a> LineBreaker<'a> {
                 InlineItemType::Text => {
                     let text = &self.items_data.text[candidate.text_range.clone()];
                     if allows_line_wrap(style.white_space) {
-                        let mut search_start = 0usize;
-                        for word in text.split_whitespace() {
-                            let offset = text[search_start..].find(word).unwrap_or(0);
-                            let start = candidate.text_range.start + search_start + offset;
-                            let end = start + word.len();
-                            widest_text =
-                                widest_text.max_of(self.measure_text_range(item_index, start, end));
-                            search_start += offset + word.len();
+                        // Min-content is bounded by every soft wrap
+                        // opportunity, not just ASCII whitespace. Treating a
+                        // complete URL or hyphenated item as one word moves
+                        // the entire inline before `handle_text` can consume
+                        // its UAX #14 opportunities.
+                        let mut boundaries = find_break_opportunities(
+                            text,
+                            style.word_break,
+                            style.overflow_wrap,
+                            style.line_break,
+                        );
+                        boundaries.push(text.len());
+                        let mut segment_start = 0usize;
+                        for segment_end in boundaries {
+                            if segment_end <= segment_start {
+                                continue;
+                            }
+                            let segment = &text[segment_start..segment_end];
+                            let measured = if matches!(
+                                style.white_space,
+                                WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
+                            ) {
+                                segment.trim_matches([' ', '\t', '\n', '\r'])
+                            } else {
+                                segment
+                            };
+                            if !measured.is_empty() {
+                                let leading =
+                                    measured.as_ptr() as usize - segment.as_ptr() as usize;
+                                let start = candidate.text_range.start + segment_start + leading;
+                                let end = start + measured.len();
+                                widest_content = widest_content
+                                    .max_of(self.measure_text_range(item_index, start, end));
+                            }
+                            segment_start = segment_end;
                         }
                     } else {
-                        widest_text = widest_text.max_of(self.measure_text_range(
+                        widest_content = widest_content.max_of(self.measure_text_range(
                             item_index,
                             candidate.text_range.start,
                             candidate.text_range.end,
@@ -677,13 +704,13 @@ impl<'a> LineBreaker<'a> {
                 }
                 InlineItemType::AtomicInline => {
                     if let Some((min, _)) = candidate.intrinsic_inline_size {
-                        widest_text = widest_text.max_of(LayoutUnit::from_f32(min));
+                        widest_content = widest_content.max_of(LayoutUnit::from_f32(min));
                     }
                 }
                 InlineItemType::Control | InlineItemType::BlockInInline => {}
             }
         }
-        edges + widest_text
+        edges + widest_content
     }
 
     /// Handle a text item — measure, find break opportunities, break if needed.
@@ -2018,6 +2045,7 @@ fn find_uax14_breaks(text: &str) -> Vec<usize> {
                 if byte_offset > 0
                     && byte_offset < text.len()
                     && !break_splits_apostrophe_word(text, byte_offset)
+                    && !break_follows_url_solidus(text, byte_offset)
                 {
                     breaks.push(byte_offset);
                 }
@@ -2039,6 +2067,30 @@ fn find_uax14_breaks(text: &str) -> Vec<usize> {
     breaks.sort_unstable();
     breaks.dedup();
     breaks
+}
+
+/// Chromium keeps the solidus-delimited portions of an ASCII URL in the same
+/// unbreakable unit while retaining ordinary opportunities at hyphens. The
+/// Unicode line-break crate exposes every solidus boundary; accepting those
+/// points changes both min-content measurement and greedy line placement.
+fn break_follows_url_solidus(text: &str, byte_offset: usize) -> bool {
+    if !text.is_char_boundary(byte_offset)
+        || !text[..byte_offset]
+            .chars()
+            .next_back()
+            .is_some_and(|character| character == '/')
+    {
+        return false;
+    }
+    let token_start = text[..byte_offset]
+        .rfind(char::is_whitespace)
+        .map_or(0, |offset| {
+            offset + text[offset..].chars().next().unwrap().len_utf8()
+        });
+    let token_end = text[byte_offset..]
+        .find(char::is_whitespace)
+        .map_or(text.len(), |offset| byte_offset + offset);
+    text[token_start..token_end].contains("://")
 }
 
 fn break_splits_apostrophe_word(text: &str, byte_offset: usize) -> bool {
@@ -2689,6 +2741,13 @@ mod tests {
     }
 
     #[test]
+    fn chromium_url_breaks_at_hyphens_not_solidus_boundaries() {
+        let text = "http://dev.w3.org/csswg/css3-flexbox/#auto-margins";
+        let breaks = find_uax14_breaks(text);
+        assert_eq!(breaks, vec![29, 43]);
+    }
+
+    #[test]
     fn test_find_space_breaks() {
         let breaks = find_space_breaks("hello world test");
         assert_eq!(breaks, vec![6, 12]);
@@ -3106,7 +3165,7 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut style = ComputedStyle::default();
-        style.white_space = WhiteSpace::PreWrap;
+        style.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
         let style_index = 0;
 
         let items_data = InlineItemsData {
@@ -3165,7 +3224,7 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut pre_style = ComputedStyle::default();
-        pre_style.white_space = WhiteSpace::Pre;
+        pre_style.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
 
         let item = InlineItem {
             item_type: InlineItemType::Text,
@@ -3223,7 +3282,7 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut pre_wrap_style = ComputedStyle::default();
-        pre_wrap_style.white_space = WhiteSpace::PreWrap;
+        pre_wrap_style.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
 
         let item = InlineItem {
             item_type: InlineItemType::Text,
@@ -3285,8 +3344,8 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut style = ComputedStyle::default();
-        style.white_space = WhiteSpace::PreWrap;
-        style.overflow_wrap = OverflowWrap::BreakWord;
+        style.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
+        style.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
 
         let items_data = InlineItemsData {
             font_collection: openui_text::FontCollection::system(),
@@ -3387,7 +3446,7 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut prewrap_style = ComputedStyle::default();
-        prewrap_style.white_space = WhiteSpace::PreWrap;
+        prewrap_style.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
 
         let item = InlineItem {
             item_type: InlineItemType::Text,
@@ -3526,7 +3585,7 @@ mod tests {
         };
 
         let mut style = ComputedStyle::default();
-        style.overflow_wrap = OverflowWrap::BreakWord;
+        style.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
 
         let items_data = InlineItemsData {
             font_collection: openui_text::FontCollection::system(),
@@ -3571,14 +3630,14 @@ mod tests {
         // should resolve to 100 + 2*5 + 2*10 = 130px total.
         use openui_style::BorderStyle;
         let mut style = ComputedStyle::default();
-        style.width = openui_geometry::Length::px(100.0);
-        style.border_left_width = 5;
-        style.border_right_width = 5;
-        style.border_left_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-        style.padding_left = openui_geometry::Length::px(10.0);
-        style.padding_right = openui_geometry::Length::px(10.0);
-        style.box_sizing = openui_style::BoxSizing::ContentBox;
+        style.update_derived(|computed| computed.width = openui_geometry::Length::px(100.0));
+        style.update_derived(|computed| computed.border_left_width = 5);
+        style.update_derived(|computed| computed.border_right_width = 5);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_left = openui_geometry::Length::px(10.0));
+        style.update_derived(|computed| computed.padding_right = openui_geometry::Length::px(10.0));
+        style.update_derived(|computed| computed.box_sizing = openui_style::BoxSizing::ContentBox);
 
         let cb = LayoutUnit::from_i32(500);
         let w = resolve_atomic_inline_width(&style, cb, None);
@@ -3595,14 +3654,14 @@ mod tests {
         // should resolve to exactly 100px (border-box already includes them).
         use openui_style::BorderStyle;
         let mut style = ComputedStyle::default();
-        style.width = openui_geometry::Length::px(100.0);
-        style.border_left_width = 5;
-        style.border_right_width = 5;
-        style.border_left_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-        style.padding_left = openui_geometry::Length::px(10.0);
-        style.padding_right = openui_geometry::Length::px(10.0);
-        style.box_sizing = openui_style::BoxSizing::BorderBox;
+        style.update_derived(|computed| computed.width = openui_geometry::Length::px(100.0));
+        style.update_derived(|computed| computed.border_left_width = 5);
+        style.update_derived(|computed| computed.border_right_width = 5);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_left = openui_geometry::Length::px(10.0));
+        style.update_derived(|computed| computed.padding_right = openui_geometry::Length::px(10.0));
+        style.update_derived(|computed| computed.box_sizing = openui_style::BoxSizing::BorderBox);
 
         let cb = LayoutUnit::from_i32(500);
         let w = resolve_atomic_inline_width(&style, cb, None);
@@ -3619,14 +3678,14 @@ mod tests {
         // should return 80 + 6 + 14 = 100.
         use openui_style::BorderStyle;
         let mut style = ComputedStyle::default();
-        style.width = openui_geometry::Length::auto();
-        style.border_left_width = 3;
-        style.border_right_width = 3;
-        style.border_left_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-        style.padding_left = openui_geometry::Length::px(7.0);
-        style.padding_right = openui_geometry::Length::px(7.0);
-        style.box_sizing = openui_style::BoxSizing::ContentBox;
+        style.update_derived(|computed| computed.width = openui_geometry::Length::auto());
+        style.update_derived(|computed| computed.border_left_width = 3);
+        style.update_derived(|computed| computed.border_right_width = 3);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_left = openui_geometry::Length::px(7.0));
+        style.update_derived(|computed| computed.padding_right = openui_geometry::Length::px(7.0));
+        style.update_derived(|computed| computed.box_sizing = openui_style::BoxSizing::ContentBox);
 
         let cb = LayoutUnit::from_i32(500);
         let w = resolve_atomic_inline_width(&style, cb, Some((80.0, 80.0)));
@@ -3642,14 +3701,14 @@ mod tests {
         use openui_style::BorderStyle;
 
         let mut style = ComputedStyle::default();
-        style.width = openui_geometry::Length::px(15.0);
-        style.height = openui_geometry::Length::px(45.0);
-        style.border_top_width = 2;
-        style.border_bottom_width = 3;
-        style.border_top_style = BorderStyle::Solid;
-        style.border_bottom_style = BorderStyle::Solid;
-        style.padding_top = openui_geometry::Length::px(4.0);
-        style.padding_bottom = openui_geometry::Length::px(6.0);
+        style.update_derived(|computed| computed.width = openui_geometry::Length::px(15.0));
+        style.update_derived(|computed| computed.height = openui_geometry::Length::px(45.0));
+        style.update_derived(|computed| computed.border_top_width = 2);
+        style.update_derived(|computed| computed.border_bottom_width = 3);
+        style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_top = openui_geometry::Length::px(4.0));
+        style.update_derived(|computed| computed.padding_bottom = openui_geometry::Length::px(6.0));
 
         let inline_size = resolve_atomic_inline_size(
             &style,
@@ -3679,7 +3738,7 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut style = ComputedStyle::default();
-        style.white_space = ws;
+        style.update_derived(|computed| computed.white_space = ws);
 
         let at_item_end = line_text_range.end == text.len();
         let item = InlineItem {
@@ -4516,13 +4575,13 @@ mod tests {
     }
 
     #[test]
-    fn whitespace_before_plain_inline_rewinds_its_min_content_unit() {
+    fn whitespace_before_unbreakable_inline_rewinds_its_min_content_unit() {
         use openui_dom::NodeId;
         use openui_text::{Font, FontDescription, TextDirection, TextShaper};
         use std::sync::Arc;
 
         let prefix = "prefix ";
-        let link = "http://example.test/path";
+        let link = "plaininlineword";
         let text = format!("{prefix}{link}");
         let shaper = TextShaper::new();
         let font = Font::new(FontDescription::default());
@@ -4592,5 +4651,89 @@ mod tests {
         assert_eq!(first.items[0].text_range, 0..link_start - 1);
         assert_eq!(second.items[0].item_type, InlineItemType::OpenTag);
         assert_eq!(second.items[1].text_range.start, link_start);
+    }
+
+    #[test]
+    fn whitespace_before_inline_keeps_a_fitting_hyphenated_prefix() {
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+        use std::sync::Arc;
+
+        let prefix = "prefix ";
+        let link = "well-known";
+        let text = format!("{prefix}{link}");
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let prefix_shape = Arc::new(shaper.shape(prefix, &font, TextDirection::Ltr));
+        let link_shape = Arc::new(shaper.shape(link, &font, TextDirection::Ltr));
+        let link_start = prefix.len();
+        let link_break = link_start + "well-".len();
+        let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
+            text,
+            items: vec![
+                InlineItem {
+                    item_type: InlineItemType::Text,
+                    text_range: 0..link_start,
+                    node_id: NodeId::NONE,
+                    shape_result: Some(prefix_shape.clone()),
+                    style_index: 0,
+                    end_collapse_type: CollapseType::Collapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::OpenTag,
+                    text_range: link_start..link_start,
+                    node_id: NodeId::NONE,
+                    shape_result: None,
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::Text,
+                    text_range: link_start..link_start + link.len(),
+                    node_id: NodeId::NONE,
+                    shape_result: Some(link_shape.clone()),
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::CloseTag,
+                    text_range: link_start + link.len()..link_start + link.len(),
+                    node_id: NodeId::NONE,
+                    shape_result: None,
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+            ],
+            styles: vec![ComputedStyle::default(), ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+        let first_unit_width = link_shape.width_for_range(0, "well-".len());
+        let second_unit_width = link_shape.width_for_range("well-".len(), link.chars().count());
+        let width = LayoutUnit::from_f32(
+            prefix_shape.width + first_unit_width.max(second_unit_width) + 1.0,
+        );
+        let mut breaker = LineBreaker::new(&items_data, width);
+
+        let first = breaker.next_line(width).expect("prefix and inline prefix");
+        let second = breaker.next_line(width).expect("inline suffix");
+
+        assert_eq!(first.items[0].text_range, 0..link_start);
+        assert_eq!(first.items[1].item_type, InlineItemType::OpenTag);
+        assert_eq!(first.items[2].text_range, link_start..link_break);
+        assert_eq!(second.items[0].text_range.start, link_break);
     }
 }

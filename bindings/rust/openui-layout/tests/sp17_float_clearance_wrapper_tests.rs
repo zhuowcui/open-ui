@@ -18,22 +18,21 @@ fn add_float(
     margin_bottom: i32,
 ) -> NodeId {
     let child = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(child).style;
-        style.display = Display::Block;
-        style.float = side;
-        style.width = Length::px(20.0);
-        style.height = Length::px(height as f32);
-        style.margin_top = Length::px(margin_top as f32);
-        style.margin_bottom = Length::px(margin_bottom as f32);
-    }
+    doc.update_resolved_style(child, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.float = side);
+        style.update_derived(|computed| computed.width = Length::px(20.0));
+        style.update_derived(|computed| computed.height = Length::px(height as f32));
+        style.update_derived(|computed| computed.margin_top = Length::px(margin_top as f32));
+        style.update_derived(|computed| computed.margin_bottom = Length::px(margin_bottom as f32));
+    });
     doc.append_child(parent, child);
     child
 }
 
 fn add_clearing_break(doc: &mut Document, parent: NodeId, clear: Clear) {
     let child = doc.create_node(ElementTag::Break);
-    doc.node_mut(child).style.clear = clear;
+    doc.update_resolved_style(child, |style| style.clear = clear);
     doc.append_child(parent, child);
 }
 
@@ -45,12 +44,11 @@ fn add_collapsible_whitespace(doc: &mut Document, parent: NodeId) {
 
 fn add_marker(doc: &mut Document, parent: NodeId) -> NodeId {
     let marker = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(marker).style;
-        style.display = Display::Block;
-        style.width = Length::px(1.0);
-        style.height = Length::px(1.0);
-    }
+    doc.update_resolved_style(marker, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(1.0));
+        style.update_derived(|computed| computed.height = Length::px(1.0));
+    });
     doc.append_child(parent, marker);
     marker
 }
@@ -93,9 +91,11 @@ fn zero_height_clearing_breaks_separate_left_right_and_both_float_rows() {
     ] {
         let mut doc = Document::new();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
-        doc.node_mut(container).style.width = Length::px(100.0);
-        doc.node_mut(container).style.line_height = LineHeight::Length(1.0);
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
+        doc.update_resolved_style(container, |style| style.width = Length::px(100.0));
+        doc.update_resolved_style(container, |style| {
+            style.line_height = LineHeight::Length(1.0)
+        });
         doc.append_child(doc.root(), container);
 
         for (side, height) in first {
@@ -132,9 +132,11 @@ fn zero_height_clearing_breaks_separate_left_right_and_both_float_rows() {
 fn margin_box_clearance_advances_anonymous_wrapper_and_parent_once() {
     let mut doc = Document::new();
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(100.0);
-    doc.node_mut(container).style.line_height = LineHeight::Length(1.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(container, |style| {
+        style.line_height = LineHeight::Length(1.0)
+    });
     doc.append_child(doc.root(), container);
 
     add_float(&mut doc, container, Float::Left, 10, 2, 3);
@@ -163,12 +165,11 @@ fn margin_box_clearance_advances_anonymous_wrapper_and_parent_once() {
 fn only_a_break_that_advances_clearance_suppresses_its_line_strut() {
     let mut doc = Document::new();
     let container = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(container).style;
-        style.display = Display::Block;
-        style.width = Length::px(100.0);
-        style.line_height = LineHeight::Length(10.0);
-    }
+    doc.update_resolved_style(container, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.line_height = LineHeight::Length(10.0));
+    });
     doc.append_child(doc.root(), container);
 
     add_float(&mut doc, container, Float::Left, 5, 0, 0);

@@ -35,54 +35,51 @@ fn wpt_like_text_item(
 ) -> (Document, NodeId, NodeId) {
     let mut doc = Document::new();
     let container = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(container).style;
-        style.display = Display::Flex;
-        style.width = Length::px(500.0);
-        style.height = Length::px(150.0);
-    }
+    doc.update_resolved_style(container, |style| {
+        style.update_derived(|computed| computed.display = Display::Flex);
+        style.update_derived(|computed| computed.width = Length::px(500.0));
+        style.update_derived(|computed| computed.height = Length::px(150.0));
+    });
     doc.append_child(doc.root(), container);
 
     let item = doc.create_node(ElementTag::Span);
-    {
-        let style = &mut doc.node_mut(item).style;
-        style.display = Display::Block;
-        style.writing_mode = writing_mode;
-        style.direction = direction;
-        style.text_orientation = TextOrientation::Mixed;
-        style.height = Length::px(6.0); // inline-size: 6px in vertical/sideways modes
-        style.font_size = font_size;
-        style.font_family = FontFamilyList::single("Ahem");
-        style.margin_top = Length::px(11.0);
-        style.margin_right = Length::px(13.0);
-        style.margin_bottom = Length::px(17.0);
-        style.margin_left = Length::px(7.0);
-        style.border_top_width = 2;
-        style.border_right_width = 2;
-        style.border_bottom_width = 2;
-        style.border_left_width = 2;
-        style.border_top_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-        style.border_bottom_style = BorderStyle::Solid;
-        style.border_left_style = BorderStyle::Solid;
-    }
+    doc.update_resolved_style(item, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.writing_mode = writing_mode);
+        style.update_derived(|computed| computed.direction = direction);
+        style.update_derived(|computed| computed.text_orientation = TextOrientation::Mixed);
+        style.update_derived(|computed| computed.height = Length::px(6.0)); // inline-size: 6px in vertical/sideways modes
+        style.update_derived(|computed| computed.font_size = font_size);
+        style.update_derived(|computed| computed.font_family = FontFamilyList::single("Ahem"));
+        style.update_derived(|computed| computed.margin_top = Length::px(11.0));
+        style.update_derived(|computed| computed.margin_right = Length::px(13.0));
+        style.update_derived(|computed| computed.margin_bottom = Length::px(17.0));
+        style.update_derived(|computed| computed.margin_left = Length::px(7.0));
+        style.update_derived(|computed| computed.border_top_width = 2);
+        style.update_derived(|computed| computed.border_right_width = 2);
+        style.update_derived(|computed| computed.border_bottom_width = 2);
+        style.update_derived(|computed| computed.border_left_width = 2);
+        style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+    });
     doc.append_child(container, item);
 
     let text = doc.create_node(ElementTag::Text);
-    {
-        let style = &mut doc.node_mut(text).style;
-        style.display = Display::Inline;
-        style.writing_mode = writing_mode;
-        style.direction = direction;
-        style.text_orientation = TextOrientation::Mixed;
-        style.font_size = font_size;
-        style.font_family = FontFamilyList::single("Ahem");
-        doc.node_mut(text).text = Some(if font_size == 12.0 {
-            "p b c".to_string()
-        } else {
-            "p e".to_string()
-        });
-    }
+    doc.update_resolved_style(text, |style| {
+        style.update_derived(|computed| computed.display = Display::Inline);
+        style.update_derived(|computed| computed.writing_mode = writing_mode);
+        style.update_derived(|computed| computed.direction = direction);
+        style.update_derived(|computed| computed.text_orientation = TextOrientation::Mixed);
+        style.update_derived(|computed| computed.font_size = font_size);
+        style.update_derived(|computed| computed.font_family = FontFamilyList::single("Ahem"));
+    });
+    doc.node_mut(text).text = Some(if font_size == 12.0 {
+        "p b c".to_string()
+    } else {
+        "p e".to_string()
+    });
     doc.append_child(item, text);
     (doc, container, item)
 }
@@ -156,25 +153,25 @@ fn flex_positions(
 ) -> Vec<(LayoutUnit, LayoutUnit)> {
     let mut doc = Document::new();
     let container = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(container).style;
-        style.display = Display::Flex;
-        style.writing_mode = writing_mode;
-        style.direction = direction;
-        style.flex_direction = flex_direction;
-        style.flex_wrap = flex_wrap;
-        style.width = Length::px(40.0);
-        style.height = Length::px(40.0);
-    }
+    doc.update_resolved_style(container, |style| {
+        style.update_derived(|computed| computed.display = Display::Flex);
+        style.update_derived(|computed| computed.writing_mode = writing_mode);
+        style.update_derived(|computed| computed.direction = direction);
+        style.update_derived(|computed| computed.flex_direction = flex_direction);
+        style.update_derived(|computed| computed.flex_wrap = flex_wrap);
+        style.update_derived(|computed| computed.width = Length::px(40.0));
+        style.update_derived(|computed| computed.height = Length::px(40.0));
+    });
     doc.append_child(doc.root(), container);
     let mut ids = Vec::new();
     for _ in 0..4 {
         let item = doc.create_node(ElementTag::Div);
-        let style = &mut doc.node_mut(item).style;
-        style.display = Display::Block;
-        style.width = Length::px(10.0);
-        style.height = Length::px(20.0);
-        style.flex_shrink = 0.0;
+        doc.update_resolved_style(item, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(10.0);
+            style.height = Length::px(20.0);
+            style.flex_shrink = 0.0;
+        });
         doc.append_child(container, item);
         ids.push(item);
     }
@@ -256,45 +253,61 @@ fn auto_sized_flex_padding_projects_once_across_writing_modes() {
             ] {
                 let mut doc = Document::new();
                 let container = doc.create_node(ElementTag::Div);
-                {
-                    let style = &mut doc.node_mut(container).style;
-                    style.display = Display::Flex;
-                    style.float = Float::Left;
-                    style.writing_mode = writing_mode;
-                    style.direction = direction;
-                    style.flex_direction = FlexDirection::Row;
-                    style.border_top_width = 2;
-                    style.border_right_width = 2;
-                    style.border_bottom_width = 2;
-                    style.border_left_width = 2;
-                    style.border_top_style = BorderStyle::Solid;
-                    style.border_right_style = BorderStyle::Solid;
-                    style.border_bottom_style = BorderStyle::Solid;
-                    style.border_left_style = BorderStyle::Solid;
-                }
+                doc.update_resolved_style(container, |style| {
+                    style.update_derived(|computed| computed.display = Display::Flex);
+                    style.update_derived(|computed| computed.float = Float::Left);
+                    style.update_derived(|computed| computed.writing_mode = writing_mode);
+                    style.update_derived(|computed| computed.direction = direction);
+                    style.update_derived(|computed| computed.flex_direction = FlexDirection::Row);
+                    style.update_derived(|computed| computed.border_top_width = 2);
+                    style.update_derived(|computed| computed.border_right_width = 2);
+                    style.update_derived(|computed| computed.border_bottom_width = 2);
+                    style.update_derived(|computed| computed.border_left_width = 2);
+                    style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+                    style.update_derived(|computed| {
+                        computed.border_right_style = BorderStyle::Solid
+                    });
+                    style.update_derived(|computed| {
+                        computed.border_bottom_style = BorderStyle::Solid
+                    });
+                    style
+                        .update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+                });
                 doc.append_child(doc.root(), container);
                 let item = doc.create_node(ElementTag::Div);
-                {
-                    let style = &mut doc.node_mut(item).style;
-                    style.display = Display::Block;
-                    style.width = Length::px(10.0);
-                    style.height = Length::px(10.0);
-                    style.border_top_width = 1;
-                    style.border_right_width = 1;
-                    style.border_bottom_width = 1;
-                    style.border_left_width = 1;
-                    style.border_top_style = BorderStyle::Solid;
-                    style.border_right_style = BorderStyle::Solid;
-                    style.border_bottom_style = BorderStyle::Solid;
-                    style.border_left_style = BorderStyle::Solid;
+                doc.update_resolved_style(item, |style| {
+                    style.update_derived(|computed| computed.display = Display::Block);
+                    style.update_derived(|computed| computed.width = Length::px(10.0));
+                    style.update_derived(|computed| computed.height = Length::px(10.0));
+                    style.update_derived(|computed| computed.border_top_width = 1);
+                    style.update_derived(|computed| computed.border_right_width = 1);
+                    style.update_derived(|computed| computed.border_bottom_width = 1);
+                    style.update_derived(|computed| computed.border_left_width = 1);
+                    style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+                    style.update_derived(|computed| {
+                        computed.border_right_style = BorderStyle::Solid
+                    });
+                    style.update_derived(|computed| {
+                        computed.border_bottom_style = BorderStyle::Solid
+                    });
+                    style
+                        .update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
                     match side {
-                        "top" => style.padding_top = Length::px(amount as f32),
-                        "right" => style.padding_right = Length::px(amount as f32),
-                        "bottom" => style.padding_bottom = Length::px(amount as f32),
-                        "left" => style.padding_left = Length::px(amount as f32),
+                        "top" => style.update_derived(|computed| {
+                            computed.padding_top = Length::px(amount as f32)
+                        }),
+                        "right" => style.update_derived(|computed| {
+                            computed.padding_right = Length::px(amount as f32)
+                        }),
+                        "bottom" => style.update_derived(|computed| {
+                            computed.padding_bottom = Length::px(amount as f32)
+                        }),
+                        "left" => style.update_derived(|computed| {
+                            computed.padding_left = Length::px(amount as f32)
+                        }),
                         _ => unreachable!(),
                     }
-                }
+                });
                 doc.append_child(container, item);
                 let root = block_layout(
                     &doc,

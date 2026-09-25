@@ -7,12 +7,16 @@ import argparse
 import csv
 import io
 import re
+from collections import Counter
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = ROOT / "bindings/rust/openui-style/property-schema.csv"
+INTERNAL_SCHEMA = ROOT / "bindings/rust/openui-style/internal-style-fields.csv"
+COMPUTED = ROOT / "bindings/rust/openui-style/src/computed.rs"
 RUST_OUT = ROOT / "bindings/rust/openui-style/src/generated_properties.rs"
+ACCESSORS_OUT = ROOT / "bindings/rust/openui-style/src/generated_computed_accessors.rs"
 C_OUT = ROOT / "include/openui_style_properties.h"
 DOC_OUT = ROOT / "docs/v02/generated/style-properties.md"
 FRAMEWORK_OUT = ROOT / "bindings/rust/openui/src/generated_style_setters.rs"
@@ -45,12 +49,67 @@ CHROMIUM_147_TYPOGRAPHY = frozenset(
 )
 
 
+def computed_fields() -> dict[str, str]:
+    text = COMPUTED.read_text()
+    start = text.index("pub struct ComputedStyleFields {")
+    end = text.index("\n}\n", start)
+    fields = dict(
+        re.findall(
+            r"^\s+(?:pub(?:\(crate\))?\s+)?([a-z][a-z0-9_]*):\s*(.+),$",
+            text[start:end],
+            re.M,
+        )
+    )
+    if not fields:
+        raise SystemExit("could not parse ComputedStyle fields")
+    return fields
+
+
+def field_names(row: dict[str, str]) -> list[str]:
+    value = row["computed_fields"].strip()
+    return [] if value == "-" else value.split(";")
+
+
+def internal_rows() -> list[dict[str, str]]:
+    parsed = list(csv.DictReader(INTERNAL_SCHEMA.read_text().splitlines()))
+    names = [row["field"] for row in parsed]
+    if len(names) != len(set(names)):
+        raise SystemExit("internal style field names must be unique")
+    if any(not row["rationale"].strip() for row in parsed):
+        raise SystemExit("every internal style field requires a rationale")
+    fields = computed_fields()
+    stale = sorted(set(names) - set(fields))
+    if stale:
+        raise SystemExit("stale internal style fields: " + ", ".join(stale))
+    return parsed
+
+
 def rows() -> list[dict[str, str]]:
     parsed = list(csv.DictReader(SCHEMA.read_text().splitlines()))
+    required = {
+        "id", "rust_name", "css_name", "rust_type", "value_kind", "initial",
+        "inherited", "invalidation", "interpolation", "computed_fields",
+    }
+    if not parsed or set(parsed[0]) != required:
+        raise SystemExit("style schema columns do not match the generator contract")
     ids = [int(row["id"]) for row in parsed]
     names = [row["css_name"] for row in parsed]
     if ids != sorted(ids) or len(ids) != len(set(ids)) or len(names) != len(set(names)):
         raise SystemExit("style schema IDs and names must be unique and ordered")
+    if ids != list(range(1, len(ids) + 1)):
+        raise SystemExit("style schema IDs must be contiguous")
+    mapped = [field for row in parsed for field in field_names(row)]
+    duplicates = sorted(field for field, count in Counter(mapped).items() if count > 1)
+    if duplicates:
+        raise SystemExit("duplicate computed-field mappings: " + ", ".join(duplicates))
+    fields = computed_fields()
+    unknown = sorted(set(mapped) - set(fields))
+    if unknown:
+        raise SystemExit("unknown computed-field mappings: " + ", ".join(unknown))
+    internal = {row["field"] for row in internal_rows()}
+    overlap = sorted(set(mapped) & internal)
+    if overlap:
+        raise SystemExit("fields cannot be both authored and internal: " + ", ".join(overlap))
     missing_typography = sorted(CHROMIUM_147_TYPOGRAPHY.difference(names))
     if missing_typography:
         raise SystemExit(
@@ -94,14 +153,52 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
     lookups = "\n".join(
         f'            "{row["css_name"]}" => Some(Self::{row["rust_name"]}),' for row in schema
     )
+    # Renderer fixtures and engine-internal typed setters use the exact
+    # computed-field type, while the stable public builders retain their
+    # higher-level author value types (for example LengthValue). Every row in
+    # this list owns exactly one field by schema construction.
+    fields = computed_fields()
+    renderer_rows = [row for row in schema if len(field_names(row)) == 1]
+    renderer_variants = "\n".join(
+        f"    {row['rust_name']}({fields[field_names(row)[0]]})," for row in renderer_rows
+    )
+    renderer_apply = "\n".join(
+        f"            (StyleProperty::{row['rust_name']}, Self::{row['rust_name']}(value)) => {{ style.fields.{field_names(row)[0]} = value.clone(); true }},"
+        for row in renderer_rows
+    )
+    renderer_read = "\n".join(
+        f"            StyleProperty::{row['rust_name']} => Some(Self::{row['rust_name']}(style.fields.{field_names(row)[0]}.clone())),"
+        for row in renderer_rows
+    )
+    internal = internal_rows()
+    internal_variants = "\n".join(
+        f"    {title(row['field'].replace('_', '-'))}({fields[row['field']]}),"
+        for row in internal
+    )
+    internal_apply = "\n".join(
+        f"            Self::{title(row['field'].replace('_', '-'))}(value) => style.{row['field']} = value,"
+        for row in internal
+    )
     builders = "\n".join(
         "\n".join(
             (
                 f"    pub fn {rust_method(row['css_name'])}(self, value: {row['rust_type']}) -> Self {{",
-                f"        self.with(StyleProperty::{row['rust_name']}, value)",
+                (
+                    f"        self.with(StyleProperty::{row['rust_name']}, value)"
+                    if int(row["id"]) <= 125
+                    else f"        self.with_renderer(StyleProperty::{row['rust_name']}, RendererStyleValue::{row['rust_name']}(value))"
+                ),
                 "    }",
             )
         )
+        for row in schema
+    )
+    compile_pass = "\n".join(
+        f"        let _ = Style::default().{rust_method(row['css_name'])}(unimplemented!());"
+        for row in schema
+    )
+    compile_fail = "\n".join(
+        f"///     let _ = Style::default().{rust_method(row['css_name'])}(());"
         for row in schema
     )
     text = f"""// @generated by tools/style/generate_properties.py; do not edit.
@@ -111,6 +208,65 @@ def rust_output(schema: list[dict[str, str]]) -> bytes:
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum StyleProperty {{
 {variants}
+}}
+
+/// Schema-generated values for renderer longhands appended after the stable
+/// v0.2 property surface. Each variant is tied to exactly one computed field.
+#[derive(Debug, Clone)]
+pub enum RendererStyleValue {{
+{renderer_variants}
+}}
+
+impl PartialEq for RendererStyleValue {{
+    fn eq(&self, other: &Self) -> bool {{
+        // Several renderer value types intentionally avoid semantic equality
+        // (notably decoded images and gradients). Their deterministic Debug
+        // representation is sufficient for the authored-value no-op cache.
+        std::mem::discriminant(self) == std::mem::discriminant(other)
+            && format!("{{self:?}}") == format!("{{other:?}}")
+    }}
+}}
+
+impl RendererStyleValue {{
+    pub fn property(&self) -> StyleProperty {{
+        match self {{
+{chr(10).join(f"            Self::{row['rust_name']}(..) => StyleProperty::{row['rust_name']}," for row in renderer_rows)}
+        }}
+    }}
+
+    pub(crate) fn apply(&self, style: &mut ComputedStyle, property: StyleProperty) -> bool {{
+        match (property, self) {{
+{renderer_apply}
+            _ => false,
+        }}
+    }}
+
+    pub(crate) fn from_computed(
+        style: &ComputedStyle,
+        property: StyleProperty,
+    ) -> Option<Self> {{
+        match property {{
+{renderer_read}
+            _ => None,
+        }}
+    }}
+}}
+
+/// Engine-owned renderer state which is deliberately not an author property.
+/// Each entry has an explicit rationale in `internal-style-fields.csv`.
+#[doc(hidden)]
+#[derive(Debug, Clone)]
+pub enum RendererInternalStyleValue {{
+{internal_variants}
+}}
+
+impl RendererInternalStyleValue {{
+    #[doc(hidden)]
+    pub fn apply_to(self, computed: &mut ComputedStyle) {{
+        computed.update_derived(|style| match self {{
+{internal_apply}
+        }});
+    }}
 }}
 
 impl StyleProperty {{
@@ -137,6 +293,27 @@ impl StyleProperty {{
 pub const PROPERTY_METADATA: &[PropertyMetadata] = &[
 {metadata}
 ];
+
+/// Compile contract for every schema-generated Rust property builder.
+///
+/// ```compile_fail
+/// use openui_style::Style;
+/// fn every_property_rejects_an_untyped_unit_value() {{
+{compile_fail}
+/// }}
+/// ```
+#[doc(hidden)]
+pub struct GeneratedPropertyCompileContract;
+
+#[cfg(test)]
+mod generated_property_compile_pass {{
+    use super::Style;
+
+    #[allow(dead_code, unreachable_code)]
+    fn every_property_accepts_its_generated_type() {{
+{compile_pass}
+    }}
+}}
 
 #[rustfmt::skip]
 impl Style {{
@@ -181,7 +358,11 @@ def framework_output(schema: list[dict[str, str]]) -> bytes:
         "\n".join(
             (
                 f"    pub fn set_{rust_method(row['css_name'])}(&self, value: {row['rust_type']}) -> Result<(), Error> {{",
-                f"        self.set_property(StyleProperty::{row['rust_name']}, value.into())",
+                (
+                    f"        self.set_property(StyleProperty::{row['rust_name']}, value.into())"
+                    if int(row["id"]) <= 125
+                    else f"        self.set_property(StyleProperty::{row['rust_name']}, StyleValue::Renderer(RendererStyleValue::{row['rust_name']}(value)))"
+                ),
                 "    }",
             )
         )
@@ -206,21 +387,44 @@ def docs_output(schema: list[dict[str, str]]) -> bytes:
         "<!-- @generated by tools/style/generate_properties.py; do not edit. -->",
         "# Open UI v0.2 style properties",
         "",
-        "| ID | Property | Rust type | Initial | Inherited | Invalidation | Interpolation |",
-        "|---:|---|---|---|:---:|---|---|",
+        "| ID | Property | Computed field(s) | Rust type | Initial | Inherited | Invalidation | Interpolation |",
+        "|---:|---|---|---|---|:---:|---|---|",
     ]
     lines.extend(
-        f"| {row['id']} | `{row['css_name']}` | `{row['rust_type']}` | `{row['initial']}` | "
+        f"| {row['id']} | `{row['css_name']}` | `{row['computed_fields']}` | `{row['rust_type']}` | `{row['initial']}` | "
         f"{row['inherited']} | {row['invalidation']} | {row['interpolation']} |"
         for row in schema
     )
     return ("\n".join(lines) + "\n").encode()
 
 
+def accessors_output(schema: list[dict[str, str]]) -> bytes:
+    fields = computed_fields()
+    authored = {field for row in schema for field in field_names(row)}
+    internal = {row["field"] for row in internal_rows()}
+    accessors = []
+    for field in sorted(authored | internal):
+        accessors.extend(
+            (
+                "    #[inline]",
+                f"    pub fn {field}(&self) -> &{fields[field]} {{",
+                f"        &self.fields.{field}",
+                "    }",
+            )
+        )
+    return (
+        "// @generated by tools/style/generate_properties.py; do not edit.\n\n"
+        "impl ComputedStyle {\n"
+        + "\n".join(accessors)
+        + "\n}\n"
+    ).encode()
+
+
 def outputs() -> dict[Path, bytes]:
     schema = rows()
     return {
         RUST_OUT: rust_output(schema),
+        ACCESSORS_OUT: accessors_output(schema),
         FRAMEWORK_OUT: framework_output(schema),
         C_OUT: c_output(schema),
         DOC_OUT: docs_output(schema),

@@ -6,10 +6,12 @@
 
 use std::collections::{BTreeMap, HashMap};
 
+use openui_geometry::RasterConfiguration;
 use openui_style::{
-    Color, ComputedStyle, ContainerCondition, Containment, CounterStyle, Display, FontFamily,
-    GeneratedContentItem, GenericFontFamily, ImageResourceId, Overflow, QuotePair,
-    ScrollMarkerGroup,
+    apply_to_computed, Color, ComputedStyle, ContainerCondition, Containment, CounterStyle,
+    Display, FontFamily, GeneratedContentItem, GenericFontFamily, ImageResourceId, Overflow,
+    PropertyTypeError, QuotePair, RendererInternalStyleValue, ScrollMarkerGroup, Style,
+    StyleProperty, StyleValue,
 };
 
 /// Encoded raster or static-SVG bytes owned by a document.
@@ -32,6 +34,7 @@ pub enum ReplacedResourceKind {
     Image(ImageResourceId),
     StaticSvg(ImageResourceId),
     TransparentCanvas,
+    /// A poster image or hash-pinned decoded first frame for a media element.
     MediaPoster(ImageResourceId),
     PackagedDocument(ImageResourceId),
 }
@@ -299,12 +302,6 @@ impl NodeData {
             label: None,
         }
     }
-
-    /// Mutable access to the style (convenience for tests and builder patterns).
-    #[inline]
-    pub fn style_mut(&mut self) -> &mut ComputedStyle {
-        &mut self.style
-    }
 }
 
 /// The document tree — an arena of nodes.
@@ -319,6 +316,8 @@ pub struct Document {
     image_resources: Vec<EncodedImageResource>,
     legacy_canvas_body: Option<NodeId>,
     font_collection: std::sync::Arc<openui_text::FontCollection>,
+    raster_configuration: RasterConfiguration,
+    device_scale_factor: f64,
 }
 
 impl Document {
@@ -331,6 +330,15 @@ impl Document {
     pub fn new_with_font_collection(
         font_collection: std::sync::Arc<openui_text::FontCollection>,
     ) -> Self {
+        Self::new_with_raster_configuration(font_collection, RasterConfiguration::default(), 1.0)
+    }
+
+    /// Create a document with explicit immutable raster context.
+    pub fn new_with_raster_configuration(
+        font_collection: std::sync::Arc<openui_text::FontCollection>,
+        raster_configuration: RasterConfiguration,
+        device_scale_factor: f64,
+    ) -> Self {
         let mut doc = Self {
             nodes: Vec::new(),
             free_nodes: Vec::new(),
@@ -338,12 +346,98 @@ impl Document {
             image_resources: Vec::new(),
             legacy_canvas_body: None,
             font_collection,
+            raster_configuration,
+            device_scale_factor,
         };
         let root_id = doc.create_node(ElementTag::Viewport);
         doc.root = root_id;
         // The viewport is a block-level element.
-        doc.nodes[root_id.index()].style.display = openui_style::Display::Block;
+        doc.nodes[root_id.index()].style = ComputedStyle::for_viewport();
+        doc.nodes[root_id.index()]
+            .style
+            .set_raster_context(raster_configuration, device_scale_factor);
         doc
+    }
+
+    pub fn raster_configuration(&self) -> RasterConfiguration {
+        self.raster_configuration
+    }
+
+    pub fn device_scale_factor(&self) -> f64 {
+        self.device_scale_factor
+    }
+
+    /// Update the engine-owned raster context after a viewport scale change.
+    #[doc(hidden)]
+    pub fn set_raster_context(
+        &mut self,
+        raster_configuration: RasterConfiguration,
+        device_scale_factor: f64,
+    ) {
+        self.raster_configuration = raster_configuration;
+        self.device_scale_factor = device_scale_factor;
+        for node in &mut self.nodes {
+            node.style
+                .set_raster_context(raster_configuration, device_scale_factor);
+        }
+    }
+
+    /// Apply one schema-validated author declaration at the DOM/style
+    /// boundary. No mutable computed-style reference is returned.
+    pub fn apply_style_property(
+        &mut self,
+        node: NodeId,
+        property: StyleProperty,
+        value: &StyleValue,
+        viewport: (f32, f32),
+    ) -> Result<openui_style::InvalidationClass, PropertyTypeError> {
+        apply_to_computed(
+            &mut self.nodes[node.index()].style,
+            property,
+            value,
+            viewport,
+        )
+    }
+
+    /// Apply an ordered typed declaration list through the same boundary.
+    pub fn apply_style(
+        &mut self,
+        node: NodeId,
+        declarations: &Style,
+        viewport: (f32, f32),
+    ) -> Result<(), PropertyTypeError> {
+        for declaration in declarations.declarations() {
+            self.apply_style_property(node, declaration.property, &declaration.value, viewport)?;
+        }
+        Ok(())
+    }
+
+    /// Install a style snapshot produced for an anonymous layout box. Author
+    /// declarations must use `apply_style` or `apply_style_property`.
+    #[doc(hidden)]
+    pub fn install_resolved_style(&mut self, node: NodeId, mut style: ComputedStyle) {
+        style.set_raster_context(self.raster_configuration, self.device_scale_factor);
+        self.nodes[node.index()].style = style;
+    }
+
+    /// Update an engine-derived snapshot in place without returning a mutable
+    /// computed-style reference. This is for anonymous boxes and low-level
+    /// layout construction; authored declarations must use the schema APIs.
+    #[doc(hidden)]
+    pub fn update_resolved_style(
+        &mut self,
+        node: NodeId,
+        update: impl FnOnce(&mut openui_style::ComputedStyleFields),
+    ) {
+        self.nodes[node.index()].style.update_derived(update);
+    }
+
+    /// Apply a generated engine-owned style value at the DOM/style boundary.
+    /// These values are never author declarations and therefore have no
+    /// public property ID, but their mutation is still kept inside the DOM.
+    #[doc(hidden)]
+    pub fn apply_internal_style(&mut self, node: NodeId, value: RendererInternalStyleValue) {
+        value.apply_to(&mut self.nodes[node.index()].style);
     }
 
     pub fn font_collection(&self) -> &std::sync::Arc<openui_text::FontCollection> {
@@ -374,14 +468,18 @@ impl Document {
 
     /// Create a new detached node (not yet in the tree).
     pub fn create_node(&mut self, tag: ElementTag) -> NodeId {
-        if let Some(index) = self.free_nodes.pop() {
+        let node = if let Some(index) = self.free_nodes.pop() {
             self.nodes[index as usize] = NodeData::new(tag);
             NodeId(index)
         } else {
             let id = NodeId(self.nodes.len() as u32);
             self.nodes.push(NodeData::new(tag));
             id
-        }
+        };
+        self.nodes[node.index()]
+            .style
+            .set_raster_context(self.raster_configuration, self.device_scale_factor);
+        node
     }
 
     /// Append `child` as the last child of `parent`.
@@ -713,9 +811,47 @@ impl Document {
         }
     }
 
+    /// Return the legend that supplies an HTML fieldset's rendered legend box.
+    ///
+    /// `display: contents` removes its principal box, so legends below an
+    /// unbroken chain of such elements participate as fieldset children in the
+    /// box tree. Hidden, unboxed, and out-of-flow legends do not establish the
+    /// fieldset's border area.
+    pub fn fieldset_rendered_legend(&self, fieldset: NodeId) -> Option<NodeId> {
+        if self.node(fieldset).tag != ElementTag::Fieldset {
+            return None;
+        }
+
+        fn find(doc: &Document, parent: NodeId) -> Option<NodeId> {
+            for child in doc.children(parent) {
+                let node = doc.node(child);
+                if node.style.display == Display::None || node.style.is_out_of_flow() {
+                    continue;
+                }
+                if node.style.display == Display::Contents {
+                    if let Some(legend) = find(doc, child) {
+                        return Some(legend);
+                    }
+                } else if node.tag == ElementTag::Legend {
+                    return Some(child);
+                }
+            }
+            None
+        }
+
+        find(self, fieldset)
+    }
+
     /// Count of all nodes in the document.
     pub fn node_count(&self) -> usize {
         self.nodes.len()
+    }
+
+    /// Resolve an arena index while an engine adopts nodes created by DOM
+    /// materialization. This does not expose mutable tree storage.
+    #[doc(hidden)]
+    pub fn node_id_at(&self, index: usize) -> Option<NodeId> {
+        (index < self.nodes.len()).then_some(NodeId(index as u32))
     }
 
     /// Number of arena entries currently available for reuse.
@@ -1109,8 +1245,8 @@ mod tests {
         let mut doc = Document::new();
         let html = doc.create_node(ElementTag::Html);
         let body = doc.create_node(ElementTag::Body);
-        doc.node_mut(html).style.display = Display::Block;
-        doc.node_mut(body).style.display = Display::Block;
+        doc.update_resolved_style(html, |style| style.display = Display::Block);
+        doc.update_resolved_style(body, |style| style.display = Display::Block);
         doc.append_child(doc.root(), html);
         doc.append_child(html, body);
         (doc, html, body)
@@ -1195,12 +1331,16 @@ mod tests {
         doc.set_attribute(origin, "data-label", "value");
 
         let after = doc.insert_pseudo_element(origin, PseudoElementKind::After);
-        doc.node_mut(after).style.content = Some(vec![GeneratedContentItem::String("A".into())]);
+        doc.update_resolved_style(after, |style| {
+            style.content = Some(vec![GeneratedContentItem::String("A".into())])
+        });
         let before = doc.insert_pseudo_element(origin, PseudoElementKind::Before);
-        doc.node_mut(before).style.content = Some(vec![
-            GeneratedContentItem::Attribute("data-label".into()),
-            GeneratedContentItem::String(":".into()),
-        ]);
+        doc.update_resolved_style(before, |style| {
+            style.content = Some(vec![
+                GeneratedContentItem::Attribute("data-label".into()),
+                GeneratedContentItem::String(":".into()),
+            ])
+        });
         doc.materialize_generated_content();
 
         let children: Vec<_> = doc.children(origin).collect();
@@ -1216,24 +1356,30 @@ mod tests {
     fn generated_counters_scope_format_and_quotes() {
         let mut doc = Document::new();
         let origin = doc.create_node(ElementTag::Div);
-        doc.node_mut(origin).style.counter_reset = vec![openui_style::CounterOperation {
-            name: "section".into(),
-            value: 3,
-        }];
+        doc.update_resolved_style(origin, |style| {
+            style.counter_reset = vec![openui_style::CounterOperation {
+                name: "section".into(),
+                value: 3,
+            }]
+        });
         doc.append_child(doc.root(), origin);
         let before = doc.insert_pseudo_element(origin, PseudoElementKind::Before);
-        doc.node_mut(before).style.counter_increment = vec![openui_style::CounterOperation {
-            name: "section".into(),
-            value: 1,
-        }];
-        doc.node_mut(before).style.content = Some(vec![
-            GeneratedContentItem::OpenQuote,
-            GeneratedContentItem::Counter {
+        doc.update_resolved_style(before, |style| {
+            style.counter_increment = vec![openui_style::CounterOperation {
                 name: "section".into(),
-                style: CounterStyle::UpperRoman,
-            },
-            GeneratedContentItem::CloseQuote,
-        ]);
+                value: 1,
+            }]
+        });
+        doc.update_resolved_style(before, |style| {
+            style.content = Some(vec![
+                GeneratedContentItem::OpenQuote,
+                GeneratedContentItem::Counter {
+                    name: "section".into(),
+                    style: CounterStyle::UpperRoman,
+                },
+                GeneratedContentItem::CloseQuote,
+            ])
+        });
         doc.materialize_generated_content();
         let text = doc.children(before).next().unwrap();
         assert_eq!(doc.node(text).text.as_deref(), Some("“IV”"));
@@ -1263,9 +1409,13 @@ mod tests {
     fn style_mutation() {
         let mut doc = Document::new();
         let node = doc.create_node(ElementTag::Div);
-        doc.node_mut(node).style.display = openui_style::Display::Block;
-        doc.node_mut(node).style.width = openui_geometry::Length::px(100.0);
-        doc.node_mut(node).style.background_color = openui_style::Color::RED;
+        doc.update_resolved_style(node, |style| style.display = openui_style::Display::Block);
+        doc.update_resolved_style(node, |style| {
+            style.width = openui_geometry::Length::px(100.0)
+        });
+        doc.update_resolved_style(node, |style| {
+            style.background_color = openui_style::Color::RED
+        });
 
         assert_eq!(doc.node(node).style.display, openui_style::Display::Block);
         assert_eq!(
@@ -1275,13 +1425,73 @@ mod tests {
     }
 
     #[test]
+    fn fieldset_rendered_legend_follows_display_contents_box_children() {
+        let mut doc = Document::new();
+        let fieldset = doc.create_node(ElementTag::Fieldset);
+        doc.append_child(doc.root(), fieldset);
+
+        let ordinary = doc.create_node(ElementTag::Div);
+        doc.append_child(fieldset, ordinary);
+        let nested_ordinary_legend = doc.create_node(ElementTag::Legend);
+        doc.append_child(ordinary, nested_ordinary_legend);
+
+        let contents = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(contents, |style| style.display = Display::Contents);
+        doc.append_child(fieldset, contents);
+        let flattened_legend = doc.create_node(ElementTag::Legend);
+        doc.append_child(contents, flattened_legend);
+
+        let later_direct_legend = doc.create_node(ElementTag::Legend);
+        doc.append_child(fieldset, later_direct_legend);
+
+        assert_eq!(
+            doc.fieldset_rendered_legend(fieldset),
+            Some(flattened_legend)
+        );
+
+        doc.update_resolved_style(flattened_legend, |style| style.display = Display::Contents);
+        assert_eq!(
+            doc.fieldset_rendered_legend(fieldset),
+            Some(later_direct_legend)
+        );
+
+        doc.update_resolved_style(later_direct_legend, |style| style.display = Display::None);
+        assert_eq!(doc.fieldset_rendered_legend(fieldset), None);
+    }
+
+    #[test]
+    fn installed_resolved_style_retains_document_raster_context() {
+        let raster_configuration = RasterConfiguration::legacy_deterministic_aliased(true);
+        let mut doc = Document::new_with_raster_configuration(
+            openui_text::FontCollection::system(),
+            raster_configuration,
+            2.0,
+        );
+        let node = doc.create_node(ElementTag::Div);
+
+        doc.install_resolved_style(node, ComputedStyle::initial());
+
+        assert_eq!(
+            doc.node(node).style.raster_configuration,
+            raster_configuration
+        );
+        assert_eq!(doc.node(node).style.device_scale_factor, 2.0);
+    }
+
+    #[test]
     fn root_background_precedes_body_canvas_propagation() {
         let (mut doc, html, body) = root_aware_document();
-        doc.node_mut(html).style.background_color = openui_style::Color::RED;
-        doc.node_mut(body).style.background_color = openui_style::Color::BLUE;
+        doc.update_resolved_style(html, |style| {
+            style.background_color = openui_style::Color::RED
+        });
+        doc.update_resolved_style(body, |style| {
+            style.background_color = openui_style::Color::BLUE
+        });
         assert_eq!(doc.canvas_background_source(), Some(html));
 
-        doc.node_mut(html).style.background_color = openui_style::Color::TRANSPARENT;
+        doc.update_resolved_style(html, |style| {
+            style.background_color = openui_style::Color::TRANSPARENT
+        });
         assert_eq!(doc.canvas_background_source(), Some(body));
     }
 
@@ -1304,17 +1514,19 @@ mod tests {
                 },
             ],
         });
-        doc.node_mut(html)
-            .style
-            .background_layers
-            .push(openui_style::BackgroundLayer::new(image.clone()));
+        doc.update_resolved_style(html, |style| {
+            style
+                .background_layers
+                .push(openui_style::BackgroundLayer::new(image.clone()));
+        });
         assert_eq!(doc.canvas_background_source(), Some(html));
 
-        doc.node_mut(html).style.background_layers.clear();
-        doc.node_mut(body)
-            .style
-            .background_layers
-            .push(openui_style::BackgroundLayer::new(image));
+        doc.update_resolved_style(html, |style| style.background_layers.clear());
+        doc.update_resolved_style(body, |style| {
+            style
+                .background_layers
+                .push(openui_style::BackgroundLayer::new(image));
+        });
         assert_eq!(doc.canvas_background_source(), Some(body));
     }
 
@@ -1322,16 +1534,20 @@ mod tests {
     fn explicitly_registered_legacy_body_propagates_canvas_background() {
         let mut doc = Document::new();
         let body = doc.create_node(ElementTag::Div);
-        doc.node_mut(body).style.display = Display::Block;
-        doc.node_mut(body).style.background_color = openui_style::Color::BLUE;
+        doc.update_resolved_style(body, |style| style.display = Display::Block);
+        doc.update_resolved_style(body, |style| {
+            style.background_color = openui_style::Color::BLUE
+        });
         doc.append_child(doc.root(), body);
         doc.set_legacy_canvas_body(body);
         assert_eq!(doc.canvas_background_source(), Some(body));
 
         let mut ordinary = Document::new();
         let div = ordinary.create_node(ElementTag::Div);
-        ordinary.node_mut(div).style.display = Display::Block;
-        ordinary.node_mut(div).style.background_color = openui_style::Color::BLUE;
+        ordinary.update_resolved_style(div, |style| style.display = Display::Block);
+        ordinary.update_resolved_style(div, |style| {
+            style.background_color = openui_style::Color::BLUE
+        });
         ordinary.append_child(ordinary.root(), div);
         assert_eq!(ordinary.canvas_background_source(), None);
     }
@@ -1340,11 +1556,15 @@ mod tests {
     fn authored_legacy_root_background_precedes_registered_body() {
         let mut doc = Document::new();
         let body = doc.create_node(ElementTag::Div);
-        doc.node_mut(body).style.display = Display::Block;
-        doc.node_mut(body).style.background_color = openui_style::Color::BLACK;
+        doc.update_resolved_style(body, |style| style.display = Display::Block);
+        doc.update_resolved_style(body, |style| {
+            style.background_color = openui_style::Color::BLACK
+        });
         doc.append_child(doc.root(), body);
         doc.set_legacy_canvas_body(body);
-        doc.node_mut(doc.root()).style.background_color = openui_style::Color::WHITE;
+        doc.update_resolved_style(doc.root(), |style| {
+            style.background_color = openui_style::Color::WHITE
+        });
 
         assert_eq!(doc.canvas_background_source(), Some(doc.root()));
     }
@@ -1352,22 +1572,24 @@ mod tests {
     #[test]
     fn hidden_or_unboxed_root_body_cannot_supply_canvas_background() {
         let (mut doc, html, body) = root_aware_document();
-        doc.node_mut(body).style.background_color = openui_style::Color::RED;
-        doc.node_mut(body).style.display = Display::Contents;
+        doc.update_resolved_style(body, |style| {
+            style.background_color = openui_style::Color::RED
+        });
+        doc.update_resolved_style(body, |style| style.display = Display::Contents);
         assert_eq!(doc.canvas_background_source(), None);
 
-        doc.node_mut(body).style.display = Display::Block;
-        doc.node_mut(html).style.display = Display::None;
+        doc.update_resolved_style(body, |style| style.display = Display::Block);
+        doc.update_resolved_style(html, |style| style.display = Display::None);
         assert_eq!(doc.canvas_background_source(), None);
     }
 
     #[test]
     fn root_overflow_prevents_body_overflow_propagation() {
         let (mut doc, html, body) = root_aware_document();
-        doc.node_mut(body).style.overflow_y = Overflow::Hidden;
+        doc.update_resolved_style(body, |style| style.overflow_y = Overflow::Hidden);
         assert!(doc.body_overflow_is_propagated());
 
-        doc.node_mut(html).style.overflow_y = Overflow::Hidden;
+        doc.update_resolved_style(html, |style| style.overflow_y = Overflow::Hidden);
         assert!(!doc.body_overflow_is_propagated());
     }
 }

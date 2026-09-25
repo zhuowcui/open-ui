@@ -24,6 +24,10 @@ import tempfile
 from collections import Counter
 from pathlib import Path
 
+from generate_sp13r_multicol_closure import lowered_candidate_promotions
+from generate_sp20_closure import MANIFEST_SHA256 as SP20_MANIFEST_SHA256
+from generate_sp20_closure import TARGETS as SP20_TARGETS
+
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
@@ -413,6 +417,9 @@ def validate_live_snapshot(rows: list[dict[str, str]], summary: dict) -> str:
     repair_targets = set(json.loads(REPAIR_TARGETS.read_text(encoding="utf-8")))
     layout_targets = set(json.loads(LAYOUT_TARGETS.read_text(encoding="utf-8")))
     projected = set(json.loads(PROJECTED_UNPORTED.read_text(encoding="utf-8")))
+    if hashlib.sha256(SP20_TARGETS.read_bytes()).hexdigest() != SP20_MANIFEST_SHA256[SP20_TARGETS]:
+        raise ValueError("SP20 later-promotion manifest hash changed")
+    sp20_targets = set(json.loads(SP20_TARGETS.read_text(encoding="utf-8")))
     repair_parts = load_partitions(REPAIR_PARTITIONS, REPAIR_COUNTS)
     layout_parts = load_partitions(LAYOUT_PARTITIONS, LAYOUT_COUNTS)
 
@@ -437,6 +444,9 @@ def validate_live_snapshot(rows: list[dict[str, str]], summary: dict) -> str:
 
     current_repaired = repair_targets & exact
     current_layout = layout_targets & exact
+    later_exact = sp20_targets & exact
+    if later_exact not in (set(), sp20_targets):
+        raise ValueError("SP20 later exact promotions are incomplete")
     matches = [
         name for name, expected_repaired, expected_layout in wave_steps
         if current_repaired == expected_repaired and current_layout == expected_layout
@@ -444,10 +454,10 @@ def validate_live_snapshot(rows: list[dict[str, str]], summary: dict) -> str:
     if len(matches) != 1:
         raise ValueError("SP19 live exact targets are not a complete wave prefix")
     wave = matches[0]
-    expected_ids = repaired | current_layout
+    expected_ids = repaired | current_layout | later_exact
     if set(by_id) != expected_ids:
         raise ValueError("SP19 runnable expansion or non-target summary IDs drifted")
-    if exact != initial_exact | current_repaired | current_layout:
+    if exact != initial_exact | current_repaired | current_layout | later_exact:
         raise ValueError("SP19 live exact set contains target or non-target drift")
     failures = set(by_id) - exact
     if failures != repair_targets - current_repaired:
@@ -456,10 +466,13 @@ def validate_live_snapshot(rows: list[dict[str, str]], summary: dict) -> str:
         raise ValueError("SP19 live summary contains errors")
 
     row_by_id = {canonical_id(row): row for row in rows}
+    candidate_promotions = lowered_candidate_promotions(row_by_id, require_complete=False)
+    if candidate_promotions & later_exact:
+        raise ValueError("AST candidates overlap SP20 static promotions")
     live_unported = {
         test_id for test_id, row in row_by_id.items() if row["ported"] == "no"
     }
-    if live_unported != projected | (layout_targets - current_layout):
+    if live_unported != (projected | (layout_targets - current_layout)) - later_exact - candidate_promotions:
         raise ValueError("SP19 mapping target/non-target runnable state drifted")
     for test_id in current_layout | repair_targets:
         row = row_by_id[test_id]

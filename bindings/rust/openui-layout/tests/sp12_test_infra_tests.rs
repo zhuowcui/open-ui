@@ -39,8 +39,8 @@ fn single_child_with_fixed_size() {
 fn child_with_margins() {
     // Container needs a border to prevent parent-child margin collapsing.
     let mut builder = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     builder
         .add_child()
@@ -249,8 +249,8 @@ fn style_builder_sets_margin_padding_border() {
 fn style_builder_with_closure() {
     let style = style_builder()
         .with(|s| {
-            s.z_index = Some(42);
-            s.opacity = 0.5;
+            s.update_derived(|computed| computed.z_index = Some(42));
+            s.update_derived(|computed| computed.opacity = 0.5);
         })
         .build();
 
@@ -332,7 +332,7 @@ fn child_builder_with_style_closure() {
         .width(200.0)
         .height(100.0)
         .with_style(|s| {
-            s.opacity = 0.8;
+            s.update_derived(|computed| computed.opacity = 0.8);
         })
         .done();
     let result = builder.build();
@@ -348,8 +348,8 @@ fn child_builder_with_style_closure() {
 fn with_container_style_mutator() {
     let result = BlockTestBuilder::new(800, 600)
         .with_container_style(|s| {
-            s.padding_top = Length::px(10.0);
-            s.padding_bottom = Length::px(10.0);
+            s.update_derived(|computed| computed.padding_top = Length::px(10.0));
+            s.update_derived(|computed| computed.padding_bottom = Length::px(10.0));
         })
         .build();
 

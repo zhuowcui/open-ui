@@ -1,6 +1,7 @@
 //! WPT test modules — auto-generated
 
-use openui_dom::Document;
+use openui_engine::{Engine, EngineError};
+use openui_geometry::ViewportMetrics;
 
 pub mod wpt_css2_floats;
 pub mod wpt_css_backgrounds;
@@ -13,7 +14,10 @@ pub mod wpt_css_overflow;
 pub mod wpt_css_position;
 pub mod wpt_css_sizing;
 
-pub fn all_wpt_registry() -> Vec<(&'static str, fn() -> Document)> {
+pub fn all_wpt_registry() -> Vec<(
+    &'static str,
+    fn(ViewportMetrics) -> Result<Engine, EngineError>,
+)> {
     let mut all = Vec::new();
     all.extend(wpt_css2_floats::css2_floats_registry());
     all.extend(wpt_css_position::css_position_registry());

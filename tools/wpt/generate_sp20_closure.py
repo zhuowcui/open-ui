@@ -28,6 +28,8 @@ from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
 
+from generate_sp13r_multicol_closure import lowered_candidate_promotions
+
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
@@ -702,8 +704,9 @@ def validate_live_snapshot(rows: list[dict[str, str]], summary: dict) -> str:
         raise ValueError("SP20 pass is not zero-pixel exact")
 
     row_by_id = {canonical_id(row): row for row in rows}
+    candidate_promotions = lowered_candidate_promotions(row_by_id)
     live_unported = {test_id for test_id, row in row_by_id.items() if row.get("ported") == "no"}
-    if live_unported != projected | (targets - current):
+    if live_unported != (projected | (targets - current)) - candidate_promotions:
         raise ValueError("SP20 mapping target/non-target state drifted")
     for test_id in baseline | current:
         row = row_by_id[test_id]

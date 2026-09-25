@@ -381,4 +381,340 @@ impl Element {
     pub fn set_text_box(&self, value: TextBoxShorthand) -> Result<(), Error> {
         self.set_property(StyleProperty::TextBox, value.into())
     }
+    pub fn set_align_content(&self, value: ContentAlignment) -> Result<(), Error> {
+        self.set_property(StyleProperty::AlignContent, StyleValue::Renderer(RendererStyleValue::AlignContent(value)))
+    }
+    pub fn set_align_self(&self, value: ItemAlignment) -> Result<(), Error> {
+        self.set_property(StyleProperty::AlignSelf, StyleValue::Renderer(RendererStyleValue::AlignSelf(value)))
+    }
+    pub fn set_aspect_ratio(&self, value: Option<AspectRatio>) -> Result<(), Error> {
+        self.set_property(StyleProperty::AspectRatio, StyleValue::Renderer(RendererStyleValue::AspectRatio(value)))
+    }
+    pub fn set_background_attachment(&self, value: BackgroundAttachment) -> Result<(), Error> {
+        self.set_property(StyleProperty::BackgroundAttachment, StyleValue::Renderer(RendererStyleValue::BackgroundAttachment(value)))
+    }
+    pub fn set_background_clip(&self, value: BackgroundClip) -> Result<(), Error> {
+        self.set_property(StyleProperty::BackgroundClip, StyleValue::Renderer(RendererStyleValue::BackgroundClip(value)))
+    }
+    pub fn set_background_layers(&self, value: Vec<BackgroundLayer>) -> Result<(), Error> {
+        self.set_property(StyleProperty::BackgroundLayers, StyleValue::Renderer(RendererStyleValue::BackgroundLayers(value)))
+    }
+    pub fn set_background_linear_gradient(&self, value: Option<LinearGradient>) -> Result<(), Error> {
+        self.set_property(StyleProperty::BackgroundLinearGradient, StyleValue::Renderer(RendererStyleValue::BackgroundLinearGradient(value)))
+    }
+    pub fn set_border_bottom_color(&self, value: StyleColor) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderBottomColor, StyleValue::Renderer(RendererStyleValue::BorderBottomColor(value)))
+    }
+    pub fn set_border_bottom_left_radius(&self, value: (f32, f32)) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderBottomLeftRadius, StyleValue::Renderer(RendererStyleValue::BorderBottomLeftRadius(value)))
+    }
+    pub fn set_border_bottom_right_radius(&self, value: (f32, f32)) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderBottomRightRadius, StyleValue::Renderer(RendererStyleValue::BorderBottomRightRadius(value)))
+    }
+    pub fn set_border_bottom_style(&self, value: BorderStyle) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderBottomStyle, StyleValue::Renderer(RendererStyleValue::BorderBottomStyle(value)))
+    }
+    pub fn set_border_bottom_width(&self, value: i32) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderBottomWidth, StyleValue::Renderer(RendererStyleValue::BorderBottomWidth(value)))
+    }
+    pub fn set_border_collapse(&self, value: BorderCollapse) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderCollapse, StyleValue::Renderer(RendererStyleValue::BorderCollapse(value)))
+    }
+    pub fn set_border_image(&self, value: Option<BorderImage>) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderImage, StyleValue::Renderer(RendererStyleValue::BorderImage(value)))
+    }
+    pub fn set_border_left_color(&self, value: StyleColor) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderLeftColor, StyleValue::Renderer(RendererStyleValue::BorderLeftColor(value)))
+    }
+    pub fn set_border_left_style(&self, value: BorderStyle) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderLeftStyle, StyleValue::Renderer(RendererStyleValue::BorderLeftStyle(value)))
+    }
+    pub fn set_border_left_width(&self, value: i32) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderLeftWidth, StyleValue::Renderer(RendererStyleValue::BorderLeftWidth(value)))
+    }
+    pub fn set_border_radius_percent(&self, value: [(bool, bool); 4]) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderRadiusPercent, StyleValue::Renderer(RendererStyleValue::BorderRadiusPercent(value)))
+    }
+    pub fn set_border_right_color(&self, value: StyleColor) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderRightColor, StyleValue::Renderer(RendererStyleValue::BorderRightColor(value)))
+    }
+    pub fn set_border_right_style(&self, value: BorderStyle) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderRightStyle, StyleValue::Renderer(RendererStyleValue::BorderRightStyle(value)))
+    }
+    pub fn set_border_right_width(&self, value: i32) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderRightWidth, StyleValue::Renderer(RendererStyleValue::BorderRightWidth(value)))
+    }
+    pub fn set_border_spacing(&self, value: (Length, Length)) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderSpacing, StyleValue::Renderer(RendererStyleValue::BorderSpacing(value)))
+    }
+    pub fn set_border_top_color(&self, value: StyleColor) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderTopColor, StyleValue::Renderer(RendererStyleValue::BorderTopColor(value)))
+    }
+    pub fn set_border_top_left_radius(&self, value: (f32, f32)) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderTopLeftRadius, StyleValue::Renderer(RendererStyleValue::BorderTopLeftRadius(value)))
+    }
+    pub fn set_border_top_right_radius(&self, value: (f32, f32)) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderTopRightRadius, StyleValue::Renderer(RendererStyleValue::BorderTopRightRadius(value)))
+    }
+    pub fn set_border_top_style(&self, value: BorderStyle) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderTopStyle, StyleValue::Renderer(RendererStyleValue::BorderTopStyle(value)))
+    }
+    pub fn set_border_top_width(&self, value: i32) -> Result<(), Error> {
+        self.set_property(StyleProperty::BorderTopWidth, StyleValue::Renderer(RendererStyleValue::BorderTopWidth(value)))
+    }
+    pub fn set_bottom(&self, value: Length) -> Result<(), Error> {
+        self.set_property(StyleProperty::Bottom, StyleValue::Renderer(RendererStyleValue::Bottom(value)))
+    }
+    pub fn set_box_decoration_break(&self, value: BoxDecorationBreak) -> Result<(), Error> {
+        self.set_property(StyleProperty::BoxDecorationBreak, StyleValue::Renderer(RendererStyleValue::BoxDecorationBreak(value)))
+    }
+    pub fn set_box_shadow(&self, value: Vec<BoxShadow>) -> Result<(), Error> {
+        self.set_property(StyleProperty::BoxShadow, StyleValue::Renderer(RendererStyleValue::BoxShadow(value)))
+    }
+    pub fn set_box_sizing(&self, value: BoxSizing) -> Result<(), Error> {
+        self.set_property(StyleProperty::BoxSizing, StyleValue::Renderer(RendererStyleValue::BoxSizing(value)))
+    }
+    pub fn set_break_after(&self, value: BreakValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::BreakAfter, StyleValue::Renderer(RendererStyleValue::BreakAfter(value)))
+    }
+    pub fn set_break_before(&self, value: BreakValue) -> Result<(), Error> {
+        self.set_property(StyleProperty::BreakBefore, StyleValue::Renderer(RendererStyleValue::BreakBefore(value)))
+    }
+    pub fn set_break_inside(&self, value: BreakInside) -> Result<(), Error> {
+        self.set_property(StyleProperty::BreakInside, StyleValue::Renderer(RendererStyleValue::BreakInside(value)))
+    }
+    pub fn set_caption_side(&self, value: CaptionSide) -> Result<(), Error> {
+        self.set_property(StyleProperty::CaptionSide, StyleValue::Renderer(RendererStyleValue::CaptionSide(value)))
+    }
+    pub fn set_clear(&self, value: Clear) -> Result<(), Error> {
+        self.set_property(StyleProperty::Clear, StyleValue::Renderer(RendererStyleValue::Clear(value)))
+    }
+    pub fn set_clip_path_inset(&self, value: Option<[Length; 4]>) -> Result<(), Error> {
+        self.set_property(StyleProperty::ClipPathInset, StyleValue::Renderer(RendererStyleValue::ClipPathInset(value)))
+    }
+    pub fn set_column_count(&self, value: Option<u32>) -> Result<(), Error> {
+        self.set_property(StyleProperty::ColumnCount, StyleValue::Renderer(RendererStyleValue::ColumnCount(value)))
+    }
+    pub fn set_column_fill(&self, value: ColumnFill) -> Result<(), Error> {
+        self.set_property(StyleProperty::ColumnFill, StyleValue::Renderer(RendererStyleValue::ColumnFill(value)))
+    }
+    pub fn set_column_height(&self, value: Option<Length>) -> Result<(), Error> {
+        self.set_property(StyleProperty::ColumnHeight, StyleValue::Renderer(RendererStyleValue::ColumnHeight(value)))
+    }
+    pub fn set_column_rule_color(&self, value: StyleColor) -> Result<(), Error> {
+        self.set_property(StyleProperty::ColumnRuleColor, StyleValue::Renderer(RendererStyleValue::ColumnRuleColor(value)))
+    }
+    pub fn set_column_rule_style(&self, value: BorderStyle) -> Result<(), Error> {
+        self.set_property(StyleProperty::ColumnRuleStyle, StyleValue::Renderer(RendererStyleValue::ColumnRuleStyle(value)))
+    }
+    pub fn set_column_rule_width(&self, value: i32) -> Result<(), Error> {
+        self.set_property(StyleProperty::ColumnRuleWidth, StyleValue::Renderer(RendererStyleValue::ColumnRuleWidth(value)))
+    }
+    pub fn set_column_span(&self, value: ColumnSpan) -> Result<(), Error> {
+        self.set_property(StyleProperty::ColumnSpan, StyleValue::Renderer(RendererStyleValue::ColumnSpan(value)))
+    }
+    pub fn set_column_width(&self, value: Option<Length>) -> Result<(), Error> {
+        self.set_property(StyleProperty::ColumnWidth, StyleValue::Renderer(RendererStyleValue::ColumnWidth(value)))
+    }
+    pub fn set_column_wrap(&self, value: ColumnWrap) -> Result<(), Error> {
+        self.set_property(StyleProperty::ColumnWrap, StyleValue::Renderer(RendererStyleValue::ColumnWrap(value)))
+    }
+    pub fn set_contain(&self, value: Containment) -> Result<(), Error> {
+        self.set_property(StyleProperty::Contain, StyleValue::Renderer(RendererStyleValue::Contain(value)))
+    }
+    pub fn set_contain_intrinsic_height(&self, value: ContainIntrinsicLength) -> Result<(), Error> {
+        self.set_property(StyleProperty::ContainIntrinsicHeight, StyleValue::Renderer(RendererStyleValue::ContainIntrinsicHeight(value)))
+    }
+    pub fn set_contain_intrinsic_width(&self, value: ContainIntrinsicLength) -> Result<(), Error> {
+        self.set_property(StyleProperty::ContainIntrinsicWidth, StyleValue::Renderer(RendererStyleValue::ContainIntrinsicWidth(value)))
+    }
+    pub fn set_container_type(&self, value: ContainerType) -> Result<(), Error> {
+        self.set_property(StyleProperty::ContainerType, StyleValue::Renderer(RendererStyleValue::ContainerType(value)))
+    }
+    pub fn set_content(&self, value: Option<Vec<GeneratedContentItem>>) -> Result<(), Error> {
+        self.set_property(StyleProperty::Content, StyleValue::Renderer(RendererStyleValue::Content(value)))
+    }
+    pub fn set_filter_blur(&self, value: f32) -> Result<(), Error> {
+        self.set_property(StyleProperty::FilterBlur, StyleValue::Renderer(RendererStyleValue::FilterBlur(value)))
+    }
+    pub fn set_filter_grayscale(&self, value: f32) -> Result<(), Error> {
+        self.set_property(StyleProperty::FilterGrayscale, StyleValue::Renderer(RendererStyleValue::FilterGrayscale(value)))
+    }
+    pub fn set_float(&self, value: Float) -> Result<(), Error> {
+        self.set_property(StyleProperty::Float, StyleValue::Renderer(RendererStyleValue::Float(value)))
+    }
+    pub fn set_grid_auto_columns(&self, value: Vec<GridTrackSize>) -> Result<(), Error> {
+        self.set_property(StyleProperty::GridAutoColumns, StyleValue::Renderer(RendererStyleValue::GridAutoColumns(value)))
+    }
+    pub fn set_grid_auto_flow(&self, value: GridAutoFlow) -> Result<(), Error> {
+        self.set_property(StyleProperty::GridAutoFlow, StyleValue::Renderer(RendererStyleValue::GridAutoFlow(value)))
+    }
+    pub fn set_grid_auto_rows(&self, value: Vec<GridTrackSize>) -> Result<(), Error> {
+        self.set_property(StyleProperty::GridAutoRows, StyleValue::Renderer(RendererStyleValue::GridAutoRows(value)))
+    }
+    pub fn set_grid_column(&self, value: GridPlacement) -> Result<(), Error> {
+        self.set_property(StyleProperty::GridColumn, StyleValue::Renderer(RendererStyleValue::GridColumn(value)))
+    }
+    pub fn set_grid_row(&self, value: GridPlacement) -> Result<(), Error> {
+        self.set_property(StyleProperty::GridRow, StyleValue::Renderer(RendererStyleValue::GridRow(value)))
+    }
+    pub fn set_grid_template_areas(&self, value: GridTemplateAreas) -> Result<(), Error> {
+        self.set_property(StyleProperty::GridTemplateAreas, StyleValue::Renderer(RendererStyleValue::GridTemplateAreas(value)))
+    }
+    pub fn set_grid_template_columns(&self, value: GridTrackList) -> Result<(), Error> {
+        self.set_property(StyleProperty::GridTemplateColumns, StyleValue::Renderer(RendererStyleValue::GridTemplateColumns(value)))
+    }
+    pub fn set_grid_template_rows(&self, value: GridTrackList) -> Result<(), Error> {
+        self.set_property(StyleProperty::GridTemplateRows, StyleValue::Renderer(RendererStyleValue::GridTemplateRows(value)))
+    }
+    pub fn set_justify_items(&self, value: ItemAlignment) -> Result<(), Error> {
+        self.set_property(StyleProperty::JustifyItems, StyleValue::Renderer(RendererStyleValue::JustifyItems(value)))
+    }
+    pub fn set_justify_self(&self, value: ItemAlignment) -> Result<(), Error> {
+        self.set_property(StyleProperty::JustifySelf, StyleValue::Renderer(RendererStyleValue::JustifySelf(value)))
+    }
+    pub fn set_left(&self, value: Length) -> Result<(), Error> {
+        self.set_property(StyleProperty::Left, StyleValue::Renderer(RendererStyleValue::Left(value)))
+    }
+    pub fn set_list_style_position(&self, value: ListStylePosition) -> Result<(), Error> {
+        self.set_property(StyleProperty::ListStylePosition, StyleValue::Renderer(RendererStyleValue::ListStylePosition(value)))
+    }
+    pub fn set_locale(&self, value: Option<String>) -> Result<(), Error> {
+        self.set_property(StyleProperty::Locale, StyleValue::Renderer(RendererStyleValue::Locale(value)))
+    }
+    pub fn set_margin_trim(&self, value: MarginTrim) -> Result<(), Error> {
+        self.set_property(StyleProperty::MarginTrim, StyleValue::Renderer(RendererStyleValue::MarginTrim(value)))
+    }
+    pub fn set_mask_layers(&self, value: Vec<BackgroundLayer>) -> Result<(), Error> {
+        self.set_property(StyleProperty::MaskLayers, StyleValue::Renderer(RendererStyleValue::MaskLayers(value)))
+    }
+    pub fn set_object_fit(&self, value: ObjectFit) -> Result<(), Error> {
+        self.set_property(StyleProperty::ObjectFit, StyleValue::Renderer(RendererStyleValue::ObjectFit(value)))
+    }
+    pub fn set_object_position(&self, value: ObjectPosition) -> Result<(), Error> {
+        self.set_property(StyleProperty::ObjectPosition, StyleValue::Renderer(RendererStyleValue::ObjectPosition(value)))
+    }
+    pub fn set_order(&self, value: i32) -> Result<(), Error> {
+        self.set_property(StyleProperty::Order, StyleValue::Renderer(RendererStyleValue::Order(value)))
+    }
+    pub fn set_orphans(&self, value: u32) -> Result<(), Error> {
+        self.set_property(StyleProperty::Orphans, StyleValue::Renderer(RendererStyleValue::Orphans(value)))
+    }
+    pub fn set_outline_color(&self, value: StyleColor) -> Result<(), Error> {
+        self.set_property(StyleProperty::OutlineColor, StyleValue::Renderer(RendererStyleValue::OutlineColor(value)))
+    }
+    pub fn set_outline_offset(&self, value: i32) -> Result<(), Error> {
+        self.set_property(StyleProperty::OutlineOffset, StyleValue::Renderer(RendererStyleValue::OutlineOffset(value)))
+    }
+    pub fn set_outline_style(&self, value: BorderStyle) -> Result<(), Error> {
+        self.set_property(StyleProperty::OutlineStyle, StyleValue::Renderer(RendererStyleValue::OutlineStyle(value)))
+    }
+    pub fn set_overflow_clip_box(&self, value: OverflowClipBox) -> Result<(), Error> {
+        self.set_property(StyleProperty::OverflowClipBox, StyleValue::Renderer(RendererStyleValue::OverflowClipBox(value)))
+    }
+    pub fn set_overflow_clip_margin(&self, value: f32) -> Result<(), Error> {
+        self.set_property(StyleProperty::OverflowClipMargin, StyleValue::Renderer(RendererStyleValue::OverflowClipMargin(value)))
+    }
+    pub fn set_overflow_x(&self, value: Overflow) -> Result<(), Error> {
+        self.set_property(StyleProperty::OverflowX, StyleValue::Renderer(RendererStyleValue::OverflowX(value)))
+    }
+    pub fn set_overflow_y(&self, value: Overflow) -> Result<(), Error> {
+        self.set_property(StyleProperty::OverflowY, StyleValue::Renderer(RendererStyleValue::OverflowY(value)))
+    }
+    pub fn set_position_anchor(&self, value: Option<String>) -> Result<(), Error> {
+        self.set_property(StyleProperty::PositionAnchor, StyleValue::Renderer(RendererStyleValue::PositionAnchor(value)))
+    }
+    pub fn set_position_area(&self, value: PositionArea) -> Result<(), Error> {
+        self.set_property(StyleProperty::PositionArea, StyleValue::Renderer(RendererStyleValue::PositionArea(value)))
+    }
+    pub fn set_resize(&self, value: Resize) -> Result<(), Error> {
+        self.set_property(StyleProperty::Resize, StyleValue::Renderer(RendererStyleValue::Resize(value)))
+    }
+    pub fn set_right(&self, value: Length) -> Result<(), Error> {
+        self.set_property(StyleProperty::Right, StyleValue::Renderer(RendererStyleValue::Right(value)))
+    }
+    pub fn set_scroll_marker_group(&self, value: ScrollMarkerGroup) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollMarkerGroup, StyleValue::Renderer(RendererStyleValue::ScrollMarkerGroup(value)))
+    }
+    pub fn set_scroll_snap_align(&self, value: ScrollSnapAlign) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollSnapAlign, StyleValue::Renderer(RendererStyleValue::ScrollSnapAlign(value)))
+    }
+    pub fn set_scroll_snap_axis(&self, value: ScrollSnapAxis) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollSnapAxis, StyleValue::Renderer(RendererStyleValue::ScrollSnapAxis(value)))
+    }
+    pub fn set_scrollbar_gutter(&self, value: ScrollbarGutter) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollbarGutter, StyleValue::Renderer(RendererStyleValue::ScrollbarGutter(value)))
+    }
+    pub fn set_scrollbar_track_color(&self, value: Option<Color>) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollbarTrackColor, StyleValue::Renderer(RendererStyleValue::ScrollbarTrackColor(value)))
+    }
+    pub fn set_scrollbar_width(&self, value: ScrollbarWidth) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollbarWidth, StyleValue::Renderer(RendererStyleValue::ScrollbarWidth(value)))
+    }
+    pub fn set_table_layout(&self, value: TableLayout) -> Result<(), Error> {
+        self.set_property(StyleProperty::TableLayout, StyleValue::Renderer(RendererStyleValue::TableLayout(value)))
+    }
+    pub fn set_top(&self, value: Length) -> Result<(), Error> {
+        self.set_property(StyleProperty::Top, StyleValue::Renderer(RendererStyleValue::Top(value)))
+    }
+    pub fn set_transform_origin(&self, value: (Length, Length)) -> Result<(), Error> {
+        self.set_property(StyleProperty::TransformOrigin, StyleValue::Renderer(RendererStyleValue::TransformOrigin(value)))
+    }
+    pub fn set_visibility(&self, value: Visibility) -> Result<(), Error> {
+        self.set_property(StyleProperty::Visibility, StyleValue::Renderer(RendererStyleValue::Visibility(value)))
+    }
+    pub fn set_webkit_box_orient(&self, value: WebkitBoxOrient) -> Result<(), Error> {
+        self.set_property(StyleProperty::WebkitBoxOrient, StyleValue::Renderer(RendererStyleValue::WebkitBoxOrient(value)))
+    }
+    pub fn set_widows(&self, value: u32) -> Result<(), Error> {
+        self.set_property(StyleProperty::Widows, StyleValue::Renderer(RendererStyleValue::Widows(value)))
+    }
+    pub fn set_text_emphasis_mark(&self, value: TextEmphasisMark) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextEmphasisMark, StyleValue::Renderer(RendererStyleValue::TextEmphasisMark(value)))
+    }
+    pub fn set_text_emphasis_fill(&self, value: TextEmphasisFill) -> Result<(), Error> {
+        self.set_property(StyleProperty::TextEmphasisFill, StyleValue::Renderer(RendererStyleValue::TextEmphasisFill(value)))
+    }
+    pub fn set_anchor_name(&self, value: Option<String>) -> Result<(), Error> {
+        self.set_property(StyleProperty::AnchorName, StyleValue::Renderer(RendererStyleValue::AnchorName(value)))
+    }
+    pub fn set_container_name(&self, value: Vec<String>) -> Result<(), Error> {
+        self.set_property(StyleProperty::ContainerName, StyleValue::Renderer(RendererStyleValue::ContainerName(value)))
+    }
+    pub fn set_content_visibility(&self, value: ContentVisibility) -> Result<(), Error> {
+        self.set_property(StyleProperty::ContentVisibility, StyleValue::Renderer(RendererStyleValue::ContentVisibility(value)))
+    }
+    pub fn set_counter_increment(&self, value: Vec<CounterOperation>) -> Result<(), Error> {
+        self.set_property(StyleProperty::CounterIncrement, StyleValue::Renderer(RendererStyleValue::CounterIncrement(value)))
+    }
+    pub fn set_counter_reset(&self, value: Vec<CounterOperation>) -> Result<(), Error> {
+        self.set_property(StyleProperty::CounterReset, StyleValue::Renderer(RendererStyleValue::CounterReset(value)))
+    }
+    pub fn set_counter_set(&self, value: Vec<CounterOperation>) -> Result<(), Error> {
+        self.set_property(StyleProperty::CounterSet, StyleValue::Renderer(RendererStyleValue::CounterSet(value)))
+    }
+    pub fn set_empty_cells(&self, value: EmptyCells) -> Result<(), Error> {
+        self.set_property(StyleProperty::EmptyCells, StyleValue::Renderer(RendererStyleValue::EmptyCells(value)))
+    }
+    pub fn set_outline_width(&self, value: i32) -> Result<(), Error> {
+        self.set_property(StyleProperty::OutlineWidth, StyleValue::Renderer(RendererStyleValue::OutlineWidth(value)))
+    }
+    pub fn set_quotes(&self, value: Vec<QuotePair>) -> Result<(), Error> {
+        self.set_property(StyleProperty::Quotes, StyleValue::Renderer(RendererStyleValue::Quotes(value)))
+    }
+    pub fn set_scroll_target_group(&self, value: ScrollTargetGroup) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollTargetGroup, StyleValue::Renderer(RendererStyleValue::ScrollTargetGroup(value)))
+    }
+    pub fn set_scrollbar_thumb_color(&self, value: Option<Color>) -> Result<(), Error> {
+        self.set_property(StyleProperty::ScrollbarThumbColor, StyleValue::Renderer(RendererStyleValue::ScrollbarThumbColor(value)))
+    }
+    pub fn set_shape_image_threshold(&self, value: f32) -> Result<(), Error> {
+        self.set_property(StyleProperty::ShapeImageThreshold, StyleValue::Renderer(RendererStyleValue::ShapeImageThreshold(value)))
+    }
+    pub fn set_shape_margin(&self, value: Length) -> Result<(), Error> {
+        self.set_property(StyleProperty::ShapeMargin, StyleValue::Renderer(RendererStyleValue::ShapeMargin(value)))
+    }
+    pub fn set_shape_outside(&self, value: ShapeOutside) -> Result<(), Error> {
+        self.set_property(StyleProperty::ShapeOutside, StyleValue::Renderer(RendererStyleValue::ShapeOutside(value)))
+    }
 }

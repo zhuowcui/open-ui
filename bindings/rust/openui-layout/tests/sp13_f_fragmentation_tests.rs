@@ -356,8 +356,8 @@ fn computed_style_widows_default() {
 #[test]
 fn computed_style_orphans_widows_custom() {
     let mut s = openui_style::ComputedStyle::initial();
-    s.orphans = 4;
-    s.widows = 3;
+    s.update_derived(|computed| computed.orphans = 4);
+    s.update_derived(|computed| computed.widows = 3);
     assert_eq!(s.orphans, 4);
     assert_eq!(s.widows, 3);
 }

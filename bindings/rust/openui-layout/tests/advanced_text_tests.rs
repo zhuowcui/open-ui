@@ -474,7 +474,7 @@ use openui_style::ComputedStyle;
 
 fn setup_doc_with_text(
     text: &str,
-    style_fn: impl FnOnce(&mut ComputedStyle),
+    style_fn: impl FnOnce(&mut openui_style::ComputedStyleFields),
 ) -> (Document, openui_dom::NodeId) {
     let mut doc = Document::new();
     let viewport = doc.root();
@@ -482,8 +482,9 @@ fn setup_doc_with_text(
     let block_id = doc.create_node(openui_dom::ElementTag::Div);
     {
         let node = doc.node_mut(block_id);
-        node.style.display = openui_style::Display::Block;
-        style_fn(&mut node.style);
+        node.style
+            .update_derived(|computed| computed.display = openui_style::Display::Block);
+        node.style.update_derived(style_fn);
     }
     doc.append_child(viewport, block_id);
 
@@ -517,7 +518,7 @@ fn layout_with_width(
 #[test]
 fn text_indent_zero_no_offset() {
     let (doc, block_id) = setup_doc_with_text("Hello world", |s| {
-        s.text_indent = Length::px(0.0);
+        s.update_derived(|computed| computed.text_indent = Length::px(0.0));
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     // First text child should start at 0 (no indent)
@@ -535,7 +536,7 @@ fn text_indent_zero_no_offset() {
 #[test]
 fn text_indent_positive() {
     let (doc, block_id) = setup_doc_with_text("Hello world", |s| {
-        s.text_indent = Length::px(20.0);
+        s.update_derived(|computed| computed.text_indent = Length::px(20.0));
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     if let Some(line) = fragment.children.first() {
@@ -553,7 +554,7 @@ fn text_indent_positive() {
 #[test]
 fn text_indent_negative_hanging() {
     let (doc, block_id) = setup_doc_with_text("Hello world", |s| {
-        s.text_indent = Length::px(-10.0);
+        s.update_derived(|computed| computed.text_indent = Length::px(-10.0));
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     if let Some(line) = fragment.children.first() {
@@ -572,7 +573,7 @@ fn text_indent_negative_hanging() {
 fn text_indent_only_first_line() {
     // Set a narrow width to force line breaks, then verify second line has no indent
     let (doc, block_id) = setup_doc_with_text("The quick brown fox jumps over the lazy dog", |s| {
-        s.text_indent = Length::px(30.0);
+        s.update_derived(|computed| computed.text_indent = Length::px(30.0));
     });
     let fragment = layout_with_width(&doc, block_id, 120);
     if fragment.children.len() >= 2 {
@@ -593,7 +594,7 @@ fn text_indent_only_first_line() {
 #[test]
 fn text_indent_percentage() {
     let (doc, block_id) = setup_doc_with_text("Hello world", |s| {
-        s.text_indent = Length::percent(10.0);
+        s.update_derived(|computed| computed.text_indent = Length::percent(10.0));
     });
     // 10% of 500px = 50px
     let fragment = layout_with_width(&doc, block_id, 500);
@@ -613,8 +614,8 @@ fn text_indent_percentage() {
 #[test]
 fn text_indent_with_center_align() {
     let (doc, block_id) = setup_doc_with_text("Hi", |s| {
-        s.text_indent = Length::px(20.0);
-        s.text_align = TextAlign::Center;
+        s.update_derived(|computed| computed.text_indent = Length::px(20.0));
+        s.update_derived(|computed| computed.text_align = TextAlign::Center);
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     // Should have both centering offset and indent
@@ -624,8 +625,8 @@ fn text_indent_with_center_align() {
 #[test]
 fn text_indent_with_right_align() {
     let (doc, block_id) = setup_doc_with_text("Hi", |s| {
-        s.text_indent = Length::px(20.0);
-        s.text_align = TextAlign::Right;
+        s.update_derived(|computed| computed.text_indent = Length::px(20.0));
+        s.update_derived(|computed| computed.text_align = TextAlign::Right);
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     assert!(!fragment.children.is_empty());
@@ -634,7 +635,7 @@ fn text_indent_with_right_align() {
 #[test]
 fn text_indent_large_value() {
     let (doc, block_id) = setup_doc_with_text("Hello", |s| {
-        s.text_indent = Length::px(400.0);
+        s.update_derived(|computed| computed.text_indent = Length::px(400.0));
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     // Should still layout without panicking
@@ -645,7 +646,7 @@ fn text_indent_large_value() {
 fn text_indent_auto_is_zero() {
     // Auto text-indent should resolve to 0
     let (doc, block_id) = setup_doc_with_text("Hello world", |s| {
-        s.text_indent = Length::auto();
+        s.update_derived(|computed| computed.text_indent = Length::auto());
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     if let Some(line) = fragment.children.first() {
@@ -660,7 +661,7 @@ fn text_indent_does_not_affect_subsequent_lines() {
     let (doc, block_id) = setup_doc_with_text(
         "First line text here and more words to wrap around to the next line",
         |s| {
-            s.text_indent = Length::px(50.0);
+            s.update_derived(|computed| computed.text_indent = Length::px(50.0));
         },
     );
     let fragment = layout_with_width(&doc, block_id, 150);
@@ -684,7 +685,7 @@ fn text_indent_does_not_affect_subsequent_lines() {
 #[test]
 fn bidi_integration_ltr_layout() {
     let (doc, block_id) = setup_doc_with_text("Hello world", |s| {
-        s.direction = openui_style::Direction::Ltr;
+        s.update_derived(|computed| computed.direction = openui_style::Direction::Ltr);
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     assert!(
@@ -696,8 +697,8 @@ fn bidi_integration_ltr_layout() {
 #[test]
 fn bidi_integration_rtl_direction() {
     let (doc, block_id) = setup_doc_with_text("Hello world", |s| {
-        s.direction = openui_style::Direction::Rtl;
-        s.text_align = TextAlign::Start; // Start = right in RTL
+        s.update_derived(|computed| computed.direction = openui_style::Direction::Rtl);
+        s.update_derived(|computed| computed.text_align = TextAlign::Start); // Start = right in RTL
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     assert!(!fragment.children.is_empty());
@@ -706,8 +707,8 @@ fn bidi_integration_rtl_direction() {
 #[test]
 fn bidi_integration_rtl_text_align_end() {
     let (doc, block_id) = setup_doc_with_text("Hello world", |s| {
-        s.direction = openui_style::Direction::Rtl;
-        s.text_align = TextAlign::End;
+        s.update_derived(|computed| computed.direction = openui_style::Direction::Rtl);
+        s.update_derived(|computed| computed.text_align = TextAlign::End);
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     assert!(!fragment.children.is_empty());
@@ -717,7 +718,7 @@ fn bidi_integration_rtl_text_align_end() {
 fn bidi_integration_ltr_with_bidi_level() {
     // Verify that bidi analysis runs and sets levels
     let (doc, block_id) = setup_doc_with_text("Hello world", |s| {
-        s.direction = openui_style::Direction::Ltr;
+        s.update_derived(|computed| computed.direction = openui_style::Direction::Ltr);
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     assert!(!fragment.children.is_empty());
@@ -727,8 +728,8 @@ fn bidi_integration_ltr_with_bidi_level() {
 fn bidi_integration_rtl_right_alignment() {
     // RTL with text-align: right should work
     let (doc, block_id) = setup_doc_with_text("Hello", |s| {
-        s.direction = openui_style::Direction::Rtl;
-        s.text_align = TextAlign::Right;
+        s.update_derived(|computed| computed.direction = openui_style::Direction::Rtl);
+        s.update_derived(|computed| computed.text_align = TextAlign::Right);
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     assert!(!fragment.children.is_empty());
@@ -741,7 +742,7 @@ fn bidi_integration_rtl_right_alignment() {
 #[test]
 fn transform_integration_uppercase_in_layout() {
     let (doc, block_id) = setup_doc_with_text("hello world", |s| {
-        s.text_transform = TextTransform::Uppercase;
+        s.update_derived(|computed| computed.text_transform = TextTransform::Uppercase);
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     assert!(
@@ -753,7 +754,7 @@ fn transform_integration_uppercase_in_layout() {
 #[test]
 fn transform_integration_capitalize_in_layout() {
     let (doc, block_id) = setup_doc_with_text("hello world", |s| {
-        s.text_transform = TextTransform::Capitalize;
+        s.update_derived(|computed| computed.text_transform = TextTransform::Capitalize);
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     assert!(!fragment.children.is_empty());
@@ -763,7 +764,7 @@ fn transform_integration_capitalize_in_layout() {
 fn transform_integration_with_line_breaking() {
     // Uppercase text may be wider, potentially causing different line breaks
     let (doc, block_id) = setup_doc_with_text("hello world test", |s| {
-        s.text_transform = TextTransform::Uppercase;
+        s.update_derived(|computed| computed.text_transform = TextTransform::Uppercase);
     });
     let fragment = layout_with_width(&doc, block_id, 100);
     assert!(!fragment.children.is_empty());
@@ -772,8 +773,8 @@ fn transform_integration_with_line_breaking() {
 #[test]
 fn ellipsis_no_effect_when_fits() {
     let (doc, block_id) = setup_doc_with_text("Hi", |s| {
-        s.text_overflow = openui_style::TextOverflow::Ellipsis;
-        s.overflow_x = openui_style::Overflow::Hidden;
+        s.update_derived(|computed| computed.text_overflow = openui_style::TextOverflow::Ellipsis);
+        s.update_derived(|computed| computed.overflow_x = openui_style::Overflow::Hidden);
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     assert!(!fragment.children.is_empty());
@@ -782,7 +783,7 @@ fn ellipsis_no_effect_when_fits() {
 #[test]
 fn transform_full_width_in_layout() {
     let (doc, block_id) = setup_doc_with_text("ABC", |s| {
-        s.text_transform = TextTransform::FullWidth;
+        s.update_derived(|computed| computed.text_transform = TextTransform::FullWidth);
     });
     let fragment = layout_with_width(&doc, block_id, 500);
     assert!(!fragment.children.is_empty());

@@ -28,13 +28,14 @@ fn add_positioned_container(
     height: i32,
 ) -> NodeId {
     let container = doc.create_node(ElementTag::Div);
-    let style = &mut doc.node_mut(container).style;
-    style.display = Display::Block;
-    style.position = Position::Relative;
-    style.writing_mode = mode;
-    style.direction = direction;
-    style.width = Length::px(width as f32);
-    style.height = Length::px(height as f32);
+    doc.update_resolved_style(container, |style| {
+        style.display = Display::Block;
+        style.position = Position::Relative;
+        style.writing_mode = mode;
+        style.direction = direction;
+        style.width = Length::px(width as f32);
+        style.height = Length::px(height as f32);
+    });
     doc.append_child(doc.root(), container);
     container
 }
@@ -46,11 +47,12 @@ fn add_abspos(
     direction: Direction,
 ) -> NodeId {
     let child = doc.create_node(ElementTag::Div);
-    let style = &mut doc.node_mut(child).style;
-    style.display = Display::Block;
-    style.position = Position::Absolute;
-    style.writing_mode = mode;
-    style.direction = direction;
+    doc.update_resolved_style(child, |style| {
+        style.display = Display::Block;
+        style.position = Position::Absolute;
+        style.writing_mode = mode;
+        style.direction = direction;
+    });
     doc.append_child(parent, child);
     child
 }
@@ -78,13 +80,14 @@ fn physical_overconstraint_polarity_covers_three_modes_and_both_directions() {
         let mut doc = Document::new();
         let container = add_positioned_container(&mut doc, mode, direction, 300, 200);
         let abspos = add_abspos(&mut doc, container, mode, direction);
-        let style = &mut doc.node_mut(abspos).style;
-        style.left = Length::px(10.0);
-        style.right = Length::px(20.0);
-        style.top = Length::px(10.0);
-        style.bottom = Length::px(20.0);
-        style.width = Length::px(100.0);
-        style.height = Length::px(50.0);
+        doc.update_resolved_style(abspos, |style| {
+            style.left = Length::px(10.0);
+            style.right = Length::px(20.0);
+            style.top = Length::px(10.0);
+            style.bottom = Length::px(20.0);
+            style.width = Length::px(100.0);
+            style.height = Length::px(50.0);
+        });
 
         let root = layout_root(&doc);
         let container_fragment = fragment_for(&root, container);
@@ -114,27 +117,30 @@ fn flex_abspos_static_position_projects_asymmetric_edges_once() {
         for direction in [Direction::Ltr, Direction::Rtl] {
             let mut doc = Document::new();
             let container = add_positioned_container(&mut doc, mode, direction, 120, 80);
-            {
-                let style = &mut doc.node_mut(container).style;
-                style.display = Display::Flex;
-                style.justify_content = ContentAlignment::new(ContentPosition::Center);
-                style.align_items = ItemAlignment::new(ItemPosition::Center);
-                style.border_left_width = 7;
-                style.border_right_width = 11;
-                style.border_top_width = 13;
-                style.border_bottom_width = 17;
-                style.border_left_style = BorderStyle::Solid;
-                style.border_right_style = BorderStyle::Solid;
-                style.border_top_style = BorderStyle::Solid;
-                style.border_bottom_style = BorderStyle::Solid;
-                style.padding_left = Length::px(19.0);
-                style.padding_right = Length::px(23.0);
-                style.padding_top = Length::px(29.0);
-                style.padding_bottom = Length::px(31.0);
-            }
+            doc.update_resolved_style(container, |style| {
+                style.update_derived(|computed| computed.display = Display::Flex);
+                style.update_derived(|computed| {
+                    computed.justify_content = ContentAlignment::new(ContentPosition::Center)
+                });
+                style.update_derived(|computed| {
+                    computed.align_items = ItemAlignment::new(ItemPosition::Center)
+                });
+                style.update_derived(|computed| computed.border_left_width = 7);
+                style.update_derived(|computed| computed.border_right_width = 11);
+                style.update_derived(|computed| computed.border_top_width = 13);
+                style.update_derived(|computed| computed.border_bottom_width = 17);
+                style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+                style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+                style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+                style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+                style.update_derived(|computed| computed.padding_left = Length::px(19.0));
+                style.update_derived(|computed| computed.padding_right = Length::px(23.0));
+                style.update_derived(|computed| computed.padding_top = Length::px(29.0));
+                style.update_derived(|computed| computed.padding_bottom = Length::px(31.0));
+            });
             let abspos = add_abspos(&mut doc, container, mode, direction);
-            doc.node_mut(abspos).style.width = Length::px(20.0);
-            doc.node_mut(abspos).style.height = Length::px(10.0);
+            doc.update_resolved_style(abspos, |style| style.width = Length::px(20.0));
+            doc.update_resolved_style(abspos, |style| style.height = Length::px(10.0));
 
             let root = layout_root(&doc);
             let container_fragment = fragment_for(&root, container);
@@ -171,31 +177,30 @@ fn vertical_abspos_intrinsic_block_keywords_and_auto_margins_are_physical() {
             300,
         );
         let abspos = add_abspos(&mut doc, container, WritingMode::VerticalRl, Direction::Ltr);
-        {
-            let style = &mut doc.node_mut(abspos).style;
-            style.left = Length::px(0.0);
-            style.right = Length::px(0.0);
-            style.top = Length::px(0.0);
-            style.bottom = Length::px(0.0);
-            style.width = intrinsic;
-            style.height = Length::px(100.0);
-            style.margin_left = Length::auto();
-            style.margin_right = Length::auto();
-            style.margin_top = Length::auto();
-            style.margin_bottom = Length::auto();
-            style.border_left_width = 5;
-            style.border_right_width = 5;
-            style.border_top_width = 5;
-            style.border_bottom_width = 5;
-            style.border_left_style = BorderStyle::Solid;
-            style.border_right_style = BorderStyle::Solid;
-            style.border_top_style = BorderStyle::Solid;
-            style.border_bottom_style = BorderStyle::Solid;
-        }
+        doc.update_resolved_style(abspos, |style| {
+            style.update_derived(|computed| computed.left = Length::px(0.0));
+            style.update_derived(|computed| computed.right = Length::px(0.0));
+            style.update_derived(|computed| computed.top = Length::px(0.0));
+            style.update_derived(|computed| computed.bottom = Length::px(0.0));
+            style.update_derived(|computed| computed.width = intrinsic);
+            style.update_derived(|computed| computed.height = Length::px(100.0));
+            style.update_derived(|computed| computed.margin_left = Length::auto());
+            style.update_derived(|computed| computed.margin_right = Length::auto());
+            style.update_derived(|computed| computed.margin_top = Length::auto());
+            style.update_derived(|computed| computed.margin_bottom = Length::auto());
+            style.update_derived(|computed| computed.border_left_width = 5);
+            style.update_derived(|computed| computed.border_right_width = 5);
+            style.update_derived(|computed| computed.border_top_width = 5);
+            style.update_derived(|computed| computed.border_bottom_width = 5);
+            style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+            style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+            style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+            style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        });
         let inner = doc.create_node(ElementTag::Div);
-        doc.node_mut(inner).style.display = Display::Block;
-        doc.node_mut(inner).style.writing_mode = WritingMode::VerticalRl;
-        doc.node_mut(inner).style.width = Length::px(200.0);
+        doc.update_resolved_style(inner, |style| style.display = Display::Block);
+        doc.update_resolved_style(inner, |style| style.writing_mode = WritingMode::VerticalRl);
+        doc.update_resolved_style(inner, |style| style.width = Length::px(200.0));
         doc.append_child(abspos, inner);
 
         let root = layout_root(&doc);
@@ -219,22 +224,27 @@ fn vertical_aspect_ratio_transfer_is_definite_for_percentage_descendants() {
         200,
     );
     let abspos = add_abspos(&mut doc, container, WritingMode::VerticalLr, Direction::Ltr);
-    {
-        let style = &mut doc.node_mut(abspos).style;
-        style.left = Length::px(0.0);
-        style.right = Length::px(0.0);
-        style.top = Length::px(0.0);
-        style.width = Length::px(100.0);
-        style.aspect_ratio = Some(openui_style::AspectRatio {
-            ratio: (1.0, 1.0),
-            auto_flag: false,
+    doc.update_resolved_style(abspos, |style| {
+        style.update_derived(|computed| computed.left = Length::px(0.0));
+        style.update_derived(|computed| computed.right = Length::px(0.0));
+        style.update_derived(|computed| computed.top = Length::px(0.0));
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| {
+            computed.aspect_ratio = Some(openui_style::AspectRatio {
+                ratio: (1.0, 1.0),
+                auto_flag: false,
+            })
         });
-    }
+    });
     let percentage_child = doc.create_node(ElementTag::Div);
-    doc.node_mut(percentage_child).style.display = Display::Block;
-    doc.node_mut(percentage_child).style.writing_mode = WritingMode::VerticalLr;
-    doc.node_mut(percentage_child).style.width = Length::px(10.0);
-    doc.node_mut(percentage_child).style.height = Length::percent(50.0);
+    doc.update_resolved_style(percentage_child, |style| style.display = Display::Block);
+    doc.update_resolved_style(percentage_child, |style| {
+        style.writing_mode = WritingMode::VerticalLr
+    });
+    doc.update_resolved_style(percentage_child, |style| style.width = Length::px(10.0));
+    doc.update_resolved_style(percentage_child, |style| {
+        style.height = Length::percent(50.0)
+    });
     doc.append_child(abspos, percentage_child);
 
     let root = layout_root(&doc);

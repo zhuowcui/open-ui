@@ -14,43 +14,43 @@ fn lu(value: i32) -> LayoutUnit {
 fn layout_multicol(mode: WritingMode, direction: Direction) -> Fragment {
     let mut doc = Document::new();
     let root = doc.root();
-    {
-        let style = &mut doc.node_mut(root).style;
-        style.display = Display::Block;
-        style.writing_mode = mode;
-        style.direction = direction;
-        style.width = Length::px(100.0);
-        style.height = Length::px(100.0);
-        style.column_count = Some(2);
-        style.column_gap = Some(Length::px(0.0));
-        style.column_fill = ColumnFill::Auto;
-        style.border_top_width = 1;
-        style.border_right_width = 2;
-        style.border_bottom_width = 3;
-        style.border_left_width = 4;
-        style.border_top_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-        style.border_bottom_style = BorderStyle::Solid;
-        style.border_left_style = BorderStyle::Solid;
-        style.padding_top = Length::px(5.0);
-        style.padding_right = Length::px(6.0);
-        style.padding_bottom = Length::px(7.0);
-        style.padding_left = Length::px(8.0);
-    }
+    doc.update_resolved_style(root, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.writing_mode = mode);
+        style.update_derived(|computed| computed.direction = direction);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(2));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+        style.update_derived(|computed| computed.border_top_width = 1);
+        style.update_derived(|computed| computed.border_right_width = 2);
+        style.update_derived(|computed| computed.border_bottom_width = 3);
+        style.update_derived(|computed| computed.border_left_width = 4);
+        style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_top = Length::px(5.0));
+        style.update_derived(|computed| computed.padding_right = Length::px(6.0));
+        style.update_derived(|computed| computed.padding_bottom = Length::px(7.0));
+        style.update_derived(|computed| computed.padding_left = Length::px(8.0));
+    });
 
     let child = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(child).style;
-        style.display = Display::Block;
-        style.writing_mode = mode;
-        style.direction = direction;
-        style.background_color = Color::from_rgba8(0, 128, 0, 255);
+    doc.update_resolved_style(child, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.writing_mode = mode);
+        style.update_derived(|computed| computed.direction = direction);
+        style.update_derived(|computed| {
+            computed.background_color = Color::from_rgba8(0, 128, 0, 255)
+        });
         if mode == WritingMode::HorizontalTb {
-            style.height = Length::px(200.0);
+            style.update_derived(|computed| computed.height = Length::px(200.0));
         } else {
-            style.width = Length::px(200.0);
+            style.update_derived(|computed| computed.width = Length::px(200.0));
         }
-    }
+    });
     doc.append_child(root, child);
 
     let writing_direction = direction.writing_direction(mode);
@@ -124,24 +124,27 @@ fn column_projection_covers_three_modes_and_both_directions() {
 fn vertical_balance_uses_visible_logical_block_overflow() {
     let mut doc = Document::new();
     let root = doc.root();
-    {
-        let style = &mut doc.node_mut(root).style;
-        style.display = Display::Block;
-        style.writing_mode = WritingMode::VerticalRl;
-        style.width = Length::auto();
-        style.height = Length::px(100.0);
-        style.column_count = Some(2);
-        style.column_gap = Some(Length::px(0.0));
-    }
+    doc.update_resolved_style(root, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.writing_mode = WritingMode::VerticalRl);
+        style.update_derived(|computed| computed.width = Length::auto());
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(2));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+    });
     let wrapper = doc.create_node(ElementTag::Div);
-    doc.node_mut(wrapper).style.display = Display::Block;
-    doc.node_mut(wrapper).style.writing_mode = WritingMode::VerticalRl;
-    doc.node_mut(wrapper).style.width = Length::px(20.0);
+    doc.update_resolved_style(wrapper, |style| style.display = Display::Block);
+    doc.update_resolved_style(wrapper, |style| {
+        style.writing_mode = WritingMode::VerticalRl
+    });
+    doc.update_resolved_style(wrapper, |style| style.width = Length::px(20.0));
     doc.append_child(root, wrapper);
     let overflow = doc.create_node(ElementTag::Div);
-    doc.node_mut(overflow).style.display = Display::Block;
-    doc.node_mut(overflow).style.writing_mode = WritingMode::VerticalRl;
-    doc.node_mut(overflow).style.width = Length::px(200.0);
+    doc.update_resolved_style(overflow, |style| style.display = Display::Block);
+    doc.update_resolved_style(overflow, |style| {
+        style.writing_mode = WritingMode::VerticalRl
+    });
+    doc.update_resolved_style(overflow, |style| style.width = Length::px(200.0));
     doc.append_child(wrapper, overflow);
 
     let direction = Direction::Ltr.writing_direction(WritingMode::VerticalRl);
@@ -166,21 +169,25 @@ fn vertical_balance_uses_visible_logical_block_overflow() {
 fn orthogonal_spanner_shrink_wraps_its_own_inline_axis() {
     let mut doc = Document::new();
     let root = doc.root();
-    doc.node_mut(root).style.display = Display::Block;
-    doc.node_mut(root).style.width = Length::px(100.0);
-    doc.node_mut(root).style.column_count = Some(4);
-    doc.node_mut(root).style.column_gap = Some(Length::px(0.0));
+    doc.update_resolved_style(root, |style| style.display = Display::Block);
+    doc.update_resolved_style(root, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(root, |style| style.column_count = Some(4));
+    doc.update_resolved_style(root, |style| style.column_gap = Some(Length::px(0.0)));
 
     let spanner = doc.create_node(ElementTag::Div);
-    doc.node_mut(spanner).style.display = Display::Block;
-    doc.node_mut(spanner).style.writing_mode = WritingMode::VerticalRl;
-    doc.node_mut(spanner).style.column_span = openui_style::ColumnSpan::All;
+    doc.update_resolved_style(spanner, |style| style.display = Display::Block);
+    doc.update_resolved_style(spanner, |style| {
+        style.writing_mode = WritingMode::VerticalRl
+    });
+    doc.update_resolved_style(spanner, |style| {
+        style.column_span = openui_style::ColumnSpan::All
+    });
     doc.append_child(root, spanner);
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.writing_mode = WritingMode::VerticalRl;
-    doc.node_mut(child).style.width = Length::px(100.0);
-    doc.node_mut(child).style.height = Length::px(50.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.writing_mode = WritingMode::VerticalRl);
+    doc.update_resolved_style(child, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(50.0));
     doc.append_child(spanner, child);
 
     let fragment = block_layout(&doc, root, &ConstraintSpace::for_root(lu(800), lu(600)));
@@ -197,40 +204,40 @@ fn orthogonal_spanner_shrink_wraps_its_own_inline_axis() {
 fn bubbled_horizontal_rtl_oof_uses_the_physical_content_left_edge() {
     let mut doc = Document::new();
     let root = doc.root();
-    {
-        let style = &mut doc.node_mut(root).style;
-        style.display = Display::Block;
-        style.width = Length::px(100.0);
-        style.height = Length::px(100.0);
-        style.column_count = Some(2);
-        style.column_gap = Some(Length::px(0.0));
-        style.column_fill = ColumnFill::Auto;
-    }
+    doc.update_resolved_style(root, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
+        style.update_derived(|computed| computed.column_count = Some(2));
+        style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        style.update_derived(|computed| computed.column_fill = ColumnFill::Auto);
+    });
 
     let child = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(child).style;
-        style.display = Display::Block;
-        style.direction = Direction::Rtl;
-        style.width = Length::px(32.0);
-        style.height = Length::px(180.0);
-        style.border_left_width = 10;
-        style.border_right_width = 8;
-        style.border_left_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-    }
+    doc.update_resolved_style(child, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.direction = Direction::Rtl);
+        style.update_derived(|computed| computed.width = Length::px(32.0));
+        style.update_derived(|computed| computed.height = Length::px(180.0));
+        style.update_derived(|computed| computed.border_left_width = 10);
+        style.update_derived(|computed| computed.border_right_width = 8);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+    });
     doc.append_child(root, child);
 
     let containing_block = doc.create_node(ElementTag::Div);
-    doc.node_mut(containing_block).style.display = Display::Block;
-    doc.node_mut(containing_block).style.position = Position::Relative;
+    doc.update_resolved_style(containing_block, |style| style.display = Display::Block);
+    doc.update_resolved_style(containing_block, |style| {
+        style.position = Position::Relative
+    });
     doc.append_child(child, containing_block);
 
     let abspos = doc.create_node(ElementTag::Div);
-    doc.node_mut(abspos).style.display = Display::Block;
-    doc.node_mut(abspos).style.position = Position::Absolute;
-    doc.node_mut(abspos).style.width = Length::px(22.0);
-    doc.node_mut(abspos).style.height = Length::px(180.0);
+    doc.update_resolved_style(abspos, |style| style.display = Display::Block);
+    doc.update_resolved_style(abspos, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(abspos, |style| style.width = Length::px(22.0));
+    doc.update_resolved_style(abspos, |style| style.height = Length::px(180.0));
     doc.append_child(containing_block, abspos);
 
     let fragment = block_layout(&doc, root, &ConstraintSpace::for_root(lu(800), lu(600)));
@@ -248,15 +255,15 @@ fn bubbled_horizontal_rtl_oof_uses_the_physical_content_left_edge() {
 fn horizontal_rtl_keeps_physical_left_floats_on_the_left() {
     let mut doc = Document::new();
     let root = doc.root();
-    doc.node_mut(root).style.display = Display::Block;
-    doc.node_mut(root).style.direction = Direction::Rtl;
-    doc.node_mut(root).style.width = Length::px(100.0);
+    doc.update_resolved_style(root, |style| style.display = Display::Block);
+    doc.update_resolved_style(root, |style| style.direction = Direction::Rtl);
+    doc.update_resolved_style(root, |style| style.width = Length::px(100.0));
 
     let floated = doc.create_node(ElementTag::Div);
-    doc.node_mut(floated).style.display = Display::Block;
-    doc.node_mut(floated).style.float = Float::Left;
-    doc.node_mut(floated).style.width = Length::px(20.0);
-    doc.node_mut(floated).style.height = Length::px(20.0);
+    doc.update_resolved_style(floated, |style| style.display = Display::Block);
+    doc.update_resolved_style(floated, |style| style.float = Float::Left);
+    doc.update_resolved_style(floated, |style| style.width = Length::px(20.0));
+    doc.update_resolved_style(floated, |style| style.height = Length::px(20.0));
     doc.append_child(root, floated);
 
     let direction = Direction::Rtl.writing_direction(WritingMode::HorizontalTb);
@@ -277,24 +284,30 @@ fn horizontal_rtl_keeps_physical_left_floats_on_the_left() {
 fn horizontal_rtl_keeps_float_avoidance_offsets_physical() {
     let mut doc = Document::new();
     let root = doc.root();
-    doc.node_mut(root).style.display = Display::Block;
-    doc.node_mut(root).style.direction = Direction::Rtl;
-    doc.node_mut(root).style.width = Length::px(100.0);
-    doc.node_mut(root).style.height = Length::px(100.0);
+    doc.update_resolved_style(root, |style| style.display = Display::Block);
+    doc.update_resolved_style(root, |style| style.direction = Direction::Rtl);
+    doc.update_resolved_style(root, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(root, |style| style.height = Length::px(100.0));
 
     let floated = doc.create_node(ElementTag::Div);
-    doc.node_mut(floated).style.display = Display::Block;
-    doc.node_mut(floated).style.float = Float::Left;
-    doc.node_mut(floated).style.width = Length::px(50.0);
-    doc.node_mut(floated).style.height = Length::px(100.0);
+    doc.update_resolved_style(floated, |style| style.display = Display::Block);
+    doc.update_resolved_style(floated, |style| style.float = Float::Left);
+    doc.update_resolved_style(floated, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(floated, |style| style.height = Length::px(100.0));
     doc.append_child(root, floated);
 
     let formatting_context = doc.create_node(ElementTag::Div);
-    doc.node_mut(formatting_context).style.display = Display::Block;
-    doc.node_mut(formatting_context).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(formatting_context).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(formatting_context).style.margin_left = Length::px(-20.0);
-    doc.node_mut(formatting_context).style.height = Length::px(100.0);
+    doc.update_resolved_style(formatting_context, |style| style.display = Display::Block);
+    doc.update_resolved_style(formatting_context, |style| {
+        style.overflow_x = Overflow::Hidden
+    });
+    doc.update_resolved_style(formatting_context, |style| {
+        style.overflow_y = Overflow::Hidden
+    });
+    doc.update_resolved_style(formatting_context, |style| {
+        style.margin_left = Length::px(-20.0)
+    });
+    doc.update_resolved_style(formatting_context, |style| style.height = Length::px(100.0));
     doc.append_child(root, formatting_context);
 
     let direction = Direction::Rtl.writing_direction(WritingMode::HorizontalTb);

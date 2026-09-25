@@ -3,6 +3,8 @@
 use std::sync::Arc;
 
 #[cfg(test)]
+use openui_geometry::RasterConfiguration;
+#[cfg(test)]
 use openui_style::FontStyleEnum;
 use openui_style::GenericFontFamily;
 
@@ -22,6 +24,8 @@ struct FontCacheKey {
     native_control_text: bool,
     embedded_document_text: bool,
     native_button_text_metrics: bool,
+    raster_configuration: RasterConfiguration,
+    device_scale_factor_bits: u64,
 }
 
 /// A non-global cache facade retained for low-level embedders and tests.
@@ -94,6 +98,8 @@ impl FontCache {
             native_control_text: description.native_control_text,
             embedded_document_text: description.embedded_document_text,
             native_button_text_metrics: description.native_button_text_metrics,
+            raster_configuration: description.raster_configuration,
+            device_scale_factor_bits: description.device_scale_factor.to_bits(),
         }
     }
 }
@@ -117,6 +123,23 @@ mod tests {
         assert_ne!(
             FontCache::make_key("sans-serif", &first),
             FontCache::make_key("sans-serif", &second)
+        );
+    }
+
+    #[test]
+    fn raster_configuration_and_scale_participate_in_cache_identity() {
+        let first = FontDescription::default();
+        let mut scaled = first.clone();
+        scaled.device_scale_factor = 2.0;
+        let mut aliased = first.clone();
+        aliased.raster_configuration = RasterConfiguration::deterministic_aliased(false);
+        assert_ne!(
+            FontCache::make_key("sans-serif", &first),
+            FontCache::make_key("sans-serif", &scaled)
+        );
+        assert_ne!(
+            FontCache::make_key("sans-serif", &first),
+            FontCache::make_key("sans-serif", &aliased)
         );
     }
 

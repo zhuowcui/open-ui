@@ -31,6 +31,10 @@ use crate::out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate, Static
 struct Track {
     sizing: GridTrackSize,
     base: LayoutUnit,
+    /// Fragmentainer remainder inserted after this track. It contributes to
+    /// subsequent line positions and the grid's fragmented used size, but it
+    /// is not part of an item whose grid area ends on this track.
+    fragmentation_clearance: LayoutUnit,
     flexible: f32,
     stretchable: bool,
     intrinsic_minimum: bool,
@@ -54,6 +58,7 @@ impl Track {
         Self {
             sizing,
             base,
+            fragmentation_clearance: LayoutUnit::zero(),
             flexible,
             stretchable,
             intrinsic_minimum,
@@ -711,7 +716,12 @@ fn axis_contribution(intrinsic: IntrinsicSizes, columns: bool, max_content: bool
 /// in the axis being intrinsically sized. CSS Grid treats the percentage as
 /// auto for the intrinsic pass, but a definite opposite-axis size still
 /// transfers through the preferred aspect ratio.
-fn cyclic_ratio_contribution(doc: &Document, node_id: NodeId, columns: bool) -> Option<LayoutUnit> {
+fn cyclic_ratio_contribution_with_opposite_basis(
+    doc: &Document,
+    node_id: NodeId,
+    columns: bool,
+    opposite_percentage_basis: Option<LayoutUnit>,
+) -> Option<LayoutUnit> {
     let style = &doc.node(node_id).style;
     let ratio = style.aspect_ratio.as_ref()?;
     if ratio.ratio.0 <= 0.0 || ratio.ratio.1 <= 0.0 {
@@ -722,11 +732,20 @@ fn cyclic_ratio_contribution(doc: &Document, node_id: NodeId, columns: bool) -> 
     } else {
         (&style.height, &style.width)
     };
-    if !(cyclic.is_percent() || cyclic.length_type() == LengthType::Calculated)
-        || !opposite.is_fixed()
-    {
+    if !(cyclic.is_percent() || cyclic.length_type() == LengthType::Calculated) {
         return None;
     }
+
+    let opposite_used = if opposite.is_fixed() {
+        LayoutUnit::from_f32(opposite.value())
+    } else if (opposite.is_percent() || opposite.length_type() == LengthType::Calculated)
+        && opposite_percentage_basis.is_some_and(|basis| !basis.is_indefinite())
+    {
+        let basis = opposite_percentage_basis.unwrap();
+        resolve_length(opposite, basis, basis, basis)
+    } else {
+        return None;
+    };
 
     let border = resolve_border(style);
     let padding = resolve_padding(style, LayoutUnit::zero());
@@ -742,9 +761,9 @@ fn cyclic_ratio_contribution(doc: &Document, node_id: NodeId, columns: bool) -> 
         border.block_sum() + padding.block_sum()
     };
     let opposite_border_box = if style.box_sizing == BoxSizing::BorderBox {
-        LayoutUnit::from_f32(opposite.value()).max_of(opposite_border_padding)
+        opposite_used.max_of(opposite_border_padding)
     } else {
-        LayoutUnit::from_f32(opposite.value()) + opposite_border_padding
+        opposite_used + opposite_border_padding
     };
     let ratio_uses_border_box = !ratio.auto_flag && style.box_sizing == BoxSizing::BorderBox;
     let transferred = if ratio_uses_border_box {
@@ -771,6 +790,10 @@ fn cyclic_ratio_contribution(doc: &Document, node_id: NodeId, columns: bool) -> 
                 margin.block_sum()
             },
     )
+}
+
+fn cyclic_ratio_contribution(doc: &Document, node_id: NodeId, columns: bool) -> Option<LayoutUnit> {
+    cyclic_ratio_contribution_with_opposite_basis(doc, node_id, columns, None)
 }
 
 /// Return the Grid item's minimum contribution in the physical axis used by
@@ -1055,8 +1078,13 @@ fn size_row_tracks_from_layout(
                 let intrinsic = compute_child_intrinsic_contribution(doc, item.node_id);
                 grid_item_min_contribution(doc, item.node_id, intrinsic, false)
             } else {
-                cyclic_ratio_contribution(doc, item.node_id, false)
-                    .unwrap_or(margins.block_start + margins.block_end)
+                cyclic_ratio_contribution_with_opposite_basis(
+                    doc,
+                    item.node_id,
+                    false,
+                    Some(area_inline),
+                )
+                .unwrap_or(margins.block_start + margins.block_end)
             }
         } else {
             fragmented_block + margins.block_start + margins.block_end
@@ -1425,6 +1453,8 @@ fn apply_row_fragmentation_breaks(
             let clearance = available;
             if group_start > 0 {
                 rows[group_start - 1].base = rows[group_start - 1].base + clearance;
+                rows[group_start - 1].fragmentation_clearance =
+                    rows[group_start - 1].fragmentation_clearance + clearance;
             }
             cursor = cursor + clearance;
         }
@@ -1583,6 +1613,28 @@ fn axis_area(
             between
         };
     (track_start, offsets[end] - track_start)
+}
+
+fn row_area(
+    offsets: &[LayoutUnit],
+    tracks: &[Track],
+    start: usize,
+    span: usize,
+    between: LayoutUnit,
+) -> (LayoutUnit, LayoutUnit) {
+    let (track_start, area) = axis_area(offsets, start, span, between);
+    let start = start.min(tracks.len());
+    let end = (start + span).min(tracks.len());
+    let trailing_clearance = end
+        .checked_sub(1)
+        .filter(|end| *end >= start)
+        .map_or(LayoutUnit::zero(), |end| {
+            tracks[end].fragmentation_clearance
+        });
+    (
+        track_start,
+        (area - trailing_clearance).clamp_negative_to_zero(),
+    )
 }
 
 fn style_axis_size(style: &openui_style::ComputedStyle, inline_axis: bool) -> &Length {
@@ -2122,8 +2174,9 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             item.column_span,
             column_gap + column_between,
         );
-        let (row_start, area_block) = axis_area(
+        let (row_start, area_block) = row_area(
             &row_offsets,
+            &rows.tracks,
             item.row_start,
             item.row_span,
             row_gap + row_between,
@@ -2170,6 +2223,7 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             stretch_inline,
             stretch_block,
         );
+        let stretched_block_extent = stretch_block.then_some(child.size.height);
         if space.has_block_fragmentation() && writing_direction.is_horizontal() {
             crate::block::apply_forced_descendant_offsets_at(
                 &mut child,
@@ -2177,6 +2231,14 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
                 space.fragmentainer_block_size,
                 content_origin.block_offset + row_start,
             );
+            // Forced descendants extend the item's scrollable/ink overflow,
+            // not the border box that `align-self: stretch` resolved from its
+            // grid area. Keeping the inflated fragment size here causes the
+            // item's background to be cloned into later fragmentainers and
+            // overlap the next row's background at fractional device scales.
+            if let Some(extent) = stretched_block_extent {
+                child.size.height = extent;
+            }
         }
         if space.has_block_fragmentation()
             && writing_direction.is_horizontal()
@@ -2309,8 +2371,13 @@ pub fn grid_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) -> 
             column.span,
             column_gap + column_between,
         );
-        let (row_start, area_block) =
-            axis_area(&row_offsets, row.start, row.span, row_gap + row_between);
+        let (row_start, area_block) = row_area(
+            &row_offsets,
+            &rows.tracks,
+            row.start,
+            row.span,
+            row_gap + row_between,
+        );
         let area_size = logical_box.physical_size(LogicalSize::new(area_inline, area_block));
         let area_offset = converter.to_physical_offset(
             LogicalOffset::new(
@@ -2561,5 +2628,127 @@ pub fn compute_grid_intrinsic_sizes(doc: &Document, node_id: NodeId) -> Intrinsi
         max_content_inline_size: tracks_used_size(&columns.tracks, column_gap) + bp_inline,
         min_content_block_size: tracks_used_size(&min_rows.tracks, row_gap) + bp_block,
         max_content_block_size: tracks_used_size(&rows.tracks, row_gap) + bp_block,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use openui_style::BreakValue;
+
+    fn fixed_track(px: f32) -> Track {
+        Track::new(
+            GridTrackSize::Breadth(GridTrackBreadth::Length(Length::px(px))),
+            INDEFINITE_SIZE,
+            false,
+        )
+    }
+
+    #[test]
+    fn forced_break_clearance_does_not_expand_an_ending_grid_area() {
+        let mut doc = Document::new();
+        let first = doc.create_node(ElementTag::Div);
+        let second = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(second, |style| style.break_before = BreakValue::Column);
+        let items = vec![
+            GridItem {
+                node_id: first,
+                source_index: 0,
+                column_start: 0,
+                column_span: 1,
+                row_start: 0,
+                row_span: 1,
+            },
+            GridItem {
+                node_id: second,
+                source_index: 1,
+                column_start: 0,
+                column_span: 1,
+                row_start: 1,
+                row_span: 1,
+            },
+        ];
+        let mut rows = vec![fixed_track(50.0), fixed_track(100.0)];
+
+        apply_row_fragmentation_breaks(
+            &doc,
+            &items,
+            &mut rows,
+            LayoutUnit::zero(),
+            LayoutUnit::from_i32(100),
+        );
+
+        assert_eq!(rows[0].base, LayoutUnit::from_i32(100));
+        assert_eq!(rows[0].fragmentation_clearance, LayoutUnit::from_i32(50));
+        let offsets = track_offsets(
+            &rows,
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+            LayoutUnit::zero(),
+        );
+        assert_eq!(
+            row_area(&offsets, &rows, 0, 1, LayoutUnit::zero()),
+            (LayoutUnit::zero(), LayoutUnit::from_i32(50),)
+        );
+        assert_eq!(
+            row_area(&offsets, &rows, 1, 1, LayoutUnit::zero()),
+            (LayoutUnit::from_i32(100), LayoutUnit::from_i32(100),)
+        );
+        assert_eq!(
+            row_area(&offsets, &rows, 0, 2, LayoutUnit::zero()),
+            (LayoutUnit::zero(), LayoutUnit::from_i32(200),)
+        );
+    }
+
+    #[test]
+    fn forced_descendant_overflow_does_not_expand_a_stretched_grid_item() {
+        let mut doc = Document::new();
+        let grid = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(grid, |style| {
+            style.display = Display::Grid;
+            style.width = Length::px(50.0);
+            style.grid_template_rows = GridTrackList::Tracks(vec![GridTrackComponent::Track(
+                GridTrackSize::Breadth(GridTrackBreadth::Length(Length::px(50.0))),
+            )]);
+        });
+        doc.append_child(doc.root(), grid);
+
+        let item = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(item, |style| style.display = Display::Block);
+        doc.append_child(grid, item);
+        let first = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(first, |style| {
+            style.display = Display::Block;
+            style.height = Length::px(25.0);
+            style.break_after = BreakValue::Column;
+        });
+        doc.append_child(item, first);
+        let second = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(second, |style| {
+            style.display = Display::Block;
+            style.height = Length::px(25.0);
+        });
+        doc.append_child(item, second);
+
+        let mut space = ConstraintSpace::for_block_child(
+            LayoutUnit::from_i32(50),
+            LayoutUnit::from_i32(600),
+            LayoutUnit::from_i32(50),
+            LayoutUnit::from_i32(600),
+            false,
+        );
+        space.fragmentainer_block_size = LayoutUnit::from_i32(100);
+        let fragment = crate::block::block_layout(&doc, grid, &space);
+        let item_fragment = fragment
+            .children
+            .iter()
+            .find(|child| child.node_id == item)
+            .expect("stretched grid item");
+
+        assert_eq!(item_fragment.size.height, LayoutUnit::from_i32(50));
+        assert_eq!(
+            item_fragment.children[1].offset.top,
+            LayoutUnit::from_i32(100)
+        );
     }
 }

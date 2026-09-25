@@ -94,9 +94,9 @@ class RootAwarePorterTests(unittest.TestCase):
             "demo", parser.root, parser.html_styles, root_aware=True
         )
         template = port_wpt.generate_html_template(str(path), root_aware=True)
-        self.assertIn("let (mut doc, html, vp) = root_doc()", rust)
-        self.assertIn("doc.node_mut(html).style.height", rust)
-        self.assertIn("doc.node_mut(vp).style.overflow_x", rust)
+        self.assertIn("let (mut doc, html, vp) = root_doc(viewport)", rust)
+        self.assertIn("doc.set_style(html, RendererStyleValue::Height", rust)
+        self.assertIn("doc.set_style(vp, RendererStyleValue::OverflowX", rust)
         self.assertTrue(template.startswith("<!--OPENUI_ROOT_AWARE-->"))
         self.assertIn("html {height:100%}", template)
         self.assertIn("body {overflow:hidden}", template)
@@ -111,7 +111,9 @@ class RootAwarePorterTests(unittest.TestCase):
         self.assertIn("*{display:contents}", rust)
         self.assertIn("PASS", rust)
         self.assertNotIn("ElementTag::Break", rust)
-        self.assertIn("doc.node_mut(vp).style.display = Display::None", rust)
+        self.assertIn(
+            "doc.set_style(vp, RendererStyleValue::Display(Display::None))", rust
+        )
 
     def test_display_contents_resets_non_inherited_background_boundary(self):
         path = self.html(
@@ -125,8 +127,12 @@ class RootAwarePorterTests(unittest.TestCase):
         # Retaining each unboxed element preserves its computed-style
         # boundary. The outer node keeps blue without transferring it through
         # the transparent middle node to the leaf.
-        self.assertEqual(rust.count("background_color = Color::BLUE"), 1)
-        self.assertIn("background_color = Color::TRANSPARENT", rust)
+        self.assertEqual(
+            rust.count("RendererStyleValue::BackgroundColor(Color::BLUE)"), 1
+        )
+        self.assertIn(
+            "RendererStyleValue::BackgroundColor(Color::TRANSPARENT)", rust
+        )
 
 
 class SupersessionTests(unittest.TestCase):

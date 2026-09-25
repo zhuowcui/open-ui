@@ -36,12 +36,12 @@ fn block_layout_text(texts: &[&str], width: i32) -> Fragment {
     let mut doc = Document::new();
     let vp = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(vp, block);
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         doc.append_child(block, t);
     }
     let sp = space(width, 600);
@@ -52,26 +52,28 @@ fn block_layout_text(texts: &[&str], width: i32) -> Fragment {
 fn make_styled_text_block(
     texts: &[&str],
     width: i32,
-    style_fn: impl Fn(&mut ComputedStyle),
+    style_fn: impl Fn(&mut openui_style::ComputedStyleFields),
 ) -> Fragment {
     let mut doc = Document::new();
     let vp = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    style_fn(&mut doc.node_mut(block).style);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, style_fn);
     doc.append_child(vp, block);
 
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         // Propagate writing-mode and direction to text children.
         let block_style = doc.node(block).style.clone();
-        doc.node_mut(t).style.writing_mode = block_style.writing_mode;
-        doc.node_mut(t).style.direction = block_style.direction;
-        doc.node_mut(t).style.text_orientation = block_style.text_orientation;
-        doc.node_mut(t).style.text_align = block_style.text_align;
-        doc.node_mut(t).style.unicode_bidi = block_style.unicode_bidi;
+        doc.update_resolved_style(t, |style| style.writing_mode = block_style.writing_mode);
+        doc.update_resolved_style(t, |style| style.direction = block_style.direction);
+        doc.update_resolved_style(t, |style| {
+            style.text_orientation = block_style.text_orientation
+        });
+        doc.update_resolved_style(t, |style| style.text_align = block_style.text_align);
+        doc.update_resolved_style(t, |style| style.unicode_bidi = block_style.unicode_bidi);
         doc.append_child(block, t);
     }
 
@@ -514,7 +516,7 @@ mod direction_property {
     #[test]
     fn rtl_direction_produces_positive_height() {
         let frag = make_styled_text_block(&["Hello"], 400, |s| {
-            s.direction = Direction::Rtl;
+            s.update_derived(|computed| computed.direction = Direction::Rtl);
         });
         let block = first_block_child(&frag);
         assert!(
@@ -527,8 +529,8 @@ mod direction_property {
     #[test]
     fn rtl_text_align_start_offsets_right() {
         let frag = make_styled_text_block(&["Hi"], 800, |s| {
-            s.direction = Direction::Rtl;
-            s.text_align = TextAlign::Start;
+            s.update_derived(|computed| computed.direction = Direction::Rtl);
+            s.update_derived(|computed| computed.text_align = TextAlign::Start);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -544,8 +546,8 @@ mod direction_property {
     #[test]
     fn ltr_text_align_start_at_left() {
         let frag = make_styled_text_block(&["Hello"], 800, |s| {
-            s.direction = Direction::Ltr;
-            s.text_align = TextAlign::Start;
+            s.update_derived(|computed| computed.direction = Direction::Ltr);
+            s.update_derived(|computed| computed.text_align = TextAlign::Start);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -560,8 +562,8 @@ mod direction_property {
     #[test]
     fn rtl_text_align_end_at_left() {
         let frag = make_styled_text_block(&["Hi"], 800, |s| {
-            s.direction = Direction::Rtl;
-            s.text_align = TextAlign::End;
+            s.update_derived(|computed| computed.direction = Direction::Rtl);
+            s.update_derived(|computed| computed.text_align = TextAlign::End);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -576,8 +578,8 @@ mod direction_property {
     #[test]
     fn ltr_text_align_right_offsets_right() {
         let frag = make_styled_text_block(&["Hi"], 800, |s| {
-            s.direction = Direction::Ltr;
-            s.text_align = TextAlign::Right;
+            s.update_derived(|computed| computed.direction = Direction::Ltr);
+            s.update_derived(|computed| computed.text_align = TextAlign::Right);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -591,8 +593,8 @@ mod direction_property {
     #[test]
     fn ltr_text_align_center_shifts_center() {
         let frag = make_styled_text_block(&["Hi"], 800, |s| {
-            s.direction = Direction::Ltr;
-            s.text_align = TextAlign::Center;
+            s.update_derived(|computed| computed.direction = Direction::Ltr);
+            s.update_derived(|computed| computed.text_align = TextAlign::Center);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -683,7 +685,7 @@ mod unicode_bidi {
     #[test]
     fn set_on_computed_style() {
         let mut style = ComputedStyle::default();
-        style.unicode_bidi = UnicodeBidi::Embed;
+        style.update_derived(|computed| computed.unicode_bidi = UnicodeBidi::Embed);
         assert_eq!(style.unicode_bidi, UnicodeBidi::Embed);
     }
 
@@ -699,7 +701,7 @@ mod unicode_bidi {
     #[test]
     fn set_override_on_computed_style() {
         let mut style = ComputedStyle::default();
-        style.unicode_bidi = UnicodeBidi::Override;
+        style.update_derived(|computed| computed.unicode_bidi = UnicodeBidi::Override);
         assert_eq!(style.unicode_bidi, UnicodeBidi::Override);
     }
 
@@ -707,7 +709,7 @@ mod unicode_bidi {
     #[test]
     fn set_isolate_on_computed_style() {
         let mut style = ComputedStyle::default();
-        style.unicode_bidi = UnicodeBidi::Isolate;
+        style.update_derived(|computed| computed.unicode_bidi = UnicodeBidi::Isolate);
         assert_eq!(style.unicode_bidi, UnicodeBidi::Isolate);
     }
 
@@ -715,7 +717,7 @@ mod unicode_bidi {
     #[test]
     fn set_plaintext_on_computed_style() {
         let mut style = ComputedStyle::default();
-        style.unicode_bidi = UnicodeBidi::Plaintext;
+        style.update_derived(|computed| computed.unicode_bidi = UnicodeBidi::Plaintext);
         assert_eq!(style.unicode_bidi, UnicodeBidi::Plaintext);
     }
 
@@ -723,8 +725,8 @@ mod unicode_bidi {
     #[test]
     fn layout_bidi_normal_produces_fragment() {
         let frag = make_styled_text_block(&["Hello"], 400, |s| {
-            s.unicode_bidi = UnicodeBidi::Normal;
-            s.direction = Direction::Ltr;
+            s.update_derived(|computed| computed.unicode_bidi = UnicodeBidi::Normal);
+            s.update_derived(|computed| computed.direction = Direction::Ltr);
         });
         let block = first_block_child(&frag);
         assert!(

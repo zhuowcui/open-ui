@@ -26,27 +26,31 @@ fn fragments_for(fragment: &Fragment, node: NodeId) -> Vec<&Fragment> {
     found
 }
 
-fn set_vertical_logical_size(style: &mut ComputedStyle, inline: Length, block: Length) {
-    style.height = inline;
-    style.width = block;
+fn set_vertical_logical_size(
+    style: &mut openui_style::ComputedStyleFields,
+    inline: Length,
+    block: Length,
+) {
+    style.update_derived(|computed| computed.height = inline);
+    style.update_derived(|computed| computed.width = block);
 }
 
 fn set_logical_starts(
-    style: &mut ComputedStyle,
+    style: &mut openui_style::ComputedStyleFields,
     mode: WritingMode,
     direction: Direction,
     inline: f32,
     block: f32,
 ) {
     if direction == Direction::Ltr {
-        style.top = Length::px(inline);
+        style.update_derived(|computed| computed.top = Length::px(inline));
     } else {
-        style.bottom = Length::px(inline);
+        style.update_derived(|computed| computed.bottom = Length::px(inline));
     }
     if mode == WritingMode::VerticalLr {
-        style.left = Length::px(block);
+        style.update_derived(|computed| computed.left = Length::px(block));
     } else {
-        style.right = Length::px(block);
+        style.update_derived(|computed| computed.right = Length::px(block));
     }
 }
 
@@ -54,15 +58,16 @@ fn vertical_multicol_document(mode: WritingMode, direction: Direction) -> (Docum
     let mut doc = Document::new();
     let root = doc.root();
     let multicol = doc.create_node(ElementTag::Div);
-    let style = &mut doc.node_mut(multicol).style;
-    style.display = Display::Block;
-    style.writing_mode = mode;
-    style.direction = direction;
-    style.width = Length::px(100.0);
-    style.height = Length::px(100.0);
-    style.column_count = Some(2);
-    style.column_fill = ColumnFill::Auto;
-    style.column_gap = Some(Length::px(0.0));
+    doc.update_resolved_style(multicol, |style| {
+        style.display = Display::Block;
+        style.writing_mode = mode;
+        style.direction = direction;
+        style.width = Length::px(100.0);
+        style.height = Length::px(100.0);
+        style.column_count = Some(2);
+        style.column_fill = ColumnFill::Auto;
+        style.column_gap = Some(Length::px(0.0));
+    });
     doc.append_child(root, multicol);
     (doc, multicol)
 }
@@ -83,55 +88,45 @@ fn fixed_box_after_block_in_inline_has_two_source_ordered_continuations() {
                 let (mut doc, multicol) = vertical_multicol_document(mode, direction);
 
                 let wrapper = doc.create_node(ElementTag::Div);
-                doc.node_mut(wrapper).style.display = Display::Block;
-                doc.node_mut(wrapper).style.writing_mode = mode;
-                doc.node_mut(wrapper).style.direction = direction;
+                doc.update_resolved_style(wrapper, |style| style.display = Display::Block);
+                doc.update_resolved_style(wrapper, |style| style.writing_mode = mode);
+                doc.update_resolved_style(wrapper, |style| style.direction = direction);
                 doc.append_child(multicol, wrapper);
 
                 let containing_inline = doc.create_node(ElementTag::Span);
-                doc.node_mut(containing_inline).style.display = Display::Inline;
-                doc.node_mut(containing_inline).style.position = Position::Relative;
-                doc.node_mut(containing_inline).style.writing_mode = mode;
-                doc.node_mut(containing_inline).style.direction = direction;
+                doc.update_resolved_style(containing_inline, |style| {
+                    style.display = Display::Inline
+                });
+                doc.update_resolved_style(containing_inline, |style| {
+                    style.position = Position::Relative
+                });
+                doc.update_resolved_style(containing_inline, |style| style.writing_mode = mode);
+                doc.update_resolved_style(containing_inline, |style| style.direction = direction);
                 if translated {
-                    set_logical_starts(
-                        &mut doc.node_mut(containing_inline).style,
-                        mode,
-                        direction,
-                        5.0,
-                        10.0,
-                    );
+                    doc.update_resolved_style(containing_inline, |style| {
+                        set_logical_starts(style, mode, direction, 5.0, 10.0)
+                    });
                 }
                 doc.append_child(wrapper, containing_inline);
 
                 let interruption = doc.create_node(ElementTag::Div);
-                doc.node_mut(interruption).style.display = Display::Block;
-                doc.node_mut(interruption).style.writing_mode = mode;
-                doc.node_mut(interruption).style.direction = direction;
-                set_vertical_logical_size(
-                    &mut doc.node_mut(interruption).style,
-                    Length::px(50.0),
-                    Length::px(200.0),
-                );
+                doc.update_resolved_style(interruption, |style| style.display = Display::Block);
+                doc.update_resolved_style(interruption, |style| style.writing_mode = mode);
+                doc.update_resolved_style(interruption, |style| style.direction = direction);
+                doc.update_resolved_style(interruption, |style| {
+                    set_vertical_logical_size(style, Length::px(50.0), Length::px(200.0))
+                });
                 doc.append_child(containing_inline, interruption);
 
                 let positioned = doc.create_node(ElementTag::Div);
-                doc.node_mut(positioned).style.display = Display::Block;
-                doc.node_mut(positioned).style.position = Position::Absolute;
-                doc.node_mut(positioned).style.writing_mode = mode;
-                doc.node_mut(positioned).style.direction = direction;
-                set_vertical_logical_size(
-                    &mut doc.node_mut(positioned).style,
-                    Length::px(50.0),
-                    Length::px(200.0),
-                );
-                set_logical_starts(
-                    &mut doc.node_mut(positioned).style,
-                    mode,
-                    direction,
-                    0.0,
-                    0.0,
-                );
+                doc.update_resolved_style(positioned, |style| style.display = Display::Block);
+                doc.update_resolved_style(positioned, |style| style.position = Position::Absolute);
+                doc.update_resolved_style(positioned, |style| style.writing_mode = mode);
+                doc.update_resolved_style(positioned, |style| style.direction = direction);
+                doc.update_resolved_style(positioned, |style| {
+                    set_vertical_logical_size(style, Length::px(50.0), Length::px(200.0));
+                    set_logical_starts(style, mode, direction, 0.0, 0.0);
+                });
                 doc.append_child(containing_inline, positioned);
 
                 let result = layout(&doc);
@@ -216,42 +211,43 @@ fn stretched_box_uses_fragmented_block_and_flex_containing_blocks() {
                 let (mut doc, multicol) = vertical_multicol_document(mode, direction);
 
                 let containing_block = doc.create_node(ElementTag::Div);
-                {
-                    let style = &mut doc.node_mut(containing_block).style;
-                    style.display = display;
-                    style.position = Position::Relative;
-                    style.writing_mode = mode;
-                    style.direction = direction;
-                    style.box_sizing = BoxSizing::ContentBox;
+                doc.update_resolved_style(containing_block, |style| {
+                    style.update_derived(|computed| computed.display = display);
+                    style.update_derived(|computed| computed.position = Position::Relative);
+                    style.update_derived(|computed| computed.writing_mode = mode);
+                    style.update_derived(|computed| computed.direction = direction);
+                    style.update_derived(|computed| computed.box_sizing = BoxSizing::ContentBox);
                     set_vertical_logical_size(style, Length::px(50.0), Length::px(160.0));
                     if mode == WritingMode::VerticalLr {
-                        style.border_left_width = 20;
-                        style.border_right_width = 10;
+                        style.update_derived(|computed| computed.border_left_width = 20);
+                        style.update_derived(|computed| computed.border_right_width = 10);
                     } else {
-                        style.border_right_width = 20;
-                        style.border_left_width = 10;
+                        style.update_derived(|computed| computed.border_right_width = 20);
+                        style.update_derived(|computed| computed.border_left_width = 10);
                     }
-                    style.border_left_style = BorderStyle::Solid;
-                    style.border_right_style = BorderStyle::Solid;
-                }
+                    style
+                        .update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+                    style.update_derived(|computed| {
+                        computed.border_right_style = BorderStyle::Solid
+                    });
+                });
                 doc.append_child(multicol, containing_block);
 
                 let positioned = doc.create_node(ElementTag::Div);
-                {
-                    let style = &mut doc.node_mut(positioned).style;
-                    style.display = Display::Block;
-                    style.position = Position::Absolute;
-                    style.writing_mode = mode;
-                    style.direction = direction;
+                doc.update_resolved_style(positioned, |style| {
+                    style.update_derived(|computed| computed.display = Display::Block);
+                    style.update_derived(|computed| computed.position = Position::Absolute);
+                    style.update_derived(|computed| computed.writing_mode = mode);
+                    style.update_derived(|computed| computed.direction = direction);
                     set_vertical_logical_size(style, Length::percent(100.0), Length::auto());
-                    style.left = Length::px(0.0);
-                    style.right = Length::px(0.0);
+                    style.update_derived(|computed| computed.left = Length::px(0.0));
+                    style.update_derived(|computed| computed.right = Length::px(0.0));
                     if direction == Direction::Ltr {
-                        style.top = Length::px(0.0);
+                        style.update_derived(|computed| computed.top = Length::px(0.0));
                     } else {
-                        style.bottom = Length::px(0.0);
+                        style.update_derived(|computed| computed.bottom = Length::px(0.0));
                     }
-                }
+                });
                 doc.append_child(containing_block, positioned);
 
                 let result = layout(&doc);

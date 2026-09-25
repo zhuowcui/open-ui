@@ -61,31 +61,30 @@ fn sample_avg_color(surface: &mut Surface, x: i32, y: i32, w: i32, h: i32) -> (f
 fn make_3d_bordered_box(doc: &mut Document, border_style: BorderStyle) -> Fragment {
     let vp = doc.root();
     let div = doc.create_node(ElementTag::Div);
-    {
-        let s = &mut doc.node_mut(div).style;
-        s.display = Display::Block;
-        s.width = Length::px(80.0);
-        s.height = Length::px(80.0);
+    doc.update_resolved_style(div, |s| {
+        s.update_derived(|computed| computed.display = Display::Block);
+        s.update_derived(|computed| computed.width = Length::px(80.0));
+        s.update_derived(|computed| computed.height = Length::px(80.0));
         // 8px border on all sides, gray color for easy shading tests.
-        s.border_top_width = 8;
-        s.border_right_width = 8;
-        s.border_bottom_width = 8;
-        s.border_left_width = 8;
+        s.update_derived(|computed| computed.border_top_width = 8);
+        s.update_derived(|computed| computed.border_right_width = 8);
+        s.update_derived(|computed| computed.border_bottom_width = 8);
+        s.update_derived(|computed| computed.border_left_width = 8);
         let gray = Color {
             r: 0.6,
             g: 0.6,
             b: 0.6,
             a: 1.0,
         };
-        s.border_top_color = StyleColor::Resolved(gray);
-        s.border_right_color = StyleColor::Resolved(gray);
-        s.border_bottom_color = StyleColor::Resolved(gray);
-        s.border_left_color = StyleColor::Resolved(gray);
-        s.border_top_style = border_style;
-        s.border_right_style = border_style;
-        s.border_bottom_style = border_style;
-        s.border_left_style = border_style;
-    }
+        s.update_derived(|computed| computed.border_top_color = StyleColor::Resolved(gray));
+        s.update_derived(|computed| computed.border_right_color = StyleColor::Resolved(gray));
+        s.update_derived(|computed| computed.border_bottom_color = StyleColor::Resolved(gray));
+        s.update_derived(|computed| computed.border_left_color = StyleColor::Resolved(gray));
+        s.update_derived(|computed| computed.border_top_style = border_style);
+        s.update_derived(|computed| computed.border_right_style = border_style);
+        s.update_derived(|computed| computed.border_bottom_style = border_style);
+        s.update_derived(|computed| computed.border_left_style = border_style);
+    });
     doc.append_child(vp, div);
 
     let mut frag = Fragment::new_box(
@@ -218,7 +217,7 @@ fn ridge_border_is_opposite_of_groove() {
 #[test]
 fn paint_style_to_font_description_plumbs_locale() {
     let mut style = ComputedStyle::default();
-    style.locale = Some("zh-Hans".to_string());
+    style.update_derived(|computed| computed.locale = Some("zh-Hans".to_string()));
 
     let desc = openui_paint::text_painter::style_to_font_description(&style);
     assert_eq!(

@@ -1,8 +1,8 @@
 use crate::{Engine, EngineError, NodeHandle};
 use openui_style::{
-    apply_to_computed, value_from_computed, AnimationOptions, AnimationPhase, CompositeOperation,
-    IterationCount, Keyframes, LengthValue, PlayState, PropertyKeyframes, StyleProperty,
-    StyleValue, TimelineAxis, TimelineRange, TransformList,
+    value_from_computed, AnimationOptions, AnimationPhase, CompositeOperation, IterationCount,
+    Keyframes, LengthValue, PlayState, PropertyKeyframes, StyleProperty, StyleValue, TimelineAxis,
+    TimelineRange, TransformList,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Ord, PartialOrd)]
@@ -573,16 +573,17 @@ impl Engine {
         value: &StyleValue,
     ) -> Result<(), EngineError> {
         let node = self.resolve(target)?;
-        apply_to_computed(
-            &mut self.document.node_mut(node).style,
-            property,
-            value,
-            (
-                self.viewport.logical_width() as f32,
-                self.viewport.logical_height() as f32,
-            ),
-        )
-        .map_err(|_| EngineError::PropertyType { property })?;
+        self.document
+            .apply_style_property(
+                node,
+                property,
+                value,
+                (
+                    self.viewport.logical_width() as f32,
+                    self.viewport.logical_height() as f32,
+                ),
+            )
+            .map_err(|_| EngineError::PropertyType { property })?;
         self.dirty.hit_test = true;
         self.mark_dirty(property.metadata().invalidation);
         Ok(())

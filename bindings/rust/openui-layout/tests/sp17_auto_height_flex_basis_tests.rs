@@ -25,60 +25,61 @@ fn flex_basis_case(
 ) -> (LayoutUnit, LayoutUnit) {
     let mut doc = Document::new();
     let container = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(container).style;
-        style.display = Display::Flex;
-        style.flex_direction = direction;
-        style.writing_mode = writing_mode;
+    doc.update_resolved_style(container, |style| {
+        style.update_derived(|computed| computed.display = Display::Flex);
+        style.update_derived(|computed| computed.flex_direction = direction);
+        style.update_derived(|computed| computed.writing_mode = writing_mode);
         if writing_mode == WritingMode::HorizontalTb {
-            style.width = Length::px(100.0);
-            style.height = if definite_main_size {
-                Length::px(100.0)
-            } else {
-                Length::auto()
-            };
+            style.update_derived(|computed| computed.width = Length::px(100.0));
+            style.update_derived(|computed| {
+                computed.height = if definite_main_size {
+                    Length::px(100.0)
+                } else {
+                    Length::auto()
+                }
+            });
         } else {
-            style.width = if definite_main_size {
-                Length::px(100.0)
-            } else {
-                Length::auto()
-            };
-            style.height = Length::px(100.0);
+            style.update_derived(|computed| {
+                computed.width = if definite_main_size {
+                    Length::px(100.0)
+                } else {
+                    Length::auto()
+                }
+            });
+            style.update_derived(|computed| computed.height = Length::px(100.0));
         }
-    }
+    });
     doc.append_child(doc.root(), container);
 
     let item = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(item).style;
-        style.display = Display::Block;
-        style.flex_grow = 0.0;
-        style.flex_shrink = 0.0;
-        style.flex_basis = basis;
-        style.writing_mode = writing_mode;
+    doc.update_resolved_style(item, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.flex_grow = 0.0);
+        style.update_derived(|computed| computed.flex_shrink = 0.0);
+        style.update_derived(|computed| computed.flex_basis = basis);
+        style.update_derived(|computed| computed.writing_mode = writing_mode);
         if writing_mode == WritingMode::HorizontalTb {
-            style.height = Length::px(200.0);
-            style.min_height = Length::zero();
+            style.update_derived(|computed| computed.height = Length::px(200.0));
+            style.update_derived(|computed| computed.min_height = Length::zero());
         } else {
-            style.width = Length::px(200.0);
-            style.min_width = Length::zero();
+            style.update_derived(|computed| computed.width = Length::px(200.0));
+            style.update_derived(|computed| computed.min_width = Length::zero());
         }
-    }
+    });
     doc.append_child(container, item);
 
     let content = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(content).style;
-        style.display = Display::Block;
-        style.writing_mode = writing_mode;
+    doc.update_resolved_style(content, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.writing_mode = writing_mode);
         if writing_mode == WritingMode::HorizontalTb {
-            style.width = Length::px(10.0);
-            style.height = Length::px(40.0);
+            style.update_derived(|computed| computed.width = Length::px(10.0));
+            style.update_derived(|computed| computed.height = Length::px(40.0));
         } else {
-            style.width = Length::px(40.0);
-            style.height = Length::px(10.0);
+            style.update_derived(|computed| computed.width = Length::px(40.0));
+            style.update_derived(|computed| computed.height = Length::px(10.0));
         }
-    }
+    });
     doc.append_child(item, content);
 
     let writing_direction = Direction::Ltr.writing_direction(writing_mode);
@@ -128,30 +129,34 @@ fn zero_percent_falls_back_to_content_only_when_main_size_is_indefinite() {
 fn inline_break_height(sequence: &[ElementTag]) -> LayoutUnit {
     let mut doc = Document::new();
     let block = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(block).style;
-        style.display = Display::Block;
-        style.width = Length::px(200.0);
-        style.font_size = 10.0;
-        style.line_height = LineHeight::Length(10.0);
-    }
+    doc.update_resolved_style(block, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(200.0));
+        style.update_derived(|computed| computed.font_size = 10.0);
+        style.update_derived(|computed| computed.line_height = LineHeight::Length(10.0));
+    });
     doc.append_child(doc.root(), block);
 
     for tag in sequence {
         let child = doc.create_node(*tag);
         {
             let node = doc.node_mut(child);
-            node.style.display = Display::Inline;
-            node.style.font_size = if *tag == ElementTag::Break {
-                40.0
-            } else {
-                10.0
-            };
-            node.style.line_height = if *tag == ElementTag::Break {
-                LineHeight::Length(40.0)
-            } else {
-                LineHeight::Length(10.0)
-            };
+            node.style
+                .update_derived(|computed| computed.display = Display::Inline);
+            node.style.update_derived(|computed| {
+                computed.font_size = if *tag == ElementTag::Break {
+                    40.0
+                } else {
+                    10.0
+                }
+            });
+            node.style.update_derived(|computed| {
+                computed.line_height = if *tag == ElementTag::Break {
+                    LineHeight::Length(40.0)
+                } else {
+                    LineHeight::Length(10.0)
+                }
+            });
             if *tag == ElementTag::Text {
                 node.text = Some("X".to_string());
             }
@@ -191,51 +196,51 @@ fn semantic_break_sequences_use_the_break_strut_without_a_phantom_line() {
 fn auto_height_flex_item_includes_border_padding_and_one_break_line() {
     let mut doc = Document::new();
     let container = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(container).style;
-        style.display = Display::Flex;
-        style.flex_direction = FlexDirection::Column;
-        style.width = Length::px(100.0);
-        style.height = Length::auto();
-        style.border_top_width = 1;
-        style.border_top_style = BorderStyle::Solid;
-        style.border_bottom_width = 1;
-        style.border_bottom_style = BorderStyle::Solid;
-        style.padding_top = Length::px(5.0);
-        style.padding_bottom = Length::px(5.0);
-    }
+    doc.update_resolved_style(container, |style| {
+        style.update_derived(|computed| computed.display = Display::Flex);
+        style.update_derived(|computed| computed.flex_direction = FlexDirection::Column);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::auto());
+        style.update_derived(|computed| computed.border_top_width = 1);
+        style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_bottom_width = 1);
+        style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_top = Length::px(5.0));
+        style.update_derived(|computed| computed.padding_bottom = Length::px(5.0));
+    });
     doc.append_child(doc.root(), container);
 
     let item = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(item).style;
-        style.display = Display::Block;
-        style.flex_grow = 1.0;
-        style.flex_shrink = 1.0;
-        style.flex_basis = Length::percent(0.0);
-        style.border_top_width = 2;
-        style.border_top_style = BorderStyle::Solid;
-        style.border_bottom_width = 2;
-        style.border_bottom_style = BorderStyle::Solid;
-        style.padding_top = Length::px(3.0);
-        style.padding_bottom = Length::px(3.0);
-        style.font_size = 20.0;
-        style.line_height = LineHeight::Length(20.0);
-    }
+    doc.update_resolved_style(item, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.flex_grow = 1.0);
+        style.update_derived(|computed| computed.flex_shrink = 1.0);
+        style.update_derived(|computed| computed.flex_basis = Length::percent(0.0));
+        style.update_derived(|computed| computed.border_top_width = 2);
+        style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_bottom_width = 2);
+        style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_top = Length::px(3.0));
+        style.update_derived(|computed| computed.padding_bottom = Length::px(3.0));
+        style.update_derived(|computed| computed.font_size = 20.0);
+        style.update_derived(|computed| computed.line_height = LineHeight::Length(20.0));
+    });
     doc.append_child(container, item);
 
     let text = doc.create_node(ElementTag::Text);
-    doc.node_mut(text).style.font_size = 20.0;
-    doc.node_mut(text).style.line_height = LineHeight::Length(20.0);
+    doc.update_resolved_style(text, |style| style.font_size = 20.0);
+    doc.update_resolved_style(text, |style| style.line_height = LineHeight::Length(20.0));
     // The words wrap at min-content width but fit the item's actual cross
     // size. A semantic trailing break must not make the automatic main-axis
     // minimum reserve that synthetic wrapped measurement.
     doc.node_mut(text).text = Some("XX XX".to_string());
     doc.append_child(item, text);
     let line_break = doc.create_node(ElementTag::Break);
-    doc.node_mut(line_break).style.display = Display::Inline;
-    doc.node_mut(line_break).style.font_size = 20.0;
-    doc.node_mut(line_break).style.line_height = LineHeight::Length(20.0);
+    doc.update_resolved_style(line_break, |style| style.display = Display::Inline);
+    doc.update_resolved_style(line_break, |style| style.font_size = 20.0);
+    doc.update_resolved_style(line_break, |style| {
+        style.line_height = LineHeight::Length(20.0)
+    });
     doc.append_child(item, line_break);
 
     let fragment = flex_layout(

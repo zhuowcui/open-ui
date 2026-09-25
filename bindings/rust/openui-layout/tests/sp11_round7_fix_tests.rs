@@ -48,16 +48,16 @@ fn narrow_box_ellipsis_still_shows_ellipsis() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_overflow = TextOverflow::Ellipsis;
-    doc.node_mut(block).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(block).style.white_space = WhiteSpace::Nowrap;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_overflow = TextOverflow::Ellipsis);
+    doc.update_resolved_style(block, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(block, |style| style.white_space = WhiteSpace::Nowrap);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("Hello World this is long text".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
-    doc.node_mut(t).style.white_space = WhiteSpace::Nowrap;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t, |style| style.white_space = WhiteSpace::Nowrap);
     doc.append_child(block, t);
 
     // 5px wide — too narrow for any content + ellipsis
@@ -94,19 +94,19 @@ fn make_atomic_inline_block(
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("text ".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let atomic = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic).style.display = Display::InlineBlock;
-    doc.node_mut(atomic).style.width = Length::px(atomic_w);
-    doc.node_mut(atomic).style.height = Length::px(atomic_h);
-    doc.node_mut(atomic).style.vertical_align = valign;
+    doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic, |style| style.width = Length::px(atomic_w));
+    doc.update_resolved_style(atomic, |style| style.height = Length::px(atomic_h));
+    doc.update_resolved_style(atomic, |style| style.vertical_align = valign);
     doc.append_child(block, atomic);
 
     (doc, block, atomic)
@@ -215,14 +215,14 @@ fn break_spaces_preserves_trailing_spaces() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.white_space = WhiteSpace::BreakSpaces;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.white_space = WhiteSpace::BreakSpaces);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("hello   ".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
-    doc.node_mut(t).style.white_space = WhiteSpace::BreakSpaces;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t, |style| style.white_space = WhiteSpace::BreakSpaces);
     doc.append_child(block, t);
 
     // Wide enough to fit everything on one line
@@ -233,14 +233,14 @@ fn break_spaces_preserves_trailing_spaces() {
     let mut doc2 = Document::new();
     let root2 = doc2.root();
     let block2 = doc2.create_node(ElementTag::Div);
-    doc2.node_mut(block2).style.display = Display::Block;
-    doc2.node_mut(block2).style.white_space = WhiteSpace::BreakSpaces;
+    doc2.update_resolved_style(block2, |style| style.display = Display::Block);
+    doc2.update_resolved_style(block2, |style| style.white_space = WhiteSpace::BreakSpaces);
     doc2.append_child(root2, block2);
 
     let t2 = doc2.create_node(ElementTag::Text);
     doc2.node_mut(t2).text = Some("hello".to_string());
-    doc2.node_mut(t2).style.display = Display::Inline;
-    doc2.node_mut(t2).style.white_space = WhiteSpace::BreakSpaces;
+    doc2.update_resolved_style(t2, |style| style.display = Display::Inline);
+    doc2.update_resolved_style(t2, |style| style.white_space = WhiteSpace::BreakSpaces);
     doc2.append_child(block2, t2);
 
     let sp2 = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
@@ -275,15 +275,15 @@ fn break_spaces_wrapping_preserves_space_at_line_end() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.white_space = WhiteSpace::BreakSpaces;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.white_space = WhiteSpace::BreakSpaces);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     // "a b" with break-spaces in a very narrow container
     doc.node_mut(t).text = Some("a b c".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
-    doc.node_mut(t).style.white_space = WhiteSpace::BreakSpaces;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t, |style| style.white_space = WhiteSpace::BreakSpaces);
     doc.append_child(block, t);
 
     // Narrow container — each word + space should wrap
@@ -301,14 +301,14 @@ fn break_spaces_wrapping_preserves_space_at_line_end() {
     let mut doc2 = Document::new();
     let root2 = doc2.root();
     let block2 = doc2.create_node(ElementTag::Div);
-    doc2.node_mut(block2).style.display = Display::Block;
-    doc2.node_mut(block2).style.white_space = WhiteSpace::PreWrap;
+    doc2.update_resolved_style(block2, |style| style.display = Display::Block);
+    doc2.update_resolved_style(block2, |style| style.white_space = WhiteSpace::PreWrap);
     doc2.append_child(root2, block2);
 
     let t2 = doc2.create_node(ElementTag::Text);
     doc2.node_mut(t2).text = Some("a b c".to_string());
-    doc2.node_mut(t2).style.display = Display::Inline;
-    doc2.node_mut(t2).style.white_space = WhiteSpace::PreWrap;
+    doc2.update_resolved_style(t2, |style| style.display = Display::Inline);
+    doc2.update_resolved_style(t2, |style| style.white_space = WhiteSpace::PreWrap);
     doc2.append_child(block2, t2);
 
     let sp2 = ConstraintSpace::for_block_child(lu_i(25), lu_i(600), lu_i(25), lu_i(600), false);

@@ -38,8 +38,10 @@ fn single_line_first_and_last_baseline_are_equal() {
     let div = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(div);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, div);
 
@@ -79,9 +81,12 @@ fn multi_line_first_baseline_before_last() {
     let div = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(div);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
-        node.style.width = Length::px(60.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(60.0));
     }
     doc.append_child(vp, div);
 
@@ -112,9 +117,12 @@ fn baseline_includes_container_offset() {
     let outer = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(outer);
-        node.style.display = Display::Block;
-        node.style.padding_top = Length::px(20.0);
-        node.style.font_size = 16.0;
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.padding_top = Length::px(20.0));
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, outer);
 
@@ -144,8 +152,10 @@ fn baselines_always_computed() {
     let div = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(div);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, div);
 
@@ -171,14 +181,16 @@ fn nested_block_propagates_child_baseline() {
     let vp = doc.root();
 
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
     doc.append_child(vp, outer);
 
     let inner = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(inner);
-        node.style.display = Display::Block;
-        node.style.font_size = 20.0;
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 20.0);
     }
     doc.append_child(outer, inner);
 
@@ -201,14 +213,16 @@ fn baseline_from_first_child_not_second() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
     doc.append_child(vp, container);
 
     let child1 = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(child1);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(container, child1);
     let text1 = doc.create_node(ElementTag::Text);
@@ -218,8 +232,10 @@ fn baseline_from_first_child_not_second() {
     let child2 = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(child2);
-        node.style.display = Display::Block;
-        node.style.font_size = 32.0;
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 32.0);
     }
     doc.append_child(container, child2);
     let text2 = doc.create_node(ElementTag::Text);
@@ -250,8 +266,10 @@ fn inline_layout_sets_baselines_directly() {
     let div = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(div);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, div);
 
@@ -280,8 +298,10 @@ fn empty_block_has_no_baselines() {
     let div = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(div);
-        node.style.display = Display::Block;
-        node.style.height = Length::px(50.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.height = Length::px(50.0));
     }
     doc.append_child(vp, div);
 

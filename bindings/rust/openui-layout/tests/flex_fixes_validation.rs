@@ -25,10 +25,11 @@ fn lu(v: i32) -> LayoutUnit {
 fn make_flex(doc: &mut Document, w: i32, h: i32) -> NodeId {
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(w as f32);
-        s.height = Length::px(h as f32);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(w as f32);
+            s.height = Length::px(h as f32);
+        });
     }
     doc.append_child(doc.root(), c);
     c
@@ -37,9 +38,10 @@ fn make_flex(doc: &mut Document, w: i32, h: i32) -> NodeId {
 fn make_flex_w(doc: &mut Document, w: i32) -> NodeId {
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(w as f32);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(w as f32);
+        });
     }
     doc.append_child(doc.root(), c);
     c
@@ -48,10 +50,11 @@ fn make_flex_w(doc: &mut Document, w: i32) -> NodeId {
 fn add(doc: &mut Document, parent: NodeId, w: i32, h: i32) -> NodeId {
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(w as f32);
-        s.height = Length::px(h as f32);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(w as f32);
+            s.height = Length::px(h as f32);
+        });
     }
     doc.append_child(parent, c);
     c
@@ -60,9 +63,10 @@ fn add(doc: &mut Document, parent: NodeId, w: i32, h: i32) -> NodeId {
 fn add_h(doc: &mut Document, parent: NodeId, h: i32) -> NodeId {
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Block;
-        s.height = Length::px(h as f32);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Block;
+            s.height = Length::px(h as f32);
+        });
     }
     doc.append_child(parent, c);
     c
@@ -84,19 +88,21 @@ fn min_auto_prevents_shrink_below_content() {
     let c = make_flex(&mut doc, 200, 100);
     let item = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(item).style_mut();
-        s.display = Display::Block;
-        s.flex_shrink = 1.0;
+        doc.update_resolved_style(item, |s| {
+            s.display = Display::Block;
+            s.flex_shrink = 1.0;
+        });
         // width:auto, min-width:auto (default)
     }
     doc.append_child(c, item);
     // Child with explicit width provides content minimum
     let inner = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(inner).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(150.0);
-        s.height = Length::px(20.0);
+        doc.update_resolved_style(inner, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(150.0);
+            s.height = Length::px(20.0);
+        });
     }
     doc.append_child(item, inner);
 
@@ -115,20 +121,22 @@ fn min_auto_overflow_hidden_allows_shrink() {
     let c = make_flex(&mut doc, 200, 100);
     let item1 = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(item1).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(150.0);
-        s.flex_shrink = 1.0;
-        s.overflow_x = Overflow::Hidden;
+        doc.update_resolved_style(item1, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(150.0);
+            s.flex_shrink = 1.0;
+            s.overflow_x = Overflow::Hidden;
+        });
     }
     doc.append_child(c, item1);
     let item2 = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(item2).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(150.0);
-        s.flex_shrink = 1.0;
-        s.overflow_x = Overflow::Hidden;
+        doc.update_resolved_style(item2, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(150.0);
+            s.flex_shrink = 1.0;
+            s.overflow_x = Overflow::Hidden;
+        });
     }
     doc.append_child(c, item2);
 
@@ -145,11 +153,12 @@ fn min_auto_overflow_scroll_allows_shrink() {
     let c = make_flex(&mut doc, 200, 100);
     let item = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(item).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(300.0);
-        s.flex_shrink = 1.0;
-        s.overflow_x = Overflow::Scroll;
+        doc.update_resolved_style(item, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(300.0);
+            s.flex_shrink = 1.0;
+            s.overflow_x = Overflow::Scroll;
+        });
     }
     doc.append_child(c, item);
 
@@ -165,19 +174,21 @@ fn min_auto_clamp_by_specified_size() {
     let c = make_flex(&mut doc, 100, 100);
     let item = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(item).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(50.0);
-        s.flex_shrink = 1.0;
+        doc.update_resolved_style(item, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(50.0);
+            s.flex_shrink = 1.0;
+        });
     }
     doc.append_child(c, item);
     // Inner child wider than item's specified width
     let inner = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(inner).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(200.0);
-        s.height = Length::px(10.0);
+        doc.update_resolved_style(inner, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(200.0);
+            s.height = Length::px(10.0);
+        });
     }
     doc.append_child(item, inner);
 
@@ -192,20 +203,22 @@ fn min_auto_column_flex_min_height() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(200.0);
-        s.height = Length::px(100.0);
-        s.flex_direction = FlexDirection::Column;
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(200.0);
+            s.height = Length::px(100.0);
+            s.flex_direction = FlexDirection::Column;
+        });
     }
     doc.append_child(doc.root(), c);
 
     let item = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(item).style_mut();
-        s.display = Display::Block;
-        s.height = Length::px(150.0);
-        s.flex_shrink = 1.0;
+        doc.update_resolved_style(item, |s| {
+            s.display = Display::Block;
+            s.height = Length::px(150.0);
+            s.flex_shrink = 1.0;
+        });
     }
     doc.append_child(c, item);
 
@@ -224,11 +237,12 @@ fn min_auto_explicit_min_width_zero() {
     let c = make_flex(&mut doc, 200, 100);
     let item = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(item).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(300.0);
-        s.flex_shrink = 1.0;
-        s.min_width = Length::px(0.0);
+        doc.update_resolved_style(item, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(300.0);
+            s.flex_shrink = 1.0;
+            s.min_width = Length::px(0.0);
+        });
     }
     doc.append_child(c, item);
 
@@ -250,9 +264,10 @@ fn align_stretch_fills_line_cross_size() {
                                        // Actually, let's use a truly auto-height item
     let item = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(item).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(50.0);
+        doc.update_resolved_style(item, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(50.0);
+        });
     }
     doc.append_child(c, item);
 
@@ -266,11 +281,12 @@ fn align_center_positions_correctly() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(300.0);
-        s.height = Length::px(100.0);
-        s.align_items = ItemAlignment::new(ItemPosition::Center);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(300.0);
+            s.height = Length::px(100.0);
+            s.align_items = ItemAlignment::new(ItemPosition::Center);
+        });
     }
     doc.append_child(doc.root(), c);
     add(&mut doc, c, 50, 40);
@@ -285,11 +301,12 @@ fn align_flex_end_positions_at_bottom() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(300.0);
-        s.height = Length::px(100.0);
-        s.align_items = ItemAlignment::new(ItemPosition::FlexEnd);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(300.0);
+            s.height = Length::px(100.0);
+            s.align_items = ItemAlignment::new(ItemPosition::FlexEnd);
+        });
     }
     doc.append_child(doc.root(), c);
     add(&mut doc, c, 50, 40);
@@ -304,15 +321,18 @@ fn align_self_override() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(300.0);
-        s.height = Length::px(100.0);
-        s.align_items = ItemAlignment::new(ItemPosition::FlexStart);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(300.0);
+            s.height = Length::px(100.0);
+            s.align_items = ItemAlignment::new(ItemPosition::FlexStart);
+        });
     }
     doc.append_child(doc.root(), c);
     let item = add(&mut doc, c, 50, 40);
-    doc.node_mut(item).style_mut().align_self = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(item, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Center)
+    });
 
     let f = lay(&doc, c, 300, 100);
     assert_eq!(f.children[0].offset.top, lu(30));
@@ -325,11 +345,12 @@ fn align_stretch_with_margins() {
     let c = make_flex(&mut doc, 300, 100);
     let item = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(item).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(50.0);
-        s.margin_top = Length::px(10.0);
-        s.margin_bottom = Length::px(10.0);
+        doc.update_resolved_style(item, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(50.0);
+            s.margin_top = Length::px(10.0);
+            s.margin_bottom = Length::px(10.0);
+        });
         // height:auto → stretch
     }
     doc.append_child(c, item);
@@ -356,11 +377,12 @@ fn align_center_in_multiline() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(200.0);
-        s.height = Length::px(200.0);
-        s.flex_wrap = FlexWrap::Wrap;
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(200.0);
+            s.height = Length::px(200.0);
+            s.flex_wrap = FlexWrap::Wrap;
+        });
     }
     doc.append_child(doc.root(), c);
 
@@ -370,7 +392,9 @@ fn align_center_in_multiline() {
     // Line 2: one tall + one short centered
     add(&mut doc, c, 100, 60);
     let short = add(&mut doc, c, 100, 30);
-    doc.node_mut(short).style_mut().align_self = ItemAlignment::new(ItemPosition::Center);
+    doc.update_resolved_style(short, |style| {
+        style.align_self = ItemAlignment::new(ItemPosition::Center)
+    });
 
     let f = lay(&doc, c, 200, 200);
     // align-content:normal → stretch. Free=200-60-60=80. +40 per line.
@@ -384,12 +408,13 @@ fn align_self_column_flex() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(200.0);
-        s.height = Length::px(300.0);
-        s.flex_direction = FlexDirection::Column;
-        s.align_items = ItemAlignment::new(ItemPosition::Center);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(200.0);
+            s.height = Length::px(300.0);
+            s.flex_direction = FlexDirection::Column;
+            s.align_items = ItemAlignment::new(ItemPosition::Center);
+        });
     }
     doc.append_child(doc.root(), c);
     add(&mut doc, c, 80, 50);
@@ -408,13 +433,14 @@ fn column_wrap_basic() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(300.0);
-        s.height = Length::px(100.0);
-        s.flex_direction = FlexDirection::Column;
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(300.0);
+            s.height = Length::px(100.0);
+            s.flex_direction = FlexDirection::Column;
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        });
     }
     doc.append_child(doc.root(), c);
 
@@ -436,13 +462,14 @@ fn column_wrap_line_cross_offset() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(400.0);
-        s.height = Length::px(100.0);
-        s.flex_direction = FlexDirection::Column;
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(400.0);
+            s.height = Length::px(100.0);
+            s.flex_direction = FlexDirection::Column;
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        });
     }
     doc.append_child(doc.root(), c);
 
@@ -466,36 +493,39 @@ fn column_wrap_intrinsic_width() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.flex_direction = FlexDirection::Column;
-        s.flex_wrap = FlexWrap::Wrap;
-        s.max_height = Length::px(100.0);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.flex_direction = FlexDirection::Column;
+            s.flex_wrap = FlexWrap::Wrap;
+            s.max_height = Length::px(100.0);
+        });
     }
     doc.append_child(doc.root(), c);
 
     // Two items each 100px tall, 50px wide. max-height:100 → each on its own column.
     let c1 = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c1).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(50.0);
-        s.flex_grow = 0.0;
-        s.flex_shrink = 0.0;
-        s.flex_basis = Length::px(100.0);
-        s.min_height = Length::px(0.0);
+        doc.update_resolved_style(c1, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(50.0);
+            s.flex_grow = 0.0;
+            s.flex_shrink = 0.0;
+            s.flex_basis = Length::px(100.0);
+            s.min_height = Length::px(0.0);
+        });
     }
     doc.append_child(c, c1);
 
     let c2 = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c2).style_mut();
-        s.display = Display::Block;
-        s.width = Length::px(50.0);
-        s.flex_grow = 0.0;
-        s.flex_shrink = 0.0;
-        s.flex_basis = Length::px(100.0);
-        s.min_height = Length::px(0.0);
+        doc.update_resolved_style(c2, |s| {
+            s.display = Display::Block;
+            s.width = Length::px(50.0);
+            s.flex_grow = 0.0;
+            s.flex_shrink = 0.0;
+            s.flex_basis = Length::px(100.0);
+            s.min_height = Length::px(0.0);
+        });
     }
     doc.append_child(c, c2);
 
@@ -510,13 +540,14 @@ fn column_wrap_two_items_per_column() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(300.0);
-        s.height = Length::px(120.0);
-        s.flex_direction = FlexDirection::Column;
-        s.flex_wrap = FlexWrap::Wrap;
-        s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(300.0);
+            s.height = Length::px(120.0);
+            s.flex_direction = FlexDirection::Column;
+            s.flex_wrap = FlexWrap::Wrap;
+            s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        });
     }
     doc.append_child(doc.root(), c);
 
@@ -541,14 +572,15 @@ fn column_wrap_with_gap_between_lines() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(400.0);
-        s.height = Length::px(100.0);
-        s.flex_direction = FlexDirection::Column;
-        s.flex_wrap = FlexWrap::Wrap;
-        s.column_gap = Some(Length::px(10.0)); // gap between columns
-        s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(400.0);
+            s.height = Length::px(100.0);
+            s.flex_direction = FlexDirection::Column;
+            s.flex_wrap = FlexWrap::Wrap;
+            s.column_gap = Some(Length::px(10.0)); // gap between columns
+            s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        });
     }
     doc.append_child(doc.root(), c);
 
@@ -570,11 +602,12 @@ fn gap_column_gap_basic() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(400.0);
-        s.height = Length::px(100.0);
-        s.column_gap = Some(Length::px(20.0));
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(400.0);
+            s.height = Length::px(100.0);
+            s.column_gap = Some(Length::px(20.0));
+        });
     }
     doc.append_child(doc.root(), c);
 
@@ -594,12 +627,13 @@ fn gap_row_gap_between_lines() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(200.0);
-        s.flex_wrap = FlexWrap::Wrap;
-        s.row_gap = Some(Length::px(10.0));
-        s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(200.0);
+            s.flex_wrap = FlexWrap::Wrap;
+            s.row_gap = Some(Length::px(10.0));
+            s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        });
     }
     doc.append_child(doc.root(), c);
 
@@ -620,21 +654,23 @@ fn gap_does_not_participate_in_grow() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(400.0);
-        s.height = Length::px(100.0);
-        s.column_gap = Some(Length::px(20.0));
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(400.0);
+            s.height = Length::px(100.0);
+            s.column_gap = Some(Length::px(20.0));
+        });
     }
     doc.append_child(doc.root(), c);
 
     for _ in 0..2 {
         let item = doc.create_node(ElementTag::Div);
         {
-            let s = doc.node_mut(item).style_mut();
-            s.display = Display::Block;
-            s.flex_grow = 1.0;
-            s.height = Length::px(50.0);
+            doc.update_resolved_style(item, |s| {
+                s.display = Display::Block;
+                s.flex_grow = 1.0;
+                s.height = Length::px(50.0);
+            });
         }
         doc.append_child(c, item);
     }
@@ -650,20 +686,22 @@ fn gap_single_item_no_gap() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(400.0);
-        s.height = Length::px(100.0);
-        s.column_gap = Some(Length::px(20.0));
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(400.0);
+            s.height = Length::px(100.0);
+            s.column_gap = Some(Length::px(20.0));
+        });
     }
     doc.append_child(doc.root(), c);
 
     let item = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(item).style_mut();
-        s.display = Display::Block;
-        s.flex_grow = 1.0;
-        s.height = Length::px(50.0);
+        doc.update_resolved_style(item, |s| {
+            s.display = Display::Block;
+            s.flex_grow = 1.0;
+            s.height = Length::px(50.0);
+        });
     }
     doc.append_child(c, item);
 
@@ -677,12 +715,13 @@ fn gap_in_column_flex() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(200.0);
-        s.height = Length::px(300.0);
-        s.flex_direction = FlexDirection::Column;
-        s.row_gap = Some(Length::px(10.0)); // row_gap = main axis gap for column
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(200.0);
+            s.height = Length::px(300.0);
+            s.flex_direction = FlexDirection::Column;
+            s.row_gap = Some(Length::px(10.0)); // row_gap = main axis gap for column
+        });
     }
     doc.append_child(doc.root(), c);
 
@@ -702,13 +741,14 @@ fn gap_with_wrap_both_gaps() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(200.0);
-        s.flex_wrap = FlexWrap::Wrap;
-        s.column_gap = Some(Length::px(10.0));
-        s.row_gap = Some(Length::px(5.0));
-        s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(200.0);
+            s.flex_wrap = FlexWrap::Wrap;
+            s.column_gap = Some(Length::px(10.0));
+            s.row_gap = Some(Length::px(5.0));
+            s.align_content = ContentAlignment::new(ContentPosition::FlexStart);
+        });
     }
     doc.append_child(doc.root(), c);
 
@@ -734,11 +774,12 @@ fn gap_not_before_first_or_after_last() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(200.0);
-        s.height = Length::px(100.0);
-        s.column_gap = Some(Length::px(20.0));
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(200.0);
+            s.height = Length::px(100.0);
+            s.column_gap = Some(Length::px(20.0));
+        });
     }
     doc.append_child(doc.root(), c);
 
@@ -754,12 +795,14 @@ fn gap_with_space_between() {
     let mut doc = Document::new();
     let c = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(c).style_mut();
-        s.display = Display::Flex;
-        s.width = Length::px(400.0);
-        s.height = Length::px(100.0);
-        s.column_gap = Some(Length::px(10.0));
-        s.justify_content = ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        doc.update_resolved_style(c, |s| {
+            s.display = Display::Flex;
+            s.width = Length::px(400.0);
+            s.height = Length::px(100.0);
+            s.column_gap = Some(Length::px(10.0));
+            s.justify_content =
+                ContentAlignment::with_distribution(ContentDistribution::SpaceBetween);
+        });
     }
     doc.append_child(doc.root(), c);
 
@@ -787,18 +830,20 @@ fn inline_children_max_content_sums() {
     let mut doc = Document::new();
     let parent = doc.create_node(ElementTag::Div);
     {
-        let s = doc.node_mut(parent).style_mut();
-        s.display = Display::Block;
+        doc.update_resolved_style(parent, |s| {
+            s.display = Display::Block;
+        });
     }
     doc.append_child(doc.root(), parent);
 
     for _ in 0..2 {
         let ib = doc.create_node(ElementTag::Div);
         {
-            let s = doc.node_mut(ib).style_mut();
-            s.display = Display::InlineBlock;
-            s.width = Length::px(10.0);
-            s.height = Length::px(10.0);
+            doc.update_resolved_style(ib, |s| {
+                s.display = Display::InlineBlock;
+                s.width = Length::px(10.0);
+                s.height = Length::px(10.0);
+            });
         }
         doc.append_child(parent, ib);
     }

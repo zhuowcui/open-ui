@@ -81,13 +81,13 @@ pub struct ChildBuilder<'a> {
 impl<'a> ChildBuilder<'a> {
     fn new(parent: &'a mut BlockTestBuilder) -> Self {
         let mut style = ComputedStyle::initial();
-        style.display = Display::Block;
+        style.update_derived(|computed| computed.display = Display::Block);
         // Default to overflow:hidden so test children establish a new BFC.
         // CSS 2.1 §9.5: only BFC children avoid float overlap; non-BFC
         // blocks overlap floats (only their line boxes avoid them).
         // Tests needing self-collapsing blocks should use .overflow(Visible).
-        style.overflow_x = Overflow::Hidden;
-        style.overflow_y = Overflow::Hidden;
+        style.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+        style.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
         Self {
             parent,
             style,
@@ -99,59 +99,71 @@ impl<'a> ChildBuilder<'a> {
     // ── Sizing ───────────────────────────────────────────────────────
 
     pub fn width(mut self, v: f32) -> Self {
-        self.style.width = Length::px(v);
+        self.style
+            .update_derived(|computed| computed.width = Length::px(v));
         self
     }
 
     pub fn height(mut self, v: f32) -> Self {
-        self.style.height = Length::px(v);
+        self.style
+            .update_derived(|computed| computed.height = Length::px(v));
         self
     }
 
     pub fn min_width(mut self, v: f32) -> Self {
-        self.style.min_width = Length::px(v);
+        self.style
+            .update_derived(|computed| computed.min_width = Length::px(v));
         self
     }
 
     pub fn min_height(mut self, v: f32) -> Self {
-        self.style.min_height = Length::px(v);
+        self.style
+            .update_derived(|computed| computed.min_height = Length::px(v));
         self
     }
 
     pub fn max_width(mut self, v: f32) -> Self {
-        self.style.max_width = Length::px(v);
+        self.style
+            .update_derived(|computed| computed.max_width = Length::px(v));
         self
     }
 
     pub fn max_height(mut self, v: f32) -> Self {
-        self.style.max_height = Length::px(v);
+        self.style
+            .update_derived(|computed| computed.max_height = Length::px(v));
         self
     }
 
     pub fn width_pct(mut self, v: f32) -> Self {
-        self.style.width = Length::percent(v);
+        self.style
+            .update_derived(|computed| computed.width = Length::percent(v));
         self
     }
 
     pub fn height_pct(mut self, v: f32) -> Self {
-        self.style.height = Length::percent(v);
+        self.style
+            .update_derived(|computed| computed.height = Length::percent(v));
         self
     }
 
     pub fn width_auto(mut self) -> Self {
-        self.style.width = Length::auto();
+        self.style
+            .update_derived(|computed| computed.width = Length::auto());
         self
     }
 
     pub fn height_auto(mut self) -> Self {
-        self.style.height = Length::auto();
+        self.style
+            .update_derived(|computed| computed.height = Length::auto());
         self
     }
 
     /// Set the child as a replaced element with a fixed intrinsic size.
     pub fn fixed_size(mut self, w: f32, h: f32) -> Self {
-        self.style.width = Length::px(w);
-        self.style.height = Length::px(h);
+        self.style
+            .update_derived(|computed| computed.width = Length::px(w));
+        self.style
+            .update_derived(|computed| computed.height = Length::px(h));
         self.content = TestContent::FixedSize(PhysicalSize::new(lu(w as i32), lu(h as i32)));
         self
     }
@@ -160,137 +172,173 @@ impl<'a> ChildBuilder<'a> {
 
     /// Set all four margins (top, right, bottom, left) in pixels.
     pub fn margin(mut self, top: i32, right: i32, bottom: i32, left: i32) -> Self {
-        self.style.margin_top = Length::px(top as f32);
-        self.style.margin_right = Length::px(right as f32);
-        self.style.margin_bottom = Length::px(bottom as f32);
-        self.style.margin_left = Length::px(left as f32);
+        self.style
+            .update_derived(|computed| computed.margin_top = Length::px(top as f32));
+        self.style
+            .update_derived(|computed| computed.margin_right = Length::px(right as f32));
+        self.style
+            .update_derived(|computed| computed.margin_bottom = Length::px(bottom as f32));
+        self.style
+            .update_derived(|computed| computed.margin_left = Length::px(left as f32));
         self
     }
 
     /// Set margin-top only.
     pub fn margin_top(mut self, v: i32) -> Self {
-        self.style.margin_top = Length::px(v as f32);
+        self.style
+            .update_derived(|computed| computed.margin_top = Length::px(v as f32));
         self
     }
 
     /// Set margin-bottom only.
     pub fn margin_bottom(mut self, v: i32) -> Self {
-        self.style.margin_bottom = Length::px(v as f32);
+        self.style
+            .update_derived(|computed| computed.margin_bottom = Length::px(v as f32));
         self
     }
 
     /// Set horizontal margins to `auto` (for centering).
     pub fn margin_auto_horizontal(mut self) -> Self {
-        self.style.margin_left = Length::auto();
-        self.style.margin_right = Length::auto();
+        self.style
+            .update_derived(|computed| computed.margin_left = Length::auto());
+        self.style
+            .update_derived(|computed| computed.margin_right = Length::auto());
         self
     }
 
     /// Set all four paddings (top, right, bottom, left) in pixels.
     pub fn padding(mut self, top: i32, right: i32, bottom: i32, left: i32) -> Self {
-        self.style.padding_top = Length::px(top as f32);
-        self.style.padding_right = Length::px(right as f32);
-        self.style.padding_bottom = Length::px(bottom as f32);
-        self.style.padding_left = Length::px(left as f32);
+        self.style
+            .update_derived(|computed| computed.padding_top = Length::px(top as f32));
+        self.style
+            .update_derived(|computed| computed.padding_right = Length::px(right as f32));
+        self.style
+            .update_derived(|computed| computed.padding_bottom = Length::px(bottom as f32));
+        self.style
+            .update_derived(|computed| computed.padding_left = Length::px(left as f32));
         self
     }
 
     /// Set all four border widths (top, right, bottom, left) in pixels.
     /// Also sets border-style to `solid` so the widths take effect.
     pub fn border(mut self, top: i32, right: i32, bottom: i32, left: i32) -> Self {
-        self.style.border_top_width = top;
-        self.style.border_right_width = right;
-        self.style.border_bottom_width = bottom;
-        self.style.border_left_width = left;
-        self.style.border_top_style = BorderStyle::Solid;
-        self.style.border_right_style = BorderStyle::Solid;
-        self.style.border_bottom_style = BorderStyle::Solid;
-        self.style.border_left_style = BorderStyle::Solid;
+        self.style
+            .update_derived(|computed| computed.border_top_width = top);
+        self.style
+            .update_derived(|computed| computed.border_right_width = right);
+        self.style
+            .update_derived(|computed| computed.border_bottom_width = bottom);
+        self.style
+            .update_derived(|computed| computed.border_left_width = left);
+        self.style
+            .update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        self.style
+            .update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        self.style
+            .update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        self.style
+            .update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
         self
     }
 
     // ── Positioning & float ──────────────────────────────────────────
 
     pub fn float(mut self, f: Float) -> Self {
-        self.style.float = f;
+        self.style.update_derived(|computed| computed.float = f);
         self
     }
 
     pub fn float_left(mut self) -> Self {
-        self.style.float = Float::Left;
+        self.style
+            .update_derived(|computed| computed.float = Float::Left);
         self
     }
 
     pub fn float_right(mut self) -> Self {
-        self.style.float = Float::Right;
+        self.style
+            .update_derived(|computed| computed.float = Float::Right);
         self
     }
 
     pub fn clear(mut self, c: Clear) -> Self {
-        self.style.clear = c;
+        self.style.update_derived(|computed| computed.clear = c);
         self
     }
 
     pub fn clear_left(mut self) -> Self {
-        self.style.clear = Clear::Left;
+        self.style
+            .update_derived(|computed| computed.clear = Clear::Left);
         self
     }
 
     pub fn clear_right(mut self) -> Self {
-        self.style.clear = Clear::Right;
+        self.style
+            .update_derived(|computed| computed.clear = Clear::Right);
         self
     }
 
     pub fn clear_both(mut self) -> Self {
-        self.style.clear = Clear::Both;
+        self.style
+            .update_derived(|computed| computed.clear = Clear::Both);
         self
     }
 
     pub fn position(mut self, p: Position) -> Self {
-        self.style.position = p;
+        self.style.update_derived(|computed| computed.position = p);
         self
     }
 
     pub fn position_relative(mut self) -> Self {
-        self.style.position = Position::Relative;
+        self.style
+            .update_derived(|computed| computed.position = Position::Relative);
         self
     }
 
     pub fn position_absolute(mut self) -> Self {
-        self.style.position = Position::Absolute;
+        self.style
+            .update_derived(|computed| computed.position = Position::Absolute);
         self
     }
 
     /// Set inset properties (top, right, bottom, left) for positioned elements.
     pub fn inset(mut self, top: i32, right: i32, bottom: i32, left: i32) -> Self {
-        self.style.top = Length::px(top as f32);
-        self.style.right = Length::px(right as f32);
-        self.style.bottom = Length::px(bottom as f32);
-        self.style.left = Length::px(left as f32);
+        self.style
+            .update_derived(|computed| computed.top = Length::px(top as f32));
+        self.style
+            .update_derived(|computed| computed.right = Length::px(right as f32));
+        self.style
+            .update_derived(|computed| computed.bottom = Length::px(bottom as f32));
+        self.style
+            .update_derived(|computed| computed.left = Length::px(left as f32));
         self
     }
 
     // ── Display & overflow ───────────────────────────────────────────
 
     pub fn display(mut self, d: Display) -> Self {
-        self.style.display = d;
+        self.style.update_derived(|computed| computed.display = d);
         self
     }
 
     pub fn overflow(mut self, o: Overflow) -> Self {
-        self.style.overflow_x = o;
-        self.style.overflow_y = o;
+        self.style
+            .update_derived(|computed| computed.overflow_x = o);
+        self.style
+            .update_derived(|computed| computed.overflow_y = o);
         self
     }
 
     pub fn overflow_hidden(mut self) -> Self {
-        self.style.overflow_x = Overflow::Hidden;
-        self.style.overflow_y = Overflow::Hidden;
+        self.style
+            .update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+        self.style
+            .update_derived(|computed| computed.overflow_y = Overflow::Hidden);
         self
     }
 
     pub fn box_sizing_border_box(mut self) -> Self {
-        self.style.box_sizing = BoxSizing::BorderBox;
+        self.style
+            .update_derived(|computed| computed.box_sizing = BoxSizing::BorderBox);
         self
     }
 
@@ -302,8 +350,8 @@ impl<'a> ChildBuilder<'a> {
     }
 
     /// Apply an arbitrary style mutation via a closure.
-    pub fn with_style(mut self, f: impl FnOnce(&mut ComputedStyle)) -> Self {
-        f(&mut self.style);
+    pub fn with_style(mut self, f: impl FnOnce(&mut openui_style::ComputedStyleFields)) -> Self {
+        self.style.update_derived(f);
         self
     }
 
@@ -342,7 +390,7 @@ pub struct NestedChildBuilder<'a> {
 impl<'a> NestedChildBuilder<'a> {
     fn new(parent_builder: ChildBuilder<'a>) -> Self {
         let mut style = ComputedStyle::initial();
-        style.display = Display::Block;
+        style.update_derived(|computed| computed.display = Display::Block);
         Self {
             parent_builder,
             style,
@@ -351,73 +399,97 @@ impl<'a> NestedChildBuilder<'a> {
     }
 
     pub fn width(mut self, v: f32) -> Self {
-        self.style.width = Length::px(v);
+        self.style
+            .update_derived(|computed| computed.width = Length::px(v));
         self
     }
 
     pub fn height(mut self, v: f32) -> Self {
-        self.style.height = Length::px(v);
+        self.style
+            .update_derived(|computed| computed.height = Length::px(v));
         self
     }
 
     pub fn fixed_size(mut self, w: f32, h: f32) -> Self {
-        self.style.width = Length::px(w);
-        self.style.height = Length::px(h);
+        self.style
+            .update_derived(|computed| computed.width = Length::px(w));
+        self.style
+            .update_derived(|computed| computed.height = Length::px(h));
         self.content = TestContent::FixedSize(PhysicalSize::new(lu(w as i32), lu(h as i32)));
         self
     }
 
     pub fn margin(mut self, top: i32, right: i32, bottom: i32, left: i32) -> Self {
-        self.style.margin_top = Length::px(top as f32);
-        self.style.margin_right = Length::px(right as f32);
-        self.style.margin_bottom = Length::px(bottom as f32);
-        self.style.margin_left = Length::px(left as f32);
+        self.style
+            .update_derived(|computed| computed.margin_top = Length::px(top as f32));
+        self.style
+            .update_derived(|computed| computed.margin_right = Length::px(right as f32));
+        self.style
+            .update_derived(|computed| computed.margin_bottom = Length::px(bottom as f32));
+        self.style
+            .update_derived(|computed| computed.margin_left = Length::px(left as f32));
         self
     }
 
     pub fn padding(mut self, top: i32, right: i32, bottom: i32, left: i32) -> Self {
-        self.style.padding_top = Length::px(top as f32);
-        self.style.padding_right = Length::px(right as f32);
-        self.style.padding_bottom = Length::px(bottom as f32);
-        self.style.padding_left = Length::px(left as f32);
+        self.style
+            .update_derived(|computed| computed.padding_top = Length::px(top as f32));
+        self.style
+            .update_derived(|computed| computed.padding_right = Length::px(right as f32));
+        self.style
+            .update_derived(|computed| computed.padding_bottom = Length::px(bottom as f32));
+        self.style
+            .update_derived(|computed| computed.padding_left = Length::px(left as f32));
         self
     }
 
     pub fn border(mut self, top: i32, right: i32, bottom: i32, left: i32) -> Self {
-        self.style.border_top_width = top;
-        self.style.border_right_width = right;
-        self.style.border_bottom_width = bottom;
-        self.style.border_left_width = left;
-        self.style.border_top_style = BorderStyle::Solid;
-        self.style.border_right_style = BorderStyle::Solid;
-        self.style.border_bottom_style = BorderStyle::Solid;
-        self.style.border_left_style = BorderStyle::Solid;
+        self.style
+            .update_derived(|computed| computed.border_top_width = top);
+        self.style
+            .update_derived(|computed| computed.border_right_width = right);
+        self.style
+            .update_derived(|computed| computed.border_bottom_width = bottom);
+        self.style
+            .update_derived(|computed| computed.border_left_width = left);
+        self.style
+            .update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        self.style
+            .update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        self.style
+            .update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        self.style
+            .update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
         self
     }
 
     pub fn float_left(mut self) -> Self {
-        self.style.float = Float::Left;
+        self.style
+            .update_derived(|computed| computed.float = Float::Left);
         self
     }
 
     pub fn float_right(mut self) -> Self {
-        self.style.float = Float::Right;
+        self.style
+            .update_derived(|computed| computed.float = Float::Right);
         self
     }
 
     pub fn overflow_hidden(mut self) -> Self {
-        self.style.overflow_x = Overflow::Hidden;
-        self.style.overflow_y = Overflow::Hidden;
+        self.style
+            .update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+        self.style
+            .update_derived(|computed| computed.overflow_y = Overflow::Hidden);
         self
     }
 
     pub fn display(mut self, d: Display) -> Self {
-        self.style.display = d;
+        self.style.update_derived(|computed| computed.display = d);
         self
     }
 
-    pub fn with_style(mut self, f: impl FnOnce(&mut ComputedStyle)) -> Self {
-        f(&mut self.style);
+    pub fn with_style(mut self, f: impl FnOnce(&mut openui_style::ComputedStyleFields)) -> Self {
+        self.style.update_derived(f);
         self
     }
 
@@ -448,9 +520,9 @@ impl BlockTestBuilder {
     /// Create a new builder with the given container (viewport) dimensions.
     pub fn new(width: i32, height: i32) -> Self {
         let mut style = ComputedStyle::initial();
-        style.display = Display::Block;
-        style.width = Length::px(width as f32);
-        style.height = Length::px(height as f32);
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.width = Length::px(width as f32));
+        style.update_derived(|computed| computed.height = Length::px(height as f32));
         Self {
             container_style: style,
             container_width: width,
@@ -466,8 +538,11 @@ impl BlockTestBuilder {
     }
 
     /// Mutate the container style via a closure.
-    pub fn with_container_style(mut self, f: impl FnOnce(&mut ComputedStyle)) -> Self {
-        f(&mut self.container_style);
+    pub fn with_container_style(
+        mut self,
+        f: impl FnOnce(&mut openui_style::ComputedStyleFields),
+    ) -> Self {
+        self.container_style.update_derived(f);
         self
     }
 
@@ -717,112 +792,142 @@ pub fn style_builder() -> StyleBuilder {
 
 impl StyleBuilder {
     pub fn width(mut self, v: f32) -> Self {
-        self.style.width = Length::px(v);
+        self.style
+            .update_derived(|computed| computed.width = Length::px(v));
         self
     }
 
     pub fn height(mut self, v: f32) -> Self {
-        self.style.height = Length::px(v);
+        self.style
+            .update_derived(|computed| computed.height = Length::px(v));
         self
     }
 
     pub fn width_auto(mut self) -> Self {
-        self.style.width = Length::auto();
+        self.style
+            .update_derived(|computed| computed.width = Length::auto());
         self
     }
 
     pub fn height_auto(mut self) -> Self {
-        self.style.height = Length::auto();
+        self.style
+            .update_derived(|computed| computed.height = Length::auto());
         self
     }
 
     pub fn width_pct(mut self, v: f32) -> Self {
-        self.style.width = Length::percent(v);
+        self.style
+            .update_derived(|computed| computed.width = Length::percent(v));
         self
     }
 
     pub fn height_pct(mut self, v: f32) -> Self {
-        self.style.height = Length::percent(v);
+        self.style
+            .update_derived(|computed| computed.height = Length::percent(v));
         self
     }
 
     pub fn margin(mut self, top: i32, right: i32, bottom: i32, left: i32) -> Self {
-        self.style.margin_top = Length::px(top as f32);
-        self.style.margin_right = Length::px(right as f32);
-        self.style.margin_bottom = Length::px(bottom as f32);
-        self.style.margin_left = Length::px(left as f32);
+        self.style
+            .update_derived(|computed| computed.margin_top = Length::px(top as f32));
+        self.style
+            .update_derived(|computed| computed.margin_right = Length::px(right as f32));
+        self.style
+            .update_derived(|computed| computed.margin_bottom = Length::px(bottom as f32));
+        self.style
+            .update_derived(|computed| computed.margin_left = Length::px(left as f32));
         self
     }
 
     pub fn padding(mut self, top: i32, right: i32, bottom: i32, left: i32) -> Self {
-        self.style.padding_top = Length::px(top as f32);
-        self.style.padding_right = Length::px(right as f32);
-        self.style.padding_bottom = Length::px(bottom as f32);
-        self.style.padding_left = Length::px(left as f32);
+        self.style
+            .update_derived(|computed| computed.padding_top = Length::px(top as f32));
+        self.style
+            .update_derived(|computed| computed.padding_right = Length::px(right as f32));
+        self.style
+            .update_derived(|computed| computed.padding_bottom = Length::px(bottom as f32));
+        self.style
+            .update_derived(|computed| computed.padding_left = Length::px(left as f32));
         self
     }
 
     pub fn border_width(mut self, top: i32, right: i32, bottom: i32, left: i32) -> Self {
-        self.style.border_top_width = top;
-        self.style.border_right_width = right;
-        self.style.border_bottom_width = bottom;
-        self.style.border_left_width = left;
-        self.style.border_top_style = BorderStyle::Solid;
-        self.style.border_right_style = BorderStyle::Solid;
-        self.style.border_bottom_style = BorderStyle::Solid;
-        self.style.border_left_style = BorderStyle::Solid;
+        self.style
+            .update_derived(|computed| computed.border_top_width = top);
+        self.style
+            .update_derived(|computed| computed.border_right_width = right);
+        self.style
+            .update_derived(|computed| computed.border_bottom_width = bottom);
+        self.style
+            .update_derived(|computed| computed.border_left_width = left);
+        self.style
+            .update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        self.style
+            .update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        self.style
+            .update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        self.style
+            .update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
         self
     }
 
     pub fn float_left(mut self) -> Self {
-        self.style.float = Float::Left;
+        self.style
+            .update_derived(|computed| computed.float = Float::Left);
         self
     }
 
     pub fn float_right(mut self) -> Self {
-        self.style.float = Float::Right;
+        self.style
+            .update_derived(|computed| computed.float = Float::Right);
         self
     }
 
     pub fn clear(mut self, c: Clear) -> Self {
-        self.style.clear = c;
+        self.style.update_derived(|computed| computed.clear = c);
         self
     }
 
     pub fn clear_both(mut self) -> Self {
-        self.style.clear = Clear::Both;
+        self.style
+            .update_derived(|computed| computed.clear = Clear::Both);
         self
     }
 
     pub fn position_relative(mut self) -> Self {
-        self.style.position = Position::Relative;
+        self.style
+            .update_derived(|computed| computed.position = Position::Relative);
         self
     }
 
     pub fn position_absolute(mut self) -> Self {
-        self.style.position = Position::Absolute;
+        self.style
+            .update_derived(|computed| computed.position = Position::Absolute);
         self
     }
 
     pub fn overflow_hidden(mut self) -> Self {
-        self.style.overflow_x = Overflow::Hidden;
-        self.style.overflow_y = Overflow::Hidden;
+        self.style
+            .update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+        self.style
+            .update_derived(|computed| computed.overflow_y = Overflow::Hidden);
         self
     }
 
     pub fn display(mut self, d: Display) -> Self {
-        self.style.display = d;
+        self.style.update_derived(|computed| computed.display = d);
         self
     }
 
     pub fn box_sizing_border_box(mut self) -> Self {
-        self.style.box_sizing = BoxSizing::BorderBox;
+        self.style
+            .update_derived(|computed| computed.box_sizing = BoxSizing::BorderBox);
         self
     }
 
     /// Apply an arbitrary style mutation via a closure.
-    pub fn with(mut self, f: impl FnOnce(&mut ComputedStyle)) -> Self {
-        f(&mut self.style);
+    pub fn with(mut self, f: impl FnOnce(&mut openui_style::ComputedStyleFields)) -> Self {
+        self.style.update_derived(f);
         self
     }
 

@@ -887,7 +887,13 @@ impl ColumnLayoutAlgorithm {
                 // We don't have that here yet, so use 0 as placeholder.
                 LayoutUnit::zero()
             }
-            _ => LayoutUnit::from_f32(style.font_size), // CSS default `normal` = 1em
+            // Blink resolves the `normal` multicol gap from the font's used
+            // pixel size. A fractional computed size (notably the UA `h3`
+            // size, 18.72px at a 16px root) therefore contributes a 19px
+            // gap. Keeping the unrounded computed value shifts every later
+            // column by a fractional layout cell even though the same font's
+            // used advance and line height are integral.
+            _ => LayoutUnit::from_f32(style.font_size.round()),
         };
 
         let column_rule = if style.column_rule_style.has_visible_border() {
@@ -950,6 +956,17 @@ mod tests {
         let expected =
             LayoutUnit::from_raw((LayoutUnit::from_i32(900) - LayoutUnit::from_i32(40)).raw() / 3);
         assert_eq!(r.width, expected);
+    }
+
+    #[test]
+    fn normal_gap_uses_the_font_used_pixel_size() {
+        let mut style = ComputedStyle::default();
+        style.update_derived(|style| {
+            style.column_count = Some(2);
+            style.font_size = 18.72;
+        });
+        let algorithm = ColumnLayoutAlgorithm::from_style(&style).unwrap();
+        assert_eq!(algorithm.column_gap, LayoutUnit::from_i32(19));
     }
 
     #[test]

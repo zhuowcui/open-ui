@@ -18,6 +18,7 @@
 
 use skia_safe::{Canvas, ColorSpace, Paint, PaintStyle, PathBuilder, PathEffect, Point, Rect};
 
+use openui_geometry::{PhysicalSnap, RasterSnapping};
 use openui_style::ComputedStyle;
 use openui_style::{TextDecorationSkipInk, TextDecorationStyle, TextDecorationThickness};
 use openui_text::font::FontMetrics;
@@ -89,7 +90,12 @@ pub fn paint_text_decorations(
     // Resolve decoration thickness.
     // Blink: TextDecorationInfo::ResolvedThickness() — uses UnderlineThickness()
     // for ALL decoration types (underline, overline, and line-through).
-    let thickness = resolve_thickness(&style.text_decoration_thickness, metrics, style.font_size);
+    let thickness = resolve_thickness(
+        &style.text_decoration_thickness,
+        metrics,
+        style.font_size,
+        style.device_scale_factor,
+    );
 
     // Build the base paint for decorations.
     let mut paint = Paint::default();
@@ -465,6 +471,7 @@ fn resolve_thickness(
     thickness: &TextDecorationThickness,
     metrics: &FontMetrics,
     font_size: f32,
+    device_scale_factor: f64,
 ) -> f32 {
     let t = match thickness {
         TextDecorationThickness::Auto => {
@@ -483,8 +490,9 @@ fn resolve_thickness(
             }
         }
         TextDecorationThickness::Length(px) => {
-            // Blink: roundf(text_decoration_thickness_pixels), minimum 1px.
-            px.round().max(1.0)
+            // Explicit lengths snap to the nearest physical pixel after the
+            // device scale is known. The returned width stays logical.
+            RasterSnapping::new(device_scale_factor).logical_length(*px, PhysicalSnap::Nearest, 1)
         }
     };
     // Clamp to a positive minimum to prevent infinite loops in draw routines
@@ -679,7 +687,7 @@ mod tests {
             ..FontMetrics::zero()
         };
         // auto: font_size / 10.0, no rounding (matches Blink), min 1px
-        let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 16.0);
+        let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 16.0, 1.0);
         // 16.0 / 10.0 = 1.6 → max(1.0) → 1.6 (no rounding)
         assert_eq!(t, 1.6);
     }
@@ -687,7 +695,7 @@ mod tests {
     #[test]
     fn auto_thickness_small_font_clamps_to_1() {
         let metrics = FontMetrics::zero();
-        let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 8.0);
+        let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 8.0, 1.0);
         // 8.0 / 10.0 = 0.8 → max(1.0) → 1.0
         assert_eq!(t, 1.0);
     }
@@ -698,7 +706,7 @@ mod tests {
             underline_thickness: 1.7,
             ..FontMetrics::zero()
         };
-        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0);
+        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0, 1.0);
         // 1.7 → max(1.0) → 1.7 (no rounding, matches Blink)
         assert_eq!(t, 1.7);
     }
@@ -709,7 +717,7 @@ mod tests {
             underline_thickness: 0.0,
             ..FontMetrics::zero()
         };
-        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 20.0);
+        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 20.0, 1.0);
         // fallback: 20.0 / 10.0 = 2.0 → max(1.0) → 2.0
         assert_eq!(t, 2.0);
     }
@@ -717,9 +725,9 @@ mod tests {
     #[test]
     fn explicit_length_rounds_to_device_pixel() {
         let metrics = FontMetrics::zero();
-        let t = resolve_thickness(&TextDecorationThickness::Length(1.4), &metrics, 16.0);
+        let t = resolve_thickness(&TextDecorationThickness::Length(1.4), &metrics, 16.0, 1.0);
         assert_eq!(t, 1.0); // 1.4 → round → 1.0
-        let t2 = resolve_thickness(&TextDecorationThickness::Length(1.6), &metrics, 16.0);
+        let t2 = resolve_thickness(&TextDecorationThickness::Length(1.6), &metrics, 16.0, 1.0);
         assert_eq!(t2, 2.0); // 1.6 → round → 2.0
     }
 
@@ -734,7 +742,7 @@ mod tests {
             strikeout_thickness: 3.0,
             ..FontMetrics::zero()
         };
-        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0);
+        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0, 1.0);
         // Should use underline_thickness (1.5), not strikeout_thickness (3.0)
         assert_eq!(t, 1.5);
     }
@@ -748,7 +756,7 @@ mod tests {
             strikeout_thickness: 4.0,
             ..FontMetrics::zero()
         };
-        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0);
+        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0, 1.0);
         assert_eq!(t, 2.3);
     }
 
@@ -757,7 +765,7 @@ mod tests {
     #[test]
     fn auto_thickness_14px_matches_blink() {
         let metrics = FontMetrics::zero();
-        let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 14.0);
+        let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 14.0, 1.0);
         // Blink: 14.0 / 10.0 = 1.4 (raw, no rounding)
         assert_eq!(t, 1.4);
     }
@@ -765,7 +773,7 @@ mod tests {
     #[test]
     fn auto_thickness_12px_matches_blink() {
         let metrics = FontMetrics::zero();
-        let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 12.0);
+        let t = resolve_thickness(&TextDecorationThickness::Auto, &metrics, 12.0, 1.0);
         // Blink: 12.0 / 10.0 = 1.2 (raw, no rounding)
         assert_eq!(t, 1.2);
     }
@@ -777,8 +785,15 @@ mod tests {
             underline_thickness: 1.3,
             ..FontMetrics::zero()
         };
-        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0);
+        let t = resolve_thickness(&TextDecorationThickness::FromFont, &metrics, 16.0, 1.0);
         assert_eq!(t, 1.3);
+    }
+
+    #[test]
+    fn explicit_length_uses_the_physical_scale() {
+        let metrics = FontMetrics::zero();
+        let t = resolve_thickness(&TextDecorationThickness::Length(0.6), &metrics, 16.0, 2.0);
+        assert_eq!(t, 0.5);
     }
 
     // ── Issue 3: double decoration offset = thickness + 1px ──────────
@@ -967,7 +982,7 @@ mod tests {
     #[test]
     fn style_to_font_description_preserves_font_size() {
         let mut style = openui_style::ComputedStyle::default();
-        style.font_size = 24.0;
+        style.update_derived(|computed| computed.font_size = 24.0);
         let desc = crate::text_painter::style_to_font_description(&style);
         assert_eq!(
             desc.size, 24.0,

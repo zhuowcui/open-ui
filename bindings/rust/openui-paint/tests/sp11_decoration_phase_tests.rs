@@ -40,7 +40,7 @@ fn before_text_phase_paints_underline() {
     let metrics = metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
 
     paint_text_decorations(
         surface.canvas(),
@@ -64,7 +64,9 @@ fn after_text_phase_paints_line_through() {
     let metrics = metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine::LINE_THROUGH
+    });
 
     paint_text_decorations(
         surface.canvas(),
@@ -88,7 +90,9 @@ fn before_text_phase_does_not_paint_line_through() {
     let metrics = metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine::LINE_THROUGH
+    });
 
     paint_text_decorations(
         surface.canvas(),

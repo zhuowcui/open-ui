@@ -970,6 +970,8 @@ fn make_platform_data(
         description.native_control_text,
         description.embedded_document_text,
         description.native_button_text_metrics,
+        description.raster_configuration,
+        description.device_scale_factor,
         configuration,
     ))
 }
@@ -1529,6 +1531,112 @@ mod tests {
     }
 
     #[test]
+    fn pinned_wpt_font_containers_report_identical_owned_metadata() {
+        let fixtures: &[(&str, &[u8], FontContainerFormat)] = &[
+            (
+                "Certification TTF",
+                include_bytes!("../../fonts/certification/fixture.ttf"),
+                FontContainerFormat::Ttf,
+            ),
+            (
+                "Certification OTF",
+                include_bytes!("../../fonts/certification/fixture.otf"),
+                FontContainerFormat::Otf,
+            ),
+            (
+                "Certification WOFF",
+                include_bytes!("../../fonts/certification/fixture.woff"),
+                FontContainerFormat::Woff,
+            ),
+            (
+                "Certification WOFF2",
+                include_bytes!("../../fonts/certification/fixture.woff2"),
+                FontContainerFormat::Woff2,
+            ),
+            (
+                "Certification TTC",
+                include_bytes!("../../fonts/certification/fixture.ttc"),
+                FontContainerFormat::Collection,
+            ),
+            (
+                "Certification OTC",
+                include_bytes!("../../fonts/certification/fixture.otc"),
+                FontContainerFormat::Collection,
+            ),
+        ];
+        let collection = FontCollection::system();
+        for (family, bytes, format) in fixtures {
+            let descriptor = FontFaceDescriptor::new(*family);
+            let owned: Arc<[u8]> = Arc::from(*bytes);
+            let handle = collection
+                .register(Arc::clone(&owned), descriptor.clone())
+                .unwrap_or_else(|error| panic!("{family} registration failed: {error:?}"));
+            let info = collection.query(handle).unwrap();
+            assert_eq!(info.descriptor, descriptor);
+            assert_eq!(info.descriptor.face_index, 0);
+            assert_eq!(info.format, *format);
+            assert_eq!(info.byte_length, bytes.len());
+            assert_eq!(info.sha256, sha256(bytes));
+            drop(owned);
+            // Registration owns its bytes and remains queryable after the
+            // caller releases the source buffer.
+            assert_eq!(collection.query(handle).unwrap(), info);
+            collection.unregister(handle).unwrap();
+            assert_eq!(
+                collection.query(handle),
+                Err(FontCollectionError::UnknownFace)
+            );
+        }
+    }
+
+    #[test]
+    fn font_container_signatures_do_not_bypass_decoder_validation() {
+        let collection = FontCollection::system();
+        for signature in [b"OTTO", b"ttcf", b"wOFF", b"wOF2"] {
+            let mut truncated = vec![0_u8; 12];
+            truncated[..4].copy_from_slice(signature);
+            assert!(matches!(
+                collection.register(
+                    Arc::from(truncated),
+                    FontFaceDescriptor::new(format!("Truncated {signature:?}")),
+                ),
+                Err(FontCollectionError::MalformedFont | FontCollectionError::InvalidFaceIndex)
+            ));
+        }
+    }
+
+    #[test]
+    fn collection_face_indices_are_validated_for_ttc_and_otc() {
+        let collection = FontCollection::system();
+        let ttc = include_bytes!("../../fonts/certification/fixture.ttc");
+        for face_index in 0..2 {
+            let mut descriptor = FontFaceDescriptor::new(format!("TTC face {face_index}"));
+            descriptor.face_index = face_index;
+            let handle = collection
+                .register(Arc::from(ttc.as_slice()), descriptor)
+                .unwrap();
+            assert_eq!(
+                collection.query(handle).unwrap().descriptor.face_index,
+                face_index
+            );
+        }
+        let mut missing_ttc_face = FontFaceDescriptor::new("Missing TTC face");
+        missing_ttc_face.face_index = 2;
+        assert_eq!(
+            collection.register(Arc::from(ttc.as_slice()), missing_ttc_face),
+            Err(FontCollectionError::InvalidFaceIndex)
+        );
+
+        let otc = include_bytes!("../../fonts/certification/fixture.otc");
+        let mut missing_otc_face = FontFaceDescriptor::new("Missing OTC face");
+        missing_otc_face.face_index = 1;
+        assert_eq!(
+            collection.register(Arc::from(otc.as_slice()), missing_otc_face),
+            Err(FontCollectionError::InvalidFaceIndex)
+        );
+    }
+
+    #[test]
     fn malformed_inputs_and_descriptors_are_rejected() {
         let collection = FontCollection::system();
         assert_eq!(
@@ -1690,7 +1798,7 @@ mod tests {
     }
 
     #[test]
-    fn instance_key_includes_variations_palette_and_synthesis() {
+    fn instance_key_includes_variations_palette_synthesis_scale_and_raster_policy() {
         let base = FontDescription::default();
         let mut varied = base.clone();
         varied.variation_settings.push(openui_style::FontVariation {
@@ -1701,10 +1809,17 @@ mod tests {
         palette.palette = FontPalette::Dark;
         let mut synthesis = base.clone();
         synthesis.font_synthesis_weight = FontSynthesis::None;
+        let mut scaled = base.clone();
+        scaled.device_scale_factor = 2.0;
+        let mut raster = base.clone();
+        raster.raster_configuration =
+            openui_geometry::RasterConfiguration::deterministic_aliased(false);
         let base = FontInstanceKey::new("family", &base);
         assert_ne!(base, FontInstanceKey::new("family", &varied));
         assert_ne!(base, FontInstanceKey::new("family", &palette));
         assert_ne!(base, FontInstanceKey::new("family", &synthesis));
+        assert_ne!(base, FontInstanceKey::new("family", &scaled));
+        assert_ne!(base, FontInstanceKey::new("family", &raster));
     }
 
     #[test]

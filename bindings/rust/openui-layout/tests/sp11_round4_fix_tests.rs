@@ -35,20 +35,20 @@ fn make_atomic_inline_block(
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     // Add text before the atomic to establish baseline and line metrics.
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("text ".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let atomic = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic).style.display = Display::InlineBlock;
-    doc.node_mut(atomic).style.width = Length::px(atomic_w);
-    doc.node_mut(atomic).style.height = Length::px(atomic_h);
-    doc.node_mut(atomic).style.vertical_align = valign;
+    doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic, |style| style.width = Length::px(atomic_w));
+    doc.update_resolved_style(atomic, |style| style.height = Length::px(atomic_h));
+    doc.update_resolved_style(atomic, |style| style.vertical_align = valign);
     doc.append_child(block, atomic);
 
     (doc, block, atomic)

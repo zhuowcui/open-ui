@@ -4,14 +4,14 @@
     "bindings/rust/openui-paint/src"
   ],
   "counts": {
-    "consumed": 213,
-    "internal": 12,
-    "public_typed": 201,
+    "consumed": 216,
+    "internal": 14,
+    "public_typed": 202,
     "unclassified": 0
   },
   "fields": [
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -21,6 +21,8 @@
       ],
       "css_name": "align-content",
       "field": "align_content",
+      "internal_rationale": null,
+      "property_id": 126,
       "rust_type": "ContentAlignment"
     },
     {
@@ -34,10 +36,12 @@
       ],
       "css_name": "align-items",
       "field": "align_items",
+      "internal_rationale": null,
+      "property_id": 29,
       "rust_type": "ItemAlignment"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -47,10 +51,12 @@
       ],
       "css_name": "align-self",
       "field": "align_self",
+      "internal_rationale": null,
+      "property_id": 127,
       "rust_type": "ItemAlignment"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -64,26 +70,32 @@
       ],
       "css_name": "aspect-ratio",
       "field": "aspect_ratio",
+      "internal_rationale": null,
+      "property_id": 128,
       "rust_type": "Option<AspectRatio>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "background-attachment",
       "field": "background_attachment",
+      "internal_rationale": null,
+      "property_id": 129,
       "rust_type": "BackgroundAttachment"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "background-clip",
       "field": "background_clip",
+      "internal_rationale": null,
+      "property_id": 130,
       "rust_type": "BackgroundClip"
     },
     {
@@ -98,10 +110,12 @@
       ],
       "css_name": "background-color",
       "field": "background_color",
+      "internal_rationale": null,
+      "property_id": 20,
       "rust_type": "Color"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -110,10 +124,12 @@
       ],
       "css_name": "background-layers",
       "field": "background_layers",
+      "internal_rationale": null,
+      "property_id": 131,
       "rust_type": "Vec<BackgroundLayer>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -121,6 +137,8 @@
       ],
       "css_name": "background-linear-gradient",
       "field": "background_linear_gradient",
+      "internal_rationale": null,
+      "property_id": 132,
       "rust_type": "Option<LinearGradient>"
     },
     {
@@ -133,10 +151,12 @@
       ],
       "css_name": "block-ellipsis",
       "field": "block_ellipsis",
+      "internal_rationale": null,
+      "property_id": 115,
       "rust_type": "BlockEllipsis"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -146,30 +166,36 @@
       ],
       "css_name": "border-bottom-color",
       "field": "border_bottom_color",
+      "internal_rationale": null,
+      "property_id": 133,
       "rust_type": "StyleColor"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "border-bottom-left-radius",
       "field": "border_bottom_left_radius",
-      "rust_type": "(f32"
+      "internal_rationale": null,
+      "property_id": 134,
+      "rust_type": "(f32, f32)"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "border-bottom-right-radius",
       "field": "border_bottom_right_radius",
-      "rust_type": "(f32"
+      "internal_rationale": null,
+      "property_id": 135,
+      "rust_type": "(f32, f32)"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -183,10 +209,12 @@
       ],
       "css_name": "border-bottom-style",
       "field": "border_bottom_style",
+      "internal_rationale": null,
+      "property_id": 136,
       "rust_type": "BorderStyle"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -200,10 +228,12 @@
       ],
       "css_name": "border-bottom-width",
       "field": "border_bottom_width",
+      "internal_rationale": null,
+      "property_id": 137,
       "rust_type": "i32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -212,20 +242,25 @@
       ],
       "css_name": "border-collapse",
       "field": "border_collapse",
+      "internal_rationale": null,
+      "property_id": 138,
       "rust_type": "BorderCollapse"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "border-image",
       "field": "border_image",
+      "internal_rationale": null,
+      "property_id": 139,
       "rust_type": "Option<BorderImage>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -235,10 +270,12 @@
       ],
       "css_name": "border-left-color",
       "field": "border_left_color",
+      "internal_rationale": null,
+      "property_id": 140,
       "rust_type": "StyleColor"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -252,10 +289,12 @@
       ],
       "css_name": "border-left-style",
       "field": "border_left_style",
+      "internal_rationale": null,
+      "property_id": 141,
       "rust_type": "BorderStyle"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -269,20 +308,24 @@
       ],
       "css_name": "border-left-width",
       "field": "border_left_width",
+      "internal_rationale": null,
+      "property_id": 142,
       "rust_type": "i32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "border-radius-percent",
       "field": "border_radius_percent",
-      "rust_type": "[(bool"
+      "internal_rationale": null,
+      "property_id": 143,
+      "rust_type": "[(bool, bool); 4]"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -292,10 +335,12 @@
       ],
       "css_name": "border-right-color",
       "field": "border_right_color",
+      "internal_rationale": null,
+      "property_id": 144,
       "rust_type": "StyleColor"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -309,10 +354,12 @@
       ],
       "css_name": "border-right-style",
       "field": "border_right_style",
+      "internal_rationale": null,
+      "property_id": 145,
       "rust_type": "BorderStyle"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -326,20 +373,24 @@
       ],
       "css_name": "border-right-width",
       "field": "border_right_width",
+      "internal_rationale": null,
+      "property_id": 146,
       "rust_type": "i32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/table.rs"
       ],
       "css_name": "border-spacing",
       "field": "border_spacing",
-      "rust_type": "(Length"
+      "internal_rationale": null,
+      "property_id": 147,
+      "rust_type": "(Length, Length)"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -349,30 +400,36 @@
       ],
       "css_name": "border-top-color",
       "field": "border_top_color",
+      "internal_rationale": null,
+      "property_id": 148,
       "rust_type": "StyleColor"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "border-top-left-radius",
       "field": "border_top_left_radius",
-      "rust_type": "(f32"
+      "internal_rationale": null,
+      "property_id": 149,
+      "rust_type": "(f32, f32)"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "border-top-right-radius",
       "field": "border_top_right_radius",
-      "rust_type": "(f32"
+      "internal_rationale": null,
+      "property_id": 150,
+      "rust_type": "(f32, f32)"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -386,10 +443,12 @@
       ],
       "css_name": "border-top-style",
       "field": "border_top_style",
+      "internal_rationale": null,
+      "property_id": 151,
       "rust_type": "BorderStyle"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -403,10 +462,12 @@
       ],
       "css_name": "border-top-width",
       "field": "border_top_width",
+      "internal_rationale": null,
+      "property_id": 152,
       "rust_type": "i32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -427,10 +488,12 @@
       ],
       "css_name": "bottom",
       "field": "bottom",
+      "internal_rationale": null,
+      "property_id": 153,
       "rust_type": "Length"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -441,10 +504,12 @@
       ],
       "css_name": "box-decoration-break",
       "field": "box_decoration_break",
+      "internal_rationale": null,
+      "property_id": 154,
       "rust_type": "BoxDecorationBreak"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -452,10 +517,12 @@
       ],
       "css_name": "box-shadow",
       "field": "box_shadow",
+      "internal_rationale": null,
+      "property_id": 155,
       "rust_type": "Vec<BoxShadow>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -470,10 +537,12 @@
       ],
       "css_name": "box-sizing",
       "field": "box_sizing",
+      "internal_rationale": null,
+      "property_id": 156,
       "rust_type": "BoxSizing"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -482,10 +551,12 @@
       ],
       "css_name": "break-after",
       "field": "break_after",
+      "internal_rationale": null,
+      "property_id": 157,
       "rust_type": "BreakValue"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -494,10 +565,12 @@
       ],
       "css_name": "break-before",
       "field": "break_before",
+      "internal_rationale": null,
+      "property_id": 158,
       "rust_type": "BreakValue"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -505,10 +578,12 @@
       ],
       "css_name": "break-inside",
       "field": "break_inside",
+      "internal_rationale": null,
+      "property_id": 159,
       "rust_type": "BreakInside"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -516,10 +591,12 @@
       ],
       "css_name": "caption-side",
       "field": "caption_side",
+      "internal_rationale": null,
+      "property_id": 160,
       "rust_type": "CaptionSide"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -533,16 +610,20 @@
       ],
       "css_name": "clear",
       "field": "clear",
+      "internal_rationale": null,
+      "property_id": 161,
       "rust_type": "Clear"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "clip-path-inset",
       "field": "clip_path_inset",
+      "internal_rationale": null,
+      "property_id": 162,
       "rust_type": "Option<[Length; 4]>"
     },
     {
@@ -560,10 +641,12 @@
       ],
       "css_name": "color",
       "field": "color",
+      "internal_rationale": null,
+      "property_id": 21,
       "rust_type": "Color"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -574,10 +657,12 @@
       ],
       "css_name": "column-count",
       "field": "column_count",
+      "internal_rationale": null,
+      "property_id": 163,
       "rust_type": "Option<u32>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -585,6 +670,8 @@
       ],
       "css_name": "column-fill",
       "field": "column_fill",
+      "internal_rationale": null,
+      "property_id": 164,
       "rust_type": "ColumnFill"
     },
     {
@@ -599,10 +686,12 @@
       ],
       "css_name": "column-gap",
       "field": "column_gap",
+      "internal_rationale": null,
+      "property_id": 33,
       "rust_type": "Option<Length>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -610,10 +699,12 @@
       ],
       "css_name": "column-height",
       "field": "column_height",
+      "internal_rationale": null,
+      "property_id": 165,
       "rust_type": "Option<Length>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/multicol/mod.rs",
@@ -621,10 +712,12 @@
       ],
       "css_name": "column-rule-color",
       "field": "column_rule_color",
+      "internal_rationale": null,
+      "property_id": 166,
       "rust_type": "StyleColor"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -633,10 +726,12 @@
       ],
       "css_name": "column-rule-style",
       "field": "column_rule_style",
+      "internal_rationale": null,
+      "property_id": 167,
       "rust_type": "BorderStyle"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -644,10 +739,12 @@
       ],
       "css_name": "column-rule-width",
       "field": "column_rule_width",
+      "internal_rationale": null,
+      "property_id": 168,
       "rust_type": "i32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -658,10 +755,12 @@
       ],
       "css_name": "column-span",
       "field": "column_span",
+      "internal_rationale": null,
+      "property_id": 169,
       "rust_type": "ColumnSpan"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -672,10 +771,12 @@
       ],
       "css_name": "column-width",
       "field": "column_width",
+      "internal_rationale": null,
+      "property_id": 170,
       "rust_type": "Option<Length>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -683,20 +784,25 @@
       ],
       "css_name": "column-wrap",
       "field": "column_wrap",
+      "internal_rationale": null,
+      "property_id": 171,
       "rust_type": "ColumnWrap"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/containment.rs"
       ],
       "css_name": "contain",
       "field": "contain",
+      "internal_rationale": null,
+      "property_id": 172,
       "rust_type": "Containment"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -704,10 +810,12 @@
       ],
       "css_name": "contain-intrinsic-height",
       "field": "contain_intrinsic_height",
+      "internal_rationale": null,
+      "property_id": 173,
       "rust_type": "ContainIntrinsicLength"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -715,27 +823,50 @@
       ],
       "css_name": "contain-intrinsic-width",
       "field": "contain_intrinsic_width",
+      "internal_rationale": null,
+      "property_id": 174,
       "rust_type": "ContainIntrinsicLength"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/containment.rs"
       ],
       "css_name": "container-type",
       "field": "container_type",
+      "internal_rationale": null,
+      "property_id": 175,
       "rust_type": "ContainerType"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "content",
       "field": "content",
+      "internal_rationale": null,
+      "property_id": 176,
       "rust_type": "Option<Vec<GeneratedContentItem>>"
+    },
+    {
+      "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/decoration_painter.rs",
+        "bindings/rust/openui-paint/src/emphasis_painter.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs"
+      ],
+      "css_name": null,
+      "field": "device_scale_factor",
+      "internal_rationale": "Retains physical-pixel scale for font strike selection without changing logical text metrics.",
+      "property_id": null,
+      "rust_type": "f64"
     },
     {
       "canonical_schema_entry": true,
@@ -758,6 +889,8 @@
       ],
       "css_name": "direction",
       "field": "direction",
+      "internal_rationale": null,
+      "property_id": 47,
       "rust_type": "Direction"
     },
     {
@@ -781,6 +914,8 @@
       ],
       "css_name": "display",
       "field": "display",
+      "internal_rationale": null,
+      "property_id": 1,
       "rust_type": "Display"
     },
     {
@@ -791,6 +926,8 @@
       ],
       "css_name": null,
       "field": "embedded_document_text",
+      "internal_rationale": "Marks text in a statically lowered nested document for the platform raster policy.",
+      "property_id": null,
       "rust_type": "bool"
     },
     {
@@ -806,26 +943,34 @@
       ],
       "css_name": null,
       "field": "establishes_transform_containing_block",
+      "internal_rationale": "Caches containing-block behavior derived from authored transform-related declarations.",
+      "property_id": null,
       "rust_type": "bool"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "filter-blur",
       "field": "filter_blur",
+      "internal_rationale": null,
+      "property_id": 177,
       "rust_type": "f32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "filter-grayscale",
       "field": "filter_grayscale",
+      "internal_rationale": null,
+      "property_id": 178,
       "rust_type": "f32"
     },
     {
@@ -836,6 +981,8 @@
       ],
       "css_name": null,
       "field": "first_letter_style",
+      "internal_rationale": "Stores the resolved immutable pseudo-element snapshot owned by style resolution.",
+      "property_id": null,
       "rust_type": "Option<Box<ComputedStyle>>"
     },
     {
@@ -848,6 +995,8 @@
       ],
       "css_name": null,
       "field": "first_line_style",
+      "internal_rationale": "Stores the resolved immutable pseudo-element snapshot owned by style resolution.",
+      "property_id": null,
       "rust_type": "Option<Box<ComputedStyle>>"
     },
     {
@@ -860,6 +1009,8 @@
       ],
       "css_name": "flex-basis",
       "field": "flex_basis",
+      "internal_rationale": null,
+      "property_id": 28,
       "rust_type": "Length"
     },
     {
@@ -872,6 +1023,8 @@
       ],
       "css_name": "flex-direction",
       "field": "flex_direction",
+      "internal_rationale": null,
+      "property_id": 24,
       "rust_type": "FlexDirection"
     },
     {
@@ -885,6 +1038,8 @@
       ],
       "css_name": "flex-grow",
       "field": "flex_grow",
+      "internal_rationale": null,
+      "property_id": 26,
       "rust_type": "f32"
     },
     {
@@ -897,6 +1052,8 @@
       ],
       "css_name": "flex-shrink",
       "field": "flex_shrink",
+      "internal_rationale": null,
+      "property_id": 27,
       "rust_type": "f32"
     },
     {
@@ -909,10 +1066,12 @@
       ],
       "css_name": "flex-wrap",
       "field": "flex_wrap",
+      "internal_rationale": null,
+      "property_id": 25,
       "rust_type": "FlexWrap"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -928,6 +1087,8 @@
       ],
       "css_name": "float",
       "field": "float",
+      "internal_rationale": null,
+      "property_id": 179,
       "rust_type": "Float"
     },
     {
@@ -945,6 +1106,8 @@
       ],
       "css_name": "font-family",
       "field": "font_family",
+      "internal_rationale": null,
+      "property_id": 34,
       "rust_type": "FontFamilyList"
     },
     {
@@ -955,6 +1118,8 @@
       ],
       "css_name": "font-feature-settings",
       "field": "font_feature_settings",
+      "internal_rationale": null,
+      "property_id": 65,
       "rust_type": "Vec<FontFeature>"
     },
     {
@@ -965,6 +1130,8 @@
       ],
       "css_name": "font-kerning",
       "field": "font_kerning",
+      "internal_rationale": null,
+      "property_id": 48,
       "rust_type": "FontKerning"
     },
     {
@@ -975,6 +1142,8 @@
       ],
       "css_name": "font-language-override",
       "field": "font_language_override",
+      "internal_rationale": null,
+      "property_id": 67,
       "rust_type": "FontLanguageOverride"
     },
     {
@@ -985,6 +1154,8 @@
       ],
       "css_name": "font-optical-sizing",
       "field": "font_optical_sizing",
+      "internal_rationale": null,
+      "property_id": 49,
       "rust_type": "FontOpticalSizing"
     },
     {
@@ -995,6 +1166,8 @@
       ],
       "css_name": "font-palette",
       "field": "font_palette",
+      "internal_rationale": null,
+      "property_id": 50,
       "rust_type": "FontPalette"
     },
     {
@@ -1016,6 +1189,8 @@
       ],
       "css_name": "font-size",
       "field": "font_size",
+      "internal_rationale": null,
+      "property_id": 35,
       "rust_type": "f32"
     },
     {
@@ -1026,16 +1201,20 @@
       ],
       "css_name": "font-size-adjust",
       "field": "font_size_adjust",
+      "internal_rationale": null,
+      "property_id": 51,
       "rust_type": "FontSizeAdjust"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs"
       ],
-      "css_name": "font-smoothing",
+      "css_name": "-webkit-font-smoothing",
       "field": "font_smoothing",
+      "internal_rationale": null,
+      "property_id": 113,
       "rust_type": "FontSmoothing"
     },
     {
@@ -1047,6 +1226,8 @@
       ],
       "css_name": "font-stretch",
       "field": "font_stretch",
+      "internal_rationale": null,
+      "property_id": 52,
       "rust_type": "FontStretch"
     },
     {
@@ -1059,6 +1240,8 @@
       ],
       "css_name": "font-style",
       "field": "font_style",
+      "internal_rationale": null,
+      "property_id": 53,
       "rust_type": "FontStyleEnum"
     },
     {
@@ -1069,6 +1252,8 @@
       ],
       "css_name": "font-synthesis-position",
       "field": "font_synthesis_position",
+      "internal_rationale": null,
+      "property_id": 64,
       "rust_type": "FontSynthesis"
     },
     {
@@ -1079,6 +1264,8 @@
       ],
       "css_name": "font-synthesis-small-caps",
       "field": "font_synthesis_small_caps",
+      "internal_rationale": null,
+      "property_id": 63,
       "rust_type": "FontSynthesis"
     },
     {
@@ -1089,6 +1276,8 @@
       ],
       "css_name": "font-synthesis-style",
       "field": "font_synthesis_style",
+      "internal_rationale": null,
+      "property_id": 62,
       "rust_type": "FontSynthesis"
     },
     {
@@ -1099,6 +1288,8 @@
       ],
       "css_name": "font-synthesis-weight",
       "field": "font_synthesis_weight",
+      "internal_rationale": null,
+      "property_id": 61,
       "rust_type": "FontSynthesis"
     },
     {
@@ -1109,6 +1300,8 @@
       ],
       "css_name": "font-variant-alternates",
       "field": "font_variant_alternates",
+      "internal_rationale": null,
+      "property_id": 58,
       "rust_type": "FontVariantAlternates"
     },
     {
@@ -1119,6 +1312,8 @@
       ],
       "css_name": "font-variant-caps",
       "field": "font_variant_caps",
+      "internal_rationale": null,
+      "property_id": 55,
       "rust_type": "FontVariantCaps"
     },
     {
@@ -1129,6 +1324,8 @@
       ],
       "css_name": "font-variant-east-asian",
       "field": "font_variant_east_asian",
+      "internal_rationale": null,
+      "property_id": 56,
       "rust_type": "FontVariantEastAsian"
     },
     {
@@ -1139,6 +1336,8 @@
       ],
       "css_name": "font-variant-emoji",
       "field": "font_variant_emoji",
+      "internal_rationale": null,
+      "property_id": 60,
       "rust_type": "FontVariantEmoji"
     },
     {
@@ -1149,6 +1348,8 @@
       ],
       "css_name": "font-variant-ligatures",
       "field": "font_variant_ligatures",
+      "internal_rationale": null,
+      "property_id": 54,
       "rust_type": "FontVariantLigatures"
     },
     {
@@ -1159,6 +1360,8 @@
       ],
       "css_name": "font-variant-numeric",
       "field": "font_variant_numeric",
+      "internal_rationale": null,
+      "property_id": 57,
       "rust_type": "FontVariantNumeric"
     },
     {
@@ -1169,6 +1372,8 @@
       ],
       "css_name": "font-variant-position",
       "field": "font_variant_position",
+      "internal_rationale": null,
+      "property_id": 59,
       "rust_type": "FontVariantPosition"
     },
     {
@@ -1179,6 +1384,8 @@
       ],
       "css_name": "font-variation-settings",
       "field": "font_variation_settings",
+      "internal_rationale": null,
+      "property_id": 66,
       "rust_type": "Vec<FontVariation>"
     },
     {
@@ -1191,86 +1398,104 @@
       ],
       "css_name": "font-weight",
       "field": "font_weight",
+      "internal_rationale": null,
+      "property_id": 36,
       "rust_type": "FontWeight"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-auto-columns",
       "field": "grid_auto_columns",
+      "internal_rationale": null,
+      "property_id": 180,
       "rust_type": "Vec<GridTrackSize>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-auto-flow",
       "field": "grid_auto_flow",
+      "internal_rationale": null,
+      "property_id": 181,
       "rust_type": "GridAutoFlow"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-auto-rows",
       "field": "grid_auto_rows",
+      "internal_rationale": null,
+      "property_id": 182,
       "rust_type": "Vec<GridTrackSize>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-column",
       "field": "grid_column",
+      "internal_rationale": null,
+      "property_id": 183,
       "rust_type": "GridPlacement"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-row",
       "field": "grid_row",
+      "internal_rationale": null,
+      "property_id": 184,
       "rust_type": "GridPlacement"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-template-areas",
       "field": "grid_template_areas",
+      "internal_rationale": null,
+      "property_id": 185,
       "rust_type": "GridTemplateAreas"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-template-columns",
       "field": "grid_template_columns",
+      "internal_rationale": null,
+      "property_id": 186,
       "rust_type": "GridTrackList"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "grid-template-rows",
       "field": "grid_template_rows",
+      "internal_rationale": null,
+      "property_id": 187,
       "rust_type": "GridTrackList"
     },
     {
@@ -1297,6 +1522,8 @@
       ],
       "css_name": "height",
       "field": "height",
+      "internal_rationale": null,
+      "property_id": 5,
       "rust_type": "Length"
     },
     {
@@ -1309,6 +1536,8 @@
       ],
       "css_name": "hyphenate-character",
       "field": "hyphenate_character",
+      "internal_rationale": null,
+      "property_id": 81,
       "rust_type": "Option<String>"
     },
     {
@@ -1320,7 +1549,9 @@
       ],
       "css_name": "hyphenate-limit-chars",
       "field": "hyphenate_limit_chars",
-      "rust_type": "(u8"
+      "internal_rationale": null,
+      "property_id": 80,
+      "rust_type": "(u8, u8, u8)"
     },
     {
       "canonical_schema_entry": true,
@@ -1332,6 +1563,8 @@
       ],
       "css_name": "hyphens",
       "field": "hyphens",
+      "internal_rationale": null,
+      "property_id": 79,
       "rust_type": "Hyphens"
     },
     {
@@ -1343,6 +1576,8 @@
       ],
       "css_name": null,
       "field": "is_first_letter_pseudo",
+      "internal_rationale": "Identifies a generated first-letter box created by style resolution.",
+      "property_id": null,
       "rust_type": "bool"
     },
     {
@@ -1355,20 +1590,24 @@
       ],
       "css_name": "justify-content",
       "field": "justify_content",
+      "internal_rationale": null,
+      "property_id": 30,
       "rust_type": "ContentAlignment"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/grid.rs"
       ],
       "css_name": "justify-items",
       "field": "justify_items",
+      "internal_rationale": null,
+      "property_id": 188,
       "rust_type": "ItemAlignment"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -1376,10 +1615,12 @@
       ],
       "css_name": "justify-self",
       "field": "justify_self",
+      "internal_rationale": null,
+      "property_id": 189,
       "rust_type": "ItemAlignment"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -1400,6 +1641,8 @@
       ],
       "css_name": "left",
       "field": "left",
+      "internal_rationale": null,
+      "property_id": 190,
       "rust_type": "Length"
     },
     {
@@ -1413,6 +1656,8 @@
       ],
       "css_name": null,
       "field": "legacy_webkit_box",
+      "internal_rationale": "Records normalized legacy display semantics after the authored display value is consumed.",
+      "property_id": null,
       "rust_type": "bool"
     },
     {
@@ -1424,6 +1669,8 @@
       ],
       "css_name": null,
       "field": "legacy_webkit_line_clamp",
+      "internal_rationale": "Records whether normalized line clamping came from the legacy WebKit property.",
+      "property_id": null,
       "rust_type": "bool"
     },
     {
@@ -1431,10 +1678,13 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/first_line.rs",
-        "bindings/rust/openui-layout/src/inline/items_builder.rs"
+        "bindings/rust/openui-layout/src/inline/items_builder.rs",
+        "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "letter-spacing",
       "field": "letter_spacing",
+      "internal_rationale": null,
+      "property_id": 69,
       "rust_type": "f32"
     },
     {
@@ -1448,6 +1698,8 @@
       ],
       "css_name": "line-break",
       "field": "line_break",
+      "internal_rationale": null,
+      "property_id": 78,
       "rust_type": "LineBreak"
     },
     {
@@ -1461,6 +1713,8 @@
       ],
       "css_name": "line-clamp",
       "field": "line_clamp",
+      "internal_rationale": null,
+      "property_id": 114,
       "rust_type": "LineClamp"
     },
     {
@@ -1477,10 +1731,12 @@
       ],
       "css_name": "line-height",
       "field": "line_height",
+      "internal_rationale": null,
+      "property_id": 68,
       "rust_type": "LineHeight"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -1488,21 +1744,25 @@
       ],
       "css_name": "list-style-position",
       "field": "list_style_position",
+      "internal_rationale": null,
+      "property_id": 191,
       "rust_type": "ListStylePosition"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
-      "css_name": "list-style-type",
+      "css_name": "list-style",
       "field": "list_style_type",
+      "internal_rationale": null,
+      "property_id": 44,
       "rust_type": "ListStyleType"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
@@ -1510,6 +1770,8 @@
       ],
       "css_name": "locale",
       "field": "locale",
+      "internal_rationale": null,
+      "property_id": 192,
       "rust_type": "Option<String>"
     },
     {
@@ -1529,6 +1791,8 @@
       ],
       "css_name": "margin-bottom",
       "field": "margin_bottom",
+      "internal_rationale": null,
+      "property_id": 13,
       "rust_type": "Length"
     },
     {
@@ -1547,6 +1811,8 @@
       ],
       "css_name": "margin-left",
       "field": "margin_left",
+      "internal_rationale": null,
+      "property_id": 14,
       "rust_type": "Length"
     },
     {
@@ -1566,6 +1832,8 @@
       ],
       "css_name": "margin-right",
       "field": "margin_right",
+      "internal_rationale": null,
+      "property_id": 12,
       "rust_type": "Length"
     },
     {
@@ -1585,16 +1853,20 @@
       ],
       "css_name": "margin-top",
       "field": "margin_top",
+      "internal_rationale": null,
+      "property_id": 11,
       "rust_type": "Length"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs"
       ],
       "css_name": "margin-trim",
       "field": "margin_trim",
+      "internal_rationale": null,
+      "property_id": 193,
       "rust_type": "MarginTrim"
     },
     {
@@ -1606,16 +1878,20 @@
       ],
       "css_name": null,
       "field": "marker_style",
+      "internal_rationale": "Stores the resolved immutable marker pseudo-element snapshot owned by style resolution.",
+      "property_id": null,
       "rust_type": "Option<Box<ComputedStyle>>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "mask-layers",
       "field": "mask_layers",
+      "internal_rationale": null,
+      "property_id": 194,
       "rust_type": "Vec<BackgroundLayer>"
     },
     {
@@ -1635,6 +1911,8 @@
       ],
       "css_name": "max-height",
       "field": "max_height",
+      "internal_rationale": null,
+      "property_id": 9,
       "rust_type": "Length"
     },
     {
@@ -1652,6 +1930,8 @@
       ],
       "css_name": "max-width",
       "field": "max_width",
+      "internal_rationale": null,
+      "property_id": 8,
       "rust_type": "Length"
     },
     {
@@ -1670,6 +1950,8 @@
       ],
       "css_name": "min-height",
       "field": "min_height",
+      "internal_rationale": null,
+      "property_id": 7,
       "rust_type": "Length"
     },
     {
@@ -1687,6 +1969,8 @@
       ],
       "css_name": "min-width",
       "field": "min_width",
+      "internal_rationale": null,
+      "property_id": 6,
       "rust_type": "Length"
     },
     {
@@ -1697,6 +1981,8 @@
       ],
       "css_name": null,
       "field": "native_button_text_metrics",
+      "internal_rationale": "Selects platform metrics for engine-generated native button content.",
+      "property_id": null,
       "rust_type": "bool"
     },
     {
@@ -1708,26 +1994,32 @@
       ],
       "css_name": null,
       "field": "native_control_text",
+      "internal_rationale": "Marks engine-generated native control text for platform rasterization.",
+      "property_id": null,
       "rust_type": "bool"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "object-fit",
       "field": "object_fit",
+      "internal_rationale": null,
+      "property_id": 195,
       "rust_type": "ObjectFit"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "object-position",
       "field": "object_position",
+      "internal_rationale": null,
+      "property_id": 196,
       "rust_type": "ObjectPosition"
     },
     {
@@ -1740,10 +2032,12 @@
       ],
       "css_name": "opacity",
       "field": "opacity",
+      "internal_rationale": null,
+      "property_id": 22,
       "rust_type": "f32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
@@ -1752,30 +2046,36 @@
       ],
       "css_name": "order",
       "field": "order",
+      "internal_rationale": null,
+      "property_id": 197,
       "rust_type": "i32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs"
       ],
       "css_name": "orphans",
       "field": "orphans",
+      "internal_rationale": null,
+      "property_id": 198,
       "rust_type": "u32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "outline-color",
       "field": "outline_color",
+      "internal_rationale": null,
+      "property_id": 199,
       "rust_type": "StyleColor"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -1783,36 +2083,57 @@
       ],
       "css_name": "outline-offset",
       "field": "outline_offset",
+      "internal_rationale": null,
+      "property_id": 200,
       "rust_type": "i32"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "outline-style",
       "field": "outline_style",
+      "internal_rationale": null,
+      "property_id": 201,
       "rust_type": "BorderStyle"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
+      "classification": "public-typed",
+      "consumers": [
+        "bindings/rust/openui-paint/src/painter.rs"
+      ],
+      "css_name": "outline-width",
+      "field": "outline_width",
+      "internal_rationale": null,
+      "property_id": 231,
+      "rust_type": "i32"
+    },
+    {
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "overflow-clip-box",
       "field": "overflow_clip_box",
+      "internal_rationale": null,
+      "property_id": 202,
       "rust_type": "OverflowClipBox"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "overflow-clip-margin",
       "field": "overflow_clip_margin",
+      "internal_rationale": null,
+      "property_id": 203,
       "rust_type": "f32"
     },
     {
@@ -1825,10 +2146,12 @@
       ],
       "css_name": "overflow-wrap",
       "field": "overflow_wrap",
+      "internal_rationale": null,
+      "property_id": 76,
       "rust_type": "OverflowWrap"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -1842,10 +2165,12 @@
       ],
       "css_name": "overflow-x",
       "field": "overflow_x",
+      "internal_rationale": null,
+      "property_id": 204,
       "rust_type": "Overflow"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -1858,6 +2183,8 @@
       ],
       "css_name": "overflow-y",
       "field": "overflow_y",
+      "internal_rationale": null,
+      "property_id": 205,
       "rust_type": "Overflow"
     },
     {
@@ -1875,6 +2202,8 @@
       ],
       "css_name": "padding-bottom",
       "field": "padding_bottom",
+      "internal_rationale": null,
+      "property_id": 18,
       "rust_type": "Length"
     },
     {
@@ -1882,6 +2211,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
@@ -1893,6 +2223,8 @@
       ],
       "css_name": "padding-left",
       "field": "padding_left",
+      "internal_rationale": null,
+      "property_id": 19,
       "rust_type": "Length"
     },
     {
@@ -1900,6 +2232,7 @@
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
+        "bindings/rust/openui-layout/src/flex/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/algorithm.rs",
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
         "bindings/rust/openui-layout/src/inline/line_breaker.rs",
@@ -1911,6 +2244,8 @@
       ],
       "css_name": "padding-right",
       "field": "padding_right",
+      "internal_rationale": null,
+      "property_id": 17,
       "rust_type": "Length"
     },
     {
@@ -1928,6 +2263,8 @@
       ],
       "css_name": "padding-top",
       "field": "padding_top",
+      "internal_rationale": null,
+      "property_id": 16,
       "rust_type": "Length"
     },
     {
@@ -1938,6 +2275,8 @@
       ],
       "css_name": null,
       "field": "placeholder_style",
+      "internal_rationale": "Stores the resolved immutable placeholder pseudo-element snapshot owned by style resolution.",
+      "property_id": null,
       "rust_type": "Option<Box<ComputedStyle>>"
     },
     {
@@ -1962,30 +2301,52 @@
       ],
       "css_name": "position",
       "field": "position",
+      "internal_rationale": null,
+      "property_id": 2,
       "rust_type": "Position"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs"
       ],
       "css_name": "position-anchor",
       "field": "position_anchor",
+      "internal_rationale": null,
+      "property_id": 206,
       "rust_type": "Option<String>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs"
       ],
       "css_name": "position-area",
       "field": "position_area",
+      "internal_rationale": null,
+      "property_id": 207,
       "rust_type": "PositionArea"
     },
     {
       "canonical_schema_entry": false,
+      "classification": "internal",
+      "consumers": [
+        "bindings/rust/openui-layout/src/table.rs",
+        "bindings/rust/openui-paint/src/emphasis_painter.rs",
+        "bindings/rust/openui-paint/src/painter.rs",
+        "bindings/rust/openui-paint/src/render.rs",
+        "bindings/rust/openui-paint/src/text_painter.rs"
+      ],
+      "css_name": null,
+      "field": "raster_configuration",
+      "internal_rationale": "Retains the immutable engine raster policy on every detached style snapshot used by text and paint.",
+      "property_id": null,
+      "rust_type": "RasterConfiguration"
+    },
+    {
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/table.rs",
@@ -1993,10 +2354,12 @@
       ],
       "css_name": "resize",
       "field": "resize",
+      "internal_rationale": null,
+      "property_id": 208,
       "rust_type": "Resize"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -2017,6 +2380,8 @@
       ],
       "css_name": "right",
       "field": "right",
+      "internal_rationale": null,
+      "property_id": 209,
       "rust_type": "Length"
     },
     {
@@ -2031,6 +2396,8 @@
       ],
       "css_name": "row-gap",
       "field": "row_gap",
+      "internal_rationale": null,
+      "property_id": 32,
       "rust_type": "Option<Length>"
     },
     {
@@ -2042,6 +2409,8 @@
       ],
       "css_name": "ruby-align",
       "field": "ruby_align",
+      "internal_rationale": null,
+      "property_id": 107,
       "rust_type": "RubyAlign"
     },
     {
@@ -2052,6 +2421,8 @@
       ],
       "css_name": "ruby-overhang",
       "field": "ruby_overhang",
+      "internal_rationale": null,
+      "property_id": 109,
       "rust_type": "RubyOverhang"
     },
     {
@@ -2063,66 +2434,80 @@
       ],
       "css_name": "ruby-position",
       "field": "ruby_position",
+      "internal_rationale": null,
+      "property_id": 108,
       "rust_type": "RubyPosition"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs"
       ],
       "css_name": "scroll-marker-group",
       "field": "scroll_marker_group",
+      "internal_rationale": null,
+      "property_id": 210,
       "rust_type": "ScrollMarkerGroup"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs"
       ],
       "css_name": "scroll-snap-align",
       "field": "scroll_snap_align",
+      "internal_rationale": null,
+      "property_id": 211,
       "rust_type": "ScrollSnapAlign"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs"
       ],
       "css_name": "scroll-snap-axis",
       "field": "scroll_snap_axis",
+      "internal_rationale": null,
+      "property_id": 212,
       "rust_type": "ScrollSnapAxis"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs"
       ],
       "css_name": "scrollbar-gutter",
       "field": "scrollbar_gutter",
+      "internal_rationale": null,
+      "property_id": 213,
       "rust_type": "ScrollbarGutter"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "scrollbar-track-color",
       "field": "scrollbar_track_color",
+      "internal_rationale": null,
+      "property_id": 214,
       "rust_type": "Option<Color>"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs"
       ],
       "css_name": "scrollbar-width",
       "field": "scrollbar_width",
+      "internal_rationale": null,
+      "property_id": 215,
       "rust_type": "ScrollbarWidth"
     },
     {
@@ -2133,16 +2518,20 @@
       ],
       "css_name": "tab-size",
       "field": "tab_size",
+      "internal_rationale": null,
+      "property_id": 87,
       "rust_type": "TabSize"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/table.rs"
       ],
       "css_name": "table-layout",
       "field": "table_layout",
+      "internal_rationale": null,
+      "property_id": 216,
       "rust_type": "TableLayout"
     },
     {
@@ -2155,6 +2544,8 @@
       ],
       "css_name": "text-align",
       "field": "text_align",
+      "internal_rationale": null,
+      "property_id": 72,
       "rust_type": "TextAlign"
     },
     {
@@ -2165,6 +2556,8 @@
       ],
       "css_name": "text-align-last",
       "field": "text_align_last",
+      "internal_rationale": null,
+      "property_id": 73,
       "rust_type": "TextAlignLast"
     },
     {
@@ -2175,6 +2568,8 @@
       ],
       "css_name": "text-autospace",
       "field": "text_autospace",
+      "internal_rationale": null,
+      "property_id": 85,
       "rust_type": "TextAutospace"
     },
     {
@@ -2186,6 +2581,8 @@
       ],
       "css_name": "text-box-edge",
       "field": "text_box_edge",
+      "internal_rationale": null,
+      "property_id": 116,
       "rust_type": "TextBoxEdge"
     },
     {
@@ -2197,6 +2594,8 @@
       ],
       "css_name": "text-box-trim",
       "field": "text_box_trim",
+      "internal_rationale": null,
+      "property_id": 117,
       "rust_type": "TextBoxTrim"
     },
     {
@@ -2207,6 +2606,8 @@
       ],
       "css_name": "text-combine-upright",
       "field": "text_combine_upright",
+      "internal_rationale": null,
+      "property_id": 102,
       "rust_type": "TextCombineUpright"
     },
     {
@@ -2218,6 +2619,8 @@
       ],
       "css_name": "text-decoration-color",
       "field": "text_decoration_color",
+      "internal_rationale": null,
+      "property_id": 91,
       "rust_type": "StyleColor"
     },
     {
@@ -2230,6 +2633,8 @@
       ],
       "css_name": "text-decoration-line",
       "field": "text_decoration_line",
+      "internal_rationale": null,
+      "property_id": 89,
       "rust_type": "TextDecorationLine"
     },
     {
@@ -2241,6 +2646,8 @@
       ],
       "css_name": "text-decoration-skip-ink",
       "field": "text_decoration_skip_ink",
+      "internal_rationale": null,
+      "property_id": 93,
       "rust_type": "TextDecorationSkipInk"
     },
     {
@@ -2252,6 +2659,8 @@
       ],
       "css_name": "text-decoration-style",
       "field": "text_decoration_style",
+      "internal_rationale": null,
+      "property_id": 90,
       "rust_type": "TextDecorationStyle"
     },
     {
@@ -2263,6 +2672,8 @@
       ],
       "css_name": "text-decoration-thickness",
       "field": "text_decoration_thickness",
+      "internal_rationale": null,
+      "property_id": 92,
       "rust_type": "TextDecorationThickness"
     },
     {
@@ -2274,10 +2685,12 @@
       ],
       "css_name": "text-emphasis-color",
       "field": "text_emphasis_color",
+      "internal_rationale": null,
+      "property_id": 98,
       "rust_type": "StyleColor"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/inline/items_builder.rs",
@@ -2285,10 +2698,12 @@
       ],
       "css_name": "text-emphasis-fill",
       "field": "text_emphasis_fill",
+      "internal_rationale": null,
+      "property_id": 223,
       "rust_type": "TextEmphasisFill"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -2298,6 +2713,8 @@
       ],
       "css_name": "text-emphasis-mark",
       "field": "text_emphasis_mark",
+      "internal_rationale": null,
+      "property_id": 222,
       "rust_type": "TextEmphasisMark"
     },
     {
@@ -2311,6 +2728,8 @@
       ],
       "css_name": "text-emphasis-position",
       "field": "text_emphasis_position",
+      "internal_rationale": null,
+      "property_id": 97,
       "rust_type": "TextEmphasisPosition"
     },
     {
@@ -2321,6 +2740,8 @@
       ],
       "css_name": "text-indent",
       "field": "text_indent",
+      "internal_rationale": null,
+      "property_id": 71,
       "rust_type": "Length"
     },
     {
@@ -2331,6 +2752,8 @@
       ],
       "css_name": "text-justify",
       "field": "text_justify",
+      "internal_rationale": null,
+      "property_id": 74,
       "rust_type": "TextJustify"
     },
     {
@@ -2343,6 +2766,8 @@
       ],
       "css_name": "text-orientation",
       "field": "text_orientation",
+      "internal_rationale": null,
+      "property_id": 104,
       "rust_type": "TextOrientation"
     },
     {
@@ -2353,6 +2778,8 @@
       ],
       "css_name": "text-overflow",
       "field": "text_overflow",
+      "internal_rationale": null,
+      "property_id": 100,
       "rust_type": "TextOverflow"
     },
     {
@@ -2363,6 +2790,8 @@
       ],
       "css_name": "text-rendering",
       "field": "text_rendering",
+      "internal_rationale": null,
+      "property_id": 112,
       "rust_type": "TextRendering"
     },
     {
@@ -2374,6 +2803,8 @@
       ],
       "css_name": "text-shadow",
       "field": "text_shadow",
+      "internal_rationale": null,
+      "property_id": 99,
       "rust_type": "Vec<TextShadow>"
     },
     {
@@ -2384,6 +2815,8 @@
       ],
       "css_name": "text-size-adjust",
       "field": "text_size_adjust",
+      "internal_rationale": null,
+      "property_id": 101,
       "rust_type": "TextSizeAdjust"
     },
     {
@@ -2394,6 +2827,8 @@
       ],
       "css_name": "text-spacing-trim",
       "field": "text_spacing_trim",
+      "internal_rationale": null,
+      "property_id": 86,
       "rust_type": "TextSpacingTrim"
     },
     {
@@ -2405,6 +2840,8 @@
       ],
       "css_name": "text-transform",
       "field": "text_transform",
+      "internal_rationale": null,
+      "property_id": 88,
       "rust_type": "TextTransform"
     },
     {
@@ -2416,6 +2853,8 @@
       ],
       "css_name": "text-underline-offset",
       "field": "text_underline_offset",
+      "internal_rationale": null,
+      "property_id": 94,
       "rust_type": "Length"
     },
     {
@@ -2426,6 +2865,8 @@
       ],
       "css_name": "text-underline-position",
       "field": "text_underline_position",
+      "internal_rationale": null,
+      "property_id": 95,
       "rust_type": "TextUnderlinePosition"
     },
     {
@@ -2437,6 +2878,8 @@
       ],
       "css_name": "text-wrap",
       "field": "text_wrap",
+      "internal_rationale": null,
+      "property_id": 122,
       "rust_type": "TextWrap"
     },
     {
@@ -2447,6 +2890,8 @@
       ],
       "css_name": "text-wrap-mode",
       "field": "text_wrap_mode",
+      "internal_rationale": null,
+      "property_id": 83,
       "rust_type": "TextWrapMode"
     },
     {
@@ -2457,10 +2902,12 @@
       ],
       "css_name": "text-wrap-style",
       "field": "text_wrap_style",
+      "internal_rationale": null,
+      "property_id": 84,
       "rust_type": "TextWrapStyle"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/bfc_resolution.rs",
@@ -2483,6 +2930,8 @@
       ],
       "css_name": "top",
       "field": "top",
+      "internal_rationale": null,
+      "property_id": 217,
       "rust_type": "Length"
     },
     {
@@ -2495,17 +2944,21 @@
       ],
       "css_name": "transform",
       "field": "transform",
+      "internal_rationale": null,
+      "property_id": 45,
       "rust_type": "Transform2D"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-paint/src/painter.rs"
       ],
       "css_name": "transform-origin",
       "field": "transform_origin",
-      "rust_type": "(Length"
+      "internal_rationale": null,
+      "property_id": 218,
+      "rust_type": "(Length, Length)"
     },
     {
       "canonical_schema_entry": true,
@@ -2517,6 +2970,8 @@
       ],
       "css_name": "unicode-bidi",
       "field": "unicode_bidi",
+      "internal_rationale": null,
+      "property_id": 105,
       "rust_type": "UnicodeBidi"
     },
     {
@@ -2532,10 +2987,12 @@
       ],
       "css_name": "vertical-align",
       "field": "vertical_align",
+      "internal_rationale": null,
+      "property_id": 106,
       "rust_type": "VerticalAlign"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/flex/algorithm.rs",
@@ -2543,10 +3000,12 @@
       ],
       "css_name": "visibility",
       "field": "visibility",
+      "internal_rationale": null,
+      "property_id": 219,
       "rust_type": "Visibility"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs",
@@ -2554,6 +3013,8 @@
       ],
       "css_name": "webkit-box-orient",
       "field": "webkit_box_orient",
+      "internal_rationale": null,
+      "property_id": 220,
       "rust_type": "WebkitBoxOrient"
     },
     {
@@ -2568,6 +3029,8 @@
       ],
       "css_name": "white-space",
       "field": "white_space",
+      "internal_rationale": null,
+      "property_id": 121,
       "rust_type": "WhiteSpace"
     },
     {
@@ -2578,16 +3041,20 @@
       ],
       "css_name": "white-space-collapse",
       "field": "white_space_collapse",
+      "internal_rationale": null,
+      "property_id": 82,
       "rust_type": "WhiteSpaceCollapse"
     },
     {
-      "canonical_schema_entry": false,
+      "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
         "bindings/rust/openui-layout/src/block.rs"
       ],
       "css_name": "widows",
       "field": "widows",
+      "internal_rationale": null,
+      "property_id": 221,
       "rust_type": "u32"
     },
     {
@@ -2618,6 +3085,8 @@
       ],
       "css_name": "width",
       "field": "width",
+      "internal_rationale": null,
+      "property_id": 4,
       "rust_type": "Length"
     },
     {
@@ -2629,6 +3098,8 @@
       ],
       "css_name": null,
       "field": "will_change_transform",
+      "internal_rationale": "Caches compositing intent derived from authored will-change declarations.",
+      "property_id": null,
       "rust_type": "bool"
     },
     {
@@ -2642,6 +3113,8 @@
       ],
       "css_name": "word-break",
       "field": "word_break",
+      "internal_rationale": null,
+      "property_id": 75,
       "rust_type": "WordBreak"
     },
     {
@@ -2653,6 +3126,8 @@
       ],
       "css_name": "word-spacing",
       "field": "word_spacing",
+      "internal_rationale": null,
+      "property_id": 70,
       "rust_type": "f32"
     },
     {
@@ -2676,6 +3151,8 @@
       ],
       "css_name": "writing-mode",
       "field": "writing_mode",
+      "internal_rationale": null,
+      "property_id": 103,
       "rust_type": "WritingMode"
     },
     {
@@ -2686,6 +3163,8 @@
       ],
       "css_name": "z-index",
       "field": "z_index",
+      "internal_rationale": null,
+      "property_id": 23,
       "rust_type": "Option<i32>"
     }
   ],

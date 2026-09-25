@@ -530,7 +530,22 @@
   "renderer_contract": "chromium-147-native-structure-v1",
   "resource_hashes": {
     "tools/accountability/data/wpt_ported/sp20_resource_manifest.json": "7b6ef91b6dcfccef8751fdd25b47a0e3a9a682e8b982474fe34bdf72cf331328",
-    "tools/wpt/sp20_focused_ids.json": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f"
+    "tools/qualification/manifests/complete-5731.json": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
+    "tools/qualification/manifests/focused-raster.json": "215b2eee97e6eacb7984ede2e8c8e11e5d049d1ffe948589083efc3258528c98"
   },
-  "schema_version": 1
+  "schema_version": 1,
+  "suite_manifests": {
+    "focused": {
+      "count": 16,
+      "evidence": "qualification-gate",
+      "path": "tools/qualification/manifests/focused-raster.json",
+      "sha256": "215b2eee97e6eacb7984ede2e8c8e11e5d049d1ffe948589083efc3258528c98"
+    },
+    "full": {
+      "count": 5731,
+      "evidence": "diagnostic-census",
+      "path": "tools/qualification/manifests/complete-5731.json",
+      "sha256": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f"
+    }
+  }
 }

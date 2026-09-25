@@ -964,6 +964,7 @@ impl Engine {
                     "color" => FormControlRole::ColorInput,
                     "date" => FormControlRole::DateInput,
                     "file" => FormControlRole::FileInput,
+                    "button" | "submit" | "reset" => FormControlRole::Button,
                     _ => FormControlRole::TextInput,
                 };
                 if control.role == FormControlRole::Range && control.value.is_empty() {
@@ -1365,5 +1366,20 @@ mod tests {
         engine.activate(b).unwrap();
         assert!(!engine.control_state(a).unwrap().unwrap().checked);
         assert!(engine.control_state(b).unwrap().unwrap().checked);
+    }
+
+    #[test]
+    fn input_button_type_attributes_preserve_button_role() {
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(100.0, 100.0, 1.0).unwrap())
+                .unwrap();
+        for input_type in ["button", "submit", "reset"] {
+            let input = sized_control(&mut engine, ElementTag::Input);
+            engine.set_attribute(input, "type", input_type).unwrap();
+            assert_eq!(
+                engine.control_state(input).unwrap().unwrap().role,
+                FormControlRole::Button
+            );
+        }
     }
 }

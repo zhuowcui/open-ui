@@ -289,9 +289,9 @@ fn test_viewport() -> openui_geometry::ViewportMetrics {
 /// Create a block container (div) with a given width and append to parent.
 fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
     if width_px > 0.0 {
-        doc.node_mut(div).style.width = Length::px(width_px);
+        doc.update_resolved_style(div, |style| style.width = Length::px(width_px));
     }
     doc.append_child(parent, div);
     div
@@ -300,7 +300,7 @@ fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
 /// Create an inline span and append to parent. Returns span NodeId.
 fn add_span(doc: &mut Document, parent: NodeId) -> NodeId {
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(parent, span);
     span
 }
@@ -311,24 +311,38 @@ fn add_text(doc: &mut Document, parent: NodeId, content: &str) -> NodeId {
     let parent_style = doc.node(parent).style.clone();
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some(content.to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     // Propagate inherited text properties from parent
-    doc.node_mut(text).style.font_family = parent_style.font_family;
-    doc.node_mut(text).style.font_size = parent_style.font_size;
-    doc.node_mut(text).style.font_weight = parent_style.font_weight;
-    doc.node_mut(text).style.font_style = parent_style.font_style;
-    doc.node_mut(text).style.font_stretch = parent_style.font_stretch;
-    doc.node_mut(text).style.color = parent_style.color;
-    doc.node_mut(text).style.letter_spacing = parent_style.letter_spacing;
-    doc.node_mut(text).style.word_spacing = parent_style.word_spacing;
-    doc.node_mut(text).style.text_transform = parent_style.text_transform;
-    doc.node_mut(text).style.white_space = parent_style.white_space;
-    doc.node_mut(text).style.direction = parent_style.direction;
-    doc.node_mut(text).style.line_height = parent_style.line_height;
-    doc.node_mut(text).style.text_decoration_line = parent_style.text_decoration_line;
-    doc.node_mut(text).style.text_decoration_style = parent_style.text_decoration_style;
-    doc.node_mut(text).style.text_decoration_color = parent_style.text_decoration_color.clone();
-    doc.node_mut(text).style.vertical_align = parent_style.vertical_align;
+    doc.update_resolved_style(text, |style| {
+        style.font_family = parent_style.font_family.clone()
+    });
+    doc.update_resolved_style(text, |style| style.font_size = parent_style.font_size);
+    doc.update_resolved_style(text, |style| style.font_weight = parent_style.font_weight);
+    doc.update_resolved_style(text, |style| style.font_style = parent_style.font_style);
+    doc.update_resolved_style(text, |style| style.font_stretch = parent_style.font_stretch);
+    doc.update_resolved_style(text, |style| style.color = parent_style.color);
+    doc.update_resolved_style(text, |style| {
+        style.letter_spacing = parent_style.letter_spacing
+    });
+    doc.update_resolved_style(text, |style| style.word_spacing = parent_style.word_spacing);
+    doc.update_resolved_style(text, |style| {
+        style.text_transform = parent_style.text_transform
+    });
+    doc.update_resolved_style(text, |style| style.white_space = parent_style.white_space);
+    doc.update_resolved_style(text, |style| style.direction = parent_style.direction);
+    doc.update_resolved_style(text, |style| style.line_height = parent_style.line_height);
+    doc.update_resolved_style(text, |style| {
+        style.text_decoration_line = parent_style.text_decoration_line
+    });
+    doc.update_resolved_style(text, |style| {
+        style.text_decoration_style = parent_style.text_decoration_style
+    });
+    doc.update_resolved_style(text, |style| {
+        style.text_decoration_color = parent_style.text_decoration_color.clone()
+    });
+    doc.update_resolved_style(text, |style| {
+        style.vertical_align = parent_style.vertical_align
+    });
     doc.append_child(parent, text);
     text
 }
@@ -336,15 +350,17 @@ fn add_text(doc: &mut Document, parent: NodeId, content: &str) -> NodeId {
 /// Apply body-like defaults: white background, DejaVu Sans, 20px padding.
 fn setup_viewport(doc: &mut Document) -> NodeId {
     let vp = doc.root();
-    doc.node_mut(vp).style.display = Display::Block;
-    doc.node_mut(vp).style.background_color = Color::WHITE;
-    doc.node_mut(vp).style.padding_top = Length::px(20.0);
-    doc.node_mut(vp).style.padding_right = Length::px(20.0);
-    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
-    doc.node_mut(vp).style.padding_left = Length::px(20.0);
-    doc.node_mut(vp).style.font_family = FontFamilyList::single("DejaVu Sans");
-    doc.node_mut(vp).style.font_size = 16.0;
-    doc.node_mut(vp).style.color = Color::BLACK;
+    doc.update_resolved_style(vp, |style| style.display = Display::Block);
+    doc.update_resolved_style(vp, |style| style.background_color = Color::WHITE);
+    doc.update_resolved_style(vp, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_right = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_bottom = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_left = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| {
+        style.font_family = FontFamilyList::single("DejaVu Sans")
+    });
+    doc.update_resolved_style(vp, |style| style.font_size = 16.0);
+    doc.update_resolved_style(vp, |style| style.color = Color::BLACK);
     vp
 }
 
@@ -354,23 +370,25 @@ fn add_paragraph_with_style(
     doc: &mut Document,
     parent: NodeId,
     text: &str,
-    style_fn: impl FnOnce(&mut ComputedStyle),
+    style_fn: impl FnOnce(&mut openui_style::ComputedStyleFields),
 ) -> NodeId {
     let p = doc.create_node(ElementTag::Div);
-    doc.node_mut(p).style.display = Display::Block;
-    doc.node_mut(p).style.margin_bottom = Length::px(10.0);
+    doc.update_resolved_style(p, |style| style.display = Display::Block);
+    doc.update_resolved_style(p, |style| style.margin_bottom = Length::px(10.0));
     // Inherit viewport defaults
     let parent_style = doc.node(parent).style.clone();
-    doc.node_mut(p).style.font_family = parent_style.font_family;
-    doc.node_mut(p).style.font_size = parent_style.font_size;
-    doc.node_mut(p).style.font_weight = parent_style.font_weight;
-    doc.node_mut(p).style.font_style = parent_style.font_style;
-    doc.node_mut(p).style.color = parent_style.color;
-    doc.node_mut(p).style.direction = parent_style.direction;
-    doc.node_mut(p).style.line_height = parent_style.line_height;
-    doc.node_mut(p).style.white_space = parent_style.white_space;
+    doc.update_resolved_style(p, |style| {
+        style.font_family = parent_style.font_family.clone()
+    });
+    doc.update_resolved_style(p, |style| style.font_size = parent_style.font_size);
+    doc.update_resolved_style(p, |style| style.font_weight = parent_style.font_weight);
+    doc.update_resolved_style(p, |style| style.font_style = parent_style.font_style);
+    doc.update_resolved_style(p, |style| style.color = parent_style.color);
+    doc.update_resolved_style(p, |style| style.direction = parent_style.direction);
+    doc.update_resolved_style(p, |style| style.line_height = parent_style.line_height);
+    doc.update_resolved_style(p, |style| style.white_space = parent_style.white_space);
     // Apply custom style
-    style_fn(&mut doc.node_mut(p).style);
+    doc.update_resolved_style(p, style_fn);
     doc.append_child(parent, p);
     add_text(doc, p, text);
     p
@@ -379,24 +397,25 @@ fn add_paragraph_with_style(
 /// Copy inheritable text properties from parent node to child node.
 fn inherit_text_style(doc: &mut Document, parent: NodeId, child: NodeId) {
     let ps = doc.node(parent).style.clone();
-    let cs = &mut doc.node_mut(child).style;
-    cs.font_family = ps.font_family;
-    cs.font_size = ps.font_size;
-    cs.font_weight = ps.font_weight;
-    cs.font_style = ps.font_style;
-    cs.font_stretch = ps.font_stretch;
-    cs.color = ps.color;
-    cs.letter_spacing = ps.letter_spacing;
-    cs.word_spacing = ps.word_spacing;
-    cs.text_transform = ps.text_transform;
-    cs.white_space = ps.white_space;
-    cs.direction = ps.direction;
-    cs.line_height = ps.line_height;
-    cs.text_align = ps.text_align;
-    cs.text_decoration_line = ps.text_decoration_line;
-    cs.text_decoration_style = ps.text_decoration_style;
-    cs.text_decoration_color = ps.text_decoration_color;
-    cs.vertical_align = ps.vertical_align;
+    doc.update_resolved_style(child, |cs| {
+        cs.font_family = ps.font_family.clone();
+        cs.font_size = ps.font_size;
+        cs.font_weight = ps.font_weight;
+        cs.font_style = ps.font_style;
+        cs.font_stretch = ps.font_stretch;
+        cs.color = ps.color;
+        cs.letter_spacing = ps.letter_spacing;
+        cs.word_spacing = ps.word_spacing;
+        cs.text_transform = ps.text_transform;
+        cs.white_space = ps.white_space;
+        cs.direction = ps.direction;
+        cs.line_height = ps.line_height;
+        cs.text_align = ps.text_align;
+        cs.text_decoration_line = ps.text_decoration_line;
+        cs.text_decoration_style = ps.text_decoration_style;
+        cs.text_decoration_color = ps.text_decoration_color.clone();
+        cs.vertical_align = ps.vertical_align;
+    });
 }
 
 /// Render a Document, save the PNG, compare with Chromium reference if available.
@@ -412,9 +431,7 @@ fn render_and_compare(doc: &Document, test_name: &str) -> (Surface, Option<Pixel
     let mut surface = render_to_surface(doc, test_viewport()).expect("render_to_surface failed");
 
     // Save our render
-    render_to_png(doc, test_viewport(), out_path.to_str().unwrap(),
-    )
-    .expect("render_to_png failed");
+    render_to_png(doc, test_viewport(), out_path.to_str().unwrap()).expect("render_to_png failed");
 
     // Compare with Chromium reference if it exists
     let ref_path = chromium_ref_path(test_name);
@@ -592,11 +609,11 @@ fn build_line_breaking() -> Document {
     let make_container = |doc: &mut Document, parent: NodeId, width: f32| -> NodeId {
         let c = add_block(doc, parent, width);
         inherit_text_style(doc, parent, c);
-        doc.node_mut(c).style.margin_bottom = Length::px(10.0);
-        doc.node_mut(c).style.padding_top = Length::px(4.0);
-        doc.node_mut(c).style.padding_right = Length::px(4.0);
-        doc.node_mut(c).style.padding_bottom = Length::px(4.0);
-        doc.node_mut(c).style.padding_left = Length::px(4.0);
+        doc.update_resolved_style(c, |style| style.margin_bottom = Length::px(10.0));
+        doc.update_resolved_style(c, |style| style.padding_top = Length::px(4.0));
+        doc.update_resolved_style(c, |style| style.padding_right = Length::px(4.0));
+        doc.update_resolved_style(c, |style| style.padding_bottom = Length::px(4.0));
+        doc.update_resolved_style(c, |style| style.padding_left = Length::px(4.0));
         c
     };
 
@@ -681,14 +698,14 @@ fn build_text_alignment() -> Document {
 
         // Create block manually (add_block already appends)
         let p = doc.create_node(ElementTag::Div);
-        doc.node_mut(p).style.display = Display::Block;
+        doc.update_resolved_style(p, |style| style.display = Display::Block);
         inherit_text_style(&mut doc, container, p);
-        doc.node_mut(p).style.text_align = align;
-        doc.node_mut(p).style.margin_bottom = Length::px(10.0);
-        doc.node_mut(p).style.padding_top = Length::px(4.0);
-        doc.node_mut(p).style.padding_right = Length::px(4.0);
-        doc.node_mut(p).style.padding_bottom = Length::px(4.0);
-        doc.node_mut(p).style.padding_left = Length::px(4.0);
+        doc.update_resolved_style(p, |style| style.text_align = align);
+        doc.update_resolved_style(p, |style| style.margin_bottom = Length::px(10.0));
+        doc.update_resolved_style(p, |style| style.padding_top = Length::px(4.0));
+        doc.update_resolved_style(p, |style| style.padding_right = Length::px(4.0));
+        doc.update_resolved_style(p, |style| style.padding_bottom = Length::px(4.0));
+        doc.update_resolved_style(p, |style| style.padding_left = Length::px(4.0));
         doc.append_child(container, p);
         add_text(&mut doc, p, &full_text);
     }
@@ -741,8 +758,8 @@ fn build_vertical_align() -> Document {
     for &(va, label) in alignments {
         let line = add_block(&mut doc, container, 0.0);
         inherit_text_style(&mut doc, container, line);
-        doc.node_mut(line).style.margin_bottom = Length::px(15.0);
-        doc.node_mut(line).style.line_height = LineHeight::Length(40.0);
+        doc.update_resolved_style(line, |style| style.margin_bottom = Length::px(15.0));
+        doc.update_resolved_style(line, |style| style.line_height = LineHeight::Length(40.0));
 
         // "Normal " text
         add_text(&mut doc, line, "Normal ");
@@ -750,8 +767,8 @@ fn build_vertical_align() -> Document {
         // Span with vertical-align and smaller font
         let span = add_span(&mut doc, line);
         inherit_text_style(&mut doc, line, span);
-        doc.node_mut(span).style.font_size = 10.0;
-        doc.node_mut(span).style.vertical_align = va;
+        doc.update_resolved_style(span, |style| style.font_size = 10.0);
+        doc.update_resolved_style(span, |style| style.vertical_align = va);
         add_text(&mut doc, span, label);
 
         // " text here."
@@ -1206,14 +1223,14 @@ fn build_line_height() -> Document {
     for &(lh, label) in line_heights {
         let full = format!("{}{}", label, text);
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         inherit_text_style(&mut doc, container, block);
-        doc.node_mut(block).style.line_height = lh;
-        doc.node_mut(block).style.margin_bottom = Length::px(10.0);
-        doc.node_mut(block).style.padding_top = Length::px(4.0);
-        doc.node_mut(block).style.padding_right = Length::px(4.0);
-        doc.node_mut(block).style.padding_bottom = Length::px(4.0);
-        doc.node_mut(block).style.padding_left = Length::px(4.0);
+        doc.update_resolved_style(block, |style| style.line_height = lh);
+        doc.update_resolved_style(block, |style| style.margin_bottom = Length::px(10.0));
+        doc.update_resolved_style(block, |style| style.padding_top = Length::px(4.0));
+        doc.update_resolved_style(block, |style| style.padding_right = Length::px(4.0));
+        doc.update_resolved_style(block, |style| style.padding_bottom = Length::px(4.0));
+        doc.update_resolved_style(block, |style| style.padding_left = Length::px(4.0));
         doc.append_child(container, block);
         add_text(&mut doc, block, &full);
     }
@@ -1277,14 +1294,14 @@ fn build_white_space() -> Document {
 
     for &(ws, content) in ws_modes {
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
         inherit_text_style(&mut doc, container, block);
-        doc.node_mut(block).style.white_space = ws;
-        doc.node_mut(block).style.margin_bottom = Length::px(10.0);
-        doc.node_mut(block).style.padding_top = Length::px(4.0);
-        doc.node_mut(block).style.padding_right = Length::px(4.0);
-        doc.node_mut(block).style.padding_bottom = Length::px(4.0);
-        doc.node_mut(block).style.padding_left = Length::px(4.0);
+        doc.update_resolved_style(block, |style| style.white_space = ws);
+        doc.update_resolved_style(block, |style| style.margin_bottom = Length::px(10.0));
+        doc.update_resolved_style(block, |style| style.padding_top = Length::px(4.0));
+        doc.update_resolved_style(block, |style| style.padding_right = Length::px(4.0));
+        doc.update_resolved_style(block, |style| style.padding_bottom = Length::px(4.0));
+        doc.update_resolved_style(block, |style| style.padding_left = Length::px(4.0));
         doc.append_child(container, block);
         add_text(&mut doc, block, content);
     }

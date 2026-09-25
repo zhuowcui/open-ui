@@ -46,59 +46,60 @@ fn absolute_offsets_for(
     }
 }
 
-fn bordered(style: &mut openui_style::ComputedStyle, left: i32, top: i32) {
-    style.border_left_width = left;
-    style.border_top_width = top;
-    style.border_right_width = 3;
-    style.border_bottom_width = 4;
-    style.border_left_style = BorderStyle::Solid;
-    style.border_top_style = BorderStyle::Solid;
-    style.border_right_style = BorderStyle::Solid;
-    style.border_bottom_style = BorderStyle::Solid;
+fn bordered(style: &mut openui_style::ComputedStyleFields, left: i32, top: i32) {
+    style.update_derived(|computed| computed.border_left_width = left);
+    style.update_derived(|computed| computed.border_top_width = top);
+    style.update_derived(|computed| computed.border_right_width = 3);
+    style.update_derived(|computed| computed.border_bottom_width = 4);
+    style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+    style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+    style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+    style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
 }
 
 fn add_outer(doc: &mut Document) -> NodeId {
     let outer = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(outer).style;
-        style.display = Display::Block;
-        style.position = Position::Relative;
-        style.width = Length::px(100.0);
-        style.height = Length::px(100.0);
+    doc.update_resolved_style(outer, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.position = Position::Relative);
+        style.update_derived(|computed| computed.width = Length::px(100.0));
+        style.update_derived(|computed| computed.height = Length::px(100.0));
         bordered(style, 7, 5);
-        style.padding_left = Length::px(11.0);
-        style.padding_right = Length::px(13.0);
-        style.padding_top = Length::px(9.0);
-        style.padding_bottom = Length::px(15.0);
-    }
+        style.update_derived(|computed| computed.padding_left = Length::px(11.0));
+        style.update_derived(|computed| computed.padding_right = Length::px(13.0));
+        style.update_derived(|computed| computed.padding_top = Length::px(9.0));
+        style.update_derived(|computed| computed.padding_bottom = Length::px(15.0));
+    });
     doc.append_child(doc.root(), outer);
     outer
 }
 
 fn add_centering_flex(doc: &mut Document, outer: NodeId, direction: FlexDirection) -> NodeId {
     let flex = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(flex).style;
-        style.display = Display::Flex;
-        style.flex_direction = direction;
-        style.width = Length::px(40.0);
-        style.height = Length::px(40.0);
-        style.margin_left = Length::px(10.0);
-        style.margin_top = Length::px(10.0);
-        style.justify_content = ContentAlignment::new(ContentPosition::Center);
-        style.align_items = ItemAlignment::new(ItemPosition::Center);
-    }
+    doc.update_resolved_style(flex, |style| {
+        style.update_derived(|computed| computed.display = Display::Flex);
+        style.update_derived(|computed| computed.flex_direction = direction);
+        style.update_derived(|computed| computed.width = Length::px(40.0));
+        style.update_derived(|computed| computed.height = Length::px(40.0));
+        style.update_derived(|computed| computed.margin_left = Length::px(10.0));
+        style.update_derived(|computed| computed.margin_top = Length::px(10.0));
+        style.update_derived(|computed| {
+            computed.justify_content = ContentAlignment::new(ContentPosition::Center)
+        });
+        style.update_derived(|computed| {
+            computed.align_items = ItemAlignment::new(ItemPosition::Center)
+        });
+    });
     doc.append_child(outer, flex);
     flex
 }
 
 fn add_abspos(doc: &mut Document, parent: NodeId) -> NodeId {
     let child = doc.create_node(ElementTag::Div);
-    {
-        let style = &mut doc.node_mut(child).style;
-        style.display = Display::Block;
-        style.position = Position::Absolute;
-    }
+    doc.update_resolved_style(child, |style| {
+        style.update_derived(|computed| computed.display = Display::Block);
+        style.update_derived(|computed| computed.position = Position::Absolute);
+    });
     doc.append_child(parent, child);
     child
 }
@@ -110,22 +111,21 @@ fn bubbled_horizontal_center_uses_asymmetric_interval_for_known_and_auto_widths(
         let outer = add_outer(&mut doc);
         let flex = add_centering_flex(&mut doc, outer, FlexDirection::Row);
         let abspos = add_abspos(&mut doc, flex);
-        {
-            let style = &mut doc.node_mut(abspos).style;
-            style.top = Length::px(0.0);
-            style.height = Length::px(10.0);
+        doc.update_resolved_style(abspos, |style| {
+            style.update_derived(|computed| computed.top = Length::px(0.0));
+            style.update_derived(|computed| computed.height = Length::px(10.0));
             if known_width {
-                style.width = Length::px(20.0);
-                style.margin_left = Length::px(4.0);
-                style.margin_right = Length::px(6.0);
+                style.update_derived(|computed| computed.width = Length::px(20.0));
+                style.update_derived(|computed| computed.margin_left = Length::px(4.0));
+                style.update_derived(|computed| computed.margin_right = Length::px(6.0));
             }
-        }
+        });
         if !known_width {
             for _ in 0..2 {
                 let intrinsic = doc.create_node(ElementTag::Div);
-                doc.node_mut(intrinsic).style.display = Display::InlineBlock;
-                doc.node_mut(intrinsic).style.width = Length::px(50.0);
-                doc.node_mut(intrinsic).style.height = Length::px(10.0);
+                doc.update_resolved_style(intrinsic, |style| style.display = Display::InlineBlock);
+                doc.update_resolved_style(intrinsic, |style| style.width = Length::px(50.0));
+                doc.update_resolved_style(intrinsic, |style| style.height = Length::px(10.0));
                 doc.append_child(abspos, intrinsic);
             }
         }
@@ -156,27 +156,27 @@ fn bubbled_vertical_center_repositions_auto_physical_height_after_vertical_layou
         let outer = add_outer(&mut doc);
         let flex = add_centering_flex(&mut doc, outer, FlexDirection::Column);
         let abspos = add_abspos(&mut doc, flex);
-        {
-            let style = &mut doc.node_mut(abspos).style;
-            style.left = Length::px(0.0);
-            style.width = Length::px(10.0);
+        doc.update_resolved_style(abspos, |style| {
+            style.update_derived(|computed| computed.left = Length::px(0.0));
+            style.update_derived(|computed| computed.width = Length::px(10.0));
             if known_height {
-                style.height = Length::px(20.0);
-                style.margin_top = Length::px(4.0);
-                style.margin_bottom = Length::px(6.0);
+                style.update_derived(|computed| computed.height = Length::px(20.0));
+                style.update_derived(|computed| computed.margin_top = Length::px(4.0));
+                style.update_derived(|computed| computed.margin_bottom = Length::px(6.0));
             } else {
-                style.writing_mode = WritingMode::VerticalRl;
-                style.direction = Direction::Ltr;
+                style.update_derived(|computed| computed.writing_mode = WritingMode::VerticalRl);
+                style.update_derived(|computed| computed.direction = Direction::Ltr);
             }
-        }
+        });
         if !known_height {
             for _ in 0..2 {
                 let inline = doc.create_node(ElementTag::Div);
-                let style = &mut doc.node_mut(inline).style;
-                style.display = Display::InlineBlock;
-                style.writing_mode = WritingMode::VerticalRl;
-                style.width = Length::px(10.0);
-                style.height = Length::px(50.0);
+                doc.update_resolved_style(inline, |style| {
+                    style.display = Display::InlineBlock;
+                    style.writing_mode = WritingMode::VerticalRl;
+                    style.width = Length::px(10.0);
+                    style.height = Length::px(50.0);
+                });
                 doc.append_child(abspos, inline);
             }
         }
@@ -209,13 +209,12 @@ fn center_anchor_is_independent_of_hypothetical_size_across_flow_reversal() {
             let mut doc = Document::new();
             let outer = add_outer(&mut doc);
             let flex = add_centering_flex(&mut doc, outer, flex_direction);
-            doc.node_mut(flex).style.direction = direction;
+            doc.update_resolved_style(flex, |style| style.direction = direction);
             let abspos = add_abspos(&mut doc, flex);
-            {
-                let style = &mut doc.node_mut(abspos).style;
-                style.width = Length::px(20.0);
-                style.height = Length::px(20.0);
-            }
+            doc.update_resolved_style(abspos, |style| {
+                style.update_derived(|computed| computed.width = Length::px(20.0));
+                style.update_derived(|computed| computed.height = Length::px(20.0));
+            });
 
             let root = layout_root(&doc);
             let outer_fragment = fragment_for(&root, outer);
@@ -239,23 +238,22 @@ fn ordinary_block_static_start_edge_behavior_is_unchanged() {
     for direction in [Direction::Ltr, Direction::Rtl] {
         let mut doc = Document::new();
         let outer = doc.create_node(ElementTag::Div);
-        {
-            let style = &mut doc.node_mut(outer).style;
-            style.display = Display::Block;
-            style.position = Position::Relative;
-            style.direction = direction;
-            style.width = Length::px(100.0);
-            style.height = Length::px(80.0);
-        }
+        doc.update_resolved_style(outer, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.position = Position::Relative);
+            style.update_derived(|computed| computed.direction = direction);
+            style.update_derived(|computed| computed.width = Length::px(100.0));
+            style.update_derived(|computed| computed.height = Length::px(80.0));
+        });
         doc.append_child(doc.root(), outer);
 
         let inflow = doc.create_node(ElementTag::Div);
-        doc.node_mut(inflow).style.height = Length::px(20.0);
+        doc.update_resolved_style(inflow, |style| style.height = Length::px(20.0));
         doc.append_child(outer, inflow);
 
         let abspos = add_abspos(&mut doc, outer);
-        doc.node_mut(abspos).style.width = Length::px(10.0);
-        doc.node_mut(abspos).style.height = Length::px(10.0);
+        doc.update_resolved_style(abspos, |style| style.width = Length::px(10.0));
+        doc.update_resolved_style(abspos, |style| style.height = Length::px(10.0));
 
         let root = layout_root(&doc);
         let positioned = fragment_for(fragment_for(&root, outer), abspos);
@@ -279,35 +277,35 @@ fn fragmented_column_flex_materializes_center_and_end_edges_before_column_mappin
     ] {
         let mut doc = Document::new();
         let multicol = doc.create_node(ElementTag::Div);
-        {
-            let style = &mut doc.node_mut(multicol).style;
-            style.display = Display::Block;
-            style.position = Position::Relative;
-            style.width = Length::px(100.0);
-            style.height = Length::px(100.0);
-            style.column_count = Some(4);
-            style.column_gap = Some(Length::px(0.0));
-        }
+        doc.update_resolved_style(multicol, |style| {
+            style.update_derived(|computed| computed.display = Display::Block);
+            style.update_derived(|computed| computed.position = Position::Relative);
+            style.update_derived(|computed| computed.width = Length::px(100.0));
+            style.update_derived(|computed| computed.height = Length::px(100.0));
+            style.update_derived(|computed| computed.column_count = Some(4));
+            style.update_derived(|computed| computed.column_gap = Some(Length::px(0.0)));
+        });
         doc.append_child(doc.root(), multicol);
 
         let flex = doc.create_node(ElementTag::Div);
-        {
-            let style = &mut doc.node_mut(flex).style;
-            style.display = Display::Flex;
-            style.flex_direction = FlexDirection::Column;
-            style.justify_content = ContentAlignment::new(position);
-            style.width = Length::px(50.0);
-            style.height = Length::px(400.0);
-        }
+        doc.update_resolved_style(flex, |style| {
+            style.update_derived(|computed| computed.display = Display::Flex);
+            style.update_derived(|computed| computed.flex_direction = FlexDirection::Column);
+            style.update_derived(|computed| {
+                computed.justify_content = ContentAlignment::new(position)
+            });
+            style.update_derived(|computed| computed.width = Length::px(50.0));
+            style.update_derived(|computed| computed.height = Length::px(400.0));
+        });
         doc.append_child(multicol, flex);
 
         let abspos = add_abspos(&mut doc, flex);
-        doc.node_mut(abspos).style.width = Length::px(25.0);
-        doc.node_mut(abspos).style.height = Length::px(100.0);
+        doc.update_resolved_style(abspos, |style| style.width = Length::px(25.0));
+        doc.update_resolved_style(abspos, |style| style.height = Length::px(100.0));
         for _ in 0..4 {
             let child = doc.create_node(ElementTag::Div);
-            doc.node_mut(child).style.width = Length::px(25.0);
-            doc.node_mut(child).style.height = Length::px(100.0);
+            doc.update_resolved_style(child, |style| style.width = Length::px(25.0));
+            doc.update_resolved_style(child, |style| style.height = Length::px(100.0));
             doc.append_child(flex, child);
         }
 

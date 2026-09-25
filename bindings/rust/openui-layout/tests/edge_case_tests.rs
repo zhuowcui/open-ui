@@ -35,13 +35,13 @@ fn block_layout_text(texts: &[&str], width: i32) -> Fragment {
     let mut doc = Document::new();
     let vp = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(vp, block);
 
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         doc.append_child(block, t);
     }
 
@@ -53,13 +53,13 @@ fn make_text_block(texts: &[&str], _width: i32) -> (Document, NodeId) {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         doc.append_child(block, t);
     }
     (doc, block)
@@ -315,21 +315,21 @@ fn edge_mixed_tiny_and_normal_text() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     // "small" text node (default font size, tiny line-height)
     let t1 = doc.create_node(ElementTag::Text);
     doc.node_mut(t1).text = Some("small".to_string());
-    doc.node_mut(t1).style.display = Display::Inline;
-    doc.node_mut(t1).style.line_height = LineHeight::Number(0.5);
+    doc.update_resolved_style(t1, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t1, |style| style.line_height = LineHeight::Number(0.5));
     doc.append_child(block, t1);
 
     // "LARGE" text node (default font size, large line-height)
     let t2 = doc.create_node(ElementTag::Text);
     doc.node_mut(t2).text = Some("LARGE".to_string());
-    doc.node_mut(t2).style.display = Display::Inline;
-    doc.node_mut(t2).style.line_height = LineHeight::Number(3.0);
+    doc.update_resolved_style(t2, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t2, |style| style.line_height = LineHeight::Number(3.0));
     doc.append_child(block, t2);
 
     let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
@@ -419,13 +419,13 @@ fn edge_rtl_direction_produces_fragment() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.direction = Direction::Rtl;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.direction = Direction::Rtl);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("Hello".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
@@ -441,14 +441,14 @@ fn edge_rtl_text_align_start_offsets_right() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.direction = Direction::Rtl;
-    doc.node_mut(block).style.text_align = TextAlign::Start;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.direction = Direction::Rtl);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Start);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("Hi".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
@@ -470,13 +470,13 @@ fn edge_ltr_text_in_rtl_paragraph_renders() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.direction = Direction::Rtl;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.direction = Direction::Rtl);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("LTR content in RTL".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
@@ -502,14 +502,14 @@ fn edge_line_height_less_than_font_no_crash() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.line_height = LineHeight::Number(0.1);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.line_height = LineHeight::Number(0.1));
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("Squeezed".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
-    doc.node_mut(t).style.line_height = LineHeight::Number(0.1);
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t, |style| style.line_height = LineHeight::Number(0.1));
     doc.append_child(block, t);
 
     let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
@@ -527,14 +527,14 @@ fn edge_line_height_much_larger_than_font() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.line_height = LineHeight::Length(200.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.line_height = LineHeight::Length(200.0));
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("Tall".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
-    doc.node_mut(t).style.line_height = LineHeight::Length(200.0);
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t, |style| style.line_height = LineHeight::Length(200.0));
     doc.append_child(block, t);
 
     let sp = ConstraintSpace::for_block_child(lu_i(800), lu_i(600), lu_i(800), lu_i(600), false);
@@ -551,14 +551,14 @@ fn edge_large_indent_with_center_alignment_no_crash() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Center;
-    doc.node_mut(block).style.text_indent = Length::px(500.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Center);
+    doc.update_resolved_style(block, |style| style.text_indent = Length::px(500.0));
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("Indented center".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let sp = ConstraintSpace::for_block_child(lu_i(300), lu_i(600), lu_i(300), lu_i(600), false);

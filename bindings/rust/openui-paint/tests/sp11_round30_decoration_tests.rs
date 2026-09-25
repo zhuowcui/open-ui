@@ -28,10 +28,14 @@ fn r30_from_font_ignores_strikeout_thickness() {
     };
 
     let mut style = ComputedStyle::default();
-    style.font_size = 16.0;
-    style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
-    style.text_decoration_thickness = TextDecorationThickness::FromFont;
-    style.text_decoration_style = TextDecorationStyle::Solid;
+    style.update_derived(|computed| computed.font_size = 16.0);
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine::LINE_THROUGH
+    });
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::FromFont
+    });
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Solid);
 
     let surface_info = skia_safe::ImageInfo::new_n32_premul((100, 100), None);
     let mut surface = skia_safe::surfaces::raster(&surface_info, None, None).expect("surface");
@@ -63,11 +67,15 @@ fn r30_underline_and_linethrough_share_thickness() {
     };
 
     let mut style = ComputedStyle::default();
-    style.font_size = 16.0;
-    style.text_decoration_line =
-        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0);
-    style.text_decoration_thickness = TextDecorationThickness::FromFont;
-    style.text_decoration_style = TextDecorationStyle::Solid;
+    style.update_derived(|computed| computed.font_size = 16.0);
+    style.update_derived(|computed| {
+        computed.text_decoration_line =
+            TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0)
+    });
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::FromFont
+    });
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Solid);
 
     let surface_info = skia_safe::ImageInfo::new_n32_premul((100, 100), None);
     let mut surface = skia_safe::surfaces::raster(&surface_info, None, None).expect("surface");
@@ -100,10 +108,12 @@ fn r30_underline_and_linethrough_share_thickness() {
 fn r30_auto_thickness_14px_not_rounded() {
     // Blink: 14.0 / 10.0 = 1.4 (raw). Old code rounded to 1.0.
     let mut style = ComputedStyle::default();
-    style.font_size = 14.0;
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_thickness = TextDecorationThickness::Auto;
-    style.text_decoration_style = TextDecorationStyle::Solid;
+    style.update_derived(|computed| computed.font_size = 14.0);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::Auto
+    });
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Solid);
 
     let metrics = FontMetrics {
         underline_offset: 2.0,
@@ -132,10 +142,12 @@ fn r30_auto_thickness_14px_not_rounded() {
 fn r30_auto_thickness_16px_not_rounded() {
     // Blink: 16.0 / 10.0 = 1.6 (raw). Old code rounded to 2.0.
     let mut style = ComputedStyle::default();
-    style.font_size = 16.0;
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_thickness = TextDecorationThickness::Auto;
-    style.text_decoration_style = TextDecorationStyle::Solid;
+    style.update_derived(|computed| computed.font_size = 16.0);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::Auto
+    });
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Solid);
 
     let metrics = FontMetrics {
         underline_offset: 2.0,
