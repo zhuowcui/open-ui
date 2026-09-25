@@ -811,6 +811,8 @@ impl<'a> LineBreaker<'a> {
             } else {
                 text_width
             };
+        let discardable_space = item.end_collapse_type == CollapseType::Collapsible
+            && text_slice.chars().all(|ch| ch.is_ascii_whitespace());
 
         // Independently shaped homogeneous runs can quantize one LayoutUnit
         // wider than the same text measured as a single intrinsic run (for
@@ -825,7 +827,7 @@ impl<'a> LineBreaker<'a> {
             i32::try_from(line.items.len().saturating_add(1)).unwrap_or(i32::MAX),
         );
         let fits_after_run_quantization = fit_width <= remaining + quantization_slack;
-        if fits_after_run_quantization || !allows_wrap {
+        if fits_after_run_quantization || discardable_space || !allows_wrap {
             // Entire text fits (or we're in nowrap mode)
             line.items.push(InlineItemResult {
                 item_index,

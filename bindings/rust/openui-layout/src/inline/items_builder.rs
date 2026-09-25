@@ -1526,6 +1526,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 .take(2)
                 .count()
                 >= 2;
+        let mut flex_intrinsic_min = None;
         let intrinsic_max = if specified_intrinsic.is_some() {
             specified_intrinsic
         } else if let Some(sizes) = definite_block_intrinsic {
@@ -1546,6 +1547,14 @@ impl<'a> InlineItemsBuilder<'a> {
             let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(self.doc, node_id);
             // Flex intrinsic sizes are expressed in the flex container's own
             // logical axes.
+            let min_w = if child_direction.is_horizontal()
+                == self.inline_writing_direction.is_horizontal()
+            {
+                sizes.min_content_inline_size
+            } else {
+                sizes.min_content_block_size
+            };
+            flex_intrinsic_min = Some(min_w.to_f32());
             let max_w = if child_direction.is_horizontal()
                 == self.inline_writing_direction.is_horizontal()
             {
@@ -1611,6 +1620,11 @@ impl<'a> InlineItemsBuilder<'a> {
                 max
             } else if let Some(sizes) = definite_block_intrinsic {
                 (sizes.min.to_f32() - own_inline_edges).max(0.0)
+            } else if style.display.is_flex() {
+                // A flex container's intrinsic min-content size is computed
+                // from its items. A zero endpoint lets an unwrapped inline
+                // flex row shrink below the sum of its definite item widths.
+                flex_intrinsic_min.unwrap_or(0.0)
             } else if !deterministic_text_profile {
                 // Builders outside the pinned fallback profile retain the
                 // legacy single intrinsic measure, which was capped directly
@@ -1619,9 +1633,9 @@ impl<'a> InlineItemsBuilder<'a> {
                 // while regenerated builders opt into the complete min/max
                 // algorithm below.
                 0.0
-            } else if style.display.is_flex() || is_orthogonal || has_consecutive_floats {
-                // Preserve flex and orthogonal atomic paths' established
-                // completed-fragment measure and zero min-content fallback.
+            } else if is_orthogonal || has_consecutive_floats {
+                // Preserve orthogonal atomic paths' established completed-
+                // fragment measure and zero min-content fallback.
                 0.0
             } else {
                 let sizes = crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(

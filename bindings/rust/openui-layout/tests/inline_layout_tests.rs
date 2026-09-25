@@ -1987,6 +1987,73 @@ fn inline_block_bfc_contains_child_margin_top() {
 }
 
 #[test]
+fn inline_flex_auto_width_preserves_fixed_item_min_content_width() {
+    // An unwrapped inline flex row has a min-content width equal to the sum
+    // of its definite item widths. It must overflow a narrower line instead
+    // of using that line width as permission to shrink every item.
+    let mut doc = Document::new();
+    let block = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.append_child(doc.root(), block);
+
+    let flex = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(flex, |style| style.display = Display::InlineFlex);
+    doc.append_child(block, flex);
+    for _ in 0..14 {
+        let item = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(item, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(40.0);
+        });
+        doc.append_child(flex, item);
+    }
+
+    let sp = ConstraintSpace::for_block_child(lu_i(335), lu_i(600), lu_i(335), lu_i(600), false);
+    let fragment = inline_layout(&doc, block, &sp);
+    let atomic = fragment
+        .children
+        .iter()
+        .flat_map(|line| &line.children)
+        .find(|child| child.kind == FragmentKind::Box && child.node_id == flex)
+        .expect("inline flex fragment");
+    assert_eq!(atomic.size.width, lu_i(560));
+}
+
+#[test]
+fn forced_break_after_overflowing_atomic_does_not_add_an_empty_line() {
+    let mut doc = Document::new();
+    let block = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.append_child(doc.root(), block);
+
+    let first = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(first, |style| {
+        style.display = Display::InlineFlex;
+        style.width = Length::px(560.0);
+        style.height = Length::px(200.0);
+    });
+    doc.append_child(block, first);
+
+    let space = doc.create_node(ElementTag::Text);
+    doc.node_mut(space).text = Some(" ".to_string());
+    doc.append_child(block, space);
+    let br = doc.create_node(ElementTag::Break);
+    doc.append_child(block, br);
+
+    let second = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(second, |style| {
+        style.display = Display::InlineFlex;
+        style.width = Length::px(100.0);
+        style.height = Length::px(200.0);
+    });
+    doc.append_child(block, second);
+
+    let sp = ConstraintSpace::for_block_child(lu_i(335), lu_i(600), lu_i(335), lu_i(600), false);
+    let fragment = inline_layout(&doc, block, &sp);
+    assert_eq!(fragment.children.len(), 2, "one line per atomic flex box");
+}
+
+#[test]
 fn inline_block_bfc_contains_child_margin_bottom() {
     // Bottom margin should also be contained by the inline-block BFC.
     let mut doc = Document::new();
