@@ -71,10 +71,22 @@ def historical_audit(ids: list[str]) -> dict[str, object]:
 def matrix_audit(report_path: Path, ids: list[str], images: dict[str, bytes]) -> dict[str, object]:
     raw = report_path.read_bytes()
     report = json.loads(raw)
+    contract_bytes = (ROOT / "docs/renderer/generated/qualification-contract-v2.json").read_bytes()
+    contract = json.loads(contract_bytes)
     if report.get("suite") != "full" or not report.get("complete_contract_scope"):
         raise ValueError("a complete four-profile full matrix report is required")
     if not report["source"]["clean"] or report["evidence"]["tolerance_pixels"] != 0:
         raise ValueError("matrix report must have clean source and zero tolerance")
+    if report["commit"] != report["source"]["commit"]:
+        raise ValueError("matrix report commit identity is inconsistent")
+    if report["contract_sha256"] != sha256(contract_bytes):
+        raise ValueError("matrix report uses a different qualification contract")
+    if report["chromium"]["build_identity"] != contract["chromium"]["raster_oracle_build_identity"]:
+        raise ValueError("matrix report uses a different Chromium oracle build")
+    if report["openui"]["raster_backend_identity"]["backend"] != contract["raster"]["qualification_backend"]:
+        raise ValueError("matrix report uses a different qualification raster backend")
+    if report["results"]["total"] != len(ids) * 4:
+        raise ValueError("matrix report does not include all four profiles")
     if report["id_manifest"]["sha256"] != sha256(MANIFEST.read_bytes()):
         raise ValueError("matrix report uses a different immutable manifest")
     profiles = [item for item in report["profiles"] if item["profile"] == "legacy-800x600@1"]
