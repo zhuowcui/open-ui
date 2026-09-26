@@ -3210,7 +3210,10 @@ mod tests {
     fn auto_table_width_honors_unbreakable_cell_min_content() {
         use openui_style::{FontFamily, FontFamilyList};
 
-        let mut doc = Document::new();
+        // The assertion depends on Ahem's fixed advances; use the bundled
+        // document-owned face instead of the host's font fallback.
+        let mut doc =
+            Document::new_with_font_collection(openui_text::FontCollection::deterministic_test());
         let table = doc.create_node(ElementTag::Div);
         doc.update_resolved_style(table, |style| style.display = Display::Table);
         doc.update_resolved_style(table, |style| style.width = Length::px(40.0));

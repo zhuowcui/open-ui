@@ -3379,11 +3379,40 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         child_available_inline,
                         space,
                     );
+                // The source-position probe measures line advancement without
+                // an exclusion space. A clearing break before a float instead
+                // advances to the relevant float margin-box edge. Resolve
+                // each break when source order reaches it, and retain that
+                // floor for subsequent floats so siblings after one break
+                // share the same clearance rather than clearing each other.
+                let mut preceding_item_index = 0;
+                let mut clearing_float_floor = LayoutUnit::zero();
                 for placeholder in &inline_run_floats {
+                    for item in inline_run_items
+                        .items
+                        .iter()
+                        .skip(preceding_item_index)
+                        .take(placeholder.item_index.saturating_sub(preceding_item_index))
+                    {
+                        if item.item_type == crate::inline::items::InlineItemType::Control
+                            && doc.node(item.node_id).tag == ElementTag::Break
+                        {
+                            let clear = doc.node(item.node_id).style.clear;
+                            if clear != Clear::None {
+                                clearing_float_floor = clearing_float_floor.max_of(
+                                    exclusion_space_mixed
+                                        .clearance_offset(clear_type_from_style(clear)),
+                                );
+                            }
+                        }
+                    }
+                    preceding_item_index = placeholder.item_index;
                     let source_block = inline_run_float_positions
                         .get(&placeholder.node_id)
                         .map(|source| source.block_offset)
                         .unwrap_or_default();
+                    let float_block_offset =
+                        (block_offset + source_block).max_of(content_edge + clearing_float_floor);
                     handle_float(
                         doc,
                         placeholder.node_id,
@@ -3393,7 +3422,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                         &border,
                         &padding,
                         content_edge,
-                        &(block_offset + source_block),
+                        &float_block_offset,
                         &mut exclusion_space_mixed,
                         &mut child_fragments,
                         &mut oof_candidates,
@@ -7780,7 +7809,28 @@ fn resolve_inline_size(
                     }
                 } else {
                     None
-                };
+                }
+                .or_else(|| {
+                    // Native buttons have an intrinsic auto inline size even
+                    // when display:block is authored. With auto height (or a
+                    // percentage that cannot resolve), a definite min-height
+                    // transfers through their preferred ratio instead of
+                    // letting the control stretch to its containing block.
+                    let node = doc.node(node_id);
+                    let is_button = node.tag == ElementTag::Button
+                        || node.form_control == Some(openui_dom::FormControlRole::Button);
+                    let height_is_auto = style.height.is_auto()
+                        || (style.height.is_percent()
+                            && space.percentage_resolution_block_size.is_indefinite());
+                    (is_button && height_is_auto && style.min_height.is_fixed()).then(|| {
+                        resolve_length(
+                            &style.min_height,
+                            space.percentage_resolution_block_size,
+                            LayoutUnit::zero(),
+                            LayoutUnit::zero(),
+                        )
+                    })
+                });
                 if let Some(h) = h_resolved {
                     // CSS Sizing 4: when `auto <ratio>`, AR applies to
                     // content-box regardless of box-sizing. Bare `<ratio>`
