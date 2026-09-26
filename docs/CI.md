@@ -9,8 +9,8 @@ attestation identity.
 `.github/workflows/ci.yml` runs:
 
 - formatting and the locked Rust renderer/framework/ABI suites;
-- a fresh 5,731-ID byte replay against the frozen Open UI archive and a
-  separate strict audit of historical Chromium pass provenance;
+- an integrity check of the 5,731-image historical Open UI archive and an
+  audit of its old comparison policy; old image replay is diagnostic only;
 - generated style, C ABI, migration, and SP13-R through SP20 closure checks;
 - versioned renderer profiles, author-style inventory, and JavaScript disposition checks;
 - Python porter/closure tests and the 7/7 repository audit;
@@ -31,6 +31,11 @@ Weekly/manual jobs use pinned `nightly-2026-09-01` for:
 - all five libFuzzer targets.
 
 Failures block release even when they do not run on every pull request.
+
+Pixel release qualification separately requires a complete, clean-source,
+zero-tolerance four-profile matrix against the pinned Chromium oracle. The
+historical archive check and a green pull-request workflow do not establish
+that result. See the [renderer contract](renderer/contract.md).
 
 ## Release workflow
 

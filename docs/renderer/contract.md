@@ -14,13 +14,14 @@ renderer.
 
 The generated v2 contract records four complete-suite profiles and the
 40-profile focused viewport/scale cross-product. The 800×600@1 profile refers
-to the existing 5,731-case baseline by hash. The generator refuses to rewrite
-or accept drift in that legacy baseline.
-That baseline preserves historical pass records from a comparator with a
-four-level channel tolerance and a 15-pixel excluded right strip. Its
-5,731 passes are archival accountability data; exact Chromium equality must
-be established by the separate zero-tolerance qualification matrix. The
-[frozen oracle audit](frozen-oracle-audit.md) records the discrepancy.
+to the existing 5,731-case test inventory by hash. The generator refuses to
+rewrite or accept drift in that historical evidence. That baseline preserves
+historical pass records from a comparator with a four-level channel tolerance
+and a 15-pixel excluded right strip. Its 5,731 passes are archival
+accountability data, not expected output bytes or a release gate. Exact
+Chromium equality must be established by the separate zero-tolerance
+qualification matrix. The [frozen oracle audit](frozen-oracle-audit.md)
+records the discrepancy.
 The Chromium source/API inventory remains pinned to `147.0.7727.24`; Linux
 pixel qualification records and verifies the installed `147.0.7727.50`
 Chrome-for-Testing raster oracle used by the frozen comparison harness.
@@ -70,8 +71,9 @@ The primitive gate remains open, and all four residuals are unowned.
 The runner defaults to `bindings/rust/target/release/pixel_compare`. Rebuild
 that executable from the clean checkpoint with the pinned toolchain and pass
 its path explicitly using `--pixel-compare`; a recent debug build does not
-refresh the release executable. Matrix reports record the executable SHA-256,
-while the frozen byte replay uses its own explicitly selected executable.
+refresh the release executable. Matrix reports record the executable SHA-256.
+The optional historical byte replay uses its own explicitly selected
+executable and never substitutes for Chromium qualification.
 `expanded-v1.json` preserves the prior 200 AST-lowered admissions. A fresh
 four-profile run found 197 still exact and three different at one profile
 each. The [requalification ledger](generated/expanded-requalification-v1.json)

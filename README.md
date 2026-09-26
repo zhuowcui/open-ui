@@ -20,8 +20,8 @@ is retained only as the frozen reference used to prove renderer compatibility.
 
 The current v0.2 release candidate has:
 
-- a fresh frozen replay with 5,549 of 5,731 renders byte-identical and 182
-  changed; the historical 5,731 pass records used a tolerant comparator;
+- a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
+  on replay and 182 changed; these old screenshots are not pixel targets;
 - a clean four-profile Chromium census with 21,111 of 22,924 comparisons
   exact, 1,813 different, and zero render errors;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
@@ -34,13 +34,13 @@ The current v0.2 release candidate has:
 - sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
   in CI; several remain open or failing.
 
-The archived Open UI bytes and a fresh pinned Chromium capture disagree for
-the same minimal fixture, so the frozen replay and Chromium exactness gates
-cannot both pass with the current immutable inputs. This repository is not yet
-declaring the final v0.2 release. Physical-GPU and reference-machine
-qualification, automated AT-SPI operation, direct Skia GPU qualification,
-retained per-node layers, compositor-owned animation curves, a C-owned native
-event loop, and signed publication still remain. See
+Chromium is the sole pixel target. The archived Open UI bytes disagree with
+Chromium for some fixtures, which is why replaying old screenshots cannot be a
+release gate. The four-profile Chromium census still has 1,813 differences,
+so this repository is not yet declaring the final v0.2 release. Physical-GPU
+and reference-machine qualification, automated AT-SPI operation, direct Skia
+GPU qualification, retained per-node layers, compositor-owned animation
+curves, a C-owned native event loop, and signed publication still remain. See
 [current status](docs/progress/current-status.md)
 and [release qualification](docs/v02/release.md).
 
@@ -124,7 +124,7 @@ release workflow. See [packaging instructions](docs/v02/packaging.md).
 | `bindings/rust/openui-{style,layout,text,paint}` | Exact rendering pipeline |
 | `include/` | Generated v0.2 C headers |
 | `examples/c_v02/` | C examples matching the Rust examples |
-| `tools/accountability/` | Frozen exact-render inventory and audit |
+| `tools/accountability/` | Chromium comparison inventory and historical evidence audit |
 | `tools/release/` | Contract generation and reproducible packaging |
 | `docs/v02/` | Supported architecture and release contract |
 

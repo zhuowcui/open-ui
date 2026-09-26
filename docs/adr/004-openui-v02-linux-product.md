@@ -13,12 +13,13 @@ both paths supported would make interaction, accessibility, animation, and
 platform work land twice and would leave pixel behavior dependent on which API
 an application chose.
 
-**Evidence correction (2026-09-26):** “Exact” above describes the historical
-claim, not the pixels proven by its comparator. The archived records used a
-channel tolerance of 4 and excluded the rightmost 15 pixels. The architecture
-decision and frozen compatibility bytes remain in force; the
-[frozen oracle audit](../renderer/frozen-oracle-audit.md) now blocks release
-qualification from relying on that historical claim.
+**Evidence and contract correction (2026-09-26):** “Exact” above describes the
+historical claim, not the pixels proven by its comparator. The archived records
+used a channel tolerance of 4 and excluded the rightmost 15 pixels. The
+architecture decision remains in force. Chromium is the sole pixel target;
+archived Open UI images are immutable historical evidence, not a compatibility
+requirement. The [frozen oracle audit](../renderer/frozen-oracle-audit.md)
+explains the discrepancy.
 
 ## Decision
 
@@ -55,12 +56,14 @@ dependencies are feature-gated out of headless builds.
 
 ## Compatibility baseline
 
-The v0.2 implementation may reorganize ownership and retain intermediate
-results but must not change any pixel in the frozen SP20 corpus. The generated
-files in `docs/v02/generated` bind the test identities, result bytes, source
-and resource inventories, viewport, scale factor, Chromium build identity,
-font inputs, public APIs, example artifacts, and historical application
-fixtures to cryptographic hashes.
+The v0.2 implementation must render the declared cases exactly like the pinned
+Chromium oracle at every required profile. It may change pixels from the old
+Open UI screenshots when that is needed to match Chromium. The archive and
+historical result files remain byte-pinned for provenance, not as expected
+outputs. The generated files in `docs/v02/generated` bind the test identities,
+historical result bytes, source and resource inventories, viewport, scale
+factor, Chromium build identity, font inputs, public APIs, example artifacts,
+and historical application fixtures to cryptographic hashes.
 
 The C ABI is a deliberate v0.2 break. Removed v0.1 calls are recorded in the
 generated migration ledger; they do not receive a second production backend
@@ -68,7 +71,7 @@ or an indefinite compatibility shim.
 
 ## Consequences
 
-Blink/Chromium remains a test oracle for the frozen compatibility corpus, not
+Blink/Chromium remains a test oracle for the declared renderer corpus, not
 a supported application runtime or release dependency. Linux and headless
 closure takes priority over other operating systems and graphics APIs. macOS,
 Windows, mobile platforms, Vulkan, browser execution, network fetching, media,

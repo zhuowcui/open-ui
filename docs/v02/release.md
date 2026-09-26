@@ -4,10 +4,10 @@ The v0.2 source contract and artifact pipeline are implemented. This document
 distinguishes verified repository evidence from release-lab work that cannot be
 claimed by source code alone.
 
-| Gate | Current evidence | State |
+| Area | Current evidence | State |
 |---|---|---|
-| Frozen headless replay | 5,549/5,731 byte-identical in the [complete replay](../renderer/generated/frozen-replay-v1.json); 182 changed | fail |
-| Original Chromium exactness | 203 frozen images differ from pinned Chromium; one minimal case differs by 4,348 pixels | blocked: conflicts with frozen replay |
+| Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
+| Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Four-profile renderer matrix | 21,111/22,924 exact, 1,813 different, zero errors in the [fresh census](../renderer/generated/four-profile-census-v2.json) | fail |
 | Focused and primitive raster | 640/640 focused exact; 884/960 primitive exact with four unowned residual IDs | fail |
 | Expanded deterministic manifest | Prior v1 admitted 200; fresh run retains 197 exact additions and [demotes three](../renderer/generated/expanded-requalification-v1.json). None of the 36 original pending cases met all four profiles | open |
@@ -43,8 +43,9 @@ metadata; Miri failed when the Engine test called Skia C FFI; AddressSanitizer,
 LeakSanitizer, and fuzz failed on process-exit Fontconfig allocations. The
 ordinary [PR CI run](https://github.com/zhuowcui/open-ui/actions/runs/36235359772)
 passed Rust parity, Python accountability, platform conformance, and both
-format checks. Its strict frozen replay was still running when this status was
-written. Later check results must be recorded before qualification.
+format checks. Its frozen replay was still running when that status was
+written; this replay is now diagnostic. Later check results must be recorded
+before qualification.
 
 The next [hardening validation](https://github.com/zhuowcui/open-ui/actions/runs/36236727149)
 on checkpoint `68db3c74` passed Rust 1.85 headless/Linux checks, the Miri C
@@ -53,22 +54,27 @@ allocations after all 17 FFI tests pass; fuzz stops on the same allocation
 path. Its Linux platform smoke job was still running when this status was
 written.
 
-The frozen replay checks the archived Open UI bytes; it does not prove those
-bytes equal Chromium. The historical pixel comparator accepted per-channel
-differences up to 4 and excluded the rightmost 15 pixels. At least 186 of its
-5,731 reported passes have a nonzero channel delta in the compared area. The
+The optional frozen replay checks the archived Open UI bytes; it does not prove
+those bytes equal Chromium. The historical pixel comparator accepted
+per-channel differences up to 4 and excluded the rightmost 15 pixels. At least
+186 of its 5,731 reported passes have a nonzero channel delta in the compared
+area. The
 archived result totals and generated kickoff baseline remain immutable
-historical records, not zero-tolerance qualification evidence. See the
-[frozen oracle audit](../renderer/frozen-oracle-audit.md).
+historical records, not zero-tolerance qualification evidence or pixel gates.
+See the [frozen oracle audit](../renderer/frozen-oracle-audit.md).
 
 The archived image for
 `wpt/css_backgrounds/background-image-gradient-interpolation-repaint-ref`
-differs from the pinned Chromium pixels at 800×600@1. Since frozen replay
-requires those archived bytes and the original matrix requires Chromium's
-pixels for the same fixture, the two mandatory gates cannot both pass. This
-is a release-contract blocker even if the current renderer's other residuals
-are repaired. The [minimal proof](../renderer/generated/frozen-oracle-audit-v1.json)
-preserves the inputs and measured difference.
+differs from the pinned Chromium pixels at 800×600@1. That old Open UI image
+is not a pixel target. The [historical evidence](../renderer/generated/frozen-oracle-audit-v1.json)
+preserves the inputs and measured difference. Its old blocked status records
+the retired two-gate policy; it is not the current release decision.
+
+The final-head [PR CI run](https://github.com/zhuowcui/open-ui/actions/runs/36237911865)
+passed its other jobs but failed the obsolete frozen replay and strict
+historical-exactness steps. Those steps have been replaced by archive
+integrity and metadata checks. The four-profile Chromium matrix remains a
+separate, failing release gate; green PR CI alone does not qualify pixels.
 
 ## Release decision
 

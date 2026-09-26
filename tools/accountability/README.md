@@ -66,14 +66,16 @@ RGBA pixels: 186 reported passes have nonzero compared channel deltas. The
 remaining 1,942 rows retain explicit ownership: 1,912 require JavaScript and 30
 are nonvisual or crash-harness rows.
 
-The required `frozen-pixel-replay` CI check compares fresh renders against the
-original 5,731 Open UI PNGs without tolerance. Their bytes
+The `historical-pixel-audit` CI check verifies the archive and comparator
+metadata. Optional replay compares fresh renders with the original 5,731
+Open UI PNGs, but is diagnostic, not a pixel release gate. Their bytes
 are preserved in `data/pixel_comparison/frozen-openui-5731-v1.tar.xz`, whose
 SHA-256 and exact manifest membership are checked by
 `restore_frozen_openui_archive.py`. Restoring it never overwrites a differing
 local PNG. The Chromium oracle PNGs and result metadata are not refrozen. The
 [frozen oracle audit](../../docs/renderer/frozen-oracle-audit.md) checks the
-historical policy separately and blocks an exactness claim based on it.
+historical policy separately. Exact pixel qualification compares with pinned
+Chromium through the zero-tolerance renderer matrix.
 
 ## Data Files
 

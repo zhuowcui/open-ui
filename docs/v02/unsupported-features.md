@@ -42,10 +42,8 @@ These are implementation gaps, not accepted final-v0.2 omissions:
 
 - direct Skia Ganesh raster builds behind an explicit selection but remains
   unqualified; OpenGL presentation currently uploads the CPU Skia frame;
-- the immutable frozen Open UI archive disagrees with the pinned Chromium
-  oracle for the same fixture, blocking simultaneous exactness of both gates;
-- the current four-profile Chromium census, primitive matrix, and frozen byte
-  replay do not meet their exact gates;
+- the current four-profile Chromium census and primitive matrix do not meet
+  their exact gates;
 - retained per-node compositor layers and compositor-owned immutable animation
   curves are incomplete;
 - the strict 100 promoted animations while the UI thread is blocked gate has

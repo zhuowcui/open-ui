@@ -1,4 +1,11 @@
-# Frozen Chromium oracle discrepancy
+# Historical Open UI archive versus Chromium
+
+Chromium is the sole v0.2 pixel target. The old Open UI screenshots and SP20
+pass records remain immutable so their provenance can be checked, but matching
+those screenshots is not a release requirement. The v1 machine-readable report
+predates this contract correction; its `blocked` status and
+`both_required_pixel_gates_can_pass_on_same_image` field describe the retired
+two-gate policy, not the current release decision.
 
 The SP20 historical result files call 5,731 comparisons passes. Those records
 were produced by `tools/accountability/pixel_diff.py`, whose default permits a
@@ -9,12 +16,10 @@ their `mismatched_pixels: 0` and `mismatch_pct: 0.0` fields do not prove exact
 RGBA equality. The generated kickoff baseline preserves those historical
 records by hash; it must not be read as a fresh zero-tolerance result.
 
-The immutable Open UI PNG archive is separately useful: replaying it checks
-whether the current renderer can still produce those same bytes. Replay does
-not compare the bytes with Chromium. The qualification matrix uses zero
-tolerance and a pinned Chrome-for-Testing oracle, so it must report its own
-exact count. The two gates are independent and neither may be silently
-substituted for the other.
+The immutable Open UI PNG archive is separately useful: replaying it measures
+how the renderer changed over time. Replay does not compare with Chromium and
+is diagnostic only. The qualification matrix uses zero tolerance and a pinned
+Chrome-for-Testing oracle; only that comparison determines pixel parity.
 
 The 106-byte native fixture for
 `wpt/css_backgrounds/background-image-gradient-interpolation-repaint-ref`
@@ -31,14 +36,12 @@ channel differs by at most one. The historical and fresh Chromium captures
 have the same decoded RGBA hash for this fixture. No reference image was
 rewritten to obtain this result.
 
-The strict current renderer is only 12 pixels away from Chromium on this
-fixture, but that does not resolve the archive conflict. The archived Open UI
-RGBA hash is different from the pinned Chromium RGBA hash for the same fixture
-and profile. If a renderer passes frozen replay, its output must equal the
-archived bytes; if it passes the original Chromium gate, its decoded pixels
-must equal Chromium. Both requirements cannot hold for this fixture. The
-machine-readable [minimal proof](generated/frozen-oracle-audit-v1.json)
-records the hashes, capture and runner identities, bounds, and region count.
+The current renderer differs from Chromium by 12 pixels on this fixture.
+The archived Open UI RGBA hash is different from the pinned Chromium RGBA hash
+for the same fixture and profile. That explains why preserving old output
+would obstruct Chromium parity. The historical
+[minimal evidence](generated/frozen-oracle-audit-v1.json) records the hashes,
+capture and runner identities, bounds, and region count.
 
 The complete fresh legacy-profile audit found 5,526 cases where archive,
 renderer, and Chromium all agree. In 155 cases the current renderer equals
@@ -66,11 +69,11 @@ minimal conflict. Pass `--matrix-report` with a
 complete, clean-source four-profile census to compare every frozen Open UI
 image against the live Chromium oracle and current renderer. The
 `--prior-local-captures` option adds the local historical-capture comparison
-when those ignored files are available. The
-`--require-original-exact` option is a CI gate and exits nonzero while the
-historical exactness conflict remains. A complete diagnostic report may be
-written as `docs/renderer/generated/frozen-oracle-audit-v1.json`; it is
-evidence, not a qualification override.
+when those ignored files are available. The CI historical audit verifies the
+archive and metadata without requiring the current renderer to recreate old
+pixels. The existing v1 report remains unmodified; fresh reports use schema
+v2 and describe the archive/Chromium difference without a release-blocked
+status.
 
 From a clean checkout with the pinned Chromium and a freshly built
 `pixel_compare` binary, the minimal report is reproducible with:
@@ -93,7 +96,6 @@ on this example. Its report is diagnostic; the audit separately compares the
 immutable archive with the verified Chromium capture.
 
 The original archive, Chromium oracle, and 5,731-case manifest remain
-immutable. The conjunction of the original exactness and frozen replay gates
-is unsatisfiable for this fixture under those immutable inputs. The v0.2 final
-release is blocked under the declared contract; a future decision about its
-requirements must be explicit and must preserve this evidence.
+immutable. This discrepancy is historical evidence, not a contradiction in
+the release contract. v0.2 still fails Chromium qualification because the
+complete four-profile census has 1,813 current renderer differences.
