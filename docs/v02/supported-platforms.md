@@ -25,9 +25,12 @@ picker dialogs, media playback, interactive embedded documents, a visual
 inspector, and a general plugin ecosystem.
 
 The frozen WPT inventory contains 1,912 JavaScript-dependent and 30
-nonvisual/crash-harness rows. They are explicit exclusions. The supported
-5,731 rows must remain byte-exact at the frozen 800 by 600 logical viewport,
-device scale factor 1.
+nonvisual/crash-harness rows. JavaScript execution and nonvisual test outcomes are
+outside the renderer pixel contract. Deterministic final states from some
+JavaScript-dependent tests may be reproduced through ordered native Engine
+mutations and admitted only after exact comparison with pinned Chromium at all
+four required profiles. The original 5,731-case inventory is immutable, but
+old Open UI screenshots are historical evidence, not expected pixels.
 
 ## Build and release policy
 
@@ -38,6 +41,6 @@ device scale factor 1.
 - Every release carries generated API/reference metadata, native ABI layout
   metadata, an exported-symbol allowlist, checksums, licenses, an SBOM, and
   provenance.
-- A rendering-baseline change requires an independently reviewed refreeze; it
-  is never accepted as incidental implementation drift.
-
+- Chromium oracle captures and their input identities are immutable. Renderer
+  changes qualify only against the pinned Chromium pixels; historical Open UI
+  outputs are retained for provenance.
