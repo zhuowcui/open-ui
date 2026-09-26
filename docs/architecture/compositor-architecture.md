@@ -40,7 +40,7 @@ paint and display.  Its responsibilities:
 - **Layer management** — maintaining a tree of composited layers with
   transform, clip, opacity, and scroll state.
 - **Off-main-thread work** — driving scroll, pinch-zoom, and CSS animations
-  on the compositor thread so the main thread can remain free for JavaScript.
+  on the compositor thread while the main thread handles application work.
 - **Tiled rasterization** — breaking painted content into tiles, scheduling
   their rasterization in priority order, and uploading results to the GPU.
 - **Frame assembly** — producing a `CompositorFrame` (a set of render passes
@@ -452,8 +452,9 @@ entirely:
   BeginFrame → (no BeginMainFrame) → Draw
 ```
 
-This is what makes scroll and animation **jank-free** — the main thread can
-be blocked on JavaScript and the compositor still produces frames at 60 fps.
+This lets the compositor continue producing frames while the main thread is
+busy or blocked. Open UI application callbacks run in native Rust; Open UI
+does not execute JavaScript.
 
 ---
 
@@ -637,8 +638,9 @@ This maps to the Web Animations API grouping model:
 drive animation on the compositor thread.  The worklet's `animate()` callback
 runs in a worklet global scope on the compositor thread's task runner.
 
-For Open UI, worklet animations are **out of scope** for the initial
-extraction.  Standard keyframe animations are fully supported.
+This describes Chromium's worklet API only. Open UI does not implement a
+JavaScript worklet or a JavaScript runtime. Applications use the public native
+Rust API for element interactions and animation control.
 
 ---
 
