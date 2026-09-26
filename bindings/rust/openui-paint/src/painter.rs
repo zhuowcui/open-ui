@@ -5996,7 +5996,7 @@ fn prepaint_in_flow_block_decorations(
     offset: PhysicalOffset,
 ) -> Vec<usize> {
     let mut prepainted = Vec::new();
-    for &idx in in_flow {
+    for (position, &idx) in in_flow.iter().enumerate() {
         let fragment = &children[idx];
         if fragment.node_id.is_none()
             || fragment.kind != FragmentKind::Box
@@ -6007,23 +6007,29 @@ fn prepaint_in_flow_block_decorations(
             continue;
         }
         let style = &doc.node(fragment.node_id).style;
+        let qualified_text_profile = uses_deterministic_text_profile(style);
         if !style.display.is_block_level()
-            // Flex/grid containers resolve item stacking around their own
-            // decoration; moving it ahead of negative-z items changes that
-            // paint order when item ink reaches the container border.
-            || style.display.is_flex()
-            || style.display.is_grid()
             || style.float != openui_style::Float::None
             || style.transform != openui_style::Transform2D::IDENTITY
             || style.filter_blur > 0.0
             || style.filter_grayscale > 0.0
             || style.clip_path_inset.is_some()
-            // A mask or paint-containment group must composite the background
-            // with its descendants, so its decoration stays in that group.
-            || !style.mask_layers.is_empty()
-            || style.has_paint_containment()
             || style.visibility != Visibility::Visible
             || style.opacity < 1.0
+            // Preserve the qualified deterministic-font path. Outside it,
+            // moving every decoration would reorder overlapping block and
+            // flex backgrounds, or split a mask/paint-containment group.
+            || (!qualified_text_profile
+                && (style.display.is_flex()
+                    || style.display.is_grid()
+                    || !style.mask_layers.is_empty()
+                    || style.has_paint_containment()
+                    || !earlier_inline_ink_reaches_block(
+                        children,
+                        &in_flow[..position],
+                        fragment,
+                        doc,
+                    )))
         {
             continue;
         }
@@ -6039,6 +6045,57 @@ fn prepaint_in_flow_block_decorations(
         prepainted.push(pointer);
     }
     prepainted
+}
+
+fn earlier_inline_ink_reaches_block(
+    children: &[Fragment],
+    earlier_in_flow: &[usize],
+    block: &Fragment,
+    doc: &Document,
+) -> bool {
+    let block_left = block.offset.left;
+    let block_right = block_left + block.size.width;
+    let block_top = block.offset.top;
+    earlier_in_flow.iter().any(|&idx| {
+        let earlier = &children[idx];
+        if earlier.kind != FragmentKind::Box || earlier.node_id.is_none() {
+            return false;
+        }
+        let style = &doc.node(earlier.node_id).style;
+        if style.display.is_flex() || style.display.is_grid() || earlier.has_overflow_clip {
+            return false;
+        }
+        text_fragment_reaches_block(earlier, earlier.offset, block_left, block_right, block_top)
+    })
+}
+
+fn text_fragment_reaches_block(
+    fragment: &Fragment,
+    offset: PhysicalOffset,
+    block_left: LayoutUnit,
+    block_right: LayoutUnit,
+    block_top: LayoutUnit,
+) -> bool {
+    if fragment.kind == FragmentKind::Text {
+        // A glyph can cover the adjacent device row even when its layout box
+        // ends exactly at the next block's border edge.
+        return offset.left < block_right
+            && offset.left + fragment.size.width > block_left
+            && offset.top <= block_top
+            && offset.top + fragment.size.height + LayoutUnit::from_i32(1) >= block_top;
+    }
+    fragment.children.iter().any(|child| {
+        text_fragment_reaches_block(
+            child,
+            PhysicalOffset::new(
+                offset.left + child.offset.left,
+                offset.top + child.offset.top,
+            ),
+            block_left,
+            block_right,
+            block_top,
+        )
+    })
 }
 
 #[derive(Clone, Copy)]
