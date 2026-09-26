@@ -136,9 +136,19 @@ jobs:
             --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' \
             --locked --package pixel-compare
           python3 tools/accountability/verify_frozen_openui_pixels.py \
-            --pixel-compare bindings/rust/target/debug/pixel_compare --jobs 4
+            --pixel-compare bindings/rust/target/debug/pixel_compare --jobs 4 \
+            --report "$RUNNER_TEMP/frozen-replay-summary.json"
+
+      - name: Upload frozen replay evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frozen-replay-summary
+          path: ${{ runner.temp }}/frozen-replay-summary.json
+          if-no-files-found: warn
 
       - name: Require exact provenance for frozen pass records
+        if: always()
         run: python3 tools/accountability/audit_frozen_oracle.py --require-original-exact
 
   python-accountability:
