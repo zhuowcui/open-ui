@@ -12,7 +12,8 @@ attestation identity.
 - an integrity check of the 5,731-image historical Open UI archive and an
   audit of its old comparison policy; old image replay is diagnostic only;
 - generated style, C ABI, migration, and SP13-R through SP20 closure checks;
-- versioned renderer profiles, author-style inventory, and JavaScript disposition checks;
+- versioned renderer profiles, author-style inventory, and offline disposition
+  checks for Chromium WPT files that contain scripts;
 - Python porter/closure tests and the 7/7 repository audit;
 - C ABI export/layout checks plus C and C++ consumers;
 - application conformance and performance artifact validation.

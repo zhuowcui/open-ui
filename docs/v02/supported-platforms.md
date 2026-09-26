@@ -16,6 +16,27 @@ resource bytes used by deterministic rendering are supplied synchronously by
 the application or an immutable resource registry; the engine performs no
 network access.
 
+## Native interaction API
+
+Application behavior runs in Rust. The public `openui` crate exposes retained
+`Document` and `Element` handles; the application may keep those handles and
+call native methods from Rust callbacks. There is no JavaScript execution,
+`eval`, script binding, or embedded browser runtime in the application path.
+Browser-style effects are provided by native operations where v0.2 needs them:
+
+| Application task | Public Rust API |
+|---|---|
+| Create, move, or remove elements | `Element::create`, `append_child`, `insert_before`, `remove` |
+| Change text, attributes, or typed style | `set_text`, `set_attribute`, `set_property` and generated typed setters |
+| Handle input | `Element::on`, `on_capture`; Rust callbacks in `view!` |
+| Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `bounding_rect`; `Document::hit_test` |
+| Update form controls | `set_control_value`, `set_selection`, `set_checked` |
+
+These methods operate on the same retained document as rendering and native
+input. A browser DOM or Web API surface is not promised. If a product feature
+needs another element operation, expose it through the public native Rust API
+and the shared engine rather than introducing JavaScript.
+
 ## Deferred
 
 The following are not v0.2 defects or compatibility promises: macOS, Windows,
@@ -24,13 +45,14 @@ compatibility, URL fetching, HTML loading, runtime CSS parsing, file/date/color
 picker dialogs, media playback, interactive embedded documents, a visual
 inspector, and a general plugin ecosystem.
 
-The frozen WPT inventory contains 1,912 JavaScript-dependent and 30
-nonvisual/crash-harness rows. JavaScript execution and nonvisual test outcomes are
-outside the renderer pixel contract. Deterministic final states from some
-JavaScript-dependent tests may be reproduced through ordered native Engine
-mutations and admitted only after exact comparison with pinned Chromium at all
-four required profiles. The original 5,731-case inventory is immutable, but
-old Open UI screenshots are historical evidence, not expected pixels.
+The frozen WPT inventory contains 1,912 test files with JavaScript in their
+Chromium source and 30 nonvisual/crash-harness rows. Those scripts are not run
+by Open UI. Test tooling may read a script to construct a fixed native Rust
+fixture for its final visual state; the renderer then compares that state with
+Chromium at all four required profiles. This test process does not add a
+JavaScript runtime or browser API promise. The original 5,731-case inventory
+is immutable, but old Open UI screenshots are historical evidence, not
+expected pixels.
 
 ## Build and release policy
 

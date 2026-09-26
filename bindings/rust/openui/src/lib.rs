@@ -1,6 +1,9 @@
 //! # Open UI
 //!
 //! Safe, direct Rust framework over the pure-Rust Open UI retained engine.
+//! Application interaction uses Rust callbacks and native [`Document`] and
+//! [`Element`] methods. Open UI does not execute JavaScript or expose browser
+//! script bindings.
 //!
 //! ```no_run
 //! use openui::prelude::*;

@@ -57,14 +57,17 @@ rightmost 15 pixels excluded):
 | `needs_font_metrics` rows | 0 |
 | SP20 baseline pass records | 4962 |
 | SP20 static-visual target pass records | 769 |
-| Excluded SP20 JavaScript-dependent rows | 1912 |
+| SP20 rows whose Chromium WPT source contains JavaScript | 1912 |
 | Excluded SP20 nonvisual/crash-harness rows | 30 |
 
 All 4,962 baseline IDs and 769 static-visual targets were recorded as passes
 with 0.0% mismatch under that comparator. These records do not establish exact
 RGBA pixels: 186 reported passes have nonzero compared channel deltas. The
-remaining 1,942 rows retain explicit ownership: 1,912 require JavaScript and 30
-are nonvisual or crash-harness rows.
+remaining 1,942 rows retain explicit historical classification: 1,912 have
+scripts in their Chromium WPT source and 30 are nonvisual or crash-harness
+rows. This classification does not mean Open UI runs JavaScript. Fixed final
+visual states can be built with native Rust test fixtures; application
+interaction uses the public native Rust API.
 
 The `historical-pixel-audit` CI check verifies the archive and comparator
 metadata. Optional replay compares fresh renders with the original 5,731
@@ -97,9 +100,11 @@ not it has a runnable Rust port.
 | `dependency` | Human-readable dependency label |
 | `notes` | Porter rejection reason or additional tracking note |
 
-`not_ported` is not an acceptable long-term category. Unported rows must be assigned
-to named categories such as `needs_javascript`, `needs_writing_mode`, `sp13_fragmentation`,
-`needs_grid`, or `needs_table_layout`.
+`not_ported` is not an acceptable long-term category. Unported rows must be
+assigned to named historical categories such as `needs_javascript`,
+`needs_writing_mode`, `sp13_fragmentation`, `needs_grid`, or
+`needs_table_layout`. `needs_javascript` labels a dependency in the WPT source
+or harness; it is not a planned JavaScript runtime for Open UI.
 
 ### Pixel Summary (`data/pixel_comparison/results/summary.json`)
 

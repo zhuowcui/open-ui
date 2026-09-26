@@ -26,4 +26,5 @@ second implementation roadmap.
   against Chromium without modifying historical evidence.
 
 Network fetching, embedded JavaScript, and browser execution are not roadmap
-requirements for the desktop framework.
+requirements for the desktop framework. New application interaction is added
+through native Rust APIs over the shared retained engine.

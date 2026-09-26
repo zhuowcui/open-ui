@@ -10,7 +10,7 @@ claimed by source code alone.
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
 | Four-profile renderer matrix | 21,111/22,924 exact, 1,813 different, zero errors in the [fresh census](../renderer/generated/four-profile-census-v2.json) | fail |
 | Focused and primitive raster | 640/640 focused exact; 884/960 primitive exact with four unowned residual IDs | fail |
-| Expanded deterministic manifest | Prior v1 admitted 200; fresh run retains 197 exact additions and [demotes three](../renderer/generated/expanded-requalification-v1.json). None of the 36 original pending cases met all four profiles | open |
+| Expanded native final-state fixtures | Prior v1 admitted 200 test fixtures; fresh run retains 197 exact additions and [demotes three](../renderer/generated/expanded-requalification-v1.json). None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [hosted validation](https://github.com/zhuowcui/open-ui/actions/runs/36236727149): locked headless and Linux checks passed after the string-boundary fix and compatible Wayland/Zbus pins | pass |

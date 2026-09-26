@@ -44,6 +44,11 @@ immutable resource payloads may cross to a render thread. Handles carry a
 document identity, arena index, and generation; stale and cross-document use
 returns an error.
 
+Applications implement interaction with native Rust callbacks and public
+`Document` and `Element` methods. The C ABI translates its calls to the same
+engine. Browser-style element operations needed by applications receive
+native APIs; JavaScript execution is not part of this product.
+
 `openui-style` is the only public source of style value definitions. Property
 metadata drives Rust setters, macro checks, C values, invalidation, animation,
 and reference documentation. Runtime CSS text, runtime property-name strings,

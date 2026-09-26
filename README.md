@@ -15,6 +15,11 @@ headless clock ─────────────────────�
 The supported application path has no Blink/Chromium runtime, resource pack,
 HTML loader, CSS text parser, JavaScript engine, or network stack. Chromium 147
 is retained only as the frozen reference used to prove renderer compatibility.
+Applications handle interaction in native Rust through `openui::Document`,
+`openui::Element`, signals, and Rust event callbacks. Operations that need a
+browser-like effect on an element are exposed as native Rust methods, not as
+JavaScript or browser API bindings. See the
+[native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status
 

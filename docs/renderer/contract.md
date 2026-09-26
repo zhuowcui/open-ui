@@ -4,6 +4,10 @@ Open UI accepts native structure, state, typed styles, and immutable resources.
 Its rendering target is pinned Chromium 147; HTML parsing, JavaScript execution,
 navigation, networking, iframe browsing contexts, storage, and media playback
 are not part of the renderer contract.
+Application interaction is implemented through the public native Rust API,
+including retained `Document` and `Element` methods and Rust callbacks. A
+test fixture that reaches a state through native Engine operations is evidence
+about rendering that state, not evidence of JavaScript or browser API support.
 
 Static media presentation may consume a generated first frame. Those pixels
 are decoded ahead of rendering by the Chromium-matched codec revision, bound
@@ -37,11 +41,16 @@ by the layout and paint source trees. Engine bookkeeping has an explicit
 properties. An unclassified field is a qualification failure.
 
 `javascript-disposition.json` preserves the immutable 393-case final-state
-candidate inventory. `javascript-mutation-audit-v2.json` parses those cases
-with the Acorn copy in the pinned Chromium checkout and emits an ordered
-mutation IR. Pure synchronous mutations remain pending until their native
-Engine lowering is exact across all four profiles. Every rejected case carries
-an AST-derived behavioral reason; porter syntax is never a final disposition.
+candidate inventory from historical WPT files that contain scripts. Offline
+test tooling uses the Acorn copy in the pinned Chromium checkout to parse
+those scripts into an ordered mutation IR in `javascript-mutation-audit-v2.json`.
+Open UI does not execute that JavaScript. Native Rust test fixtures reproduce
+only deterministic final visual states; a fixture is admitted only when its
+Engine operations are exact against Chromium across all four profiles. A
+script's behavioral or nonvisual outcome is outside pixel admission. Every
+rejected case carries an AST-derived reason; porter syntax is never a final
+disposition. Product interactions must be available through the public
+`openui` Rust API; test-only Engine lowering does not establish that coverage.
 At clean checkpoint `5acc962a`, the 36 AST-lowered pending cases produced
 21/144 exact comparisons, 123 differences, and zero errors. None was exact
 at all four required profiles, so none was admitted. The
