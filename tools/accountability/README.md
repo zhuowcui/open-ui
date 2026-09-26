@@ -65,6 +65,14 @@ run are 5,731/5,731 exact with zero failures and zero render/diff errors. The
 remaining 1,942 rows retain explicit ownership: 1,912 require JavaScript and 30
 are nonvisual or crash-harness rows.
 
+The historical 0.0% result metadata is not a byte-exact current-renderer
+qualification. The required `frozen-pixel-replay` CI check compares fresh
+renders against the original 5,731 OpenUI PNGs without tolerance. Their bytes
+are preserved in `data/pixel_comparison/frozen-openui-5731-v1.tar.xz`, whose
+SHA-256 and exact manifest membership are checked by
+`restore_frozen_openui_archive.py`. Restoring it never overwrites a differing
+local PNG. The Chromium oracle PNGs and result metadata are not refrozen.
+
 ## Data Files
 
 ### WPT Mapping (`data/wpt_mapping.csv`)

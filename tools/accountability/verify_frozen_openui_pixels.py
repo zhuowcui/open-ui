@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Re-render the frozen SP20 manifest and byte-compare committed Open UI PNGs."""
+"""Re-render the frozen SP20 manifest and byte-compare archived OpenUI PNGs."""
 
 from __future__ import annotations
 
@@ -68,7 +68,7 @@ def main() -> None:
         index, test_id = item
         expected = RESULTS / test_id / "openui.png"
         if not expected.is_file():
-            return index, test_id, "missing committed openui.png"
+            return index, test_id, "missing restored frozen openui.png"
         template = templates.get(test_id, "")
         preserve_subpixel = bool(
             re.search(
