@@ -11,7 +11,7 @@ use std::sync::Arc;
 // ── Helper ──────────────────────────────────────────────────────────────
 
 fn get_test_font_data() -> Arc<openui_text::font::FontPlatformData> {
-    let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+    let mut cache = openui_text::FontCache::new();
     let desc = openui_text::FontDescription::default();
     cache
         .get_font_platform_data("sans-serif", &desc)

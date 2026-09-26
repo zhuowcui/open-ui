@@ -442,35 +442,35 @@ mod tests {
     #[test]
     fn overflow_hidden_creates_fc() {
         let mut style = ComputedStyle::initial();
-        style.overflow_x = Overflow::Hidden;
+        style.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
         assert!(creates_new_formatting_context(&style, false));
     }
 
     #[test]
     fn float_creates_fc() {
         let mut style = ComputedStyle::initial();
-        style.float = Float::Left;
+        style.update_derived(|computed| computed.float = Float::Left);
         assert!(creates_new_formatting_context(&style, false));
     }
 
     #[test]
     fn absolute_position_creates_fc() {
         let mut style = ComputedStyle::initial();
-        style.position = Position::Absolute;
+        style.update_derived(|computed| computed.position = Position::Absolute);
         assert!(creates_new_formatting_context(&style, false));
     }
 
     #[test]
     fn flow_root_creates_fc() {
         let mut style = ComputedStyle::initial();
-        style.display = Display::FlowRoot;
+        style.update_derived(|computed| computed.display = Display::FlowRoot);
         assert!(creates_new_formatting_context(&style, false));
     }
 
     #[test]
     fn flex_creates_fc() {
         let mut style = ComputedStyle::initial();
-        style.display = Display::Flex;
+        style.update_derived(|computed| computed.display = Display::Flex);
         assert!(creates_new_formatting_context(&style, false));
     }
 

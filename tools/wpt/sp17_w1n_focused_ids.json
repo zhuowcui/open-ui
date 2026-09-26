@@ -1,0 +1,21 @@
+[
+  "wpt/css_break/flexbox_flex-container-fragmentation-010",
+  "wpt/css_break/flexbox_flex-container-fragmentation-011",
+  "wpt/css_flexbox/align-content-wrap-004",
+  "wpt/css_flexbox/flex-wrap-002",
+  "wpt/css_flexbox/flex-wrap-003",
+  "wpt/css_flexbox/flex-wrap-004",
+  "wpt/css_flexbox/flex-wrap-005",
+  "wpt/css_flexbox/flexbox-writing-mode-002",
+  "wpt/css_flexbox/flexbox-writing-mode-002-ref",
+  "wpt/css_flexbox/flexbox-writing-mode-003",
+  "wpt/css_flexbox/flexbox-writing-mode-003-ref",
+  "wpt/css_flexbox/flexbox-writing-mode-005",
+  "wpt/css_flexbox/flexbox-writing-mode-005-ref",
+  "wpt/css_flexbox/flexbox-writing-mode-006",
+  "wpt/css_flexbox/flexbox-writing-mode-006-ref",
+  "wpt/css_flexbox/gap-003-lr",
+  "wpt/css_flexbox/gap-003-lr-ref",
+  "wpt/css_flexbox/gap-003-rl",
+  "wpt/css_flexbox/gap-003-rl-ref"
+]

@@ -68,7 +68,7 @@ fn space_bl(w: f32, h: f32) -> ConstraintSpace {
 fn add_text(doc: &mut Document, parent: NodeId, text: &str) -> NodeId {
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some(text.to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(parent, t);
     t
 }
@@ -134,18 +134,25 @@ fn wpt_float_left_shrinks_available_inline_size() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(300.0);
-        n.style.height = Length::px(400.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(300.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(400.0));
     }
     doc.append_child(vp, div);
     let fl = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(fl);
-        n.style.display = Display::Block;
-        n.style.float = Float::Left;
-        n.style.width = Length::px(80.0);
-        n.style.height = Length::px(40.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.float = Float::Left);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(80.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(40.0));
     }
     doc.append_child(div, fl);
     add_text(&mut doc, div, "Words here");
@@ -168,18 +175,25 @@ fn wpt_float_right_positioned_at_right_edge() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(400.0);
-        n.style.height = Length::px(400.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(400.0));
     }
     doc.append_child(vp, div);
     let fl = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(fl);
-        n.style.display = Display::Block;
-        n.style.float = Float::Right;
-        n.style.width = Length::px(120.0);
-        n.style.height = Length::px(60.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.float = Float::Right);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(120.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(60.0));
     }
     doc.append_child(div, fl);
     add_text(&mut doc, div, "Text");
@@ -201,29 +215,40 @@ fn wpt_dual_floats_squeeze_text() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(400.0);
-        n.style.height = Length::px(600.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(600.0));
     }
     doc.append_child(vp, div);
     // Left float
     let lf = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(lf);
-        n.style.display = Display::Block;
-        n.style.float = Float::Left;
-        n.style.width = Length::px(100.0);
-        n.style.height = Length::px(50.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.float = Float::Left);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(100.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(50.0));
     }
     doc.append_child(div, lf);
     // Right float
     let rf = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(rf);
-        n.style.display = Display::Block;
-        n.style.float = Float::Right;
-        n.style.width = Length::px(100.0);
-        n.style.height = Length::px(50.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.float = Float::Right);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(100.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(50.0));
     }
     doc.append_child(div, rf);
     add_text(&mut doc, div, "Hello");
@@ -240,17 +265,23 @@ fn wpt_float_zero_height_no_exclusion() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(300.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(300.0));
     }
     doc.append_child(vp, div);
     let fl = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(fl);
-        n.style.display = Display::Block;
-        n.style.float = Float::Left;
-        n.style.width = Length::px(100.0);
-        n.style.height = Length::px(0.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.float = Float::Left);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(100.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(0.0));
     }
     doc.append_child(div, fl);
     add_text(&mut doc, div, "text");
@@ -267,18 +298,25 @@ fn wpt_float_wider_than_container() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(100.0);
-        n.style.height = Length::px(200.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(100.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(200.0));
     }
     doc.append_child(vp, div);
     let fl = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(fl);
-        n.style.display = Display::Block;
-        n.style.float = Float::Left;
-        n.style.width = Length::px(200.0);
-        n.style.height = Length::px(50.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.float = Float::Left);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(200.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(50.0));
     }
     doc.append_child(div, fl);
     add_text(&mut doc, div, "A");
@@ -297,8 +335,10 @@ fn wpt_no_float_full_width_baseline() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(500.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(500.0));
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Hello");
@@ -315,18 +355,25 @@ fn wpt_float_tall_pushes_text_below() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(200.0);
-        n.style.height = Length::px(400.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(200.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(400.0));
     }
     doc.append_child(vp, div);
     let fl = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(fl);
-        n.style.display = Display::Block;
-        n.style.float = Float::Left;
-        n.style.width = Length::px(190.0);
-        n.style.height = Length::px(100.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.float = Float::Left);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(190.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(100.0));
     }
     doc.append_child(div, fl);
     add_text(&mut doc, div, "W");
@@ -343,19 +390,27 @@ fn wpt_float_with_margin() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(400.0);
-        n.style.height = Length::px(400.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(400.0));
     }
     doc.append_child(vp, div);
     let fl = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(fl);
-        n.style.display = Display::Block;
-        n.style.float = Float::Left;
-        n.style.width = Length::px(100.0);
-        n.style.height = Length::px(60.0);
-        n.style.margin_right = Length::px(10.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.float = Float::Left);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(100.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(60.0));
+        n.style
+            .update_derived(|computed| computed.margin_right = Length::px(10.0));
     }
     doc.append_child(div, fl);
     add_text(&mut doc, div, "text next to float");
@@ -377,17 +432,22 @@ fn wpt_inline_padding_offsets_text() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(400.0);
-        n.style.font_size = 16.0;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        n.style.update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, div);
     let span = doc.create_node(ElementTag::Span);
     {
         let n = doc.node_mut(span);
-        n.style.display = Display::Inline;
-        n.style.padding_left = Length::px(20.0);
-        n.style.padding_right = Length::px(20.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        n.style
+            .update_derived(|computed| computed.padding_left = Length::px(20.0));
+        n.style
+            .update_derived(|computed| computed.padding_right = Length::px(20.0));
     }
     doc.append_child(div, span);
     add_text(&mut doc, span, "Hello");
@@ -416,18 +476,24 @@ fn wpt_box_decoration_break_clone_setting() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(100.0);
-        n.style.font_size = 16.0;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(100.0));
+        n.style.update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, div);
     let span = doc.create_node(ElementTag::Span);
     {
         let n = doc.node_mut(span);
-        n.style.display = Display::Inline;
-        n.style.padding_left = Length::px(8.0);
-        n.style.padding_right = Length::px(8.0);
-        n.style.box_decoration_break = BoxDecorationBreak::Clone;
+        n.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        n.style
+            .update_derived(|computed| computed.padding_left = Length::px(8.0));
+        n.style
+            .update_derived(|computed| computed.padding_right = Length::px(8.0));
+        n.style
+            .update_derived(|computed| computed.box_decoration_break = BoxDecorationBreak::Clone);
     }
     doc.append_child(div, span);
     add_text(&mut doc, span, "Clone mode wrap text");
@@ -447,18 +513,24 @@ fn wpt_inline_border_contributes_to_offset() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(500.0);
-        n.style.font_size = 16.0;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(500.0));
+        n.style.update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, div);
     let span = doc.create_node(ElementTag::Span);
     {
         let n = doc.node_mut(span);
-        n.style.display = Display::Inline;
-        n.style.border_left_width = 3;
-        n.style.border_left_style = BorderStyle::Solid;
-        n.style.padding_left = Length::px(7.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        n.style
+            .update_derived(|computed| computed.border_left_width = 3);
+        n.style
+            .update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        n.style
+            .update_derived(|computed| computed.padding_left = Length::px(7.0));
     }
     doc.append_child(div, span);
     add_text(&mut doc, span, "X");
@@ -482,13 +554,15 @@ fn wpt_single_line_span_is_first_and_last() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(500.0);
-        n.style.font_size = 16.0;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(500.0));
+        n.style.update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, div);
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(div, span);
     add_text(&mut doc, span, "one-liner");
     let frag = block_layout(&doc, vp, &space(500, 400));
@@ -506,17 +580,22 @@ fn wpt_multi_line_span_first_not_last() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(80.0);
-        n.style.font_size = 16.0;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(80.0));
+        n.style.update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, div);
     let span = doc.create_node(ElementTag::Span);
     {
         let n = doc.node_mut(span);
-        n.style.display = Display::Inline;
-        n.style.padding_left = Length::px(5.0);
-        n.style.padding_right = Length::px(5.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        n.style
+            .update_derived(|computed| computed.padding_left = Length::px(5.0));
+        n.style
+            .update_derived(|computed| computed.padding_right = Length::px(5.0));
     }
     doc.append_child(div, span);
     add_text(&mut doc, span, "These words wrap across lines");
@@ -546,13 +625,15 @@ fn wpt_empty_inline_span_no_crash() {
     let mut doc = Document::new();
     let vp = doc.root();
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
     doc.append_child(vp, div);
     let span = doc.create_node(ElementTag::Span);
     {
         let n = doc.node_mut(span);
-        n.style.display = Display::Inline;
-        n.style.padding_left = Length::px(10.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        n.style
+            .update_derived(|computed| computed.padding_left = Length::px(10.0));
     }
     doc.append_child(div, span);
     // No text child — empty span
@@ -567,18 +648,25 @@ fn wpt_rtl_inline_direction() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.width = Length::px(400.0);
-        n.style.direction = Direction::Rtl;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        n.style
+            .update_derived(|computed| computed.direction = Direction::Rtl);
     }
     doc.append_child(vp, div);
     let span = doc.create_node(ElementTag::Span);
     {
         let n = doc.node_mut(span);
-        n.style.display = Display::Inline;
-        n.style.direction = Direction::Rtl;
-        n.style.padding_left = Length::px(5.0);
-        n.style.padding_right = Length::px(10.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        n.style
+            .update_derived(|computed| computed.direction = Direction::Rtl);
+        n.style
+            .update_derived(|computed| computed.padding_left = Length::px(5.0));
+        n.style
+            .update_derived(|computed| computed.padding_right = Length::px(10.0));
     }
     doc.append_child(div, span);
     add_text(&mut doc, span, "RTL text");
@@ -596,16 +684,16 @@ fn wpt_block_in_inline_splits_into_three() {
     let mut doc = Document::new();
     let root = doc.root();
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
     add_text(&mut doc, span, "Before ");
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(40.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(40.0));
     doc.append_child(span, block);
     add_text(&mut doc, span, " After");
     let frag = block_layout(&doc, container, &space(500, 500));
@@ -623,16 +711,16 @@ fn wpt_block_in_inline_children_dont_overlap() {
     let mut doc = Document::new();
     let root = doc.root();
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
     add_text(&mut doc, span, "A");
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(80.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(80.0));
     doc.append_child(span, block);
     add_text(&mut doc, span, "B");
     let frag = block_layout(&doc, container, &space(500, 500));
@@ -651,21 +739,21 @@ fn wpt_multiple_blocks_in_inline_heights() {
     let mut doc = Document::new();
     let root = doc.root();
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
     add_text(&mut doc, span, "X");
     let b1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(b1).style.display = Display::Block;
-    doc.node_mut(b1).style.height = Length::px(25.0);
+    doc.update_resolved_style(b1, |style| style.display = Display::Block);
+    doc.update_resolved_style(b1, |style| style.height = Length::px(25.0));
     doc.append_child(span, b1);
     add_text(&mut doc, span, "Y");
     let b2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(b2).style.display = Display::Block;
-    doc.node_mut(b2).style.height = Length::px(35.0);
+    doc.update_resolved_style(b2, |style| style.display = Display::Block);
+    doc.update_resolved_style(b2, |style| style.height = Length::px(35.0));
     doc.append_child(span, b2);
     add_text(&mut doc, span, "Z");
     let frag = block_layout(&doc, container, &space(500, 500));
@@ -679,16 +767,16 @@ fn wpt_block_in_inline_empty_before() {
     let mut doc = Document::new();
     let root = doc.root();
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
     // No text before block
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(60.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(60.0));
     doc.append_child(span, block);
     add_text(&mut doc, span, "After");
     let frag = block_layout(&doc, container, &space(500, 500));
@@ -701,16 +789,16 @@ fn wpt_block_in_inline_empty_after() {
     let mut doc = Document::new();
     let root = doc.root();
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
     add_text(&mut doc, span, "Before");
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(70.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(70.0));
     doc.append_child(span, block);
     // No text after block
     let frag = block_layout(&doc, container, &space(500, 500));
@@ -724,19 +812,19 @@ fn wpt_nested_inline_with_block_splits() {
     let mut doc = Document::new();
     let root = doc.root();
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
     let outer_span = doc.create_node(ElementTag::Span);
-    doc.node_mut(outer_span).style.display = Display::Inline;
+    doc.update_resolved_style(outer_span, |style| style.display = Display::Inline);
     doc.append_child(container, outer_span);
     let inner_span = doc.create_node(ElementTag::Span);
-    doc.node_mut(inner_span).style.display = Display::Inline;
+    doc.update_resolved_style(inner_span, |style| style.display = Display::Inline);
     doc.append_child(outer_span, inner_span);
     add_text(&mut doc, inner_span, "pre");
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(45.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(45.0));
     doc.append_child(inner_span, block);
     let frag = block_layout(&doc, container, &space(500, 500));
     let has_45 = frag.children.iter().any(|c| c.size.height == lu(45.0));
@@ -748,16 +836,16 @@ fn wpt_block_in_inline_total_height_correct() {
     let mut doc = Document::new();
     let root = doc.root();
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(container, span);
     add_text(&mut doc, span, "A");
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(100.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(100.0));
     doc.append_child(span, block);
     add_text(&mut doc, span, "B");
     let frag = block_layout(&doc, container, &space(500, 500));
@@ -770,21 +858,24 @@ fn wpt_block_in_inline_with_padding_context() {
     let mut doc = Document::new();
     let root = doc.root();
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(500.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(500.0));
     doc.append_child(root, container);
     let span = doc.create_node(ElementTag::Span);
     {
         let n = doc.node_mut(span);
-        n.style.display = Display::Inline;
-        n.style.padding_left = Length::px(10.0);
-        n.style.padding_right = Length::px(10.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        n.style
+            .update_derived(|computed| computed.padding_left = Length::px(10.0));
+        n.style
+            .update_derived(|computed| computed.padding_right = Length::px(10.0));
     }
     doc.append_child(container, span);
     add_text(&mut doc, span, "before");
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.height = Length::px(50.0);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.height = Length::px(50.0));
     doc.append_child(span, block);
     add_text(&mut doc, span, "after");
     let frag = block_layout(&doc, container, &space(500, 500));
@@ -800,24 +891,32 @@ fn wpt_block_in_inline_with_padding_context() {
 fn wpt_oof_absolute_in_inline_appears_in_tree() {
     let mut doc = Document::new();
     let vp = doc.root();
-    doc.node_mut(vp).style.position = Position::Relative;
+    doc.update_resolved_style(vp, |style| style.position = Position::Relative);
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.position = Position::Relative;
-        n.style.width = Length::px(400.0);
-        n.style.height = Length::px(200.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Relative);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(200.0));
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Pre ");
     let abs = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(abs);
-        n.style.display = Display::Block;
-        n.style.position = Position::Absolute;
-        n.style.width = Length::px(50.0);
-        n.style.height = Length::px(50.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Absolute);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(50.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(50.0));
     }
     doc.append_child(div, abs);
     add_text(&mut doc, div, " Post");
@@ -830,23 +929,31 @@ fn wpt_oof_absolute_in_inline_appears_in_tree() {
 fn wpt_oof_fixed_in_inline() {
     let mut doc = Document::new();
     let vp = doc.root();
-    doc.node_mut(vp).style.position = Position::Relative;
+    doc.update_resolved_style(vp, |style| style.position = Position::Relative);
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.position = Position::Relative;
-        n.style.width = Length::px(400.0);
-        n.style.height = Length::px(200.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Relative);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(200.0));
     }
     doc.append_child(vp, div);
     let fixed = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(fixed);
-        n.style.display = Display::Block;
-        n.style.position = Position::Fixed;
-        n.style.width = Length::px(40.0);
-        n.style.height = Length::px(40.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Fixed);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(40.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(40.0));
     }
     doc.append_child(div, fixed);
     add_text(&mut doc, div, "text");
@@ -859,31 +966,41 @@ fn wpt_oof_fixed_in_inline() {
 fn wpt_multiple_oof_in_inline_all_placed() {
     let mut doc = Document::new();
     let vp = doc.root();
-    doc.node_mut(vp).style.position = Position::Relative;
+    doc.update_resolved_style(vp, |style| style.position = Position::Relative);
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.position = Position::Relative;
-        n.style.width = Length::px(400.0);
-        n.style.height = Length::px(200.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Relative);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(200.0));
     }
     doc.append_child(vp, div);
     let abs1 = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(abs1);
-        n.style.position = Position::Absolute;
-        n.style.width = Length::px(20.0);
-        n.style.height = Length::px(20.0);
+        n.style
+            .update_derived(|computed| computed.position = Position::Absolute);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(20.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(20.0));
     }
     doc.append_child(div, abs1);
     add_text(&mut doc, div, "A");
     let abs2 = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(abs2);
-        n.style.position = Position::Absolute;
-        n.style.width = Length::px(30.0);
-        n.style.height = Length::px(30.0);
+        n.style
+            .update_derived(|computed| computed.position = Position::Absolute);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(30.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(30.0));
     }
     doc.append_child(div, abs2);
     add_text(&mut doc, div, "B");
@@ -905,24 +1022,32 @@ fn wpt_multiple_oof_in_inline_all_placed() {
 fn wpt_oof_static_position_from_inline() {
     let mut doc = Document::new();
     let vp = doc.root();
-    doc.node_mut(vp).style.position = Position::Relative;
+    doc.update_resolved_style(vp, |style| style.position = Position::Relative);
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.position = Position::Relative;
-        n.style.width = Length::px(400.0);
-        n.style.height = Length::px(200.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Relative);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(200.0));
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Before abs");
     let abs = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(abs);
-        n.style.display = Display::Block;
-        n.style.position = Position::Absolute;
-        n.style.width = Length::px(30.0);
-        n.style.height = Length::px(30.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Absolute);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(30.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(30.0));
     }
     doc.append_child(div, abs);
     let frag = block_layout(&doc, vp, &space(400, 800));
@@ -935,23 +1060,31 @@ fn wpt_oof_static_position_from_inline() {
 fn wpt_oof_no_text_before_absolute() {
     let mut doc = Document::new();
     let vp = doc.root();
-    doc.node_mut(vp).style.position = Position::Relative;
+    doc.update_resolved_style(vp, |style| style.position = Position::Relative);
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.position = Position::Relative;
-        n.style.width = Length::px(400.0);
-        n.style.height = Length::px(200.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Relative);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(200.0));
     }
     doc.append_child(vp, div);
     let abs = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(abs);
-        n.style.display = Display::Block;
-        n.style.position = Position::Absolute;
-        n.style.width = Length::px(10.0);
-        n.style.height = Length::px(10.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Absolute);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(10.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(10.0));
     }
     doc.append_child(div, abs);
     let frag = block_layout(&doc, vp, &space(400, 800));
@@ -967,10 +1100,14 @@ fn wpt_oof_relative_parent_not_absolute() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.position = Position::Relative;
-        n.style.width = Length::px(300.0);
-        n.style.height = Length::px(300.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Relative);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(300.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(300.0));
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "text");
@@ -984,23 +1121,30 @@ fn wpt_oof_relative_parent_not_absolute() {
 fn wpt_oof_between_text_nodes() {
     let mut doc = Document::new();
     let vp = doc.root();
-    doc.node_mut(vp).style.position = Position::Relative;
+    doc.update_resolved_style(vp, |style| style.position = Position::Relative);
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.position = Position::Relative;
-        n.style.width = Length::px(400.0);
-        n.style.height = Length::px(200.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Relative);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(200.0));
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Left ");
     let abs = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(abs);
-        n.style.position = Position::Absolute;
-        n.style.width = Length::px(25.0);
-        n.style.height = Length::px(25.0);
+        n.style
+            .update_derived(|computed| computed.position = Position::Absolute);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(25.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(25.0));
     }
     doc.append_child(div, abs);
     add_text(&mut doc, div, " Right");
@@ -1015,22 +1159,28 @@ fn wpt_oof_absolute_doesnt_affect_inline_flow() {
     // Absolute elements don't contribute to inline flow height
     let mut doc = Document::new();
     let vp = doc.root();
-    doc.node_mut(vp).style.position = Position::Relative;
+    doc.update_resolved_style(vp, |style| style.position = Position::Relative);
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.position = Position::Relative;
-        n.style.width = Length::px(400.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.position = Position::Relative);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Text");
     let abs = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(abs);
-        n.style.position = Position::Absolute;
-        n.style.width = Length::px(200.0);
-        n.style.height = Length::px(200.0);
+        n.style
+            .update_derived(|computed| computed.position = Position::Absolute);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(200.0));
+        n.style
+            .update_derived(|computed| computed.height = Length::px(200.0));
     }
     doc.append_child(div, abs);
     let frag = block_layout(&doc, vp, &space(400, 800));
@@ -1054,8 +1204,9 @@ fn wpt_baseline_single_line_equal() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.font_size = 16.0;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style.update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Single line");
@@ -1073,9 +1224,11 @@ fn wpt_baseline_multi_line_order() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.font_size = 16.0;
-        n.style.width = Length::px(60.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style.update_derived(|computed| computed.font_size = 16.0);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(60.0));
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "First line Second line Third");
@@ -1098,9 +1251,11 @@ fn wpt_baseline_with_padding_top() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.padding_top = Length::px(30.0);
-        n.style.font_size = 16.0;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.padding_top = Length::px(30.0));
+        n.style.update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Padded");
@@ -1121,8 +1276,10 @@ fn wpt_baseline_empty_block_none() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.height = Length::px(50.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.height = Length::px(50.0));
     }
     doc.append_child(vp, div);
     // No text → no baselines
@@ -1137,13 +1294,14 @@ fn wpt_baseline_nested_propagation() {
     let mut doc = Document::new();
     let vp = doc.root();
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
     doc.append_child(vp, outer);
     let inner = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(inner);
-        n.style.display = Display::Block;
-        n.style.font_size = 20.0;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style.update_derived(|computed| computed.font_size = 20.0);
     }
     doc.append_child(outer, inner);
     add_text(&mut doc, inner, "Nested");
@@ -1162,8 +1320,9 @@ fn wpt_baseline_positive_value() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.font_size = 24.0;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style.update_derived(|computed| computed.font_size = 24.0);
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Baseline");
@@ -1178,8 +1337,8 @@ fn wpt_baseline_always_computed_without_flag() {
     let mut doc = Document::new();
     let vp = doc.root();
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.font_size = 16.0;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.font_size = 16.0);
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Always computed");
     // Default space without needs_first_baseline
@@ -1198,8 +1357,9 @@ fn wpt_baseline_from_inline_layout_directly() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.font_size = 16.0;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style.update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Direct inline");
@@ -1326,8 +1486,8 @@ fn wpt_intrinsic_text_nonzero() {
     let mut doc = Document::new();
     let vp = doc.root();
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.font_size = 16.0;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.font_size = 16.0);
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Content");
     let sizes = compute_intrinsic_block_sizes(&doc, div);
@@ -1340,8 +1500,8 @@ fn wpt_intrinsic_wrapping_min_ge_max() {
     let mut doc = Document::new();
     let vp = doc.root();
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.font_size = 16.0;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.font_size = 16.0);
     doc.append_child(vp, div);
     add_text(
         &mut doc,
@@ -1362,8 +1522,8 @@ fn wpt_intrinsic_single_word_equal() {
     let mut doc = Document::new();
     let vp = doc.root();
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.font_size = 16.0;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.font_size = 16.0);
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Word");
     let sizes = compute_intrinsic_block_sizes(&doc, div);
@@ -1375,7 +1535,7 @@ fn wpt_intrinsic_empty_block_zero() {
     let mut doc = Document::new();
     let vp = doc.root();
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
     doc.append_child(vp, div);
     let sizes = compute_intrinsic_block_sizes(&doc, div);
     assert_eq!(sizes.min_content_block_size, lu(0.0));
@@ -1389,12 +1549,17 @@ fn wpt_intrinsic_includes_border_padding() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.font_size = 16.0;
-        n.style.padding_top = Length::px(10.0);
-        n.style.padding_bottom = Length::px(10.0);
-        n.style.border_top_width = 2;
-        n.style.border_bottom_width = 2;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style.update_derived(|computed| computed.font_size = 16.0);
+        n.style
+            .update_derived(|computed| computed.padding_top = Length::px(10.0));
+        n.style
+            .update_derived(|computed| computed.padding_bottom = Length::px(10.0));
+        n.style
+            .update_derived(|computed| computed.border_top_width = 2);
+        n.style
+            .update_derived(|computed| computed.border_bottom_width = 2);
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Content");
@@ -1412,13 +1577,13 @@ fn wpt_intrinsic_larger_font_taller() {
     let mut doc = Document::new();
     let vp = doc.root();
     let small = doc.create_node(ElementTag::Div);
-    doc.node_mut(small).style.display = Display::Block;
-    doc.node_mut(small).style.font_size = 10.0;
+    doc.update_resolved_style(small, |style| style.display = Display::Block);
+    doc.update_resolved_style(small, |style| style.font_size = 10.0);
     doc.append_child(vp, small);
     add_text(&mut doc, small, "Text");
     let big = doc.create_node(ElementTag::Div);
-    doc.node_mut(big).style.display = Display::Block;
-    doc.node_mut(big).style.font_size = 40.0;
+    doc.update_resolved_style(big, |style| style.display = Display::Block);
+    doc.update_resolved_style(big, |style| style.font_size = 40.0);
     doc.append_child(vp, big);
     add_text(&mut doc, big, "Text");
     let s_sizes = compute_intrinsic_block_sizes(&doc, small);
@@ -1431,11 +1596,11 @@ fn wpt_intrinsic_nested_block() {
     let mut doc = Document::new();
     let vp = doc.root();
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
     doc.append_child(vp, outer);
     let inner = doc.create_node(ElementTag::Div);
-    doc.node_mut(inner).style.display = Display::Block;
-    doc.node_mut(inner).style.font_size = 16.0;
+    doc.update_resolved_style(inner, |style| style.display = Display::Block);
+    doc.update_resolved_style(inner, |style| style.font_size = 16.0);
     doc.append_child(outer, inner);
     add_text(&mut doc, inner, "Nested");
     let sizes = compute_intrinsic_block_sizes(&doc, outer);
@@ -1449,9 +1614,12 @@ fn wpt_intrinsic_border_only_no_text() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.border_top_width = 5;
-        n.style.border_bottom_width = 5;
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style
+            .update_derived(|computed| computed.border_top_width = 5);
+        n.style
+            .update_derived(|computed| computed.border_bottom_width = 5);
     }
     doc.append_child(vp, div);
     let sizes = compute_intrinsic_block_sizes(&doc, div);
@@ -1517,8 +1685,8 @@ fn wpt_first_line_resolve_none_when_absent() {
 fn wpt_first_line_resolve_some_when_set() {
     let mut style = ComputedStyle::initial();
     let mut fls = ComputedStyle::initial();
-    fls.font_size = 48.0;
-    style.first_line_style = Some(Box::new(fls));
+    fls.update_derived(|computed| computed.font_size = 48.0);
+    style.update_derived(|computed| computed.first_line_style = Some(Box::new(fls)));
     let resolved = resolve_first_line_style(&style).unwrap();
     assert_eq!(resolved.font_size, 48.0);
 }
@@ -1827,9 +1995,11 @@ fn wpt_integration_layout_with_defaults() {
     let div = doc.create_node(ElementTag::Div);
     {
         let n = doc.node_mut(div);
-        n.style.display = Display::Block;
-        n.style.font_size = 16.0;
-        n.style.width = Length::px(200.0);
+        n.style
+            .update_derived(|computed| computed.display = Display::Block);
+        n.style.update_derived(|computed| computed.font_size = 16.0);
+        n.style
+            .update_derived(|computed| computed.width = Length::px(200.0));
     }
     doc.append_child(vp, div);
     add_text(&mut doc, div, "Hello world");
@@ -1843,7 +2013,7 @@ fn wpt_integration_layout_with_defaults() {
 #[test]
 fn wpt_integration_text_wrap_balance_field() {
     let mut s = ComputedStyle::initial();
-    s.text_wrap = TextWrap::Balance;
+    s.update_derived(|computed| computed.text_wrap = TextWrap::Balance);
     assert_eq!(s.text_wrap, TextWrap::Balance);
     assert!(s.text_wrap.uses_scoring());
 }

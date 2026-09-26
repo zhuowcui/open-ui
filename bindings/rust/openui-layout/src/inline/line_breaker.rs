@@ -15,7 +15,9 @@
 //! - Forced breaks (`<br>`, newlines in pre/pre-line)
 //! - Trailing space stripping per CSS Text §4.1.3
 
-use openui_geometry::{LayoutUnit, LengthType};
+use std::sync::Arc;
+
+use openui_geometry::{LayoutUnit, Length, LengthType, WritingDirectionMode};
 use openui_style::{
     BoxSizing, ComputedStyle, Hyphens, LineBreak, OverflowWrap, TextAlign, WhiteSpace, WordBreak,
 };
@@ -53,10 +55,21 @@ pub struct LineBreaker<'a> {
     /// Percentages on inline margin/border/padding resolve against this,
     /// not the per-line available width (CSS 2.2 §10.3.3).
     containing_block_width: LayoutUnit,
+    /// Logical inline direction of the containing inline formatting context.
+    writing_direction: WritingDirectionMode,
     /// CSS `hyphens` property value for the block container.
     hyphens: Hyphens,
+    /// Text offset of the first float in this formatting context. Blink
+    /// retains native fixed-point truncation for advances after that source
+    /// boundary because float exclusion geometry is already quantized. Text
+    /// before a trailing float keeps its ordinary ceil quantization.
+    first_float_text_offset: Option<usize>,
     /// Hyphenation engine for `hyphens: auto` (lazily initialized).
     hyphenation: Option<Hyphenation>,
+    /// Line clamping needs the opening inline edge to remain on the line
+    /// where it was encountered so a later continuation and clamp marker
+    /// retain the correct inline-box geometry.
+    preserve_leading_inline_fragment: bool,
     /// Pre-computed byte-to-char mapping for O(1) lookups.
     char_map: ByteToCharMap,
 }
@@ -77,6 +90,90 @@ pub struct LineBreakerCheckpoint {
 }
 
 impl<'a> LineBreaker<'a> {
+    /// Return the fixed-point excess of adjacent shaping items from the text
+    /// node immediately before an inline close boundary. The correction is
+    /// assigned to that structural boundary so glyph origins and masks retain
+    /// their independently quantized positions.
+    fn trailing_shaping_run_rounding_excess(&self, line: &LineInfo) -> LayoutUnit {
+        let Some(last) = line
+            .items
+            .last()
+            .filter(|result| result.item_type == InlineItemType::Text)
+        else {
+            return LayoutUnit::zero();
+        };
+        let node_id = self.items_data.items[last.item_index].node_id;
+        let mut exact_width = 0.0f32;
+        let mut allocated_width = LayoutUnit::zero();
+        let mut run_count = 0usize;
+
+        for result in line.items.iter().rev() {
+            if result.item_type != InlineItemType::Text {
+                break;
+            }
+            let item = &self.items_data.items[result.item_index];
+            if item.node_id != node_id
+                || self.items_data.text[result.text_range.clone()]
+                    .chars()
+                    .any(char::is_whitespace)
+            {
+                break;
+            }
+            let Some(shape_result) = item.shape_result.as_ref() else {
+                break;
+            };
+            let item_char_start = self.char_map.get(item.text_range.start);
+            let result_char_start = self.char_map.get(result.text_range.start);
+            let result_char_end = self.char_map.get(result.text_range.end);
+            exact_width += shape_result.width_for_range(
+                result_char_start - item_char_start,
+                result_char_end - item_char_start,
+            );
+            allocated_width = allocated_width + result.inline_size;
+            run_count += 1;
+        }
+
+        if run_count > 1 {
+            cumulative_rounding_excess(exact_width, allocated_width)
+        } else {
+            LayoutUnit::zero()
+        }
+    }
+
+    /// Whether the unconsumed item stream can produce visible in-flow ink or
+    /// an atomic box. Structural inline boundaries, breaks, and collapsible
+    /// whitespace alone do not require a clamp marker.
+    pub fn has_remaining_visible_content(&self) -> bool {
+        self.items_data.items[self.current_item..]
+            .iter()
+            .any(|item| match item.item_type {
+                InlineItemType::Text => {
+                    let start = if item.text_range.contains(&self.current_text_offset) {
+                        self.current_text_offset
+                    } else {
+                        item.text_range.start
+                    };
+                    self.items_data.text[start..item.text_range.end]
+                        .chars()
+                        .any(|character| !character.is_whitespace())
+                }
+                InlineItemType::AtomicInline | InlineItemType::BlockInInline => true,
+                InlineItemType::OpenTag | InlineItemType::CloseTag | InlineItemType::Control => {
+                    false
+                }
+            })
+    }
+
+    /// Legacy WebKit clamping paints its marker for a discarded forced-break
+    /// continuation even when that continuation contains no glyphs.
+    pub fn has_remaining_forced_break(&self) -> bool {
+        self.items_data.items[self.current_item..]
+            .iter()
+            .any(|item| {
+                item.item_type == InlineItemType::Control && item.is_end_collapsible_newline
+            })
+    }
+
     /// Create a new line breaker for the given inline items.
     pub fn new(items_data: &'a InlineItemsData, containing_block_width: LayoutUnit) -> Self {
         let char_map = ByteToCharMap::new(&items_data.text);
@@ -88,8 +185,11 @@ impl<'a> LineBreaker<'a> {
             text_align: TextAlign::Start,
             container_white_space: WhiteSpace::Normal,
             containing_block_width,
+            writing_direction: WritingDirectionMode::horizontal_ltr(),
             hyphens: Hyphens::Manual,
+            first_float_text_offset: None,
             hyphenation: None,
+            preserve_leading_inline_fragment: false,
             char_map,
         }
     }
@@ -103,14 +203,49 @@ impl<'a> LineBreaker<'a> {
         self.container_white_space = ws;
     }
 
+    pub(crate) fn set_preserve_leading_inline_fragment(&mut self, value: bool) {
+        self.preserve_leading_inline_fragment = value;
+    }
+
+    /// Select the logical inline axis used by atomic-inline sizing. Text is
+    /// still shaped horizontally; vertical homogeneous rotated runs are
+    /// projected and painted at the inline-layout boundary.
+    pub(crate) fn set_writing_direction(&mut self, writing_direction: WritingDirectionMode) {
+        self.writing_direction = writing_direction;
+    }
+
+    pub(crate) fn set_float_precedes_in_flow_text(&mut self, value: bool) {
+        self.first_float_text_offset = value.then_some(0);
+    }
+
+    pub(crate) fn set_first_float_text_offset(&mut self, offset: Option<usize>) {
+        self.first_float_text_offset = offset;
+    }
+
     /// Configure hyphenation from computed style properties.
     ///
     /// `hyphens`: the CSS `hyphens` property value
     /// `limits`: the CSS `hyphenate-limit-chars` property as (min_word, min_prefix, min_suffix)
     pub fn set_hyphens(&mut self, hyphens: Hyphens, limits: (u8, u8, u8)) {
+        self.set_hyphenation(hyphens, limits, Some("en-US"));
+    }
+
+    /// Configure automatic hyphenation for the element language. Missing
+    /// dictionaries deliberately produce no automatic opportunities.
+    pub fn set_hyphenation(
+        &mut self,
+        hyphens: Hyphens,
+        limits: (u8, u8, u8),
+        locale: Option<&str>,
+    ) {
         self.hyphens = hyphens;
         if hyphens == Hyphens::Auto {
-            self.hyphenation = Some(Hyphenation::english_from_css_limits(limits));
+            self.hyphenation = locale.and_then(|locale| {
+                self.items_data
+                    .font_collection
+                    .hyphenation_registry()
+                    .resolve(locale, limits)
+            });
         } else {
             self.hyphenation = None;
         }
@@ -139,6 +274,23 @@ impl<'a> LineBreaker<'a> {
         self.is_finished = cp.is_finished;
     }
 
+    /// Continue this breaker immediately after a line produced from an
+    /// equivalent item stream (used by the separately shaped first line).
+    pub(crate) fn seek_after_line(&mut self, line: &LineInfo) {
+        let Some(last) = line.items.last() else {
+            return;
+        };
+        let item = &self.items_data.items[last.item_index];
+        if last.item_type == InlineItemType::Text && last.text_range.end < item.text_range.end {
+            self.current_item = last.item_index;
+            self.current_text_offset = last.text_range.end;
+        } else {
+            self.current_item = last.item_index + 1;
+            self.current_text_offset = 0;
+        }
+        self.is_finished = self.current_item >= self.items_data.items.len();
+    }
+
     /// Get the next line. Returns `None` when all items are consumed.
     pub fn next_line(&mut self, available_width: LayoutUnit) -> Option<LineInfo> {
         if self.is_finished {
@@ -163,6 +315,40 @@ impl<'a> LineBreaker<'a> {
                 InlineItemType::OpenTag => {
                     let style = &self.items_data.styles[item.style_index];
                     let pct_base = self.containing_block_width;
+                    if !self.preserve_leading_inline_fragment
+                        && line.has_content()
+                        && allows_line_wrap(self.container_white_space)
+                    {
+                        let quantization_slack = LayoutUnit::from_raw(
+                            i32::try_from(line.items.len().saturating_add(1)).unwrap_or(i32::MAX),
+                        );
+                        let external_soft_opportunity =
+                            self.has_soft_opportunity_before_inline_box(&line);
+                        let internal_soft_opportunity = self
+                            .has_leading_soft_opportunity_inside_inline_box(self.current_item)
+                            || (external_soft_opportunity
+                                && self.has_leading_out_of_flow_placeholder_inside_inline_box(
+                                    self.current_item,
+                                ));
+                        let needed = if internal_soft_opportunity {
+                            Some(self.inline_box_empty_fragment_width(self.current_item))
+                        } else if external_soft_opportunity {
+                            Some(self.inline_box_min_content_width(self.current_item))
+                        } else {
+                            None
+                        };
+                        if needed.is_some_and(|needed| {
+                            needed > line.remaining_width() + quantization_slack
+                        }) {
+                            // External whitespace tests the full leading
+                            // min-content unit. Internal leading whitespace
+                            // tests only the empty first decoration fragment;
+                            // consume OpenTag when that fragment fits so line
+                            // construction retains it before wrapping.
+                            state = LineState::Done;
+                            continue;
+                        }
+                    }
                     let mbp = if style.direction == openui_style::Direction::Rtl {
                         resolve_margin_or_padding(&style.margin_right, pct_base)
                             + LayoutUnit::from_i32(style.effective_border_right())
@@ -194,6 +380,10 @@ impl<'a> LineBreaker<'a> {
                         resolve_margin_or_padding(&style.padding_right, pct_base)
                             + LayoutUnit::from_i32(style.effective_border_right())
                             + resolve_margin_or_padding(&style.margin_right, pct_base)
+                    } - if self.next_text_starts_with_non_whitespace(self.current_item) {
+                        self.trailing_shaping_run_rounding_excess(&line)
+                    } else {
+                        LayoutUnit::zero()
                     };
                     line.items.push(InlineItemResult {
                         item_index: self.current_item,
@@ -207,6 +397,20 @@ impl<'a> LineBreaker<'a> {
                     self.current_item += 1;
                 }
                 InlineItemType::Control => {
+                    if !item.is_end_collapsible_newline {
+                        // WBR is a discretionary opportunity even in `pre`,
+                        // where ordinary Unicode soft wrapping is disabled.
+                        // Break here only when the following unbroken text
+                        // segment cannot fit in the remainder of this line.
+                        self.current_item += 1;
+                        self.current_text_offset = 0;
+                        if line.has_content()
+                            && self.unbroken_width_after_soft_control() > line.remaining_width()
+                        {
+                            state = LineState::Done;
+                        }
+                        continue;
+                    }
                     // Forced break (<br> or newline in pre mode)
                     line.items.push(InlineItemResult {
                         item_index: self.current_item,
@@ -247,6 +451,266 @@ impl<'a> LineBreaker<'a> {
         }
 
         Some(line)
+    }
+
+    /// Measure the text up to the next forced newline/control after a WBR.
+    /// Inline boundaries contribute their physical edge geometry; this is the
+    /// same fit question a discretionary break answers before normal item
+    /// processing resumes.
+    fn unbroken_width_after_soft_control(&self) -> LayoutUnit {
+        let mut width = LayoutUnit::zero();
+        for (index, item) in self.items_data.items[self.current_item..]
+            .iter()
+            .enumerate()
+        {
+            let item_index = self.current_item + index;
+            let style = &self.items_data.styles[item.style_index];
+            match item.item_type {
+                InlineItemType::Text => {
+                    let text = &self.items_data.text[item.text_range.clone()];
+                    let end = text
+                        .find('\n')
+                        .map_or(item.text_range.end, |offset| item.text_range.start + offset);
+                    width = width + self.measure_text_range(item_index, item.text_range.start, end);
+                    if end != item.text_range.end {
+                        break;
+                    }
+                }
+                InlineItemType::OpenTag => {
+                    width = width
+                        + resolve_margin_or_padding(
+                            if style.direction == openui_style::Direction::Rtl {
+                                &style.padding_right
+                            } else {
+                                &style.padding_left
+                            },
+                            self.containing_block_width,
+                        );
+                }
+                InlineItemType::CloseTag => {
+                    width = width
+                        + resolve_margin_or_padding(
+                            if style.direction == openui_style::Direction::Rtl {
+                                &style.padding_left
+                            } else {
+                                &style.padding_right
+                            },
+                            self.containing_block_width,
+                        );
+                }
+                InlineItemType::AtomicInline => {
+                    width = width
+                        + item
+                            .intrinsic_inline_size
+                            .map_or(LayoutUnit::zero(), |(_, max)| LayoutUnit::from_f32(max));
+                }
+                InlineItemType::Control | InlineItemType::BlockInInline => break,
+            }
+        }
+        width
+    }
+
+    fn has_soft_opportunity_before_inline_box(&self, line: &LineInfo) -> bool {
+        if line.items.iter().rev().find_map(|result| {
+            if result.item_type != InlineItemType::Text {
+                return None;
+            }
+            let item = &self.items_data.items[result.item_index];
+            let style = &self.items_data.styles[item.style_index];
+            Some(
+                allows_line_wrap(style.white_space)
+                    && self.items_data.text[result.text_range.clone()]
+                        .chars()
+                        .next_back()
+                        .is_some_and(char::is_whitespace),
+            )
+        }) == Some(true)
+        {
+            return true;
+        }
+
+        false
+    }
+
+    fn has_leading_soft_opportunity_inside_inline_box(&self, open_index: usize) -> bool {
+        let mut depth = 0usize;
+        for candidate in &self.items_data.items[open_index..] {
+            match candidate.item_type {
+                InlineItemType::OpenTag => depth += 1,
+                InlineItemType::CloseTag => {
+                    depth = depth.saturating_sub(1);
+                    if depth == 0 {
+                        break;
+                    }
+                }
+                InlineItemType::Text => {
+                    let style = &self.items_data.styles[candidate.style_index];
+                    return allows_line_wrap(style.white_space)
+                        && self.items_data.text[candidate.text_range.clone()]
+                            .chars()
+                            .next()
+                            .is_some_and(char::is_whitespace);
+                }
+                InlineItemType::AtomicInline => {
+                    let style = &self.items_data.styles[candidate.style_index];
+                    if !style.position.is_absolutely_positioned() {
+                        return false;
+                    }
+                }
+                InlineItemType::Control | InlineItemType::BlockInInline => {}
+            }
+        }
+        false
+    }
+
+    fn has_leading_out_of_flow_placeholder_inside_inline_box(&self, open_index: usize) -> bool {
+        let open = &self.items_data.items[open_index];
+        self.items_data.oof_children.iter().any(|placeholder| {
+            placeholder.inline_containing_block == Some(open.node_id)
+                && placeholder.item_index == open_index + 1
+        })
+    }
+
+    fn inline_box_empty_fragment_width(&self, open_index: usize) -> LayoutUnit {
+        let item = &self.items_data.items[open_index];
+        let style = &self.items_data.styles[item.style_index];
+        let start = if style.direction == openui_style::Direction::Rtl {
+            resolve_margin_or_padding(&style.margin_right, self.containing_block_width)
+                + LayoutUnit::from_i32(style.effective_border_right())
+                + resolve_margin_or_padding(&style.padding_right, self.containing_block_width)
+        } else {
+            resolve_margin_or_padding(&style.margin_left, self.containing_block_width)
+                + LayoutUnit::from_i32(style.effective_border_left())
+                + resolve_margin_or_padding(&style.padding_left, self.containing_block_width)
+        };
+        if style.box_decoration_break != openui_style::BoxDecorationBreak::Clone {
+            return start;
+        }
+        start
+            + if style.direction == openui_style::Direction::Rtl {
+                resolve_margin_or_padding(&style.padding_left, self.containing_block_width)
+                    + LayoutUnit::from_i32(style.effective_border_left())
+                    + resolve_margin_or_padding(&style.margin_left, self.containing_block_width)
+            } else {
+                resolve_margin_or_padding(&style.padding_right, self.containing_block_width)
+                    + LayoutUnit::from_i32(style.effective_border_right())
+                    + resolve_margin_or_padding(&style.margin_right, self.containing_block_width)
+            }
+    }
+
+    fn inline_box_min_content_width(&self, open_index: usize) -> LayoutUnit {
+        let mut depth = 0usize;
+        let mut edges = LayoutUnit::zero();
+        let mut widest_content = LayoutUnit::zero();
+        for (relative_index, candidate) in self.items_data.items[open_index..].iter().enumerate() {
+            let item_index = open_index + relative_index;
+            let style = &self.items_data.styles[candidate.style_index];
+            match candidate.item_type {
+                InlineItemType::OpenTag => {
+                    depth += 1;
+                    edges = edges
+                        + if style.direction == openui_style::Direction::Rtl {
+                            resolve_margin_or_padding(
+                                &style.margin_right,
+                                self.containing_block_width,
+                            ) + LayoutUnit::from_i32(style.effective_border_right())
+                                + resolve_margin_or_padding(
+                                    &style.padding_right,
+                                    self.containing_block_width,
+                                )
+                        } else {
+                            resolve_margin_or_padding(
+                                &style.margin_left,
+                                self.containing_block_width,
+                            ) + LayoutUnit::from_i32(style.effective_border_left())
+                                + resolve_margin_or_padding(
+                                    &style.padding_left,
+                                    self.containing_block_width,
+                                )
+                        };
+                }
+                InlineItemType::CloseTag => {
+                    edges = edges
+                        + if style.direction == openui_style::Direction::Rtl {
+                            resolve_margin_or_padding(
+                                &style.padding_left,
+                                self.containing_block_width,
+                            ) + LayoutUnit::from_i32(style.effective_border_left())
+                                + resolve_margin_or_padding(
+                                    &style.margin_left,
+                                    self.containing_block_width,
+                                )
+                        } else {
+                            resolve_margin_or_padding(
+                                &style.padding_right,
+                                self.containing_block_width,
+                            ) + LayoutUnit::from_i32(style.effective_border_right())
+                                + resolve_margin_or_padding(
+                                    &style.margin_right,
+                                    self.containing_block_width,
+                                )
+                        };
+                    depth = depth.saturating_sub(1);
+                    if depth == 0 {
+                        break;
+                    }
+                }
+                InlineItemType::Text => {
+                    let text = &self.items_data.text[candidate.text_range.clone()];
+                    if allows_line_wrap(style.white_space) {
+                        // Min-content is bounded by every soft wrap
+                        // opportunity, not just ASCII whitespace. Treating a
+                        // complete URL or hyphenated item as one word moves
+                        // the entire inline before `handle_text` can consume
+                        // its UAX #14 opportunities.
+                        let mut boundaries = find_break_opportunities(
+                            text,
+                            style.word_break,
+                            style.overflow_wrap,
+                            style.line_break,
+                        );
+                        boundaries.push(text.len());
+                        let mut segment_start = 0usize;
+                        for segment_end in boundaries {
+                            if segment_end <= segment_start {
+                                continue;
+                            }
+                            let segment = &text[segment_start..segment_end];
+                            let measured = if matches!(
+                                style.white_space,
+                                WhiteSpace::Normal | WhiteSpace::Nowrap | WhiteSpace::PreLine
+                            ) {
+                                segment.trim_matches([' ', '\t', '\n', '\r'])
+                            } else {
+                                segment
+                            };
+                            if !measured.is_empty() {
+                                let leading =
+                                    measured.as_ptr() as usize - segment.as_ptr() as usize;
+                                let start = candidate.text_range.start + segment_start + leading;
+                                let end = start + measured.len();
+                                widest_content = widest_content
+                                    .max_of(self.measure_text_range(item_index, start, end));
+                            }
+                            segment_start = segment_end;
+                        }
+                    } else {
+                        widest_content = widest_content.max_of(self.measure_text_range(
+                            item_index,
+                            candidate.text_range.start,
+                            candidate.text_range.end,
+                        ));
+                    }
+                }
+                InlineItemType::AtomicInline => {
+                    if let Some((min, _)) = candidate.intrinsic_inline_size {
+                        widest_content = widest_content.max_of(LayoutUnit::from_f32(min));
+                    }
+                }
+                InlineItemType::Control | InlineItemType::BlockInInline => {}
+            }
+        }
+        edges + widest_content
     }
 
     /// Handle a text item — measure, find break opportunities, break if needed.
@@ -296,13 +760,28 @@ impl<'a> LineBreaker<'a> {
             allows_line_wrap(style.white_space) && allows_line_wrap(self.container_white_space);
 
         // Measure the text
+        let truncates_collapsible_boundary = uses_truncated_collapsible_boundary(
+            &self.items_data.items,
+            &self.items_data.styles,
+            item_index,
+            text_slice,
+        );
+        // Only a leading float participates in the fixed-point exclusion
+        // quantization profile. A float encountered after any text must not
+        // change the advances of either the preceding run or later siblings.
+        let float_precedes_current_text = self.first_float_text_offset == Some(0);
         let text_width = if let Some(ref sr) = item.shape_result {
             let char_start = self.char_map.get(text_start);
             let char_end = self.char_map.get(text_end);
             let item_char_start = self.char_map.get(item.text_range.start);
             let local_start = char_start - item_char_start;
             let local_end = char_end - item_char_start;
-            LayoutUnit::from_f32(sr.width_for_range(local_start, local_end))
+            let width = sr.width_for_range(local_start, local_end);
+            if truncates_collapsible_boundary || float_precedes_current_text {
+                LayoutUnit::from_f32(width)
+            } else {
+                LayoutUnit::from_f32_ceil(width)
+            }
         } else {
             LayoutUnit::zero()
         };
@@ -319,16 +798,44 @@ impl<'a> LineBreaker<'a> {
                     let char_start = self.char_map.get(text_start);
                     let char_end = self.char_map.get(text_end);
                     let item_char_start = self.char_map.get(item.text_range.start);
-                    LayoutUnit::from_f32(sr.width_for_range(
+                    let width = sr.width_for_range(
                         char_start - item_char_start,
                         char_end.saturating_sub(1) - item_char_start,
-                    ))
+                    );
+                    if truncates_collapsible_boundary || float_precedes_current_text {
+                        LayoutUnit::from_f32(width)
+                    } else {
+                        LayoutUnit::from_f32_ceil(width)
+                    }
                 })
             } else {
                 text_width
             };
+        let next_is_forced_break = self
+            .items_data
+            .items
+            .get(item_index + 1)
+            .is_some_and(|next| {
+                next.item_type == InlineItemType::Control && next.is_end_collapsible_newline
+            });
+        let discardable_space = next_is_forced_break
+            && item.end_collapse_type == CollapseType::Collapsible
+            && text_slice.chars().all(|ch| ch.is_ascii_whitespace());
 
-        if fit_width <= remaining || !allows_wrap {
+        // Independently shaped homogeneous runs can quantize one LayoutUnit
+        // wider than the same text measured as a single intrinsic run (for
+        // example, two exact 50px bidi/script runs versus a 99.999px
+        // max-content measurement). Treat that single fixed-point quantum as
+        // an exact fit so a shaping boundary cannot invent a line break.
+        // Each preceding independently-shaped item can contribute the same
+        // subpixel truncation. Accumulate one quantum per item already on the
+        // line plus the candidate, matching the unsplit run's single final
+        // quantization without granting a device-pixel-sized wrapping fudge.
+        let quantization_slack = LayoutUnit::from_raw(
+            i32::try_from(line.items.len().saturating_add(1)).unwrap_or(i32::MAX),
+        );
+        let fits_after_run_quantization = fit_width <= remaining + quantization_slack;
+        if fits_after_run_quantization || discardable_space || !allows_wrap {
             // Entire text fits (or we're in nowrap mode)
             line.items.push(InlineItemResult {
                 item_index,
@@ -351,12 +858,45 @@ impl<'a> LineBreaker<'a> {
             style.overflow_wrap,
             style.line_break,
         );
+        let mut automatic_hyphen_breaks = Vec::new();
+        if self.hyphens == Hyphens::Auto {
+            if let Some(hyphenation) = &self.hyphenation {
+                for (word_start, word) in text_slice.unicode_word_indices() {
+                    if !hyphenation.should_hyphenate(word) {
+                        continue;
+                    }
+                    let word_end = word_start + word.len();
+                    if word_end == text_slice.trim_end().len()
+                        && self.has_attached_nonbreaking_suffix(item_index)
+                    {
+                        // A following pre/nowrap run without leading
+                        // whitespace extends this word's unbreakable unit
+                        // across the inline boundary. Rewind to the prior
+                        // opportunity instead of inventing a hyphen inside
+                        // only the first half of that unit.
+                        continue;
+                    }
+                    for point in hyphenation.hyphen_byte_locations(word) {
+                        let offset = word_start + point;
+                        automatic_hyphen_breaks.push(offset);
+                        if !break_opps.contains(&offset) {
+                            break_opps.push(offset);
+                        }
+                    }
+                }
+            }
+        }
 
         // Add soft hyphen break opportunities if hyphens != none.
         // Soft hyphens (U+00AD) are valid break points in manual and auto modes.
         if self.hyphens != Hyphens::None {
             let soft_breaks = hyphenation::find_soft_hyphens(text_slice);
             for sb in &soft_breaks {
+                // UAX #14 reports the boundary after U+00AD, while the
+                // discretionary-break machinery stores the boundary at the
+                // character so the invisible source code point is excluded
+                // from this line and skipped exactly once on resume.
+                break_opps.retain(|offset| *offset != *sb + '\u{00AD}'.len_utf8());
                 if !break_opps.contains(sb) {
                     break_opps.push(*sb);
                 }
@@ -367,16 +907,19 @@ impl<'a> LineBreaker<'a> {
 
         let mut best_break: Option<usize> = None;
         let mut best_width = LayoutUnit::zero();
-        let mut best_is_hyphen = false;
+        let mut best_inserts_hyphen = false;
+        let mut best_skips_soft_hyphen = false;
         let mut first_overflow_break: Option<(usize, LayoutUnit)> = None;
 
         // Shape the actual hyphen to get exact advance width.
         let hyphen_advance = {
             let shaper = TextShaper::new();
             let font_desc = style_to_font_description(style);
-            let font = Font::new(font_desc);
-            let sr = shaper.shape("-", &font, openui_text::TextDirection::Ltr);
-            LayoutUnit::from_f32(sr.width)
+            let font =
+                Font::new_in_collection(font_desc, Arc::clone(&self.items_data.font_collection));
+            let marker = style.hyphenate_character.as_deref().unwrap_or("-");
+            let sr = shaper.shape(marker, &font, openui_text::TextDirection::Ltr);
+            LayoutUnit::from_f32_ceil(sr.width)
         };
 
         if let Some(ref sr) = item.shape_result {
@@ -406,27 +949,29 @@ impl<'a> LineBreaker<'a> {
                 let break_char = self.char_map.get(measured_break_byte);
                 let local_start = char_start - item_char_start;
                 let local_end = break_char - item_char_start;
-                let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                let width = LayoutUnit::from_f32_ceil(sr.width_for_range(local_start, local_end));
                 // Keep the collapsible trailing space in the line item's
                 // stored advance. `strip_trailing_spaces` removes it after
                 // construction. Storing the already-trimmed fit width here
                 // made that pass subtract the space twice (turning `AA ` into
                 // one A for geometry even though both glyphs were painted).
                 let raw_break_char = self.char_map.get(break_byte);
-                let raw_width = LayoutUnit::from_f32(
+                let raw_width = LayoutUnit::from_f32_ceil(
                     sr.width_for_range(local_start, raw_break_char - item_char_start),
                 );
                 let is_shy = brk < text_slice.len() && text_slice[brk..].starts_with('\u{00AD}');
+                let is_auto_hyphen = automatic_hyphen_breaks.contains(&brk);
                 // Soft-hyphen breaks insert a visible hyphen glyph — account for its width.
-                let effective_width = if is_shy {
+                let effective_width = if is_shy || is_auto_hyphen {
                     width + hyphen_advance
                 } else {
                     width
                 };
-                if effective_width <= remaining {
+                if effective_width <= remaining + quantization_slack {
                     best_break = Some(brk);
                     best_width = raw_width;
-                    best_is_hyphen = is_shy;
+                    best_inserts_hyphen = is_shy || is_auto_hyphen;
+                    best_skips_soft_hyphen = is_shy;
                 } else {
                     if brk > 0 && !is_shy && first_overflow_break.is_none() {
                         first_overflow_break = Some((brk, raw_width));
@@ -441,6 +986,11 @@ impl<'a> LineBreaker<'a> {
                 // Can't fit anything — if line is empty, force overflow
                 if !line.has_content() {
                     self.force_text_on_line(item_index, text_start, text_end, text_width, line);
+                    // The forced run may be followed by zero-width inline
+                    // structure or a <br>. Keep consuming so a break belongs
+                    // to this overfull line instead of creating an extra
+                    // empty line of its own.
+                    return;
                 }
                 *state = LineState::Done;
                 return;
@@ -456,10 +1006,15 @@ impl<'a> LineBreaker<'a> {
                 item_type: InlineItemType::Text,
             });
             line.used_width = line.used_width + best_width;
-            if best_is_hyphen {
-                // Skip past the soft hyphen character for the next line
-                let shy_len = '\u{00AD}'.len_utf8();
-                self.current_text_offset = break_byte + shy_len;
+            if best_inserts_hyphen {
+                self.current_text_offset = if best_skips_soft_hyphen {
+                    // A discretionary soft-hyphen character is not part of
+                    // the resumed text. Automatic dictionary hyphenation has
+                    // no source character to skip.
+                    break_byte + '\u{00AD}'.len_utf8()
+                } else {
+                    break_byte
+                };
                 line.has_forced_hyphen = true;
             } else {
                 self.current_text_offset = break_byte;
@@ -500,11 +1055,16 @@ impl<'a> LineBreaker<'a> {
                             line.used_width = line.used_width + width;
                             self.current_text_offset = break_byte;
                         } else {
-                            // No later opportunity exists; force the whole
-                            // unbreakable item to guarantee progress.
-                            self.force_text_on_line(
-                                item_index, text_start, text_end, text_width, line,
+                            // Shaping may split one logical word at a script,
+                            // orientation, or fallback-font boundary. Those
+                            // item boundaries are not CSS soft-wrap
+                            // opportunities. Force the complete logical unit
+                            // through its next Unicode break while retaining
+                            // the independently shaped item results.
+                            self.force_text_through_next_logical_break(
+                                item_index, text_start, text_width, line, style,
                             );
+                            return;
                         }
                         *state = LineState::Done;
                     } else {
@@ -514,6 +1074,42 @@ impl<'a> LineBreaker<'a> {
                 }
             }
         }
+    }
+
+    fn has_attached_nonbreaking_suffix(&self, item_index: usize) -> bool {
+        for candidate in &self.items_data.items[item_index + 1..] {
+            match candidate.item_type {
+                InlineItemType::OpenTag | InlineItemType::CloseTag => continue,
+                InlineItemType::Text => {
+                    let style = &self.items_data.styles[candidate.style_index];
+                    let text = &self.items_data.text[candidate.text_range.clone()];
+                    return !allows_line_wrap(style.white_space)
+                        && text.chars().next().is_some_and(|ch| !ch.is_whitespace());
+                }
+                InlineItemType::AtomicInline
+                | InlineItemType::Control
+                | InlineItemType::BlockInInline => return false,
+            }
+        }
+        false
+    }
+
+    fn next_text_starts_with_non_whitespace(&self, item_index: usize) -> bool {
+        for candidate in &self.items_data.items[item_index + 1..] {
+            match candidate.item_type {
+                InlineItemType::OpenTag | InlineItemType::CloseTag => continue,
+                InlineItemType::Text => {
+                    return self.items_data.text[candidate.text_range.clone()]
+                        .chars()
+                        .next()
+                        .is_some_and(|character| !character.is_whitespace());
+                }
+                InlineItemType::AtomicInline
+                | InlineItemType::Control
+                | InlineItemType::BlockInInline => return false,
+            }
+        }
+        false
     }
 
     /// Try to break a word at a hyphenation point using the Knuth-Liang algorithm.
@@ -571,9 +1167,11 @@ impl<'a> LineBreaker<'a> {
         let hyphen_advance = {
             let shaper = TextShaper::new();
             let font_desc = style_to_font_description(style);
-            let font = Font::new(font_desc);
-            let sr = shaper.shape("-", &font, openui_text::TextDirection::Ltr);
-            LayoutUnit::from_f32(sr.width)
+            let font =
+                Font::new_in_collection(font_desc, Arc::clone(&self.items_data.font_collection));
+            let marker = style.hyphenate_character.as_deref().unwrap_or("-");
+            let sr = shaper.shape(marker, &font, openui_text::TextDirection::Ltr);
+            LayoutUnit::from_f32_ceil(sr.width)
         };
 
         if let Some(ref sr) = item.shape_result {
@@ -591,7 +1189,7 @@ impl<'a> LineBreaker<'a> {
                 let break_char = self.char_map.get(break_byte);
                 let local_start = char_start - item_char_start;
                 let local_end = break_char - item_char_start;
-                let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                let width = LayoutUnit::from_f32_ceil(sr.width_for_range(local_start, local_end));
 
                 if width + hyphen_advance <= remaining {
                     line.items.push(InlineItemResult {
@@ -684,7 +1282,7 @@ impl<'a> LineBreaker<'a> {
                                 let brk_char = self.char_map.get(brk_byte);
                                 let local_start = char_start - item_char_start;
                                 let local_end = brk_char - item_char_start;
-                                let width = LayoutUnit::from_f32(
+                                let width = LayoutUnit::from_f32_ceil(
                                     sr.width_for_range(local_start, local_end),
                                 );
                                 if width <= remaining {
@@ -802,8 +1400,9 @@ impl<'a> LineBreaker<'a> {
                             let brk_char = self.char_map.get(brk_byte);
                             let local_start = char_start - item_char_start;
                             let local_end = brk_char - item_char_start;
-                            let width =
-                                LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                            let width = LayoutUnit::from_f32_ceil(
+                                sr.width_for_range(local_start, local_end),
+                            );
                             if width <= remaining {
                                 best_break = Some(brk);
                                 best_width = width;
@@ -900,7 +1499,7 @@ impl<'a> LineBreaker<'a> {
                 }
                 let local_start = char_start - item_char_start;
                 let local_end = local_break;
-                let width = LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                let width = LayoutUnit::from_f32_ceil(sr.width_for_range(local_start, local_end));
                 if width <= remaining {
                     best_byte = Some(break_byte);
                     best_width = width;
@@ -933,7 +1532,7 @@ impl<'a> LineBreaker<'a> {
                         let local_start = char_start - item_char_start;
                         let local_end = break_char - item_char_start;
                         let width =
-                            LayoutUnit::from_f32(sr.width_for_range(local_start, local_end));
+                            LayoutUnit::from_f32_ceil(sr.width_for_range(local_start, local_end));
                         if width <= remaining {
                             best_byte = Some(break_byte);
                             best_width = width;
@@ -1025,21 +1624,27 @@ impl<'a> LineBreaker<'a> {
         // For `auto` or percentage widths without a definite containing block,
         // fall back to zero (full box layout integration is required for
         // intrinsic sizing of inline-block content).
-        let width = resolve_atomic_inline_width(
+        let width = resolve_atomic_inline_size(
             style,
             self.containing_block_width,
             item.intrinsic_inline_size,
+            self.writing_direction,
         );
+        let axis = AtomicInlineAxisMapping::new(self.writing_direction);
         let margin_inline =
-            resolve_margin_or_padding(&style.margin_left, self.containing_block_width)
-                + resolve_margin_or_padding(&style.margin_right, self.containing_block_width);
+            resolve_margin_or_padding(axis.margin_start(style), self.containing_block_width)
+                + resolve_margin_or_padding(axis.margin_end(style), self.containing_block_width);
         let margin_box_width = width + margin_inline;
         let remaining = line.remaining_width();
         // Use the container's white-space for wrapping decisions (CSS inheritance).
         // The container's nowrap applies to all inline content within.
         let allows_wrap = allows_line_wrap(self.container_white_space);
 
-        if margin_box_width <= remaining || !line.has_content() || !allows_wrap {
+        let quantization_slack = LayoutUnit::from_raw(
+            i32::try_from(line.items.len().saturating_add(1)).unwrap_or(i32::MAX),
+        );
+        if margin_box_width <= remaining + quantization_slack || !line.has_content() || !allows_wrap
+        {
             line.items.push(InlineItemResult {
                 item_index,
                 text_range: item.text_range.clone(),
@@ -1078,6 +1683,90 @@ impl<'a> LineBreaker<'a> {
         self.current_text_offset = 0;
     }
 
+    /// Force an overflowing logical text unit onto an empty line.
+    ///
+    /// Deterministic fallback shaping represents a single DOM text node as
+    /// adjacent homogeneous items. CSS line breaking still operates on the
+    /// original text, so a fallback boundary inside a contraction or another
+    /// unbreakable word must not become an invented wrap point.
+    fn force_text_through_next_logical_break(
+        &mut self,
+        item_index: usize,
+        text_start: usize,
+        first_width: LayoutUnit,
+        line: &mut LineInfo,
+        style: &ComputedStyle,
+    ) {
+        let first = &self.items_data.items[item_index];
+        let mut logical_end = first.text_range.end;
+        let mut last_item = item_index;
+
+        for (candidate_index, candidate) in self.items_data.items[item_index + 1..]
+            .iter()
+            .enumerate()
+            .map(|(offset, candidate)| (item_index + 1 + offset, candidate))
+        {
+            if candidate.item_type != InlineItemType::Text
+                || candidate.node_id != first.node_id
+                || candidate.style_index != first.style_index
+                || candidate.bidi_level != first.bidi_level
+                || candidate.text_range.start != logical_end
+            {
+                break;
+            }
+            logical_end = candidate.text_range.end;
+            last_item = candidate_index;
+        }
+
+        let logical_text = &self.items_data.text[text_start..logical_end];
+        let break_end = find_break_opportunities(
+            logical_text,
+            style.word_break,
+            style.overflow_wrap,
+            style.line_break,
+        )
+        .into_iter()
+        .next()
+        .map_or(logical_end, |offset| text_start + offset);
+
+        for candidate_index in item_index..=last_item {
+            let candidate = &self.items_data.items[candidate_index];
+            let range_start = text_start.max(candidate.text_range.start);
+            let range_end = break_end.min(candidate.text_range.end);
+            if range_start >= range_end {
+                continue;
+            }
+            let width = if candidate_index == item_index && range_end == candidate.text_range.end {
+                first_width
+            } else {
+                self.measure_text_range(candidate_index, range_start, range_end)
+            };
+            line.items.push(InlineItemResult {
+                item_index: candidate_index,
+                text_range: range_start..range_end,
+                inline_size: width,
+                shape_result: candidate.shape_result.clone(),
+                has_forced_break: false,
+                item_type: InlineItemType::Text,
+            });
+            line.used_width = line.used_width + width;
+
+            if break_end <= candidate.text_range.end {
+                if break_end == candidate.text_range.end {
+                    self.current_item = candidate_index + 1;
+                    self.current_text_offset = 0;
+                } else {
+                    self.current_item = candidate_index;
+                    self.current_text_offset = break_end;
+                }
+                return;
+            }
+        }
+
+        self.current_item = last_item + 1;
+        self.current_text_offset = 0;
+    }
+
     /// Measure the width of a byte range within a text item.
     fn measure_text_range(&self, item_index: usize, start: usize, end: usize) -> LayoutUnit {
         let item = &self.items_data.items[item_index];
@@ -1087,7 +1776,7 @@ impl<'a> LineBreaker<'a> {
             let char_end = self.char_map.get(end);
             let local_start = char_start - item_char_start;
             let local_end = char_end - item_char_start;
-            LayoutUnit::from_f32(sr.width_for_range(local_start, local_end))
+            LayoutUnit::from_f32_ceil(sr.width_for_range(local_start, local_end))
         } else {
             LayoutUnit::zero()
         }
@@ -1108,6 +1797,33 @@ impl<'a> LineBreaker<'a> {
 /// Uses the actual text on the current line (the item_result's text_range)
 /// rather than the full item's collapse metadata, so that split items are
 /// handled correctly.
+fn uses_truncated_collapsible_boundary(
+    items: &[InlineItem],
+    styles: &[ComputedStyle],
+    item_index: usize,
+    text: &str,
+) -> bool {
+    let Some(item) = items.get(item_index) else {
+        return false;
+    };
+    if item.end_collapse_type != CollapseType::Collapsible || !text.ends_with(' ') {
+        return false;
+    }
+    if styles
+        .get(item.style_index)
+        .is_some_and(|style| style.white_space == WhiteSpace::Nowrap)
+    {
+        return false;
+    }
+    let Some(next) = items.get(item_index + 1) else {
+        return false;
+    };
+    next.item_type == InlineItemType::OpenTag
+        && styles
+            .get(next.style_index)
+            .is_some_and(|style| style.white_space == WhiteSpace::Nowrap)
+}
+
 fn strip_trailing_spaces(
     line: &mut LineInfo,
     items: &[InlineItem],
@@ -1124,6 +1840,7 @@ fn strip_trailing_spaces(
             }
             if item_result.item_type != InlineItemType::CloseTag
                 && item_result.item_type != InlineItemType::OpenTag
+                && item_result.item_type != InlineItemType::Control
             {
                 break;
             }
@@ -1275,7 +1992,7 @@ pub fn find_break_opportunities(
     }
 
     let base_breaks = match word_break {
-        WordBreak::Normal => {
+        WordBreak::Normal | WordBreak::AutoPhrase => {
             // UAX#14 line break opportunities
             find_uax14_breaks(text)
         }
@@ -1311,6 +2028,15 @@ pub fn find_break_opportunities(
         LineBreak::Loose => apply_loose_line_break(text, base_breaks),
         // Auto and Normal use standard UAX#14 behavior unchanged.
         LineBreak::Auto | LineBreak::Normal | LineBreak::Anywhere => base_breaks,
+        LineBreak::AfterWhiteSpace => base_breaks
+            .into_iter()
+            .filter(|&offset| {
+                text[..offset]
+                    .chars()
+                    .next_back()
+                    .is_some_and(char::is_whitespace)
+            })
+            .collect(),
     }
 }
 
@@ -1326,13 +2052,80 @@ fn find_uax14_breaks(text: &str) -> Vec<usize> {
         match break_opp {
             BreakOpportunity::Mandatory | BreakOpportunity::Allowed => {
                 // Don't include break at position 0 or at the very end (after last char)
-                if byte_offset > 0 && byte_offset < text.len() {
+                if byte_offset > 0
+                    && byte_offset < text.len()
+                    && !break_splits_apostrophe_word(text, byte_offset)
+                    && !break_follows_url_solidus(text, byte_offset)
+                {
                     breaks.push(byte_offset);
                 }
             }
         }
     }
+    // CSS collapsible ASCII whitespace remains a soft-wrap opportunity even
+    // when UAX #14 would suppress the boundary because the following
+    // character is closing punctuation (for example `word )`). Chromium can
+    // wrap before that punctuation after discarding the intervening space.
+    // Keep these CSS whitespace opportunities alongside the Unicode set.
+    let chars: Vec<(usize, char)> = text.char_indices().collect();
+    for index in 1..chars.len() {
+        let (byte_offset, _) = chars[index];
+        if matches!(chars[index - 1].1, ' ' | '\t') {
+            breaks.push(byte_offset);
+        }
+    }
+    breaks.sort_unstable();
+    breaks.dedup();
     breaks
+}
+
+/// Chromium keeps the solidus-delimited portions of an ASCII URL in the same
+/// unbreakable unit while retaining ordinary opportunities at hyphens. The
+/// Unicode line-break crate exposes every solidus boundary; accepting those
+/// points changes both min-content measurement and greedy line placement.
+fn break_follows_url_solidus(text: &str, byte_offset: usize) -> bool {
+    if !text.is_char_boundary(byte_offset)
+        || !text[..byte_offset]
+            .chars()
+            .next_back()
+            .is_some_and(|character| character == '/')
+    {
+        return false;
+    }
+    let token_start = text[..byte_offset]
+        .rfind(char::is_whitespace)
+        .map_or(0, |offset| {
+            offset + text[offset..].chars().next().unwrap().len_utf8()
+        });
+    let token_end = text[byte_offset..]
+        .find(char::is_whitespace)
+        .map_or(text.len(), |offset| byte_offset + offset);
+    text[token_start..token_end].contains("://")
+}
+
+fn break_splits_apostrophe_word(text: &str, byte_offset: usize) -> bool {
+    if !text.is_char_boundary(byte_offset) {
+        return false;
+    }
+    let before = text[..byte_offset].chars().next_back();
+    let after = text[byte_offset..].chars().next();
+    let is_apostrophe = |character| matches!(character, '\'' | '\u{2019}');
+
+    if before.is_some_and(is_apostrophe) && after.is_some_and(char::is_alphanumeric) {
+        let apostrophe_start = byte_offset - before.unwrap().len_utf8();
+        return text[..apostrophe_start]
+            .chars()
+            .next_back()
+            .is_some_and(char::is_alphanumeric);
+    }
+    if before.is_some_and(char::is_alphanumeric) && after.is_some_and(is_apostrophe) {
+        let after_apostrophe = byte_offset + after.unwrap().len_utf8();
+        return text[after_apostrophe..]
+            .chars()
+            .next()
+            .is_some_and(char::is_alphanumeric);
+    }
+    false
 }
 
 /// Find break opportunities only at spaces (used by tests).
@@ -1348,6 +2141,14 @@ fn find_space_breaks(text: &str) -> Vec<usize> {
         }
     }
     breaks
+}
+
+fn cumulative_rounding_excess(
+    cumulative_exact_width: f32,
+    cumulative_allocated: LayoutUnit,
+) -> LayoutUnit {
+    (cumulative_allocated - LayoutUnit::from_f32_ceil(cumulative_exact_width))
+        .clamp_negative_to_zero()
 }
 
 /// Check if a break opportunity at `byte_pos` is a CJK-specific break
@@ -1528,17 +2329,107 @@ fn allows_line_wrap(white_space: WhiteSpace) -> bool {
     }
 }
 
-/// Compute the horizontal border+padding for an element's style.
+/// Maps the parent inline axis to the physical fields retained by
+/// `ComputedStyle`. Atomic inline outer geometry belongs to the parent IFC,
+/// even when the atomic box establishes an orthogonal child writing mode.
+#[derive(Clone, Copy)]
+struct AtomicInlineAxisMapping {
+    is_horizontal: bool,
+}
+
+impl AtomicInlineAxisMapping {
+    fn new(writing_direction: WritingDirectionMode) -> Self {
+        Self {
+            is_horizontal: writing_direction.is_horizontal(),
+        }
+    }
+
+    fn size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.width
+        } else {
+            &style.height
+        }
+    }
+
+    fn min_size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.min_width
+        } else {
+            &style.min_height
+        }
+    }
+
+    fn max_size<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.max_width
+        } else {
+            &style.max_height
+        }
+    }
+
+    fn padding_start<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.padding_left
+        } else {
+            &style.padding_top
+        }
+    }
+
+    fn padding_end<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.padding_right
+        } else {
+            &style.padding_bottom
+        }
+    }
+
+    fn margin_start<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.margin_left
+        } else {
+            &style.margin_top
+        }
+    }
+
+    fn margin_end<'a>(self, style: &'a ComputedStyle) -> &'a Length {
+        if self.is_horizontal {
+            &style.margin_right
+        } else {
+            &style.margin_bottom
+        }
+    }
+
+    fn border_start(self, style: &ComputedStyle) -> i32 {
+        if self.is_horizontal {
+            style.effective_border_left()
+        } else {
+            style.effective_border_top()
+        }
+    }
+
+    fn border_end(self, style: &ComputedStyle) -> i32 {
+        if self.is_horizontal {
+            style.effective_border_right()
+        } else {
+            style.effective_border_bottom()
+        }
+    }
+}
+
+/// Compute logical-inline border+padding for an element's style.
 ///
 /// Used to convert content-box widths to border-box widths for atomic inlines.
 fn compute_border_padding_inline(
     style: &ComputedStyle,
     containing_block_width: LayoutUnit,
+    writing_direction: WritingDirectionMode,
 ) -> LayoutUnit {
-    let border_left = LayoutUnit::from_i32(style.effective_border_left());
-    let border_right = LayoutUnit::from_i32(style.effective_border_right());
-    let pad_left = resolve_margin_or_padding(&style.padding_left, containing_block_width);
-    let pad_right = resolve_margin_or_padding(&style.padding_right, containing_block_width);
+    let axis = AtomicInlineAxisMapping::new(writing_direction);
+    let border_left = LayoutUnit::from_i32(axis.border_start(style));
+    let border_right = LayoutUnit::from_i32(axis.border_end(style));
+    let pad_left = resolve_margin_or_padding(axis.padding_start(style), containing_block_width);
+    let pad_right = resolve_margin_or_padding(axis.padding_end(style), containing_block_width);
     border_left + border_right + pad_left + pad_right
 }
 
@@ -1551,16 +2442,36 @@ fn compute_border_padding_inline(
 /// The returned value is always a **border-box** width: for `content-box` sizing
 /// the element's own border+padding is added; for `border-box` the CSS width
 /// already includes them.
+#[cfg(test)]
 fn resolve_atomic_inline_width(
     style: &ComputedStyle,
     containing_block_width: LayoutUnit,
-    intrinsic_inline_size: Option<f32>,
+    intrinsic_inline_size: Option<(f32, f32)>,
 ) -> LayoutUnit {
-    let border_padding = compute_border_padding_inline(style, containing_block_width);
+    resolve_atomic_inline_size(
+        style,
+        containing_block_width,
+        intrinsic_inline_size,
+        WritingDirectionMode::horizontal_ltr(),
+    )
+}
 
-    let base = match style.width.length_type() {
+fn resolve_atomic_inline_size(
+    style: &ComputedStyle,
+    containing_block_width: LayoutUnit,
+    intrinsic_inline_size: Option<(f32, f32)>,
+    writing_direction: WritingDirectionMode,
+) -> LayoutUnit {
+    let axis = AtomicInlineAxisMapping::new(writing_direction);
+    let size = axis.size(style);
+    let min_size = axis.min_size(style);
+    let max_size = axis.max_size(style);
+    let border_padding =
+        compute_border_padding_inline(style, containing_block_width, writing_direction);
+
+    let base = match size.length_type() {
         LengthType::Fixed => {
-            let css_w = LayoutUnit::from_f32(style.width.value());
+            let css_w = LayoutUnit::from_f32(size.value());
             if style.box_sizing == BoxSizing::ContentBox {
                 css_w + border_padding
             } else {
@@ -1569,9 +2480,8 @@ fn resolve_atomic_inline_width(
         }
         LengthType::Percent => {
             if containing_block_width > LayoutUnit::zero() {
-                let css_w = LayoutUnit::from_f32(
-                    style.width.value() / 100.0 * containing_block_width.to_f32(),
-                );
+                let css_w =
+                    LayoutUnit::from_f32(size.value() / 100.0 * containing_block_width.to_f32());
                 if style.box_sizing == BoxSizing::ContentBox {
                     css_w + border_padding
                 } else {
@@ -1581,25 +2491,56 @@ fn resolve_atomic_inline_width(
                 LayoutUnit::zero()
             }
         }
+        LengthType::MinContent | LengthType::MaxContent | LengthType::FitContent => {
+            let intrinsic = intrinsic_inline_size
+                .map(|(min_size, max_size)| {
+                    let min_size = LayoutUnit::from_f32(min_size);
+                    let max_size = LayoutUnit::from_f32(max_size);
+                    if style.display.is_flex() {
+                        (min_size, max_size)
+                    } else {
+                        (min_size + border_padding, max_size + border_padding)
+                    }
+                })
+                .unwrap_or((border_padding, border_padding));
+            match size.length_type() {
+                LengthType::MinContent => intrinsic.0,
+                LengthType::MaxContent => intrinsic.1,
+                LengthType::FitContent => {
+                    let available = if containing_block_width > LayoutUnit::zero() {
+                        containing_block_width
+                    } else {
+                        intrinsic.1
+                    };
+                    crate::intrinsic_sizing::shrink_to_fit_inline_size(
+                        intrinsic.0,
+                        intrinsic.1,
+                        available,
+                    )
+                }
+                _ => unreachable!(),
+            }
+        }
         // Auto: use intrinsic size (shrink-to-fit), then min-width as floor, then zero.
         // Flex intrinsic sizing already returns border-box sizes; the recursive
         // non-flex atomic intrinsic helper returns content-box sizes.
         _ => {
             let intrinsic = intrinsic_inline_size
-                .map(|v| {
-                    let size = LayoutUnit::from_f32(v);
+                .map(|(min_size, max_size)| {
+                    let min_size = LayoutUnit::from_f32(min_size);
+                    let max_size = LayoutUnit::from_f32(max_size);
                     if style.display.is_flex() {
-                        size
+                        (min_size, max_size)
                     } else {
-                        size + border_padding
+                        (min_size + border_padding, max_size + border_padding)
                     }
                 })
-                .unwrap_or(border_padding);
+                .unwrap_or((border_padding, border_padding));
 
             // Apply min-width as a floor.
-            let min_w = match style.min_width.length_type() {
+            let min_w = match min_size.length_type() {
                 LengthType::Fixed => {
-                    let mw = LayoutUnit::from_f32(style.min_width.value());
+                    let mw = LayoutUnit::from_f32(min_size.value());
                     if style.box_sizing == BoxSizing::ContentBox {
                         mw + border_padding
                     } else {
@@ -1609,7 +2550,7 @@ fn resolve_atomic_inline_width(
                 LengthType::Percent => {
                     if containing_block_width > LayoutUnit::zero() {
                         let mw = LayoutUnit::from_f32(
-                            style.min_width.value() / 100.0 * containing_block_width.to_f32(),
+                            min_size.value() / 100.0 * containing_block_width.to_f32(),
                         );
                         if style.box_sizing == BoxSizing::ContentBox {
                             mw + border_padding
@@ -1626,13 +2567,18 @@ fn resolve_atomic_inline_width(
             // Shrink-to-fit: min(max(min_content, available), max_content).
             // Since we only have one intrinsic measure, use it clamped to
             // [min_width, containing_block_width].
-            let result = if intrinsic > LayoutUnit::zero() {
-                let capped = if containing_block_width > LayoutUnit::zero() {
-                    intrinsic.min_of(containing_block_width)
+            let result = if intrinsic.1 > LayoutUnit::zero() {
+                let available = if containing_block_width > LayoutUnit::zero() {
+                    containing_block_width
                 } else {
-                    intrinsic
+                    intrinsic.1
                 };
-                capped.max_of(min_w)
+                crate::intrinsic_sizing::shrink_to_fit_inline_size(
+                    intrinsic.0,
+                    intrinsic.1,
+                    available,
+                )
+                .max_of(min_w)
             } else {
                 min_w
             };
@@ -1640,15 +2586,64 @@ fn resolve_atomic_inline_width(
         }
     };
 
-    // Clamp to max-width if specified.
-    match style.max_width.length_type() {
+    // Min/max constraints apply after resolving every preferred-size form,
+    // including intrinsic keywords. Keeping this floor only in the `auto`
+    // branch made the principal box disagree with the space reserved for it.
+    let base = match min_size.length_type() {
         LengthType::Fixed => {
-            let max = LayoutUnit::from_f32(style.max_width.value());
+            let min = LayoutUnit::from_f32(min_size.value());
+            let min = if style.box_sizing == BoxSizing::ContentBox {
+                min + border_padding
+            } else {
+                min
+            };
+            base.max_of(min)
+        }
+        LengthType::Percent if containing_block_width > LayoutUnit::zero() => {
+            let min =
+                LayoutUnit::from_f32(min_size.value() / 100.0 * containing_block_width.to_f32());
+            let min = if style.box_sizing == BoxSizing::ContentBox {
+                min + border_padding
+            } else {
+                min
+            };
+            base.max_of(min)
+        }
+        _ => base,
+    };
+
+    // Clamp to max-width if specified. CSS Sizing makes the minimum win an
+    // over-constrained min/max pair; atomic inline measurement must reserve
+    // the same width that the child layout will use.
+    let resolved_min = match min_size.length_type() {
+        LengthType::Fixed => {
+            let min = LayoutUnit::from_f32(min_size.value());
+            if style.box_sizing == BoxSizing::ContentBox {
+                min + border_padding
+            } else {
+                min
+            }
+        }
+        LengthType::Percent if containing_block_width > LayoutUnit::zero() => {
+            let min =
+                LayoutUnit::from_f32(min_size.value() / 100.0 * containing_block_width.to_f32());
+            if style.box_sizing == BoxSizing::ContentBox {
+                min + border_padding
+            } else {
+                min
+            }
+        }
+        _ => LayoutUnit::zero(),
+    };
+    match max_size.length_type() {
+        LengthType::Fixed => {
+            let max = LayoutUnit::from_f32(max_size.value());
             let max = if style.box_sizing == BoxSizing::ContentBox {
                 max + border_padding
             } else {
                 max
-            };
+            }
+            .max_of(resolved_min);
             if base > max {
                 max
             } else {
@@ -1658,13 +2653,14 @@ fn resolve_atomic_inline_width(
         LengthType::Percent => {
             if containing_block_width > LayoutUnit::zero() {
                 let max = LayoutUnit::from_f32(
-                    style.max_width.value() / 100.0 * containing_block_width.to_f32(),
+                    max_size.value() / 100.0 * containing_block_width.to_f32(),
                 );
                 let max = if style.box_sizing == BoxSizing::ContentBox {
                     max + border_padding
                 } else {
                     max
-                };
+                }
+                .max_of(resolved_min);
                 if base > max {
                     max
                 } else {
@@ -1755,6 +2751,13 @@ mod tests {
     }
 
     #[test]
+    fn chromium_url_breaks_at_hyphens_not_solidus_boundaries() {
+        let text = "http://dev.w3.org/csswg/css3-flexbox/#auto-margins";
+        let breaks = find_uax14_breaks(text);
+        assert_eq!(breaks, vec![29, 43]);
+    }
+
+    #[test]
     fn test_find_space_breaks() {
         let breaks = find_space_breaks("hello world test");
         assert_eq!(breaks, vec![6, 12]);
@@ -1787,6 +2790,24 @@ mod tests {
         assert_eq!(byte_to_char_offset(text, 2), 2); // 'f'
         assert_eq!(byte_to_char_offset(text, 3), 3); // 'é' start
         assert_eq!(byte_to_char_offset(text, 5), 4); // end
+    }
+
+    #[test]
+    fn inline_close_absorbs_bidi_shaping_run_rounding_excess() {
+        let two_glyphs = 12.041_016;
+        let one_glyph = 6.020_508;
+        let allocated =
+            LayoutUnit::from_f32_ceil(two_glyphs) + LayoutUnit::from_f32_ceil(one_glyph);
+        assert_eq!(
+            cumulative_rounding_excess(two_glyphs + one_glyph, allocated).raw(),
+            1
+        );
+
+        let allocated = LayoutUnit::from_f32_ceil(one_glyph) * 3;
+        assert_eq!(
+            cumulative_rounding_excess(one_glyph * 3.0, allocated).raw(),
+            2
+        );
     }
 
     #[test]
@@ -2042,6 +3063,40 @@ mod tests {
     }
 
     #[test]
+    fn normal_line_break_keeps_apostrophe_contractions_together() {
+        for contraction in ["shouldn't be", "browser\u{2019}s behavior"] {
+            let breaks = find_break_opportunities(
+                contraction,
+                WordBreak::Normal,
+                OverflowWrap::Normal,
+                LineBreak::Auto,
+            );
+            let apostrophe = contraction
+                .char_indices()
+                .find(|(_, character)| matches!(character, '\'' | '\u{2019}'))
+                .map(|(offset, character)| (offset, offset + character.len_utf8()))
+                .unwrap();
+            assert!(
+                !breaks.contains(&apostrophe.0),
+                "break before apostrophe: {breaks:?}"
+            );
+            assert!(
+                !breaks.contains(&apostrophe.1),
+                "break after apostrophe: {breaks:?}"
+            );
+        }
+        assert_eq!(
+            find_break_opportunities(
+                "shouldn't be visible",
+                WordBreak::Normal,
+                OverflowWrap::Normal,
+                LineBreak::Auto,
+            ),
+            vec![10, 13],
+        );
+    }
+
+    #[test]
     fn keep_all_suppresses_cjk_breaks() {
         // keep-all should suppress breaks between CJK characters.
         // "漢字" = two CJK ideographs (U+6F22, U+5B57)
@@ -2120,10 +3175,11 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut style = ComputedStyle::default();
-        style.white_space = WhiteSpace::PreWrap;
+        style.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
         let style_index = 0;
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![InlineItem {
                 item_type: InlineItemType::Text,
@@ -2178,7 +3234,7 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut pre_style = ComputedStyle::default();
-        pre_style.white_space = WhiteSpace::Pre;
+        pre_style.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
 
         let item = InlineItem {
             item_type: InlineItemType::Text,
@@ -2236,7 +3292,7 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut pre_wrap_style = ComputedStyle::default();
-        pre_wrap_style.white_space = WhiteSpace::PreWrap;
+        pre_wrap_style.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
 
         let item = InlineItem {
             item_type: InlineItemType::Text,
@@ -2298,10 +3354,11 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut style = ComputedStyle::default();
-        style.white_space = WhiteSpace::PreWrap;
-        style.overflow_wrap = OverflowWrap::BreakWord;
+        style.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
+        style.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![InlineItem {
                 item_type: InlineItemType::Text,
@@ -2399,7 +3456,7 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut prewrap_style = ComputedStyle::default();
-        prewrap_style.white_space = WhiteSpace::PreWrap;
+        prewrap_style.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
 
         let item = InlineItem {
             item_type: InlineItemType::Text,
@@ -2538,9 +3595,10 @@ mod tests {
         };
 
         let mut style = ComputedStyle::default();
-        style.overflow_wrap = OverflowWrap::BreakWord;
+        style.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![item],
             styles: vec![style],
@@ -2582,14 +3640,14 @@ mod tests {
         // should resolve to 100 + 2*5 + 2*10 = 130px total.
         use openui_style::BorderStyle;
         let mut style = ComputedStyle::default();
-        style.width = openui_geometry::Length::px(100.0);
-        style.border_left_width = 5;
-        style.border_right_width = 5;
-        style.border_left_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-        style.padding_left = openui_geometry::Length::px(10.0);
-        style.padding_right = openui_geometry::Length::px(10.0);
-        style.box_sizing = openui_style::BoxSizing::ContentBox;
+        style.update_derived(|computed| computed.width = openui_geometry::Length::px(100.0));
+        style.update_derived(|computed| computed.border_left_width = 5);
+        style.update_derived(|computed| computed.border_right_width = 5);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_left = openui_geometry::Length::px(10.0));
+        style.update_derived(|computed| computed.padding_right = openui_geometry::Length::px(10.0));
+        style.update_derived(|computed| computed.box_sizing = openui_style::BoxSizing::ContentBox);
 
         let cb = LayoutUnit::from_i32(500);
         let w = resolve_atomic_inline_width(&style, cb, None);
@@ -2606,14 +3664,14 @@ mod tests {
         // should resolve to exactly 100px (border-box already includes them).
         use openui_style::BorderStyle;
         let mut style = ComputedStyle::default();
-        style.width = openui_geometry::Length::px(100.0);
-        style.border_left_width = 5;
-        style.border_right_width = 5;
-        style.border_left_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-        style.padding_left = openui_geometry::Length::px(10.0);
-        style.padding_right = openui_geometry::Length::px(10.0);
-        style.box_sizing = openui_style::BoxSizing::BorderBox;
+        style.update_derived(|computed| computed.width = openui_geometry::Length::px(100.0));
+        style.update_derived(|computed| computed.border_left_width = 5);
+        style.update_derived(|computed| computed.border_right_width = 5);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_left = openui_geometry::Length::px(10.0));
+        style.update_derived(|computed| computed.padding_right = openui_geometry::Length::px(10.0));
+        style.update_derived(|computed| computed.box_sizing = openui_style::BoxSizing::BorderBox);
 
         let cb = LayoutUnit::from_i32(500);
         let w = resolve_atomic_inline_width(&style, cb, None);
@@ -2630,22 +3688,46 @@ mod tests {
         // should return 80 + 6 + 14 = 100.
         use openui_style::BorderStyle;
         let mut style = ComputedStyle::default();
-        style.width = openui_geometry::Length::auto();
-        style.border_left_width = 3;
-        style.border_right_width = 3;
-        style.border_left_style = BorderStyle::Solid;
-        style.border_right_style = BorderStyle::Solid;
-        style.padding_left = openui_geometry::Length::px(7.0);
-        style.padding_right = openui_geometry::Length::px(7.0);
-        style.box_sizing = openui_style::BoxSizing::ContentBox;
+        style.update_derived(|computed| computed.width = openui_geometry::Length::auto());
+        style.update_derived(|computed| computed.border_left_width = 3);
+        style.update_derived(|computed| computed.border_right_width = 3);
+        style.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_left = openui_geometry::Length::px(7.0));
+        style.update_derived(|computed| computed.padding_right = openui_geometry::Length::px(7.0));
+        style.update_derived(|computed| computed.box_sizing = openui_style::BoxSizing::ContentBox);
 
         let cb = LayoutUnit::from_i32(500);
-        let w = resolve_atomic_inline_width(&style, cb, Some(80.0));
+        let w = resolve_atomic_inline_width(&style, cb, Some((80.0, 80.0)));
         assert_eq!(
             w.to_f32(),
             100.0,
             "auto width: intrinsic(80) + border(6) + padding(14) = 100"
         );
+    }
+
+    #[test]
+    fn vertical_atomic_inline_uses_height_and_logical_inline_edges() {
+        use openui_style::BorderStyle;
+
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| computed.width = openui_geometry::Length::px(15.0));
+        style.update_derived(|computed| computed.height = openui_geometry::Length::px(45.0));
+        style.update_derived(|computed| computed.border_top_width = 2);
+        style.update_derived(|computed| computed.border_bottom_width = 3);
+        style.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        style.update_derived(|computed| computed.padding_top = openui_geometry::Length::px(4.0));
+        style.update_derived(|computed| computed.padding_bottom = openui_geometry::Length::px(6.0));
+
+        let inline_size = resolve_atomic_inline_size(
+            &style,
+            LayoutUnit::from_i32(200),
+            None,
+            WritingDirectionMode::new(false, false, false, false),
+        );
+
+        assert_eq!(inline_size, LayoutUnit::from_i32(60));
     }
 
     // ── Trailing space hanging — hang_width tracking ─────────────────
@@ -2666,7 +3748,7 @@ mod tests {
         let sr_arc = Arc::new(sr);
 
         let mut style = ComputedStyle::default();
-        style.white_space = ws;
+        style.update_derived(|computed| computed.white_space = ws);
 
         let at_item_end = line_text_range.end == text.len();
         let item = InlineItem {
@@ -3054,7 +4136,7 @@ mod tests {
             end_collapse_type: CollapseType::NotCollapsible,
             is_end_collapsible_newline: false,
             bidi_level: 0,
-            intrinsic_inline_size: Some(50.0),
+            intrinsic_inline_size: Some((0.0, 50.0)),
         };
 
         let item_result = InlineItemResult {
@@ -3201,6 +4283,7 @@ mod tests {
         };
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![item],
             styles: vec![ComputedStyle::default()],
@@ -3251,6 +4334,7 @@ mod tests {
         };
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![item],
             styles: vec![ComputedStyle::default()],
@@ -3306,6 +4390,7 @@ mod tests {
         };
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![item],
             styles: vec![ComputedStyle::default()],
@@ -3341,6 +4426,7 @@ mod tests {
         use openui_style::Hyphens;
 
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: String::new(),
             items: vec![],
             styles: vec![],
@@ -3383,6 +4469,7 @@ mod tests {
         let narrow = LayoutUnit::from_f32(shape.width_for_range(0, 6) + 1.0);
         let wide = LayoutUnit::from_f32(shape.width + 1.0);
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![InlineItem {
                 item_type: InlineItemType::Text,
@@ -3426,6 +4513,7 @@ mod tests {
         let font = Font::new(FontDescription::default());
         let shape = Arc::new(shaper.shape(text, &font, TextDirection::Ltr));
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![InlineItem {
                 item_type: InlineItemType::Text,
@@ -3463,6 +4551,7 @@ mod tests {
         let first_word_end = "oversized ".len();
         let narrow = LayoutUnit::from_f32(shape.width_for_range(0, 4));
         let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
             text: text.to_string(),
             items: vec![InlineItem {
                 item_type: InlineItemType::Text,
@@ -3493,5 +4582,168 @@ mod tests {
             first_word_end
         );
         assert_eq!(second.items.last().unwrap().text_range.end, text.len());
+    }
+
+    #[test]
+    fn whitespace_before_unbreakable_inline_rewinds_its_min_content_unit() {
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+        use std::sync::Arc;
+
+        let prefix = "prefix ";
+        let link = "plaininlineword";
+        let text = format!("{prefix}{link}");
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let prefix_shape = Arc::new(shaper.shape(prefix, &font, TextDirection::Ltr));
+        let link_shape = Arc::new(shaper.shape(link, &font, TextDirection::Ltr));
+        let link_start = prefix.len();
+        let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
+            text,
+            items: vec![
+                InlineItem {
+                    item_type: InlineItemType::Text,
+                    text_range: 0..link_start,
+                    node_id: NodeId::NONE,
+                    shape_result: Some(prefix_shape.clone()),
+                    style_index: 0,
+                    end_collapse_type: CollapseType::Collapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::OpenTag,
+                    text_range: link_start..link_start,
+                    node_id: NodeId::NONE,
+                    shape_result: None,
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::Text,
+                    text_range: link_start..link_start + link.len(),
+                    node_id: NodeId::NONE,
+                    shape_result: Some(link_shape.clone()),
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::CloseTag,
+                    text_range: link_start + link.len()..link_start + link.len(),
+                    node_id: NodeId::NONE,
+                    shape_result: None,
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+            ],
+            styles: vec![ComputedStyle::default(), ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+        let width = LayoutUnit::from_f32(prefix_shape.width + link_shape.width / 2.0);
+        let mut breaker = LineBreaker::new(&items_data, width);
+
+        let first = breaker.next_line(width).expect("prefix line");
+        let second = breaker.next_line(width).expect("inline line");
+
+        assert_eq!(first.items.len(), 1);
+        assert_eq!(first.items[0].text_range, 0..link_start - 1);
+        assert_eq!(second.items[0].item_type, InlineItemType::OpenTag);
+        assert_eq!(second.items[1].text_range.start, link_start);
+    }
+
+    #[test]
+    fn whitespace_before_inline_keeps_a_fitting_hyphenated_prefix() {
+        use openui_dom::NodeId;
+        use openui_text::{Font, FontDescription, TextDirection, TextShaper};
+        use std::sync::Arc;
+
+        let prefix = "prefix ";
+        let link = "well-known";
+        let text = format!("{prefix}{link}");
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let prefix_shape = Arc::new(shaper.shape(prefix, &font, TextDirection::Ltr));
+        let link_shape = Arc::new(shaper.shape(link, &font, TextDirection::Ltr));
+        let link_start = prefix.len();
+        let link_break = link_start + "well-".len();
+        let items_data = InlineItemsData {
+            font_collection: openui_text::FontCollection::system(),
+            text,
+            items: vec![
+                InlineItem {
+                    item_type: InlineItemType::Text,
+                    text_range: 0..link_start,
+                    node_id: NodeId::NONE,
+                    shape_result: Some(prefix_shape.clone()),
+                    style_index: 0,
+                    end_collapse_type: CollapseType::Collapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::OpenTag,
+                    text_range: link_start..link_start,
+                    node_id: NodeId::NONE,
+                    shape_result: None,
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::Text,
+                    text_range: link_start..link_start + link.len(),
+                    node_id: NodeId::NONE,
+                    shape_result: Some(link_shape.clone()),
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+                InlineItem {
+                    item_type: InlineItemType::CloseTag,
+                    text_range: link_start + link.len()..link_start + link.len(),
+                    node_id: NodeId::NONE,
+                    shape_result: None,
+                    style_index: 1,
+                    end_collapse_type: CollapseType::NotCollapsible,
+                    is_end_collapsible_newline: false,
+                    bidi_level: 0,
+                    intrinsic_inline_size: None,
+                },
+            ],
+            styles: vec![ComputedStyle::default(), ComputedStyle::default()],
+            oof_children: Vec::new(),
+            block_in_inline: Vec::new(),
+        };
+        let first_unit_width = link_shape.width_for_range(0, "well-".len());
+        let second_unit_width = link_shape.width_for_range("well-".len(), link.chars().count());
+        let width = LayoutUnit::from_f32(
+            prefix_shape.width + first_unit_width.max(second_unit_width) + 1.0,
+        );
+        let mut breaker = LineBreaker::new(&items_data, width);
+
+        let first = breaker.next_line(width).expect("prefix and inline prefix");
+        let second = breaker.next_line(width).expect("inline suffix");
+
+        assert_eq!(first.items[0].text_range, 0..link_start);
+        assert_eq!(first.items[1].item_type, InlineItemType::OpenTag);
+        assert_eq!(first.items[2].text_range, link_start..link_break);
+        assert_eq!(second.items[0].text_range.start, link_break);
     }
 }

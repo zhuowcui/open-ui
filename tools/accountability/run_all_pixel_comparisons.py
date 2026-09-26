@@ -9,16 +9,28 @@ For each test in the pixel_compare binary:
 4. Diff → result.json + diff.png
 """
 
+import base64
+import html
+import hashlib
 import json
 import os
 import re
+import socket
+import struct
 import subprocess
 import sys
+import tempfile
+import time
+import urllib.parse
+import urllib.request
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 RESULTS_DIR = os.path.join(SCRIPT_DIR, "data", "pixel_comparison", "results")
-PIXEL_COMPARE = os.path.join(PROJECT_ROOT, "bindings", "rust", "target", "release", "pixel_compare")
+PIXEL_COMPARE = os.environ.get(
+    "OPENUI_PIXEL_COMPARE",
+    os.path.join(PROJECT_ROOT, "bindings", "rust", "target", "release", "pixel_compare"),
+)
 PIXEL_DIFF = os.path.join(SCRIPT_DIR, "pixel_diff.py")
 # SP14: fontconfig that renders Ahem with zero antialiasing (binary {0,255}
 # coverage, matching OpenUI's rasterizer). It is applied only to IDs in the
@@ -35,6 +47,16 @@ TEXT_PORTED_LIST = os.path.join(
 REAL_FONT_LIST = os.path.join(
     SCRIPT_DIR, "data", "wpt_ported", "sp16_real_font_tests.json"
 )
+FREETYPE_TEXT_LIST = os.path.join(
+    SCRIPT_DIR, "data", "wpt_ported", "sp17_freetype_text_tests.json"
+)
+SP18_TARGET_LIST = os.path.join(
+    PROJECT_ROOT, "tools", "wpt", "sp18_targets.json"
+)
+SP18_BLINK_FEATURES = (
+    "CSSLineClamp,CSSLineClampLineBreakingEllipsis,"
+    "CSSLineClampLinesAndHeight,CSSListCounterAccounting"
+)
 
 # Chrome binary detection
 CHROME_DIRS = [
@@ -42,8 +64,58 @@ CHROME_DIRS = [
     os.path.join(PROJECT_ROOT, "chrome"),
 ]
 
-BODY_STYLE = "* { margin: 0; padding: 0; box-sizing: content-box; } ::-webkit-scrollbar { display: none; } html { overflow: hidden; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; color: black; background-color: white; }"
-ROOT_BODY_STYLE = "* { margin: 0; padding: 0; box-sizing: content-box; } ::-webkit-scrollbar { display: none; } body { margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; }"
+ANIMATION_FREEZE_STYLE = "*, *::before, *::after { animation-play-state: paused !important; }"
+BODY_STYLE = f"* {{ margin: 0; padding: 0; box-sizing: content-box; }} {ANIMATION_FREEZE_STYLE} ::-webkit-scrollbar {{ display: none; }} html {{ overflow: hidden; }} body {{ margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; color: black; background-color: white; }}"
+ROOT_BODY_STYLE = f"* {{ margin: 0; padding: 0; box-sizing: content-box; }} {ANIMATION_FREEZE_STYLE} ::-webkit-scrollbar {{ display: none; }} body {{ margin: 0; padding: 20px; font-family: DejaVu Sans, sans-serif; font-size: 16px; }}"
+RASTER_TIMEOUT_SECONDS = 300
+
+
+def _consume_openui_directives(template):
+    """Decode inert fixture metadata from the start of a WPT template."""
+    root_aware = False
+    values = {
+        "FINAL_HTML_ATTRS": {},
+        "FINAL_BODY_ATTRS": {},
+        "FINAL_SCROLLS": [],
+    }
+    while True:
+        if template.startswith("<!--OPENUI_ROOT_AWARE-->\n"):
+            root_aware = True
+            template = template[len("<!--OPENUI_ROOT_AWARE-->\n"):]
+            continue
+        match = re.match(
+            r"<!--OPENUI_(FINAL_HTML_ATTRS|FINAL_BODY_ATTRS|FINAL_SCROLLS):"
+            r"([A-Za-z0-9_=-]+)-->\n?",
+            template,
+        )
+        if match is None:
+            break
+        try:
+            values[match.group(1)] = json.loads(
+                base64.urlsafe_b64decode(match.group(2)).decode("utf-8")
+            )
+        except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ValueError("invalid OpenUI final-state directive") from exc
+        template = template[match.end():]
+    if not isinstance(values["FINAL_HTML_ATTRS"], dict):
+        raise ValueError("final html attributes must be an object")
+    if not isinstance(values["FINAL_BODY_ATTRS"], dict):
+        raise ValueError("final body attributes must be an object")
+    if not isinstance(values["FINAL_SCROLLS"], list):
+        raise ValueError("final scroll state must be an array")
+    return template, root_aware, values
+
+
+def _html_attributes(values):
+    result = []
+    for name, value in values.items():
+        if not isinstance(name, str) or re.fullmatch(r"on[a-z]+", name, re.I):
+            raise ValueError("invalid final-state attribute name")
+        if value is None:
+            result.append(f" {name}")
+        else:
+            result.append(f' {name}="{html.escape(str(value), quote=True)}"')
+    return "".join(result)
 
 
 def build_html_document(template):
@@ -52,12 +124,26 @@ def build_html_document(template):
     # display:none of the injected <style> element and paint BODY_STYLE itself.
     # Inline !important is runner-owned and keeps the reset node non-rendered
     # while its stylesheet continues to participate normally.
-    root_aware = template.startswith("<!--OPENUI_ROOT_AWARE-->")
+    template, root_aware, directives = _consume_openui_directives(template)
     harness_style = ROOT_BODY_STYLE if root_aware else BODY_STYLE
+    html_attrs = _html_attributes(directives["FINAL_HTML_ATTRS"])
+    body_attrs = _html_attributes(directives["FINAL_BODY_ATTRS"])
+    scroll_script = ""
+    if directives["FINAL_SCROLLS"]:
+        scroll_json = json.dumps(
+            directives["FINAL_SCROLLS"], separators=(",", ":")
+        ).replace("<", "\\u003c")
+        scroll_script = (
+            '<script style="display:none!important">'
+            f"for(const s of {scroll_json}){{const n=document.querySelector("
+            "`[data-openui-final-scroll=\"${s.marker}\"]`);"
+            "if(n){n.scrollLeft=s.left;n.scrollTop=s.top}}"
+            "</script>"
+        )
     return (
-        "<!DOCTYPE html><html><head>"
+        f"<!DOCTYPE html><html{html_attrs}><head>"
         f'<style style="display:none!important">{harness_style}</style>'
-        f"</head><body>{template}</body></html>"
+        f"</head><body{body_attrs}>{template}{scroll_script}</body></html>"
     )
 
 # HTML templates for each test pattern.
@@ -411,57 +497,348 @@ def chrome_environment(chrome_dir, use_ahem_noaa=False, use_real_font=False):
     return env
 
 
+class _CdpWebSocket:
+    """Small dependency-free WebSocket client for Chromium's local CDP port."""
+
+    def __init__(self, url, timeout=RASTER_TIMEOUT_SECONDS):
+        parsed = urllib.parse.urlsplit(url)
+        if parsed.scheme != "ws" or parsed.hostname is None or parsed.port is None:
+            raise ValueError(f"invalid CDP WebSocket URL: {url}")
+        self.socket = socket.create_connection(
+            (parsed.hostname, parsed.port), timeout=timeout
+        )
+        self.socket.settimeout(timeout)
+        key = base64.b64encode(os.urandom(16)).decode("ascii")
+        path = parsed.path or "/"
+        if parsed.query:
+            path += "?" + parsed.query
+        request = (
+            f"GET {path} HTTP/1.1\r\n"
+            f"Host: {parsed.hostname}:{parsed.port}\r\n"
+            "Upgrade: websocket\r\n"
+            "Connection: Upgrade\r\n"
+            f"Sec-WebSocket-Key: {key}\r\n"
+            "Sec-WebSocket-Version: 13\r\n\r\n"
+        )
+        self.socket.sendall(request.encode("ascii"))
+        response = self._read_headers()
+        expected = base64.b64encode(
+            hashlib.sha1(
+                (key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").encode("ascii")
+            ).digest()
+        ).decode("ascii")
+        if not response.startswith(b"HTTP/1.1 101 "):
+            raise RuntimeError(f"CDP WebSocket upgrade failed: {response[:200]!r}")
+        headers = {}
+        for raw_line in response.split(b"\r\n")[1:]:
+            if b":" in raw_line:
+                name, value = raw_line.split(b":", 1)
+                headers[name.strip().lower()] = value.strip().decode("ascii")
+        if headers.get(b"sec-websocket-accept") != expected:
+            raise RuntimeError("CDP WebSocket returned an invalid accept token")
+        self.next_id = 1
+
+    def _read_exact(self, length):
+        chunks = []
+        remaining = length
+        while remaining:
+            chunk = self.socket.recv(remaining)
+            if not chunk:
+                raise EOFError("CDP WebSocket closed unexpectedly")
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        return b"".join(chunks)
+
+    def _read_headers(self):
+        response = bytearray()
+        while b"\r\n\r\n" not in response:
+            chunk = self.socket.recv(4096)
+            if not chunk:
+                raise EOFError("CDP WebSocket closed during upgrade")
+            response.extend(chunk)
+            if len(response) > 64 * 1024:
+                raise RuntimeError("CDP WebSocket upgrade response is too large")
+        return bytes(response)
+
+    def _send_frame(self, payload, opcode=1):
+        mask = os.urandom(4)
+        length = len(payload)
+        header = bytearray([0x80 | opcode])
+        if length < 126:
+            header.append(0x80 | length)
+        elif length <= 0xFFFF:
+            header.append(0x80 | 126)
+            header.extend(struct.pack("!H", length))
+        else:
+            header.append(0x80 | 127)
+            header.extend(struct.pack("!Q", length))
+        header.extend(mask)
+        masked = bytes(value ^ mask[index % 4] for index, value in enumerate(payload))
+        self.socket.sendall(header + masked)
+
+    def _read_message(self):
+        parts = []
+        message_opcode = None
+        while True:
+            first, second = self._read_exact(2)
+            final = bool(first & 0x80)
+            opcode = first & 0x0F
+            masked = bool(second & 0x80)
+            length = second & 0x7F
+            if length == 126:
+                length = struct.unpack("!H", self._read_exact(2))[0]
+            elif length == 127:
+                length = struct.unpack("!Q", self._read_exact(8))[0]
+            mask = self._read_exact(4) if masked else None
+            payload = self._read_exact(length)
+            if mask is not None:
+                payload = bytes(
+                    value ^ mask[index % 4] for index, value in enumerate(payload)
+                )
+            if opcode == 8:
+                raise EOFError("CDP WebSocket closed")
+            if opcode == 9:
+                self._send_frame(payload, opcode=10)
+                continue
+            if opcode in (1, 2):
+                message_opcode = opcode
+                parts = [payload]
+            elif opcode == 0 and message_opcode is not None:
+                parts.append(payload)
+            else:
+                continue
+            if final:
+                return b"".join(parts)
+
+    def command(self, method, params=None):
+        command_id = self.next_id
+        self.next_id += 1
+        request = {"id": command_id, "method": method}
+        if params is not None:
+            request["params"] = params
+        self._send_frame(json.dumps(request, separators=(",", ":")).encode("utf-8"))
+        while True:
+            message = json.loads(self._read_message())
+            if message.get("id") != command_id:
+                continue
+            if "error" in message:
+                raise RuntimeError(f"CDP {method} failed: {message['error']}")
+            return message.get("result", {})
+
+    def close(self):
+        try:
+            self._send_frame(b"", opcode=8)
+        finally:
+            self.socket.close()
+
+
+def _wait_for_devtools_endpoint(profile_dir, process, timeout=10):
+    endpoint_file = os.path.join(profile_dir, "DevToolsActivePort")
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            raise RuntimeError("Chromium exited before exposing its DevTools endpoint")
+        try:
+            with open(endpoint_file, encoding="utf-8") as source:
+                lines = source.read().splitlines()
+            if lines:
+                return int(lines[0])
+        except (FileNotFoundError, OSError, ValueError):
+            pass
+        time.sleep(0.02)
+    raise TimeoutError("Chromium did not expose its DevTools endpoint")
+
+
+def _page_websocket_url(port, timeout=10):
+    deadline = time.monotonic() + timeout
+    url = f"http://127.0.0.1:{port}/json/list"
+    while time.monotonic() < deadline:
+        try:
+            with urllib.request.urlopen(url, timeout=1) as response:
+                targets = json.load(response)
+            for target in targets:
+                if target.get("type") == "page" and target.get("webSocketDebuggerUrl"):
+                    return target["webSocketDebuggerUrl"]
+        except (OSError, ValueError):
+            pass
+        time.sleep(0.02)
+    raise TimeoutError("Chromium did not expose a page target")
+
+
+def _device_metrics_match(value, logical_width, logical_height, device_scale):
+    """Return whether CDP installed the exact requested layout viewport."""
+    if not isinstance(value, dict):
+        return False
+    try:
+        width = float(value["width"])
+        height = float(value["height"])
+        dpr = float(value["dpr"])
+    except (KeyError, TypeError, ValueError):
+        return False
+    return (
+        width == float(logical_width)
+        and height == float(logical_height)
+        and abs(dpr - float(device_scale)) <= 1e-9
+    )
+
+
 def render_chrome(
     html_file, output_png, chrome_bin, chrome_dir, use_ahem_noaa=False,
-    use_real_font=False,
+    use_real_font=False, use_freetype_backend=False, use_sp18_features=False,
+    logical_width=800, logical_height=600, device_scale=1.0,
 ):
     """Render HTML with Chrome headless.
 
-    Chrome headless reserves 87px for virtual UI, so we use a taller window
-    (800×687) to get an actual 800×600 viewport, then crop to 800×600.
+    Device metrics are applied through CDP before navigation. Chromium's
+    command-line window sizing has a 500-CSS-pixel minimum, which would make a
+    nominal 375px profile render a 500px layout viewport and merely crop the
+    result. Capturing the emulated viewport also avoids virtual-toolbar and
+    platform-window-size dependencies.
     """
     try:
         env = chrome_environment(chrome_dir, use_ahem_noaa, use_real_font)
     except FileNotFoundError:
         return False
-    # Use 687 height so the viewport content area is exactly 600px.
-    raw_png = output_png + ".raw.png"
-    cmd = [
-        chrome_bin, "--headless", "--disable-gpu", "--no-sandbox",
-        "--force-device-scale-factor=1", "--window-size=800,687",
-        f"--screenshot={raw_png}", f"file://{html_file}"
-    ]
-    if use_real_font:
-        # Chromium 147 otherwise constructs Linux system faces through
-        # Fontations while openui-text's Skia FontMgr uses FreeType. Keep the
-        # renderer pinned but select Chromium's supported FreeType parameter so
-        # both sides rasterize the byte-identical vendored face through the
-        # same backend. This remains one manifest-wide profile, never a
-        # per-test substitution.
-        cmd.insert(
-            5,
-            "--enable-features=FontDataServiceLinux:typeface/Freetype",
-        )
-    try:
-        result = subprocess.run(cmd, env=env, capture_output=True, timeout=30)
-        if result.returncode != 0 or not os.path.isfile(raw_png):
-            return False
-        # Crop to 800×600 (discard the 87px virtual-toolbar area at the bottom)
-        from PIL import Image
-        img = Image.open(raw_png)
-        if img.size[1] > 600:
-            img = img.crop((0, 0, 800, 600))
-        img.save(output_png)
-        os.remove(raw_png)
-        return True
-    except subprocess.TimeoutExpired:
+    if logical_width <= 0 or logical_height <= 0 or device_scale <= 0:
         return False
+    physical_width = int(logical_width * device_scale + 0.5)
+    physical_height = int(logical_height * device_scale + 0.5)
+    process = None
+    client = None
+    try:
+        with tempfile.TemporaryDirectory(prefix="openui-chrome-profile-") as profile_dir:
+            cmd = [
+                chrome_bin,
+                "--headless",
+                "--disable-gpu",
+                "--no-sandbox",
+                "--no-first-run",
+                "--no-default-browser-check",
+                "--remote-debugging-port=0",
+                f"--user-data-dir={profile_dir}",
+                # Allocate a backing surface at least as large as the emulated
+                # physical viewport. The host window remains DPR 1; CDP owns
+                # the page DPR and logical viewport below.
+                f"--window-size={physical_width},{physical_height + 87}",
+                "about:blank",
+            ]
+            if use_sp18_features:
+                # Modern line-clamp is runtime-guarded in pinned Chromium 147.
+                cmd.insert(5, f"--enable-blink-features={SP18_BLINK_FEATURES}")
+            if use_real_font or use_freetype_backend:
+                # Pin Chromium's supported FreeType path for matching faces.
+                cmd.insert(
+                    5,
+                    "--enable-features=FontDataServiceLinux:typeface/Freetype",
+                )
+            process = subprocess.Popen(
+                cmd,
+                env=env,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            port = _wait_for_devtools_endpoint(profile_dir, process)
+            client = _CdpWebSocket(_page_websocket_url(port))
+            client.command("Page.enable")
+            client.command(
+                "Emulation.setDeviceMetricsOverride",
+                {
+                    "width": int(logical_width),
+                    "height": int(logical_height),
+                    "deviceScaleFactor": float(device_scale),
+                    "mobile": False,
+                    "screenWidth": int(logical_width),
+                    "screenHeight": int(logical_height),
+                },
+            )
+            page_url = "file:" + urllib.request.pathname2url(os.path.abspath(html_file))
+            client.command("Page.navigate", {"url": page_url})
+            metrics_result = client.command(
+                "Runtime.evaluate",
+                {
+                    "expression": (
+                        "new Promise(resolve => {"
+                        "const done = () => document.fonts.ready.then(() => "
+                        "requestAnimationFrame(() => requestAnimationFrame(resolve)));"
+                        "if (document.readyState === 'complete') done();"
+                        "else addEventListener('load', done, {once:true});"
+                        "}).then(() => ({width:innerWidth,height:innerHeight,dpr:devicePixelRatio}))"
+                    ),
+                    "awaitPromise": True,
+                    "returnByValue": True,
+                },
+            )
+            metrics = metrics_result.get("result", {}).get("value")
+            if not _device_metrics_match(
+                metrics, logical_width, logical_height, device_scale
+            ):
+                return False
+            capture_options = {
+                "format": "png",
+                "fromSurface": True,
+                "captureBeyondViewport": False,
+            }
+            result = client.command("Page.captureScreenshot", capture_options)
+            confirmation = client.command("Page.captureScreenshot", capture_options)
+            # A newly allocated headless surface can very rarely expose a
+            # stale backing tile on its first read. Never cache such a frame;
+            # when the first two disagree, require a third capture to agree
+            # byte-for-byte with one of them.
+            if result.get("data") != confirmation.get("data"):
+                third = client.command("Page.captureScreenshot", capture_options)
+                if confirmation.get("data") == third.get("data"):
+                    result = confirmation
+                elif result.get("data") != third.get("data"):
+                    # Media controls can briefly repaint their loading state
+                    # after document/font readiness. Give that transient one
+                    # bounded settling interval, then still require a strict
+                    # byte-identical pair before accepting the oracle frame.
+                    time.sleep(1.0)
+                    settled = client.command("Page.captureScreenshot", capture_options)
+                    settled_confirmation = client.command(
+                        "Page.captureScreenshot", capture_options
+                    )
+                    if settled.get("data") != settled_confirmation.get("data"):
+                        settled_third = client.command(
+                            "Page.captureScreenshot", capture_options
+                        )
+                        if (
+                            settled_confirmation.get("data")
+                            != settled_third.get("data")
+                        ):
+                            return False
+                        settled_confirmation = settled_third
+                    result = settled_confirmation
+            png = base64.b64decode(result["data"], validate=True)
+            from PIL import Image
+            from io import BytesIO
+            with Image.open(BytesIO(png)) as captured:
+                if captured.size != (physical_width, physical_height):
+                    return False
+            with open(output_png, "wb") as output:
+                output.write(png)
+        return True
     except Exception:
         return False
+    finally:
+        if client is not None:
+            try:
+                client.close()
+            except Exception:
+                pass
+        if process is not None:
+            process.terminate()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
 
 
-def openui_environment(use_ahem_noaa=False, use_real_font=False):
-    """Build OpenUI's environment with the same profile precedence."""
+def openui_environment(
+    use_real_font=False,
+):
+    """Build process state only; raster policy is an explicit CLI option."""
     env = os.environ.copy()
     if use_real_font:
         pinned_freetype = os.path.join(REAL_FONT_FREETYPE_DIR, "libfreetype.so.6")
@@ -470,26 +847,52 @@ def openui_environment(use_ahem_noaa=False, use_real_font=False):
         env["LD_LIBRARY_PATH"] = (
             REAL_FONT_FREETYPE_DIR + ":" + env.get("LD_LIBRARY_PATH", "")
         )
-        env["OPENUI_REAL_FONT_RASTER"] = "1"
-        env["OPENUI_EDGING"] = "subpixel"
-        env["OPENUI_SUBPIXEL"] = "1"
-        env["OPENUI_HINTING"] = "slight"
-        env["OPENUI_AUTOHINT"] = "0"
-    elif use_ahem_noaa:
-        env["OPENUI_EDGING"] = "alias"
-        env["OPENUI_SUBPIXEL"] = "0"
-        env["OPENUI_HINTING"] = "none"
     return env
 
 
-def render_openui(test_id, output_png, use_ahem_noaa=False, use_real_font=False):
+def render_openui(
+    test_id,
+    output_png,
+    use_ahem_noaa=False,
+    use_real_font=False,
+    preserve_subpixel_positioning=False,
+    logical_width=800,
+    logical_height=600,
+    device_scale=1.0,
+    raster_backend="cpu-skia",
+):
     """Render test pattern with our engine."""
     try:
+        command = [PIXEL_COMPARE, "render", test_id, output_png]
+        raster_profile = "default"
+        if use_real_font:
+            raster_profile = "chromium-linux-lcd"
+        elif use_ahem_noaa:
+            raster_profile = (
+                "deterministic-alias-subpixel"
+                if preserve_subpixel_positioning
+                else "deterministic-alias"
+            )
+        command.extend(["--raster-config", raster_profile])
+        command.extend(["--backend", raster_backend])
+        if (logical_width, logical_height, device_scale) != (800, 600, 1.0):
+            command.extend(
+                [
+                    "--viewport",
+                    f"{logical_width}x{logical_height}",
+                    "--scale",
+                    str(device_scale),
+                ]
+            )
         result = subprocess.run(
-            [PIXEL_COMPARE, "render", test_id, output_png],
-            env=openui_environment(use_ahem_noaa, use_real_font),
+            command,
+            env=openui_environment(use_real_font),
             capture_output=True,
-            timeout=30,
+            # High-DPR ultrawide profiles rasterize tens of millions of
+            # physical pixels. Keep the renderer timeout aligned with the CDP
+            # capture timeout so valid large-profile work is not mislabeled as
+            # an engine failure.
+            timeout=RASTER_TIMEOUT_SECONDS,
         )
         return result.returncode == 0 and os.path.isfile(output_png)
     except (FileNotFoundError, subprocess.TimeoutExpired):
@@ -528,17 +931,33 @@ def select_tests(all_tests, args):
         ids_file = args[index + 1]
         del args[index:index + 2]
 
+    partition = None
+    if "--partition" in args:
+        index = args.index("--partition")
+        if index + 1 >= len(args):
+            raise ValueError("--partition requires a key")
+        partition = args[index + 1]
+        del args[index:index + 2]
+
     unknown = [arg for arg in args if arg.startswith("--")]
     if unknown:
         raise ValueError(f"unknown option: {unknown[0]}")
     if ids_file and args:
         raise ValueError("--ids-file cannot be combined with a prefix")
+    if partition and not ids_file:
+        raise ValueError("--partition requires --ids-file")
     if len(args) > 1:
         raise ValueError("expected at most one prefix")
 
     if ids_file:
         with open(ids_file, encoding="utf-8") as f:
             selected_data = json.load(f)
+        if partition is not None:
+            if not isinstance(selected_data, dict) or partition not in selected_data:
+                raise ValueError(
+                    f"exact-ID manifest has no partition {partition!r}: {ids_file}"
+                )
+            selected_data = selected_data[partition]
         if (
             not isinstance(selected_data, list)
             or any(not isinstance(test_id, str) or not test_id for test_id in selected_data)
@@ -562,6 +981,19 @@ def select_tests(all_tests, args):
             f"prefix '{prefix}'"
         )
     return all_tests, resume_mode, None
+
+
+def extract_summary_file(args):
+    """Remove and resolve an optional summary destination from command arguments."""
+    args = list(args)
+    summary_file = os.path.join(RESULTS_DIR, "summary.json")
+    if "--summary-file" in args:
+        index = args.index("--summary-file")
+        if index + 1 >= len(args):
+            raise ValueError("--summary-file requires a JSON path")
+        summary_file = os.path.abspath(args[index + 1])
+        del args[index:index + 2]
+    return args, summary_file
 
 
 def main():
@@ -623,6 +1055,43 @@ def main():
                 file=sys.stderr,
             )
             sys.exit(1)
+    freetype_text_tests = set()
+    if os.path.isfile(FREETYPE_TEXT_LIST):
+        with open(FREETYPE_TEXT_LIST) as f:
+            freetype_text_data = json.load(f)
+        if (
+            not isinstance(freetype_text_data, list)
+            or any(not isinstance(t, str) or not t for t in freetype_text_data)
+            or freetype_text_data != sorted(set(freetype_text_data))
+        ):
+            print(
+                f"ERROR: invalid FreeType text manifest: {FREETYPE_TEXT_LIST}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        freetype_text_tests = set(freetype_text_data)
+        invalid_profiles = freetype_text_tests - text_ported_tests
+        if invalid_profiles or freetype_text_tests & real_font_tests:
+            print(
+                "ERROR: FreeType text tests must be text-ported and not real-font tests",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+    sp18_feature_tests = set()
+    if os.path.isfile(SP18_TARGET_LIST):
+        with open(SP18_TARGET_LIST) as f:
+            sp18_feature_data = json.load(f)
+        if (
+            not isinstance(sp18_feature_data, list)
+            or any(not isinstance(t, str) or not t for t in sp18_feature_data)
+            or sp18_feature_data != sorted(set(sp18_feature_data))
+        ):
+            print(
+                f"ERROR: invalid SP18 target manifest: {SP18_TARGET_LIST}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+        sp18_feature_tests = set(sp18_feature_data)
     # Get all test IDs
     result = subprocess.run([PIXEL_COMPARE, "list"], capture_output=True, text=True)
     all_tests = result.stdout.strip().split("\n")
@@ -630,7 +1099,8 @@ def main():
     print(f"Total tests: {len(all_tests)}")
 
     try:
-        all_tests, resume_mode, selection = select_tests(all_tests, sys.argv[1:])
+        selection_args, summary_file = extract_summary_file(sys.argv[1:])
+        all_tests, resume_mode, selection = select_tests(all_tests, selection_args)
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(2)
@@ -708,6 +1178,13 @@ def main():
                 test_id in text_ported_tests and test_id not in real_font_tests
             ),
             use_real_font=test_id in real_font_tests,
+            preserve_subpixel_positioning=bool(
+                re.search(
+                    r'<input\b[^>]*\btype\s*=\s*["\']?range\b',
+                    template,
+                    re.IGNORECASE,
+                )
+            ),
         ):
             print(f"  ERROR  {test_id} — openui render failed")
             errors += 1
@@ -724,6 +1201,8 @@ def main():
                 test_id in text_ported_tests and test_id not in real_font_tests
             ),
             use_real_font=test_id in real_font_tests,
+            use_freetype_backend=test_id in freetype_text_tests,
+            use_sp18_features=test_id in sp18_feature_tests,
         ):
             print(f"  ERROR  {test_id} — chrome render failed")
             errors += 1
@@ -779,7 +1258,9 @@ def main():
     ref_pass = sum(1 for tid, st, _ in results_summary if ("-ref" in tid or "-notref" in tid) and st == "pass")
 
     # Write summary JSON
-    summary_file = os.path.join(RESULTS_DIR, "summary.json")
+    summary_parent = os.path.dirname(summary_file)
+    if summary_parent:
+        os.makedirs(summary_parent, exist_ok=True)
     with open(summary_file, "w") as f:
         json.dump({
             "total": total,

@@ -46,14 +46,16 @@ fn atomic_inline_valign_negative_length_reduces_line_height() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let atomic = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic).style.display = Display::InlineBlock;
-    doc.node_mut(atomic).style.width = Length::px(50.0);
-    doc.node_mut(atomic).style.height = Length::px(48.0);
-    doc.node_mut(atomic).style.vertical_align = VerticalAlign::Length(-5.0);
+    doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(atomic, |style| style.height = Length::px(48.0));
+    doc.update_resolved_style(atomic, |style| {
+        style.vertical_align = VerticalAlign::Length(-5.0)
+    });
     doc.append_child(block, atomic);
 
     let frag = inline_layout(&doc, block, &make_constraint());
@@ -85,19 +87,21 @@ fn atomic_inline_text_top_no_overflow() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("text".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let atomic = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic).style.display = Display::InlineBlock;
-    doc.node_mut(atomic).style.width = Length::px(50.0);
-    doc.node_mut(atomic).style.height = Length::px(48.0);
-    doc.node_mut(atomic).style.vertical_align = VerticalAlign::TextTop;
+    doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(atomic, |style| style.height = Length::px(48.0));
+    doc.update_resolved_style(atomic, |style| {
+        style.vertical_align = VerticalAlign::TextTop
+    });
     doc.append_child(block, atomic);
 
     let frag = inline_layout(&doc, block, &make_constraint());
@@ -130,19 +134,21 @@ fn atomic_inline_text_bottom_no_overflow() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("text".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let atomic = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic).style.display = Display::InlineBlock;
-    doc.node_mut(atomic).style.width = Length::px(50.0);
-    doc.node_mut(atomic).style.height = Length::px(48.0);
-    doc.node_mut(atomic).style.vertical_align = VerticalAlign::TextBottom;
+    doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(atomic, |style| style.height = Length::px(48.0));
+    doc.update_resolved_style(atomic, |style| {
+        style.vertical_align = VerticalAlign::TextBottom
+    });
     doc.append_child(block, atomic);
 
     let frag = inline_layout(&doc, block, &make_constraint());
@@ -177,14 +183,14 @@ fn atomic_inline_sub_line_expanded() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let atomic = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic).style.display = Display::InlineBlock;
-    doc.node_mut(atomic).style.width = Length::px(40.0);
-    doc.node_mut(atomic).style.height = Length::px(30.0);
-    doc.node_mut(atomic).style.vertical_align = VerticalAlign::Sub;
+    doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic, |style| style.width = Length::px(40.0));
+    doc.update_resolved_style(atomic, |style| style.height = Length::px(30.0));
+    doc.update_resolved_style(atomic, |style| style.vertical_align = VerticalAlign::Sub);
     doc.append_child(block, atomic);
 
     let frag = inline_layout(&doc, block, &make_constraint());

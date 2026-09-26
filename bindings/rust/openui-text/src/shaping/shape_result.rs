@@ -6,9 +6,169 @@
 
 use std::sync::Arc;
 
-use skia_safe::{Point, TextBlob, TextBlobBuilder};
+use skia_safe::{
+    font::Edging, utils::CustomTypefaceBuilder, FontHinting, FontMetrics, PathBuilder, Point,
+    TextBlob, TextBlobBuilder,
+};
+use skrifa::{
+    instance::{LocationRef, Size},
+    outline::{
+        DrawSettings, Engine, GlyphStyles, HintingInstance, HintingOptions, OutlinePen, SmoothMode,
+        Target,
+    },
+    FontRef, GlyphId as SkrifaGlyphId, MetadataProvider,
+};
 
 use crate::font::FontPlatformData;
+
+/// Selects the outline rasterizer used when a shaped run becomes a Skia
+/// text blob. Chromium's Linux native controls use Fontations-hinted paths,
+/// while authored text continues through Skia's ordinary FreeType backend.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum TextRasterPolicy {
+    #[default]
+    Skia,
+    ChromiumNativeControl,
+    ChromiumEmbeddedDocument,
+    ChromiumAuthorLcd,
+    ChromiumAliased,
+}
+
+/// Match Chromium's retained 10px LCD mask in the one fixed-point phase cell
+/// where direct Skia switches to the following cached mask early. Larger
+/// strikes use Skia's native phase boundary.
+fn chromium_lcd_raster_x(device_x: f32, font_size: f32) -> f32 {
+    let phase = device_x.rem_euclid(1.0);
+    if (font_size - 10.0).abs() < f32::EPSILON && (24.0 / 64.0..25.0 / 64.0).contains(&phase) {
+        device_x - phase + 1.0 / 3.0
+    } else {
+        device_x
+    }
+}
+
+fn chromium_lcd_strike_y_offset(
+    device_scale: f32,
+    edging: Edging,
+    hinting: FontHinting,
+    font_size: f32,
+    family: &str,
+) -> f32 {
+    // Chromium's retained 10px no-hint LCD strike keeps its origin one
+    // logical pixel above Skia's direct scaled replay. Ahem is a synthetic
+    // geometric face and does not use this outline-strike origin.
+    if (device_scale - 1.0).abs() > f32::EPSILON
+        && edging == Edging::SubpixelAntiAlias
+        && hinting == FontHinting::None
+        && (font_size - 10.0).abs() < f32::EPSILON
+        && !family.eq_ignore_ascii_case("Ahem")
+    {
+        1.0
+    } else {
+        0.0
+    }
+}
+
+struct SkiaPathPen(PathBuilder);
+
+impl Default for SkiaPathPen {
+    fn default() -> Self {
+        Self(PathBuilder::new())
+    }
+}
+
+impl OutlinePen for SkiaPathPen {
+    fn move_to(&mut self, x: f32, y: f32) {
+        self.0.move_to((x, -y));
+    }
+
+    fn line_to(&mut self, x: f32, y: f32) {
+        self.0.line_to((x, -y));
+    }
+
+    fn quad_to(&mut self, cx0: f32, cy0: f32, x: f32, y: f32) {
+        self.0.quad_to((cx0, -cy0), (x, -y));
+    }
+
+    fn curve_to(&mut self, cx0: f32, cy0: f32, cx1: f32, cy1: f32, x: f32, y: f32) {
+        self.0.cubic_to((cx0, -cy0), (cx1, -cy1), (x, -y));
+    }
+
+    fn close(&mut self) {
+        self.0.close();
+    }
+}
+
+fn fontations_compatible_font(
+    source_font: &skia_safe::Font,
+    glyphs: &[u16],
+    raster_policy: TextRasterPolicy,
+) -> Option<skia_safe::Font> {
+    let (font_data, ttc_index) = source_font.typeface().to_font_data()?;
+    let font_ref = FontRef::from_index(&font_data, ttc_index as u32).ok()?;
+    let outlines = font_ref.outline_glyphs();
+    let size = source_font.size();
+    let location = LocationRef::default();
+    let hinting = match raster_policy {
+        TextRasterPolicy::ChromiumNativeControl
+        | TextRasterPolicy::ChromiumAuthorLcd
+        | TextRasterPolicy::ChromiumEmbeddedDocument => {
+            let glyph_styles = GlyphStyles::new(&outlines);
+            HintingInstance::new(
+                &outlines,
+                Size::new(size),
+                location,
+                HintingOptions {
+                    engine: Engine::Auto(Some(glyph_styles)),
+                    target: Target::Smooth {
+                        mode: SmoothMode::Light,
+                        symmetric_rendering: true,
+                        preserve_linear_metrics: false,
+                    },
+                },
+            )
+            .ok()?
+        }
+        TextRasterPolicy::ChromiumAliased => HintingInstance::new(
+            &outlines,
+            Size::new(size),
+            location,
+            skrifa::outline::HintingMode::Strong,
+        )
+        .ok()?,
+        TextRasterPolicy::Skia => return None,
+    };
+
+    let mut builder = CustomTypefaceBuilder::new();
+    builder.set_metrics(&FontMetrics::default(), 1.0);
+    for &glyph_id in glyphs {
+        let glyph = outlines.get(SkrifaGlyphId::new(glyph_id as u32))?;
+        let mut pen = SkiaPathPen::default();
+        glyph
+            .draw(DrawSettings::hinted(&hinting, false), &mut pen)
+            .ok()?;
+        let path = pen.0.detach();
+        builder.set_glyph(glyph_id, 0.0, &path);
+    }
+    let typeface = builder.detach()?;
+    let mut font = source_font.with_size(1.0)?;
+    font.set_typeface(typeface);
+    font.set_hinting(FontHinting::None);
+    let native_control = matches!(
+        raster_policy,
+        TextRasterPolicy::ChromiumNativeControl | TextRasterPolicy::ChromiumAuthorLcd
+    );
+    let embedded_document = raster_policy == TextRasterPolicy::ChromiumEmbeddedDocument;
+    font.set_subpixel(true);
+    font.set_linear_metrics(native_control);
+    font.set_edging(if native_control {
+        Edging::SubpixelAntiAlias
+    } else if embedded_document {
+        Edging::AntiAlias
+    } else {
+        Edging::Alias
+    });
+    Some(font)
+}
 
 /// Direction of text flow within a run or result.
 ///
@@ -279,9 +439,47 @@ impl ShapeResult {
     ///
     /// Returns `None` if the result has no glyphs.
     pub fn to_text_blob(&self) -> Option<TextBlob> {
+        self.to_text_blob_with_raster_policy(None, TextRasterPolicy::Skia)
+    }
+
+    /// Build a text blob using Chromium's Linux 10px LCD phase boundary.
+    ///
+    /// Skia's direct FreeType path changes its cached RGB mask at 24/64 px,
+    /// while the pinned Chromium FreeType display-list path retains the prior
+    /// phase until 25/64 px. Positions in that single fixed-point cell are
+    /// represented at the middle third without changing logical advances or
+    /// fragment geometry.
+    pub fn to_text_blob_with_lcd_origin(&self, device_origin_x: Option<f32>) -> Option<TextBlob> {
+        self.to_text_blob_with_raster_policy(device_origin_x, TextRasterPolicy::Skia)
+    }
+
+    /// Build a text blob with an explicit platform raster policy.
+    pub fn to_text_blob_with_raster_policy(
+        &self,
+        device_origin_x: Option<f32>,
+        raster_policy: TextRasterPolicy,
+    ) -> Option<TextBlob> {
+        self.to_text_blob_with_raster_policy_at_scale(device_origin_x, raster_policy, 1.0)
+    }
+
+    /// Build a blob whose glyph strike and positions are expressed in
+    /// physical pixels. Callers apply the inverse local scale while recording
+    /// so layout origins and advances remain logical.
+    pub fn to_text_blob_with_raster_policy_at_scale(
+        &self,
+        device_origin_x: Option<f32>,
+        raster_policy: TextRasterPolicy,
+        device_scale: f32,
+    ) -> Option<TextBlob> {
         if self.runs.is_empty() || self.num_glyphs() == 0 {
             return None;
         }
+
+        let device_scale = if device_scale.is_finite() && device_scale > 0.0 {
+            device_scale
+        } else {
+            1.0
+        };
 
         let mut builder = TextBlobBuilder::new();
         let mut run_x = 0.0f32;
@@ -290,13 +488,78 @@ impl ShapeResult {
             if run.num_glyphs == 0 {
                 continue;
             }
-            let sk_font = run.font_data.sk_font();
-            let (glyphs_out, positions_out) = builder.alloc_run_pos(sk_font, run.num_glyphs, None);
+            let source_font = run.font_data.sk_font();
+            // Chromium asks FreeType/fontations for the device-size aliased
+            // strike. Building the compatible outline at the CSS size and
+            // scaling its already grid-fitted path widened every rotated Ahem
+            // glyph by another device pixel (and two pixels at 1.5x/2x).
+            // Hint at the physical size once and keep that custom outline at
+            // its unit font size; glyph positions are converted below.
+            let mut physical_source_font;
+            let compatible_source_font = if raster_policy == TextRasterPolicy::ChromiumAliased
+                && (device_scale - 1.0).abs() > f32::EPSILON
+            {
+                physical_source_font = source_font.clone();
+                physical_source_font.set_size(source_font.size() * device_scale);
+                &physical_source_font
+            } else {
+                source_font
+            };
+            let compatible_font = (raster_policy != TextRasterPolicy::Skia)
+                .then(|| {
+                    fontations_compatible_font(compatible_source_font, &run.glyphs, raster_policy)
+                })
+                .flatten();
+            let sk_font = compatible_font.as_ref().unwrap_or(source_font);
+            let mut physical_font;
+            let compatible_outline_is_physical = compatible_font.is_some()
+                && raster_policy == TextRasterPolicy::ChromiumAliased
+                && (device_scale - 1.0).abs() > f32::EPSILON;
+            let raster_font =
+                if (device_scale - 1.0).abs() > f32::EPSILON && !compatible_outline_is_physical {
+                    physical_font = sk_font.clone();
+                    physical_font.set_size(sk_font.size() * device_scale);
+                    &physical_font
+                } else {
+                    // Keep the legacy unit-scale font object byte-for-byte
+                    // unchanged. Calling set_size with its existing value still
+                    // rebuilds Skia's strike descriptor and shifts aliased Ahem
+                    // masks by one row in fragmented paint.
+                    sk_font
+                };
+            let (glyphs_out, positions_out) =
+                builder.alloc_run_pos(raster_font, run.num_glyphs, None);
             glyphs_out.copy_from_slice(&run.glyphs);
 
             let mut x = run_x;
             for i in 0..run.num_glyphs {
-                positions_out[i] = Point::new(x + run.offsets[i].0, run.offsets[i].1);
+                let local_x = x + run.offsets[i].0;
+                let raster_x = device_origin_x.map_or(local_x, |origin| {
+                    let mut device_x = origin + local_x;
+                    if matches!(
+                        raster_policy,
+                        TextRasterPolicy::ChromiumNativeControl
+                            | TextRasterPolicy::ChromiumAuthorLcd
+                    ) {
+                        // Blink hands native-control glyph origins to Skia in
+                        // LayoutUnit coordinates. Preserve that 1/64-device-
+                        // pixel boundary before Skia selects its LCD phase.
+                        device_x = (device_x * 64.0).round() / 64.0;
+                    }
+                    chromium_lcd_raster_x(device_x, source_font.size()) - origin
+                });
+                positions_out[i] = Point::new(
+                    raster_x * device_scale,
+                    (run.offsets[i].1
+                        - chromium_lcd_strike_y_offset(
+                            device_scale,
+                            source_font.edging(),
+                            source_font.hinting(),
+                            source_font.size(),
+                            &source_font.typeface().family_name(),
+                        ))
+                        * device_scale,
+                );
                 x += run.advances[i];
             }
             run_x = x;
@@ -659,5 +922,76 @@ impl std::fmt::Debug for ShapeResultRun {
             .field("start_index", &self.start_index)
             .field("direction", &self.direction)
             .finish()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{chromium_lcd_raster_x, chromium_lcd_strike_y_offset};
+    use skia_safe::{font::Edging, FontHinting};
+
+    #[test]
+    fn chromium_lcd_phase_retains_only_the_24_to_25_sixty_fourths_cell() {
+        let retained = chromium_lcd_raster_x(269.384_77, 10.0);
+        assert!((retained - (269.0 + 1.0 / 3.0)).abs() < 0.000_01);
+        assert_eq!(chromium_lcd_raster_x(269.390_625, 10.0), 269.390_625);
+        assert_eq!(chromium_lcd_raster_x(269.374_97, 10.0), 269.374_97);
+        assert_eq!(chromium_lcd_raster_x(269.384_77, 20.0), 269.384_77);
+    }
+
+    #[test]
+    fn chromium_lcd_strike_y_offset_is_limited_to_scaled_10px_outline_faces() {
+        assert_eq!(
+            chromium_lcd_strike_y_offset(
+                1.25,
+                Edging::SubpixelAntiAlias,
+                FontHinting::None,
+                10.0,
+                "DejaVu Sans Mono",
+            ),
+            1.0
+        );
+        for (scale, edging, hinting, size, family) in [
+            (
+                1.0,
+                Edging::SubpixelAntiAlias,
+                FontHinting::None,
+                10.0,
+                "DejaVu Sans Mono",
+            ),
+            (
+                1.25,
+                Edging::AntiAlias,
+                FontHinting::None,
+                10.0,
+                "DejaVu Sans Mono",
+            ),
+            (
+                1.25,
+                Edging::SubpixelAntiAlias,
+                FontHinting::Slight,
+                10.0,
+                "DejaVu Sans Mono",
+            ),
+            (
+                1.25,
+                Edging::SubpixelAntiAlias,
+                FontHinting::None,
+                16.0,
+                "DejaVu Sans",
+            ),
+            (
+                1.25,
+                Edging::SubpixelAntiAlias,
+                FontHinting::None,
+                10.0,
+                "aHeM",
+            ),
+        ] {
+            assert_eq!(
+                chromium_lcd_strike_y_offset(scale, edging, hinting, size, family),
+                0.0
+            );
+        }
     }
 }

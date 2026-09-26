@@ -21,8 +21,10 @@ use openui_text::Font;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FirstLetterExtraction {
     /// Byte offset where the first-letter portion starts (inclusive).
-    /// Skips any leading whitespace — the first-letter pseudo-element
-    /// does not include whitespace per CSS 2.1 §5.12.2.
+    /// Leading whitespace belongs to the pseudo when a following first
+    /// letter exists. Collapsible line-start spaces may subsequently vanish
+    /// during whitespace processing, while non-collapsible Unicode spaces
+    /// retain the pseudo's metrics and background.
     pub first_letter_start: usize,
     /// Byte offset where the first-letter portion ends (exclusive).
     /// This includes any leading punctuation + the letter + trailing punctuation.
@@ -141,7 +143,7 @@ pub fn extract_first_letter(text: &str) -> Option<FirstLetterExtraction> {
         }
     }
 
-    let first_letter_start = offset;
+    let first_letter_start = 0;
 
     // Phase 2: Consume leading punctuation
     while let Some(&(idx, ch)) = chars.peek() {
@@ -235,10 +237,11 @@ impl FirstLetterStyle {
 
     /// Apply common drop-cap styling: large font, left float, right margin.
     pub fn with_drop_cap(base: &ComputedStyle, font_size: f32, margin_right: f32) -> Self {
-        let mut style = base.clone();
-        style.font_size = font_size;
-        style.float = openui_style::Float::Left;
-        style.margin_right = openui_geometry::Length::px(margin_right);
+        let style = base.derive(|style| {
+            style.font_size = font_size;
+            style.float = openui_style::Float::Left;
+            style.margin_right = openui_geometry::Length::px(margin_right);
+        });
         Self { style }
     }
 }
@@ -284,8 +287,7 @@ impl FirstLetterMetrics {
     /// Queries actual font metrics from the default font at the requested
     /// size. Prefer `from_style()` when a `ComputedStyle` is available.
     pub fn from_font_size(font_size: f32) -> Self {
-        let mut style = ComputedStyle::default();
-        style.font_size = font_size;
+        let style = ComputedStyle::default().derive(|style| style.font_size = font_size);
         Self::from_style(&style)
     }
 }
@@ -345,13 +347,21 @@ mod tests {
     #[test]
     fn leading_whitespace_then_letter() {
         let result = extract_first_letter("  Hello").unwrap();
-        assert_eq!(result.first_letter_start, 2); // skip "  "
+        assert_eq!(result.first_letter_start, 0);
         assert_eq!(result.first_letter_end, 3); // "H" at byte 2..3
-                                                // The first-letter text is "H", not "  H"
         assert_eq!(
             &"  Hello"[result.first_letter_start..result.first_letter_end],
-            "H"
+            "  H"
         );
+    }
+
+    #[test]
+    fn non_collapsible_spaces_join_a_following_first_letter() {
+        for text in ["\u{00a0}A", "\u{2002}B", "\u{2003}C", "\u{2009}D"] {
+            let result = extract_first_letter(text).unwrap();
+            assert_eq!(result.first_letter_start, 0);
+            assert_eq!(result.first_letter_end, text.len());
+        }
     }
 
     #[test]

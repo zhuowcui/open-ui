@@ -21,8 +21,8 @@ fn text_contributes_nonzero_block_size() {
     let vp = doc.root();
 
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = openui_style::Display::Block;
-    doc.node_mut(div).style.font_size = 16.0;
+    doc.update_resolved_style(div, |style| style.display = openui_style::Display::Block);
+    doc.update_resolved_style(div, |style| style.font_size = 16.0);
     doc.append_child(vp, div);
 
     let text = doc.create_node(ElementTag::Text);
@@ -51,8 +51,8 @@ fn wrapping_text_min_block_size_greater_than_max() {
     let vp = doc.root();
 
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = openui_style::Display::Block;
-    doc.node_mut(div).style.font_size = 16.0;
+    doc.update_resolved_style(div, |style| style.display = openui_style::Display::Block);
+    doc.update_resolved_style(div, |style| style.font_size = 16.0);
     doc.append_child(vp, div);
 
     let text = doc.create_node(ElementTag::Text);
@@ -78,8 +78,8 @@ fn single_word_min_equals_max_block_size() {
     let vp = doc.root();
 
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = openui_style::Display::Block;
-    doc.node_mut(div).style.font_size = 16.0;
+    doc.update_resolved_style(div, |style| style.display = openui_style::Display::Block);
+    doc.update_resolved_style(div, |style| style.font_size = 16.0);
     doc.append_child(vp, div);
 
     let text = doc.create_node(ElementTag::Text);
@@ -100,7 +100,7 @@ fn empty_block_zero_block_size() {
     let vp = doc.root();
 
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = openui_style::Display::Block;
+    doc.update_resolved_style(div, |style| style.display = openui_style::Display::Block);
     doc.append_child(vp, div);
 
     let sizes = compute_intrinsic_block_sizes(&doc, div);
@@ -120,12 +120,18 @@ fn block_size_includes_border_padding() {
     let div = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(div);
-        node.style.display = openui_style::Display::Block;
-        node.style.font_size = 16.0;
-        node.style.padding_top = openui_geometry::Length::px(10.0);
-        node.style.padding_bottom = openui_geometry::Length::px(10.0);
-        node.style.border_top_width = 2;
-        node.style.border_bottom_width = 2;
+        node.style
+            .update_derived(|computed| computed.display = openui_style::Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
+        node.style
+            .update_derived(|computed| computed.padding_top = openui_geometry::Length::px(10.0));
+        node.style
+            .update_derived(|computed| computed.padding_bottom = openui_geometry::Length::px(10.0));
+        node.style
+            .update_derived(|computed| computed.border_top_width = 2);
+        node.style
+            .update_derived(|computed| computed.border_bottom_width = 2);
     }
     doc.append_child(vp, div);
 
@@ -150,12 +156,12 @@ fn nested_block_with_text_has_nonzero_block_size() {
     let vp = doc.root();
 
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = openui_style::Display::Block;
+    doc.update_resolved_style(outer, |style| style.display = openui_style::Display::Block);
     doc.append_child(vp, outer);
 
     let inner = doc.create_node(ElementTag::Div);
-    doc.node_mut(inner).style.display = openui_style::Display::Block;
-    doc.node_mut(inner).style.font_size = 16.0;
+    doc.update_resolved_style(inner, |style| style.display = openui_style::Display::Block);
+    doc.update_resolved_style(inner, |style| style.font_size = 16.0);
     doc.append_child(outer, inner);
 
     let text = doc.create_node(ElementTag::Text);
@@ -178,8 +184,10 @@ fn larger_font_produces_taller_block_size() {
 
     // Small font
     let div_small = doc.create_node(ElementTag::Div);
-    doc.node_mut(div_small).style.display = openui_style::Display::Block;
-    doc.node_mut(div_small).style.font_size = 10.0;
+    doc.update_resolved_style(div_small, |style| {
+        style.display = openui_style::Display::Block
+    });
+    doc.update_resolved_style(div_small, |style| style.font_size = 10.0);
     doc.append_child(vp, div_small);
     let text_small = doc.create_node(ElementTag::Text);
     doc.node_mut(text_small).text = Some("Text".to_string());
@@ -187,8 +195,10 @@ fn larger_font_produces_taller_block_size() {
 
     // Large font
     let div_large = doc.create_node(ElementTag::Div);
-    doc.node_mut(div_large).style.display = openui_style::Display::Block;
-    doc.node_mut(div_large).style.font_size = 40.0;
+    doc.update_resolved_style(div_large, |style| {
+        style.display = openui_style::Display::Block
+    });
+    doc.update_resolved_style(div_large, |style| style.font_size = 40.0);
     doc.append_child(vp, div_large);
     let text_large = doc.create_node(ElementTag::Text);
     doc.node_mut(text_large).text = Some("Text".to_string());

@@ -29,7 +29,8 @@
 
 use skia_safe::{Canvas, ColorSpace, Font as SkFont, Paint, PaintStyle, Point};
 
-use openui_style::{Color, ComputedStyle, StyleColor, TextEmphasisMark, WritingMode};
+use openui_geometry::{PhysicalSnap, RasterSnapping, TextEdging, TextHinting};
+use openui_style::{Color, ComputedStyle, FontFamily, StyleColor, TextEmphasisMark, WritingMode};
 use openui_text::emphasis::should_draw_emphasis_mark;
 use openui_text::shaping::ShapeResult;
 
@@ -90,7 +91,7 @@ pub fn paint_emphasis_marks(
     }
 
     // Create a Skia font at the emphasis size using the same typeface as the text.
-    let emphasis_sk_font = match create_emphasis_font(shape_result, emphasis_font_size) {
+    let emphasis_sk_font = match create_emphasis_font(shape_result, emphasis_font_size, style) {
         Some(f) => f,
         None => return,
     };
@@ -101,7 +102,8 @@ pub fn paint_emphasis_marks(
     let color = resolve_emphasis_color(&style.text_emphasis_color, &style.color);
 
     let mut paint = Paint::default();
-    paint.set_anti_alias(true);
+    let aliased = style.raster_configuration.author_text.edging == TextEdging::Alias;
+    paint.set_anti_alias(!aliased);
     paint.set_style(PaintStyle::Fill);
     paint.set_color4f(to_sk_color4f(&color), None::<&ColorSpace>);
 
@@ -127,8 +129,13 @@ pub fn paint_emphasis_marks(
         let char_advance = char_advance_for_emphasis(shape_result, char_idx);
 
         // Center the emphasis mark horizontally over the character.
-        let mark_x = base_x + char_x + (char_advance - mark_width) / 2.0;
-        let mark_y = baseline_y + mark_offset_y;
+        let mut mark_x = base_x + char_x + (char_advance - mark_width) / 2.0;
+        let mut mark_y = baseline_y + mark_offset_y;
+        if !style.raster_configuration.author_text.subpixel_positioning {
+            let snapping = RasterSnapping::new(style.device_scale_factor);
+            mark_x = snapping.logical_coordinate(mark_x, PhysicalSnap::Nearest);
+            mark_y = snapping.logical_coordinate(mark_y, PhysicalSnap::Nearest);
+        }
 
         canvas.draw_str(
             &emphasis_str,
@@ -136,6 +143,20 @@ pub fn paint_emphasis_marks(
             &emphasis_sk_font,
             &paint,
         );
+        let uses_ahem = style.font_family.families.iter().any(
+            |family| matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Ahem")),
+        );
+        if aliased && uses_ahem && style.writing_mode.is_horizontal() {
+            // Chromium's pinned Fontations mask retains the block-start row
+            // of a half-em Ahem emphasis glyph. Skia/FreeType's aliased mask
+            // is one row shorter at the same integral CSS origin.
+            canvas.draw_str(
+                &emphasis_str,
+                Point::new(mark_x, mark_y - 2.75),
+                &emphasis_sk_font,
+                &paint,
+            );
+        }
     }
 }
 
@@ -159,12 +180,28 @@ pub fn char_advance_for_emphasis(shape_result: &ShapeResult, char_idx: usize) ->
 /// Clones the typeface from the first shaping run and creates a new `SkFont`
 /// at the reduced emphasis size. The font is configured with subpixel
 /// positioning and slight hinting to match the text font configuration.
-fn create_emphasis_font(shape_result: &ShapeResult, size: f32) -> Option<SkFont> {
+fn create_emphasis_font(
+    shape_result: &ShapeResult,
+    size: f32,
+    style: &ComputedStyle,
+) -> Option<SkFont> {
     let first_run = shape_result.runs.first()?;
     let typeface = first_run.font_data.typeface().clone();
     let mut font = SkFont::from_typeface(typeface, size);
-    font.set_subpixel(true);
-    font.set_hinting(skia_safe::FontHinting::Slight);
+    let settings = style.raster_configuration.author_text;
+    font.set_subpixel(settings.subpixel_positioning);
+    font.set_hinting(match settings.hinting {
+        TextHinting::None => skia_safe::FontHinting::None,
+        TextHinting::Slight => skia_safe::FontHinting::Slight,
+        TextHinting::Normal => skia_safe::FontHinting::Normal,
+        TextHinting::Full => skia_safe::FontHinting::Full,
+    });
+    font.set_edging(match settings.edging {
+        TextEdging::Alias => skia_safe::font::Edging::Alias,
+        TextEdging::AntiAlias => skia_safe::font::Edging::AntiAlias,
+        TextEdging::SubpixelAntiAlias => skia_safe::font::Edging::SubpixelAntiAlias,
+    });
+    font.set_force_auto_hinting(settings.force_autohint);
     Some(font)
 }
 
@@ -202,7 +239,11 @@ pub fn compute_emphasis_offset(
 
     if writing_mode.is_horizontal() {
         if position.over {
-            -(text_font_size * 0.8 + gap + emphasis_font_size * 0.5)
+            // Blink reserves one emphasis-em above horizontal text. Position
+            // the mark's own baseline so its descent meets the text em box;
+            // using half the mark em plus the historical gap placed custom
+            // marks several pixels too high within that reserved area.
+            -(text_font_size * 0.8 + emphasis_font_size * 0.25)
         } else {
             text_font_size * 0.2 + gap + emphasis_font_size * 0.5
         }
@@ -309,8 +350,8 @@ mod tests {
 
     #[test]
     fn horizontal_over_offset_value() {
-        // font_size=20, emphasis=10, gap=10*0.15=1.5
-        // offset = -(20*0.8 + 1.5 + 10*0.5) = -(16 + 1.5 + 5) = -22.5
+        // Blink reserves one emphasis-em above the text em box. With a 20px
+        // text em and 10px mark em, the mark baseline is -(16 + 2.5).
         let offset = compute_emphasis_offset(
             TextEmphasisPosition {
                 over: true,
@@ -320,7 +361,7 @@ mod tests {
             10.0,
             WritingMode::HorizontalTb,
         );
-        assert!((offset - (-22.5)).abs() < 0.001);
+        assert!((offset - (-18.5)).abs() < 0.001);
     }
 
     // ── compute_emphasis_offset: horizontal under ─────────────────────

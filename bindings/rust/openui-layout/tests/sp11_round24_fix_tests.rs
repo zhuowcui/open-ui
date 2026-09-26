@@ -58,14 +58,14 @@ fn r24_atomic_inline_with_text_child_has_children() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     // Create inline-block with explicit size and text child
     let ib = doc.create_node(ElementTag::Div);
-    doc.node_mut(ib).style.display = Display::InlineBlock;
-    doc.node_mut(ib).style.width = Length::px(100.0);
-    doc.node_mut(ib).style.height = Length::px(30.0);
+    doc.update_resolved_style(ib, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(ib, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(ib, |style| style.height = Length::px(30.0));
     doc.append_child(block, ib);
 
     let text = doc.create_node(ElementTag::Text);
@@ -97,13 +97,13 @@ fn r24_atomic_inline_children_contain_text_fragments() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let ib = doc.create_node(ElementTag::Div);
-    doc.node_mut(ib).style.display = Display::InlineBlock;
-    doc.node_mut(ib).style.width = Length::px(120.0);
-    doc.node_mut(ib).style.height = Length::px(30.0);
+    doc.update_resolved_style(ib, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(ib, |style| style.width = Length::px(120.0));
+    doc.update_resolved_style(ib, |style| style.height = Length::px(30.0));
     doc.append_child(block, ib);
 
     let text = doc.create_node(ElementTag::Text);
@@ -130,13 +130,13 @@ fn r24_auto_width_inline_block_with_text_nonzero_width() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let ib = doc.create_node(ElementTag::Div);
-    doc.node_mut(ib).style.display = Display::InlineBlock;
+    doc.update_resolved_style(ib, |style| style.display = Display::InlineBlock);
     // width: auto (default) — no explicit width set
-    doc.node_mut(ib).style.height = Length::px(20.0);
+    doc.update_resolved_style(ib, |style| style.height = Length::px(20.0));
     doc.append_child(block, ib);
 
     let text = doc.create_node(ElementTag::Text);
@@ -167,11 +167,11 @@ fn r24_auto_width_inline_block_no_children_zero_width() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let ib = doc.create_node(ElementTag::Div);
-    doc.node_mut(ib).style.display = Display::InlineBlock;
+    doc.update_resolved_style(ib, |style| style.display = Display::InlineBlock);
     // No children, no explicit width
     doc.append_child(block, ib);
 
@@ -206,12 +206,12 @@ fn r24_auto_width_respects_min_width_floor() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let ib = doc.create_node(ElementTag::Div);
-    doc.node_mut(ib).style.display = Display::InlineBlock;
-    doc.node_mut(ib).style.min_width = Length::px(50.0);
+    doc.update_resolved_style(ib, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(ib, |style| style.min_width = Length::px(50.0));
     doc.append_child(block, ib);
 
     let text = doc.create_node(ElementTag::Text);
@@ -243,9 +243,9 @@ fn r24_text_justify_auto_cjk_uses_inter_character() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Justify;
-    doc.node_mut(block).style.text_justify = TextJustify::Auto;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Justify);
+    doc.update_resolved_style(block, |style| style.text_justify = TextJustify::Auto);
     doc.append_child(root, block);
 
     // CJK text with no spaces — inter-word justification would produce 0 opportunities
@@ -274,9 +274,9 @@ fn r24_text_justify_auto_latin_uses_inter_word() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Justify;
-    doc.node_mut(block).style.text_justify = TextJustify::Auto;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Justify);
+    doc.update_resolved_style(block, |style| style.text_justify = TextJustify::Auto);
     doc.append_child(root, block);
 
     let text = doc.create_node(ElementTag::Text);

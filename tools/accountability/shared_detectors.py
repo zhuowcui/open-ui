@@ -553,6 +553,11 @@ def dependency_for_portability_reason(reason: str) -> str:
         return "line_clamp"
     if "writing-mode" in value or "unicode-bidi" in value:
         return "writing_mode"
+    if "text_non_ascii" in value:
+        # The deterministic Ahem profile rejects glyphs without a pinned
+        # fallback. SP17 owns that advanced-text/font-orientation prerequisite;
+        # it must not be mislabeled as an advanced-selector failure.
+        return "writing_mode"
     if "margin-trim" in value:
         return "margin_trim"
     if "contain" in value or "container" in value:

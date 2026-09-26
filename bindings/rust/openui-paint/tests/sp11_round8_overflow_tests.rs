@@ -74,11 +74,11 @@ fn overflow_hidden_clips_at_padding_box_not_border_box() {
     let vp = doc.root();
 
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(100.0);
-    doc.node_mut(div).style.height = Length::px(100.0);
-    doc.node_mut(div).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(div).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(div, |style| style.overflow_y = Overflow::Hidden);
     // Border widths set on the style for consistency, but border_style left
     // as default (None) so no visible border is painted — we only care about
     // the clip inset from fragment.border.
@@ -87,7 +87,7 @@ fn overflow_hidden_clips_at_padding_box_not_border_box() {
     // Wide text that extends beyond the padding box
     let text_node = doc.create_node(ElementTag::Text);
     doc.node_mut(text_node).text = Some("XXXXXXXXXXXXXXXXXXXXX".to_string());
-    doc.node_mut(text_node).style.color = Color::BLACK;
+    doc.update_resolved_style(text_node, |style| style.color = Color::BLACK);
     doc.append_child(div, text_node);
 
     let sr = Arc::new(shape_text("XXXXXXXXXXXXXXXXXXXXX"));
@@ -147,16 +147,16 @@ fn overflow_hidden_no_border_still_clips() {
     let vp = doc.root();
 
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(50.0);
-    doc.node_mut(div).style.height = Length::px(30.0);
-    doc.node_mut(div).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(div).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(div, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, div);
 
     let text_node = doc.create_node(ElementTag::Text);
     doc.node_mut(text_node).text = Some("XXXXXXXXXXXXX".to_string());
-    doc.node_mut(text_node).style.color = Color::BLACK;
+    doc.update_resolved_style(text_node, |style| style.color = Color::BLACK);
     doc.append_child(div, text_node);
 
     let sr = Arc::new(shape_text("XXXXXXXXXXXXX"));

@@ -1,0 +1,17 @@
+field,rationale
+animation_snapshot,Sampled animation state is engine-owned and never represents an author declaration.
+embedded_document_text,Marks text in a statically lowered nested document for the platform raster policy.
+establishes_transform_containing_block,Caches containing-block behavior derived from authored transform-related declarations.
+first_letter_style,Stores the resolved immutable pseudo-element snapshot owned by style resolution.
+first_line_style,Stores the resolved immutable pseudo-element snapshot owned by style resolution.
+is_first_letter_pseudo,Identifies a generated first-letter box created by style resolution.
+legacy_webkit_box,Records normalized legacy display semantics after the authored display value is consumed.
+legacy_webkit_line_clamp,Records whether normalized line clamping came from the legacy WebKit property.
+list_item_is_flow_root,Caches a layout classification derived from the authored display value.
+marker_style,Stores the resolved immutable marker pseudo-element snapshot owned by style resolution.
+native_button_text_metrics,Selects platform metrics for engine-generated native button content.
+native_control_text,Marks engine-generated native control text for platform rasterization.
+placeholder_style,Stores the resolved immutable placeholder pseudo-element snapshot owned by style resolution.
+raster_configuration,Retains the immutable engine raster policy on every detached style snapshot used by text and paint.
+device_scale_factor,Retains physical-pixel scale for font strike selection without changing logical text metrics.
+will_change_transform,Caches compositing intent derived from authored will-change declarations.

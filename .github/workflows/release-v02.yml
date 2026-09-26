@@ -1,0 +1,158 @@
+name: Open UI v0.2 Release Candidate
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v0.2.*"]
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+  artifact-metadata: write
+
+concurrency:
+  group: release-v02-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  BINDGEN_EXTRA_CLANG_ARGS: ""
+  CC: clang
+  CLANGCC: clang
+  CLANGCXX: clang++
+  CXX: clang++
+  CXXFLAGS: ""
+  FORCE_SKIA_BUILD: "1"
+  LIBCLANG_PATH: /usr/lib/llvm-18/lib
+  PKG_CONFIG_SYSROOT_DIR: ""
+  SKIA_GN_ARGS: >-
+    extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP",
+    "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2",
+    "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing" ]
+  SKIA_NINJA_COMMAND: ninja
+
+jobs:
+  source-contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Rust
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+      - name: Verify generated release inputs
+        run: python3 tools/release/build_v02_linux.py --verify-source
+      - name: Inspect every crates.io package without publishing
+        working-directory: bindings/rust
+        run: |
+          for crate in \
+            openui-geometry openui-style openui-dom openui-text openui-layout \
+            openui-paint openui-compositor openui-engine openui-platform \
+            openui-macros openui; do
+            cargo package --locked --package "$crate" --list >/dev/null
+          done
+          cargo package --locked --package openui-geometry --no-verify
+
+  linux-artifacts:
+    needs: source-contract
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            target: x86_64-unknown-linux-gnu
+          - runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install build and package dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            binutils build-essential clang cmake dpkg-dev libclang-18-dev \
+            libfontconfig1-dev libfreetype-dev libgl1-mesa-dev ninja-build \
+            pkg-config python3 rpm
+          rustup toolchain install 1.85.0 --profile minimal
+          rustup default 1.85.0
+      - name: Build two clean SDKs
+        run: |
+          epoch=$(git show -s --format=%ct HEAD)
+          CARGO_TARGET_DIR="$RUNNER_TEMP/cargo-a" \
+            python3 tools/release/build_v02_linux.py \
+              --target "${{ matrix.target }}" --output "$RUNNER_TEMP/dist-a" \
+              --source-date-epoch "$epoch" --format sdk --format deb --format rpm
+          CARGO_TARGET_DIR="$RUNNER_TEMP/cargo-b" \
+            python3 tools/release/build_v02_linux.py \
+              --target "${{ matrix.target }}" --output "$RUNNER_TEMP/dist-b" \
+              --source-date-epoch "$epoch" --format sdk
+          cmp \
+            "$RUNNER_TEMP/dist-a/openui-sdk-0.2.0-${{ matrix.target }}.tar.gz" \
+            "$RUNNER_TEMP/dist-b/openui-sdk-0.2.0-${{ matrix.target }}.tar.gz"
+          cp -a "$RUNNER_TEMP/dist-a" dist
+          python3 tools/release/verify_v02_artifact.py \
+            "dist/openui-sdk-0.2.0-${{ matrix.target }}.tar.gz"
+      - name: Install Debian package and run packaged C example
+        run: |
+          sudo dpkg -i dist/openui-sdk_0.2.0_*.deb
+          cc /usr/share/openui/examples/c/hello.c \
+            $(pkg-config --cflags --libs openui) -o "$RUNNER_TEMP/openui-c-hello"
+          LD_LIBRARY_PATH=/usr/lib "$RUNNER_TEMP/openui-c-hello"
+          cmake -S /usr/share/openui/examples/c -B "$RUNNER_TEMP/cmake-consumer" \
+            -DOpenUI_DIR=/usr/lib/cmake/OpenUI
+          cmake --build "$RUNNER_TEMP/cmake-consumer"
+          LD_LIBRARY_PATH=/usr/lib "$RUNNER_TEMP/cmake-consumer/openui_hello"
+      - name: Sign release-tag artifacts with Sigstore
+        if: startsWith(github.ref, 'refs/tags/v0.2.')
+        uses: sigstore/cosign-installer@v4.1.2
+      - name: Create detached keyless signature bundles
+        if: startsWith(github.ref, 'refs/tags/v0.2.')
+        run: |
+          for artifact in dist/*.tar.gz dist/*.deb dist/*.rpm; do
+            cosign sign-blob --yes --bundle "${artifact}.sigstore.json" "$artifact"
+          done
+      - name: Attest release-tag artifacts
+        if: startsWith(github.ref, 'refs/tags/v0.2.')
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            dist/*.tar.gz
+            dist/*.deb
+            dist/*.rpm
+      - name: Upload architecture artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: openui-${{ matrix.target }}
+          path: dist/
+          if-no-files-found: error
+
+  fedora-install:
+    needs: linux-artifacts
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            target: x86_64-unknown-linux-gnu
+          - runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+    runs-on: ${{ matrix.runner }}
+    container: fedora:42
+    timeout-minutes: 30
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: openui-${{ matrix.target }}
+          path: dist
+      - name: Install RPM and run packaged C example
+        run: |
+          dnf install --assumeyes cmake gcc gcc-c++ pkgconf-pkg-config dist/*.rpm
+          cc /usr/share/openui/examples/c/hello.c \
+            $(pkg-config --cflags --libs openui) -o /tmp/openui-c-hello
+          LD_LIBRARY_PATH=/usr/lib /tmp/openui-c-hello
+          cmake -S /usr/share/openui/examples/c -B /tmp/cmake-consumer \
+            -DOpenUI_DIR=/usr/lib/cmake/OpenUI
+          cmake --build /tmp/cmake-consumer
+          LD_LIBRARY_PATH=/usr/lib /tmp/cmake-consumer/openui_hello

@@ -22,13 +22,13 @@ fn doc_with_one_child(child_width: f32, child_height: f32) -> (Document, NodeId)
     let root = doc.root();
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(child_width);
-    doc.node_mut(child).style.height = Length::px(child_height);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(child_width));
+    doc.update_resolved_style(child, |style| style.height = Length::px(child_height));
     doc.append_child(parent, child);
 
     (doc, parent)
@@ -41,14 +41,14 @@ fn doc_with_children(sizes: &[(f32, f32)]) -> (Document, NodeId) {
     let root = doc.root();
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
 
     for &(w, h) in sizes {
         let child = doc.create_node(ElementTag::Div);
-        doc.node_mut(child).style.display = Display::Block;
-        doc.node_mut(child).style.width = Length::px(w);
-        doc.node_mut(child).style.height = Length::px(h);
+        doc.update_resolved_style(child, |style| style.display = Display::Block);
+        doc.update_resolved_style(child, |style| style.width = Length::px(w));
+        doc.update_resolved_style(child, |style| style.height = Length::px(h));
         doc.append_child(parent, child);
     }
 
@@ -79,7 +79,7 @@ fn zero_content_element() {
     let root = doc.root();
 
     let empty = doc.create_node(ElementTag::Div);
-    doc.node_mut(empty).style.display = Display::Block;
+    doc.update_resolved_style(empty, |style| style.display = Display::Block);
     doc.append_child(root, empty);
 
     let sizes = compute_intrinsic_block_sizes(&doc, empty);
@@ -130,27 +130,35 @@ fn max_content_with_padding_border() {
     let root = doc.root();
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     // Add padding: 10px all around
-    doc.node_mut(parent).style.padding_top = Length::px(10.0);
-    doc.node_mut(parent).style.padding_right = Length::px(10.0);
-    doc.node_mut(parent).style.padding_bottom = Length::px(10.0);
-    doc.node_mut(parent).style.padding_left = Length::px(10.0);
+    doc.update_resolved_style(parent, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(parent, |style| style.padding_right = Length::px(10.0));
+    doc.update_resolved_style(parent, |style| style.padding_bottom = Length::px(10.0));
+    doc.update_resolved_style(parent, |style| style.padding_left = Length::px(10.0));
     // Add border: 5px all around
-    doc.node_mut(parent).style.border_top_width = 5;
-    doc.node_mut(parent).style.border_right_width = 5;
-    doc.node_mut(parent).style.border_bottom_width = 5;
-    doc.node_mut(parent).style.border_left_width = 5;
-    doc.node_mut(parent).style.border_top_style = openui_style::BorderStyle::Solid;
-    doc.node_mut(parent).style.border_right_style = openui_style::BorderStyle::Solid;
-    doc.node_mut(parent).style.border_bottom_style = openui_style::BorderStyle::Solid;
-    doc.node_mut(parent).style.border_left_style = openui_style::BorderStyle::Solid;
+    doc.update_resolved_style(parent, |style| style.border_top_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_right_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_left_width = 5);
+    doc.update_resolved_style(parent, |style| {
+        style.border_top_style = openui_style::BorderStyle::Solid
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_right_style = openui_style::BorderStyle::Solid
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_bottom_style = openui_style::BorderStyle::Solid
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_left_style = openui_style::BorderStyle::Solid
+    });
     doc.append_child(root, parent);
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(100.0);
-    doc.node_mut(child).style.height = Length::px(40.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(40.0));
     doc.append_child(parent, child);
 
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
@@ -209,7 +217,7 @@ fn block_size_from_content_sum() {
     let root = doc.root();
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
 
     // Children margin boxes: 50, 30, 40
@@ -240,8 +248,8 @@ fn replaced_element_explicit_both() {
     use openui_style::ComputedStyle;
 
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(640.0);
-    style.height = Length::px(480.0);
+    style.update_derived(|computed| computed.width = Length::px(640.0));
+    style.update_derived(|computed| computed.height = Length::px(480.0));
 
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, LayoutUnit::from_f32(640.0));
@@ -255,7 +263,7 @@ fn replaced_with_width_only_applies_aspect_ratio() {
     use openui_style::ComputedStyle;
 
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(600.0);
+    style.update_derived(|computed| computed.width = Length::px(600.0));
     // height auto → derived from default 2:1 aspect ratio (300:150)
     // height = 600 * 150 / 300 = 300
 
@@ -269,7 +277,7 @@ fn replaced_with_height_only_applies_aspect_ratio() {
     use openui_style::ComputedStyle;
 
     let mut style = ComputedStyle::initial();
-    style.height = Length::px(300.0);
+    style.update_derived(|computed| computed.height = Length::px(300.0));
     // width auto → derived from default 2:1 aspect ratio (300:150)
     // width = 300 * 300 / 150 = 600
 
@@ -286,20 +294,20 @@ fn auto_block_size_with_margin_collapsing() {
     let root = doc.root();
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
 
     // Two children with adjacent margins that should collapse.
     let child1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(child1).style.display = Display::Block;
-    doc.node_mut(child1).style.height = Length::px(50.0);
-    doc.node_mut(child1).style.margin_bottom = Length::px(20.0);
+    doc.update_resolved_style(child1, |style| style.display = Display::Block);
+    doc.update_resolved_style(child1, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(child1, |style| style.margin_bottom = Length::px(20.0));
     doc.append_child(parent, child1);
 
     let child2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(child2).style.display = Display::Block;
-    doc.node_mut(child2).style.height = Length::px(30.0);
-    doc.node_mut(child2).style.margin_top = Length::px(30.0);
+    doc.update_resolved_style(child2, |style| style.display = Display::Block);
+    doc.update_resolved_style(child2, |style| style.height = Length::px(30.0));
+    doc.update_resolved_style(child2, |style| style.margin_top = Length::px(30.0));
     doc.append_child(parent, child2);
 
     // Margin boxes: child1 = 50 + 20(margin-bottom), child2 = 30(margin-top) + 30
@@ -323,17 +331,17 @@ fn nested_block_intrinsic_sizing() {
 
     // grandparent → parent → child(width=200, height=60)
     let grandparent = doc.create_node(ElementTag::Div);
-    doc.node_mut(grandparent).style.display = Display::Block;
+    doc.update_resolved_style(grandparent, |style| style.display = Display::Block);
     doc.append_child(root, grandparent);
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(grandparent, parent);
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(60.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(60.0));
     doc.append_child(parent, child);
 
     let sizes = compute_intrinsic_block_sizes(&doc, grandparent);
@@ -392,21 +400,21 @@ fn display_none_children_skipped() {
     let root = doc.root();
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
 
     // Visible child: 100×50
     let visible = doc.create_node(ElementTag::Div);
-    doc.node_mut(visible).style.display = Display::Block;
-    doc.node_mut(visible).style.width = Length::px(100.0);
-    doc.node_mut(visible).style.height = Length::px(50.0);
+    doc.update_resolved_style(visible, |style| style.display = Display::Block);
+    doc.update_resolved_style(visible, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(visible, |style| style.height = Length::px(50.0));
     doc.append_child(parent, visible);
 
     // Hidden child: 300×200 (should not contribute)
     let hidden = doc.create_node(ElementTag::Div);
-    doc.node_mut(hidden).style.display = Display::None;
-    doc.node_mut(hidden).style.width = Length::px(300.0);
-    doc.node_mut(hidden).style.height = Length::px(200.0);
+    doc.update_resolved_style(hidden, |style| style.display = Display::None);
+    doc.update_resolved_style(hidden, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(hidden, |style| style.height = Length::px(200.0));
     doc.append_child(parent, hidden);
 
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
@@ -424,14 +432,14 @@ fn child_with_min_width_constraint() {
     let root = doc.root();
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
 
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(80.0);
-    doc.node_mut(child).style.min_width = Length::px(120.0);
-    doc.node_mut(child).style.height = Length::px(30.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(80.0));
+    doc.update_resolved_style(child, |style| style.min_width = Length::px(120.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(30.0));
     doc.append_child(parent, child);
 
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
@@ -448,8 +456,8 @@ fn block_size_from_content_clamped_by_min_height() {
     let root = doc.root();
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.min_height = Length::px(200.0);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.min_height = Length::px(200.0));
     doc.append_child(root, parent);
 
     // Children total only 50px
@@ -467,8 +475,8 @@ fn block_size_from_content_clamped_by_max_height() {
     let root = doc.root();
 
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.max_height = Length::px(80.0);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.max_height = Length::px(80.0));
     doc.append_child(root, parent);
 
     // Children total 150px

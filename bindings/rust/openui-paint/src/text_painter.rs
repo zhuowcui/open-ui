@@ -18,12 +18,15 @@
 //! 2. Letting Skia's `drawTextBlob` handle color/non-color dispatch
 //! 3. Not forcing monochrome rendering paths
 
-use skia_safe::{Canvas, Color4f, ColorSpace, Paint, PaintStyle, Point, Rect, TextBlob};
+use skia_safe::{
+    Canvas, Color4f, ColorSpace, Paint, PaintStyle, Point, Rect, TextBlob, TextBlobBuilder,
+};
 
+use openui_geometry::{PhysicalSnap, RasterBackend, RasterSnapping, TextEdging};
 use openui_layout::inline::text_combine::TextCombineLayout;
-use openui_style::{Color, ComputedStyle, FontFamily};
+use openui_style::{Color, ComputedStyle, FontFamily, GenericFontFamily};
 use openui_text::font::FontMetrics;
-use openui_text::shaping::ShapeResult;
+use openui_text::shaping::{ShapeResult, TextRasterPolicy};
 
 /// Paint shaped text glyphs onto a canvas.
 ///
@@ -49,16 +52,83 @@ pub fn paint_text(
     origin: (f32, f32),
     style: &ComputedStyle,
 ) {
+    let author_lcd = uses_chromium_author_lcd(style);
+    let raster_policy = if style.native_control_text {
+        TextRasterPolicy::ChromiumNativeControl
+    } else if style.embedded_document_text {
+        TextRasterPolicy::ChromiumEmbeddedDocument
+    } else if author_lcd {
+        TextRasterPolicy::ChromiumAuthorLcd
+    } else {
+        TextRasterPolicy::Skia
+    };
+    paint_text_with_raster_policy(canvas, shape_result, origin, style, raster_policy);
+}
+
+/// Paint shaped glyphs with an explicit platform outline raster policy.
+pub fn paint_text_with_raster_policy(
+    canvas: &Canvas,
+    shape_result: &ShapeResult,
+    origin: (f32, f32),
+    style: &ComputedStyle,
+    raster_policy: TextRasterPolicy,
+) {
+    let text_raster = if style.native_control_text {
+        style.raster_configuration.native_text
+    } else if style.embedded_document_text {
+        style.raster_configuration.embedded_text
+    } else {
+        style.raster_configuration.author_text
+    };
+    let aliased_ahem = text_raster.edging == TextEdging::Alias
+        && !shape_result.runs.is_empty()
+        && shape_result.runs.iter().all(|run| {
+            run.font_data
+                .typeface()
+                .family_name()
+                .eq_ignore_ascii_case("Ahem")
+        });
+    let origin = if text_raster.subpixel_positioning
+        || (style.device_scale_factor - 1.0).abs() <= f64::EPSILON
+        // Chromium retains the LayoutUnit origin while selecting a monochrome
+        // Ahem mask. Snapping the run origin first changes the phase of every
+        // later fractional advance; the glyph rasterizer, not paint, owns
+        // that final device-cell choice.
+        || aliased_ahem
+    {
+        origin
+    } else {
+        let snapping = RasterSnapping::new(style.device_scale_factor);
+        (
+            snapping.logical_coordinate(origin.0, PhysicalSnap::Nearest),
+            snapping.logical_coordinate(origin.1, PhysicalSnap::Nearest),
+        )
+    };
     // Build a Skia TextBlob from the shaped glyph runs.
     // Blink: TextPainter::Paint → DrawBlob → canvas->drawTextBlob()
-    if let Some(text_blob) = shape_result.to_text_blob() {
+    let lcd_origin = (style.native_control_text
+        || raster_policy == TextRasterPolicy::ChromiumAuthorLcd
+        || text_raster.edging == TextEdging::SubpixelAntiAlias)
+        .then(|| {
+            origin.0
+                + if style.native_control_text {
+                    f32::from(style.raster_configuration.native_text.lcd_phase_64ths)
+                        / 64.0
+                        / style.device_scale_factor as f32
+                } else {
+                    0.0
+                }
+        });
+    if let Some(logical_blob) =
+        shape_result.to_text_blob_with_raster_policy(lcd_origin, raster_policy)
+    {
         // Cull against the glyphs' logical ink bounds before Skia applies its
         // LCD coverage filter.  Skia's filter taps extend one device pixel
         // beyond those bounds; if a run begins exactly at a hard overflow
         // clip edge, drawing it first and clipping the filtered mask can leak
         // a colored subpixel back into the visible area.  Blink rejects the
         // display item from its logical visual rect in this case.
-        if text_blob_is_outside_device_clip(canvas, &text_blob, origin)
+        if text_blob_is_outside_device_clip(canvas, &logical_blob, origin)
             || (style
                 .font_family
                 .families
@@ -81,7 +151,146 @@ pub fn paint_text(
         let c = &style.color;
         paint.set_color4f(Color4f::new(c.r, c.g, c.b, c.a), None::<&ColorSpace>);
 
-        canvas.draw_text_blob(&text_blob, Point::new(origin.0, origin.1), &paint);
+        let physical_scale = style.device_scale_factor as f32;
+        if style.raster_configuration.backend == RasterBackend::ChromiumLinux
+            && (physical_scale - 1.0).abs() > f32::EPSILON
+        {
+            if let Some(physical_blob) = shape_result.to_text_blob_with_raster_policy_at_scale(
+                lcd_origin,
+                raster_policy,
+                physical_scale,
+            ) {
+                canvas.save();
+                canvas.translate(origin);
+                canvas.scale((1.0 / physical_scale, 1.0 / physical_scale));
+                canvas.draw_text_blob(&physical_blob, Point::new(0.0, 0.0), &paint);
+                canvas.restore();
+            }
+        } else {
+            canvas.draw_text_blob(&logical_blob, Point::new(origin.0, origin.1), &paint);
+        }
+    }
+}
+
+fn uses_chromium_author_lcd(style: &ComputedStyle) -> bool {
+    if style.native_control_text
+        || style.embedded_document_text
+        || style.raster_configuration.author_text.edging != TextEdging::Alias
+    {
+        return false;
+    }
+    match style.font_family.families.first() {
+        Some(FontFamily::Named(name)) => ![
+            "Ahem",
+            "Droid Sans Fallback",
+            "Noto Sans Devanagari",
+            "Noto Color Emoji",
+            "DejaVu Sans",
+        ]
+        .iter()
+        .any(|family| name.eq_ignore_ascii_case(family)),
+        Some(FontFamily::Generic(family)) => !matches!(
+            family,
+            GenericFontFamily::None
+                | GenericFontFamily::SansSerif
+                | GenericFontFamily::Emoji
+                | GenericFontFamily::UiSansSerif
+        ),
+        None => false,
+    }
+}
+
+/// Paint an upright run in a vertical line.
+///
+/// Shaping selects vertical OpenType alternates, while this builder maps each
+/// HarfBuzz cluster to one font-size vertical advance and keeps every glyph
+/// outline upright. Multiple glyphs in one cluster (combining sequences and
+/// emoji) share a baseline. `vertical_baseline_x` is layout's exported
+/// baseline axis and `top_y` is the fragment's physical inline-start.
+pub fn paint_vertical_text(
+    canvas: &Canvas,
+    shape_result: &ShapeResult,
+    vertical_baseline_x: f32,
+    top_y: f32,
+    style: &ComputedStyle,
+) {
+    if shape_result.runs.is_empty() || shape_result.num_glyphs() == 0 {
+        return;
+    }
+
+    let mut builder = TextBlobBuilder::new();
+    let physical_scale = style.device_scale_factor as f32;
+    let physical_strike = style.raster_configuration.backend == RasterBackend::ChromiumLinux
+        && (physical_scale - 1.0).abs() > f32::EPSILON;
+    let (vertical_baseline_x, top_y) =
+        if style.raster_configuration.author_text.subpixel_positioning
+            || (style.device_scale_factor - 1.0).abs() <= f64::EPSILON
+        {
+            (vertical_baseline_x, top_y)
+        } else {
+            let snapping = RasterSnapping::new(style.device_scale_factor);
+            (
+                // Upright vertical glyphs use an aliased physical strike.
+                // Blink selects the containing block-axis device column;
+                // nearest rounding advances every glyph by one column when
+                // the exported baseline lands on an exact half-pixel.
+                snapping.logical_coordinate(vertical_baseline_x, PhysicalSnap::Nearest),
+                snapping.logical_coordinate(top_y, PhysicalSnap::Nearest),
+            )
+        };
+    let mut run_y = top_y;
+    for run in &shape_result.runs {
+        if run.num_glyphs == 0 {
+            continue;
+        }
+        let source_font = run.font_data.sk_font();
+        let mut scaled_font;
+        let raster_font = if physical_strike {
+            scaled_font = source_font.clone();
+            scaled_font.set_size(source_font.size() * physical_scale);
+            &scaled_font
+        } else {
+            source_font
+        };
+        let (glyphs_out, positions_out) = builder.alloc_run_pos(raster_font, run.num_glyphs, None);
+        glyphs_out.copy_from_slice(&run.glyphs);
+
+        let mut cluster_y = run_y;
+        for index in 0..run.num_glyphs {
+            let glyph = run.glyphs[index];
+            let offset = run.offsets.get(index).copied().unwrap_or((0.0, 0.0));
+            positions_out[index] = Point::new(
+                (vertical_baseline_x + offset.0)
+                    * if physical_strike { physical_scale } else { 1.0 },
+                (cluster_y + run.font_data.vertical_origin_y(glyph) + offset.1)
+                    * if physical_strike { physical_scale } else { 1.0 },
+            );
+            let cluster = run.clusters.get(index).copied().unwrap_or(index);
+            let next_cluster = run.clusters.get(index + 1).copied();
+            if next_cluster != Some(cluster) {
+                cluster_y += run.font_data.vertical_advance(glyph);
+            }
+        }
+        run_y = cluster_y;
+    }
+
+    if let Some(blob) = builder.make() {
+        let mut paint = Paint::default();
+        paint.set_anti_alias(true);
+        paint.set_style(PaintStyle::Fill);
+        let color = &style.color;
+        paint.set_color4f(
+            Color4f::new(color.r, color.g, color.b, color.a),
+            None::<&ColorSpace>,
+        );
+        if physical_strike {
+            canvas.save();
+            canvas.scale((1.0 / physical_scale, 1.0 / physical_scale));
+            canvas.draw_text_blob(&blob, Point::new(0.0, 0.0), &paint);
+            canvas.restore();
+        } else {
+            canvas.draw_text_blob(&blob, Point::new(0.0, 0.0), &paint);
+        }
     }
 }
 
@@ -159,11 +368,12 @@ pub fn paint_text_shadows(
         // Apply blur via Skia's MaskFilter.
         // Blink: ApplyShadowBlurToFlags → SkMaskFilter::MakeBlur(kNormal_SkBlurStyle, sigma)
         if shadow.blur_radius > 0.0 {
-            // Convert CSS blur radius to Skia sigma: sigma = blur_radius / 2.0
-            // Blink: style/filter_operations.h uses this conversion.
+            // Blink records the CSS blur in local coordinates. Respect the
+            // canvas transform so device scale and authored transforms apply
+            // equally to the glyphs and their shadow kernel.
             let sigma = shadow.blur_radius / 2.0;
             if let Some(filter) =
-                skia_safe::MaskFilter::blur(skia_safe::BlurStyle::Normal, sigma, false)
+                skia_safe::MaskFilter::blur(skia_safe::BlurStyle::Normal, sigma, true)
             {
                 paint.set_mask_filter(filter);
             }

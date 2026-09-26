@@ -1,7 +1,13 @@
 [package]
 name = "openui-geometry"
-version = "0.1.0"
-edition = "2021"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
 description = "Blink-identical geometry primitives: LayoutUnit (fixed-point 1/64px), rects, offsets, sizes"
 
 [dependencies]

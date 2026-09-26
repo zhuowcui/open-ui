@@ -22,15 +22,19 @@ fn oof_in_pure_inline_generates_candidate() {
     // generate an OOF candidate on the fragment.
     let mut doc = Document::new();
     let vp = doc.root();
-    doc.node_mut(vp).style.position = Position::Relative;
+    doc.update_resolved_style(vp, |style| style.position = Position::Relative);
 
     let div = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(div);
-        node.style.display = Display::Block;
-        node.style.position = Position::Relative;
-        node.style.width = Length::px(400.0);
-        node.style.height = Length::px(200.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.position = Position::Relative);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        node.style
+            .update_derived(|computed| computed.height = Length::px(200.0));
     }
     doc.append_child(vp, div);
 
@@ -43,10 +47,14 @@ fn oof_in_pure_inline_generates_candidate() {
     let abs = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(abs);
-        node.style.display = Display::Block;
-        node.style.position = Position::Absolute;
-        node.style.width = Length::px(50.0);
-        node.style.height = Length::px(50.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.position = Position::Absolute);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(50.0));
+        node.style
+            .update_derived(|computed| computed.height = Length::px(50.0));
     }
     doc.append_child(div, abs);
 
@@ -73,15 +81,19 @@ fn oof_in_inline_gets_static_position() {
     // The static position should be within the inline formatting context
     let mut doc = Document::new();
     let vp = doc.root();
-    doc.node_mut(vp).style.position = Position::Relative;
+    doc.update_resolved_style(vp, |style| style.position = Position::Relative);
 
     let div = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(div);
-        node.style.display = Display::Block;
-        node.style.position = Position::Relative;
-        node.style.width = Length::px(400.0);
-        node.style.height = Length::px(200.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.position = Position::Relative);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        node.style
+            .update_derived(|computed| computed.height = Length::px(200.0));
     }
     doc.append_child(vp, div);
 
@@ -92,10 +104,14 @@ fn oof_in_inline_gets_static_position() {
     let abs = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(abs);
-        node.style.display = Display::Block;
-        node.style.position = Position::Absolute;
-        node.style.width = Length::px(30.0);
-        node.style.height = Length::px(30.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.position = Position::Absolute);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(30.0));
+        node.style
+            .update_derived(|computed| computed.height = Length::px(30.0));
     }
     doc.append_child(div, abs);
 
@@ -119,15 +135,19 @@ fn multiple_oof_in_inline() {
     // Multiple OOF children should all be collected
     let mut doc = Document::new();
     let vp = doc.root();
-    doc.node_mut(vp).style.position = Position::Relative;
+    doc.update_resolved_style(vp, |style| style.position = Position::Relative);
 
     let div = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(div);
-        node.style.display = Display::Block;
-        node.style.position = Position::Relative;
-        node.style.width = Length::px(400.0);
-        node.style.height = Length::px(200.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.position = Position::Relative);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(400.0));
+        node.style
+            .update_derived(|computed| computed.height = Length::px(200.0));
     }
     doc.append_child(vp, div);
 
@@ -138,9 +158,12 @@ fn multiple_oof_in_inline() {
     let abs1 = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(abs1);
-        node.style.position = Position::Absolute;
-        node.style.width = Length::px(20.0);
-        node.style.height = Length::px(20.0);
+        node.style
+            .update_derived(|computed| computed.position = Position::Absolute);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(20.0));
+        node.style
+            .update_derived(|computed| computed.height = Length::px(20.0));
     }
     doc.append_child(div, abs1);
 
@@ -151,9 +174,12 @@ fn multiple_oof_in_inline() {
     let abs2 = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(abs2);
-        node.style.position = Position::Absolute;
-        node.style.width = Length::px(20.0);
-        node.style.height = Length::px(20.0);
+        node.style
+            .update_derived(|computed| computed.position = Position::Absolute);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(20.0));
+        node.style
+            .update_derived(|computed| computed.height = Length::px(20.0));
     }
     doc.append_child(div, abs2);
 

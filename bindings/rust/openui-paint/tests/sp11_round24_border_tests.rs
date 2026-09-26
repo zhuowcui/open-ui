@@ -60,46 +60,53 @@ fn sample_avg_color(surface: &mut Surface, x: i32, y: i32, w: i32, h: i32) -> (f
 fn make_non_uniform_border_box(doc: &mut Document) -> Fragment {
     let vp = doc.root();
     let div = doc.create_node(ElementTag::Div);
-    {
-        let s = &mut doc.node_mut(div).style;
-        s.display = Display::Block;
-        s.width = Length::px(80.0);
-        s.height = Length::px(80.0);
+    doc.update_resolved_style(div, |s| {
+        s.update_derived(|computed| computed.display = Display::Block);
+        s.update_derived(|computed| computed.width = Length::px(80.0));
+        s.update_derived(|computed| computed.height = Length::px(80.0));
         // Different colors on each side to test trapezoid rendering
-        s.border_top_width = 10;
-        s.border_right_width = 10;
-        s.border_bottom_width = 10;
-        s.border_left_width = 10;
+        s.update_derived(|computed| computed.border_top_width = 10);
+        s.update_derived(|computed| computed.border_right_width = 10);
+        s.update_derived(|computed| computed.border_bottom_width = 10);
+        s.update_derived(|computed| computed.border_left_width = 10);
         // Red top, green right, blue bottom, yellow left
-        s.border_top_color = StyleColor::Resolved(Color {
-            r: 1.0,
-            g: 0.0,
-            b: 0.0,
-            a: 1.0,
+        s.update_derived(|computed| {
+            computed.border_top_color = StyleColor::Resolved(Color {
+                r: 1.0,
+                g: 0.0,
+                b: 0.0,
+                a: 1.0,
+            })
         });
-        s.border_right_color = StyleColor::Resolved(Color {
-            r: 0.0,
-            g: 1.0,
-            b: 0.0,
-            a: 1.0,
+        s.update_derived(|computed| {
+            computed.border_right_color = StyleColor::Resolved(Color {
+                r: 0.0,
+                g: 1.0,
+                b: 0.0,
+                a: 1.0,
+            })
         });
-        s.border_bottom_color = StyleColor::Resolved(Color {
-            r: 0.0,
-            g: 0.0,
-            b: 1.0,
-            a: 1.0,
+        s.update_derived(|computed| {
+            computed.border_bottom_color = StyleColor::Resolved(Color {
+                r: 0.0,
+                g: 0.0,
+                b: 1.0,
+                a: 1.0,
+            })
         });
-        s.border_left_color = StyleColor::Resolved(Color {
-            r: 1.0,
-            g: 1.0,
-            b: 0.0,
-            a: 1.0,
+        s.update_derived(|computed| {
+            computed.border_left_color = StyleColor::Resolved(Color {
+                r: 1.0,
+                g: 1.0,
+                b: 0.0,
+                a: 1.0,
+            })
         });
-        s.border_top_style = BorderStyle::Solid;
-        s.border_right_style = BorderStyle::Solid;
-        s.border_bottom_style = BorderStyle::Solid;
-        s.border_left_style = BorderStyle::Solid;
-    }
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+    });
     doc.append_child(vp, div);
 
     Fragment::new_box(

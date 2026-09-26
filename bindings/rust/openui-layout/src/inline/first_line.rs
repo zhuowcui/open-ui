@@ -65,38 +65,38 @@ pub fn apply_first_line_overrides(
     base: &ComputedStyle,
     overrides: &FirstLineOverrides,
 ) -> ComputedStyle {
-    let mut style = base.clone();
-    if let Some(v) = overrides.font_size {
-        style.font_size = v;
-    }
-    if let Some(v) = overrides.font_weight {
-        style.font_weight = v;
-    }
-    if let Some(v) = overrides.font_style {
-        style.font_style = v;
-    }
-    if let Some(v) = overrides.color {
-        style.color = v;
-    }
-    if let Some(v) = overrides.text_decoration_line {
-        style.text_decoration_line = v;
-    }
-    if let Some(v) = overrides.letter_spacing {
-        style.letter_spacing = v;
-    }
-    if let Some(v) = overrides.word_spacing {
-        style.word_spacing = v;
-    }
-    if let Some(v) = overrides.line_height {
-        style.line_height = v;
-    }
-    if let Some(v) = overrides.text_transform {
-        style.text_transform = v;
-    }
-    if let Some(v) = overrides.vertical_align {
-        style.vertical_align = v;
-    }
-    style
+    base.derive(|style| {
+        if let Some(v) = overrides.font_size {
+            style.font_size = v;
+        }
+        if let Some(v) = overrides.font_weight {
+            style.font_weight = v;
+        }
+        if let Some(v) = overrides.font_style {
+            style.font_style = v;
+        }
+        if let Some(v) = overrides.color {
+            style.color = v;
+        }
+        if let Some(v) = overrides.text_decoration_line {
+            style.text_decoration_line = v;
+        }
+        if let Some(v) = overrides.letter_spacing {
+            style.letter_spacing = v;
+        }
+        if let Some(v) = overrides.word_spacing {
+            style.word_spacing = v;
+        }
+        if let Some(v) = overrides.line_height {
+            style.line_height = v;
+        }
+        if let Some(v) = overrides.text_transform {
+            style.text_transform = v;
+        }
+        if let Some(v) = overrides.vertical_align {
+            style.vertical_align = v;
+        }
+    })
 }
 
 /// Resolve first-line style from a block container's ComputedStyle.
@@ -224,8 +224,8 @@ mod tests {
     fn resolve_first_line_returns_some_when_present() {
         let mut style = ComputedStyle::initial();
         let mut fls = ComputedStyle::initial();
-        fls.font_size = 24.0;
-        style.first_line_style = Some(Box::new(fls));
+        fls.update_derived(|computed| computed.font_size = 24.0);
+        style.update_derived(|computed| computed.first_line_style = Some(Box::new(fls)));
         let resolved = resolve_first_line_style(&style).unwrap();
         assert_eq!(resolved.font_size, 24.0);
     }
@@ -234,9 +234,9 @@ mod tests {
     fn effective_first_line_with_override() {
         let mut block = ComputedStyle::initial();
         let mut fls = ComputedStyle::initial();
-        fls.font_size = 48.0;
-        fls.letter_spacing = 3.0;
-        block.first_line_style = Some(Box::new(fls));
+        fls.update_derived(|computed| computed.font_size = 48.0);
+        fls.update_derived(|computed| computed.letter_spacing = 3.0);
+        block.update_derived(|computed| computed.first_line_style = Some(Box::new(fls)));
         let eff = effective_first_line_style(&block);
         assert_eq!(eff.font_size, 48.0);
         assert_eq!(eff.letter_spacing, 3.0);

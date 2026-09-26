@@ -34,20 +34,20 @@ fn build_doc(
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(cw as f32);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(cw as f32));
     if let Some(h) = ch {
-        doc.node_mut(c).style.height = Length::px(h as f32);
+        doc.update_resolved_style(c, |style| style.height = Length::px(h as f32));
     }
-    doc.node_mut(c).style.overflow_x = overflow;
-    doc.node_mut(c).style.overflow_y = overflow;
+    doc.update_resolved_style(c, |style| style.overflow_x = overflow);
+    doc.update_resolved_style(c, |style| style.overflow_y = overflow);
     doc.append_child(vp, c);
     let mut ids = Vec::new();
     for &h in child_heights {
         let n = doc.create_node(ElementTag::Div);
-        doc.node_mut(n).style.display = Display::Block;
-        doc.node_mut(n).style.width = Length::px(cw as f32);
-        doc.node_mut(n).style.height = Length::px(h as f32);
+        doc.update_resolved_style(n, |style| style.display = Display::Block);
+        doc.update_resolved_style(n, |style| style.width = Length::px(cw as f32));
+        doc.update_resolved_style(n, |style| style.height = Length::px(h as f32));
         doc.append_child(c, n);
         ids.push(n);
     }
@@ -206,14 +206,14 @@ fn visible_nested_overflow_propagation() {
     let mut doc = Document::new();
     let vp = doc.root();
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
-    doc.node_mut(outer).style.width = Length::px(200.0);
-    doc.node_mut(outer).style.height = Length::px(100.0);
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
+    doc.update_resolved_style(outer, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(outer, |style| style.height = Length::px(100.0));
     doc.append_child(vp, outer);
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(200.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(200.0));
     doc.append_child(outer, child);
     let f = layout(&doc);
     let c = &f.children[0];
@@ -226,19 +226,19 @@ fn visible_deeply_nested_overflow() {
     let mut doc = Document::new();
     let vp = doc.root();
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
-    doc.node_mut(outer).style.width = Length::px(200.0);
-    doc.node_mut(outer).style.height = Length::px(50.0);
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
+    doc.update_resolved_style(outer, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(outer, |style| style.height = Length::px(50.0));
     doc.append_child(vp, outer);
     let mid = doc.create_node(ElementTag::Div);
-    doc.node_mut(mid).style.display = Display::Block;
-    doc.node_mut(mid).style.width = Length::px(200.0);
-    doc.node_mut(mid).style.height = Length::px(50.0);
+    doc.update_resolved_style(mid, |style| style.display = Display::Block);
+    doc.update_resolved_style(mid, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(mid, |style| style.height = Length::px(50.0));
     doc.append_child(outer, mid);
     let inner = doc.create_node(ElementTag::Div);
-    doc.node_mut(inner).style.display = Display::Block;
-    doc.node_mut(inner).style.width = Length::px(200.0);
-    doc.node_mut(inner).style.height = Length::px(300.0);
+    doc.update_resolved_style(inner, |style| style.display = Display::Block);
+    doc.update_resolved_style(inner, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(inner, |style| style.height = Length::px(300.0));
     doc.append_child(mid, inner);
     let f = layout(&doc);
     let outer_f = &f.children[0];
@@ -600,15 +600,15 @@ fn hidden_overflow_x_only() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -619,15 +619,15 @@ fn hidden_overflow_y_only() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -655,23 +655,23 @@ fn hidden_nested_containers() {
     let mut doc = Document::new();
     let vp = doc.root();
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
-    doc.node_mut(outer).style.width = Length::px(200.0);
-    doc.node_mut(outer).style.height = Length::px(100.0);
-    doc.node_mut(outer).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(outer).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
+    doc.update_resolved_style(outer, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(outer, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(outer, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(outer, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, outer);
     let inner = doc.create_node(ElementTag::Div);
-    doc.node_mut(inner).style.display = Display::Block;
-    doc.node_mut(inner).style.width = Length::px(200.0);
-    doc.node_mut(inner).style.height = Length::px(50.0);
-    doc.node_mut(inner).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(inner).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(inner, |style| style.display = Display::Block);
+    doc.update_resolved_style(inner, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(inner, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(inner, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(inner, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(outer, inner);
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(200.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(200.0));
     doc.append_child(inner, child);
     let f = layout(&doc);
     let outer_f = &f.children[0];
@@ -722,18 +722,18 @@ fn hidden_with_border_radius() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(c).style.border_top_left_radius = (10.0, 10.0);
-    doc.node_mut(c).style.border_top_right_radius = (10.0, 10.0);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.border_top_left_radius = (10.0, 10.0));
+    doc.update_resolved_style(c, |style| style.border_top_right_radius = (10.0, 10.0));
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     let cf = container(&f);
@@ -1246,23 +1246,23 @@ fn scroll_nested_scrollable_containers() {
     let mut doc = Document::new();
     let vp = doc.root();
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
-    doc.node_mut(outer).style.width = Length::px(200.0);
-    doc.node_mut(outer).style.height = Length::px(100.0);
-    doc.node_mut(outer).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(outer).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
+    doc.update_resolved_style(outer, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(outer, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(outer, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(outer, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, outer);
     let inner = doc.create_node(ElementTag::Div);
-    doc.node_mut(inner).style.display = Display::Block;
-    doc.node_mut(inner).style.width = Length::px(200.0);
-    doc.node_mut(inner).style.height = Length::px(80.0);
-    doc.node_mut(inner).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(inner).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(inner, |style| style.display = Display::Block);
+    doc.update_resolved_style(inner, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(inner, |style| style.height = Length::px(80.0));
+    doc.update_resolved_style(inner, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(inner, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(outer, inner);
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(300.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(300.0));
     doc.append_child(inner, child);
     let f = layout(&doc);
     let outer_f = &f.children[0];
@@ -2721,18 +2721,18 @@ fn overflow_rect_with_relative_child() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(20.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(20.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -2743,19 +2743,19 @@ fn overflow_rect_absolute_child_layout() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(c).style.position = Position::Relative;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.position = Position::Relative);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(50.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Absolute;
-    doc.node_mut(ch).style.top = Length::px(200.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(200.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -2825,19 +2825,19 @@ fn overflow_rect_nested_children() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(50.0);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(50.0));
     doc.append_child(vp, c);
     let mid = doc.create_node(ElementTag::Div);
-    doc.node_mut(mid).style.display = Display::Block;
-    doc.node_mut(mid).style.width = Length::px(200.0);
-    doc.node_mut(mid).style.height = Length::px(30.0);
+    doc.update_resolved_style(mid, |style| style.display = Display::Block);
+    doc.update_resolved_style(mid, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(mid, |style| style.height = Length::px(30.0));
     doc.append_child(c, mid);
     let leaf = doc.create_node(ElementTag::Div);
-    doc.node_mut(leaf).style.display = Display::Block;
-    doc.node_mut(leaf).style.width = Length::px(200.0);
-    doc.node_mut(leaf).style.height = Length::px(200.0);
+    doc.update_resolved_style(leaf, |style| style.display = Display::Block);
+    doc.update_resolved_style(leaf, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(leaf, |style| style.height = Length::px(200.0));
     doc.append_child(mid, leaf);
     let f = layout(&doc);
     let cf = &f.children[0];
@@ -3482,24 +3482,24 @@ fn overflow_rect_parametric_70() {
 #[test]
 fn bfc_overflow_hidden_creates_new_fc() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_overflow_auto_creates_new_fc() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_overflow_scroll_creates_new_fc() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
 }
 
@@ -3507,8 +3507,8 @@ fn bfc_overflow_scroll_creates_new_fc() {
 fn bfc_overflow_clip_does_not_create_fc() {
     // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
 }
 
@@ -3521,21 +3521,21 @@ fn bfc_overflow_visible_no_fc() {
 #[test]
 fn bfc_overflow_x_hidden_creates_fc() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_overflow_x_auto_creates_fc() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_overflow_x_scroll_creates_fc() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
 }
 
@@ -3543,28 +3543,28 @@ fn bfc_overflow_x_scroll_creates_fc() {
 fn bfc_overflow_x_clip_does_not_create_fc() {
     // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_overflow_y_hidden_creates_fc() {
     let mut s = ComputedStyle::initial();
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_overflow_y_auto_creates_fc() {
     let mut s = ComputedStyle::initial();
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_overflow_y_scroll_creates_fc() {
     let mut s = ComputedStyle::initial();
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
 }
 
@@ -3572,7 +3572,7 @@ fn bfc_overflow_y_scroll_creates_fc() {
 fn bfc_overflow_y_clip_does_not_create_fc() {
     // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
     let mut s = ComputedStyle::initial();
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
 }
 
@@ -3695,54 +3695,54 @@ fn bfc_overflow_scroll_avoids_float() {
 #[test]
 fn bfc_combined_float_left_hidden() {
     let mut s = ComputedStyle::initial();
-    s.float = Float::Left;
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.float = Float::Left);
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_combined_float_right_auto() {
     let mut s = ComputedStyle::initial();
-    s.float = Float::Right;
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.float = Float::Right);
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_combined_abs_pos_hidden() {
     let mut s = ComputedStyle::initial();
-    s.position = Position::Absolute;
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.position = Position::Absolute);
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_combined_fixed_pos_scroll() {
     let mut s = ComputedStyle::initial();
-    s.position = Position::Fixed;
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.position = Position::Fixed);
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_combined_inline_block_hidden() {
     let mut s = ComputedStyle::initial();
-    s.display = Display::InlineBlock;
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.display = Display::InlineBlock);
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_combined_flow_root_auto() {
     let mut s = ComputedStyle::initial();
-    s.display = Display::FlowRoot;
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.display = Display::FlowRoot);
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
 }
 
@@ -3750,17 +3750,17 @@ fn bfc_combined_flow_root_auto() {
 fn bfc_combined_flex_clip() {
     let mut s = ComputedStyle::initial();
     // Flex display creates a new FC regardless of overflow
-    s.display = Display::Flex;
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.display = Display::Flex);
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn bfc_parametric_1() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Auto.is_clipping());
 }
@@ -3768,8 +3768,8 @@ fn bfc_parametric_1() {
 #[test]
 fn bfc_parametric_2() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Scroll.is_clipping());
 }
@@ -3777,8 +3777,8 @@ fn bfc_parametric_2() {
 #[test]
 fn bfc_parametric_3() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
@@ -3786,8 +3786,8 @@ fn bfc_parametric_3() {
 #[test]
 fn bfc_parametric_4() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Hidden.is_clipping());
 }
@@ -3795,8 +3795,8 @@ fn bfc_parametric_4() {
 #[test]
 fn bfc_parametric_5() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Auto.is_clipping());
 }
@@ -3804,8 +3804,8 @@ fn bfc_parametric_5() {
 #[test]
 fn bfc_parametric_6() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Scroll.is_clipping());
 }
@@ -3813,8 +3813,8 @@ fn bfc_parametric_6() {
 #[test]
 fn bfc_parametric_7() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
@@ -3822,8 +3822,8 @@ fn bfc_parametric_7() {
 #[test]
 fn bfc_parametric_8() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Hidden.is_clipping());
 }
@@ -3831,8 +3831,8 @@ fn bfc_parametric_8() {
 #[test]
 fn bfc_parametric_9() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Auto.is_clipping());
 }
@@ -3840,8 +3840,8 @@ fn bfc_parametric_9() {
 #[test]
 fn bfc_parametric_10() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Scroll.is_clipping());
 }
@@ -3849,8 +3849,8 @@ fn bfc_parametric_10() {
 #[test]
 fn bfc_parametric_11() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
@@ -3858,8 +3858,8 @@ fn bfc_parametric_11() {
 #[test]
 fn bfc_parametric_12() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Hidden.is_clipping());
 }
@@ -3867,8 +3867,8 @@ fn bfc_parametric_12() {
 #[test]
 fn bfc_parametric_13() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Auto.is_clipping());
 }
@@ -3876,8 +3876,8 @@ fn bfc_parametric_13() {
 #[test]
 fn bfc_parametric_14() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Scroll.is_clipping());
 }
@@ -3885,8 +3885,8 @@ fn bfc_parametric_14() {
 #[test]
 fn bfc_parametric_15() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
@@ -3894,8 +3894,8 @@ fn bfc_parametric_15() {
 #[test]
 fn bfc_parametric_16() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Hidden.is_clipping());
 }
@@ -3903,8 +3903,8 @@ fn bfc_parametric_16() {
 #[test]
 fn bfc_parametric_17() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Auto.is_clipping());
 }
@@ -3912,8 +3912,8 @@ fn bfc_parametric_17() {
 #[test]
 fn bfc_parametric_18() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Scroll.is_clipping());
 }
@@ -3921,8 +3921,8 @@ fn bfc_parametric_18() {
 #[test]
 fn bfc_parametric_19() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
@@ -3930,8 +3930,8 @@ fn bfc_parametric_19() {
 #[test]
 fn bfc_parametric_20() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Hidden.is_clipping());
 }
@@ -3939,8 +3939,8 @@ fn bfc_parametric_20() {
 #[test]
 fn bfc_parametric_21() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Auto.is_clipping());
 }
@@ -3948,8 +3948,8 @@ fn bfc_parametric_21() {
 #[test]
 fn bfc_parametric_22() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Scroll.is_clipping());
 }
@@ -3957,8 +3957,8 @@ fn bfc_parametric_22() {
 #[test]
 fn bfc_parametric_23() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
@@ -3966,8 +3966,8 @@ fn bfc_parametric_23() {
 #[test]
 fn bfc_parametric_24() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Hidden.is_clipping());
 }
@@ -3975,8 +3975,8 @@ fn bfc_parametric_24() {
 #[test]
 fn bfc_parametric_25() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Auto.is_clipping());
 }
@@ -3984,8 +3984,8 @@ fn bfc_parametric_25() {
 #[test]
 fn bfc_parametric_26() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Scroll.is_clipping());
 }
@@ -3993,8 +3993,8 @@ fn bfc_parametric_26() {
 #[test]
 fn bfc_parametric_27() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
@@ -4002,8 +4002,8 @@ fn bfc_parametric_27() {
 #[test]
 fn bfc_parametric_28() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Hidden.is_clipping());
 }
@@ -4011,8 +4011,8 @@ fn bfc_parametric_28() {
 #[test]
 fn bfc_parametric_29() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Auto.is_clipping());
 }
@@ -4020,8 +4020,8 @@ fn bfc_parametric_29() {
 #[test]
 fn bfc_parametric_30() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Scroll.is_clipping());
 }
@@ -4029,8 +4029,8 @@ fn bfc_parametric_30() {
 #[test]
 fn bfc_parametric_31() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
@@ -4038,8 +4038,8 @@ fn bfc_parametric_31() {
 #[test]
 fn bfc_parametric_32() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Hidden.is_clipping());
 }
@@ -4047,8 +4047,8 @@ fn bfc_parametric_32() {
 #[test]
 fn bfc_parametric_33() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Auto.is_clipping());
 }
@@ -4056,8 +4056,8 @@ fn bfc_parametric_33() {
 #[test]
 fn bfc_parametric_34() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Scroll.is_clipping());
 }
@@ -4065,8 +4065,8 @@ fn bfc_parametric_34() {
 #[test]
 fn bfc_parametric_35() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
@@ -4074,8 +4074,8 @@ fn bfc_parametric_35() {
 #[test]
 fn bfc_parametric_36() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Hidden.is_clipping());
 }
@@ -4083,8 +4083,8 @@ fn bfc_parametric_36() {
 #[test]
 fn bfc_parametric_37() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Auto.is_clipping());
 }
@@ -4092,8 +4092,8 @@ fn bfc_parametric_37() {
 #[test]
 fn bfc_parametric_38() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Scroll.is_clipping());
 }
@@ -4101,8 +4101,8 @@ fn bfc_parametric_38() {
 #[test]
 fn bfc_parametric_39() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(!establishes_new_fc(&s));
     assert!(Overflow::Clip.is_clipping());
 }
@@ -4110,8 +4110,8 @@ fn bfc_parametric_39() {
 #[test]
 fn bfc_parametric_40() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
     assert!(Overflow::Hidden.is_clipping());
 }
@@ -4125,18 +4125,18 @@ fn positioning_relative_child_in_hidden_container() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(10.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(10.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4147,18 +4147,18 @@ fn positioning_absolute_child_in_hidden_container() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(c).style.position = Position::Relative;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.position = Position::Relative);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(50.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Absolute;
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Absolute);
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4169,18 +4169,18 @@ fn positioning_relative_contributes_to_overflow() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(80.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(80.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4198,18 +4198,18 @@ fn positioning_relative_in_hidden() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(50.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(10.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(10.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4220,20 +4220,20 @@ fn positioning_absolute_in_hidden() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(c).style.position = Position::Relative;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.position = Position::Relative);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(50.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Absolute;
-    doc.node_mut(ch).style.top = Length::px(10.0);
-    doc.node_mut(ch).style.left = Length::px(10.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(ch, |style| style.left = Length::px(10.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4244,18 +4244,18 @@ fn positioning_relative_in_scroll() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(50.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(10.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(10.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4266,20 +4266,20 @@ fn positioning_absolute_in_scroll() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
-    doc.node_mut(c).style.position = Position::Relative;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.position = Position::Relative);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(50.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Absolute;
-    doc.node_mut(ch).style.top = Length::px(10.0);
-    doc.node_mut(ch).style.left = Length::px(10.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(ch, |style| style.left = Length::px(10.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4290,18 +4290,18 @@ fn positioning_relative_in_auto() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(50.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(10.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(10.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4312,20 +4312,20 @@ fn positioning_absolute_in_auto() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
-    doc.node_mut(c).style.position = Position::Relative;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.position = Position::Relative);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(50.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Absolute;
-    doc.node_mut(ch).style.top = Length::px(10.0);
-    doc.node_mut(ch).style.left = Length::px(10.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(ch, |style| style.left = Length::px(10.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4336,18 +4336,18 @@ fn positioning_relative_in_clip() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(50.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(10.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(10.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4358,20 +4358,20 @@ fn positioning_absolute_in_clip() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
-    doc.node_mut(c).style.position = Position::Relative;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.position = Position::Relative);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(50.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Absolute;
-    doc.node_mut(ch).style.top = Length::px(10.0);
-    doc.node_mut(ch).style.left = Length::px(10.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(ch, |style| style.left = Length::px(10.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4382,18 +4382,18 @@ fn positioning_parametric_1() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(5.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(5.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4404,18 +4404,18 @@ fn positioning_parametric_2() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(10.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(10.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4426,18 +4426,18 @@ fn positioning_parametric_3() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(15.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(15.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4448,18 +4448,18 @@ fn positioning_parametric_4() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(20.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(20.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4470,18 +4470,18 @@ fn positioning_parametric_5() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(25.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(25.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4492,18 +4492,18 @@ fn positioning_parametric_6() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(30.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(30.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4514,18 +4514,18 @@ fn positioning_parametric_7() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(35.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(35.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4536,18 +4536,18 @@ fn positioning_parametric_8() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(40.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(40.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4558,18 +4558,18 @@ fn positioning_parametric_9() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(45.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(45.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4580,18 +4580,18 @@ fn positioning_parametric_10() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(50.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(50.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4602,18 +4602,18 @@ fn positioning_parametric_11() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(55.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(55.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4624,18 +4624,18 @@ fn positioning_parametric_12() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(60.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(60.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4646,18 +4646,18 @@ fn positioning_parametric_13() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(65.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(65.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4668,18 +4668,18 @@ fn positioning_parametric_14() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(70.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(70.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4690,18 +4690,18 @@ fn positioning_parametric_15() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(75.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(75.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4712,18 +4712,18 @@ fn positioning_parametric_16() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(80.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(80.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4734,18 +4734,18 @@ fn positioning_parametric_17() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(85.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(85.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4756,18 +4756,18 @@ fn positioning_parametric_18() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(90.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(90.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4778,18 +4778,18 @@ fn positioning_parametric_19() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(95.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(95.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4800,18 +4800,18 @@ fn positioning_parametric_20() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(100.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(100.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4822,18 +4822,18 @@ fn positioning_parametric_21() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(105.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(105.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4844,18 +4844,18 @@ fn positioning_parametric_22() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(110.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(110.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4866,18 +4866,18 @@ fn positioning_parametric_23() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(115.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(115.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4888,18 +4888,18 @@ fn positioning_parametric_24() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(120.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(120.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4910,18 +4910,18 @@ fn positioning_parametric_25() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(125.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(125.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4932,18 +4932,18 @@ fn positioning_parametric_26() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(130.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(130.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4954,18 +4954,18 @@ fn positioning_parametric_27() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(135.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(135.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4976,18 +4976,18 @@ fn positioning_parametric_28() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(140.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(140.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -4998,18 +4998,18 @@ fn positioning_parametric_29() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(145.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(145.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5020,18 +5020,18 @@ fn positioning_parametric_30() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(150.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(150.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5042,18 +5042,18 @@ fn positioning_parametric_31() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(155.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(155.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5064,18 +5064,18 @@ fn positioning_parametric_32() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(160.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(160.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5086,18 +5086,18 @@ fn positioning_parametric_33() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(165.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(165.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5108,18 +5108,18 @@ fn positioning_parametric_34() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(170.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(170.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5130,18 +5130,18 @@ fn positioning_parametric_35() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(175.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(175.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5152,18 +5152,18 @@ fn positioning_parametric_36() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(180.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(180.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5174,18 +5174,18 @@ fn positioning_parametric_37() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(185.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(185.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5196,18 +5196,18 @@ fn positioning_parametric_38() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(190.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(190.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5218,18 +5218,18 @@ fn positioning_parametric_39() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(195.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(195.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5240,18 +5240,18 @@ fn positioning_parametric_40() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(200.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(200.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5262,18 +5262,18 @@ fn positioning_parametric_41() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(205.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(205.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5284,18 +5284,18 @@ fn positioning_parametric_42() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(210.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(210.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5306,18 +5306,18 @@ fn positioning_parametric_43() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(215.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(215.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5328,18 +5328,18 @@ fn positioning_parametric_44() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(220.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(220.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5350,18 +5350,18 @@ fn positioning_parametric_45() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(225.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(225.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5372,18 +5372,18 @@ fn positioning_parametric_46() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(230.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(230.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5394,18 +5394,18 @@ fn positioning_parametric_47() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(235.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(235.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5416,18 +5416,18 @@ fn positioning_parametric_48() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(240.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(240.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5438,18 +5438,18 @@ fn positioning_parametric_49() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(245.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(245.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5460,18 +5460,18 @@ fn positioning_parametric_50() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
-    doc.node_mut(ch).style.position = Position::Relative;
-    doc.node_mut(ch).style.top = Length::px(250.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(ch, |style| style.position = Position::Relative);
+    doc.update_resolved_style(ch, |style| style.top = Length::px(250.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     assert!(container(&f).has_overflow_clip);
@@ -5484,10 +5484,10 @@ fn positioning_parametric_50() {
 #[test]
 fn border_radius_single_uniform() {
     let mut s = ComputedStyle::initial();
-    s.border_top_left_radius = (10.0, 10.0);
-    s.border_top_right_radius = (10.0, 10.0);
-    s.border_bottom_right_radius = (10.0, 10.0);
-    s.border_bottom_left_radius = (10.0, 10.0);
+    s.update_derived(|computed| computed.border_top_left_radius = (10.0, 10.0));
+    s.update_derived(|computed| computed.border_top_right_radius = (10.0, 10.0));
+    s.update_derived(|computed| computed.border_bottom_right_radius = (10.0, 10.0));
+    s.update_derived(|computed| computed.border_bottom_left_radius = (10.0, 10.0));
     assert!(s.has_border_radius());
 }
 
@@ -5500,24 +5500,24 @@ fn border_radius_no_radius() {
 #[test]
 fn border_radius_different_per_corner() {
     let mut s = ComputedStyle::initial();
-    s.border_top_left_radius = (5.0, 5.0);
-    s.border_top_right_radius = (10.0, 10.0);
-    s.border_bottom_right_radius = (15.0, 15.0);
-    s.border_bottom_left_radius = (20.0, 20.0);
+    s.update_derived(|computed| computed.border_top_left_radius = (5.0, 5.0));
+    s.update_derived(|computed| computed.border_top_right_radius = (10.0, 10.0));
+    s.update_derived(|computed| computed.border_bottom_right_radius = (15.0, 15.0));
+    s.update_derived(|computed| computed.border_bottom_left_radius = (20.0, 20.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_elliptical() {
     let mut s = ComputedStyle::initial();
-    s.border_top_left_radius = (10.0, 20.0);
+    s.update_derived(|computed| computed.border_top_left_radius = (10.0, 20.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_single_corner_only() {
     let mut s = ComputedStyle::initial();
-    s.border_top_left_radius = (10.0, 10.0);
+    s.update_derived(|computed| computed.border_top_left_radius = (10.0, 10.0));
     assert!(s.has_border_radius());
 }
 
@@ -5526,20 +5526,20 @@ fn border_radius_with_overflow_hidden_layout() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(c).style.border_top_left_radius = (20.0, 20.0);
-    doc.node_mut(c).style.border_top_right_radius = (20.0, 20.0);
-    doc.node_mut(c).style.border_bottom_right_radius = (20.0, 20.0);
-    doc.node_mut(c).style.border_bottom_left_radius = (20.0, 20.0);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.border_top_left_radius = (20.0, 20.0));
+    doc.update_resolved_style(c, |style| style.border_top_right_radius = (20.0, 20.0));
+    doc.update_resolved_style(c, |style| style.border_bottom_right_radius = (20.0, 20.0));
+    doc.update_resolved_style(c, |style| style.border_bottom_left_radius = (20.0, 20.0));
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     let cf = container(&f);
@@ -5552,10 +5552,10 @@ fn border_radius_without_overflow_no_clip() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.border_top_left_radius = (20.0, 20.0);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.border_top_left_radius = (20.0, 20.0));
     doc.append_child(vp, c);
     let f = layout(&doc);
     assert!(!container(&f).has_overflow_clip);
@@ -5564,175 +5564,175 @@ fn border_radius_without_overflow_no_clip() {
 #[test]
 fn border_radius_large_clamped_check() {
     let mut s = ComputedStyle::initial();
-    s.border_top_left_radius = (9999.0, 9999.0);
+    s.update_derived(|computed| computed.border_top_left_radius = (9999.0, 9999.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_left_1px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_left_radius = (1.0, 1.0);
+    s.update_derived(|computed| computed.border_top_left_radius = (1.0, 1.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_left_5px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_left_radius = (5.0, 5.0);
+    s.update_derived(|computed| computed.border_top_left_radius = (5.0, 5.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_left_10px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_left_radius = (10.0, 10.0);
+    s.update_derived(|computed| computed.border_top_left_radius = (10.0, 10.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_left_25px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_left_radius = (25.0, 25.0);
+    s.update_derived(|computed| computed.border_top_left_radius = (25.0, 25.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_left_50px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_left_radius = (50.0, 50.0);
+    s.update_derived(|computed| computed.border_top_left_radius = (50.0, 50.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_left_100px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_left_radius = (100.0, 100.0);
+    s.update_derived(|computed| computed.border_top_left_radius = (100.0, 100.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_right_1px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_right_radius = (1.0, 1.0);
+    s.update_derived(|computed| computed.border_top_right_radius = (1.0, 1.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_right_5px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_right_radius = (5.0, 5.0);
+    s.update_derived(|computed| computed.border_top_right_radius = (5.0, 5.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_right_10px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_right_radius = (10.0, 10.0);
+    s.update_derived(|computed| computed.border_top_right_radius = (10.0, 10.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_right_25px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_right_radius = (25.0, 25.0);
+    s.update_derived(|computed| computed.border_top_right_radius = (25.0, 25.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_right_50px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_right_radius = (50.0, 50.0);
+    s.update_derived(|computed| computed.border_top_right_radius = (50.0, 50.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_top_right_100px() {
     let mut s = ComputedStyle::initial();
-    s.border_top_right_radius = (100.0, 100.0);
+    s.update_derived(|computed| computed.border_top_right_radius = (100.0, 100.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_right_1px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_right_radius = (1.0, 1.0);
+    s.update_derived(|computed| computed.border_bottom_right_radius = (1.0, 1.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_right_5px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_right_radius = (5.0, 5.0);
+    s.update_derived(|computed| computed.border_bottom_right_radius = (5.0, 5.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_right_10px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_right_radius = (10.0, 10.0);
+    s.update_derived(|computed| computed.border_bottom_right_radius = (10.0, 10.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_right_25px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_right_radius = (25.0, 25.0);
+    s.update_derived(|computed| computed.border_bottom_right_radius = (25.0, 25.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_right_50px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_right_radius = (50.0, 50.0);
+    s.update_derived(|computed| computed.border_bottom_right_radius = (50.0, 50.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_right_100px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_right_radius = (100.0, 100.0);
+    s.update_derived(|computed| computed.border_bottom_right_radius = (100.0, 100.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_left_1px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_left_radius = (1.0, 1.0);
+    s.update_derived(|computed| computed.border_bottom_left_radius = (1.0, 1.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_left_5px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_left_radius = (5.0, 5.0);
+    s.update_derived(|computed| computed.border_bottom_left_radius = (5.0, 5.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_left_10px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_left_radius = (10.0, 10.0);
+    s.update_derived(|computed| computed.border_bottom_left_radius = (10.0, 10.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_left_25px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_left_radius = (25.0, 25.0);
+    s.update_derived(|computed| computed.border_bottom_left_radius = (25.0, 25.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_left_50px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_left_radius = (50.0, 50.0);
+    s.update_derived(|computed| computed.border_bottom_left_radius = (50.0, 50.0));
     assert!(s.has_border_radius());
 }
 
 #[test]
 fn border_radius_bottom_left_100px() {
     let mut s = ComputedStyle::initial();
-    s.border_bottom_left_radius = (100.0, 100.0);
+    s.update_derived(|computed| computed.border_bottom_left_radius = (100.0, 100.0));
     assert!(s.has_border_radius());
 }
 
@@ -5741,17 +5741,17 @@ fn border_radius_with_overflow_hidden() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(c).style.overflow_y = Overflow::Hidden;
-    doc.node_mut(c).style.border_top_left_radius = (15.0, 15.0);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Hidden);
+    doc.update_resolved_style(c, |style| style.border_top_left_radius = (15.0, 15.0));
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     let cf = container(&f);
@@ -5764,17 +5764,17 @@ fn border_radius_with_overflow_scroll() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(c).style.overflow_y = Overflow::Scroll;
-    doc.node_mut(c).style.border_top_left_radius = (15.0, 15.0);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Scroll);
+    doc.update_resolved_style(c, |style| style.border_top_left_radius = (15.0, 15.0));
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     let cf = container(&f);
@@ -5787,17 +5787,17 @@ fn border_radius_with_overflow_auto() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Auto;
-    doc.node_mut(c).style.overflow_y = Overflow::Auto;
-    doc.node_mut(c).style.border_top_left_radius = (15.0, 15.0);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Auto);
+    doc.update_resolved_style(c, |style| style.border_top_left_radius = (15.0, 15.0));
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     let cf = container(&f);
@@ -5810,17 +5810,17 @@ fn border_radius_with_overflow_clip() {
     let mut doc = Document::new();
     let vp = doc.root();
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(200.0);
-    doc.node_mut(c).style.height = Length::px(100.0);
-    doc.node_mut(c).style.overflow_x = Overflow::Clip;
-    doc.node_mut(c).style.overflow_y = Overflow::Clip;
-    doc.node_mut(c).style.border_top_left_radius = (15.0, 15.0);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(c, |style| style.overflow_x = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.overflow_y = Overflow::Clip);
+    doc.update_resolved_style(c, |style| style.border_top_left_radius = (15.0, 15.0));
     doc.append_child(vp, c);
     let ch = doc.create_node(ElementTag::Div);
-    doc.node_mut(ch).style.display = Display::Block;
-    doc.node_mut(ch).style.width = Length::px(200.0);
-    doc.node_mut(ch).style.height = Length::px(50.0);
+    doc.update_resolved_style(ch, |style| style.display = Display::Block);
+    doc.update_resolved_style(ch, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ch, |style| style.height = Length::px(50.0));
     doc.append_child(c, ch);
     let f = layout(&doc);
     let cf = container(&f);
@@ -5867,8 +5867,8 @@ fn edge_very_large_overflow() {
 #[test]
 fn edge_overflow_shorthand_both_same() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(s.overflow_x == s.overflow_y);
     assert!(establishes_new_fc(&s));
 }
@@ -5876,8 +5876,8 @@ fn edge_overflow_shorthand_both_same() {
 #[test]
 fn edge_overflow_shorthand_mixed() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Scroll;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Scroll);
     assert!(s.overflow_x != s.overflow_y);
     assert!(establishes_new_fc(&s));
 }
@@ -6419,24 +6419,24 @@ fn edge_parametric_40() {
 #[test]
 fn additional_overflow_x_hidden_y_visible() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Hidden;
-    s.overflow_y = Overflow::Visible;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Visible);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn additional_overflow_x_visible_y_hidden() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Visible;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Visible);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn additional_overflow_x_scroll_y_auto() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Auto;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(establishes_new_fc(&s));
     assert!(s.overflow_x.is_scrollable());
     assert!(s.overflow_y.is_scrollable());
@@ -6445,8 +6445,8 @@ fn additional_overflow_x_scroll_y_auto() {
 #[test]
 fn additional_overflow_x_clip_y_hidden() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Clip;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Clip);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
     assert!(s.overflow_x.is_clipping());
     assert!(s.overflow_y.is_clipping());
@@ -6455,16 +6455,16 @@ fn additional_overflow_x_clip_y_hidden() {
 #[test]
 fn additional_overflow_x_auto_y_clip() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Auto;
-    s.overflow_y = Overflow::Clip;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Clip);
     assert!(establishes_new_fc(&s));
 }
 
 #[test]
 fn additional_overflow_x_scroll_y_hidden() {
     let mut s = ComputedStyle::initial();
-    s.overflow_x = Overflow::Scroll;
-    s.overflow_y = Overflow::Hidden;
+    s.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
+    s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     assert!(establishes_new_fc(&s));
 }
 

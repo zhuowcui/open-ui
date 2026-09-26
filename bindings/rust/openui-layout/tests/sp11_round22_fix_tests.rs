@@ -43,9 +43,9 @@ fn text_align_last_center_with_text_align_left() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Left;
-    doc.node_mut(block).style.text_align_last = TextAlignLast::Center;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Left);
+    doc.update_resolved_style(block, |style| style.text_align_last = TextAlignLast::Center);
     doc.append_child(root, block);
 
     let text = doc.create_node(ElementTag::Text);
@@ -74,10 +74,10 @@ fn text_align_last_end_with_text_align_start() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Start;
-    doc.node_mut(block).style.text_align_last = TextAlignLast::End;
-    doc.node_mut(block).style.direction = Direction::Ltr;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Start);
+    doc.update_resolved_style(block, |style| style.text_align_last = TextAlignLast::End);
+    doc.update_resolved_style(block, |style| style.direction = Direction::Ltr);
     doc.append_child(root, block);
 
     let text = doc.create_node(ElementTag::Text);
@@ -105,9 +105,9 @@ fn text_align_last_auto_with_non_justify_preserves_text_align() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Right;
-    doc.node_mut(block).style.text_align_last = TextAlignLast::Auto;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Right);
+    doc.update_resolved_style(block, |style| style.text_align_last = TextAlignLast::Auto);
     doc.append_child(root, block);
 
     let text = doc.create_node(ElementTag::Text);
@@ -139,9 +139,11 @@ fn inter_character_justify_single_item_expands_shape() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Justify;
-    doc.node_mut(block).style.text_justify = TextJustify::InterCharacter;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Justify);
+    doc.update_resolved_style(block, |style| {
+        style.text_justify = TextJustify::InterCharacter
+    });
     doc.append_child(root, block);
 
     // Use enough text that it wraps to two lines in a narrow container.
@@ -173,22 +175,24 @@ fn inter_character_justify_boundary_gaps_between_items() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Justify;
-    doc.node_mut(block).style.text_justify = TextJustify::InterCharacter;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Justify);
+    doc.update_resolved_style(block, |style| {
+        style.text_justify = TextJustify::InterCharacter
+    });
     doc.append_child(root, block);
 
     // Create two inline spans with text, and a second line to ensure
     // the first line is not the last line (so justify applies).
     let span1 = doc.create_node(ElementTag::Span);
-    doc.node_mut(span1).style.display = Display::Inline;
+    doc.update_resolved_style(span1, |style| style.display = Display::Inline);
     doc.append_child(block, span1);
     let t1 = doc.create_node(ElementTag::Text);
     doc.node_mut(t1).text = Some("AB".to_string());
     doc.append_child(span1, t1);
 
     let span2 = doc.create_node(ElementTag::Span);
-    doc.node_mut(span2).style.display = Display::Inline;
+    doc.update_resolved_style(span2, |style| style.display = Display::Inline);
     doc.append_child(block, span2);
     let t2 = doc.create_node(ElementTag::Text);
     doc.node_mut(t2).text = Some("CD EFGH IJKL".to_string());

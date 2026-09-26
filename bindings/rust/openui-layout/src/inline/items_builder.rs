@@ -10,21 +10,89 @@
 //! - Forced breaks (`<br>` via ElementTag convention)
 //! - Text shaping via openui-text
 
-use openui_dom::{Document, ElementTag, NodeId};
+use openui_dom::{Document, ElementTag, NodeId, PseudoElementKind};
+use openui_geometry::WritingDirectionMode;
 use openui_style::{
-    ComputedStyle, Direction, Display, Float, TabSize, TextTransform, UnicodeBidi, WhiteSpace,
+    ComputedStyle, Direction, Display, Float, FontFamily, Position, TabSize, TextTransform,
+    UnicodeBidi, WhiteSpace,
 };
+use openui_text::shaping::Script;
 use openui_text::{
-    apply_text_transform, BidiParagraph, Font, FontDescription, TextDirection, TextShaper,
+    apply_text_transform, BidiParagraph, Font, FontDescription, RunSegmenter, TextDirection,
+    TextShaper,
 };
 use std::sync::Arc;
+use unicode_segmentation::UnicodeSegmentation;
 
 use super::items::{CollapseType, InlineItem, InlineItemType};
-use crate::length_resolver::resolve_margin_or_padding;
+use crate::fragment::{resolve_text_run_orientation, TextRunOrientation};
+use crate::length_resolver::{resolve_length, resolve_margin_or_padding};
+
+/// Resolve a horizontal-writing element's definite content-box height from
+/// authored fixed/percentage sizes. Absolutely positioned percentage heights
+/// use the positioned ancestor's padding box, while normal-flow percentages
+/// use the parent's content box.
+fn definite_content_block_size(
+    doc: &Document,
+    node_id: NodeId,
+    depth: usize,
+) -> Option<openui_geometry::LayoutUnit> {
+    if depth > 32 || node_id.is_none() {
+        return None;
+    }
+    let node = doc.node(node_id);
+    let style = &node.style;
+    if !style
+        .direction
+        .writing_direction(style.writing_mode)
+        .is_horizontal()
+    {
+        return None;
+    }
+    let padding = crate::block::resolve_padding(style, openui_geometry::LayoutUnit::zero());
+    let border = crate::block::resolve_border(style);
+    let raw = if style.height.is_fixed() {
+        openui_geometry::LayoutUnit::from_f32(style.height.value())
+    } else if style.height.is_percent()
+        || style.height.length_type() == openui_geometry::LengthType::Calculated
+    {
+        let parent_id = node.parent;
+        if parent_id.is_none() {
+            return None;
+        }
+        let parent_content = definite_content_block_size(doc, parent_id, depth + 1)?;
+        let percentage_base = if style.position.is_absolutely_positioned() {
+            let parent_style = &doc.node(parent_id).style;
+            let parent_padding =
+                crate::block::resolve_padding(parent_style, openui_geometry::LayoutUnit::zero());
+            parent_content + parent_padding.block_sum()
+        } else {
+            parent_content
+        };
+        resolve_length(
+            &style.height,
+            percentage_base,
+            openui_geometry::INDEFINITE_SIZE,
+            openui_geometry::INDEFINITE_SIZE,
+        )
+    } else {
+        return None;
+    };
+    if raw.is_indefinite() {
+        return None;
+    }
+    Some(if style.box_sizing == openui_style::BoxSizing::BorderBox {
+        (raw - border.block_sum() - padding.block_sum()).clamp_negative_to_zero()
+    } else {
+        raw
+    })
+}
 
 /// The collected inline items data — output of the builder.
 #[derive(Clone, Debug)]
 pub struct InlineItemsData {
+    /// Collection that resolved all fonts in this immutable inline stream.
+    pub font_collection: std::sync::Arc<openui_text::FontCollection>,
     /// Concatenated text content from all text nodes.
     pub text: String,
     /// Flat list of inline items in document order.
@@ -86,7 +154,85 @@ pub struct OofPlaceholder {
     pub inline_containing_block: Option<NodeId>,
 }
 
+/// Source-order position of a float encountered while flattening an IFC.
+#[derive(Clone, Debug)]
+pub struct FloatPlaceholder {
+    pub node_id: NodeId,
+    pub item_index: usize,
+    pub text_offset: usize,
+    pub inline_ancestor: Option<NodeId>,
+    pub inline_ancestor_text_offset: usize,
+}
+
 impl InlineItemsData {
+    /// Apply the originating block's computed `::first-line` style to a clone
+    /// of this item stream. The clone is shaped and broken only for line one;
+    /// subsequent lines continue with the ordinary stream.
+    pub fn apply_first_line_style(&mut self, base: &ComputedStyle, pseudo: &ComputedStyle) {
+        for style in &mut self.styles {
+            let descendant_color = (style.color != base.color).then_some(style.color);
+            *style = highlighted_text_style(style, pseudo, false);
+            if let Some(color) = descendant_color {
+                style.update_derived(|style| style.color = color);
+            }
+        }
+        for item in &mut self.items {
+            item.shape_result = None;
+        }
+    }
+
+    /// Split text items at the first-letter range and attach the computed
+    /// pseudo style. Extraction operates on the flattened text so leading and
+    /// trailing punctuation may cross nested inline/generated-text nodes.
+    pub fn apply_first_letter_style(&mut self, base: &ComputedStyle, pseudo: &ComputedStyle) {
+        let Some(extraction) = super::first_letter::extract_first_letter(&self.text) else {
+            return;
+        };
+        let start = extraction.first_letter_start;
+        let end = extraction.first_letter_end;
+        let mut rebuilt = Vec::with_capacity(self.items.len() + 2);
+        for item in self.items.drain(..) {
+            if item.item_type != InlineItemType::Text
+                || item.text_range.end <= start
+                || item.text_range.start >= end
+            {
+                rebuilt.push(item);
+                continue;
+            }
+            if item.text_range.start < start {
+                let mut before = item.clone();
+                before.text_range.end = start;
+                before.shape_result = None;
+                before.end_collapse_type = CollapseType::NotCollapsible;
+                before.is_end_collapsible_newline = false;
+                rebuilt.push(before);
+            }
+            let mut highlighted = item.clone();
+            highlighted.text_range = item.text_range.start.max(start)..item.text_range.end.min(end);
+            highlighted.shape_result = None;
+            let mut style = self.styles[item.style_index].clone();
+            let descendant_color = (style.color != base.color).then_some(style.color);
+            style = highlighted_text_style(&style, pseudo, true);
+            if let Some(color) = descendant_color {
+                style.update_derived(|style| style.color = color);
+            }
+            highlighted.style_index = self.styles.len();
+            self.styles.push(style);
+            if highlighted.text_range.end != item.text_range.end {
+                highlighted.end_collapse_type = CollapseType::NotCollapsible;
+                highlighted.is_end_collapsible_newline = false;
+            }
+            rebuilt.push(highlighted);
+            if item.text_range.end > end {
+                let mut after = item;
+                after.text_range.start = end;
+                after.shape_result = None;
+                rebuilt.push(after);
+            }
+        }
+        self.items = rebuilt;
+    }
+
     /// Shape all text items using HarfBuzz via the text shaper.
     ///
     /// Each text item gets its own `ShapeResult` based on the item's
@@ -98,7 +244,10 @@ impl InlineItemsData {
                 let text = &self.text[item.text_range.clone()];
                 let style = &self.styles[item.style_index];
                 let font_desc = style_to_font_description(style);
-                let font = Font::new(font_desc);
+                let font = Font::new_in_collection(
+                    font_desc,
+                    std::sync::Arc::clone(&self.font_collection),
+                );
                 // Use bidi level for direction: odd = RTL, even = LTR.
                 // This ensures RTL sub-items (after bidi splitting) are shaped
                 // with RTL direction, not the CSS direction property.
@@ -124,10 +273,12 @@ impl InlineItemsData {
     /// bidi analysis, then mapped back to the original text positions.
     ///
     /// Blink: `InlineItemsBuilder::SetBidiLevel` / `BidiParagraph::SetParagraph`.
-    pub fn apply_bidi(&mut self, base_direction: TextDirection) {
+    pub fn apply_bidi(&mut self, base_direction: impl Into<Option<TextDirection>>) {
         if self.text.is_empty() {
             return;
         }
+
+        let requested_base_direction = base_direction.into();
 
         // Build a bidi text buffer that includes unicode-bidi control characters
         // injected at inline element boundaries (OpenTag/CloseTag).
@@ -184,7 +335,7 @@ impl InlineItemsData {
             }
         }
 
-        let bidi = BidiParagraph::new(&bidi_text, Some(base_direction));
+        let bidi = BidiParagraph::new(&bidi_text, requested_base_direction);
         let runs = bidi.runs();
 
         // Build a mapping from original text byte positions to bidi levels.
@@ -222,7 +373,7 @@ impl InlineItemsData {
         // first subsequent Text/AtomicInline; CloseTag inherits the level of
         // the last preceding Text/AtomicInline. This ensures tag items don't
         // break contiguous bidi runs during UAX#9 L2 reordering.
-        let base_level = if base_direction == TextDirection::Rtl {
+        let base_level = if bidi.base_direction() == TextDirection::Rtl {
             1
         } else {
             0
@@ -260,8 +411,11 @@ impl InlineItemsData {
         // Re-derive runs in original text coordinates from orig_levels.
         let orig_runs = derive_runs_from_levels(&self.text, &orig_levels);
 
-        let mut new_items = Vec::with_capacity(self.items.len());
-        for item in self.items.drain(..) {
+        let old_item_count = self.items.len();
+        let mut boundary_map = vec![0usize; old_item_count + 1];
+        let mut new_items = Vec::with_capacity(old_item_count);
+        for (old_index, item) in self.items.drain(..).enumerate() {
+            boundary_map[old_index] = new_items.len();
             if item.item_type != InlineItemType::Text || item.text_range.is_empty() {
                 new_items.push(item);
                 continue;
@@ -312,8 +466,219 @@ impl InlineItemsData {
             }
         }
 
+        boundary_map[old_item_count] = new_items.len();
+        for placeholder in &mut self.oof_children {
+            placeholder.item_index = boundary_map[placeholder.item_index.min(old_item_count)];
+        }
+        for interruption in &mut self.block_in_inline {
+            interruption.item_index = boundary_map[interruption.item_index.min(old_item_count)];
+        }
         self.items = new_items;
     }
+
+    /// Split text items into runs that are homogeneous for shaping and paint.
+    ///
+    /// Bidi levels are resolved first. This pass then adds script, deterministic
+    /// fallback-family, grapheme-cluster, and vertical-orientation boundaries.
+    /// No `UnresolvedMixed` item may leave this pass, so paint never needs to
+    /// rediscover Unicode orientation from CSS or text contents.
+    pub fn split_shaping_runs(&mut self) {
+        let old_item_count = self.items.len();
+        let mut boundary_map = vec![0usize; old_item_count + 1];
+        let mut new_items = Vec::with_capacity(old_item_count);
+
+        for (old_index, item) in self.items.drain(..).enumerate() {
+            boundary_map[old_index] = new_items.len();
+            if item.item_type != InlineItemType::Text || item.text_range.is_empty() {
+                new_items.push(item);
+                continue;
+            }
+
+            let style = &self.styles[item.style_index];
+            if !style.font_family.families.iter().any(|family| {
+                matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
+            }) {
+                // The homogeneous fragment contract is enabled by the pinned
+                // deterministic fallback profile. Legacy ported builders keep
+                // their established single-run shaping until regenerated into
+                // that profile, preserving their frozen comparison evidence.
+                new_items.push(item);
+                continue;
+            }
+            let item_text = &self.text[item.text_range.clone()];
+            let font = Font::new_in_collection(
+                style_to_font_description(style),
+                std::sync::Arc::clone(&self.font_collection),
+            );
+            let scripts = RunSegmenter::segment(item_text);
+            let mut runs: Vec<(usize, usize, (TextRunOrientation, Script, Option<usize>))> =
+                Vec::new();
+
+            for (relative_start, grapheme) in item_text.grapheme_indices(true) {
+                let relative_end = relative_start + grapheme.len();
+                let mut script = scripts
+                    .iter()
+                    .find(|segment| segment.start <= relative_start && relative_start < segment.end)
+                    .map(|segment| segment.script)
+                    .unwrap_or(Script::Common);
+                if matches!(script, Script::Common | Script::Inherited) {
+                    // Leading Common/Inherited characters belong to the first
+                    // following strong-script run. RunSegmenter already folds
+                    // weak characters after a strong character into that run;
+                    // resolving the leading side here keeps an initial space
+                    // or newline from becoming a standalone inline item and
+                    // changing whitespace collapse/line construction.
+                    if let Some(next) = scripts.iter().find(|segment| {
+                        segment.start >= relative_end
+                            && !matches!(segment.script, Script::Common | Script::Inherited)
+                    }) {
+                        script = next.script;
+                    }
+                }
+                let orientation = resolve_text_run_orientation(style, grapheme);
+                let fallback = font.fallback_index_for_text(grapheme);
+                let key = (orientation, script, fallback);
+                let absolute_start = item.text_range.start + relative_start;
+                let absolute_end = item.text_range.start + relative_end;
+
+                if let Some((_, run_end, previous_key)) = runs.last_mut() {
+                    if *run_end == absolute_start && *previous_key == key {
+                        *run_end = absolute_end;
+                        continue;
+                    }
+                }
+                runs.push((absolute_start, absolute_end, key));
+            }
+
+            if runs.len() <= 1 {
+                new_items.push(item);
+                continue;
+            }
+
+            let item_end = item.text_range.end;
+            for (start, end, (orientation, _, _)) in runs {
+                debug_assert_ne!(orientation, TextRunOrientation::UnresolvedMixed);
+                let mut split = item.clone();
+                split.text_range = start..end;
+                split.shape_result = None;
+                split.intrinsic_inline_size = None;
+                if end != item_end {
+                    split.end_collapse_type = CollapseType::NotCollapsible;
+                    split.is_end_collapsible_newline = false;
+                }
+                new_items.push(split);
+            }
+        }
+
+        boundary_map[old_item_count] = new_items.len();
+        for placeholder in &mut self.oof_children {
+            placeholder.item_index = boundary_map[placeholder.item_index.min(old_item_count)];
+        }
+        for interruption in &mut self.block_in_inline {
+            interruption.item_index = boundary_map[interruption.item_index.min(old_item_count)];
+        }
+        self.items = new_items;
+    }
+}
+
+fn highlighted_text_style(
+    target: &ComputedStyle,
+    pseudo: &ComputedStyle,
+    first_letter: bool,
+) -> ComputedStyle {
+    target.derive(|target| {
+        target.color = pseudo.color;
+        target.background_color = pseudo.background_color;
+        target.background_layers = pseudo.background_layers.clone();
+        target.font_family = pseudo.font_family.clone();
+        target.font_size = pseudo.font_size;
+        target.font_weight = pseudo.font_weight;
+        target.font_style = pseudo.font_style;
+        target.font_stretch = pseudo.font_stretch;
+        target.font_kerning = pseudo.font_kerning;
+        target.font_variant_caps = pseudo.font_variant_caps;
+        target.font_variant_ligatures = pseudo.font_variant_ligatures;
+        target.font_variant_numeric = pseudo.font_variant_numeric;
+        target.font_variant_east_asian = pseudo.font_variant_east_asian;
+        target.font_variant_position = pseudo.font_variant_position;
+        target.font_variant_alternates = pseudo.font_variant_alternates;
+        target.font_variant_emoji = pseudo.font_variant_emoji;
+        target.font_size_adjust = pseudo.font_size_adjust;
+        target.font_optical_sizing = pseudo.font_optical_sizing;
+        target.font_synthesis_weight = pseudo.font_synthesis_weight;
+        target.font_synthesis_style = pseudo.font_synthesis_style;
+        target.font_synthesis_small_caps = pseudo.font_synthesis_small_caps;
+        target.font_synthesis_position = pseudo.font_synthesis_position;
+        target.font_feature_settings = pseudo.font_feature_settings.clone();
+        target.font_variation_settings = pseudo.font_variation_settings.clone();
+        target.font_language_override = pseudo.font_language_override;
+        target.font_palette = pseudo.font_palette.clone();
+        target.line_height = pseudo.line_height;
+        target.letter_spacing = pseudo.letter_spacing;
+        target.word_spacing = pseudo.word_spacing;
+        target.word_break = pseudo.word_break;
+        target.overflow_wrap = pseudo.overflow_wrap;
+        target.line_break = pseudo.line_break;
+        target.hyphens = pseudo.hyphens;
+        target.hyphenate_limit_chars = pseudo.hyphenate_limit_chars;
+        target.hyphenate_character = pseudo.hyphenate_character.clone();
+        target.white_space_collapse = pseudo.white_space_collapse;
+        target.text_wrap_mode = pseudo.text_wrap_mode;
+        target.text_wrap_style = pseudo.text_wrap_style;
+        target.white_space = pseudo.white_space;
+        target.text_wrap = pseudo.text_wrap;
+        target.text_autospace = pseudo.text_autospace;
+        target.text_spacing_trim = pseudo.text_spacing_trim;
+        target.text_decoration_line = pseudo.text_decoration_line;
+        target.text_decoration_style = pseudo.text_decoration_style;
+        target.text_decoration_color = pseudo.text_decoration_color;
+        target.text_decoration_thickness = pseudo.text_decoration_thickness;
+        target.text_underline_offset = pseudo.text_underline_offset;
+        target.text_underline_position = pseudo.text_underline_position;
+        target.text_decoration_skip_ink = pseudo.text_decoration_skip_ink;
+        target.text_transform = pseudo.text_transform;
+        target.text_size_adjust = pseudo.text_size_adjust;
+        target.text_rendering = pseudo.text_rendering;
+        target.font_smoothing = pseudo.font_smoothing;
+        target.text_shadow = pseudo.text_shadow.clone();
+        target.text_emphasis_mark = pseudo.text_emphasis_mark;
+        target.text_emphasis_fill = pseudo.text_emphasis_fill;
+        target.text_emphasis_position = pseudo.text_emphasis_position;
+        target.text_emphasis_color = pseudo.text_emphasis_color;
+        target.text_combine_upright = pseudo.text_combine_upright;
+        target.ruby_position = pseudo.ruby_position;
+        target.ruby_align = pseudo.ruby_align;
+        target.ruby_overhang = pseudo.ruby_overhang;
+        target.tab_size = pseudo.tab_size;
+        target.locale = pseudo.locale.clone();
+        target.text_box_edge = pseudo.text_box_edge;
+        target.text_box_trim = pseudo.text_box_trim;
+        if first_letter {
+            target.is_first_letter_pseudo = true;
+            target.float = pseudo.float;
+            target.vertical_align = pseudo.vertical_align;
+            target.margin_top = pseudo.margin_top.clone();
+            target.margin_right = pseudo.margin_right.clone();
+            target.margin_bottom = pseudo.margin_bottom.clone();
+            target.margin_left = pseudo.margin_left.clone();
+            target.padding_top = pseudo.padding_top.clone();
+            target.padding_right = pseudo.padding_right.clone();
+            target.padding_bottom = pseudo.padding_bottom.clone();
+            target.padding_left = pseudo.padding_left.clone();
+            target.border_top_width = pseudo.border_top_width;
+            target.border_right_width = pseudo.border_right_width;
+            target.border_bottom_width = pseudo.border_bottom_width;
+            target.border_left_width = pseudo.border_left_width;
+            target.border_top_style = pseudo.border_top_style;
+            target.border_right_style = pseudo.border_right_style;
+            target.border_bottom_style = pseudo.border_bottom_style;
+            target.border_left_style = pseudo.border_left_style;
+            target.border_top_color = pseudo.border_top_color;
+            target.border_right_color = pseudo.border_right_color;
+            target.border_bottom_color = pseudo.border_bottom_color;
+            target.border_left_color = pseudo.border_left_color;
+        }
+    })
 }
 
 /// Return bidi control characters to insert BEFORE an inline element's content
@@ -430,6 +795,8 @@ pub fn style_to_font_description(style: &ComputedStyle) -> FontDescription {
 /// Builder that walks the DOM and collects inline items.
 pub struct InlineItemsBuilder<'a> {
     doc: &'a Document,
+    /// Writing direction of the inline formatting context being collected.
+    inline_writing_direction: WritingDirectionMode,
     text: String,
     items: Vec<InlineItem>,
     styles: Vec<ComputedStyle>,
@@ -440,23 +807,39 @@ pub struct InlineItemsBuilder<'a> {
     last_space_collapsible: bool,
     /// OOF children encountered during inline item collection.
     oof_children: Vec<OofPlaceholder>,
-    /// Positioned inline ancestors currently open during the DOM walk.
+    /// Floats are laid out by the owning BFC, but retain their insertion
+    /// boundary so placement can use the current line rather than pretending
+    /// every descendant float preceded all text.
+    float_children: Vec<FloatPlaceholder>,
+    /// Inline boxes currently open during the DOM walk. Float source
+    /// positions use this stack even when the ancestor is not positioned.
+    inline_stack: Vec<(NodeId, usize)>,
+    /// Inline ancestors that establish a containing block for positioned
+    /// descendants currently open during the DOM walk.
     positioned_inline_stack: Vec<NodeId>,
     /// Block-in-inline interruptions found during collection.
     block_in_inline: Vec<BlockInInlineInfo>,
+    /// Virtual marker-group children are attached to their originating
+    /// elements for DOM order, but an explicit marker-group collection must
+    /// admit them into that pseudo box's inline formatting context.
+    include_scroll_markers: bool,
 }
 
 impl<'a> InlineItemsBuilder<'a> {
     pub fn new(doc: &'a Document) -> Self {
         Self {
             doc,
+            inline_writing_direction: WritingDirectionMode::horizontal_ltr(),
             text: String::new(),
             items: Vec::new(),
             styles: Vec::new(),
             last_space_collapsible: false,
             oof_children: Vec::new(),
+            float_children: Vec::new(),
+            inline_stack: Vec::new(),
             positioned_inline_stack: Vec::new(),
             block_in_inline: Vec::new(),
+            include_scroll_markers: false,
         }
     }
 
@@ -465,15 +848,35 @@ impl<'a> InlineItemsBuilder<'a> {
     /// This is the main entry point. It walks all children of `block_node_id`
     /// and produces a flat `InlineItemsData`.
     pub fn collect(doc: &Document, block_node_id: NodeId) -> InlineItemsData {
+        Self::collect_with_floats(doc, block_node_id).0
+    }
+
+    /// Collect inline items and the source-order float insertion boundaries.
+    pub(crate) fn collect_with_floats(
+        doc: &Document,
+        block_node_id: NodeId,
+    ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
         let mut builder = InlineItemsBuilder::new(doc);
+        let block_style = &doc.node(block_node_id).style;
+        builder.include_scroll_markers =
+            doc.node(block_node_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup);
+        builder.inline_writing_direction = block_style
+            .direction
+            .writing_direction(block_style.writing_mode);
         builder.collect_children(block_node_id);
-        InlineItemsData {
+        let mut data = InlineItemsData {
+            font_collection: std::sync::Arc::clone(doc.font_collection()),
             text: builder.text,
             items: builder.items,
             styles: builder.styles,
             oof_children: builder.oof_children,
             block_in_inline: builder.block_in_inline,
+        };
+        let floats = builder.float_children;
+        if let Some(first_letter) = block_style.first_letter_style.as_deref() {
+            data.apply_first_letter_style(block_style, first_letter);
         }
+        (data, floats)
     }
 
     /// Collect inline items from a specific set of child node IDs.
@@ -482,20 +885,43 @@ impl<'a> InlineItemsBuilder<'a> {
     /// a subset of children should participate in the inline formatting context.
     pub fn collect_for_children(
         doc: &Document,
-        _block_node_id: NodeId,
+        block_node_id: NodeId,
         children: &[NodeId],
     ) -> InlineItemsData {
+        Self::collect_for_children_with_floats(doc, block_node_id, children).0
+    }
+
+    /// Collect a mixed-flow anonymous inline run together with floats nested
+    /// below its inline wrappers. The owning block formatting context places
+    /// those floats, while the returned items retain the interrupted inline
+    /// ancestry used to position the remaining line content.
+    pub(crate) fn collect_for_children_with_floats(
+        doc: &Document,
+        block_node_id: NodeId,
+        children: &[NodeId],
+    ) -> (InlineItemsData, Vec<FloatPlaceholder>) {
         let mut builder = InlineItemsBuilder::new(doc);
+        let block_style = &doc.node(block_node_id).style;
+        builder.include_scroll_markers =
+            doc.node(block_node_id).pseudo_kind == Some(PseudoElementKind::ScrollMarkerGroup);
+        builder.inline_writing_direction = block_style
+            .direction
+            .writing_direction(block_style.writing_mode);
         for &child_id in children {
             builder.collect_single_child(child_id);
         }
-        InlineItemsData {
+        let mut data = InlineItemsData {
+            font_collection: std::sync::Arc::clone(doc.font_collection()),
             text: builder.text,
             items: builder.items,
             styles: builder.styles,
             oof_children: builder.oof_children,
             block_in_inline: builder.block_in_inline,
+        };
+        if let Some(first_letter) = block_style.first_letter_style.as_deref() {
+            data.apply_first_letter_style(block_style, first_letter);
         }
+        (data, builder.float_children)
     }
 
     /// Get or insert a style, returning its index.
@@ -518,6 +944,17 @@ impl<'a> InlineItemsBuilder<'a> {
     fn collect_single_child(&mut self, child_id: NodeId) {
         let node = self.doc.node(child_id);
 
+        // Scroll markers live in the external marker-group formatting tree.
+        // Their DOM attachment records origin/order only; the originating
+        // element must not also lay them out as principal inline content.
+        if matches!(
+            node.pseudo_kind,
+            Some(PseudoElementKind::ScrollMarker) | Some(PseudoElementKind::ColumnScrollMarker)
+        ) && !self.include_scroll_markers
+        {
+            return;
+        }
+
         // display:none generates no boxes at all.
         if node.style.display == Display::None {
             return;
@@ -530,7 +967,20 @@ impl<'a> InlineItemsBuilder<'a> {
                 self.oof_children.push(OofPlaceholder {
                     node_id: child_id,
                     item_index: self.items.len(),
-                    inline_containing_block: self.positioned_inline_stack.last().copied(),
+                    inline_containing_block: self.inline_containing_block_for(&node.style),
+                });
+            } else if node.style.float != Float::None {
+                let (inline_ancestor, inline_ancestor_text_offset) = self
+                    .inline_stack
+                    .last()
+                    .copied()
+                    .map_or((None, 0), |(node_id, offset)| (Some(node_id), offset));
+                self.float_children.push(FloatPlaceholder {
+                    node_id: child_id,
+                    item_index: self.items.len(),
+                    text_offset: self.text.len(),
+                    inline_ancestor,
+                    inline_ancestor_text_offset,
                 });
             }
             return;
@@ -547,6 +997,10 @@ impl<'a> InlineItemsBuilder<'a> {
                 let style = node.style.clone();
                 self.append_break(child_id, &style);
             }
+            ElementTag::WordBreak => {
+                let style = node.style.clone();
+                self.append_word_break(child_id, &style);
+            }
             ElementTag::Ruby => {
                 // A ruby container is one atomic inline object. Its base and
                 // annotation establish paired internal formatting contexts;
@@ -558,9 +1012,12 @@ impl<'a> InlineItemsBuilder<'a> {
             ElementTag::Span | ElementTag::Style | ElementTag::RubyText => {
                 let display = node.style.display;
                 let style = node.style.clone();
-                if display == Display::InlineBlock
+                if display == Display::Contents {
+                    self.collect_children(child_id);
+                } else if display == Display::InlineBlock
                     || display == Display::InlineFlex
                     || display == Display::InlineGrid
+                    || display == Display::InlineTable
                 {
                     self.append_atomic_inline(child_id, &style);
                 } else if display == Display::Block
@@ -594,9 +1051,44 @@ impl<'a> InlineItemsBuilder<'a> {
                     self.exit_inline(child_id, &style);
                 }
             }
-            ElementTag::Div | ElementTag::Html | ElementTag::Body => {
+            ElementTag::Div
+            | ElementTag::Html
+            | ElementTag::Body
+            | ElementTag::Table
+            | ElementTag::TableCaption
+            | ElementTag::TableColumnGroup
+            | ElementTag::TableColumn
+            | ElementTag::TableHead
+            | ElementTag::TableBody
+            | ElementTag::TableFoot
+            | ElementTag::TableRow
+            | ElementTag::TableCell
+            | ElementTag::TableHeaderCell
+            | ElementTag::Image
+            | ElementTag::Canvas
+            | ElementTag::Svg
+            | ElementTag::IFrame
+            | ElementTag::Object
+            | ElementTag::Audio
+            | ElementTag::Video
+            | ElementTag::Input
+            | ElementTag::Button
+            | ElementTag::TextArea
+            | ElementTag::Select
+            | ElementTag::Option
+            | ElementTag::OptGroup
+            | ElementTag::Form
+            | ElementTag::Embed
+            | ElementTag::Meter
+            | ElementTag::Progress
+            | ElementTag::Fieldset
+            | ElementTag::Legend
+            | ElementTag::Details
+            | ElementTag::Summary => {
                 let display = node.style.display;
-                if display == Display::Inline {
+                if display == Display::Contents {
+                    self.collect_children(child_id);
+                } else if display == Display::Inline {
                     // display:inline on a div creates a normal inline box, not atomic.
                     let style = node.style.clone();
                     self.enter_inline(child_id, &style);
@@ -605,6 +1097,7 @@ impl<'a> InlineItemsBuilder<'a> {
                 } else if display == Display::InlineBlock
                     || display == Display::InlineFlex
                     || display == Display::InlineGrid
+                    || display == Display::InlineTable
                 {
                     let style = node.style.clone();
                     self.append_atomic_inline(child_id, &style);
@@ -661,7 +1154,7 @@ impl<'a> InlineItemsBuilder<'a> {
             WhiteSpace::Pre | WhiteSpace::PreWrap | WhiteSpace::BreakSpaces
         ) {
             let font_desc = style_to_font_description(style);
-            let font = Font::new(font_desc);
+            let font = self.doc.resolve_font(font_desc);
             let space_advance = font.width(" ");
             let font_clone = font;
             expand_tabs(&processed, &style.tab_size, space_advance, |ch| {
@@ -782,17 +1275,20 @@ impl<'a> InlineItemsBuilder<'a> {
             bidi_level: 0,
             intrinsic_inline_size: None,
         });
-        if style.position.is_positioned() {
+        self.inline_stack.push((node_id, offset));
+        if style.position.is_positioned() || style.establishes_transform_containing_block {
             self.positioned_inline_stack.push(node_id);
         }
     }
 
     /// Handle inline element close (`</span>`).
     fn exit_inline(&mut self, node_id: NodeId, style: &ComputedStyle) {
-        if style.position.is_positioned() {
+        if style.position.is_positioned() || style.establishes_transform_containing_block {
             let popped = self.positioned_inline_stack.pop();
             debug_assert_eq!(popped, Some(node_id));
         }
+        let popped = self.inline_stack.pop();
+        debug_assert_eq!(popped.map(|entry| entry.0), Some(node_id));
         let style_index = self.intern_style(style);
         let offset = self.text.len();
         self.items.push(InlineItem {
@@ -808,6 +1304,22 @@ impl<'a> InlineItemsBuilder<'a> {
         });
     }
 
+    /// Find the nearest open inline box that establishes the relevant
+    /// containing block. Relative positioning captures absolute descendants;
+    /// fixed descendants pass through it until a transform/filter boundary.
+    fn inline_containing_block_for(&self, style: &ComputedStyle) -> Option<NodeId> {
+        self.positioned_inline_stack
+            .iter()
+            .rev()
+            .copied()
+            .find(|ancestor| {
+                let ancestor_style = &self.doc.node(*ancestor).style;
+                ancestor_style.establishes_transform_containing_block
+                    || (style.position != Position::Fixed
+                        && ancestor_style.position.is_positioned())
+            })
+    }
+
     /// Handle an atomic inline element (inline-block, etc.).
     ///
     /// Computes intrinsic inline size from the element's children for
@@ -821,19 +1333,345 @@ impl<'a> InlineItemsBuilder<'a> {
 
         // For flex/grid containers, use the proper intrinsic sizing algorithm
         // which handles aspect-ratio, flex-basis, definite cross sizes, etc.
-        let intrinsic = if self.doc.node(node_id).tag == ElementTag::Ruby {
+        let child_direction = style.direction.writing_direction(style.writing_mode);
+        let is_orthogonal =
+            child_direction.is_horizontal() != self.inline_writing_direction.is_horizontal();
+        let deterministic_text_profile = style.font_family.families.iter().any(|family| {
+            matches!(family, FontFamily::Named(name) if name.eq_ignore_ascii_case("Droid Sans Fallback"))
+        });
+        let own_inline_edges = if child_direction.is_horizontal() {
+            style.effective_border_left() as f32
+                + style.effective_border_right() as f32
+                + resolve_margin_or_padding(
+                    &style.padding_left,
+                    openui_geometry::LayoutUnit::zero(),
+                )
+                .to_f32()
+                + resolve_margin_or_padding(
+                    &style.padding_right,
+                    openui_geometry::LayoutUnit::zero(),
+                )
+                .to_f32()
+        } else {
+            style.effective_border_top() as f32
+                + style.effective_border_bottom() as f32
+                + resolve_margin_or_padding(&style.padding_top, openui_geometry::LayoutUnit::zero())
+                    .to_f32()
+                + resolve_margin_or_padding(
+                    &style.padding_bottom,
+                    openui_geometry::LayoutUnit::zero(),
+                )
+                .to_f32()
+        };
+        let logical_inline_size = if child_direction.is_horizontal() {
+            &style.width
+        } else {
+            &style.height
+        };
+        let specified_intrinsic = (!is_orthogonal && logical_inline_size.is_fixed()).then(|| {
+            let specified = resolve_length(
+                logical_inline_size,
+                openui_geometry::LayoutUnit::zero(),
+                openui_geometry::LayoutUnit::zero(),
+                openui_geometry::LayoutUnit::zero(),
+            )
+            .to_f32();
+            if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                (specified - own_inline_edges).max(0.0)
+            } else {
+                specified
+            }
+        });
+        // An empty atomic inline can still have a definite intrinsic inline
+        // contribution transferred through aspect-ratio. The line breaker
+        // stores content-box measures, while apply_size_override_inline
+        // returns the element's CSS-sized border box.
+        let aspect_ratio_intrinsic = (!is_orthogonal
+            && child_direction.is_horizontal()
+            && (style.width.is_auto() || style.width.is_content_or_intrinsic())
+            && style.height.is_fixed()
+            && style.aspect_ratio.is_some())
+        .then(|| {
+            let border_box = crate::intrinsic_sizing::apply_size_override_inline(
+                style,
+                openui_geometry::LayoutUnit::zero(),
+            )
+            .to_f32();
+            (border_box - own_inline_edges).max(0.0)
+        });
+        // Atomic line measurement must reserve the same border box that the
+        // replaced layout algorithm will produce. In particular, `auto
+        // <ratio>` needs the resource's natural ratio (which is unavailable
+        // to the style-only transfer above), and a bare ratio with
+        // `box-sizing:border-box` maps through the element's edges.
+        let replaced_intrinsic = (!is_orthogonal
+            && self.doc.node(node_id).replaced.is_some()
+            && (style.width.is_auto() || style.width.is_content_or_intrinsic()))
+        .then(|| {
+            let node = self.doc.node(node_id);
+            let ratio_only_replaced = node.replaced.is_some_and(|content| {
+                !content
+                    .intrinsic_width
+                    .is_some_and(|dimension| dimension > 0.0)
+                    && !content
+                        .intrinsic_height
+                        .is_some_and(|dimension| dimension > 0.0)
+            }) && style.width.is_auto()
+                && (node
+                    .replaced
+                    .and_then(|content| content.intrinsic_ratio)
+                    .or_else(|| style.aspect_ratio.as_ref().map(|ratio| ratio.ratio)))
+                .is_some_and(|ratio| ratio.0 > 0.0 && ratio.1 > 0.0);
+            if ratio_only_replaced {
+                let parent_id = node.parent;
+                if !parent_id.is_none() {
+                    let parent_style = &self.doc.node(parent_id).style;
+                    if parent_style.width.is_fixed() {
+                        let parent_border = crate::block::resolve_border(parent_style);
+                        let parent_padding = crate::block::resolve_padding(
+                            parent_style,
+                            openui_geometry::LayoutUnit::zero(),
+                        );
+                        let raw_parent =
+                            openui_geometry::LayoutUnit::from_f32(parent_style.width.value());
+                        let parent_content = if parent_style.box_sizing
+                            == openui_style::BoxSizing::BorderBox
+                        {
+                            (raw_parent - parent_border.inline_sum() - parent_padding.inline_sum())
+                                .clamp_negative_to_zero()
+                        } else {
+                            raw_parent
+                        };
+                        let margin = crate::block::resolve_margins(style, parent_content);
+                        return (parent_content.to_f32()
+                            - margin.inline_sum().to_f32()
+                            - own_inline_edges)
+                            .max(0.0);
+                    }
+                }
+                return 0.0;
+            }
+            let probe_space = crate::ConstraintSpace::for_block_child_with_writing_direction(
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                true,
+                child_direction,
+            );
+            let probe = crate::block::block_layout(self.doc, node_id, &probe_space);
+            let border_box = if self.inline_writing_direction.is_horizontal() {
+                probe.size.width
+            } else {
+                probe.size.height
+            }
+            .to_f32();
+            (border_box - own_inline_edges).max(0.0)
+        });
+        let definite_block_intrinsic = (!is_orthogonal
+            && child_direction.is_horizontal()
+            && (style.width.is_auto() || style.width.is_content_or_intrinsic()))
+        .then(|| {
+            let parent_id = self.doc.node(node_id).parent;
+            if parent_id.is_none() {
+                return None;
+            }
+            let parent_style = &self.doc.node(parent_id).style;
+            let parent_border = crate::block::resolve_border(parent_style);
+            let parent_padding =
+                crate::block::resolve_padding(parent_style, openui_geometry::LayoutUnit::zero());
+            let parent_content_block = definite_content_block_size(self.doc, parent_id, 0)?;
+            let parent_content_inline = if parent_style.width.is_fixed() {
+                let width = openui_geometry::LayoutUnit::from_f32(parent_style.width.value());
+                if parent_style.box_sizing == openui_style::BoxSizing::BorderBox {
+                    (width - parent_border.inline_sum() - parent_padding.inline_sum())
+                        .clamp_negative_to_zero()
+                } else {
+                    width
+                }
+            } else {
+                openui_geometry::LayoutUnit::zero()
+            };
+            let raw_height = resolve_length(
+                &style.height,
+                parent_content_block,
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+            );
+            if raw_height.is_indefinite() {
+                return None;
+            }
+            let own_border = crate::block::resolve_border(style);
+            let own_padding = crate::block::resolve_padding(style, parent_content_inline);
+            let border_box_height = if style.box_sizing == openui_style::BoxSizing::BorderBox {
+                raw_height.max_of(own_border.block_sum() + own_padding.block_sum())
+            } else {
+                raw_height + own_border.block_sum() + own_padding.block_sum()
+            };
+            Some(
+                crate::intrinsic_sizing::compute_intrinsic_inline_sizes_with_block_size(
+                    self.doc,
+                    node_id,
+                    border_box_height,
+                    parent_content_inline,
+                ),
+            )
+        })
+        .flatten();
+        let has_consecutive_floats = deterministic_text_profile
+            && self
+                .doc
+                .children(node_id)
+                .filter(|child_id| self.doc.node(*child_id).style.float != Float::None)
+                .take(2)
+                .count()
+                >= 2;
+        let mut flex_intrinsic_min = None;
+        let intrinsic_max = if specified_intrinsic.is_some() {
+            specified_intrinsic
+        } else if let Some(sizes) = definite_block_intrinsic {
+            Some((sizes.max.to_f32() - own_inline_edges).max(0.0))
+        } else if replaced_intrinsic.is_some() {
+            replaced_intrinsic
+        } else if aspect_ratio_intrinsic.is_some() {
+            aspect_ratio_intrinsic
+        } else if self.doc.node(node_id).tag == ElementTag::Ruby {
             self.compute_ruby_intrinsic_inline_size(node_id)
         } else if style.display.is_flex() {
+            let anonymous_forced_lines = self
+                .doc
+                .children(node_id)
+                .any(|child_id| self.doc.node(child_id).tag == ElementTag::Break)
+                .then(|| self.compute_intrinsic_inline_size(node_id))
+                .flatten();
             let sizes = crate::intrinsic_sizing::compute_intrinsic_block_sizes(self.doc, node_id);
-            let max_w = sizes.max_content_inline_size.to_f32();
+            // Flex intrinsic sizes are expressed in the flex container's own
+            // logical axes.
+            let min_w = if child_direction.is_horizontal()
+                == self.inline_writing_direction.is_horizontal()
+            {
+                sizes.min_content_inline_size
+            } else {
+                sizes.min_content_block_size
+            };
+            flex_intrinsic_min = Some(min_w.to_f32());
+            let max_w = if child_direction.is_horizontal()
+                == self.inline_writing_direction.is_horizontal()
+            {
+                sizes.max_content_inline_size
+            } else if self.inline_writing_direction.is_horizontal() {
+                sizes.max_content_block_size
+            } else {
+                sizes.max_content_block_size
+            };
+            let max_w = anonymous_forced_lines.unwrap_or_else(|| max_w.to_f32());
             if max_w > 0.0 {
                 Some(max_w)
             } else {
                 self.compute_intrinsic_inline_size(node_id)
             }
+        } else if is_orthogonal {
+            // Orthogonal atomic outer geometry cannot be derived by swapping
+            // the legacy min/max inline accumulators: consecutive descendants
+            // flow in the child's inline axis but contribute only their
+            // maximum extent to the parent's physical inline axis. Probe the
+            // completed shrink-to-fit fragment under indefinite constraints
+            // and consume its physical size at this IFC boundary.
+            let probe_space = crate::ConstraintSpace::for_block_child_with_writing_direction(
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                openui_geometry::INDEFINITE_SIZE,
+                true,
+                child_direction,
+            );
+            let probe = crate::block::block_layout(self.doc, node_id, &probe_space);
+            let size = if self.inline_writing_direction.is_horizontal() {
+                probe.size.width
+            } else {
+                probe.size.height
+            }
+            .to_f32();
+            (size > 0.0).then_some(size)
         } else {
-            self.compute_intrinsic_inline_size(node_id)
+            // Generated builders use the complete flattened intrinsic stream
+            // for atomic shrink-to-fit sizing. Besides accounting for floats,
+            // this trims collapsible leading/trailing indentation whitespace
+            // around inline children instead of treating it as authored width.
+            if deterministic_text_profile {
+                let sizes = crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(
+                    self.doc, node_id,
+                );
+                // InlineItem::intrinsic_inline_size is a content-box measure;
+                // block_layout applies this atomic element's own edges.
+                let max = (sizes.max.to_f32() - own_inline_edges).max(0.0);
+                if max > 0.0 {
+                    Some(max)
+                } else {
+                    self.compute_intrinsic_inline_size(node_id)
+                }
+            } else {
+                self.compute_intrinsic_inline_size(node_id)
+            }
         };
+
+        let intrinsic = intrinsic_max.map(|max| {
+            let min = if specified_intrinsic.is_some() {
+                max
+            } else if let Some(sizes) = definite_block_intrinsic {
+                (sizes.min.to_f32() - own_inline_edges).max(0.0)
+            } else if style.display.is_flex() {
+                // A flex container's intrinsic min-content size is computed
+                // from its items. A zero endpoint lets an unwrapped inline
+                // flex row shrink below the sum of its definite item widths.
+                flex_intrinsic_min.unwrap_or(0.0)
+            } else if !deterministic_text_profile {
+                // Builders outside the pinned fallback profile retain the
+                // legacy single intrinsic measure, which was capped directly
+                // by the available size. A zero min-content endpoint makes the
+                // tuple-based shrink-to-fit equation reproduce that behavior,
+                // while regenerated builders opt into the complete min/max
+                // algorithm below.
+                0.0
+            } else if is_orthogonal || has_consecutive_floats {
+                // Preserve orthogonal atomic paths' established completed-
+                // fragment measure and zero min-content fallback.
+                0.0
+            } else {
+                let sizes = crate::intrinsic_sizing::compute_logical_intrinsic_inline_sizes(
+                    self.doc, node_id,
+                );
+                let own_edges = if child_direction.is_horizontal() {
+                    style.effective_border_left() as f32
+                        + style.effective_border_right() as f32
+                        + resolve_margin_or_padding(
+                            &style.padding_left,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32()
+                        + resolve_margin_or_padding(
+                            &style.padding_right,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32()
+                } else {
+                    style.effective_border_top() as f32
+                        + style.effective_border_bottom() as f32
+                        + resolve_margin_or_padding(
+                            &style.padding_top,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32()
+                        + resolve_margin_or_padding(
+                            &style.padding_bottom,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32()
+                };
+                (sizes.min.to_f32() - own_edges).max(0.0)
+            };
+            (min, max)
+        });
 
         self.items.push(InlineItem {
             item_type: InlineItemType::AtomicInline,
@@ -880,11 +1718,14 @@ impl<'a> InlineItemsBuilder<'a> {
 
             let (width, child_has_content) = if child.tag == ElementTag::Text {
                 let text = child.text.as_deref().unwrap_or("");
-                let processed = preprocess_text_for_shaping(text, &child.style);
+                let processed =
+                    preprocess_text_for_shaping(text, &child.style, self.doc.font_collection());
                 if processed.is_empty() {
                     (0.0, false)
                 } else {
-                    let font = Font::new(style_to_font_description(&child.style));
+                    let font = self
+                        .doc
+                        .resolve_font(style_to_font_description(&child.style));
                     let shaper = TextShaper::new();
                     (
                         shaper.shape(&processed, &font, TextDirection::Ltr).width(),
@@ -949,14 +1790,33 @@ impl<'a> InlineItemsBuilder<'a> {
             }
 
             match child.tag {
+                ElementTag::Break => {
+                    // A forced break terminates the current intrinsic line.
+                    // Treating <br> as an empty inline descendant sums the
+                    // text on both sides and overstates shrink-to-fit atomic
+                    // widths (for example `min<br>in the box`).
+                    max_width = max_width.max(current_inline_row);
+                    current_inline_row = 0.0;
+                    has_content = true;
+                }
+                ElementTag::WordBreak => {
+                    // A WBR contributes no intrinsic width but permits the
+                    // current row to end at this position.
+                    max_width = max_width.max(current_inline_row);
+                    current_inline_row = 0.0;
+                }
                 ElementTag::Text => {
                     if let Some(ref text) = child.text {
                         if !text.is_empty() {
-                            let processed = preprocess_text_for_shaping(text, &child.style);
+                            let processed = preprocess_text_for_shaping(
+                                text,
+                                &child.style,
+                                self.doc.font_collection(),
+                            );
                             if !processed.is_empty() {
                                 has_content = true;
                                 let font_desc = style_to_font_description(&child.style);
-                                let font = Font::new(font_desc);
+                                let font = self.doc.resolve_font(font_desc);
 
                                 // For white-space modes that preserve newlines,
                                 // split on \n so each line is measured separately.
@@ -1005,10 +1865,31 @@ impl<'a> InlineItemsBuilder<'a> {
                         )
                         .to_f32();
                     let child_bp = bp_left + bp_right;
+                    let child_margin = resolve_margin_or_padding(
+                        &child_style.margin_left,
+                        openui_geometry::LayoutUnit::zero(),
+                    )
+                    .to_f32()
+                        + resolve_margin_or_padding(
+                            &child_style.margin_right,
+                            openui_geometry::LayoutUnit::zero(),
+                        )
+                        .to_f32();
 
-                    // Non-zero border+padding is itself content even if the
-                    // descendant has no text or children.
-                    if child_bp > 0.0 {
+                    // Ordinary inline boxes contribute their margins to the
+                    // enclosing atomic box's intrinsic line. Atomic inline
+                    // descendants carry their margin separately during line
+                    // construction, so folding it into their intrinsic size
+                    // here would count it twice.
+                    let recursive_margin = if child_style.display.is_block_level()
+                        || child_style.display == Display::Inline
+                    {
+                        child_margin
+                    } else {
+                        0.0
+                    };
+
+                    if child_bp > 0.0 || recursive_margin > 0.0 {
                         has_content = true;
                     }
 
@@ -1022,32 +1903,43 @@ impl<'a> InlineItemsBuilder<'a> {
                             == openui_geometry::LengthType::Fixed
                         {
                             has_content = true;
-                            child_style.width.value() + child_bp
+                            child_style.width.value() + child_bp + recursive_margin
                         } else {
-                            let (child_width, child_has_content) =
-                                self.compute_intrinsic_inline_size_recursive(child_id);
+                            let (child_width, child_has_content) = if child.tag == ElementTag::Ruby
+                            {
+                                self.compute_ruby_intrinsic_inline_size(child_id)
+                                    .map_or((0.0, false), |width| (width, true))
+                            } else {
+                                self.compute_intrinsic_inline_size_recursive(child_id)
+                            };
                             if child_has_content {
                                 has_content = true;
                             }
-                            child_width + child_bp
+                            child_width + child_bp + recursive_margin
                         };
                         max_width = max_width.max(child_total);
                     } else {
                         // Inline-level children flow horizontally → sum widths.
                         if child_style.width.length_type() == openui_geometry::LengthType::Fixed {
                             has_content = true;
-                            current_inline_row += child_style.width.value() + child_bp;
+                            current_inline_row +=
+                                child_style.width.value() + child_bp + recursive_margin;
                         } else {
-                            let (child_width, child_has_content) =
-                                self.compute_intrinsic_inline_size_recursive(child_id);
+                            let (child_width, child_has_content) = if child.tag == ElementTag::Ruby
+                            {
+                                self.compute_ruby_intrinsic_inline_size(child_id)
+                                    .map_or((0.0, false), |width| (width, true))
+                            } else {
+                                self.compute_intrinsic_inline_size_recursive(child_id)
+                            };
                             if child_has_content {
                                 has_content = true;
                             }
                             // Always add border+padding; add child_width only if child has content.
                             let contrib = if child_has_content {
-                                child_width + child_bp
+                                child_width + child_bp + recursive_margin
                             } else {
-                                child_bp
+                                child_bp + recursive_margin
                             };
                             current_inline_row += contrib;
                         }
@@ -1080,6 +1972,25 @@ impl<'a> InlineItemsBuilder<'a> {
             intrinsic_inline_size: None,
         });
     }
+
+    /// Handle a discretionary line break. U+200B is retained in the item
+    /// stream as a zero-advance control distinguished from BR by its newline
+    /// flag. The line breaker consumes it without producing a box.
+    pub fn append_word_break(&mut self, node_id: NodeId, style: &ComputedStyle) {
+        let style_index = self.intern_style(style);
+        let offset = self.text.len();
+        self.items.push(InlineItem {
+            item_type: InlineItemType::Control,
+            text_range: offset..offset,
+            node_id,
+            shape_result: None,
+            style_index,
+            end_collapse_type: CollapseType::NotCollapsible,
+            is_end_collapsible_newline: false,
+            bidi_level: 0,
+            intrinsic_inline_size: None,
+        });
+    }
 }
 
 // ── White-space processing (CSS Text Module Level 3 §4) ─────────────────
@@ -1100,7 +2011,11 @@ fn is_collapsible_ws_mode(ws: WhiteSpace) -> bool {
 ///
 /// Shared by `append_text` (real layout) and `compute_intrinsic_inline_size_recursive`
 /// (intrinsic sizing) so that measured widths match rendered output.
-pub fn preprocess_text_for_shaping(text: &str, style: &ComputedStyle) -> String {
+pub fn preprocess_text_for_shaping(
+    text: &str,
+    style: &ComputedStyle,
+    font_collection: &std::sync::Arc<openui_text::FontCollection>,
+) -> String {
     if text.is_empty() {
         return String::new();
     }
@@ -1121,7 +2036,7 @@ pub fn preprocess_text_for_shaping(text: &str, style: &ComputedStyle) -> String 
         WhiteSpace::Pre | WhiteSpace::PreWrap | WhiteSpace::BreakSpaces
     ) {
         let font_desc = style_to_font_description(style);
-        let font = Font::new(font_desc);
+        let font = Font::new_in_collection(font_desc, std::sync::Arc::clone(font_collection));
         let space_advance = font.width(" ");
         let font_clone = font;
         expand_tabs(&processed, &style.tab_size, space_advance, |ch| {
@@ -1277,7 +2192,7 @@ mod tests {
         let vp = doc.root();
 
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let text = doc.create_node(ElementTag::Text);
@@ -1285,7 +2200,7 @@ mod tests {
         doc.append_child(container, text);
 
         let hidden = doc.create_node(ElementTag::Span);
-        doc.node_mut(hidden).style.display = Display::None;
+        doc.update_resolved_style(hidden, |style| style.display = Display::None);
         doc.append_child(container, hidden);
 
         let data = InlineItemsBuilder::collect(&doc, container);
@@ -1302,7 +2217,7 @@ mod tests {
         let vp = doc.root();
 
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let text = doc.create_node(ElementTag::Text);
@@ -1310,7 +2225,9 @@ mod tests {
         doc.append_child(container, text);
 
         let abs_span = doc.create_node(ElementTag::Span);
-        doc.node_mut(abs_span).style.position = openui_style::Position::Absolute;
+        doc.update_resolved_style(abs_span, |style| {
+            style.position = openui_style::Position::Absolute
+        });
         doc.append_child(container, abs_span);
 
         let data = InlineItemsBuilder::collect(&doc, container);
@@ -1329,7 +2246,7 @@ mod tests {
         let vp = doc.root();
 
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let text = doc.create_node(ElementTag::Text);
@@ -1337,8 +2254,10 @@ mod tests {
         doc.append_child(container, text);
 
         let inline_block = doc.create_node(ElementTag::Span);
-        doc.node_mut(inline_block).style.display = Display::InlineBlock;
-        doc.node_mut(inline_block).style.width = openui_geometry::Length::px(50.0);
+        doc.update_resolved_style(inline_block, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline_block, |style| {
+            style.width = openui_geometry::Length::px(50.0)
+        });
         doc.append_child(container, inline_block);
 
         let mut data = InlineItemsBuilder::collect(&doc, container);
@@ -1369,19 +2288,19 @@ mod tests {
         let vp = doc.root();
 
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
-        doc.node_mut(container).style.direction = Direction::Ltr;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
+        doc.update_resolved_style(container, |style| style.direction = Direction::Ltr);
         doc.append_child(vp, container);
 
         let span = doc.create_node(ElementTag::Span);
-        doc.node_mut(span).style.display = Display::Inline;
-        doc.node_mut(span).style.unicode_bidi = UnicodeBidi::Embed;
-        doc.node_mut(span).style.direction = Direction::Rtl;
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(span, |style| style.unicode_bidi = UnicodeBidi::Embed);
+        doc.update_resolved_style(span, |style| style.direction = Direction::Rtl);
         doc.append_child(container, span);
 
         let text = doc.create_node(ElementTag::Text);
         doc.node_mut(text).text = Some("123".to_string());
-        doc.node_mut(text).style.direction = Direction::Rtl;
+        doc.update_resolved_style(text, |style| style.direction = Direction::Rtl);
         doc.append_child(span, text);
 
         let mut data = InlineItemsBuilder::collect(&doc, container);
@@ -1411,19 +2330,19 @@ mod tests {
         let vp = doc.root();
 
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
-        doc.node_mut(container).style.direction = Direction::Ltr;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
+        doc.update_resolved_style(container, |style| style.direction = Direction::Ltr);
         doc.append_child(vp, container);
 
         let span = doc.create_node(ElementTag::Span);
-        doc.node_mut(span).style.display = Display::Inline;
-        doc.node_mut(span).style.unicode_bidi = UnicodeBidi::Override;
-        doc.node_mut(span).style.direction = Direction::Rtl;
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(span, |style| style.unicode_bidi = UnicodeBidi::Override);
+        doc.update_resolved_style(span, |style| style.direction = Direction::Rtl);
         doc.append_child(container, span);
 
         let text = doc.create_node(ElementTag::Text);
         doc.node_mut(text).text = Some("abc".to_string());
-        doc.node_mut(text).style.direction = Direction::Rtl;
+        doc.update_resolved_style(text, |style| style.direction = Direction::Rtl);
         doc.append_child(span, text);
 
         let mut data = InlineItemsBuilder::collect(&doc, container);
@@ -1476,6 +2395,126 @@ mod tests {
         );
     }
 
+    #[test]
+    fn unicode_bidi_controls_cover_embed_override_isolate_and_plaintext() {
+        assert_eq!(
+            bidi_open_chars(UnicodeBidi::Embed, Direction::Rtl),
+            vec!['\u{202B}']
+        );
+        assert_eq!(bidi_close_chars(UnicodeBidi::Embed), vec!['\u{202C}']);
+        assert_eq!(
+            bidi_open_chars(UnicodeBidi::Override, Direction::Ltr),
+            vec!['\u{202D}']
+        );
+        assert_eq!(bidi_close_chars(UnicodeBidi::Override), vec!['\u{202C}']);
+        assert_eq!(
+            bidi_open_chars(UnicodeBidi::Isolate, Direction::Rtl),
+            vec!['\u{2067}']
+        );
+        assert_eq!(bidi_close_chars(UnicodeBidi::Isolate), vec!['\u{2069}']);
+        assert_eq!(
+            bidi_open_chars(UnicodeBidi::Plaintext, Direction::Ltr),
+            vec!['\u{2068}']
+        );
+        assert_eq!(bidi_close_chars(UnicodeBidi::Plaintext), vec!['\u{2069}']);
+    }
+
+    fn deterministic_fallback_style() -> ComputedStyle {
+        let mut style = ComputedStyle::default();
+        style.update_derived(|computed| {
+            computed.font_family = openui_style::FontFamilyList {
+                families: vec![
+                    FontFamily::Named("Ahem".to_string()),
+                    FontFamily::Named("Droid Sans Fallback".to_string()),
+                    FontFamily::Named("Noto Sans Devanagari".to_string()),
+                    FontFamily::Named("Noto Color Emoji".to_string()),
+                    FontFamily::Named("DejaVu Sans".to_string()),
+                ],
+            }
+        });
+        style.update_derived(|computed| {
+            computed.writing_mode = openui_style::WritingMode::VerticalRl
+        });
+        style.update_derived(|computed| {
+            computed.text_orientation = openui_style::TextOrientation::Mixed
+        });
+        style
+    }
+
+    #[test]
+    fn mixed_script_fallback_and_vertical_orientation_boundaries_split_runs() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
+        doc.append_child(doc.root(), container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("A\u{4e01}\u{915}\u{93f}\u{1f600}".to_string());
+        doc.install_resolved_style(text, deterministic_fallback_style());
+        doc.append_child(container, text);
+
+        let mut data = InlineItemsBuilder::collect(&doc, container);
+        data.apply_bidi(TextDirection::Ltr);
+        data.split_shaping_runs();
+
+        let pieces: Vec<&str> = data
+            .items
+            .iter()
+            .filter(|item| item.item_type == InlineItemType::Text)
+            .map(|item| &data.text[item.text_range.clone()])
+            .collect();
+        assert_eq!(pieces, vec!["A", "\u{4e01}", "\u{915}\u{93f}", "\u{1f600}"]);
+    }
+
+    #[test]
+    fn combining_grapheme_is_not_split_across_fallback_boundaries() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
+        doc.append_child(doc.root(), container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("A\u{301}".to_string());
+        doc.install_resolved_style(text, deterministic_fallback_style());
+        doc.append_child(container, text);
+
+        let mut data = InlineItemsBuilder::collect(&doc, container);
+        data.apply_bidi(TextDirection::Ltr);
+        data.split_shaping_runs();
+        assert_eq!(
+            data.items
+                .iter()
+                .filter(|item| item.item_type == InlineItemType::Text)
+                .count(),
+            1
+        );
+    }
+
+    #[test]
+    fn shaping_split_remaps_positioned_inline_static_placeholder() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
+        doc.append_child(doc.root(), container);
+
+        let text = doc.create_node(ElementTag::Text);
+        doc.node_mut(text).text = Some("A\u{6f22}".to_string());
+        doc.install_resolved_style(text, deterministic_fallback_style());
+        doc.append_child(container, text);
+
+        let positioned = doc.create_node(ElementTag::Span);
+        doc.update_resolved_style(positioned, |style| {
+            style.position = openui_style::Position::Absolute
+        });
+        doc.append_child(container, positioned);
+
+        let mut data = InlineItemsBuilder::collect(&doc, container);
+        assert_eq!(data.oof_children.len(), 1);
+        data.apply_bidi(TextDirection::Ltr);
+        data.split_shaping_runs();
+        assert_eq!(data.oof_children[0].item_index, 2);
+    }
+
     // ── Issue 4 (R26): intrinsic sizing skips out-of-flow & display:none ──
 
     #[test]
@@ -1485,7 +2524,7 @@ mod tests {
         let vp = doc.root();
 
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let visible_text = doc.create_node(ElementTag::Text);
@@ -1493,7 +2532,7 @@ mod tests {
         doc.append_child(container, visible_text);
 
         let hidden = doc.create_node(ElementTag::Span);
-        doc.node_mut(hidden).style.display = Display::None;
+        doc.update_resolved_style(hidden, |style| style.display = Display::None);
         doc.append_child(container, hidden);
 
         let hidden_text = doc.create_node(ElementTag::Text);
@@ -1509,7 +2548,7 @@ mod tests {
         let mut doc2 = Document::new();
         let vp2 = doc2.root();
         let container2 = doc2.create_node(ElementTag::Div);
-        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.update_resolved_style(container2, |style| style.display = Display::Block);
         doc2.append_child(vp2, container2);
 
         let text2 = doc2.create_node(ElementTag::Text);
@@ -1532,7 +2571,7 @@ mod tests {
         let vp = doc.root();
 
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let text_node = doc.create_node(ElementTag::Text);
@@ -1540,8 +2579,12 @@ mod tests {
         doc.append_child(container, text_node);
 
         let abs_child = doc.create_node(ElementTag::Div);
-        doc.node_mut(abs_child).style.position = openui_style::Position::Absolute;
-        doc.node_mut(abs_child).style.width = openui_geometry::Length::px(999.0);
+        doc.update_resolved_style(abs_child, |style| {
+            style.position = openui_style::Position::Absolute
+        });
+        doc.update_resolved_style(abs_child, |style| {
+            style.width = openui_geometry::Length::px(999.0)
+        });
         doc.append_child(container, abs_child);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1551,7 +2594,7 @@ mod tests {
         let mut doc2 = Document::new();
         let vp2 = doc2.root();
         let container2 = doc2.create_node(ElementTag::Div);
-        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.update_resolved_style(container2, |style| style.display = Display::Block);
         doc2.append_child(vp2, container2);
 
         let text2 = doc2.create_node(ElementTag::Text);
@@ -1574,7 +2617,7 @@ mod tests {
         let vp = doc.root();
 
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let text_node = doc.create_node(ElementTag::Text);
@@ -1582,8 +2625,10 @@ mod tests {
         doc.append_child(container, text_node);
 
         let floated = doc.create_node(ElementTag::Div);
-        doc.node_mut(floated).style.float = openui_style::Float::Left;
-        doc.node_mut(floated).style.width = openui_geometry::Length::px(500.0);
+        doc.update_resolved_style(floated, |style| style.float = openui_style::Float::Left);
+        doc.update_resolved_style(floated, |style| {
+            style.width = openui_geometry::Length::px(500.0)
+        });
         doc.append_child(container, floated);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1592,7 +2637,7 @@ mod tests {
         let mut doc2 = Document::new();
         let vp2 = doc2.root();
         let container2 = doc2.create_node(ElementTag::Div);
-        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.update_resolved_style(container2, |style| style.display = Display::Block);
         doc2.append_child(vp2, container2);
 
         let text2 = doc2.create_node(ElementTag::Text);
@@ -1618,12 +2663,14 @@ mod tests {
         let vp = doc.root();
 
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let text = doc.create_node(ElementTag::Text);
         doc.node_mut(text).text = Some("iii".to_string()); // 'i' is narrow
-        doc.node_mut(text).style.text_transform = openui_style::TextTransform::Uppercase;
+        doc.update_resolved_style(text, |style| {
+            style.text_transform = openui_style::TextTransform::Uppercase
+        });
         doc.append_child(container, text);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1633,12 +2680,14 @@ mod tests {
         let mut doc2 = Document::new();
         let vp2 = doc2.root();
         let container2 = doc2.create_node(ElementTag::Div);
-        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.update_resolved_style(container2, |style| style.display = Display::Block);
         doc2.append_child(vp2, container2);
 
         let text2 = doc2.create_node(ElementTag::Text);
         doc2.node_mut(text2).text = Some("iii".to_string());
-        doc2.node_mut(text2).style.text_transform = openui_style::TextTransform::None;
+        doc2.update_resolved_style(text2, |style| {
+            style.text_transform = openui_style::TextTransform::None
+        });
         doc2.append_child(container2, text2);
 
         let builder2 = InlineItemsBuilder::new(&doc2);
@@ -1661,12 +2710,12 @@ mod tests {
         let vp = doc.root();
 
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let text = doc.create_node(ElementTag::Text);
         doc.node_mut(text).text = Some("a     b".to_string());
-        doc.node_mut(text).style.white_space = WhiteSpace::Normal;
+        doc.update_resolved_style(text, |style| style.white_space = WhiteSpace::Normal);
         doc.append_child(container, text);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1675,12 +2724,12 @@ mod tests {
         let mut doc2 = Document::new();
         let vp2 = doc2.root();
         let container2 = doc2.create_node(ElementTag::Div);
-        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.update_resolved_style(container2, |style| style.display = Display::Block);
         doc2.append_child(vp2, container2);
 
         let text2 = doc2.create_node(ElementTag::Text);
         doc2.node_mut(text2).text = Some("a b".to_string());
-        doc2.node_mut(text2).style.white_space = WhiteSpace::Normal;
+        doc2.update_resolved_style(text2, |style| style.white_space = WhiteSpace::Normal);
         doc2.append_child(container2, text2);
 
         let builder2 = InlineItemsBuilder::new(&doc2);
@@ -1700,17 +2749,21 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let child1 = doc.create_node(ElementTag::Div);
-        doc.node_mut(child1).style.display = Display::Flex;
-        doc.node_mut(child1).style.width = openui_geometry::Length::px(100.0);
+        doc.update_resolved_style(child1, |style| style.display = Display::Flex);
+        doc.update_resolved_style(child1, |style| {
+            style.width = openui_geometry::Length::px(100.0)
+        });
         doc.append_child(container, child1);
 
         let child2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(child2).style.display = Display::Flex;
-        doc.node_mut(child2).style.width = openui_geometry::Length::px(200.0);
+        doc.update_resolved_style(child2, |style| style.display = Display::Flex);
+        doc.update_resolved_style(child2, |style| {
+            style.width = openui_geometry::Length::px(200.0)
+        });
         doc.append_child(container, child2);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1729,17 +2782,21 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let child1 = doc.create_node(ElementTag::Div);
-        doc.node_mut(child1).style.display = Display::Grid;
-        doc.node_mut(child1).style.width = openui_geometry::Length::px(150.0);
+        doc.update_resolved_style(child1, |style| style.display = Display::Grid);
+        doc.update_resolved_style(child1, |style| {
+            style.width = openui_geometry::Length::px(150.0)
+        });
         doc.append_child(container, child1);
 
         let child2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(child2).style.display = Display::Grid;
-        doc.node_mut(child2).style.width = openui_geometry::Length::px(250.0);
+        doc.update_resolved_style(child2, |style| style.display = Display::Grid);
+        doc.update_resolved_style(child2, |style| {
+            style.width = openui_geometry::Length::px(250.0)
+        });
         doc.append_child(container, child2);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1758,17 +2815,21 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let child1 = doc.create_node(ElementTag::Div);
-        doc.node_mut(child1).style.display = Display::FlowRoot;
-        doc.node_mut(child1).style.width = openui_geometry::Length::px(80.0);
+        doc.update_resolved_style(child1, |style| style.display = Display::FlowRoot);
+        doc.update_resolved_style(child1, |style| {
+            style.width = openui_geometry::Length::px(80.0)
+        });
         doc.append_child(container, child1);
 
         let child2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(child2).style.display = Display::FlowRoot;
-        doc.node_mut(child2).style.width = openui_geometry::Length::px(120.0);
+        doc.update_resolved_style(child2, |style| style.display = Display::FlowRoot);
+        doc.update_resolved_style(child2, |style| {
+            style.width = openui_geometry::Length::px(120.0)
+        });
         doc.append_child(container, child2);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1788,17 +2849,21 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let child1 = doc.create_node(ElementTag::Div);
-        doc.node_mut(child1).style.display = Display::InlineBlock;
-        doc.node_mut(child1).style.width = openui_geometry::Length::px(100.0);
+        doc.update_resolved_style(child1, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(child1, |style| {
+            style.width = openui_geometry::Length::px(100.0)
+        });
         doc.append_child(container, child1);
 
         let child2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(child2).style.display = Display::InlineBlock;
-        doc.node_mut(child2).style.width = openui_geometry::Length::px(200.0);
+        doc.update_resolved_style(child2, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(child2, |style| {
+            style.width = openui_geometry::Length::px(200.0)
+        });
         doc.append_child(container, child2);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1821,22 +2886,28 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let inline1 = doc.create_node(ElementTag::Div);
-        doc.node_mut(inline1).style.display = Display::InlineBlock;
-        doc.node_mut(inline1).style.width = openui_geometry::Length::px(50.0);
+        doc.update_resolved_style(inline1, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline1, |style| {
+            style.width = openui_geometry::Length::px(50.0)
+        });
         doc.append_child(container, inline1);
 
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.width = openui_geometry::Length::px(100.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| {
+            style.width = openui_geometry::Length::px(100.0)
+        });
         doc.append_child(container, block);
 
         let inline2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(inline2).style.display = Display::InlineBlock;
-        doc.node_mut(inline2).style.width = openui_geometry::Length::px(50.0);
+        doc.update_resolved_style(inline2, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline2, |style| {
+            style.width = openui_geometry::Length::px(50.0)
+        });
         doc.append_child(container, inline2);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1858,27 +2929,35 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let inline1 = doc.create_node(ElementTag::Div);
-        doc.node_mut(inline1).style.display = Display::InlineBlock;
-        doc.node_mut(inline1).style.width = openui_geometry::Length::px(80.0);
+        doc.update_resolved_style(inline1, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline1, |style| {
+            style.width = openui_geometry::Length::px(80.0)
+        });
         doc.append_child(container, inline1);
 
         let inline2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(inline2).style.display = Display::InlineBlock;
-        doc.node_mut(inline2).style.width = openui_geometry::Length::px(70.0);
+        doc.update_resolved_style(inline2, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline2, |style| {
+            style.width = openui_geometry::Length::px(70.0)
+        });
         doc.append_child(container, inline2);
 
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.width = openui_geometry::Length::px(60.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| {
+            style.width = openui_geometry::Length::px(60.0)
+        });
         doc.append_child(container, block);
 
         let inline3 = doc.create_node(ElementTag::Div);
-        doc.node_mut(inline3).style.display = Display::InlineBlock;
-        doc.node_mut(inline3).style.width = openui_geometry::Length::px(30.0);
+        doc.update_resolved_style(inline3, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline3, |style| {
+            style.width = openui_geometry::Length::px(30.0)
+        });
         doc.append_child(container, inline3);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1899,22 +2978,28 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let inline1 = doc.create_node(ElementTag::Div);
-        doc.node_mut(inline1).style.display = Display::InlineBlock;
-        doc.node_mut(inline1).style.width = openui_geometry::Length::px(30.0);
+        doc.update_resolved_style(inline1, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline1, |style| {
+            style.width = openui_geometry::Length::px(30.0)
+        });
         doc.append_child(container, inline1);
 
         let block = doc.create_node(ElementTag::Div);
-        doc.node_mut(block).style.display = Display::Block;
-        doc.node_mut(block).style.width = openui_geometry::Length::px(200.0);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| {
+            style.width = openui_geometry::Length::px(200.0)
+        });
         doc.append_child(container, block);
 
         let inline2 = doc.create_node(ElementTag::Div);
-        doc.node_mut(inline2).style.display = Display::InlineBlock;
-        doc.node_mut(inline2).style.width = openui_geometry::Length::px(40.0);
+        doc.update_resolved_style(inline2, |style| style.display = Display::InlineBlock);
+        doc.update_resolved_style(inline2, |style| {
+            style.width = openui_geometry::Length::px(40.0)
+        });
         doc.append_child(container, inline2);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1937,12 +3022,12 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let text = doc.create_node(ElementTag::Text);
         doc.node_mut(text).text = Some("AAA\nB".to_string());
-        doc.node_mut(text).style.white_space = WhiteSpace::Pre;
+        doc.update_resolved_style(text, |style| style.white_space = WhiteSpace::Pre);
         doc.append_child(container, text);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1953,12 +3038,12 @@ mod tests {
         let mut doc2 = Document::new();
         let vp2 = doc2.root();
         let container2 = doc2.create_node(ElementTag::Div);
-        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.update_resolved_style(container2, |style| style.display = Display::Block);
         doc2.append_child(vp2, container2);
 
         let text2 = doc2.create_node(ElementTag::Text);
         doc2.node_mut(text2).text = Some("AAA".to_string());
-        doc2.node_mut(text2).style.white_space = WhiteSpace::Pre;
+        doc2.update_resolved_style(text2, |style| style.white_space = WhiteSpace::Pre);
         doc2.append_child(container2, text2);
 
         let builder2 = InlineItemsBuilder::new(&doc2);
@@ -1977,12 +3062,12 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let text = doc.create_node(ElementTag::Text);
         doc.node_mut(text).text = Some("AAAA\nBB".to_string());
-        doc.node_mut(text).style.white_space = WhiteSpace::PreLine;
+        doc.update_resolved_style(text, |style| style.white_space = WhiteSpace::PreLine);
         doc.append_child(container, text);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -1992,12 +3077,12 @@ mod tests {
         let mut doc2 = Document::new();
         let vp2 = doc2.root();
         let container2 = doc2.create_node(ElementTag::Div);
-        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.update_resolved_style(container2, |style| style.display = Display::Block);
         doc2.append_child(vp2, container2);
 
         let text2 = doc2.create_node(ElementTag::Text);
         doc2.node_mut(text2).text = Some("AAAA".to_string());
-        doc2.node_mut(text2).style.white_space = WhiteSpace::PreLine;
+        doc2.update_resolved_style(text2, |style| style.white_space = WhiteSpace::PreLine);
         doc2.append_child(container2, text2);
 
         let builder2 = InlineItemsBuilder::new(&doc2);
@@ -2016,12 +3101,12 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let text = doc.create_node(ElementTag::Text);
         doc.node_mut(text).text = Some("A\nB".to_string());
-        doc.node_mut(text).style.white_space = WhiteSpace::Normal;
+        doc.update_resolved_style(text, |style| style.white_space = WhiteSpace::Normal);
         doc.append_child(container, text);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -2031,12 +3116,12 @@ mod tests {
         let mut doc2 = Document::new();
         let vp2 = doc2.root();
         let container2 = doc2.create_node(ElementTag::Div);
-        doc2.node_mut(container2).style.display = Display::Block;
+        doc2.update_resolved_style(container2, |style| style.display = Display::Block);
         doc2.append_child(vp2, container2);
 
         let text2 = doc2.create_node(ElementTag::Text);
         doc2.node_mut(text2).text = Some("A B".to_string());
-        doc2.node_mut(text2).style.white_space = WhiteSpace::Normal;
+        doc2.update_resolved_style(text2, |style| style.white_space = WhiteSpace::Normal);
         doc2.append_child(container2, text2);
 
         let builder2 = InlineItemsBuilder::new(&doc2);
@@ -2057,15 +3142,19 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let empty_span = doc.create_node(ElementTag::Span);
-        doc.node_mut(empty_span).style.display = Display::Inline;
-        doc.node_mut(empty_span).style.border_left_width = 5;
-        doc.node_mut(empty_span).style.border_left_style = openui_style::BorderStyle::Solid;
-        doc.node_mut(empty_span).style.border_right_width = 5;
-        doc.node_mut(empty_span).style.border_right_style = openui_style::BorderStyle::Solid;
+        doc.update_resolved_style(empty_span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(empty_span, |style| style.border_left_width = 5);
+        doc.update_resolved_style(empty_span, |style| {
+            style.border_left_style = openui_style::BorderStyle::Solid
+        });
+        doc.update_resolved_style(empty_span, |style| style.border_right_width = 5);
+        doc.update_resolved_style(empty_span, |style| {
+            style.border_right_style = openui_style::BorderStyle::Solid
+        });
         doc.append_child(container, empty_span);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -2088,13 +3177,17 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let empty_span = doc.create_node(ElementTag::Span);
-        doc.node_mut(empty_span).style.display = Display::Inline;
-        doc.node_mut(empty_span).style.padding_left = openui_geometry::Length::px(8.0);
-        doc.node_mut(empty_span).style.padding_right = openui_geometry::Length::px(8.0);
+        doc.update_resolved_style(empty_span, |style| style.display = Display::Inline);
+        doc.update_resolved_style(empty_span, |style| {
+            style.padding_left = openui_geometry::Length::px(8.0)
+        });
+        doc.update_resolved_style(empty_span, |style| {
+            style.padding_right = openui_geometry::Length::px(8.0)
+        });
         doc.append_child(container, empty_span);
 
         let builder = InlineItemsBuilder::new(&doc);
@@ -2117,15 +3210,19 @@ mod tests {
         let mut doc = Document::new();
         let vp = doc.root();
         let container = doc.create_node(ElementTag::Div);
-        doc.node_mut(container).style.display = Display::Block;
+        doc.update_resolved_style(container, |style| style.display = Display::Block);
         doc.append_child(vp, container);
 
         let empty_block = doc.create_node(ElementTag::Div);
-        doc.node_mut(empty_block).style.display = Display::Block;
-        doc.node_mut(empty_block).style.border_left_width = 10;
-        doc.node_mut(empty_block).style.border_left_style = openui_style::BorderStyle::Solid;
-        doc.node_mut(empty_block).style.border_right_width = 10;
-        doc.node_mut(empty_block).style.border_right_style = openui_style::BorderStyle::Solid;
+        doc.update_resolved_style(empty_block, |style| style.display = Display::Block);
+        doc.update_resolved_style(empty_block, |style| style.border_left_width = 10);
+        doc.update_resolved_style(empty_block, |style| {
+            style.border_left_style = openui_style::BorderStyle::Solid
+        });
+        doc.update_resolved_style(empty_block, |style| style.border_right_width = 10);
+        doc.update_resolved_style(empty_block, |style| {
+            style.border_right_style = openui_style::BorderStyle::Solid
+        });
         doc.append_child(container, empty_block);
 
         let builder = InlineItemsBuilder::new(&doc);

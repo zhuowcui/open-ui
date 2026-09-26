@@ -36,9 +36,12 @@ pub use transform::apply_text_transform;
 
 pub use font::features::collect_font_features;
 pub use font::{
-    used_line_height, used_line_height_metrics, Font, FontCache, FontDescription, FontFallbackList,
-    FontMetrics, FontPlatformData, FontRelativeLengthResolver, FontRelativeUnit,
-    UsedLineHeightMetrics,
+    used_line_height, used_line_height_metrics, Font, FontAxisRange, FontCache, FontCollection,
+    FontCollectionError, FontCollectionStats, FontContainerFormat, FontDescription,
+    FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFallbackList, FontFeatureDefault,
+    FontMetricOverrides, FontMetrics, FontPaletteBase, FontPaletteEntryOverride, FontPaletteHandle,
+    FontPaletteValuesDescriptor, FontPlatformData, FontRelativeLengthResolver, FontRelativeUnit,
+    FontStyleRange, FontUnicodeRange, UsedLineHeightMetrics,
 };
 
 pub use shaping::{
@@ -48,5 +51,5 @@ pub use shaping::{
 
 pub use hyphenation::{
     find_soft_hyphens, is_soft_hyphen, last_soft_hyphen_before, strip_soft_hyphens, Hyphenation,
-    SOFT_HYPHEN,
+    HyphenationDictionaryHandle, HyphenationRegistry, HyphenationRegistryError, SOFT_HYPHEN,
 };

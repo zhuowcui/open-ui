@@ -4,16 +4,29 @@
 //! use openui::prelude::*;
 //! ```
 
-pub use crate::app::App;
+pub use crate::app::{
+    App, AppBuilder, BackendPreference, HeadlessApp, LogicalSize, RenderOptions, WindowOptions,
+};
 pub use crate::context::{current_document, with_document};
 pub use crate::document::Document;
-pub use crate::element::Element;
+pub use crate::element::{Element, WeakElement};
 pub use crate::events::*;
 pub use crate::renderer::{DynChild, For, Show};
 pub use crate::style::*;
-pub use crate::text_node::TextNode;
+pub use crate::text_node::{TextNode, WeakTextNode};
+pub use crate::typed_style::*;
 pub use crate::view_node::{mount_view, IntoView, ViewNode};
+pub use crate::{
+    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
+    ViewportAuthority, ViewportMetrics,
+};
 pub use openui_macros::{component, view};
+pub use openui_text::{
+    FontAxisRange, FontCollection, FontFaceDescriptor, FontFaceHandle, FontFeatureDefault,
+    FontMetricOverrides, FontPaletteBase, FontPaletteEntryOverride, FontPaletteHandle,
+    FontPaletteValuesDescriptor, FontStyleRange, FontUnicodeRange, HyphenationDictionaryHandle,
+    HyphenationRegistry,
+};
 
 // Reactive primitives
 pub use crate::effect::{batch, create_effect};

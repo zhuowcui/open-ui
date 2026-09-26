@@ -178,6 +178,15 @@ const SURFACE_W: i32 = 800;
 const SURFACE_H: i32 = 600;
 const PAD: i32 = 20;
 
+fn test_viewport() -> openui_geometry::ViewportMetrics {
+    openui_geometry::ViewportMetrics::from_logical_size(
+        f64::from(SURFACE_W),
+        f64::from(SURFACE_H),
+        1.0,
+    )
+    .unwrap()
+}
+
 // Color constants (what we expect to read back as u8 RGBA)
 const RED: (u8, u8, u8) = (255, 0, 0);
 const GREEN: (u8, u8, u8) = (0, 128, 0);
@@ -198,20 +207,20 @@ const ORANGE: (u8, u8, u8) = (255, 165, 0);
 
 fn setup_viewport(doc: &mut Document) -> NodeId {
     let vp = doc.root();
-    doc.node_mut(vp).style.display = Display::Block;
-    doc.node_mut(vp).style.background_color = Color::WHITE;
-    doc.node_mut(vp).style.padding_top = Length::px(20.0);
-    doc.node_mut(vp).style.padding_right = Length::px(20.0);
-    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
-    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.update_resolved_style(vp, |style| style.display = Display::Block);
+    doc.update_resolved_style(vp, |style| style.background_color = Color::WHITE);
+    doc.update_resolved_style(vp, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_right = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_bottom = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_left = Length::px(20.0));
     vp
 }
 
 fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
     if width_px > 0.0 {
-        doc.node_mut(div).style.width = Length::px(width_px);
+        doc.update_resolved_style(div, |style| style.width = Length::px(width_px));
     }
     doc.append_child(parent, div);
     div
@@ -219,12 +228,12 @@ fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
 
 fn add_colored_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: Color) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
     if w > 0.0 {
-        doc.node_mut(div).style.width = Length::px(w);
+        doc.update_resolved_style(div, |style| style.width = Length::px(w));
     }
-    doc.node_mut(div).style.height = Length::px(h);
-    doc.node_mut(div).style.background_color = color;
+    doc.update_resolved_style(div, |style| style.height = Length::px(h));
+    doc.update_resolved_style(div, |style| style.background_color = color);
     doc.append_child(parent, div);
     div
 }
@@ -238,17 +247,17 @@ fn add_positioned_block(
     color: Color,
 ) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(w);
-    doc.node_mut(div).style.height = Length::px(h);
-    doc.node_mut(div).style.position = position;
-    doc.node_mut(div).style.background_color = color;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(w));
+    doc.update_resolved_style(div, |style| style.height = Length::px(h));
+    doc.update_resolved_style(div, |style| style.position = position);
+    doc.update_resolved_style(div, |style| style.background_color = color);
     doc.append_child(parent, div);
     div
 }
 
 fn render(doc: &Document) -> Surface {
-    render_to_surface(doc, SURFACE_W, SURFACE_H).expect("render_to_surface failed")
+    render_to_surface(doc, test_viewport()).expect("render_to_surface failed")
 }
 
 fn color_from_rgb(r: u8, g: u8, b: u8) -> Color {
@@ -339,7 +348,7 @@ fn static_block_ignores_top_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.top = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(30.0));
     let mut s = render(&doc);
     // Static ignores top — block still at (PAD, PAD)
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "static ignores top");
@@ -350,7 +359,7 @@ fn static_block_ignores_left_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.left = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(50.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "static ignores left");
 }
@@ -360,7 +369,7 @@ fn static_block_ignores_bottom_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.bottom = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(30.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "static ignores bottom");
 }
@@ -370,7 +379,7 @@ fn static_block_ignores_right_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
-    doc.node_mut(div).style.right = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.right = Length::px(30.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "static ignores right");
 }
@@ -436,7 +445,7 @@ fn rel_top_offset_moves_down() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(30.0));
     let mut s = render(&doc);
     // Normal position (PAD, PAD); with top:30 → (PAD, PAD+30)
     assert_pixel_color(&mut s, PAD + 5, PAD + 35, RED, "moved down by top:30");
@@ -447,7 +456,7 @@ fn rel_top_offset_vacated_space_is_white() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(30.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, WHITE, "vacated space is white");
 }
@@ -457,7 +466,7 @@ fn rel_left_offset_moves_right() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.left = Length::px(40.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(40.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD); with left:40 → (PAD+40, PAD)
     assert_pixel_color(&mut s, PAD + 45, PAD + 5, RED, "moved right by left:40");
@@ -468,7 +477,7 @@ fn rel_left_offset_vacated_space() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.left = Length::px(40.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(40.0));
     let mut s = render(&doc);
     assert_pixel_color(
         &mut s,
@@ -486,7 +495,7 @@ fn rel_bottom_offset_moves_up() {
     // Place a spacer first so relative can move up into visible area
     add_colored_block(&mut doc, vp, 100.0, 60.0, Color::WHITE);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::BLUE);
-    doc.node_mut(div).style.bottom = Length::px(20.0);
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(20.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD+60); bottom:20 moves up → (PAD, PAD+60-20) = (PAD, PAD+40)
     assert_pixel_color(&mut s, PAD + 5, PAD + 45, BLUE, "moved up by bottom:20");
@@ -497,7 +506,7 @@ fn rel_right_offset_moves_left() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::BLUE);
-    doc.node_mut(div).style.right = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.right = Length::px(10.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD); right:10 moves left → (PAD-10, PAD) = (10, PAD)
     assert_pixel_color(&mut s, 15, PAD + 5, BLUE, "moved left by right:10");
@@ -508,8 +517,8 @@ fn rel_top_left_combined() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(30.0);
-    doc.node_mut(div).style.left = Length::px(40.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(40.0));
     let mut s = render(&doc);
     // Normal (PAD, PAD) → (PAD+40, PAD+30) = (60, 50)
     assert_pixel_color(&mut s, 65, 55, RED, "top+left combined");
@@ -520,8 +529,8 @@ fn rel_top_left_combined_bottom_right_corner() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(30.0);
-    doc.node_mut(div).style.left = Length::px(40.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(40.0));
     let mut s = render(&doc);
     // Block at (60, 50), size 100x50 → bottom-right near (159, 99)
     assert_pixel_color(&mut s, 158, 98, RED, "bottom-right of offset block");
@@ -533,7 +542,7 @@ fn rel_negative_top_moves_up() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::WHITE);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::GREEN);
-    doc.node_mut(div).style.top = Length::px(-20.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(-20.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD+40); top:-20 → (PAD, PAD+20)
     assert_pixel_color(&mut s, PAD + 5, PAD + 25, GREEN, "negative top moves up");
@@ -544,7 +553,7 @@ fn rel_negative_left_moves_left() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::GREEN);
-    doc.node_mut(div).style.left = Length::px(-10.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(-10.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD); left:-10 → (PAD-10, PAD) = (10, 20)
     assert_pixel_color(&mut s, 15, PAD + 5, GREEN, "negative left moves left");
@@ -555,8 +564,8 @@ fn rel_does_not_affect_next_sibling() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(100.0);
-    doc.node_mut(div).style.left = Length::px(100.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(100.0));
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
     let mut s = render(&doc);
     // Red is visually at (PAD+100, PAD+100) but blue sibling at (PAD, PAD+50)
@@ -575,7 +584,7 @@ fn rel_does_not_affect_previous_sibling() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(-60.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(-60.0));
     let mut s = render(&doc);
     // Blue at (PAD, PAD); red normal at (PAD, PAD+50), moved to (PAD, PAD-10)
     // Blue should still be at its position
@@ -587,8 +596,8 @@ fn rel_zero_offsets_same_as_static() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(0.0);
-    doc.node_mut(div).style.left = Length::px(0.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(0.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "zero offset same as static");
 }
@@ -598,7 +607,7 @@ fn rel_large_top_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(200.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(200.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 5, PAD + 205, RED, "large top offset");
 }
@@ -608,7 +617,7 @@ fn rel_large_left_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.left = Length::px(300.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(300.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 305, PAD + 5, RED, "large left offset");
 }
@@ -618,8 +627,8 @@ fn rel_top_and_bottom_top_wins() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(25.0);
-    doc.node_mut(div).style.bottom = Length::px(100.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(25.0));
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(100.0));
     let mut s = render(&doc);
     // top wins: moves down by 25
     assert_pixel_color(&mut s, PAD + 5, PAD + 30, RED, "top wins over bottom");
@@ -630,8 +639,8 @@ fn rel_left_and_right_left_wins_ltr() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.left = Length::px(35.0);
-    doc.node_mut(div).style.right = Length::px(200.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(35.0));
+    doc.update_resolved_style(div, |style| style.right = Length::px(200.0));
     let mut s = render(&doc);
     // LTR: left wins, moves right by 35
     assert_pixel_color(
@@ -649,7 +658,7 @@ fn rel_bottom_only_offset() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 80.0, Color::WHITE);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::BLUE);
-    doc.node_mut(div).style.bottom = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(30.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD+80); bottom:30 → (PAD, PAD+50)
     assert_pixel_color(&mut s, PAD + 5, PAD + 55, BLUE, "bottom only moves up");
@@ -660,7 +669,7 @@ fn rel_right_only_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::BLUE);
-    doc.node_mut(div).style.right = Length::px(5.0);
+    doc.update_resolved_style(div, |style| style.right = Length::px(5.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD); right:5 moves left → (PAD-5, PAD) = (15, 20)
     assert_pixel_color(&mut s, 16, PAD + 5, BLUE, "right only moves left");
@@ -671,7 +680,7 @@ fn rel_small_top_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(1.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(1.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 5, PAD + 6, RED, "small top:1 offset");
 }
@@ -681,7 +690,7 @@ fn rel_small_left_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.left = Length::px(1.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(1.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 6, PAD + 5, RED, "small left:1 offset");
 }
@@ -691,10 +700,10 @@ fn rel_top_bottom_right_left_only_top_left_applied() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(10.0);
-    doc.node_mut(div).style.bottom = Length::px(50.0);
-    doc.node_mut(div).style.left = Length::px(15.0);
-    doc.node_mut(div).style.right = Length::px(200.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.right = Length::px(200.0));
     let mut s = render(&doc);
     // top:10, left:15 win → (PAD+15, PAD+10) = (35, 30)
     assert_pixel_color(&mut s, 40, 35, RED, "all four set: top+left win");
@@ -706,8 +715,8 @@ fn rel_second_block_with_offset() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(10.0);
-    doc.node_mut(div).style.left = Length::px(20.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(20.0));
     let mut s = render(&doc);
     // Blue normal at (PAD, PAD+50); with offsets → (PAD+20, PAD+60) = (40, 80)
     assert_pixel_color(&mut s, 45, 85, BLUE, "second block relative offset");
@@ -722,8 +731,8 @@ fn rel_with_margin_top() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.margin_top = Length::px(10.0);
-    doc.node_mut(div).style.top = Length::px(20.0);
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.top = Length::px(20.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD+10) due to margin; then top:20 → (PAD, PAD+30)
     assert_pixel_color(&mut s, PAD + 5, PAD + 35, RED, "relative + margin-top");
@@ -734,8 +743,8 @@ fn rel_with_margin_left() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.margin_left = Length::px(15.0);
-    doc.node_mut(div).style.left = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(15.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(10.0));
     let mut s = render(&doc);
     // Normal at (PAD+15, PAD); then left:10 → (PAD+25, PAD) = (45, 20)
     assert_pixel_color(&mut s, 50, PAD + 5, RED, "relative + margin-left");
@@ -753,12 +762,12 @@ fn rel_nested_relative_blocks() {
         Position::Relative,
         color_from_rgb(200, 200, 200),
     );
-    doc.node_mut(outer).style.top = Length::px(10.0);
-    doc.node_mut(outer).style.left = Length::px(10.0);
+    doc.update_resolved_style(outer, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(outer, |style| style.left = Length::px(10.0));
 
     let inner = add_positioned_block(&mut doc, outer, 80.0, 40.0, Position::Relative, Color::RED);
-    doc.node_mut(inner).style.top = Length::px(5.0);
-    doc.node_mut(inner).style.left = Length::px(5.0);
+    doc.update_resolved_style(inner, |style| style.top = Length::px(5.0));
+    doc.update_resolved_style(inner, |style| style.left = Length::px(5.0));
     let mut s = render(&doc);
     // Outer at (PAD+10, PAD+10) = (30, 30); inner at (30+5, 30+5) = (35, 35)
     assert_pixel_color(&mut s, 40, 40, RED, "nested relative stacks offsets");
@@ -769,8 +778,8 @@ fn rel_with_explicit_margin_bottom() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.margin_bottom = Length::px(20.0);
-    doc.node_mut(div).style.top = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.margin_bottom = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.top = Length::px(10.0));
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
     let mut s = render(&doc);
     // Red at (PAD, PAD+10); blue at (PAD, PAD+50+20) = (PAD, PAD+70)
@@ -788,9 +797,9 @@ fn rel_block_with_padding() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.padding_left = Length::px(10.0);
-    doc.node_mut(div).style.top = Length::px(5.0);
-    doc.node_mut(div).style.left = Length::px(5.0);
+    doc.update_resolved_style(div, |style| style.padding_left = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.top = Length::px(5.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(5.0));
     let mut s = render(&doc);
     // Block at (PAD+5, PAD+5) = (25, 25); padding doesn't affect position
     assert_pixel_color(&mut s, 30, 30, RED, "relative with padding");
@@ -801,9 +810,9 @@ fn rel_two_siblings_both_relative() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(a).style.left = Length::px(20.0);
+    doc.update_resolved_style(a, |style| style.left = Length::px(20.0));
     let b = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::BLUE);
-    doc.node_mut(b).style.left = Length::px(40.0);
+    doc.update_resolved_style(b, |style| style.left = Length::px(40.0));
     let mut s = render(&doc);
     // Red at (PAD+20, PAD) = (40, 20); blue at (PAD+40, PAD+50) = (60, 70)
     assert_pixel_color(&mut s, 45, PAD + 5, RED, "first relative sibling");
@@ -816,7 +825,7 @@ fn rel_offset_preserves_flow_for_third_sibling() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 30.0, Color::RED);
     let div = add_positioned_block(&mut doc, vp, 100.0, 30.0, Position::Relative, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(200.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(200.0));
     add_colored_block(&mut doc, vp, 100.0, 30.0, Color::GREEN);
     let mut s = render(&doc);
     // Green should be at (PAD, PAD+30+30) = (PAD, PAD+60) regardless of blue's offset
@@ -835,7 +844,7 @@ fn rel_large_negative_top() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 100.0, Color::WHITE);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(-80.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(-80.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD+100); top:-80 → (PAD, PAD+20)
     assert_pixel_color(&mut s, PAD + 5, PAD + 25, RED, "large negative top");
@@ -847,8 +856,8 @@ fn rel_combined_negative_offsets() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::WHITE);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(-30.0);
-    doc.node_mut(div).style.left = Length::px(-10.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(-30.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(-10.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD+50); offsets → (PAD-10, PAD+20) = (10, 40)
     assert_pixel_color(&mut s, 15, 45, BLUE, "combined negative offsets");
@@ -859,7 +868,7 @@ fn rel_sibling_after_relative_block_correct_y() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 40.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(50.0));
     add_colored_block(&mut doc, vp, 80.0, 30.0, Color::GREEN);
     let mut s = render(&doc);
     // Green at (PAD, PAD+40) — red's original space (40px) is preserved
@@ -877,9 +886,9 @@ fn rel_with_different_width_blocks() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 200.0, 40.0, Position::Relative, Color::RED);
-    doc.node_mut(a).style.left = Length::px(50.0);
+    doc.update_resolved_style(a, |style| style.left = Length::px(50.0));
     let b = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Relative, Color::BLUE);
-    doc.node_mut(b).style.left = Length::px(10.0);
+    doc.update_resolved_style(b, |style| style.left = Length::px(10.0));
     let mut s = render(&doc);
     // Red 200px wide at x=PAD+50=70; blue 80px wide at x=PAD+10=30
     assert_pixel_color(&mut s, 75, PAD + 5, RED, "wide block offset");
@@ -892,7 +901,7 @@ fn rel_percentage_top_offset() {
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
     // 10% of containing block height (600) = 60
-    doc.node_mut(div).style.top = Length::percent(10.0);
+    doc.update_resolved_style(div, |style| style.top = Length::percent(10.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD); top:10% of 600 = 60 → (PAD, PAD+60)
     assert_pixel_color(&mut s, PAD + 5, PAD + 65, RED, "percentage top offset");
@@ -904,7 +913,7 @@ fn rel_percentage_left_offset() {
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
     // 10% of containing block width (760) = 76
-    doc.node_mut(div).style.left = Length::percent(10.0);
+    doc.update_resolved_style(div, |style| style.left = Length::percent(10.0));
     let mut s = render(&doc);
     // Normal at (PAD, PAD); left:10% of 760 = 76 → (PAD+76, PAD) = (96, 20)
     assert_pixel_color(&mut s, 101, PAD + 5, RED, "percentage left offset");
@@ -929,8 +938,8 @@ fn abs_top_left_zero() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(0.0);
-    doc.node_mut(div).style.left = Length::px(0.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(0.0));
     let mut s = render(&doc);
     // Absolute top:0, left:0 → pixel (0, 0) from parent border-box
     assert_pixel_color(&mut s, 5, 5, BLUE, "abs at surface origin");
@@ -941,8 +950,8 @@ fn abs_top_left_zero_bottom_right() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(0.0);
-    doc.node_mut(div).style.left = Length::px(0.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(0.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 98, 48, BLUE, "abs bottom-right corner");
 }
@@ -952,8 +961,8 @@ fn abs_with_top_left_offsets() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(div).style.top = Length::px(30.0);
-    doc.node_mut(div).style.left = Length::px(40.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(40.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 45, 35, GREEN, "abs at (40,30)");
 }
@@ -963,8 +972,8 @@ fn abs_with_right_bottom_offsets() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.right = Length::px(0.0);
-    doc.node_mut(div).style.bottom = Length::px(0.0);
+    doc.update_resolved_style(div, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(0.0));
     let mut s = render(&doc);
     // CB = (800, 600); left = 800-0-100 = 700; top = 600-0-50 = 550
     assert_pixel_color(&mut s, 705, 555, RED, "abs right:0 bottom:0");
@@ -975,8 +984,8 @@ fn abs_right_bottom_edge_check() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.right = Length::px(0.0);
-    doc.node_mut(div).style.bottom = Length::px(0.0);
+    doc.update_resolved_style(div, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(0.0));
     let mut s = render(&doc);
     // Block from (660,550) to (760,600); just outside
     assert_pixel_color(&mut s, 659, 555, WHITE, "left of abs right:0 block");
@@ -987,8 +996,8 @@ fn abs_removed_from_flow() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let abs = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::RED);
-    doc.node_mut(abs).style.top = Length::px(200.0);
-    doc.node_mut(abs).style.left = Length::px(200.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(200.0));
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
     let mut s = render(&doc);
     // Blue at (PAD, PAD) — abs doesn't push it down
@@ -1007,8 +1016,8 @@ fn abs_removed_from_flow_no_gap() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::RED);
     let abs = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(abs).style.top = Length::px(300.0);
-    doc.node_mut(abs).style.left = Length::px(300.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(300.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(300.0));
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
     // Red at y=PAD, blue at y=PAD+40 (abs doesn't contribute)
@@ -1021,8 +1030,8 @@ fn abs_explicit_width_height() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 200.0, 100.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.top = Length::px(50.0);
-    doc.node_mut(div).style.left = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(50.0));
     let mut s = render(&doc);
     // Block from (50, 50) to (250, 150)
     assert_pixel_color(&mut s, 55, 55, RED, "top-left of large abs");
@@ -1035,8 +1044,8 @@ fn abs_overlapping_normal_flow() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
     let abs = add_positioned_block(&mut doc, vp, 80.0, 30.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(abs).style.top = Length::px(PAD as f32);
-    doc.node_mut(abs).style.left = Length::px(PAD as f32);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(PAD as f32));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(PAD as f32));
     let mut s = render(&doc);
     // Abs at (PAD, PAD) overlaps red at (PAD, PAD); abs paints on top
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, BLUE, "abs overlaps normal flow");
@@ -1047,7 +1056,7 @@ fn abs_top_only_with_left_auto() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.top = Length::px(80.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(80.0));
     let mut s = render(&doc);
     // top:80, left:auto → uses static position for left = PAD
     assert_pixel_color(&mut s, PAD + 5, 85, RED, "abs top:80 left:auto");
@@ -1058,7 +1067,7 @@ fn abs_left_only_with_top_auto() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.left = Length::px(100.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(100.0));
     let mut s = render(&doc);
     // left:100, top:auto → uses static position for top = PAD
     assert_pixel_color(&mut s, 105, PAD + 5, RED, "abs left:100 top:auto");
@@ -1069,8 +1078,8 @@ fn abs_top_50_left_50() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 120.0, 60.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(div).style.top = Length::px(50.0);
-    doc.node_mut(div).style.left = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(50.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 55, 55, GREEN, "abs 50,50 interior");
     assert_pixel_color(&mut s, 165, 105, GREEN, "abs 50,50 far corner");
@@ -1081,8 +1090,8 @@ fn abs_right_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(10.0);
-    doc.node_mut(div).style.right = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.right = Length::px(10.0));
     let mut s = render(&doc);
     // left = CB_width - right - width = 800 - 10 - 100 = 690
     assert_pixel_color(&mut s, 695, 15, BLUE, "abs right:10 offset");
@@ -1093,8 +1102,8 @@ fn abs_bottom_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(div).style.left = Length::px(10.0);
-    doc.node_mut(div).style.bottom = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(10.0));
     let mut s = render(&doc);
     // top = CB_height - bottom - height = 600 - 10 - 50 = 540
     assert_pixel_color(&mut s, 15, 545, BLUE, "abs bottom:10 offset");
@@ -1105,8 +1114,8 @@ fn abs_right_30_bottom_30() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.right = Length::px(30.0);
-    doc.node_mut(div).style.bottom = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.right = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(30.0));
     let mut s = render(&doc);
     // left = 800-30-80 = 690; top = 600-30-40 = 530
     assert_pixel_color(&mut s, 695, 535, RED, "abs right:30 bottom:30");
@@ -1117,8 +1126,8 @@ fn abs_white_outside_block() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.top = Length::px(100.0);
-    doc.node_mut(div).style.left = Length::px(100.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(100.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 99, 105, WHITE, "left of abs block");
     assert_pixel_color(&mut s, 105, 99, WHITE, "above abs block");
@@ -1131,11 +1140,11 @@ fn abs_multiple_absolute_blocks() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 60.0, 40.0, Position::Absolute, Color::RED);
-    doc.node_mut(a).style.top = Length::px(10.0);
-    doc.node_mut(a).style.left = Length::px(10.0);
+    doc.update_resolved_style(a, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(a, |style| style.left = Length::px(10.0));
     let b = add_positioned_block(&mut doc, vp, 60.0, 40.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(b).style.top = Length::px(100.0);
-    doc.node_mut(b).style.left = Length::px(100.0);
+    doc.update_resolved_style(b, |style| style.top = Length::px(100.0));
+    doc.update_resolved_style(b, |style| style.left = Length::px(100.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 15, 15, RED, "first abs block");
     assert_pixel_color(&mut s, 105, 105, BLUE, "second abs block");
@@ -1146,8 +1155,8 @@ fn abs_large_offsets() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 50.0, 30.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.top = Length::px(400.0);
-    doc.node_mut(div).style.left = Length::px(500.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(400.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(500.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 505, 405, RED, "abs with large offsets");
 }
@@ -1157,8 +1166,8 @@ fn abs_narrow_tall_block() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 20.0, 200.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(div).style.top = Length::px(50.0);
-    doc.node_mut(div).style.left = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(50.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 55, 55, GREEN, "narrow tall abs top");
     assert_pixel_color(&mut s, 55, 245, GREEN, "narrow tall abs bottom");
@@ -1169,8 +1178,8 @@ fn abs_wide_short_block() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 300.0, 20.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(div).style.top = Length::px(50.0);
-    doc.node_mut(div).style.left = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(50.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 55, 55, GREEN, "wide short abs left");
     assert_pixel_color(&mut s, 345, 65, GREEN, "wide short abs right");
@@ -1181,8 +1190,8 @@ fn abs_renders_visible_content() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 200.0, 100.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.top = Length::px(0.0);
-    doc.node_mut(div).style.left = Length::px(0.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(0.0));
     let mut s = render(&doc);
     assert!(has_visible_content(&mut s), "abs block renders content");
 }
@@ -1192,8 +1201,8 @@ fn abs_top_10_left_10() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(10.0);
-    doc.node_mut(div).style.left = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(10.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 11, 11, BLUE, "abs top-left at (10,10)");
     assert_pixel_color(&mut s, 68, 38, BLUE, "abs bottom-right near edge");
@@ -1208,11 +1217,13 @@ fn abs_in_relative_container_top_left_zero() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(400.0);
-    doc.node_mut(container).style.height = Length::px(300.0);
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.background_color = color_from_rgb(200, 200, 200);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| {
+        style.background_color = color_from_rgb(200, 200, 200)
+    });
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -1223,8 +1234,8 @@ fn abs_in_relative_container_top_left_zero() {
         Position::Absolute,
         Color::RED,
     );
-    doc.node_mut(abs).style.top = Length::px(0.0);
-    doc.node_mut(abs).style.left = Length::px(0.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(0.0));
     let mut s = render(&doc);
     // Container at (PAD, PAD) = (20, 20); abs at container's origin = (20, 20)
     assert_pixel_color(
@@ -1241,11 +1252,13 @@ fn abs_in_relative_container_with_offsets() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(400.0);
-    doc.node_mut(container).style.height = Length::px(300.0);
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.background_color = color_from_rgb(200, 200, 200);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| {
+        style.background_color = color_from_rgb(200, 200, 200)
+    });
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -1256,8 +1269,8 @@ fn abs_in_relative_container_with_offsets() {
         Position::Absolute,
         Color::RED,
     );
-    doc.node_mut(abs).style.top = Length::px(20.0);
-    doc.node_mut(abs).style.left = Length::px(30.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(20.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(30.0));
     let mut s = render(&doc);
     // Container at (20, 20); abs at (20+30, 20+20) = (50, 40)
     assert_pixel_color(&mut s, 55, 45, RED, "abs in container with offsets");
@@ -1268,10 +1281,10 @@ fn abs_in_container_right_zero() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(400.0);
-    doc.node_mut(container).style.height = Length::px(300.0);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -1282,8 +1295,8 @@ fn abs_in_container_right_zero() {
         Position::Absolute,
         Color::BLUE,
     );
-    doc.node_mut(abs).style.top = Length::px(0.0);
-    doc.node_mut(abs).style.right = Length::px(0.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(0.0));
     let mut s = render(&doc);
     // CB width = 400 (container content width); left = 400 - 0 - 60 = 340
     // Surface: container at (20,20) → abs at (20+340, 20+0) = (360, 20)
@@ -1295,10 +1308,10 @@ fn abs_in_container_bottom_zero() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(400.0);
-    doc.node_mut(container).style.height = Length::px(300.0);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -1309,8 +1322,8 @@ fn abs_in_container_bottom_zero() {
         Position::Absolute,
         Color::BLUE,
     );
-    doc.node_mut(abs).style.left = Length::px(0.0);
-    doc.node_mut(abs).style.top = Length::px(250.0);
+    doc.update_resolved_style(abs, |style| style.left = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.top = Length::px(250.0));
     let mut s = render(&doc);
     // Container at (20,20); abs at (20+0, 20+250) = (20, 270)
     assert_pixel_color(&mut s, 25, 275, BLUE, "abs near bottom of container");
@@ -1321,10 +1334,10 @@ fn abs_in_container_right_bottom_corner() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(400.0);
-    doc.node_mut(container).style.height = Length::px(300.0);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -1335,8 +1348,8 @@ fn abs_in_container_right_bottom_corner() {
         Position::Absolute,
         Color::RED,
     );
-    doc.node_mut(abs).style.right = Length::px(0.0);
-    doc.node_mut(abs).style.top = Length::px(260.0);
+    doc.update_resolved_style(abs, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.top = Length::px(260.0));
     let mut s = render(&doc);
     // right:0 → left = 400 - 0 - 50 = 350; top:260
     // Surface: (20+350, 20+260) = (370, 280)
@@ -1348,10 +1361,10 @@ fn abs_in_container_with_right_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(400.0);
-    doc.node_mut(container).style.height = Length::px(300.0);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -1362,8 +1375,8 @@ fn abs_in_container_with_right_offset() {
         Position::Absolute,
         Color::GREEN,
     );
-    doc.node_mut(abs).style.top = Length::px(10.0);
-    doc.node_mut(abs).style.right = Length::px(20.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(20.0));
     let mut s = render(&doc);
     // left = 400 - 20 - 80 = 300; surface: (20+300, 20+10) = (320, 30)
     assert_pixel_color(&mut s, 325, 35, GREEN, "abs right:20 in container");
@@ -1374,23 +1387,23 @@ fn abs_in_container_centering_auto_margins() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(400.0);
-    doc.node_mut(container).style.height = Length::px(300.0);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     doc.append_child(vp, container);
 
     let abs = doc.create_node(ElementTag::Div);
-    doc.node_mut(abs).style.display = Display::Block;
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(50.0);
-    doc.node_mut(abs).style.position = Position::Absolute;
-    doc.node_mut(abs).style.left = Length::px(0.0);
-    doc.node_mut(abs).style.right = Length::px(0.0);
-    doc.node_mut(abs).style.top = Length::px(0.0);
-    doc.node_mut(abs).style.margin_left = Length::auto();
-    doc.node_mut(abs).style.margin_right = Length::auto();
-    doc.node_mut(abs).style.background_color = Color::RED;
+    doc.update_resolved_style(abs, |style| style.display = Display::Block);
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(abs, |style| style.left = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(abs, |style| style.margin_right = Length::auto());
+    doc.update_resolved_style(abs, |style| style.background_color = Color::RED);
     doc.append_child(container, abs);
     let mut s = render(&doc);
     // Centered: left = (400 - 200)/2 = 100; surface: (20+100, 20+0) = (120, 20)
@@ -1402,11 +1415,13 @@ fn abs_container_bg_visible_around_abs_child() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(300.0);
-    doc.node_mut(container).style.height = Length::px(200.0);
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.background_color = color_from_rgb(200, 200, 200);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| {
+        style.background_color = color_from_rgb(200, 200, 200)
+    });
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -1417,8 +1432,8 @@ fn abs_container_bg_visible_around_abs_child() {
         Position::Absolute,
         Color::RED,
     );
-    doc.node_mut(abs).style.top = Length::px(50.0);
-    doc.node_mut(abs).style.left = Length::px(50.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(50.0));
     let mut s = render(&doc);
     // Container bg at (20,20); abs at (70,70)
     assert_pixel_color(
@@ -1436,10 +1451,10 @@ fn abs_in_container_two_abs_children() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(400.0);
-    doc.node_mut(container).style.height = Length::px(300.0);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     doc.append_child(vp, container);
 
     let a = add_positioned_block(
@@ -1450,8 +1465,8 @@ fn abs_in_container_two_abs_children() {
         Position::Absolute,
         Color::RED,
     );
-    doc.node_mut(a).style.top = Length::px(10.0);
-    doc.node_mut(a).style.left = Length::px(10.0);
+    doc.update_resolved_style(a, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(a, |style| style.left = Length::px(10.0));
     let b = add_positioned_block(
         &mut doc,
         container,
@@ -1460,8 +1475,8 @@ fn abs_in_container_two_abs_children() {
         Position::Absolute,
         Color::BLUE,
     );
-    doc.node_mut(b).style.top = Length::px(80.0);
-    doc.node_mut(b).style.left = Length::px(80.0);
+    doc.update_resolved_style(b, |style| style.top = Length::px(80.0));
+    doc.update_resolved_style(b, |style| style.left = Length::px(80.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 15, PAD + 15, RED, "first abs in container");
     assert_pixel_color(&mut s, PAD + 85, PAD + 85, BLUE, "second abs in container");
@@ -1472,12 +1487,12 @@ fn abs_in_offset_relative_container() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(300.0);
-    doc.node_mut(container).style.height = Length::px(200.0);
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.top = Length::px(20.0);
-    doc.node_mut(container).style.left = Length::px(30.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.top = Length::px(20.0));
+    doc.update_resolved_style(container, |style| style.left = Length::px(30.0));
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -1488,8 +1503,8 @@ fn abs_in_offset_relative_container() {
         Position::Absolute,
         Color::RED,
     );
-    doc.node_mut(abs).style.top = Length::px(5.0);
-    doc.node_mut(abs).style.left = Length::px(5.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(5.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(5.0));
     let mut s = render(&doc);
     // Container normal at (PAD, PAD), relative moves to (PAD+30, PAD+20) = (50, 40)
     // Abs at (50+5, 40+5) = (55, 45)
@@ -1501,10 +1516,10 @@ fn abs_with_bottom_offset_in_container() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(400.0);
-    doc.node_mut(container).style.height = Length::px(300.0);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -1515,8 +1530,8 @@ fn abs_with_bottom_offset_in_container() {
         Position::Absolute,
         Color::GREEN,
     );
-    doc.node_mut(abs).style.left = Length::px(10.0);
-    doc.node_mut(abs).style.top = Length::px(200.0);
+    doc.update_resolved_style(abs, |style| style.left = Length::px(10.0));
+    doc.update_resolved_style(abs, |style| style.top = Length::px(200.0));
     let mut s = render(&doc);
     // Container at (20,20); abs at (20+10, 20+200) = (30, 220)
     assert_pixel_color(&mut s, 35, 225, GREEN, "abs top:200 in container");
@@ -1527,14 +1542,14 @@ fn abs_multiple_non_overlapping() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::RED);
-    doc.node_mut(a).style.top = Length::px(0.0);
-    doc.node_mut(a).style.left = Length::px(0.0);
+    doc.update_resolved_style(a, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(a, |style| style.left = Length::px(0.0));
     let b = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(b).style.top = Length::px(0.0);
-    doc.node_mut(b).style.left = Length::px(200.0);
+    doc.update_resolved_style(b, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(b, |style| style.left = Length::px(200.0));
     let c = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(c).style.top = Length::px(0.0);
-    doc.node_mut(c).style.left = Length::px(400.0);
+    doc.update_resolved_style(c, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(c, |style| style.left = Length::px(400.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 50, 25, RED, "first non-overlapping abs");
     assert_pixel_color(&mut s, 250, 25, BLUE, "second non-overlapping abs");
@@ -1546,10 +1561,10 @@ fn abs_in_container_inflow_sibling_at_origin() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(300.0);
-    doc.node_mut(container).style.height = Length::px(200.0);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -1560,8 +1575,8 @@ fn abs_in_container_inflow_sibling_at_origin() {
         Position::Absolute,
         Color::RED,
     );
-    doc.node_mut(abs).style.top = Length::px(100.0);
-    doc.node_mut(abs).style.left = Length::px(100.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(100.0));
     let _flow = add_colored_block(&mut doc, container, 100.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
     // In-flow child at container's content origin (20, 20); abs moved away
@@ -1579,8 +1594,8 @@ fn abs_small_1x1_block() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 1.0, 1.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.top = Length::px(50.0);
-    doc.node_mut(div).style.left = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(50.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 50, 50, RED, "1x1 abs block at exact pixel");
 }
@@ -1590,8 +1605,8 @@ fn abs_right_10_top_10() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(div).style.top = Length::px(10.0);
-    doc.node_mut(div).style.right = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.right = Length::px(10.0));
     let mut s = render(&doc);
     // left = 760 - 10 - 100 = 650; top = 10
     assert_pixel_color(&mut s, 700, 30, GREEN, "abs right:10 top:10 interior");
@@ -1641,7 +1656,7 @@ fn abs_only_top_set() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.top = Length::px(60.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(60.0));
     let mut s = render(&doc);
     // top:60, left:auto → left = static_left = PAD
     assert_pixel_color(&mut s, PAD + 5, 65, RED, "abs only top:60");
@@ -1652,7 +1667,7 @@ fn abs_only_left_set() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.left = Length::px(70.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(70.0));
     let mut s = render(&doc);
     // left:70, top:auto → top = static_top = PAD
     assert_pixel_color(&mut s, 75, PAD + 5, RED, "abs only left:70");
@@ -1663,7 +1678,7 @@ fn abs_only_right_set() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.right = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.right = Length::px(50.0));
     let mut s = render(&doc);
     // right:50, left:auto, width:80 → left = 800 - 50 - 80 = 670
     // top:auto → static_top = PAD
@@ -1675,7 +1690,7 @@ fn abs_only_bottom_set() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.bottom = Length::px(50.0);
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(50.0));
     let mut s = render(&doc);
     // bottom:50, top:auto → top = 600 - 50 - 40 = 510
     // left:auto → static_left = PAD
@@ -1736,10 +1751,10 @@ fn abs_auto_offset_in_container() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(300.0);
-    doc.node_mut(container).style.height = Length::px(200.0);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -1760,7 +1775,7 @@ fn abs_top_zero_left_auto() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.top = Length::px(0.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(0.0));
     // left auto → static_left = PAD
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 5, 5, RED, "abs top:0, left auto at static x");
@@ -1771,7 +1786,7 @@ fn abs_left_zero_top_auto() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
-    doc.node_mut(div).style.left = Length::px(0.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(0.0));
     // top auto → static_top = PAD
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 5, PAD + 5, RED, "abs left:0, top auto at static y");
@@ -1811,8 +1826,8 @@ fn fixed_top_left_zero() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Fixed, Color::RED);
-    doc.node_mut(div).style.top = Length::px(0.0);
-    doc.node_mut(div).style.left = Length::px(0.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(0.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 5, 5, RED, "fixed at surface origin");
 }
@@ -1822,8 +1837,8 @@ fn fixed_with_top_left_offsets() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Fixed, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(30.0);
-    doc.node_mut(div).style.left = Length::px(40.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(40.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 45, 35, BLUE, "fixed with offsets");
 }
@@ -1833,8 +1848,8 @@ fn fixed_with_right_bottom_offsets() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Fixed, Color::RED);
-    doc.node_mut(div).style.right = Length::px(0.0);
-    doc.node_mut(div).style.bottom = Length::px(0.0);
+    doc.update_resolved_style(div, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(0.0));
     let mut s = render(&doc);
     // Same as absolute: left=700, top=550
     assert_pixel_color(&mut s, 705, 555, RED, "fixed right:0 bottom:0");
@@ -1846,8 +1861,8 @@ fn fixed_overlapping_normal_flow() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 200.0, 100.0, Color::GREEN);
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Fixed, Color::RED);
-    doc.node_mut(div).style.top = Length::px(PAD as f32);
-    doc.node_mut(div).style.left = Length::px(PAD as f32);
+    doc.update_resolved_style(div, |style| style.top = Length::px(PAD as f32));
+    doc.update_resolved_style(div, |style| style.left = Length::px(PAD as f32));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "fixed overlaps normal flow");
 }
@@ -1857,8 +1872,8 @@ fn fixed_removed_from_flow() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let fixed = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Fixed, Color::RED);
-    doc.node_mut(fixed).style.top = Length::px(300.0);
-    doc.node_mut(fixed).style.left = Length::px(300.0);
+    doc.update_resolved_style(fixed, |style| style.top = Length::px(300.0));
+    doc.update_resolved_style(fixed, |style| style.left = Length::px(300.0));
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::BLUE);
     let mut s = render(&doc);
     // Blue at (PAD, PAD) — fixed doesn't push it
@@ -1870,8 +1885,8 @@ fn fixed_top_10_left_10() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Fixed, Color::GREEN);
-    doc.node_mut(div).style.top = Length::px(10.0);
-    doc.node_mut(div).style.left = Length::px(10.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(10.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 15, 15, GREEN, "fixed top:10 left:10");
 }
@@ -1881,8 +1896,8 @@ fn fixed_right_20_top_20() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Fixed, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(20.0);
-    doc.node_mut(div).style.right = Length::px(20.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(20.0));
+    doc.update_resolved_style(div, |style| style.right = Length::px(20.0));
     let mut s = render(&doc);
     // left = 800 - 20 - 80 = 700; top = 20
     assert_pixel_color(&mut s, 705, 25, BLUE, "fixed right:20 top:20");
@@ -1893,8 +1908,8 @@ fn fixed_bottom_30_left_30() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Fixed, Color::RED);
-    doc.node_mut(div).style.left = Length::px(30.0);
-    doc.node_mut(div).style.bottom = Length::px(30.0);
+    doc.update_resolved_style(div, |style| style.left = Length::px(30.0));
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(30.0));
     let mut s = render(&doc);
     // top = 600 - 30 - 40 = 530; left = 30
     assert_pixel_color(&mut s, 35, 535, RED, "fixed bottom:30 left:30");
@@ -1921,8 +1936,8 @@ fn fixed_large_offsets() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 50.0, 30.0, Position::Fixed, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(300.0);
-    doc.node_mut(div).style.left = Length::px(400.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(300.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(400.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 405, 305, BLUE, "fixed large offsets");
 }
@@ -1932,8 +1947,8 @@ fn fixed_white_around_block() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Fixed, Color::RED);
-    doc.node_mut(div).style.top = Length::px(200.0);
-    doc.node_mut(div).style.left = Length::px(200.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(200.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(200.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 199, 225, WHITE, "left of fixed");
     assert_pixel_color(&mut s, 225, 199, WHITE, "above fixed");
@@ -1947,16 +1962,16 @@ fn fixed_same_as_absolute_for_viewport() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let abs = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::RED);
-    doc.node_mut(abs).style.top = Length::px(50.0);
-    doc.node_mut(abs).style.left = Length::px(50.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(50.0));
     let mut s1 = render(&doc);
     let abs_pixel = get_pixel(&mut s1, 55, 55);
 
     let mut doc2 = Document::new();
     let vp2 = setup_viewport(&mut doc2);
     let fixed = add_positioned_block(&mut doc2, vp2, 80.0, 40.0, Position::Fixed, Color::RED);
-    doc2.node_mut(fixed).style.top = Length::px(50.0);
-    doc2.node_mut(fixed).style.left = Length::px(50.0);
+    doc2.update_resolved_style(fixed, |style| style.top = Length::px(50.0));
+    doc2.update_resolved_style(fixed, |style| style.left = Length::px(50.0));
     let mut s2 = render(&doc2);
     let fixed_pixel = get_pixel(&mut s2, 55, 55);
 
@@ -1971,11 +1986,11 @@ fn fixed_multiple_fixed_blocks() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Fixed, Color::RED);
-    doc.node_mut(a).style.top = Length::px(0.0);
-    doc.node_mut(a).style.left = Length::px(0.0);
+    doc.update_resolved_style(a, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(a, |style| style.left = Length::px(0.0));
     let b = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Fixed, Color::BLUE);
-    doc.node_mut(b).style.top = Length::px(100.0);
-    doc.node_mut(b).style.left = Length::px(100.0);
+    doc.update_resolved_style(b, |style| style.top = Length::px(100.0));
+    doc.update_resolved_style(b, |style| style.left = Length::px(100.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 5, 5, RED, "first fixed");
     assert_pixel_color(&mut s, 105, 105, BLUE, "second fixed");
@@ -1987,8 +2002,8 @@ fn fixed_between_static_blocks() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::RED);
     let fixed = add_positioned_block(&mut doc, vp, 60.0, 30.0, Position::Fixed, Color::GREEN);
-    doc.node_mut(fixed).style.top = Length::px(400.0);
-    doc.node_mut(fixed).style.left = Length::px(400.0);
+    doc.update_resolved_style(fixed, |style| style.top = Length::px(400.0));
+    doc.update_resolved_style(fixed, |style| style.left = Length::px(400.0));
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
     // Fixed removed from flow: red at y=PAD, blue at y=PAD+40
@@ -2012,7 +2027,7 @@ fn overlap_later_static_block_on_top_via_relative() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 80.0, Color::RED);
     let div = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(-40.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(-40.0));
     let mut s = render(&doc);
     // Blue normal at (PAD, PAD+80), relative to (PAD, PAD+40)
     // Overlaps red at y=60..90
@@ -2025,7 +2040,7 @@ fn overlap_relative_over_static_at_same_y() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
     let div = add_positioned_block(&mut doc, vp, 80.0, 30.0, Position::Relative, Color::BLUE);
-    doc.node_mut(div).style.top = Length::px(-30.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(-30.0));
     let mut s = render(&doc);
     // Blue overlaps red near the bottom
     assert_pixel_color(
@@ -2043,8 +2058,8 @@ fn overlap_abs_over_static() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
     let abs = add_positioned_block(&mut doc, vp, 80.0, 30.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(abs).style.top = Length::px(PAD as f32 + 10.0);
-    doc.node_mut(abs).style.left = Length::px(PAD as f32 + 10.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(PAD as f32 + 10.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(PAD as f32 + 10.0));
     let mut s = render(&doc);
     // Abs at (30, 30) overlaps red at (20, 20)
     assert_pixel_color(&mut s, PAD + 15, PAD + 15, GREEN, "abs on top of static");
@@ -2055,10 +2070,10 @@ fn overlap_abs_over_relative() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let rel = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Relative, Color::RED);
-    doc.node_mut(rel).style.left = Length::px(10.0);
+    doc.update_resolved_style(rel, |style| style.left = Length::px(10.0));
     let abs = add_positioned_block(&mut doc, vp, 80.0, 30.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(abs).style.top = Length::px(PAD as f32);
-    doc.node_mut(abs).style.left = Length::px(PAD as f32 + 10.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(PAD as f32));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(PAD as f32 + 10.0));
     let mut s = render(&doc);
     // Abs on top of relative
     assert_pixel_color(&mut s, PAD + 15, PAD + 5, BLUE, "abs over relative");
@@ -2069,11 +2084,11 @@ fn overlap_two_abs_source_order() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 100.0, 100.0, Position::Absolute, Color::RED);
-    doc.node_mut(a).style.top = Length::px(10.0);
-    doc.node_mut(a).style.left = Length::px(10.0);
+    doc.update_resolved_style(a, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(a, |style| style.left = Length::px(10.0));
     let b = add_positioned_block(&mut doc, vp, 100.0, 100.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(b).style.top = Length::px(50.0);
-    doc.node_mut(b).style.left = Length::px(50.0);
+    doc.update_resolved_style(b, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(b, |style| style.left = Length::px(50.0));
     let mut s = render(&doc);
     // Non-overlapping area of red
     assert_pixel_color(&mut s, 15, 15, RED, "red in non-overlap area");
@@ -2088,14 +2103,14 @@ fn overlap_three_abs_stacking() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 80.0, 80.0, Position::Absolute, Color::RED);
-    doc.node_mut(a).style.top = Length::px(0.0);
-    doc.node_mut(a).style.left = Length::px(0.0);
+    doc.update_resolved_style(a, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(a, |style| style.left = Length::px(0.0));
     let b = add_positioned_block(&mut doc, vp, 80.0, 80.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(b).style.top = Length::px(20.0);
-    doc.node_mut(b).style.left = Length::px(20.0);
+    doc.update_resolved_style(b, |style| style.top = Length::px(20.0));
+    doc.update_resolved_style(b, |style| style.left = Length::px(20.0));
     let c = add_positioned_block(&mut doc, vp, 80.0, 80.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(c).style.top = Length::px(40.0);
-    doc.node_mut(c).style.left = Length::px(40.0);
+    doc.update_resolved_style(c, |style| style.top = Length::px(40.0));
+    doc.update_resolved_style(c, |style| style.left = Length::px(40.0));
     let mut s = render(&doc);
     // At (10, 10): only red
     assert_pixel_color(&mut s, 10, 10, RED, "only red at top-left");
@@ -2113,8 +2128,8 @@ fn overlap_fixed_over_static() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 200.0, 100.0, Color::RED);
     let fixed = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Fixed, Color::BLUE);
-    doc.node_mut(fixed).style.top = Length::px(PAD as f32);
-    doc.node_mut(fixed).style.left = Length::px(PAD as f32);
+    doc.update_resolved_style(fixed, |style| style.top = Length::px(PAD as f32));
+    doc.update_resolved_style(fixed, |style| style.left = Length::px(PAD as f32));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, BLUE, "fixed over static");
 }
@@ -2124,11 +2139,11 @@ fn overlap_fixed_over_abs() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let abs = add_positioned_block(&mut doc, vp, 100.0, 100.0, Position::Absolute, Color::RED);
-    doc.node_mut(abs).style.top = Length::px(10.0);
-    doc.node_mut(abs).style.left = Length::px(10.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(10.0));
     let fixed = add_positioned_block(&mut doc, vp, 80.0, 80.0, Position::Fixed, Color::GREEN);
-    doc.node_mut(fixed).style.top = Length::px(30.0);
-    doc.node_mut(fixed).style.left = Length::px(30.0);
+    doc.update_resolved_style(fixed, |style| style.top = Length::px(30.0));
+    doc.update_resolved_style(fixed, |style| style.left = Length::px(30.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 15, 15, RED, "abs in non-overlap");
     assert_pixel_color(&mut s, 35, 35, GREEN, "fixed over abs in overlap");
@@ -2139,11 +2154,11 @@ fn overlap_color_at_exact_boundary() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::RED);
-    doc.node_mut(a).style.top = Length::px(0.0);
-    doc.node_mut(a).style.left = Length::px(0.0);
+    doc.update_resolved_style(a, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(a, |style| style.left = Length::px(0.0));
     let b = add_positioned_block(&mut doc, vp, 100.0, 50.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(b).style.top = Length::px(50.0);
-    doc.node_mut(b).style.left = Length::px(0.0);
+    doc.update_resolved_style(b, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(b, |style| style.left = Length::px(0.0));
     let mut s = render(&doc);
     // At y=49: red; at y=50: blue
     assert_pixel_color(&mut s, 50, 49, RED, "red at boundary");
@@ -2156,8 +2171,8 @@ fn overlap_abs_partially_covers_static() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 200.0, 100.0, Color::RED);
     let abs = add_positioned_block(&mut doc, vp, 50.0, 50.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(abs).style.top = Length::px(PAD as f32 + 25.0);
-    doc.node_mut(abs).style.left = Length::px(PAD as f32 + 75.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(PAD as f32 + 25.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(PAD as f32 + 75.0));
     let mut s = render(&doc);
     // Red visible outside abs
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "red visible outside overlap");
@@ -2171,11 +2186,11 @@ fn overlap_multiple_positioned_types() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 150.0, 150.0, Color::RED);
     let rel = add_positioned_block(&mut doc, vp, 100.0, 100.0, Position::Relative, Color::GREEN);
-    doc.node_mut(rel).style.top = Length::px(-120.0);
-    doc.node_mut(rel).style.left = Length::px(25.0);
+    doc.update_resolved_style(rel, |style| style.top = Length::px(-120.0));
+    doc.update_resolved_style(rel, |style| style.left = Length::px(25.0));
     let abs = add_positioned_block(&mut doc, vp, 60.0, 60.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(abs).style.top = Length::px(PAD as f32 + 50.0);
-    doc.node_mut(abs).style.left = Length::px(PAD as f32 + 50.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(PAD as f32 + 50.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(PAD as f32 + 50.0));
     let mut s = render(&doc);
     // At (PAD+5, PAD+5): red (static, painted first)
     // Green overlaps from (PAD+25, PAD+30) region
@@ -2189,8 +2204,8 @@ fn overlap_abs_does_not_affect_sibling_position() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::RED);
     let abs = add_positioned_block(&mut doc, vp, 200.0, 200.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(abs).style.top = Length::px(300.0);
-    doc.node_mut(abs).style.left = Length::px(300.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(300.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(300.0));
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::BLUE);
     let mut s = render(&doc);
     // Blue at (PAD, PAD+40) even though abs is huge
@@ -2209,7 +2224,7 @@ fn overlap_rel_over_preceding_static_wider_block() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 200.0, 80.0, Color::RED);
     let rel = add_positioned_block(&mut doc, vp, 150.0, 40.0, Position::Relative, Color::BLUE);
-    doc.node_mut(rel).style.top = Length::px(-50.0);
+    doc.update_resolved_style(rel, |style| style.top = Length::px(-50.0));
     let mut s = render(&doc);
     // Blue overlaps red
     assert_pixel_color(&mut s, PAD + 5, PAD + 35, BLUE, "wide relative over static");
@@ -2220,11 +2235,11 @@ fn overlap_source_order_two_fixed_blocks() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 100.0, 100.0, Position::Fixed, Color::RED);
-    doc.node_mut(a).style.top = Length::px(50.0);
-    doc.node_mut(a).style.left = Length::px(50.0);
+    doc.update_resolved_style(a, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(a, |style| style.left = Length::px(50.0));
     let b = add_positioned_block(&mut doc, vp, 100.0, 100.0, Position::Fixed, Color::BLUE);
-    doc.node_mut(b).style.top = Length::px(80.0);
-    doc.node_mut(b).style.left = Length::px(80.0);
+    doc.update_resolved_style(b, |style| style.top = Length::px(80.0));
+    doc.update_resolved_style(b, |style| style.left = Length::px(80.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 55, 55, RED, "first fixed in non-overlap");
     assert_pixel_color(&mut s, 85, 85, BLUE, "second fixed on top in overlap");
@@ -2237,8 +2252,8 @@ fn overlap_abs_fully_covers_static() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 100.0, 50.0, Color::RED);
     let abs = add_positioned_block(&mut doc, vp, 200.0, 100.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(abs).style.top = Length::px(PAD as f32 - 5.0);
-    doc.node_mut(abs).style.left = Length::px(PAD as f32 - 5.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(PAD as f32 - 5.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(PAD as f32 - 5.0));
     let mut s = render(&doc);
     // Abs fully covers the static red block
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, BLUE, "abs fully covers static");
@@ -2249,9 +2264,9 @@ fn overlap_two_relative_blocks_overlapping() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 100.0, 60.0, Position::Relative, Color::RED);
-    doc.node_mut(a).style.top = Length::px(0.0);
+    doc.update_resolved_style(a, |style| style.top = Length::px(0.0));
     let b = add_positioned_block(&mut doc, vp, 100.0, 60.0, Position::Relative, Color::BLUE);
-    doc.node_mut(b).style.top = Length::px(-30.0);
+    doc.update_resolved_style(b, |style| style.top = Length::px(-30.0));
     let mut s = render(&doc);
     // A at (PAD, PAD); B normal at (PAD, PAD+60), shifted to (PAD, PAD+30)
     // Overlap from y=PAD+30 to y=PAD+60
@@ -2269,11 +2284,11 @@ fn overlap_abs_and_rel_at_same_pixel() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let rel = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Relative, Color::RED);
-    doc.node_mut(rel).style.top = Length::px(0.0);
-    doc.node_mut(rel).style.left = Length::px(0.0);
+    doc.update_resolved_style(rel, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(rel, |style| style.left = Length::px(0.0));
     let abs = add_positioned_block(&mut doc, vp, 80.0, 40.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(abs).style.top = Length::px(PAD as f32);
-    doc.node_mut(abs).style.left = Length::px(PAD as f32);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(PAD as f32));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(PAD as f32));
     let mut s = render(&doc);
     // Both at same pixel area; abs painted after rel → green on top
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, GREEN, "abs over rel at same pos");
@@ -2284,11 +2299,11 @@ fn overlap_verify_white_in_non_overlapping_gap() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 50.0, 50.0, Position::Absolute, Color::RED);
-    doc.node_mut(a).style.top = Length::px(10.0);
-    doc.node_mut(a).style.left = Length::px(10.0);
+    doc.update_resolved_style(a, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(a, |style| style.left = Length::px(10.0));
     let b = add_positioned_block(&mut doc, vp, 50.0, 50.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(b).style.top = Length::px(70.0);
-    doc.node_mut(b).style.left = Length::px(70.0);
+    doc.update_resolved_style(b, |style| style.top = Length::px(70.0));
+    doc.update_resolved_style(b, |style| style.left = Length::px(70.0));
     let mut s = render(&doc);
     // Gap between blocks should be white
     assert_pixel_color(&mut s, 65, 65, WHITE, "white gap between abs blocks");
@@ -2318,7 +2333,7 @@ fn rel_top_offset_preserves_block_size() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 120.0, 60.0, Position::Relative, Color::RED);
-    doc.node_mut(div).style.top = Length::px(15.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(15.0));
     let mut s = render(&doc);
     // Block at (PAD, PAD+15); verify all four corners
     assert_pixel_color(&mut s, PAD + 1, PAD + 16, RED, "TL corner");
@@ -2332,14 +2347,14 @@ fn abs_four_corners_of_surface() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let tl = add_positioned_block(&mut doc, vp, 30.0, 30.0, Position::Absolute, Color::RED);
-    doc.node_mut(tl).style.top = Length::px(0.0);
-    doc.node_mut(tl).style.left = Length::px(0.0);
+    doc.update_resolved_style(tl, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(tl, |style| style.left = Length::px(0.0));
     let tr = add_positioned_block(&mut doc, vp, 30.0, 30.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(tr).style.top = Length::px(0.0);
-    doc.node_mut(tr).style.right = Length::px(0.0);
+    doc.update_resolved_style(tr, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(tr, |style| style.right = Length::px(0.0));
     let bl = add_positioned_block(&mut doc, vp, 30.0, 30.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(bl).style.left = Length::px(0.0);
-    doc.node_mut(bl).style.bottom = Length::px(0.0);
+    doc.update_resolved_style(bl, |style| style.left = Length::px(0.0));
+    doc.update_resolved_style(bl, |style| style.bottom = Length::px(0.0));
     let br = add_positioned_block(
         &mut doc,
         vp,
@@ -2348,8 +2363,8 @@ fn abs_four_corners_of_surface() {
         Position::Absolute,
         color_from_rgb(255, 255, 0),
     );
-    doc.node_mut(br).style.right = Length::px(0.0);
-    doc.node_mut(br).style.bottom = Length::px(0.0);
+    doc.update_resolved_style(br, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(br, |style| style.bottom = Length::px(0.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 5, 5, RED, "top-left corner block");
     assert_pixel_color(&mut s, 780, 5, GREEN, "top-right corner block");
@@ -2363,14 +2378,14 @@ fn abs_with_margin_top() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(80.0);
-    doc.node_mut(div).style.height = Length::px(40.0);
-    doc.node_mut(div).style.position = Position::Absolute;
-    doc.node_mut(div).style.top = Length::px(10.0);
-    doc.node_mut(div).style.left = Length::px(10.0);
-    doc.node_mut(div).style.margin_top = Length::px(5.0);
-    doc.node_mut(div).style.background_color = Color::RED;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(80.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(40.0));
+    doc.update_resolved_style(div, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(div, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.margin_top = Length::px(5.0));
+    doc.update_resolved_style(div, |style| style.background_color = Color::RED);
     doc.append_child(vp, div);
     let mut s = render(&doc);
     // top:10 + margin-top:5 = 15
@@ -2382,14 +2397,14 @@ fn abs_with_margin_left() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(80.0);
-    doc.node_mut(div).style.height = Length::px(40.0);
-    doc.node_mut(div).style.position = Position::Absolute;
-    doc.node_mut(div).style.top = Length::px(10.0);
-    doc.node_mut(div).style.left = Length::px(10.0);
-    doc.node_mut(div).style.margin_left = Length::px(5.0);
-    doc.node_mut(div).style.background_color = Color::RED;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(80.0));
+    doc.update_resolved_style(div, |style| style.height = Length::px(40.0));
+    doc.update_resolved_style(div, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(div, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(10.0));
+    doc.update_resolved_style(div, |style| style.margin_left = Length::px(5.0));
+    doc.update_resolved_style(div, |style| style.background_color = Color::RED);
     doc.append_child(vp, div);
     let mut s = render(&doc);
     // left:10 + margin-left:5 = 15
@@ -2401,11 +2416,11 @@ fn rel_three_blocks_each_offset() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 80.0, 30.0, Position::Relative, Color::RED);
-    doc.node_mut(a).style.left = Length::px(0.0);
+    doc.update_resolved_style(a, |style| style.left = Length::px(0.0));
     let b = add_positioned_block(&mut doc, vp, 80.0, 30.0, Position::Relative, Color::GREEN);
-    doc.node_mut(b).style.left = Length::px(100.0);
+    doc.update_resolved_style(b, |style| style.left = Length::px(100.0));
     let c = add_positioned_block(&mut doc, vp, 80.0, 30.0, Position::Relative, Color::BLUE);
-    doc.node_mut(c).style.left = Length::px(200.0);
+    doc.update_resolved_style(c, |style| style.left = Length::px(200.0));
     let mut s = render(&doc);
     // A at (PAD, PAD); B at (PAD+100, PAD+30); C at (PAD+200, PAD+60)
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "first rel");
@@ -2418,8 +2433,8 @@ fn fixed_right_bottom_corner() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 40.0, 20.0, Position::Fixed, Color::RED);
-    doc.node_mut(div).style.right = Length::px(0.0);
-    doc.node_mut(div).style.bottom = Length::px(0.0);
+    doc.update_resolved_style(div, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(0.0));
     let mut s = render(&doc);
     // left = 800-0-40=760; top = 600-0-20=580
     assert_pixel_color(&mut s, 765, 585, RED, "fixed at right-bottom corner");
@@ -2430,11 +2445,13 @@ fn abs_in_container_top_left_offsets() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(300.0);
-    doc.node_mut(container).style.height = Length::px(200.0);
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.background_color = color_from_rgb(220, 220, 220);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| {
+        style.background_color = color_from_rgb(220, 220, 220)
+    });
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -2445,8 +2462,8 @@ fn abs_in_container_top_left_offsets() {
         Position::Absolute,
         Color::RED,
     );
-    doc.node_mut(abs).style.top = Length::px(50.0);
-    doc.node_mut(abs).style.left = Length::px(100.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(100.0));
     let mut s = render(&doc);
     // Container at (20,20); abs at (120, 70)
     assert_pixel_color(&mut s, 125, 75, RED, "abs inside container with offsets");
@@ -2459,8 +2476,8 @@ fn overlap_abs_covers_center_of_static() {
     let vp = setup_viewport(&mut doc);
     add_colored_block(&mut doc, vp, 200.0, 100.0, Color::RED);
     let abs = add_positioned_block(&mut doc, vp, 60.0, 40.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(abs).style.top = Length::px(PAD as f32 + 30.0);
-    doc.node_mut(abs).style.left = Length::px(PAD as f32 + 70.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(PAD as f32 + 30.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(PAD as f32 + 70.0));
     let mut s = render(&doc);
     // Red around the abs; blue in the center
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "red top-left");
@@ -2473,11 +2490,11 @@ fn rel_offset_then_abs_overlay() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let rel = add_positioned_block(&mut doc, vp, 120.0, 60.0, Position::Relative, Color::RED);
-    doc.node_mut(rel).style.top = Length::px(10.0);
-    doc.node_mut(rel).style.left = Length::px(10.0);
+    doc.update_resolved_style(rel, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(rel, |style| style.left = Length::px(10.0));
     let abs = add_positioned_block(&mut doc, vp, 40.0, 20.0, Position::Absolute, Color::GREEN);
-    doc.node_mut(abs).style.top = Length::px(PAD as f32 + 20.0);
-    doc.node_mut(abs).style.left = Length::px(PAD as f32 + 20.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(PAD as f32 + 20.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(PAD as f32 + 20.0));
     let mut s = render(&doc);
     // Rel at (30, 30); abs at (40, 40)
     assert_pixel_color(&mut s, 35, 35, RED, "relative before abs overlay");
@@ -2512,11 +2529,11 @@ fn abs_two_non_overlapping_vertically() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let a = add_positioned_block(&mut doc, vp, 200.0, 50.0, Position::Absolute, Color::RED);
-    doc.node_mut(a).style.top = Length::px(10.0);
-    doc.node_mut(a).style.left = Length::px(10.0);
+    doc.update_resolved_style(a, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(a, |style| style.left = Length::px(10.0));
     let b = add_positioned_block(&mut doc, vp, 200.0, 50.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(b).style.top = Length::px(70.0);
-    doc.node_mut(b).style.left = Length::px(10.0);
+    doc.update_resolved_style(b, |style| style.top = Length::px(70.0));
+    doc.update_resolved_style(b, |style| style.left = Length::px(10.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, 50, 30, RED, "top abs");
     assert_pixel_color(&mut s, 50, 65, WHITE, "gap between abs blocks");
@@ -2530,7 +2547,7 @@ fn rel_bottom_offset_from_second_block() {
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::RED);
     add_colored_block(&mut doc, vp, 100.0, 40.0, Color::WHITE);
     let div = add_positioned_block(&mut doc, vp, 100.0, 40.0, Position::Relative, Color::BLUE);
-    doc.node_mut(div).style.bottom = Length::px(40.0);
+    doc.update_resolved_style(div, |style| style.bottom = Length::px(40.0));
     let mut s = render(&doc);
     // Blue normal at (PAD, PAD+80); bottom:40 → (PAD, PAD+40)
     assert_pixel_color(
@@ -2547,8 +2564,8 @@ fn fixed_with_explicit_size_check() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let div = add_positioned_block(&mut doc, vp, 150.0, 75.0, Position::Fixed, Color::GREEN);
-    doc.node_mut(div).style.top = Length::px(100.0);
-    doc.node_mut(div).style.left = Length::px(100.0);
+    doc.update_resolved_style(div, |style| style.top = Length::px(100.0));
+    doc.update_resolved_style(div, |style| style.left = Length::px(100.0));
     let mut s = render(&doc);
     // Block at (100, 100), size 150x75
     assert_pixel_color(&mut s, 101, 101, GREEN, "fixed TL");
@@ -2562,11 +2579,13 @@ fn abs_in_container_white_outside_container() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(200.0);
-    doc.node_mut(container).style.height = Length::px(100.0);
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.background_color = color_from_rgb(200, 200, 200);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| {
+        style.background_color = color_from_rgb(200, 200, 200)
+    });
     doc.append_child(vp, container);
 
     let abs = add_positioned_block(
@@ -2577,8 +2596,8 @@ fn abs_in_container_white_outside_container() {
         Position::Absolute,
         Color::RED,
     );
-    doc.node_mut(abs).style.top = Length::px(5.0);
-    doc.node_mut(abs).style.left = Length::px(5.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(5.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(5.0));
     let mut s = render(&doc);
     // Container at (20,20), size 200x100
     // Outside container should be white
@@ -2594,12 +2613,12 @@ fn overlap_static_rel_abs_fixed_all_four() {
     add_colored_block(&mut doc, vp, 200.0, 200.0, Color::RED);
     // Relative (green) overlapping from below
     let rel = add_positioned_block(&mut doc, vp, 150.0, 150.0, Position::Relative, Color::GREEN);
-    doc.node_mut(rel).style.top = Length::px(-170.0);
-    doc.node_mut(rel).style.left = Length::px(25.0);
+    doc.update_resolved_style(rel, |style| style.top = Length::px(-170.0));
+    doc.update_resolved_style(rel, |style| style.left = Length::px(25.0));
     // Absolute (blue) overlapping both
     let abs = add_positioned_block(&mut doc, vp, 100.0, 100.0, Position::Absolute, Color::BLUE);
-    doc.node_mut(abs).style.top = Length::px(PAD as f32 + 50.0);
-    doc.node_mut(abs).style.left = Length::px(PAD as f32 + 50.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(PAD as f32 + 50.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(PAD as f32 + 50.0));
     // Fixed (yellow) on top of everything
     let fixed = add_positioned_block(
         &mut doc,
@@ -2609,8 +2628,8 @@ fn overlap_static_rel_abs_fixed_all_four() {
         Position::Fixed,
         color_from_rgb(255, 255, 0),
     );
-    doc.node_mut(fixed).style.top = Length::px(PAD as f32 + 70.0);
-    doc.node_mut(fixed).style.left = Length::px(PAD as f32 + 70.0);
+    doc.update_resolved_style(fixed, |style| style.top = Length::px(PAD as f32 + 70.0));
+    doc.update_resolved_style(fixed, |style| style.left = Length::px(PAD as f32 + 70.0));
     let mut s = render(&doc);
     // Check each layer at a unique spot
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "static red visible");

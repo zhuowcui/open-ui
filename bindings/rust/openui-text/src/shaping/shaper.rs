@@ -11,9 +11,11 @@ use skia_safe::{
     GlyphId, Point, Shaper, Vector,
 };
 use unicode_script::{Script, UnicodeScript};
+use unicode_segmentation::UnicodeSegmentation;
 
 use crate::font::features::{collect_font_features, to_skia_features};
 use crate::font::{Font, FontPlatformData};
+use openui_style::{FontFeature, FontOrientation, TextAutospace, TextSpacingTrim};
 
 use super::shape_result::{ShapeResult, ShapeResultCharacterData, ShapeResultRun, TextDirection};
 
@@ -60,6 +62,49 @@ fn is_complex_script(ch: char) -> bool {
     )
 }
 
+#[inline]
+fn is_autospace_ideographic(ch: char) -> bool {
+    matches!(
+        ch.script(),
+        Script::Han | Script::Hiragana | Script::Katakana | Script::Bopomofo | Script::Hangul
+    )
+}
+
+#[inline]
+fn is_autospace_alphanumeric(ch: char) -> bool {
+    !is_autospace_ideographic(ch) && ch.is_alphanumeric()
+}
+
+/// Legacy bidi embedding/override controls participate in UAX#9 but are
+/// default-ignorable for shaping and painting. Some fonts expose a fallback
+/// advance for these code points; browsers must suppress that advance.
+fn is_bidi_embedding_control(ch: char) -> bool {
+    matches!(ch, '\u{202a}'..='\u{202e}')
+}
+
+fn glyph_required_for_fallback(character: char) -> bool {
+    !character.is_control()
+        && !matches!(
+            character as u32,
+            0x200C..=0x200D | 0x202A..=0x202E | 0x2066..=0x2069 | 0xFE00..=0xFE0F
+        )
+}
+
+fn shaping_language(description: &crate::font::FontDescription) -> String {
+    if let Some(tag) = description.language_override.0 {
+        let language = String::from_utf8_lossy(&tag).trim().to_ascii_lowercase();
+        if !language.is_empty() {
+            return language;
+        }
+    }
+    description
+        .locale
+        .as_deref()
+        .filter(|locale| !locale.is_empty())
+        .unwrap_or("und")
+        .to_string()
+}
+
 /// Collects shaping output from Skia's SkShaper callbacks.
 ///
 /// Implements Skia's `RunHandler` trait to receive glyph data during shaping.
@@ -75,10 +120,6 @@ struct ShapeCollector {
     current_positions: Vec<Point>,
     current_offsets: Vec<Point>,
     current_clusters: Vec<u32>,
-    /// Info about the current run.
-    current_glyph_count: usize,
-    current_utf8_range: std::ops::Range<usize>,
-    current_advance: Vector,
 }
 
 /// A fully collected glyph run.
@@ -101,9 +142,6 @@ impl ShapeCollector {
             current_positions: Vec::new(),
             current_offsets: Vec::new(),
             current_clusters: Vec::new(),
-            current_glyph_count: 0,
-            current_utf8_range: 0..0,
-            current_advance: Vector::default(),
         }
     }
 
@@ -119,6 +157,7 @@ impl ShapeCollector {
 
         // Build a byte-offset-to-char-index table for cluster mapping.
         let byte_to_char: Vec<usize> = Self::build_byte_to_char_map(text);
+        let chars: Vec<char> = text.chars().collect();
 
         // Per-character advance accumulator.
         let mut char_advances = vec![0.0f32; num_characters];
@@ -133,12 +172,22 @@ impl ShapeCollector {
                 run_glyphs.push(collected.glyphs[i]);
 
                 // Compute advance from position differences.
-                let advance = if i + 1 < collected.positions.len() {
+                let mut advance = if i + 1 < collected.positions.len() {
                     collected.positions[i + 1].x - collected.positions[i].x
                 } else {
                     // Last glyph: use the run's total advance minus position.
                     collected.advance.x - collected.positions[i].x + collected.positions[0].x
                 };
+                if !collected.clusters.is_empty() {
+                    let cluster_byte = collected.clusters[i] as usize;
+                    if cluster_byte < byte_to_char.len()
+                        && chars
+                            .get(byte_to_char[cluster_byte])
+                            .is_some_and(|ch| is_bidi_embedding_control(*ch))
+                    {
+                        advance = 0.0;
+                    }
+                }
                 run_advances.push(advance);
 
                 let offset = if !collected.offsets.is_empty() {
@@ -223,8 +272,6 @@ impl ShapeCollector {
         // Build character data from accumulated advances.
         let mut character_data = Vec::with_capacity(num_characters);
         let mut x = 0.0f32;
-        let chars: Vec<char> = text.chars().collect();
-
         // Determine cluster bases from cluster info.
         let cluster_bases = Self::compute_cluster_bases(text, &self.runs, &byte_to_char);
         let safe_breaks = Self::compute_safe_breaks(&self.runs, &chars, &byte_to_char);
@@ -382,15 +429,20 @@ impl SkRunHandler for ShapeCollector {
         // Single-line shaping — nothing to do.
     }
 
-    fn run_info(&mut self, info: &run_handler::RunInfo) {
-        self.current_glyph_count = info.glyph_count;
-        self.current_utf8_range = info.utf8_range.clone();
-        self.current_advance = info.advance;
+    fn run_info(&mut self, _info: &run_handler::RunInfo) {
+        // SkShaper reports metadata for every run before it calls
+        // `run_buffer` for any run. Do not retain a single `RunInfo` here:
+        // mixed-script lines can have different glyph counts and the last
+        // reported count does not necessarily belong to the next buffer.
     }
 
     fn commit_run_info(&mut self) {
-        // Allocate storage for the run.
-        let n = self.current_glyph_count;
+        // Buffer allocation is intentionally deferred until `run_buffer`,
+        // whose `RunInfo` identifies the exact run Skia is about to fill.
+    }
+
+    fn run_buffer(&mut self, info: &run_handler::RunInfo) -> run_handler::Buffer<'_> {
+        let n = info.glyph_count;
         self.current_glyphs.clear();
         self.current_glyphs.resize(n, 0);
         self.current_positions.clear();
@@ -399,9 +451,6 @@ impl SkRunHandler for ShapeCollector {
         self.current_offsets.resize(n, Point::default());
         self.current_clusters.clear();
         self.current_clusters.resize(n, 0);
-    }
-
-    fn run_buffer(&mut self, _info: &run_handler::RunInfo) -> run_handler::Buffer<'_> {
         run_handler::Buffer {
             glyphs: &mut self.current_glyphs,
             positions: &mut self.current_positions,
@@ -411,15 +460,15 @@ impl SkRunHandler for ShapeCollector {
         }
     }
 
-    fn commit_run_buffer(&mut self, _info: &run_handler::RunInfo) {
+    fn commit_run_buffer(&mut self, info: &run_handler::RunInfo) {
         // Save the completed run.
         self.runs.push(CollectedRun {
             glyphs: self.current_glyphs.clone(),
             positions: self.current_positions.clone(),
             offsets: self.current_offsets.clone(),
             clusters: self.current_clusters.clone(),
-            utf8_range: self.current_utf8_range.clone(),
-            advance: self.current_advance,
+            utf8_range: info.utf8_range.clone(),
+            advance: info.advance,
         });
     }
 
@@ -459,7 +508,23 @@ impl TextShaper {
             return ShapeResult::empty(direction);
         }
 
-        let font_data = match font.primary_font() {
+        // Inline collection splits deterministic text at script, grapheme,
+        // orientation, and fallback boundaries. Prefer the first authored
+        // family that covers the complete homogeneous run for that profile.
+        // Legacy builders retain their established primary-face shaping and
+        // use the missing-glyph fallback below until they are regenerated.
+        let deterministic_text_profile = font.description().family.families.iter().any(|family| {
+            matches!(
+                family,
+                openui_style::FontFamily::Named(name)
+                    if name.eq_ignore_ascii_case("Droid Sans Fallback")
+            )
+        });
+        let homogeneous_font = deterministic_text_profile
+            .then(|| font.fallback_index_for_text(text))
+            .flatten()
+            .and_then(|index| font.fallback_list().get(index));
+        let font_data = match homogeneous_font.or_else(|| font.primary_font()) {
             Some(fd) => Arc::clone(fd),
             None => return ShapeResult::empty(direction),
         };
@@ -469,27 +534,61 @@ impl TextShaper {
 
         let mut collector = ShapeCollector::new(Arc::clone(&font_data), direction);
 
-        // Collect OpenType features from font-variant-* properties and
-        // explicit font-feature-settings, matching Blink's FontFeatures.
-        let font_features = collect_font_features(font.description());
+        // Face defaults come first. Variant properties and explicit CSS
+        // feature settings follow, so later values win for duplicate tags.
+        let mut font_features: Vec<FontFeature> = font_data
+            .feature_defaults()
+            .iter()
+            .map(|feature| FontFeature {
+                tag: feature.tag,
+                value: feature.value,
+            })
+            .collect();
+        font_features.extend(collect_font_features(font.description()));
+        if matches!(
+            font.description().orientation,
+            FontOrientation::VerticalMixed | FontOrientation::VerticalUpright
+        ) {
+            // Upright vertical runs use the font's vertical alternates. The
+            // layout model continues to expose their logical inline advance
+            // through `ShapeResult::width`; paint maps that advance onto the
+            // physical vertical axis without rotating the glyph outlines.
+            font_features.push(FontFeature {
+                tag: *b"vert",
+                value: 1,
+            });
+            font_features.push(FontFeature {
+                tag: *b"vrt2",
+                value: 1,
+            });
+        }
         let skia_features = to_skia_features(&font_features, text.len());
 
-        if skia_features.is_empty() {
-            // Fast path: no features — use the simple shaping API.
-            self.shaper
-                .shape(text, sk_font, left_to_right, f32::INFINITY, &mut collector);
+        // The full iterator API is used even with no explicit features. This
+        // supplies HarfBuzz with Unicode script runs, UAX#9 bidi levels, and
+        // the document's BCP47 language instead of the old `script=0`/`und`
+        // placeholders.
+        let mut font_iter = shaper::Shaper::new_trivial_font_run_iterator(sk_font, text.len());
+        let bidi_level = if left_to_right { 0 } else { 1 };
+        let mut script_iter = shaper::Shaper::new_hb_icu_script_run_iterator(text);
+        let language = shaping_language(font.description());
+        let mut lang_iter =
+            shaper::Shaper::new_trivial_language_run_iterator(&language, text.len());
+        if let Some(mut bidi_iter) = shaper::Shaper::new_icu_bidi_run_iterator(text, bidi_level) {
+            self.shaper.shape_with_iterators_and_features(
+                text,
+                &mut font_iter,
+                &mut bidi_iter,
+                &mut script_iter,
+                &mut lang_iter,
+                &skia_features,
+                f32::INFINITY,
+                &mut collector,
+            );
         } else {
-            // Feature-aware path: set up run iterators for the full API.
-            let mut font_iter = shaper::Shaper::new_trivial_font_run_iterator(sk_font, text.len());
-            let bidi_level = if left_to_right { 0 } else { 1 };
             #[allow(deprecated)]
             let mut bidi_iter =
                 shaper::Shaper::new_trivial_bidi_run_iterator(bidi_level, text.len());
-            #[allow(deprecated)]
-            let mut script_iter = shaper::Shaper::new_trivial_script_run_iterator(0, text.len());
-            let mut lang_iter =
-                shaper::Shaper::new_trivial_language_run_iterator("und", text.len());
-
             self.shaper.shape_with_iterators_and_features(
                 text,
                 &mut font_iter,
@@ -507,15 +606,79 @@ impl TextShaper {
         // ── Font fallback for missing glyphs ────────────────────────────
         // Scan for runs with glyph_id == 0 (.notdef) and attempt to
         // re-shape those character ranges with fallback fonts.
-        let fallback_list = font.fallback_list();
-        if fallback_list.len() > 1 {
-            self.apply_font_fallback(&mut result, text, font, direction);
-        }
+        self.apply_font_fallback(&mut result, text, font, direction);
 
         // Apply letter spacing and word spacing from the font description.
         Self::apply_spacing(&mut result, font, text);
 
         result
+    }
+
+    fn shape_with_font_data(
+        &self,
+        text: &str,
+        font_data: Arc<FontPlatformData>,
+        description: &crate::font::FontDescription,
+        direction: TextDirection,
+    ) -> ShapeResult {
+        let mut collector = ShapeCollector::new(Arc::clone(&font_data), direction);
+        let mut features: Vec<FontFeature> = font_data
+            .feature_defaults()
+            .iter()
+            .map(|feature| FontFeature {
+                tag: feature.tag,
+                value: feature.value,
+            })
+            .collect();
+        features.extend(collect_font_features(description));
+        if matches!(
+            description.orientation,
+            FontOrientation::VerticalMixed | FontOrientation::VerticalUpright
+        ) {
+            features.push(FontFeature {
+                tag: *b"vert",
+                value: 1,
+            });
+            features.push(FontFeature {
+                tag: *b"vrt2",
+                value: 1,
+            });
+        }
+        let skia_features = to_skia_features(&features, text.len());
+        let mut font_iter =
+            shaper::Shaper::new_trivial_font_run_iterator(font_data.sk_font(), text.len());
+        let bidi_level = if direction.is_ltr() { 0 } else { 1 };
+        let mut script_iter = shaper::Shaper::new_hb_icu_script_run_iterator(text);
+        let language = shaping_language(description);
+        let mut language_iter =
+            shaper::Shaper::new_trivial_language_run_iterator(&language, text.len());
+        if let Some(mut bidi_iter) = shaper::Shaper::new_icu_bidi_run_iterator(text, bidi_level) {
+            self.shaper.shape_with_iterators_and_features(
+                text,
+                &mut font_iter,
+                &mut bidi_iter,
+                &mut script_iter,
+                &mut language_iter,
+                &skia_features,
+                f32::INFINITY,
+                &mut collector,
+            );
+        } else {
+            #[allow(deprecated)]
+            let mut bidi_iter =
+                shaper::Shaper::new_trivial_bidi_run_iterator(bidi_level, text.len());
+            self.shaper.shape_with_iterators_and_features(
+                text,
+                &mut font_iter,
+                &mut bidi_iter,
+                &mut script_iter,
+                &mut language_iter,
+                &skia_features,
+                f32::INFINITY,
+                &mut collector,
+            );
+        }
+        collector.into_shape_result(text)
     }
 
     /// Re-shape character ranges that have missing glyphs (glyph_id == 0)
@@ -534,7 +697,6 @@ impl TextShaper {
     ) {
         let chars: Vec<char> = text.chars().collect();
         let fallback_list = font.fallback_list();
-        let left_to_right = direction.is_ltr();
 
         // Collect segments (character ranges) with missing glyphs across all runs.
         let mut missing_segments: Vec<(usize, usize)> = Vec::new(); // (char_start, char_end)
@@ -578,6 +740,25 @@ impl TextShaper {
             return;
         }
 
+        // A missing scalar expands to its complete extended grapheme cluster.
+        // This keeps combining sequences, emoji ZWJ sequences, Indic
+        // conjuncts, and variation selectors on one face.
+        let grapheme_ranges: Vec<(usize, usize)> = text
+            .grapheme_indices(true)
+            .map(|(byte_start, grapheme)| {
+                let start = text[..byte_start].chars().count();
+                (start, start + grapheme.chars().count())
+            })
+            .collect();
+        for segment in &mut missing_segments {
+            for &(start, end) in &grapheme_ranges {
+                if start < segment.1 && segment.0 < end {
+                    segment.0 = segment.0.min(start);
+                    segment.1 = segment.1.max(end);
+                }
+            }
+        }
+
         // Merge overlapping/adjacent segments.
         missing_segments.sort_by_key(|s| s.0);
         let mut merged: Vec<(usize, usize)> = Vec::new();
@@ -611,10 +792,11 @@ impl TextShaper {
                 };
 
                 // Check if this fallback font covers the missing characters.
-                let fb_sk_font = fb_data.sk_font();
                 let mut covers = true;
                 for &ch in &chars[*seg_char_start..*seg_char_end] {
-                    if fb_sk_font.unichar_to_glyph(ch as i32) == 0 {
+                    if glyph_required_for_fallback(ch)
+                        && fb_data.sk_font().unichar_to_glyph(ch as i32) == 0
+                    {
                         covers = false;
                         break;
                     }
@@ -631,15 +813,12 @@ impl TextShaper {
                 let fb_data_clone = Arc::clone(fb_data);
                 let segment_text_owned = segment_text.to_string();
                 let fb_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                    let mut fb_collector = ShapeCollector::new(fb_data_clone, direction);
-                    self.shaper.shape(
+                    self.shape_with_font_data(
                         &segment_text_owned,
-                        fb_sk_font,
-                        left_to_right,
-                        f32::INFINITY,
-                        &mut fb_collector,
-                    );
-                    fb_collector.into_shape_result(&segment_text_owned)
+                        fb_data_clone,
+                        font.description(),
+                        direction,
+                    )
                 }));
 
                 let fb_result = match fb_result {
@@ -741,31 +920,22 @@ impl TextShaper {
                     }
                     tried_codepoints.push(missing_char);
 
-                    let platform_data = {
-                        let mut cache = crate::font::cache::GLOBAL_FONT_CACHE
-                            .lock()
-                            .unwrap_or_else(|p| p.into_inner());
-                        cache.platform_fallback_for_character(missing_char, desc)
-                    };
+                    let platform_data = font.collection().fallback_for_text(segment_text, desc);
 
                     let fb_data = match platform_data {
                         Some(d) => d,
                         None => break, // No more platform fonts available.
                     };
 
-                    let fb_sk_font = fb_data.sk_font();
                     let fb_data_clone = Arc::clone(&fb_data);
                     let segment_text_owned = segment_text.to_string();
                     let fb_result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-                        let mut fb_collector = ShapeCollector::new(fb_data_clone, direction);
-                        self.shaper.shape(
+                        self.shape_with_font_data(
                             &segment_text_owned,
-                            fb_sk_font,
-                            left_to_right,
-                            f32::INFINITY,
-                            &mut fb_collector,
-                        );
-                        fb_collector.into_shape_result(&segment_text_owned)
+                            fb_data_clone,
+                            font.description(),
+                            direction,
+                        )
                     }));
 
                     if let Ok(fb_result) = fb_result {
@@ -1200,7 +1370,11 @@ impl TextShaper {
         let letter_spacing = desc.letter_spacing;
         let word_spacing = desc.word_spacing;
 
-        if letter_spacing == 0.0 && word_spacing == 0.0 {
+        if letter_spacing == 0.0
+            && word_spacing == 0.0
+            && desc.text_autospace == TextAutospace::NoAutospace
+            && desc.text_spacing_trim != TextSpacingTrim::TrimStart
+        {
             return;
         }
 
@@ -1221,6 +1395,41 @@ impl TextShaper {
             if ch == ' ' {
                 extra_advance_per_char[char_idx] += word_spacing;
             }
+        }
+
+        // CSS Text 4 inserts a narrow gap between East Asian ideographs and
+        // adjacent non-East-Asian letters/numbers. Attach the gap to the
+        // preceding cluster so line breaking, caret geometry, and painting
+        // all consume the same advance.
+        if desc.text_autospace == TextAutospace::Normal {
+            let autospace = desc.size / 8.0;
+            for index in 0..chars.len().saturating_sub(1) {
+                let left_ideographic = is_autospace_ideographic(chars[index]);
+                let right_ideographic = is_autospace_ideographic(chars[index + 1]);
+                let left_alphanumeric = is_autospace_alphanumeric(chars[index]);
+                let right_alphanumeric = is_autospace_alphanumeric(chars[index + 1]);
+                if (left_ideographic && right_alphanumeric)
+                    || (left_alphanumeric && right_ideographic)
+                {
+                    extra_advance_per_char[index] += autospace;
+                }
+            }
+        }
+
+        let leading_trim = if desc.text_spacing_trim == TextSpacingTrim::TrimStart
+            && chars
+                .first()
+                .is_some_and(|ch| is_fullwidth_opening_punctuation(*ch))
+        {
+            // A fallback face can expose an opening-punctuation advance that
+            // is narrower than half an em. Never let trimming turn that
+            // cluster (or the complete shaped result) negative.
+            (desc.size / 2.0).min(Self::char_advance_from_runs(&result.runs, 0).max(0.0))
+        } else {
+            0.0
+        };
+        if leading_trim > 0.0 {
+            extra_advance_per_char[0] -= leading_trim;
         }
 
         // Distribute the extra advance to glyph runs.
@@ -1285,6 +1494,20 @@ impl TextShaper {
                     run_extra += per_glyph_extra[gi];
                 }
                 total_extra += run_extra;
+            }
+        }
+
+        if leading_trim > 0.0 && result.direction == TextDirection::Ltr {
+            for run in &mut result.runs {
+                if run.start_index != 0 {
+                    continue;
+                }
+                for (glyph_index, cluster) in run.clusters.iter().enumerate() {
+                    if *cluster == 0 {
+                        run.offsets[glyph_index].0 -= leading_trim;
+                    }
+                }
+                break;
             }
         }
 
@@ -1372,6 +1595,25 @@ impl TextShaper {
     }
 }
 
+#[inline]
+fn is_fullwidth_opening_punctuation(ch: char) -> bool {
+    matches!(
+        ch,
+        '\u{3008}'
+            | '\u{300A}'
+            | '\u{300C}'
+            | '\u{300E}'
+            | '\u{3010}'
+            | '\u{3014}'
+            | '\u{3016}'
+            | '\u{3018}'
+            | '\u{301A}'
+            | '\u{FF08}'
+            | '\u{FF3B}'
+            | '\u{FF5B}'
+    )
+}
+
 impl Default for TextShaper {
     fn default() -> Self {
         Self::new()
@@ -1405,6 +1647,22 @@ mod tests {
     }
 
     #[test]
+    fn bidi_format_controls_have_zero_advance() {
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+        let plain = shaper.shape("a", &font, TextDirection::Ltr);
+        for controlled in ["\u{202e}a", "a\u{202d}"] {
+            let shaped = shaper.shape(controlled, &font, TextDirection::Ltr);
+            assert!(
+                (shaped.width - plain.width).abs() < 0.001,
+                "{controlled:?}: controlled={} plain={}",
+                shaped.width,
+                plain.width
+            );
+        }
+    }
+
+    #[test]
     fn shape_with_fallback_uses_multiple_fonts() {
         // Shape text mixing scripts. The fallback mechanism should not panic
         // and should produce valid results regardless of available fonts.
@@ -1422,6 +1680,26 @@ mod tests {
 
         // Verify fallback doesn't break when there's only one font.
         assert!(font.fallback_count() >= 1);
+    }
+
+    #[test]
+    fn mixed_bidi_and_emoji_runs_use_exact_buffer_sizes() {
+        let shaper = TextShaper::new();
+        let font = Font::new(FontDescription::default());
+
+        for (text, direction) in [
+            ("שלום 👩🏽‍💻 مرحبا", TextDirection::Ltr),
+            ("مرحبا 👩🏽‍💻 שלום", TextDirection::Rtl),
+        ] {
+            let result = shaper.shape(text, &font, direction);
+            assert_eq!(result.num_characters, text.chars().count());
+            assert!(result.width.is_finite());
+            assert!(result.runs.iter().all(|run| {
+                run.glyphs.len() == run.advances.len()
+                    && run.glyphs.len() == run.offsets.len()
+                    && run.glyphs.len() == run.clusters.len()
+            }));
+        }
     }
 
     #[test]
@@ -1687,7 +1965,7 @@ mod tests {
         // char_advance_from_runs(_, 0) should be (8+4)/1 = 12.0
         // char_advance_from_runs(_, 1) should be 10.0
         let font_data = {
-            let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+            let mut cache = crate::font::FontCache::new();
             let desc = FontDescription::default();
             cache
                 .get_font_platform_data("sans-serif", &desc)
@@ -1722,7 +2000,7 @@ mod tests {
         // 3 glyphs all with cluster=0 covering 2 chars, 1 glyph with cluster=2.
         // cluster 0 covers chars [0,2), advance sum = 5+3+2 = 10, per-char = 5.0
         let font_data = {
-            let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+            let mut cache = crate::font::FontCache::new();
             let desc = FontDescription::default();
             cache
                 .get_font_platform_data("sans-serif", &desc)
@@ -1762,7 +2040,7 @@ mod tests {
     fn char_advance_from_runs_1to1_mapping_unchanged() {
         // 1:1 mapping should still work correctly.
         let font_data = {
-            let mut cache = crate::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+            let mut cache = crate::font::FontCache::new();
             let desc = FontDescription::default();
             cache
                 .get_font_platform_data("sans-serif", &desc)
@@ -1783,5 +2061,109 @@ mod tests {
         assert!((TextShaper::char_advance_from_runs(&runs, 0) - 10.0).abs() < 0.01);
         assert!((TextShaper::char_advance_from_runs(&runs, 1) - 20.0).abs() < 0.01);
         assert!((TextShaper::char_advance_from_runs(&runs, 2) - 30.0).abs() < 0.01);
+    }
+
+    fn droid_description(orientation: FontOrientation) -> FontDescription {
+        let mut description = FontDescription::default();
+        description.family = openui_style::FontFamilyList {
+            families: vec![openui_style::FontFamily::Named(
+                "Droid Sans Fallback".to_string(),
+            )],
+        };
+        description.orientation = orientation;
+        description
+    }
+
+    #[test]
+    fn upright_vertical_shaping_enables_cjk_vertical_substitution() {
+        let shaper = TextShaper::new();
+        let collection = crate::font::FontCollection::deterministic_test();
+        let horizontal = shaper.shape(
+            "\u{3001}",
+            &Font::new_in_collection(
+                droid_description(FontOrientation::Horizontal),
+                Arc::clone(&collection),
+            ),
+            TextDirection::Ltr,
+        );
+        let vertical = shaper.shape(
+            "\u{3001}",
+            &Font::new_in_collection(
+                droid_description(FontOrientation::VerticalUpright),
+                collection,
+            ),
+            TextDirection::Ltr,
+        );
+        assert_eq!(horizontal.num_glyphs(), 1);
+        assert_eq!(vertical.num_glyphs(), 1);
+        assert_ne!(horizontal.runs[0].glyphs, vertical.runs[0].glyphs);
+    }
+
+    #[test]
+    fn sideways_orientation_preserves_horizontal_shaping() {
+        let shaper = TextShaper::new();
+        let collection = crate::font::FontCollection::deterministic_test();
+        let horizontal = shaper.shape(
+            "A1",
+            &Font::new_in_collection(
+                droid_description(FontOrientation::Horizontal),
+                Arc::clone(&collection),
+            ),
+            TextDirection::Ltr,
+        );
+        let sideways = shaper.shape(
+            "A1",
+            &Font::new_in_collection(
+                droid_description(FontOrientation::VerticalRotated),
+                collection,
+            ),
+            TextDirection::Ltr,
+        );
+        assert_eq!(horizontal.runs[0].glyphs, sideways.runs[0].glyphs);
+        assert_eq!(horizontal.runs[0].advances, sideways.runs[0].advances);
+        assert_eq!(horizontal.width, sideways.width);
+    }
+
+    #[test]
+    fn pinned_fallback_order_shapes_latin_cjk_devanagari_and_emoji() {
+        let mut description = FontDescription::default();
+        description.family = openui_style::FontFamilyList {
+            families: [
+                "Ahem",
+                "Droid Sans Fallback",
+                "Noto Sans Devanagari",
+                "Noto Color Emoji",
+                "DejaVu Sans",
+            ]
+            .into_iter()
+            .map(|family| openui_style::FontFamily::Named(family.to_string()))
+            .collect(),
+        };
+        let shaper = TextShaper::new();
+        let collection = crate::font::FontCollection::deterministic_test();
+        for (text, expected_family) in [
+            ("A", "Ahem"),
+            ("\u{2026}", "Ahem"),
+            ("\u{4e01}", "Droid Sans Fallback"),
+            ("\u{915}\u{93f}", "Noto Sans Devanagari"),
+            ("\u{1f600}", "Noto Color Emoji"),
+        ] {
+            // Production inline collection splits mixed text at script and
+            // fallback boundaries before shaping. Exercise the same
+            // homogeneous-run contract here rather than asking Skia's
+            // single-font callback to shape several scripts in one segment.
+            let font = Font::new_in_collection(description.clone(), Arc::clone(&collection));
+            let result = shaper.shape(text, &font, TextDirection::Ltr);
+            let family = result
+                .runs
+                .iter()
+                .find(|run| run.glyphs.iter().any(|glyph| *glyph != 0))
+                .map(|run| run.font_data.typeface().family_name());
+            assert_eq!(family.as_deref(), Some(expected_family));
+            assert!(result.runs.iter().all(|run| {
+                run.glyphs.iter().all(|glyph| *glyph != 0)
+                    && run.advances.iter().all(|advance| advance.is_finite())
+            }));
+        }
     }
 }

@@ -654,11 +654,11 @@ fn computed_style_default_line_break_is_auto() {
 #[test]
 fn computed_style_line_break_can_be_set() {
     let mut style = ComputedStyle::default();
-    style.line_break = LineBreak::Strict;
+    style.update_derived(|computed| computed.line_break = LineBreak::Strict);
     assert_eq!(style.line_break, LineBreak::Strict);
-    style.line_break = LineBreak::Loose;
+    style.update_derived(|computed| computed.line_break = LineBreak::Loose);
     assert_eq!(style.line_break, LineBreak::Loose);
-    style.line_break = LineBreak::Anywhere;
+    style.update_derived(|computed| computed.line_break = LineBreak::Anywhere);
     assert_eq!(style.line_break, LineBreak::Anywhere);
 }
 
@@ -675,9 +675,10 @@ fn linebreaker_anywhere_breaks_every_char() {
     let sr_arc = Arc::new(sr);
 
     let mut style = ComputedStyle::default();
-    style.line_break = LineBreak::Anywhere;
+    style.update_derived(|computed| computed.line_break = LineBreak::Anywhere);
 
     let items_data = InlineItemsData {
+        font_collection: openui_text::FontCollection::system(),
         text: text.to_string(),
         items: vec![InlineItem {
             item_type: InlineItemType::Text,
@@ -723,9 +724,10 @@ fn linebreaker_strict_prevents_break_before_chouon() {
     let sr_arc = Arc::new(sr);
 
     let mut style = ComputedStyle::default();
-    style.line_break = LineBreak::Strict;
+    style.update_derived(|computed| computed.line_break = LineBreak::Strict);
 
     let items_data = InlineItemsData {
+        font_collection: openui_text::FontCollection::system(),
         text: text.to_string(),
         items: vec![InlineItem {
             item_type: InlineItemType::Text,

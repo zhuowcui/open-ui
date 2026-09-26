@@ -9,6 +9,8 @@ out/
 dist/
 debug/
 release/
+!tools/release/
+!tools/release/generate_v02_contract.py
 
 # Generated link deps (machine-specific absolute paths)
 build/config/chromium/skia_link_deps.rsp

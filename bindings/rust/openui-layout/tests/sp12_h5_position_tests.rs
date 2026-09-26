@@ -42,7 +42,9 @@ fn viewport() -> PhysicalRect {
 /// Create a builder with container position:relative — needed for abs-pos tests.
 fn abs_builder(w: i32, h: i32) -> BlockTestBuilder {
     let mut b = BlockTestBuilder::new(w, h);
-    b = b.with_container_style(|s| s.position = Position::Relative);
+    b = b.with_container_style(|s| {
+        s.update_derived(|computed| computed.position = Position::Relative)
+    });
     b
 }
 
@@ -56,16 +58,16 @@ fn root_space(w: i32, h: i32) -> ConstraintSpace {
 
 fn setup_abs_child(doc: &mut Document, parent: NodeId) -> NodeId {
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.position = Position::Absolute;
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.position = Position::Absolute);
     doc.append_child(parent, child);
     child
 }
 
 fn setup_fixed_child(doc: &mut Document, parent: NodeId) -> NodeId {
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.position = Position::Fixed;
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.position = Position::Fixed);
     doc.append_child(parent, child);
     child
 }
@@ -73,9 +75,9 @@ fn setup_fixed_child(doc: &mut Document, parent: NodeId) -> NodeId {
 fn setup_container(doc: &mut Document, w: i32, h: i32) -> NodeId {
     let vp = doc.root();
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(w as f32);
-    doc.node_mut(container).style.height = Length::px(h as f32);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(w as f32));
+    doc.update_resolved_style(container, |style| style.height = Length::px(h as f32));
     doc.append_child(vp, container);
     container
 }
@@ -88,12 +90,12 @@ fn make_fragment(left: i32, top: i32, w: i32, h: i32) -> Fragment {
 
 fn make_sticky_style(top: Length, right: Length, bottom: Length, left: Length) -> ComputedStyle {
     let mut s = ComputedStyle::initial();
-    s.display = Display::Block;
-    s.position = Position::Sticky;
-    s.top = top;
-    s.right = right;
-    s.bottom = bottom;
-    s.left = left;
+    s.update_derived(|computed| computed.display = Display::Block);
+    s.update_derived(|computed| computed.position = Position::Sticky);
+    s.update_derived(|computed| computed.top = top);
+    s.update_derived(|computed| computed.right = right);
+    s.update_derived(|computed| computed.bottom = bottom);
+    s.update_derived(|computed| computed.left = left);
     s
 }
 
@@ -165,10 +167,10 @@ fn rel_right_offset_moves_left() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::auto();
-            s.bottom = Length::auto();
-            s.left = Length::auto();
-            s.right = Length::px(40.0);
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::px(40.0));
         })
         .done();
     let r = b.build();
@@ -184,10 +186,10 @@ fn rel_top_negative_moves_up() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-15.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-15.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -202,10 +204,10 @@ fn rel_left_negative_moves_left() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(-25.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(-25.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -262,14 +264,14 @@ fn rel_right_wins_over_left_rtl() {
     // so the 200px child is right-aligned in an 800px container.
     // Normal flow x = 600, then relative right:40 → x = 600 − 40 = 560.
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.direction = Direction::Rtl;
+        s.update_derived(|computed| computed.direction = Direction::Rtl);
     });
     b.add_child()
         .width(200.0)
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.direction = Direction::Rtl;
+            s.update_derived(|computed| computed.direction = Direction::Rtl);
         })
         .inset(0, 40, 0, 60)
         .done();
@@ -373,10 +375,10 @@ fn rel_large_top_offset() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(1000.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(1000.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -391,10 +393,10 @@ fn rel_large_negative_top() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-500.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-500.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -404,8 +406,8 @@ fn rel_large_negative_top() {
 #[test]
 fn rel_with_margin_top() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(200.0)
@@ -474,10 +476,10 @@ fn rel_top_percent_of_cb_height() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::percent(10.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::percent(10.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -493,10 +495,10 @@ fn rel_left_percent_of_cb_width() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::percent(5.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::percent(5.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -512,10 +514,10 @@ fn rel_bottom_percent_when_top_auto() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.bottom = Length::percent(25.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
-            s.right = Length::auto();
+            s.update_derived(|computed| computed.bottom = Length::percent(25.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -531,10 +533,10 @@ fn rel_right_percent_when_left_auto() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.right = Length::percent(10.0);
-            s.left = Length::auto();
-            s.top = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.right = Length::percent(10.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -605,8 +607,8 @@ fn rel_width_auto_fills_container() {
 #[test]
 fn rel_with_overflow_hidden_container() {
     let mut b = BlockTestBuilder::new(400, 300).with_container_style(|s| {
-        s.overflow_x = Overflow::Hidden;
-        s.overflow_y = Overflow::Hidden;
+        s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+        s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     });
     b.add_child()
         .width(200.0)
@@ -677,11 +679,11 @@ fn rel_nested_relative_parent_and_child() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Relative;
-            s.top = Length::px(5.0);
-            s.left = Length::px(5.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Relative);
+            s.update_derived(|computed| computed.top = Length::px(5.0));
+            s.update_derived(|computed| computed.left = Length::px(5.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done()
         .done();
@@ -696,12 +698,12 @@ fn rel_dom_api_basic() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.position = Position::Relative;
-    doc.node_mut(child).style.width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(100.0);
-    doc.node_mut(child).style.top = Length::px(30.0);
-    doc.node_mut(child).style.left = Length::px(40.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.position = Position::Relative);
+    doc.update_resolved_style(child, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(child, |style| style.top = Length::px(30.0));
+    doc.update_resolved_style(child, |style| style.left = Length::px(40.0));
     doc.append_child(container, child);
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, doc.root(), &space);
@@ -717,17 +719,17 @@ fn rel_dom_api_second_child() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
     let c1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(c1).style.display = Display::Block;
-    doc.node_mut(c1).style.width = Length::px(200.0);
-    doc.node_mut(c1).style.height = Length::px(80.0);
+    doc.update_resolved_style(c1, |style| style.display = Display::Block);
+    doc.update_resolved_style(c1, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c1, |style| style.height = Length::px(80.0));
     doc.append_child(container, c1);
     let c2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(c2).style.display = Display::Block;
-    doc.node_mut(c2).style.position = Position::Relative;
-    doc.node_mut(c2).style.width = Length::px(200.0);
-    doc.node_mut(c2).style.height = Length::px(60.0);
-    doc.node_mut(c2).style.top = Length::px(15.0);
-    doc.node_mut(c2).style.left = Length::px(25.0);
+    doc.update_resolved_style(c2, |style| style.display = Display::Block);
+    doc.update_resolved_style(c2, |style| style.position = Position::Relative);
+    doc.update_resolved_style(c2, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(c2, |style| style.height = Length::px(60.0));
+    doc.update_resolved_style(c2, |style| style.top = Length::px(15.0));
+    doc.update_resolved_style(c2, |style| style.left = Length::px(25.0));
     doc.append_child(container, c2);
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, doc.root(), &space);
@@ -1000,8 +1002,8 @@ fn rel_top_128_left_256() {
 #[test]
 fn rel_margin_top_10_left_10_with_offset() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(100.0)
@@ -1017,8 +1019,8 @@ fn rel_margin_top_10_left_10_with_offset() {
 #[test]
 fn rel_margin_top_20_left_0_with_offset() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(100.0)
@@ -1048,8 +1050,8 @@ fn rel_margin_top_0_left_20_with_offset() {
 #[test]
 fn rel_margin_top_5_left_15_with_offset() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(100.0)
@@ -1065,8 +1067,8 @@ fn rel_margin_top_5_left_15_with_offset() {
 #[test]
 fn rel_margin_top_15_left_5_with_offset() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(100.0)
@@ -1082,8 +1084,8 @@ fn rel_margin_top_15_left_5_with_offset() {
 #[test]
 fn rel_margin_top_30_left_30_with_offset() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(100.0)
@@ -1099,8 +1101,8 @@ fn rel_margin_top_30_left_30_with_offset() {
 #[test]
 fn rel_margin_top_50_left_0_with_offset() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(100.0)
@@ -1130,8 +1132,8 @@ fn rel_margin_top_0_left_50_with_offset() {
 #[test]
 fn rel_margin_top_100_left_100_with_offset() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(100.0)
@@ -1147,8 +1149,8 @@ fn rel_margin_top_100_left_100_with_offset() {
 #[test]
 fn rel_margin_top_10_left_40_with_offset() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(100.0)
@@ -1352,10 +1354,10 @@ fn rel_four_children_alternating_direction() {
         .height(40.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-10.0);
-            s.left = Length::px(-10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-10.0));
+            s.update_derived(|computed| computed.left = Length::px(-10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     b.add_child()
@@ -1369,10 +1371,10 @@ fn rel_four_children_alternating_direction() {
         .height(40.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-20.0);
-            s.left = Length::px(-20.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-20.0));
+            s.update_derived(|computed| computed.left = Length::px(-20.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -1385,10 +1387,10 @@ fn rel_four_children_alternating_direction() {
 #[test]
 fn rel_container_with_border() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 5;
-        s.border_top_style = BorderStyle::Solid;
-        s.border_left_width = 5;
-        s.border_left_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 5);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_left_width = 5);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(200.0)
@@ -1404,8 +1406,8 @@ fn rel_container_with_border() {
 #[test]
 fn rel_container_with_padding() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.padding_top = Length::px(20.0);
-        s.padding_left = Length::px(20.0);
+        s.update_derived(|computed| computed.padding_top = Length::px(20.0));
+        s.update_derived(|computed| computed.padding_left = Length::px(20.0));
     });
     b.add_child()
         .width(200.0)
@@ -1469,10 +1471,10 @@ fn abs_basic_right_bottom_builder() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::auto();
-            s.bottom = Length::px(30.0);
-            s.left = Length::auto();
-            s.right = Length::px(50.0);
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::px(30.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::px(50.0));
         })
         .done();
     let r = b.build();
@@ -1510,10 +1512,10 @@ fn abs_all_corners() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(0.0);
-            s.right = Length::px(0.0);
-            s.bottom = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::px(0.0));
+            s.update_derived(|computed| computed.bottom = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     // Bottom-left.
@@ -1522,10 +1524,10 @@ fn abs_all_corners() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.bottom = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
+            s.update_derived(|computed| computed.bottom = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
         })
         .done();
     // Bottom-right.
@@ -1534,10 +1536,10 @@ fn abs_all_corners() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.bottom = Length::px(0.0);
-            s.right = Length::px(0.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.bottom = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::px(0.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -1612,8 +1614,8 @@ fn abs_vertical_centering_auto_margins() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -1630,10 +1632,10 @@ fn abs_both_axis_centering() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -1659,14 +1661,14 @@ fn abs_overconstrained_ltr_left_wins() {
 #[test]
 fn abs_overconstrained_rtl_right_wins() {
     let mut b = abs_builder(800, 600).with_container_style(|s| {
-        s.direction = Direction::Rtl;
+        s.update_derived(|computed| computed.direction = Direction::Rtl);
     });
     b.add_child()
         .width(700.0)
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.direction = Direction::Rtl;
+            s.update_derived(|computed| computed.direction = Direction::Rtl);
         })
         .inset(0, 50, 0, 100)
         .done();
@@ -1700,10 +1702,10 @@ fn abs_percentage_top_left() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::percent(10.0);
-            s.left = Length::percent(5.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::percent(10.0));
+            s.update_derived(|computed| computed.left = Length::percent(5.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -1719,10 +1721,10 @@ fn abs_percentage_right_bottom() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::percent(10.0);
-            s.bottom = Length::percent(5.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::percent(10.0));
+            s.update_derived(|computed| computed.bottom = Length::percent(5.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -1737,12 +1739,12 @@ fn abs_percentage_width_height() {
     b.add_child()
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
-            s.width = Length::percent(50.0);
-            s.height = Length::percent(25.0);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
+            s.update_derived(|computed| computed.width = Length::percent(50.0));
+            s.update_derived(|computed| computed.height = Length::percent(25.0));
         })
         .done();
     let r = b.build();
@@ -1786,8 +1788,8 @@ fn abs_removed_from_flow() {
 #[test]
 fn abs_container_padding_affects_position() {
     let mut b = abs_builder(800, 600).with_container_style(|s| {
-        s.padding_top = Length::px(20.0);
-        s.padding_left = Length::px(30.0);
+        s.update_derived(|computed| computed.padding_top = Length::px(20.0));
+        s.update_derived(|computed| computed.padding_left = Length::px(30.0));
     });
     b.add_child()
         .width(100.0)
@@ -1803,10 +1805,10 @@ fn abs_container_padding_affects_position() {
 #[test]
 fn abs_container_border_affects_position() {
     let mut b = abs_builder(800, 600).with_container_style(|s| {
-        s.border_top_width = 10;
-        s.border_top_style = BorderStyle::Solid;
-        s.border_left_width = 15;
-        s.border_left_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 10);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_left_width = 15);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(100.0)
@@ -1908,12 +1910,12 @@ fn abs_multiple_children_overlap() {
 fn abs_dom_top_left_width_height() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(50.0);
-    doc.node_mut(abs).style.left = Length::px(100.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(150.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(150.0));
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -1927,12 +1929,12 @@ fn abs_dom_top_left_width_height() {
 fn abs_dom_right_bottom() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.right = Length::px(50.0);
-    doc.node_mut(abs).style.bottom = Length::px(30.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(100.0);
+    doc.update_resolved_style(abs, |style| style.right = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.bottom = Length::px(30.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(100.0));
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -1944,11 +1946,11 @@ fn abs_dom_right_bottom() {
 fn abs_dom_auto_width_left_right() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.left = Length::px(50.0);
-    doc.node_mut(abs).style.right = Length::px(50.0);
-    doc.node_mut(abs).style.height = Length::px(100.0);
+    doc.update_resolved_style(abs, |style| style.left = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(100.0));
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -1960,11 +1962,11 @@ fn abs_dom_auto_width_left_right() {
 fn abs_dom_auto_height_top_bottom() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(20.0);
-    doc.node_mut(abs).style.bottom = Length::px(30.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(20.0));
+    doc.update_resolved_style(abs, |style| style.bottom = Length::px(30.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -1976,14 +1978,14 @@ fn abs_dom_auto_height_top_bottom() {
 fn abs_dom_centering_auto_margins() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.left = Length::px(0.0);
-    doc.node_mut(abs).style.right = Length::px(0.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(100.0);
-    doc.node_mut(abs).style.margin_left = Length::auto();
-    doc.node_mut(abs).style.margin_right = Length::auto();
+    doc.update_resolved_style(abs, |style| style.left = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(abs, |style| style.margin_right = Length::auto());
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -1994,14 +1996,14 @@ fn abs_dom_centering_auto_margins() {
 fn abs_dom_vertical_centering() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(0.0);
-    doc.node_mut(abs).style.bottom = Length::px(0.0);
-    doc.node_mut(abs).style.width = Length::px(100.0);
-    doc.node_mut(abs).style.height = Length::px(200.0);
-    doc.node_mut(abs).style.margin_top = Length::auto();
-    doc.node_mut(abs).style.margin_bottom = Length::auto();
+    doc.update_resolved_style(abs, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.bottom = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.margin_top = Length::auto());
+    doc.update_resolved_style(abs, |style| style.margin_bottom = Length::auto());
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -2012,12 +2014,12 @@ fn abs_dom_vertical_centering() {
 fn abs_dom_overconstrained_ltr() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.left = Length::px(100.0);
-    doc.node_mut(abs).style.right = Length::px(100.0);
-    doc.node_mut(abs).style.width = Length::px(700.0);
-    doc.node_mut(abs).style.height = Length::px(50.0);
+    doc.update_resolved_style(abs, |style| style.left = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(700.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(50.0));
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -2029,14 +2031,14 @@ fn abs_dom_overconstrained_ltr() {
 fn abs_dom_overconstrained_rtl() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.direction = Direction::Rtl;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.direction = Direction::Rtl);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.left = Length::px(100.0);
-    doc.node_mut(abs).style.right = Length::px(100.0);
-    doc.node_mut(abs).style.width = Length::px(700.0);
-    doc.node_mut(abs).style.height = Length::px(50.0);
-    doc.node_mut(abs).style.direction = Direction::Rtl;
+    doc.update_resolved_style(abs, |style| style.left = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(700.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.direction = Direction::Rtl);
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -2049,12 +2051,12 @@ fn abs_dom_overconstrained_rtl() {
 fn abs_dom_percentage_values() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 1000, 800);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::percent(10.0);
-    doc.node_mut(abs).style.left = Length::percent(5.0);
-    doc.node_mut(abs).style.width = Length::percent(50.0);
-    doc.node_mut(abs).style.height = Length::percent(25.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::percent(10.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::percent(5.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::percent(50.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::percent(25.0));
     let space = root_space(1000, 800);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -2068,10 +2070,10 @@ fn abs_dom_percentage_values() {
 fn abs_dom_static_position_fallback() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.width = Length::px(100.0);
-    doc.node_mut(abs).style.height = Length::px(50.0);
+    doc.update_resolved_style(abs, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(50.0));
     // All insets auto → static position fallback.
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
@@ -2350,10 +2352,10 @@ fn abs_container_100x100_center() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2369,10 +2371,10 @@ fn abs_container_200x200_center() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2388,10 +2390,10 @@ fn abs_container_400x300_center() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2407,10 +2409,10 @@ fn abs_container_1000x1000_center() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2426,10 +2428,10 @@ fn abs_container_1920x1080_center() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2445,10 +2447,10 @@ fn abs_container_320x480_center() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2464,10 +2466,10 @@ fn abs_container_640x480_center() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2483,10 +2485,10 @@ fn abs_container_1024x768_center() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2502,10 +2504,10 @@ fn abs_container_500x500_center() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2521,10 +2523,10 @@ fn abs_container_1600x900_center() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2592,11 +2594,11 @@ fn abs_inside_relative_parent() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Absolute;
-            s.top = Length::px(20.0);
-            s.left = Length::px(20.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Absolute);
+            s.update_derived(|computed| computed.top = Length::px(20.0));
+            s.update_derived(|computed| computed.left = Length::px(20.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done()
         .done();
@@ -2609,8 +2611,8 @@ fn abs_inside_relative_parent() {
 #[test]
 fn abs_overflow_hidden_container() {
     let mut b = abs_builder(400, 300).with_container_style(|s| {
-        s.overflow_x = Overflow::Hidden;
-        s.overflow_y = Overflow::Hidden;
+        s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+        s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     });
     b.add_child()
         .width(200.0)
@@ -2679,11 +2681,11 @@ fn fixed_basic_top_left() {
         .width(300.0)
         .height(200.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(20.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(20.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2701,11 +2703,11 @@ fn fixed_right_bottom() {
         .width(200.0)
         .height(100.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.right = Length::px(50.0);
-            s.bottom = Length::px(30.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.right = Length::px(50.0));
+            s.update_derived(|computed| computed.bottom = Length::px(30.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2721,11 +2723,11 @@ fn fixed_top_left_zero() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2740,11 +2742,11 @@ fn fixed_auto_width_from_left_right() {
     b.add_child()
         .height(100.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(100.0);
-            s.right = Length::px(100.0);
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(100.0));
+            s.update_derived(|computed| computed.right = Length::px(100.0));
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2761,11 +2763,11 @@ fn fixed_auto_height_from_top_bottom() {
     b.add_child()
         .width(200.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(50.0);
-            s.bottom = Length::px(50.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(50.0));
+            s.update_derived(|computed| computed.bottom = Length::px(50.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2783,15 +2785,15 @@ fn fixed_centering_auto_margins() {
         .width(200.0)
         .height(100.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::px(0.0);
-            s.bottom = Length::px(0.0);
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::px(0.0));
+            s.update_derived(|computed| computed.bottom = Length::px(0.0));
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2807,13 +2809,13 @@ fn fixed_horizontal_centering() {
         .width(400.0)
         .height(100.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::px(0.0);
-            s.bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::px(0.0));
+            s.update_derived(|computed| computed.bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2829,11 +2831,11 @@ fn fixed_overconstrained_ltr() {
         .width(700.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.left = Length::px(100.0);
-            s.right = Length::px(100.0);
-            s.top = Length::px(0.0);
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.left = Length::px(100.0));
+            s.update_derived(|computed| computed.right = Length::px(100.0));
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2849,18 +2851,18 @@ fn fixed_overconstrained_rtl() {
     // Fixed element CB is the viewport (LTR by default), not the container.
     // LTR overconstrained: left wins, right is adjusted.
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.direction = Direction::Rtl;
+        s.update_derived(|computed| computed.direction = Direction::Rtl);
     });
     b.add_child()
         .width(700.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.direction = Direction::Rtl;
-            s.left = Length::px(100.0);
-            s.right = Length::px(100.0);
-            s.top = Length::px(0.0);
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.direction = Direction::Rtl);
+            s.update_derived(|computed| computed.left = Length::px(100.0));
+            s.update_derived(|computed| computed.right = Length::px(100.0));
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2877,11 +2879,11 @@ fn fixed_does_not_affect_flow() {
         .width(200.0)
         .height(100.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(200.0);
-            s.left = Length::px(200.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(200.0));
+            s.update_derived(|computed| computed.left = Length::px(200.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     b.add_child().width(200.0).height(100.0).done();
@@ -2901,11 +2903,11 @@ fn fixed_percentage_insets() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::percent(10.0);
-            s.left = Length::percent(5.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::percent(10.0));
+            s.update_derived(|computed| computed.left = Length::percent(5.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -2919,13 +2921,13 @@ fn fixed_percentage_size() {
     let mut b = BlockTestBuilder::new(1000, 800);
     b.add_child()
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
-            s.width = Length::percent(50.0);
-            s.height = Length::percent(25.0);
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
+            s.update_derived(|computed| computed.width = Length::percent(50.0));
+            s.update_derived(|computed| computed.height = Length::percent(25.0));
         })
         .done();
     let r = b.build();
@@ -2939,10 +2941,10 @@ fn fixed_dom_basic() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
     let fixed = setup_fixed_child(&mut doc, container);
-    doc.node_mut(fixed).style.top = Length::px(10.0);
-    doc.node_mut(fixed).style.left = Length::px(20.0);
-    doc.node_mut(fixed).style.width = Length::px(300.0);
-    doc.node_mut(fixed).style.height = Length::px(200.0);
+    doc.update_resolved_style(fixed, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(fixed, |style| style.left = Length::px(20.0));
+    doc.update_resolved_style(fixed, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(fixed, |style| style.height = Length::px(200.0));
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let fixed_frag = &frag.children[1];
@@ -2957,10 +2959,10 @@ fn fixed_dom_right_bottom_corner() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
     let fixed = setup_fixed_child(&mut doc, container);
-    doc.node_mut(fixed).style.right = Length::px(0.0);
-    doc.node_mut(fixed).style.bottom = Length::px(0.0);
-    doc.node_mut(fixed).style.width = Length::px(100.0);
-    doc.node_mut(fixed).style.height = Length::px(50.0);
+    doc.update_resolved_style(fixed, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(fixed, |style| style.bottom = Length::px(0.0));
+    doc.update_resolved_style(fixed, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(fixed, |style| style.height = Length::px(50.0));
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let fixed_frag = &frag.children[1];
@@ -2973,10 +2975,10 @@ fn fixed_dom_auto_width_fills() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
     let fixed = setup_fixed_child(&mut doc, container);
-    doc.node_mut(fixed).style.left = Length::px(50.0);
-    doc.node_mut(fixed).style.right = Length::px(50.0);
-    doc.node_mut(fixed).style.top = Length::px(0.0);
-    doc.node_mut(fixed).style.height = Length::px(100.0);
+    doc.update_resolved_style(fixed, |style| style.left = Length::px(50.0));
+    doc.update_resolved_style(fixed, |style| style.right = Length::px(50.0));
+    doc.update_resolved_style(fixed, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(fixed, |style| style.height = Length::px(100.0));
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let fixed_frag = &frag.children[1];
@@ -2989,16 +2991,16 @@ fn fixed_dom_centering() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
     let fixed = setup_fixed_child(&mut doc, container);
-    doc.node_mut(fixed).style.left = Length::px(0.0);
-    doc.node_mut(fixed).style.right = Length::px(0.0);
-    doc.node_mut(fixed).style.top = Length::px(0.0);
-    doc.node_mut(fixed).style.bottom = Length::px(0.0);
-    doc.node_mut(fixed).style.width = Length::px(200.0);
-    doc.node_mut(fixed).style.height = Length::px(200.0);
-    doc.node_mut(fixed).style.margin_left = Length::auto();
-    doc.node_mut(fixed).style.margin_right = Length::auto();
-    doc.node_mut(fixed).style.margin_top = Length::auto();
-    doc.node_mut(fixed).style.margin_bottom = Length::auto();
+    doc.update_resolved_style(fixed, |style| style.left = Length::px(0.0));
+    doc.update_resolved_style(fixed, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(fixed, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(fixed, |style| style.bottom = Length::px(0.0));
+    doc.update_resolved_style(fixed, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(fixed, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(fixed, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(fixed, |style| style.margin_right = Length::auto());
+    doc.update_resolved_style(fixed, |style| style.margin_top = Length::auto());
+    doc.update_resolved_style(fixed, |style| style.margin_bottom = Length::auto());
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let fixed_frag = &frag.children[1];
@@ -3013,11 +3015,11 @@ fn fixed_top_0_left_0() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3033,11 +3035,11 @@ fn fixed_top_10_left_10() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3053,11 +3055,11 @@ fn fixed_top_20_left_30() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(20.0);
-            s.left = Length::px(30.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(20.0));
+            s.update_derived(|computed| computed.left = Length::px(30.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3073,11 +3075,11 @@ fn fixed_top_50_left_50() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(50.0);
-            s.left = Length::px(50.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(50.0));
+            s.update_derived(|computed| computed.left = Length::px(50.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3093,11 +3095,11 @@ fn fixed_top_100_left_100() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(100.0);
-            s.left = Length::px(100.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(100.0));
+            s.update_derived(|computed| computed.left = Length::px(100.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3113,11 +3115,11 @@ fn fixed_top_0_left_50() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(50.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(50.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3133,11 +3135,11 @@ fn fixed_top_50_left_0() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(50.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(50.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3153,11 +3155,11 @@ fn fixed_top_200_left_300() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(200.0);
-            s.left = Length::px(300.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(200.0));
+            s.update_derived(|computed| computed.left = Length::px(300.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3173,11 +3175,11 @@ fn fixed_top_0_left_700() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(700.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(700.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3193,11 +3195,11 @@ fn fixed_top_550_left_0() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(550.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(550.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3213,11 +3215,11 @@ fn fixed_top_1_left_1() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(1.0);
-            s.left = Length::px(1.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(1.0));
+            s.update_derived(|computed| computed.left = Length::px(1.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3233,11 +3235,11 @@ fn fixed_top_5_left_15() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(5.0);
-            s.left = Length::px(15.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(5.0));
+            s.update_derived(|computed| computed.left = Length::px(15.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3253,11 +3255,11 @@ fn fixed_top_15_left_5() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(15.0);
-            s.left = Length::px(5.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(15.0));
+            s.update_derived(|computed| computed.left = Length::px(5.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3273,11 +3275,11 @@ fn fixed_top_300_left_300() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(300.0);
-            s.left = Length::px(300.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(300.0));
+            s.update_derived(|computed| computed.left = Length::px(300.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3293,11 +3295,11 @@ fn fixed_top_100_left_500() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(100.0);
-            s.left = Length::px(500.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(100.0));
+            s.update_derived(|computed| computed.left = Length::px(500.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3313,11 +3315,11 @@ fn fixed_top_250_left_250() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(250.0);
-            s.left = Length::px(250.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(250.0));
+            s.update_derived(|computed| computed.left = Length::px(250.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3333,11 +3335,11 @@ fn fixed_top_400_left_200() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(400.0);
-            s.left = Length::px(200.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(400.0));
+            s.update_derived(|computed| computed.left = Length::px(200.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3353,11 +3355,11 @@ fn fixed_top_10_left_400() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(400.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(400.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3373,11 +3375,11 @@ fn fixed_top_500_left_100() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(500.0);
-            s.left = Length::px(100.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(500.0));
+            s.update_derived(|computed| computed.left = Length::px(100.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3393,11 +3395,11 @@ fn fixed_top_99_left_99() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(99.0);
-            s.left = Length::px(99.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(99.0));
+            s.update_derived(|computed| computed.left = Length::px(99.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3409,18 +3411,18 @@ fn fixed_top_99_left_99() {
 #[test]
 fn fixed_with_container_padding() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.padding_top = Length::px(20.0);
-        s.padding_left = Length::px(20.0);
+        s.update_derived(|computed| computed.padding_top = Length::px(20.0));
+        s.update_derived(|computed| computed.padding_left = Length::px(20.0));
     });
     b.add_child()
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3439,11 +3441,11 @@ fn fixed_with_border_box() {
         .padding(10, 10, 10, 10)
         .box_sizing_border_box()
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3461,11 +3463,11 @@ fn fixed_with_explicit_margins() {
         .height(100.0)
         .margin(10, 20, 30, 40)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3481,22 +3483,22 @@ fn fixed_multiple_fixed_children() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     b.add_child()
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(100.0);
-            s.left = Length::px(100.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(100.0));
+            s.update_derived(|computed| computed.left = Length::px(100.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3513,11 +3515,11 @@ fn fixed_full_viewport() {
     let mut b = BlockTestBuilder::new(800, 600);
     b.add_child()
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::px(0.0);
-            s.bottom = Length::px(0.0);
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::px(0.0));
+            s.update_derived(|computed| computed.bottom = Length::px(0.0));
         })
         .done();
     let r = b.build();
@@ -4001,7 +4003,7 @@ fn sticky_apply_offset_noop_for_static() {
 #[test]
 fn sticky_apply_offset_noop_for_relative() {
     let mut style = ComputedStyle::initial();
-    style.position = Position::Relative;
+    style.update_derived(|computed| computed.position = Position::Relative);
     let mut frag = make_fragment(10, 200, 100, 50);
     let original = frag.offset;
     apply_sticky_offset(
@@ -4751,8 +4753,8 @@ fn interaction_z_index_set_on_relative() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.z_index = Some(10);
-            s.top = Length::px(0.0);
+            s.update_derived(|computed| computed.z_index = Some(10));
+            s.update_derived(|computed| computed.top = Length::px(0.0));
         })
         .done();
     let r = b.build();
@@ -4768,7 +4770,7 @@ fn interaction_z_index_set_on_absolute() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.z_index = Some(5);
+            s.update_derived(|computed| computed.z_index = Some(5));
         })
         .inset(10, 0, 0, 10)
         .done();
@@ -4783,12 +4785,12 @@ fn interaction_z_index_set_on_fixed() {
         .width(200.0)
         .height(100.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.z_index = Some(100);
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.z_index = Some(100));
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -4805,8 +4807,8 @@ fn interaction_z_index_auto() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.z_index = None;
-            s.top = Length::px(5.0);
+            s.update_derived(|computed| computed.z_index = None);
+            s.update_derived(|computed| computed.top = Length::px(5.0));
         })
         .done();
     let r = b.build();
@@ -4821,7 +4823,7 @@ fn interaction_multiple_z_index_no_layout_effect() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.z_index = Some(1);
+            s.update_derived(|computed| computed.z_index = Some(1));
         })
         .inset(0, 0, 0, 0)
         .done();
@@ -4830,7 +4832,7 @@ fn interaction_multiple_z_index_no_layout_effect() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.z_index = Some(10);
+            s.update_derived(|computed| computed.z_index = Some(10));
         })
         .inset(50, 0, 0, 50)
         .done();
@@ -4839,7 +4841,7 @@ fn interaction_multiple_z_index_no_layout_effect() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.z_index = Some(100);
+            s.update_derived(|computed| computed.z_index = Some(100));
         })
         .inset(100, 0, 0, 100)
         .done();
@@ -4876,11 +4878,11 @@ fn interaction_fixed_does_not_affect_siblings_flow() {
         .width(200.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(300.0);
-            s.left = Length::px(300.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(300.0));
+            s.update_derived(|computed| computed.left = Length::px(300.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     b.add_child().width(800.0).height(100.0).done();
@@ -4923,11 +4925,11 @@ fn interaction_abs_inside_abs_parent() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Absolute;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Absolute);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done()
         .done();
@@ -4948,11 +4950,11 @@ fn interaction_abs_inside_relative_parent() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Absolute;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Absolute);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done()
         .done();
@@ -5012,11 +5014,11 @@ fn interaction_all_position_types() {
         .width(80.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(500.0);
-            s.left = Length::px(500.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(500.0));
+            s.update_derived(|computed| computed.left = Length::px(500.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     // Another static.
@@ -5085,11 +5087,11 @@ fn interaction_container_height_ignores_fixed_children() {
         .width(200.0)
         .height(1000.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -5136,24 +5138,24 @@ fn interaction_count_mixed_children() {
 fn interaction_dom_abs_with_flow_sibling() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     // Flow child.
     let c1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(c1).style.display = Display::Block;
-    doc.node_mut(c1).style.width = Length::px(800.0);
-    doc.node_mut(c1).style.height = Length::px(100.0);
+    doc.update_resolved_style(c1, |style| style.display = Display::Block);
+    doc.update_resolved_style(c1, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(c1, |style| style.height = Length::px(100.0));
     doc.append_child(container, c1);
     // Abs child.
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(200.0);
-    doc.node_mut(abs).style.left = Length::px(200.0);
-    doc.node_mut(abs).style.width = Length::px(100.0);
-    doc.node_mut(abs).style.height = Length::px(50.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(50.0));
     // Another flow child.
     let c3 = doc.create_node(ElementTag::Div);
-    doc.node_mut(c3).style.display = Display::Block;
-    doc.node_mut(c3).style.width = Length::px(800.0);
-    doc.node_mut(c3).style.height = Length::px(100.0);
+    doc.update_resolved_style(c3, |style| style.display = Display::Block);
+    doc.update_resolved_style(c3, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(c3, |style| style.height = Length::px(100.0));
     doc.append_child(container, c3);
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
@@ -5170,24 +5172,24 @@ fn interaction_dom_abs_with_flow_sibling() {
 fn interaction_dom_relative_then_abs() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     // Relative child.
     let rel = doc.create_node(ElementTag::Div);
-    doc.node_mut(rel).style.display = Display::Block;
-    doc.node_mut(rel).style.position = Position::Relative;
-    doc.node_mut(rel).style.width = Length::px(800.0);
-    doc.node_mut(rel).style.height = Length::px(100.0);
-    doc.node_mut(rel).style.top = Length::px(10.0);
-    doc.node_mut(rel).style.left = Length::px(10.0);
+    doc.update_resolved_style(rel, |style| style.display = Display::Block);
+    doc.update_resolved_style(rel, |style| style.position = Position::Relative);
+    doc.update_resolved_style(rel, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(rel, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(rel, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(rel, |style| style.left = Length::px(10.0));
     doc.append_child(container, rel);
     // Abs child inside the relative.
     let abs = doc.create_node(ElementTag::Div);
-    doc.node_mut(abs).style.display = Display::Block;
-    doc.node_mut(abs).style.position = Position::Absolute;
-    doc.node_mut(abs).style.top = Length::px(20.0);
-    doc.node_mut(abs).style.left = Length::px(20.0);
-    doc.node_mut(abs).style.width = Length::px(50.0);
-    doc.node_mut(abs).style.height = Length::px(30.0);
+    doc.update_resolved_style(abs, |style| style.display = Display::Block);
+    doc.update_resolved_style(abs, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(20.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(20.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(30.0));
     doc.append_child(rel, abs);
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
@@ -5238,7 +5240,7 @@ fn interaction_negative_z_index() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.z_index = Some(-1);
+            s.update_derived(|computed| computed.z_index = Some(-1));
         })
         .inset(10, 0, 0, 10)
         .done();
@@ -5254,8 +5256,8 @@ fn interaction_relative_z_index_stacking_context() {
         .height(200.0)
         .position_relative()
         .with_style(|s| {
-            s.z_index = Some(1);
-            s.top = Length::px(0.0);
+            s.update_derived(|computed| computed.z_index = Some(1));
+            s.update_derived(|computed| computed.top = Length::px(0.0));
         })
         .done();
     let r = b.build();
@@ -5266,8 +5268,8 @@ fn interaction_relative_z_index_stacking_context() {
 #[test]
 fn interaction_abs_in_overflow_hidden() {
     let mut b = abs_builder(400, 300).with_container_style(|s| {
-        s.overflow_x = Overflow::Hidden;
-        s.overflow_y = Overflow::Hidden;
+        s.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
+        s.update_derived(|computed| computed.overflow_y = Overflow::Hidden);
     });
     b.add_child()
         .width(200.0)
@@ -5771,11 +5773,11 @@ fn edge_zero_size_container_fixed() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(5.0);
-            s.left = Length::px(5.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(5.0));
+            s.update_derived(|computed| computed.left = Length::px(5.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -5820,10 +5822,10 @@ fn edge_large_offset_absolute() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(10000.0);
-            s.left = Length::px(10000.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(10000.0));
+            s.update_derived(|computed| computed.left = Length::px(10000.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -5838,10 +5840,10 @@ fn edge_large_offset_relative() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(5000.0);
-            s.left = Length::px(5000.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(5000.0));
+            s.update_derived(|computed| computed.left = Length::px(5000.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -5856,10 +5858,10 @@ fn edge_large_negative_offset() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(-5000.0);
-            s.left = Length::px(-5000.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-5000.0));
+            s.update_derived(|computed| computed.left = Length::px(-5000.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -5914,10 +5916,10 @@ fn edge_abs_left_right_exceed_container() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.left = Length::px(500.0);
-            s.right = Length::px(500.0);
-            s.top = Length::px(0.0);
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(500.0));
+            s.update_derived(|computed| computed.right = Length::px(500.0));
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -5975,7 +5977,7 @@ fn edge_abs_only_top() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(50.0);
+            s.update_derived(|computed| computed.top = Length::px(50.0));
         })
         .done();
     let r = b.build();
@@ -5990,7 +5992,7 @@ fn edge_abs_only_left() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.left = Length::px(50.0);
+            s.update_derived(|computed| computed.left = Length::px(50.0));
         })
         .done();
     let r = b.build();
@@ -6006,7 +6008,7 @@ fn edge_abs_only_right() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(50.0);
+            s.update_derived(|computed| computed.right = Length::px(50.0));
         })
         .done();
     let r = b.build();
@@ -6023,7 +6025,7 @@ fn edge_abs_only_bottom() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.bottom = Length::px(50.0);
+            s.update_derived(|computed| computed.bottom = Length::px(50.0));
         })
         .done();
     let r = b.build();
@@ -6156,12 +6158,12 @@ fn edge_abs_100_percent_width() {
     b.add_child()
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
-            s.width = Length::percent(100.0);
-            s.height = Length::percent(100.0);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
+            s.update_derived(|computed| computed.width = Length::percent(100.0));
+            s.update_derived(|computed| computed.height = Length::percent(100.0));
         })
         .done();
     let r = b.build();
@@ -6174,12 +6176,12 @@ fn edge_abs_0_percent_width() {
     b.add_child()
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
-            s.width = Length::percent(0.0);
-            s.height = Length::percent(0.0);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
+            s.update_derived(|computed| computed.width = Length::percent(0.0));
+            s.update_derived(|computed| computed.height = Length::percent(0.0));
         })
         .done();
     let r = b.build();
@@ -6194,10 +6196,10 @@ fn edge_rel_0_percent_top() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::percent(0.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::percent(0.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6212,10 +6214,10 @@ fn edge_rel_100_percent_top() {
         .height(100.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::percent(100.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::percent(100.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6240,16 +6242,16 @@ fn edge_abs_border_box_fills() {
 #[test]
 fn edge_abs_container_border_and_padding() {
     let mut b = abs_builder(800, 600).with_container_style(|s| {
-        s.border_top_width = 10;
-        s.border_top_style = BorderStyle::Solid;
-        s.border_left_width = 10;
-        s.border_left_style = BorderStyle::Solid;
-        s.border_bottom_width = 10;
-        s.border_bottom_style = BorderStyle::Solid;
-        s.border_right_width = 10;
-        s.border_right_style = BorderStyle::Solid;
-        s.padding_top = Length::px(5.0);
-        s.padding_left = Length::px(5.0);
+        s.update_derived(|computed| computed.border_top_width = 10);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_left_width = 10);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_bottom_width = 10);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_right_width = 10);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.padding_top = Length::px(5.0));
+        s.update_derived(|computed| computed.padding_left = Length::px(5.0));
     });
     b.add_child()
         .width(100.0)
@@ -6270,10 +6272,10 @@ fn edge_abs_top_0_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6288,10 +6290,10 @@ fn edge_abs_top_5_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(5.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(5.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6306,10 +6308,10 @@ fn edge_abs_top_10_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(10.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6324,10 +6326,10 @@ fn edge_abs_top_15_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(15.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(15.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6342,10 +6344,10 @@ fn edge_abs_top_20_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(20.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(20.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6360,10 +6362,10 @@ fn edge_abs_top_25_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(25.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(25.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6378,10 +6380,10 @@ fn edge_abs_top_30_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(30.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(30.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6396,10 +6398,10 @@ fn edge_abs_top_35_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(35.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(35.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6414,10 +6416,10 @@ fn edge_abs_top_40_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(40.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(40.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6432,10 +6434,10 @@ fn edge_abs_top_45_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(45.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(45.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6450,10 +6452,10 @@ fn edge_abs_top_50_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(50.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(50.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6468,10 +6470,10 @@ fn edge_abs_top_55_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(55.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(55.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6486,10 +6488,10 @@ fn edge_abs_top_60_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(60.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(60.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6504,10 +6506,10 @@ fn edge_abs_top_65_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(65.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(65.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6522,10 +6524,10 @@ fn edge_abs_top_70_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(70.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(70.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6540,10 +6542,10 @@ fn edge_abs_top_75_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(75.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(75.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6558,10 +6560,10 @@ fn edge_abs_top_80_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(80.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(80.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6576,10 +6578,10 @@ fn edge_abs_top_85_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(85.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(85.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6594,10 +6596,10 @@ fn edge_abs_top_90_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(90.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(90.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6612,10 +6614,10 @@ fn edge_abs_top_95_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(95.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(95.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6630,10 +6632,10 @@ fn edge_abs_top_100_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(100.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(100.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6648,10 +6650,10 @@ fn edge_abs_top_105_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(105.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(105.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6666,10 +6668,10 @@ fn edge_abs_top_110_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(110.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(110.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6684,10 +6686,10 @@ fn edge_abs_top_115_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(115.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(115.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6702,10 +6704,10 @@ fn edge_abs_top_120_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(120.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(120.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6720,10 +6722,10 @@ fn edge_abs_top_125_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(125.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(125.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6738,10 +6740,10 @@ fn edge_abs_top_130_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(130.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(130.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6756,10 +6758,10 @@ fn edge_abs_top_135_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(135.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(135.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6774,10 +6776,10 @@ fn edge_abs_top_140_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(140.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(140.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6792,10 +6794,10 @@ fn edge_abs_top_145_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(145.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(145.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6810,10 +6812,10 @@ fn edge_abs_top_150_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(150.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(150.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6828,10 +6830,10 @@ fn edge_abs_top_155_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(155.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(155.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6846,10 +6848,10 @@ fn edge_abs_top_160_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(160.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(160.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6864,10 +6866,10 @@ fn edge_abs_top_165_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(165.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(165.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6882,10 +6884,10 @@ fn edge_abs_top_170_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(170.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(170.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6900,10 +6902,10 @@ fn edge_abs_top_175_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(175.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(175.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6918,10 +6920,10 @@ fn edge_abs_top_180_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(180.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(180.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6936,10 +6938,10 @@ fn edge_abs_top_185_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(185.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(185.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6954,10 +6956,10 @@ fn edge_abs_top_190_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(190.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(190.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6972,10 +6974,10 @@ fn edge_abs_top_195_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(195.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(195.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -6990,10 +6992,10 @@ fn edge_abs_top_200_left_0() {
         .height(30.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(200.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(200.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7008,10 +7010,10 @@ fn edge_rel_top_0_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(0.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7026,10 +7028,10 @@ fn edge_rel_top_5_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(5.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(5.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7044,10 +7046,10 @@ fn edge_rel_top_10_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(10.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7062,10 +7064,10 @@ fn edge_rel_top_15_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(15.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(15.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7080,10 +7082,10 @@ fn edge_rel_top_20_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(20.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(20.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7098,10 +7100,10 @@ fn edge_rel_top_25_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(25.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(25.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7116,10 +7118,10 @@ fn edge_rel_top_30_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(30.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(30.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7134,10 +7136,10 @@ fn edge_rel_top_35_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(35.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(35.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7152,10 +7154,10 @@ fn edge_rel_top_40_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(40.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(40.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7170,10 +7172,10 @@ fn edge_rel_top_45_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(45.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(45.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7188,10 +7190,10 @@ fn edge_rel_top_50_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(50.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(50.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7206,10 +7208,10 @@ fn edge_rel_top_55_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(55.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(55.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7224,10 +7226,10 @@ fn edge_rel_top_60_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(60.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(60.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7242,10 +7244,10 @@ fn edge_rel_top_65_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(65.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(65.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7260,10 +7262,10 @@ fn edge_rel_top_70_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(70.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(70.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7278,10 +7280,10 @@ fn edge_rel_top_75_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(75.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(75.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7296,10 +7298,10 @@ fn edge_rel_top_80_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(80.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(80.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7314,10 +7316,10 @@ fn edge_rel_top_85_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(85.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(85.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7332,10 +7334,10 @@ fn edge_rel_top_90_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(90.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(90.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7350,10 +7352,10 @@ fn edge_rel_top_95_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(95.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(95.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7368,10 +7370,10 @@ fn edge_rel_top_100_only() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(100.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(100.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7386,10 +7388,10 @@ fn edge_abs_right_0_bottom_0() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(0.0);
-            s.bottom = Length::px(0.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(0.0));
+            s.update_derived(|computed| computed.bottom = Length::px(0.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7404,10 +7406,10 @@ fn edge_abs_right_10_bottom_10() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(10.0);
-            s.bottom = Length::px(10.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(10.0));
+            s.update_derived(|computed| computed.bottom = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7422,10 +7424,10 @@ fn edge_abs_right_20_bottom_20() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(20.0);
-            s.bottom = Length::px(20.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(20.0));
+            s.update_derived(|computed| computed.bottom = Length::px(20.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7440,10 +7442,10 @@ fn edge_abs_right_30_bottom_30() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(30.0);
-            s.bottom = Length::px(30.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(30.0));
+            s.update_derived(|computed| computed.bottom = Length::px(30.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7458,10 +7460,10 @@ fn edge_abs_right_40_bottom_40() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(40.0);
-            s.bottom = Length::px(40.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(40.0));
+            s.update_derived(|computed| computed.bottom = Length::px(40.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7476,10 +7478,10 @@ fn edge_abs_right_50_bottom_50() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(50.0);
-            s.bottom = Length::px(50.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(50.0));
+            s.update_derived(|computed| computed.bottom = Length::px(50.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7494,10 +7496,10 @@ fn edge_abs_right_60_bottom_60() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(60.0);
-            s.bottom = Length::px(60.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(60.0));
+            s.update_derived(|computed| computed.bottom = Length::px(60.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7512,10 +7514,10 @@ fn edge_abs_right_70_bottom_70() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(70.0);
-            s.bottom = Length::px(70.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(70.0));
+            s.update_derived(|computed| computed.bottom = Length::px(70.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7530,10 +7532,10 @@ fn edge_abs_right_80_bottom_80() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(80.0);
-            s.bottom = Length::px(80.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(80.0));
+            s.update_derived(|computed| computed.bottom = Length::px(80.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7548,10 +7550,10 @@ fn edge_abs_right_90_bottom_90() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(90.0);
-            s.bottom = Length::px(90.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(90.0));
+            s.update_derived(|computed| computed.bottom = Length::px(90.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7566,10 +7568,10 @@ fn edge_abs_right_100_bottom_100() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(100.0);
-            s.bottom = Length::px(100.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(100.0));
+            s.update_derived(|computed| computed.bottom = Length::px(100.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7584,10 +7586,10 @@ fn edge_abs_right_110_bottom_110() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(110.0);
-            s.bottom = Length::px(110.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(110.0));
+            s.update_derived(|computed| computed.bottom = Length::px(110.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7602,10 +7604,10 @@ fn edge_abs_right_120_bottom_120() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(120.0);
-            s.bottom = Length::px(120.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(120.0));
+            s.update_derived(|computed| computed.bottom = Length::px(120.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7620,10 +7622,10 @@ fn edge_abs_right_130_bottom_130() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(130.0);
-            s.bottom = Length::px(130.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(130.0));
+            s.update_derived(|computed| computed.bottom = Length::px(130.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7638,10 +7640,10 @@ fn edge_abs_right_140_bottom_140() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(140.0);
-            s.bottom = Length::px(140.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(140.0));
+            s.update_derived(|computed| computed.bottom = Length::px(140.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7656,10 +7658,10 @@ fn edge_abs_right_150_bottom_150() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(150.0);
-            s.bottom = Length::px(150.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(150.0));
+            s.update_derived(|computed| computed.bottom = Length::px(150.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7674,10 +7676,10 @@ fn edge_abs_right_160_bottom_160() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(160.0);
-            s.bottom = Length::px(160.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(160.0));
+            s.update_derived(|computed| computed.bottom = Length::px(160.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7692,10 +7694,10 @@ fn edge_abs_right_170_bottom_170() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(170.0);
-            s.bottom = Length::px(170.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(170.0));
+            s.update_derived(|computed| computed.bottom = Length::px(170.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7710,10 +7712,10 @@ fn edge_abs_right_180_bottom_180() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(180.0);
-            s.bottom = Length::px(180.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(180.0));
+            s.update_derived(|computed| computed.bottom = Length::px(180.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7728,10 +7730,10 @@ fn edge_abs_right_190_bottom_190() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(190.0);
-            s.bottom = Length::px(190.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(190.0));
+            s.update_derived(|computed| computed.bottom = Length::px(190.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7746,10 +7748,10 @@ fn edge_abs_right_200_bottom_200() {
         .height(50.0)
         .position_absolute()
         .with_style(|s| {
-            s.right = Length::px(200.0);
-            s.bottom = Length::px(200.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.right = Length::px(200.0));
+            s.update_derived(|computed| computed.bottom = Length::px(200.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7763,11 +7765,11 @@ fn edge_fixed_pos_0_0_container_800x600() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7783,11 +7785,11 @@ fn edge_fixed_pos_10_10_container_800x600() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7803,11 +7805,11 @@ fn edge_fixed_pos_0_0_container_1920x1080() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7823,11 +7825,11 @@ fn edge_fixed_pos_100_100_container_400x300() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(100.0);
-            s.left = Length::px(100.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(100.0));
+            s.update_derived(|computed| computed.left = Length::px(100.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7843,11 +7845,11 @@ fn edge_fixed_pos_50_750_container_800x600() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(50.0);
-            s.left = Length::px(750.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(50.0));
+            s.update_derived(|computed| computed.left = Length::px(750.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7863,11 +7865,11 @@ fn edge_fixed_pos_550_0_container_800x600() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(550.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(550.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7883,11 +7885,11 @@ fn edge_fixed_pos_0_0_container_320x480() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7903,11 +7905,11 @@ fn edge_fixed_pos_0_0_container_1024x768() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7923,11 +7925,11 @@ fn edge_fixed_pos_200_300_container_1000x800() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(200.0);
-            s.left = Length::px(300.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(200.0));
+            s.update_derived(|computed| computed.left = Length::px(300.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -7943,11 +7945,11 @@ fn edge_fixed_pos_0_500_container_500x500() {
         .width(50.0)
         .height(30.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(500.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(500.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8030,10 +8032,10 @@ fn edge_abs_center_100x100_in_800x600() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8049,10 +8051,10 @@ fn edge_abs_center_200x200_in_800x600() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8068,10 +8070,10 @@ fn edge_abs_center_400x300_in_800x600() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8087,10 +8089,10 @@ fn edge_abs_center_600x400_in_800x600() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8106,10 +8108,10 @@ fn edge_abs_center_50x50_in_800x600() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8125,10 +8127,10 @@ fn edge_abs_center_10x10_in_800x600() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8144,10 +8146,10 @@ fn edge_abs_center_790x590_in_800x600() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8163,10 +8165,10 @@ fn edge_abs_center_1x1_in_800x600() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8182,10 +8184,10 @@ fn edge_abs_center_399x299_in_800x600() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8201,10 +8203,10 @@ fn edge_abs_center_500x500_in_800x600() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8215,7 +8217,7 @@ fn edge_abs_center_500x500_in_800x600() {
 fn edge_dom_abs_no_insets_no_size() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let _abs = setup_abs_child(&mut doc, container);
     // All defaults: no insets, no size → static position, zero size.
     let space = root_space(800, 600);
@@ -8229,12 +8231,12 @@ fn edge_dom_abs_no_insets_no_size() {
 fn edge_dom_abs_zero_size_container() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 0, 0);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(10.0);
-    doc.node_mut(abs).style.left = Length::px(10.0);
-    doc.node_mut(abs).style.width = Length::px(50.0);
-    doc.node_mut(abs).style.height = Length::px(30.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(10.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(30.0));
     let space = root_space(0, 0);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -8246,12 +8248,12 @@ fn edge_dom_abs_zero_size_container() {
 fn edge_dom_abs_percentage_zero_container() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 0, 0);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::percent(50.0);
-    doc.node_mut(abs).style.left = Length::percent(50.0);
-    doc.node_mut(abs).style.width = Length::px(50.0);
-    doc.node_mut(abs).style.height = Length::px(30.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::percent(50.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::percent(50.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(30.0));
     let space = root_space(0, 0);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -8264,13 +8266,13 @@ fn edge_dom_abs_percentage_zero_container() {
 fn edge_dom_many_abs_children() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     for i in 0..10 {
         let abs = setup_abs_child(&mut doc, container);
-        doc.node_mut(abs).style.top = Length::px((i * 50) as f32);
-        doc.node_mut(abs).style.left = Length::px((i * 50) as f32);
-        doc.node_mut(abs).style.width = Length::px(50.0);
-        doc.node_mut(abs).style.height = Length::px(30.0);
+        doc.update_resolved_style(abs, |style| style.top = Length::px((i * 50) as f32));
+        doc.update_resolved_style(abs, |style| style.left = Length::px((i * 50) as f32));
+        doc.update_resolved_style(abs, |style| style.width = Length::px(50.0));
+        doc.update_resolved_style(abs, |style| style.height = Length::px(30.0));
     }
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
@@ -8286,31 +8288,31 @@ fn edge_dom_many_abs_children() {
 fn edge_dom_nested_abs_three_levels() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
     // Level 1: relative.
     let lvl1 = doc.create_node(ElementTag::Div);
-    doc.node_mut(lvl1).style.display = Display::Block;
-    doc.node_mut(lvl1).style.position = Position::Relative;
-    doc.node_mut(lvl1).style.width = Length::px(600.0);
-    doc.node_mut(lvl1).style.height = Length::px(400.0);
+    doc.update_resolved_style(lvl1, |style| style.display = Display::Block);
+    doc.update_resolved_style(lvl1, |style| style.position = Position::Relative);
+    doc.update_resolved_style(lvl1, |style| style.width = Length::px(600.0));
+    doc.update_resolved_style(lvl1, |style| style.height = Length::px(400.0));
     doc.append_child(container, lvl1);
     // Level 2: absolute inside relative.
     let lvl2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(lvl2).style.display = Display::Block;
-    doc.node_mut(lvl2).style.position = Position::Absolute;
-    doc.node_mut(lvl2).style.top = Length::px(50.0);
-    doc.node_mut(lvl2).style.left = Length::px(50.0);
-    doc.node_mut(lvl2).style.width = Length::px(300.0);
-    doc.node_mut(lvl2).style.height = Length::px(200.0);
+    doc.update_resolved_style(lvl2, |style| style.display = Display::Block);
+    doc.update_resolved_style(lvl2, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(lvl2, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(lvl2, |style| style.left = Length::px(50.0));
+    doc.update_resolved_style(lvl2, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(lvl2, |style| style.height = Length::px(200.0));
     doc.append_child(lvl1, lvl2);
     // Level 3: absolute inside absolute.
     let lvl3 = doc.create_node(ElementTag::Div);
-    doc.node_mut(lvl3).style.display = Display::Block;
-    doc.node_mut(lvl3).style.position = Position::Absolute;
-    doc.node_mut(lvl3).style.top = Length::px(10.0);
-    doc.node_mut(lvl3).style.left = Length::px(10.0);
-    doc.node_mut(lvl3).style.width = Length::px(100.0);
-    doc.node_mut(lvl3).style.height = Length::px(50.0);
+    doc.update_resolved_style(lvl3, |style| style.display = Display::Block);
+    doc.update_resolved_style(lvl3, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(lvl3, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(lvl3, |style| style.left = Length::px(10.0));
+    doc.update_resolved_style(lvl3, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(lvl3, |style| style.height = Length::px(50.0));
     doc.append_child(lvl2, lvl3);
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
@@ -8406,8 +8408,8 @@ fn edge_sticky_apply_all_insets() {
 #[test]
 fn edge_abs_overflow_scroll_container() {
     let mut b = abs_builder(400, 300).with_container_style(|s| {
-        s.overflow_x = Overflow::Auto;
-        s.overflow_y = Overflow::Auto;
+        s.update_derived(|computed| computed.overflow_x = Overflow::Auto);
+        s.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     });
     b.add_child()
         .width(200.0)
@@ -8490,10 +8492,10 @@ fn edge_abs_width_auto_only_top_left() {
         .height(100.0)
         .position_absolute()
         .with_style(|s| {
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8687,8 +8689,8 @@ fn abs_supp_hcenter_cw_100() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8704,8 +8706,8 @@ fn abs_supp_hcenter_cw_200() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8721,8 +8723,8 @@ fn abs_supp_hcenter_cw_300() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8738,8 +8740,8 @@ fn abs_supp_hcenter_cw_400() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8755,8 +8757,8 @@ fn abs_supp_hcenter_cw_500() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8772,8 +8774,8 @@ fn abs_supp_hcenter_cw_600() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8789,8 +8791,8 @@ fn abs_supp_hcenter_cw_700() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8806,8 +8808,8 @@ fn abs_supp_hcenter_cw_900() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8823,8 +8825,8 @@ fn abs_supp_hcenter_cw_1000() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8840,8 +8842,8 @@ fn abs_supp_hcenter_cw_1200() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8857,8 +8859,8 @@ fn abs_supp_vcenter_ch_100() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8874,8 +8876,8 @@ fn abs_supp_vcenter_ch_200() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8891,8 +8893,8 @@ fn abs_supp_vcenter_ch_300() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8908,8 +8910,8 @@ fn abs_supp_vcenter_ch_400() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8925,8 +8927,8 @@ fn abs_supp_vcenter_ch_500() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8942,8 +8944,8 @@ fn abs_supp_vcenter_ch_700() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8959,8 +8961,8 @@ fn abs_supp_vcenter_ch_800() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8976,8 +8978,8 @@ fn abs_supp_vcenter_ch_900() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -8993,8 +8995,8 @@ fn abs_supp_vcenter_ch_1000() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9010,8 +9012,8 @@ fn abs_supp_vcenter_ch_1200() {
         .position_absolute()
         .inset(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_top = Length::auto();
-            s.margin_bottom = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::auto());
+            s.update_derived(|computed| computed.margin_bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9025,11 +9027,11 @@ fn fixed_supp_viewport_320x480_top_left() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9045,11 +9047,11 @@ fn fixed_supp_viewport_640x480_top_left() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9065,11 +9067,11 @@ fn fixed_supp_viewport_1024x768_top_left() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9085,11 +9087,11 @@ fn fixed_supp_viewport_1280x720_top_left() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9105,11 +9107,11 @@ fn fixed_supp_viewport_1920x1080_top_left() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9125,11 +9127,11 @@ fn fixed_supp_viewport_2560x1440_top_left() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9145,11 +9147,11 @@ fn fixed_supp_viewport_375x667_top_left() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9165,11 +9167,11 @@ fn fixed_supp_viewport_414x896_top_left() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9185,11 +9187,11 @@ fn fixed_supp_viewport_768x1024_top_left() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9205,11 +9207,11 @@ fn fixed_supp_viewport_1366x768_top_left() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(10.0);
-            s.left = Length::px(10.0);
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(10.0));
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9225,11 +9227,11 @@ fn fixed_supp_viewport_320x480_bottom_right() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.right = Length::px(10.0);
-            s.bottom = Length::px(10.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.right = Length::px(10.0));
+            s.update_derived(|computed| computed.bottom = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9245,11 +9247,11 @@ fn fixed_supp_viewport_640x480_bottom_right() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.right = Length::px(10.0);
-            s.bottom = Length::px(10.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.right = Length::px(10.0));
+            s.update_derived(|computed| computed.bottom = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9265,11 +9267,11 @@ fn fixed_supp_viewport_1024x768_bottom_right() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.right = Length::px(10.0);
-            s.bottom = Length::px(10.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.right = Length::px(10.0));
+            s.update_derived(|computed| computed.bottom = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9285,11 +9287,11 @@ fn fixed_supp_viewport_1280x720_bottom_right() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.right = Length::px(10.0);
-            s.bottom = Length::px(10.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.right = Length::px(10.0));
+            s.update_derived(|computed| computed.bottom = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9305,11 +9307,11 @@ fn fixed_supp_viewport_1920x1080_bottom_right() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.right = Length::px(10.0);
-            s.bottom = Length::px(10.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.right = Length::px(10.0));
+            s.update_derived(|computed| computed.bottom = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9325,11 +9327,11 @@ fn fixed_supp_viewport_2560x1440_bottom_right() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.right = Length::px(10.0);
-            s.bottom = Length::px(10.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.right = Length::px(10.0));
+            s.update_derived(|computed| computed.bottom = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9345,11 +9347,11 @@ fn fixed_supp_viewport_375x667_bottom_right() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.right = Length::px(10.0);
-            s.bottom = Length::px(10.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.right = Length::px(10.0));
+            s.update_derived(|computed| computed.bottom = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9365,11 +9367,11 @@ fn fixed_supp_viewport_414x896_bottom_right() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.right = Length::px(10.0);
-            s.bottom = Length::px(10.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.right = Length::px(10.0));
+            s.update_derived(|computed| computed.bottom = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9385,11 +9387,11 @@ fn fixed_supp_viewport_768x1024_bottom_right() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.right = Length::px(10.0);
-            s.bottom = Length::px(10.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.right = Length::px(10.0));
+            s.update_derived(|computed| computed.bottom = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9405,11 +9407,11 @@ fn fixed_supp_viewport_1366x768_bottom_right() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.right = Length::px(10.0);
-            s.bottom = Length::px(10.0);
-            s.top = Length::auto();
-            s.left = Length::auto();
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.right = Length::px(10.0));
+            s.update_derived(|computed| computed.bottom = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9621,10 +9623,10 @@ fn rel_supp_left_offset_0() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(0.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9639,10 +9641,10 @@ fn rel_supp_left_offset_2() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(2.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(2.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9657,10 +9659,10 @@ fn rel_supp_left_offset_4() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(4.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(4.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9675,10 +9677,10 @@ fn rel_supp_left_offset_6() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(6.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(6.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9693,10 +9695,10 @@ fn rel_supp_left_offset_8() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(8.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(8.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9711,10 +9713,10 @@ fn rel_supp_left_offset_10() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(10.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9729,10 +9731,10 @@ fn rel_supp_left_offset_12() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(12.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(12.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9747,10 +9749,10 @@ fn rel_supp_left_offset_14() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(14.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(14.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9765,10 +9767,10 @@ fn rel_supp_left_offset_16() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(16.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(16.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9783,10 +9785,10 @@ fn rel_supp_left_offset_18() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(18.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(18.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9801,10 +9803,10 @@ fn rel_supp_left_offset_20() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(20.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(20.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9819,10 +9821,10 @@ fn rel_supp_left_offset_22() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(22.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(22.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9837,10 +9839,10 @@ fn rel_supp_left_offset_24() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(24.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(24.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9855,10 +9857,10 @@ fn rel_supp_left_offset_26() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(26.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(26.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9873,10 +9875,10 @@ fn rel_supp_left_offset_28() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(28.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(28.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9891,10 +9893,10 @@ fn rel_supp_left_offset_30() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(30.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(30.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9909,10 +9911,10 @@ fn rel_supp_left_offset_32() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(32.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(32.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9927,10 +9929,10 @@ fn rel_supp_left_offset_34() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(34.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(34.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9945,10 +9947,10 @@ fn rel_supp_left_offset_36() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(36.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(36.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9963,10 +9965,10 @@ fn rel_supp_left_offset_38() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(38.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(38.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9981,10 +9983,10 @@ fn rel_supp_left_offset_40() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(40.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(40.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -9999,10 +10001,10 @@ fn rel_supp_left_offset_42() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(42.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(42.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10017,10 +10019,10 @@ fn rel_supp_left_offset_44() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(44.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(44.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10035,10 +10037,10 @@ fn rel_supp_left_offset_46() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(46.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(46.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10053,10 +10055,10 @@ fn rel_supp_left_offset_48() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(48.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(48.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10071,10 +10073,10 @@ fn rel_supp_left_offset_50() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(50.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(50.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10091,8 +10093,8 @@ fn abs_supp_with_margin_0_center() {
         .inset(0, 0, 0, 0)
         .margin(0, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10110,8 +10112,8 @@ fn abs_supp_with_margin_10_center() {
         .inset(0, 0, 0, 0)
         .margin(10, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10129,8 +10131,8 @@ fn abs_supp_with_margin_20_center() {
         .inset(0, 0, 0, 0)
         .margin(20, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10148,8 +10150,8 @@ fn abs_supp_with_margin_50_center() {
         .inset(0, 0, 0, 0)
         .margin(50, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10167,8 +10169,8 @@ fn abs_supp_with_margin_100_center() {
         .inset(0, 0, 0, 0)
         .margin(100, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10186,8 +10188,8 @@ fn abs_supp_with_margin_150_center() {
         .inset(0, 0, 0, 0)
         .margin(150, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10205,8 +10207,8 @@ fn abs_supp_with_margin_200_center() {
         .inset(0, 0, 0, 0)
         .margin(200, 0, 0, 0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10218,13 +10220,13 @@ fn abs_supp_with_margin_200_center() {
 fn edge_supp_dom_rtl_abs_left_only() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.direction = Direction::Rtl;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.direction = Direction::Rtl);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.direction = Direction::Rtl;
-    doc.node_mut(abs).style.left = Length::px(100.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(100.0);
+    doc.update_resolved_style(abs, |style| style.direction = Direction::Rtl);
+    doc.update_resolved_style(abs, |style| style.left = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(100.0));
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -10236,13 +10238,13 @@ fn edge_supp_dom_rtl_abs_left_only() {
 fn edge_supp_dom_rtl_abs_right_only() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.direction = Direction::Rtl;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.direction = Direction::Rtl);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.direction = Direction::Rtl;
-    doc.node_mut(abs).style.right = Length::px(100.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(100.0);
+    doc.update_resolved_style(abs, |style| style.direction = Direction::Rtl);
+    doc.update_resolved_style(abs, |style| style.right = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(100.0));
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
     let abs_frag = &frag.children[0].children[0];
@@ -10254,13 +10256,13 @@ fn edge_supp_dom_rtl_abs_right_only() {
 fn edge_supp_dom_rtl_abs_both_sides() {
     let mut doc = Document::new();
     let container = setup_container(&mut doc, 800, 600);
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.direction = Direction::Rtl;
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.direction = Direction::Rtl);
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.direction = Direction::Rtl;
-    doc.node_mut(abs).style.left = Length::px(100.0);
-    doc.node_mut(abs).style.right = Length::px(100.0);
-    doc.node_mut(abs).style.height = Length::px(100.0);
+    doc.update_resolved_style(abs, |style| style.direction = Direction::Rtl);
+    doc.update_resolved_style(abs, |style| style.left = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(100.0));
     // auto width: 800-100-100 = 600.
     let space = root_space(800, 600);
     let frag = block_layout(&doc, doc.root(), &space);
@@ -10547,10 +10549,10 @@ fn rel_extra_neg_left_1() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(-1.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(-1.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10565,10 +10567,10 @@ fn rel_extra_neg_left_2() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(-2.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(-2.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10583,10 +10585,10 @@ fn rel_extra_neg_left_5() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(-5.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(-5.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10601,10 +10603,10 @@ fn rel_extra_neg_left_10() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(-10.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(-10.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10619,10 +10621,10 @@ fn rel_extra_neg_left_20() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(-20.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(-20.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10637,10 +10639,10 @@ fn rel_extra_neg_left_50() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(-50.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(-50.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10655,10 +10657,10 @@ fn rel_extra_neg_left_100() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(-100.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(-100.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10673,10 +10675,10 @@ fn rel_extra_neg_left_200() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(-200.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(-200.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10691,10 +10693,10 @@ fn rel_extra_neg_left_400() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.left = Length::px(-400.0);
-            s.top = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.left = Length::px(-400.0));
+            s.update_derived(|computed| computed.top = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10709,10 +10711,10 @@ fn rel_extra_neg_top_1() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-1.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-1.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10727,10 +10729,10 @@ fn rel_extra_neg_top_2() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-2.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-2.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10745,10 +10747,10 @@ fn rel_extra_neg_top_5() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-5.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-5.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10763,10 +10765,10 @@ fn rel_extra_neg_top_10() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-10.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-10.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10781,10 +10783,10 @@ fn rel_extra_neg_top_20() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-20.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-20.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10799,10 +10801,10 @@ fn rel_extra_neg_top_50() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-50.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-50.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10817,10 +10819,10 @@ fn rel_extra_neg_top_100() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-100.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-100.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10835,10 +10837,10 @@ fn rel_extra_neg_top_200() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-200.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-200.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -10853,10 +10855,10 @@ fn rel_extra_neg_top_400() {
         .height(50.0)
         .position_relative()
         .with_style(|s| {
-            s.top = Length::px(-400.0);
-            s.left = Length::auto();
-            s.right = Length::auto();
-            s.bottom = Length::auto();
+            s.update_derived(|computed| computed.top = Length::px(-400.0));
+            s.update_derived(|computed| computed.left = Length::auto());
+            s.update_derived(|computed| computed.right = Length::auto());
+            s.update_derived(|computed| computed.bottom = Length::auto());
         })
         .done();
     let r = b.build();
@@ -11112,11 +11114,11 @@ fn fixed_extra_full_coverage() {
     let mut b = BlockTestBuilder::new(1920, 1080);
     b.add_child()
         .with_style(|s| {
-            s.position = Position::Fixed;
-            s.top = Length::px(0.0);
-            s.left = Length::px(0.0);
-            s.right = Length::px(0.0);
-            s.bottom = Length::px(0.0);
+            s.update_derived(|computed| computed.position = Position::Fixed);
+            s.update_derived(|computed| computed.top = Length::px(0.0));
+            s.update_derived(|computed| computed.left = Length::px(0.0));
+            s.update_derived(|computed| computed.right = Length::px(0.0));
+            s.update_derived(|computed| computed.bottom = Length::px(0.0));
         })
         .done();
     let r = b.build();

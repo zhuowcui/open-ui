@@ -45,9 +45,11 @@ fn inter_char_justification_no_gap_across_atomic_inline() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Justify;
-    doc.node_mut(block).style.text_justify = TextJustify::InterCharacter;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Justify);
+    doc.update_resolved_style(block, |style| {
+        style.text_justify = TextJustify::InterCharacter
+    });
     doc.append_child(root, block);
 
     // "AB"
@@ -57,9 +59,9 @@ fn inter_char_justification_no_gap_across_atomic_inline() {
 
     // <div style="display: inline-block; width: 20px; height: 16px">
     let ib = doc.create_node(ElementTag::Div);
-    doc.node_mut(ib).style.display = Display::InlineBlock;
-    doc.node_mut(ib).style.width = Length::px(20.0);
-    doc.node_mut(ib).style.height = Length::px(16.0);
+    doc.update_resolved_style(ib, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(ib, |style| style.width = Length::px(20.0));
+    doc.update_resolved_style(ib, |style| style.height = Length::px(16.0));
     doc.append_child(block, ib);
 
     // "CD"
@@ -101,9 +103,11 @@ fn inter_char_justification_text_only_counts_internal_gaps() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Justify;
-    doc.node_mut(block).style.text_justify = TextJustify::InterCharacter;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Justify);
+    doc.update_resolved_style(block, |style| {
+        style.text_justify = TextJustify::InterCharacter
+    });
     // Force a second line so the first line is justified.
     doc.append_child(root, block);
 
@@ -123,7 +127,7 @@ fn inter_char_justification_text_only_counts_internal_gaps() {
 #[test]
 fn style_to_font_description_plumbs_locale() {
     let mut style = ComputedStyle::default();
-    style.locale = Some("ja".to_string());
+    style.update_derived(|computed| computed.locale = Some("ja".to_string()));
 
     let desc = style_to_font_description(&style);
     assert_eq!(

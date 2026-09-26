@@ -177,6 +177,15 @@ const SURFACE_W: i32 = 800;
 const SURFACE_H: i32 = 600;
 const PAD: i32 = 20;
 
+fn test_viewport() -> openui_geometry::ViewportMetrics {
+    openui_geometry::ViewportMetrics::from_logical_size(
+        f64::from(SURFACE_W),
+        f64::from(SURFACE_H),
+        1.0,
+    )
+    .unwrap()
+}
+
 // Color constants (what we expect to read back as u8 RGBA)
 const RED: (u8, u8, u8) = (255, 0, 0);
 const GREEN: (u8, u8, u8) = (0, 128, 0);
@@ -193,20 +202,20 @@ const ORANGE: (u8, u8, u8) = (255, 165, 0);
 
 fn setup_viewport(doc: &mut Document) -> NodeId {
     let vp = doc.root();
-    doc.node_mut(vp).style.display = Display::Block;
-    doc.node_mut(vp).style.background_color = Color::WHITE;
-    doc.node_mut(vp).style.padding_top = Length::px(20.0);
-    doc.node_mut(vp).style.padding_right = Length::px(20.0);
-    doc.node_mut(vp).style.padding_bottom = Length::px(20.0);
-    doc.node_mut(vp).style.padding_left = Length::px(20.0);
+    doc.update_resolved_style(vp, |style| style.display = Display::Block);
+    doc.update_resolved_style(vp, |style| style.background_color = Color::WHITE);
+    doc.update_resolved_style(vp, |style| style.padding_top = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_right = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_bottom = Length::px(20.0));
+    doc.update_resolved_style(vp, |style| style.padding_left = Length::px(20.0));
     vp
 }
 
 fn add_block(doc: &mut Document, parent: NodeId, width_px: f32) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
     if width_px > 0.0 {
-        doc.node_mut(div).style.width = Length::px(width_px);
+        doc.update_resolved_style(div, |style| style.width = Length::px(width_px));
     }
     doc.append_child(parent, div);
     div
@@ -221,32 +230,32 @@ fn add_float_box(
     color: Color,
 ) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
-    doc.node_mut(div).style.width = Length::px(w);
-    doc.node_mut(div).style.height = Length::px(h);
-    doc.node_mut(div).style.float = float_dir;
-    doc.node_mut(div).style.background_color = color;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
+    doc.update_resolved_style(div, |style| style.width = Length::px(w));
+    doc.update_resolved_style(div, |style| style.height = Length::px(h));
+    doc.update_resolved_style(div, |style| style.float = float_dir);
+    doc.update_resolved_style(div, |style| style.background_color = color);
     doc.append_child(parent, div);
     div
 }
 
 fn add_colored_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: Color) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
     // BFC root so it avoids floats (CSS 2.1 §9.5).
-    doc.node_mut(div).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(div).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(div, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(div, |style| style.overflow_y = Overflow::Hidden);
     if w > 0.0 {
-        doc.node_mut(div).style.width = Length::px(w);
+        doc.update_resolved_style(div, |style| style.width = Length::px(w));
     }
-    doc.node_mut(div).style.height = Length::px(h);
-    doc.node_mut(div).style.background_color = color;
+    doc.update_resolved_style(div, |style| style.height = Length::px(h));
+    doc.update_resolved_style(div, |style| style.background_color = color);
     doc.append_child(parent, div);
     div
 }
 
 fn render(doc: &Document) -> Surface {
-    render_to_surface(doc, SURFACE_W, SURFACE_H).expect("render_to_surface failed")
+    render_to_surface(doc, test_viewport()).expect("render_to_surface failed")
 }
 
 fn color_from_rgb(r: u8, g: u8, b: u8) -> Color {
@@ -976,9 +985,9 @@ fn two_left_then_white_gap() {
 fn setup_container(doc: &mut Document, container_w: f32) -> NodeId {
     let vp = setup_viewport(doc);
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(container_w);
-    doc.node_mut(c).style.height = Length::px(400.0);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(container_w));
+    doc.update_resolved_style(c, |style| style.height = Length::px(400.0));
     doc.append_child(vp, c);
     c
 }
@@ -1236,7 +1245,7 @@ fn clear_left_moves_below_left_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 50.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Left;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Left);
     let mut s = render(&doc);
     // Cleared block below float at y >= PAD+100
     assert_pixel_color(
@@ -1254,7 +1263,7 @@ fn clear_left_not_beside_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 50.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Left;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Left);
     let mut s = render(&doc);
     // At float level, only red
     assert_pixel_color(
@@ -1272,7 +1281,7 @@ fn clear_right_moves_below_right_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Right, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 50.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Right;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Right);
     let mut s = render(&doc);
     assert_pixel_color(
         &mut s,
@@ -1290,7 +1299,7 @@ fn clear_both_moves_below_all_floats() {
     add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
     add_float_box(&mut doc, vp, 100.0, 120.0, Float::Right, Color::GREEN);
     let clr = add_colored_block(&mut doc, vp, 0.0, 50.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Both;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Both);
     let mut s = render(&doc);
     // Must be below the taller float (120)
     assert_pixel_color(&mut s, PAD + 50, PAD + 130, BLUE, "below both floats");
@@ -1302,7 +1311,7 @@ fn clear_both_full_width() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Both;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Both);
     let mut s = render(&doc);
     // Cleared block gets full width
     assert_pixel_color(&mut s, PAD + 5, PAD + 90, BLUE, "cleared block left edge");
@@ -1321,7 +1330,7 @@ fn clear_left_no_left_float_no_effect() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Right, Color::RED);
     let blk = add_colored_block(&mut doc, vp, 0.0, 50.0, Color::BLUE);
-    doc.node_mut(blk).style.clear = Clear::Left;
+    doc.update_resolved_style(blk, |style| style.clear = Clear::Left);
     let mut s = render(&doc);
     // No left float to clear, block beside right float at top
     assert_pixel_color(
@@ -1339,7 +1348,7 @@ fn clear_right_no_right_float_no_effect() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
     let blk = add_colored_block(&mut doc, vp, 0.0, 50.0, Color::BLUE);
-    doc.node_mut(blk).style.clear = Clear::Right;
+    doc.update_resolved_style(blk, |style| style.clear = Clear::Right);
     let mut s = render(&doc);
     // No right float to clear, block flows beside left float
     assert_pixel_color(
@@ -1358,7 +1367,7 @@ fn clear_both_two_left_floats() {
     add_float_box(&mut doc, vp, 100.0, 60.0, Float::Left, Color::RED);
     add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::GREEN);
     let clr = add_colored_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Both;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Both);
     let mut s = render(&doc);
     // Below the taller float (80)
     assert_pixel_color(&mut s, PAD + 50, PAD + 90, BLUE, "below both left floats");
@@ -1370,7 +1379,7 @@ fn clear_left_then_another_block() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 60.0, Float::Left, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 30.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Left;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Left);
     add_colored_block(&mut doc, vp, 0.0, 30.0, Color::GREEN);
     let mut s = render(&doc);
     // Blue at y=60, green at y=90
@@ -1384,7 +1393,7 @@ fn clear_none_stays_beside_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
     let blk = add_colored_block(&mut doc, vp, 0.0, 50.0, Color::BLUE);
-    doc.node_mut(blk).style.clear = Clear::None;
+    doc.update_resolved_style(blk, |style| style.clear = Clear::None);
     let mut s = render(&doc);
     // Block beside float (clear:none is default)
     assert_pixel_color(&mut s, PAD + 150, PAD + 25, BLUE, "block beside float");
@@ -1396,7 +1405,7 @@ fn clear_both_produces_visible() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Both;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Both);
     let mut s = render(&doc);
     assert!(has_visible_content(&mut s));
 }
@@ -1407,7 +1416,7 @@ fn clear_left_with_tall_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 200.0, Float::Left, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Left;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Left);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 210, BLUE, "below tall float");
 }
@@ -1418,7 +1427,7 @@ fn clear_right_with_tall_right_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 200.0, Float::Right, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Right;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Right);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 210, BLUE, "below tall right float");
 }
@@ -1430,7 +1439,7 @@ fn clear_both_asymmetric_floats() {
     add_float_box(&mut doc, vp, 100.0, 50.0, Float::Left, Color::RED);
     add_float_box(&mut doc, vp, 100.0, 150.0, Float::Right, Color::GREEN);
     let clr = add_colored_block(&mut doc, vp, 0.0, 30.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Both;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Both);
     let mut s = render(&doc);
     // Must be below the taller (right) float
     assert_pixel_color(
@@ -1448,7 +1457,7 @@ fn clear_left_white_at_float_level() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Left;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Left);
     let mut s = render(&doc);
     // At float level, right side should be white (no blue block there)
     assert_pixel_color(&mut s, PAD + 200, PAD + 40, WHITE, "white at float level");
@@ -1460,7 +1469,7 @@ fn clear_both_float_then_clear_then_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 60.0, Float::Left, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 30.0, Color::GREEN);
-    doc.node_mut(clr).style.clear = Clear::Both;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Both);
     add_float_box(&mut doc, vp, 100.0, 40.0, Float::Left, Color::BLUE);
     let mut s = render(&doc);
     // Red at top, green below red, blue below green
@@ -1476,7 +1485,7 @@ fn clear_left_multiple_left_floats() {
     add_float_box(&mut doc, vp, 100.0, 40.0, Float::Left, Color::RED);
     add_float_box(&mut doc, vp, 100.0, 60.0, Float::Left, Color::GREEN);
     let clr = add_colored_block(&mut doc, vp, 0.0, 30.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Left;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Left);
     let mut s = render(&doc);
     // Below the taller left float
     assert_pixel_color(&mut s, PAD + 50, PAD + 70, BLUE, "below taller left float");
@@ -1490,7 +1499,7 @@ fn clear_both_with_three_floats() {
     add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::GREEN);
     add_float_box(&mut doc, vp, 100.0, 60.0, Float::Right, Color::BLUE);
     let clr = add_colored_block(&mut doc, vp, 0.0, 30.0, color_from_rgb(255, 255, 0));
-    doc.node_mut(clr).style.clear = Clear::Both;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Both);
     let mut s = render(&doc);
     // Below tallest (80)
     assert_pixel_color(&mut s, PAD + 50, PAD + 90, YELLOW, "below all three floats");
@@ -1712,14 +1721,14 @@ fn content_wrap_block_narrow_between_floats() {
 
 fn add_bfc_block(doc: &mut Document, parent: NodeId, w: f32, h: f32, color: Color) -> NodeId {
     let div = doc.create_node(ElementTag::Div);
-    doc.node_mut(div).style.display = Display::Block;
+    doc.update_resolved_style(div, |style| style.display = Display::Block);
     if w > 0.0 {
-        doc.node_mut(div).style.width = Length::px(w);
+        doc.update_resolved_style(div, |style| style.width = Length::px(w));
     }
-    doc.node_mut(div).style.height = Length::px(h);
-    doc.node_mut(div).style.background_color = color;
-    doc.node_mut(div).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(div).style.overflow_y = Overflow::Hidden;
+    doc.update_resolved_style(div, |style| style.height = Length::px(h));
+    doc.update_resolved_style(div, |style| style.background_color = color);
+    doc.update_resolved_style(div, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(div, |style| style.overflow_y = Overflow::Hidden);
     doc.append_child(parent, div);
     div
 }
@@ -1779,10 +1788,10 @@ fn bfc_flow_root_beside_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 200.0, 100.0, Float::Left, Color::RED);
     let fr = doc.create_node(ElementTag::Div);
-    doc.node_mut(fr).style.display = Display::FlowRoot;
-    doc.node_mut(fr).style.width = Length::px(300.0);
-    doc.node_mut(fr).style.height = Length::px(80.0);
-    doc.node_mut(fr).style.background_color = Color::BLUE;
+    doc.update_resolved_style(fr, |style| style.display = Display::FlowRoot);
+    doc.update_resolved_style(fr, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(fr, |style| style.height = Length::px(80.0));
+    doc.update_resolved_style(fr, |style| style.background_color = Color::BLUE);
     doc.append_child(vp, fr);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 250, PAD + 40, BLUE, "flow-root beside float");
@@ -1815,12 +1824,12 @@ fn bfc_overflow_auto_beside_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 200.0, 100.0, Float::Left, Color::RED);
     let auto_block = doc.create_node(ElementTag::Div);
-    doc.node_mut(auto_block).style.display = Display::Block;
-    doc.node_mut(auto_block).style.width = Length::px(300.0);
-    doc.node_mut(auto_block).style.height = Length::px(80.0);
-    doc.node_mut(auto_block).style.background_color = Color::BLUE;
-    doc.node_mut(auto_block).style.overflow_x = Overflow::Auto;
-    doc.node_mut(auto_block).style.overflow_y = Overflow::Auto;
+    doc.update_resolved_style(auto_block, |style| style.display = Display::Block);
+    doc.update_resolved_style(auto_block, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(auto_block, |style| style.height = Length::px(80.0));
+    doc.update_resolved_style(auto_block, |style| style.background_color = Color::BLUE);
+    doc.update_resolved_style(auto_block, |style| style.overflow_x = Overflow::Auto);
+    doc.update_resolved_style(auto_block, |style| style.overflow_y = Overflow::Auto);
     doc.append_child(vp, auto_block);
     let mut s = render(&doc);
     assert_pixel_color(
@@ -1838,12 +1847,12 @@ fn bfc_scroll_beside_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 200.0, 100.0, Float::Left, Color::RED);
     let scroll_block = doc.create_node(ElementTag::Div);
-    doc.node_mut(scroll_block).style.display = Display::Block;
-    doc.node_mut(scroll_block).style.width = Length::px(300.0);
-    doc.node_mut(scroll_block).style.height = Length::px(80.0);
-    doc.node_mut(scroll_block).style.background_color = Color::BLUE;
-    doc.node_mut(scroll_block).style.overflow_x = Overflow::Scroll;
-    doc.node_mut(scroll_block).style.overflow_y = Overflow::Scroll;
+    doc.update_resolved_style(scroll_block, |style| style.display = Display::Block);
+    doc.update_resolved_style(scroll_block, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(scroll_block, |style| style.height = Length::px(80.0));
+    doc.update_resolved_style(scroll_block, |style| style.background_color = Color::BLUE);
+    doc.update_resolved_style(scroll_block, |style| style.overflow_x = Overflow::Scroll);
+    doc.update_resolved_style(scroll_block, |style| style.overflow_y = Overflow::Scroll);
     doc.append_child(vp, scroll_block);
     let mut s = render(&doc);
     assert_pixel_color(
@@ -1877,7 +1886,7 @@ fn bfc_cleared_below_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 200.0, 100.0, Float::Left, Color::RED);
     let bfc = add_bfc_block(&mut doc, vp, 0.0, 50.0, Color::BLUE);
-    doc.node_mut(bfc).style.clear = Clear::Left;
+    doc.update_resolved_style(bfc, |style| style.clear = Clear::Left);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 110, BLUE, "BFC cleared below float");
 }
@@ -1888,7 +1897,7 @@ fn bfc_overflow_hidden_with_float_and_clear() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
     let bfc = add_bfc_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
-    doc.node_mut(bfc).style.clear = Clear::Both;
+    doc.update_resolved_style(bfc, |style| style.clear = Clear::Both);
     let mut s = render(&doc);
     assert_pixel_color(
         &mut s,
@@ -1905,10 +1914,10 @@ fn bfc_inline_block_beside_float() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 200.0, 100.0, Float::Left, Color::RED);
     let ib = doc.create_node(ElementTag::Div);
-    doc.node_mut(ib).style.display = Display::InlineBlock;
-    doc.node_mut(ib).style.width = Length::px(200.0);
-    doc.node_mut(ib).style.height = Length::px(60.0);
-    doc.node_mut(ib).style.background_color = Color::BLUE;
+    doc.update_resolved_style(ib, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(ib, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(ib, |style| style.height = Length::px(60.0));
+    doc.update_resolved_style(ib, |style| style.background_color = Color::BLUE);
     doc.append_child(vp, ib);
     let mut s = render(&doc);
     assert!(has_visible_content(&mut s), "inline-block beside float");
@@ -2079,7 +2088,7 @@ fn nested_float_with_clear_inside() {
     let outer = add_float_container(&mut doc, vp, 300.0, 300.0, Float::Left, Color::BLUE);
     add_float_box(&mut doc, outer, 100.0, 60.0, Float::Left, Color::RED);
     let clr = add_colored_block(&mut doc, outer, 0.0, 40.0, Color::GREEN);
-    doc.node_mut(clr).style.clear = Clear::Left;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Left);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 30, RED, "inner float");
     assert_pixel_color(&mut s, PAD + 50, PAD + 70, GREEN, "cleared block inside");
@@ -2105,7 +2114,7 @@ fn float_margin_left_shifts_right() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f = add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
-    doc.node_mut(f).style.margin_left = Length::px(30.0);
+    doc.update_resolved_style(f, |style| style.margin_left = Length::px(30.0));
     let mut s = render(&doc);
     // Float shifted right by margin
     assert_pixel_color(&mut s, PAD + 25, PAD + 50, WHITE, "margin area is white");
@@ -2117,7 +2126,7 @@ fn float_margin_top_shifts_down() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f = add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
-    doc.node_mut(f).style.margin_top = Length::px(20.0);
+    doc.update_resolved_style(f, |style| style.margin_top = Length::px(20.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 10, WHITE, "margin-top area white");
     assert_pixel_color(&mut s, PAD + 50, PAD + 25, RED, "float after margin-top");
@@ -2128,7 +2137,7 @@ fn float_margin_right_on_left_float() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f1 = add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
-    doc.node_mut(f1).style.margin_right = Length::px(20.0);
+    doc.update_resolved_style(f1, |style| style.margin_right = Length::px(20.0));
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::BLUE);
     let mut s = render(&doc);
     // Second float at 100+20=120
@@ -2142,7 +2151,7 @@ fn float_margin_right_on_right_float() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f = add_float_box(&mut doc, vp, 100.0, 100.0, Float::Right, Color::RED);
-    doc.node_mut(f).style.margin_right = Length::px(30.0);
+    doc.update_resolved_style(f, |style| style.margin_right = Length::px(30.0));
     let mut s = render(&doc);
     // Right float pushed left by margin-right
     let rx = PAD + CONTENT_W - 100 - 30;
@@ -2160,10 +2169,10 @@ fn float_all_margins() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f = add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
-    doc.node_mut(f).style.margin_top = Length::px(10.0);
-    doc.node_mut(f).style.margin_right = Length::px(10.0);
-    doc.node_mut(f).style.margin_bottom = Length::px(10.0);
-    doc.node_mut(f).style.margin_left = Length::px(10.0);
+    doc.update_resolved_style(f, |style| style.margin_top = Length::px(10.0));
+    doc.update_resolved_style(f, |style| style.margin_right = Length::px(10.0));
+    doc.update_resolved_style(f, |style| style.margin_bottom = Length::px(10.0));
+    doc.update_resolved_style(f, |style| style.margin_left = Length::px(10.0));
     let mut s = render(&doc);
     // Float at (PAD+10, PAD+10), size 100x100
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, WHITE, "margin-left area");
@@ -2175,7 +2184,7 @@ fn float_large_margin_left() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f = add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
-    doc.node_mut(f).style.margin_left = Length::px(100.0);
+    doc.update_resolved_style(f, |style| style.margin_left = Length::px(100.0));
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 50, WHITE, "large margin white");
     assert_pixel_color(&mut s, PAD + 150, PAD + 50, RED, "float after large margin");
@@ -2186,9 +2195,9 @@ fn float_margin_bottom_affects_clear() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f = add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
-    doc.node_mut(f).style.margin_bottom = Length::px(20.0);
+    doc.update_resolved_style(f, |style| style.margin_bottom = Length::px(20.0));
     let clr = add_colored_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
-    doc.node_mut(clr).style.clear = Clear::Left;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Left);
     let mut s = render(&doc);
     // Clear moves below float + margin-bottom = 80+20=100
     assert_pixel_color(
@@ -2205,8 +2214,8 @@ fn float_margin_left_and_margin_right() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f = add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
-    doc.node_mut(f).style.margin_left = Length::px(20.0);
-    doc.node_mut(f).style.margin_right = Length::px(20.0);
+    doc.update_resolved_style(f, |style| style.margin_left = Length::px(20.0));
+    doc.update_resolved_style(f, |style| style.margin_right = Length::px(20.0));
     add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::BLUE);
     let mut s = render(&doc);
     // First at x=PAD+20, second at x=PAD+20+100+20=PAD+140
@@ -2219,7 +2228,7 @@ fn float_margin_produces_visible() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f = add_float_box(&mut doc, vp, 100.0, 100.0, Float::Left, Color::RED);
-    doc.node_mut(f).style.margin_left = Length::px(50.0);
+    doc.update_resolved_style(f, |style| style.margin_left = Length::px(50.0));
     let mut s = render(&doc);
     assert!(has_visible_content(&mut s));
 }
@@ -2229,9 +2238,9 @@ fn float_margin_stacking_two_floats_with_margins() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f1 = add_float_box(&mut doc, vp, 100.0, 60.0, Float::Left, Color::RED);
-    doc.node_mut(f1).style.margin_right = Length::px(10.0);
+    doc.update_resolved_style(f1, |style| style.margin_right = Length::px(10.0));
     let f2 = add_float_box(&mut doc, vp, 100.0, 60.0, Float::Left, Color::BLUE);
-    doc.node_mut(f2).style.margin_left = Length::px(10.0);
+    doc.update_resolved_style(f2, |style| style.margin_left = Length::px(10.0));
     let mut s = render(&doc);
     // Gap = 10+10 = 20
     assert_pixel_color(&mut s, PAD + 50, PAD + 30, RED, "first float");
@@ -2248,12 +2257,14 @@ fn float_left_padding_on_container() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(400.0);
-    doc.node_mut(c).style.height = Length::px(200.0);
-    doc.node_mut(c).style.padding_left = Length::px(30.0);
-    doc.node_mut(c).style.padding_top = Length::px(15.0);
-    doc.node_mut(c).style.background_color = color_from_rgb(200, 200, 200);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.padding_left = Length::px(30.0));
+    doc.update_resolved_style(c, |style| style.padding_top = Length::px(15.0));
+    doc.update_resolved_style(c, |style| {
+        style.background_color = color_from_rgb(200, 200, 200)
+    });
     doc.append_child(vp, c);
     add_float_box(&mut doc, c, 100.0, 80.0, Float::Left, Color::RED);
     let mut s = render(&doc);
@@ -2272,11 +2283,13 @@ fn float_right_padding_on_container() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let c = doc.create_node(ElementTag::Div);
-    doc.node_mut(c).style.display = Display::Block;
-    doc.node_mut(c).style.width = Length::px(400.0);
-    doc.node_mut(c).style.height = Length::px(200.0);
-    doc.node_mut(c).style.padding_right = Length::px(30.0);
-    doc.node_mut(c).style.background_color = color_from_rgb(200, 200, 200);
+    doc.update_resolved_style(c, |style| style.display = Display::Block);
+    doc.update_resolved_style(c, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(c, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(c, |style| style.padding_right = Length::px(30.0));
+    doc.update_resolved_style(c, |style| {
+        style.background_color = color_from_rgb(200, 200, 200)
+    });
     doc.append_child(vp, c);
     add_float_box(&mut doc, c, 100.0, 80.0, Float::Right, Color::RED);
     let mut s = render(&doc);
@@ -2297,7 +2310,7 @@ fn float_left_then_clear_left_then_float_left() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 50.0, Float::Left, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 30.0, Color::GREEN);
-    doc.node_mut(clr).style.clear = Clear::Left;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Left);
     add_float_box(&mut doc, vp, 100.0, 50.0, Float::Left, Color::BLUE);
     let mut s = render(&doc);
     assert_pixel_color(&mut s, PAD + 50, PAD + 25, RED, "first float");
@@ -2311,7 +2324,7 @@ fn float_right_then_clear_right_then_float_right() {
     let vp = setup_viewport(&mut doc);
     add_float_box(&mut doc, vp, 100.0, 50.0, Float::Right, Color::RED);
     let clr = add_colored_block(&mut doc, vp, 0.0, 30.0, Color::GREEN);
-    doc.node_mut(clr).style.clear = Clear::Right;
+    doc.update_resolved_style(clr, |style| style.clear = Clear::Right);
     add_float_box(&mut doc, vp, 100.0, 50.0, Float::Right, Color::BLUE);
     let mut s = render(&doc);
     let rx = PAD + CONTENT_W - 100;
@@ -2331,11 +2344,11 @@ fn float_left_50pct_width() {
     let mut doc = Document::new();
     let c = setup_container(&mut doc, 400.0);
     let f = doc.create_node(ElementTag::Div);
-    doc.node_mut(f).style.display = Display::Block;
-    doc.node_mut(f).style.width = Length::percent(50.0);
-    doc.node_mut(f).style.height = Length::px(60.0);
-    doc.node_mut(f).style.float = Float::Left;
-    doc.node_mut(f).style.background_color = Color::RED;
+    doc.update_resolved_style(f, |style| style.display = Display::Block);
+    doc.update_resolved_style(f, |style| style.width = Length::percent(50.0));
+    doc.update_resolved_style(f, |style| style.height = Length::px(60.0));
+    doc.update_resolved_style(f, |style| style.float = Float::Left);
+    doc.update_resolved_style(f, |style| style.background_color = Color::RED);
     doc.append_child(c, f);
     let mut s = render(&doc);
     // 50% of 400 = 200px wide float
@@ -2349,11 +2362,11 @@ fn float_two_50pct_fill_container() {
     let c = setup_container(&mut doc, 400.0);
     for _ in 0..2 {
         let f = doc.create_node(ElementTag::Div);
-        doc.node_mut(f).style.display = Display::Block;
-        doc.node_mut(f).style.width = Length::percent(50.0);
-        doc.node_mut(f).style.height = Length::px(60.0);
-        doc.node_mut(f).style.float = Float::Left;
-        doc.node_mut(f).style.background_color = Color::RED;
+        doc.update_resolved_style(f, |style| style.display = Display::Block);
+        doc.update_resolved_style(f, |style| style.width = Length::percent(50.0));
+        doc.update_resolved_style(f, |style| style.height = Length::px(60.0));
+        doc.update_resolved_style(f, |style| style.float = Float::Left);
+        doc.update_resolved_style(f, |style| style.background_color = Color::RED);
         doc.append_child(c, f);
     }
     let mut s = render(&doc);
@@ -2367,10 +2380,10 @@ fn float_left_with_border() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f = add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
-    doc.node_mut(f).style.border_top_width = 5;
-    doc.node_mut(f).style.border_right_width = 5;
-    doc.node_mut(f).style.border_bottom_width = 5;
-    doc.node_mut(f).style.border_left_width = 5;
+    doc.update_resolved_style(f, |style| style.border_top_width = 5);
+    doc.update_resolved_style(f, |style| style.border_right_width = 5);
+    doc.update_resolved_style(f, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(f, |style| style.border_left_width = 5);
     let mut s = render(&doc);
     // Content area inside border
     assert_pixel_color(&mut s, PAD + 50, PAD + 40, RED, "float with border content");
@@ -2381,10 +2394,10 @@ fn float_left_with_padding_content() {
     let mut doc = Document::new();
     let vp = setup_viewport(&mut doc);
     let f = add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
-    doc.node_mut(f).style.padding_top = Length::px(10.0);
-    doc.node_mut(f).style.padding_left = Length::px(10.0);
-    doc.node_mut(f).style.padding_right = Length::px(10.0);
-    doc.node_mut(f).style.padding_bottom = Length::px(10.0);
+    doc.update_resolved_style(f, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(f, |style| style.padding_left = Length::px(10.0));
+    doc.update_resolved_style(f, |style| style.padding_right = Length::px(10.0));
+    doc.update_resolved_style(f, |style| style.padding_bottom = Length::px(10.0));
     let mut s = render(&doc);
     // Padding area is also red (same bg color)
     assert_pixel_color(&mut s, PAD + 5, PAD + 5, RED, "float padding area");
@@ -2444,7 +2457,7 @@ fn all_float_scenarios_produce_output() {
                 let vp = setup_viewport(&mut doc);
                 add_float_box(&mut doc, vp, 100.0, 80.0, Float::Left, Color::RED);
                 let clr = add_colored_block(&mut doc, vp, 0.0, 40.0, Color::BLUE);
-                doc.node_mut(clr).style.clear = Clear::Both;
+                doc.update_resolved_style(clr, |style| style.clear = Clear::Both);
                 doc
             }),
         ),

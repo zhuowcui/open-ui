@@ -106,26 +106,28 @@ fn synthetic_metrics() -> FontMetrics {
 }
 
 /// Build a style with underline enabled and the given overrides applied.
-fn underline_style(f: impl FnOnce(&mut ComputedStyle)) -> ComputedStyle {
+fn underline_style(f: impl FnOnce(&mut openui_style::ComputedStyleFields)) -> ComputedStyle {
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    f(&mut style);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(f);
     style
 }
 
 /// Build a style with overline enabled and the given overrides applied.
-fn overline_style(f: impl FnOnce(&mut ComputedStyle)) -> ComputedStyle {
+fn overline_style(f: impl FnOnce(&mut openui_style::ComputedStyleFields)) -> ComputedStyle {
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::OVERLINE;
-    f(&mut style);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::OVERLINE);
+    style.update_derived(f);
     style
 }
 
 /// Build a style with line-through enabled and the given overrides applied.
-fn line_through_style(f: impl FnOnce(&mut ComputedStyle)) -> ComputedStyle {
+fn line_through_style(f: impl FnOnce(&mut openui_style::ComputedStyleFields)) -> ComputedStyle {
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
-    f(&mut style);
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine::LINE_THROUGH
+    });
+    style.update_derived(f);
     style
 }
 
@@ -260,8 +262,10 @@ fn wpt_line_underline_plus_overline() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line =
-        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::OVERLINE.0);
+    style.update_derived(|computed| {
+        computed.text_decoration_line =
+            TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::OVERLINE.0)
+    });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -273,8 +277,10 @@ fn wpt_line_underline_plus_line_through() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line =
-        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0);
+    style.update_derived(|computed| {
+        computed.text_decoration_line =
+            TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::LINE_THROUGH.0)
+    });
     paint_before(&mut surface, &sr, &style, &metrics);
     let before_count = count_non_white_pixels(&mut surface);
     paint_after(&mut surface, &sr, &style, &metrics);
@@ -290,11 +296,13 @@ fn wpt_line_all_three() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine(
-        TextDecorationLine::UNDERLINE.0
-            | TextDecorationLine::OVERLINE.0
-            | TextDecorationLine::LINE_THROUGH.0,
-    );
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine(
+            TextDecorationLine::UNDERLINE.0
+                | TextDecorationLine::OVERLINE.0
+                | TextDecorationLine::LINE_THROUGH.0,
+        )
+    });
     paint_before(&mut surface, &sr, &style, &metrics);
     paint_after(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -390,7 +398,7 @@ fn wpt_style_solid_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Solid;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Solid);
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -403,7 +411,7 @@ fn wpt_style_double_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Double;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Double);
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -416,7 +424,7 @@ fn wpt_style_dotted_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Dotted;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dotted);
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -429,7 +437,7 @@ fn wpt_style_dashed_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Dashed;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dashed);
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -442,7 +450,7 @@ fn wpt_style_wavy_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Wavy;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Wavy);
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -456,14 +464,14 @@ fn wpt_style_wavy_wider_than_solid() {
 
     let mut solid_surface = make_surface(400, 100);
     let solid_style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Solid;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Solid);
     });
     paint_before(&mut solid_surface, &sr, &solid_style, &metrics);
     let solid_px = count_non_white_pixels(&mut solid_surface);
 
     let mut wavy_surface = make_surface(400, 100);
     let wavy_style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Wavy;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Wavy);
     });
     paint_before(&mut wavy_surface, &sr, &wavy_style, &metrics);
     let wavy_px = count_non_white_pixels(&mut wavy_surface);
@@ -482,14 +490,14 @@ fn wpt_style_double_more_than_solid() {
 
     let mut solid_surface = make_surface(400, 100);
     let solid_style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Solid;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Solid);
     });
     paint_before(&mut solid_surface, &sr, &solid_style, &metrics);
     let solid_px = count_non_white_pixels(&mut solid_surface);
 
     let mut double_surface = make_surface(400, 100);
     let double_style = underline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Double;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Double);
     });
     paint_before(&mut double_surface, &sr, &double_style, &metrics);
     let double_px = count_non_white_pixels(&mut double_surface);
@@ -507,7 +515,7 @@ fn wpt_style_overline_wavy() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let style = overline_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Wavy;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Wavy);
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -520,7 +528,7 @@ fn wpt_style_line_through_dashed() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let style = line_through_style(|s| {
-        s.text_decoration_style = TextDecorationStyle::Dashed;
+        s.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dashed);
     });
     paint_after(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -544,7 +552,9 @@ fn wpt_color_red_underline() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 255));
+        s.update_derived(|computed| {
+            computed.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 255))
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(
@@ -560,7 +570,9 @@ fn wpt_color_blue_underline() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 0, 255, 255));
+        s.update_derived(|computed| {
+            computed.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 0, 255, 255))
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(
@@ -576,7 +588,9 @@ fn wpt_color_green_overline() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = overline_style(|s| {
-        s.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255));
+        s.update_derived(|computed| {
+            computed.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 128, 0, 255))
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -589,8 +603,8 @@ fn wpt_color_currentcolor_resolves() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.color = Color::from_rgba8(255, 0, 0, 255);
-        s.text_decoration_color = StyleColor::CurrentColor;
+        s.update_derived(|computed| computed.color = Color::from_rgba8(255, 0, 0, 255));
+        s.update_derived(|computed| computed.text_decoration_color = StyleColor::CurrentColor);
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -604,13 +618,17 @@ fn wpt_color_red_vs_blue_differ() {
 
     let mut red_surface = make_surface(300, 100);
     let red_style = underline_style(|s| {
-        s.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 255));
+        s.update_derived(|computed| {
+            computed.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 255))
+        });
     });
     paint_before(&mut red_surface, &sr, &red_style, &metrics);
 
     let mut blue_surface = make_surface(300, 100);
     let blue_style = underline_style(|s| {
-        s.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 0, 255, 255));
+        s.update_derived(|computed| {
+            computed.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 0, 255, 255))
+        });
     });
     paint_before(&mut blue_surface, &sr, &blue_style, &metrics);
 
@@ -626,7 +644,9 @@ fn wpt_color_transparent_draws_nothing() {
     let metrics = synthetic_metrics();
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 0, 0, 0));
+        s.update_derived(|computed| {
+            computed.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 0, 0, 0))
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(
@@ -642,7 +662,9 @@ fn wpt_color_semitransparent_draws() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 0, 0, 128));
+        s.update_derived(|computed| {
+            computed.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(0, 0, 0, 128))
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -669,7 +691,9 @@ fn wpt_thickness_from_font() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::FromFont;
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::FromFont
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -682,7 +706,9 @@ fn wpt_thickness_length_2px() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::Length(2.0);
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::Length(2.0)
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -695,7 +721,9 @@ fn wpt_thickness_length_4px() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::Length(4.0);
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::Length(4.0)
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -709,16 +737,24 @@ fn wpt_thickness_thicker_more_pixels() {
 
     let mut thin_surface = make_surface(400, 100);
     let thin_style = underline_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::Length(1.0);
-        s.text_decoration_skip_ink = TextDecorationSkipInk::None;
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::Length(1.0)
+        });
+        s.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::None
+        });
     });
     paint_before(&mut thin_surface, &sr, &thin_style, &metrics);
     let thin_px = count_non_white_pixels(&mut thin_surface);
 
     let mut thick_surface = make_surface(400, 100);
     let thick_style = underline_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::Length(4.0);
-        s.text_decoration_skip_ink = TextDecorationSkipInk::None;
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::Length(4.0)
+        });
+        s.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::None
+        });
     });
     paint_before(&mut thick_surface, &sr, &thick_style, &metrics);
     let thick_px = count_non_white_pixels(&mut thick_surface);
@@ -736,7 +772,9 @@ fn wpt_thickness_auto_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::Auto;
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::Auto
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -749,7 +787,9 @@ fn wpt_thickness_overline_custom() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let style = overline_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::Length(3.0);
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::Length(3.0)
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -762,7 +802,9 @@ fn wpt_thickness_line_through_custom() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let style = line_through_style(|s| {
-        s.text_decoration_thickness = TextDecorationThickness::Length(3.0);
+        s.update_derived(|computed| {
+            computed.text_decoration_thickness = TextDecorationThickness::Length(3.0)
+        });
     });
     paint_after(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -786,7 +828,9 @@ fn wpt_skip_ink_none_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let style = underline_style(|s| {
-        s.text_decoration_skip_ink = TextDecorationSkipInk::None;
+        s.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::None
+        });
     });
     paint_before_with_text(&mut surface, &sr, &style, &metrics, "gypsy");
     assert!(has_non_white_pixels(&mut surface));
@@ -799,7 +843,9 @@ fn wpt_skip_ink_auto_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let style = underline_style(|s| {
-        s.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+        s.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto
+        });
     });
     paint_before_with_text(&mut surface, &sr, &style, &metrics, "gypsy");
     assert!(has_non_white_pixels(&mut surface));
@@ -812,7 +858,7 @@ fn wpt_skip_ink_all_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let style = underline_style(|s| {
-        s.text_decoration_skip_ink = TextDecorationSkipInk::All;
+        s.update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::All);
     });
     paint_before_with_text(&mut surface, &sr, &style, &metrics, "gypsy");
     assert!(has_non_white_pixels(&mut surface));
@@ -826,7 +872,9 @@ fn wpt_skip_ink_none_more_pixels_than_auto() {
 
     let mut none_surface = make_surface(500, 100);
     let none_style = underline_style(|s| {
-        s.text_decoration_skip_ink = TextDecorationSkipInk::None;
+        s.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::None
+        });
     });
     paint_before_with_text(
         &mut none_surface,
@@ -839,7 +887,9 @@ fn wpt_skip_ink_none_more_pixels_than_auto() {
 
     let mut auto_surface = make_surface(500, 100);
     let auto_style = underline_style(|s| {
-        s.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+        s.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto
+        });
     });
     paint_before_with_text(
         &mut auto_surface,
@@ -863,7 +913,9 @@ fn wpt_skip_ink_uppercase_text() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let style = underline_style(|s| {
-        s.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+        s.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto
+        });
     });
     paint_before_with_text(&mut surface, &sr, &style, &metrics, "HELLO WORLD");
     assert!(has_non_white_pixels(&mut surface));
@@ -876,7 +928,9 @@ fn wpt_skip_ink_cjk_text() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let style = underline_style(|s| {
-        s.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+        s.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto
+        });
     });
     paint_before_with_text(&mut surface, &sr, &style, &metrics, "日本語テスト");
     assert!(has_non_white_pixels(&mut surface));
@@ -889,7 +943,9 @@ fn wpt_skip_ink_none_overline() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(400, 100);
     let style = overline_style(|s| {
-        s.text_decoration_skip_ink = TextDecorationSkipInk::None;
+        s.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::None
+        });
     });
     paint_before_with_text(&mut surface, &sr, &style, &metrics, "Testing");
     assert!(has_non_white_pixels(&mut surface));
@@ -902,7 +958,9 @@ fn wpt_skip_ink_empty_string() {
     let metrics = synthetic_metrics();
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+        s.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto
+        });
     });
     paint_before_with_text(&mut surface, &sr, &style, &metrics, "");
     // Empty string should not crash; may or may not have pixels.
@@ -915,7 +973,9 @@ fn wpt_skip_ink_spaces_only() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+        s.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto
+        });
     });
     paint_before_with_text(&mut surface, &sr, &style, &metrics, "     ");
     // Spaces have no ink to skip; underline should still render.
@@ -940,7 +1000,9 @@ fn wpt_underline_position_under_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_underline_position = TextUnderlinePosition::Under;
+        s.update_derived(|computed| {
+            computed.text_underline_position = TextUnderlinePosition::Under
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -953,7 +1015,7 @@ fn wpt_underline_position_auto_renders() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_underline_position = TextUnderlinePosition::Auto;
+        s.update_derived(|computed| computed.text_underline_position = TextUnderlinePosition::Auto);
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -966,7 +1028,7 @@ fn wpt_underline_position_left() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_underline_position = TextUnderlinePosition::Left;
+        s.update_derived(|computed| computed.text_underline_position = TextUnderlinePosition::Left);
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -979,7 +1041,9 @@ fn wpt_underline_position_right() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_underline_position = TextUnderlinePosition::Right;
+        s.update_derived(|computed| {
+            computed.text_underline_position = TextUnderlinePosition::Right
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -993,14 +1057,16 @@ fn wpt_underline_position_under_vs_auto() {
 
     let mut auto_surface = make_surface(400, 100);
     let auto_style = underline_style(|s| {
-        s.text_underline_position = TextUnderlinePosition::Auto;
+        s.update_derived(|computed| computed.text_underline_position = TextUnderlinePosition::Auto);
     });
     paint_before(&mut auto_surface, &sr, &auto_style, &metrics);
     let auto_px = count_non_white_pixels(&mut auto_surface);
 
     let mut under_surface = make_surface(400, 100);
     let under_style = underline_style(|s| {
-        s.text_underline_position = TextUnderlinePosition::Under;
+        s.update_derived(|computed| {
+            computed.text_underline_position = TextUnderlinePosition::Under
+        });
     });
     paint_before(&mut under_surface, &sr, &under_style, &metrics);
     let under_px = count_non_white_pixels(&mut under_surface);
@@ -1028,7 +1094,9 @@ fn wpt_underline_offset_4px() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_underline_offset = openui_geometry::Length::px(4.0);
+        s.update_derived(|computed| {
+            computed.text_underline_offset = openui_geometry::Length::px(4.0)
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -1041,7 +1109,9 @@ fn wpt_underline_offset_0px() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_underline_offset = openui_geometry::Length::px(0.0);
+        s.update_derived(|computed| {
+            computed.text_underline_offset = openui_geometry::Length::px(0.0)
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -1054,7 +1124,9 @@ fn wpt_underline_offset_negative() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_underline_offset = openui_geometry::Length::px(-2.0);
+        s.update_derived(|computed| {
+            computed.text_underline_offset = openui_geometry::Length::px(-2.0)
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -1067,7 +1139,9 @@ fn wpt_underline_offset_large() {
     let metrics = text_painter::metrics_from_shape_result(&sr);
     let mut surface = make_surface(300, 100);
     let style = underline_style(|s| {
-        s.text_underline_offset = openui_geometry::Length::px(10.0);
+        s.update_derived(|computed| {
+            computed.text_underline_offset = openui_geometry::Length::px(10.0)
+        });
     });
     paint_before(&mut surface, &sr, &style, &metrics);
     assert!(has_non_white_pixels(&mut surface));
@@ -1439,14 +1513,16 @@ fn wpt_emphasis_painting_dot_renders() {
     let sr = Arc::new(shape_text("Hello"));
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_emphasis_mark = TextEmphasisMark::Dot;
-    style.text_emphasis_fill = TextEmphasisFill::Filled;
-    style.text_emphasis_position = TextEmphasisPosition {
-        over: true,
-        right: true,
-    };
-    style.color = Color::BLACK;
-    style.text_emphasis_color = StyleColor::CurrentColor;
+    style.update_derived(|computed| computed.text_emphasis_mark = TextEmphasisMark::Dot);
+    style.update_derived(|computed| computed.text_emphasis_fill = TextEmphasisFill::Filled);
+    style.update_derived(|computed| {
+        computed.text_emphasis_position = TextEmphasisPosition {
+            over: true,
+            right: true,
+        }
+    });
+    style.update_derived(|computed| computed.color = Color::BLACK);
+    style.update_derived(|computed| computed.text_emphasis_color = StyleColor::CurrentColor);
     emphasis_painter::paint_emphasis_marks(
         surface.canvas(),
         &sr,
@@ -1466,7 +1542,7 @@ fn wpt_emphasis_painting_none_draws_nothing() {
     let sr = Arc::new(shape_text("Hello"));
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_emphasis_mark = TextEmphasisMark::None;
+    style.update_derived(|computed| computed.text_emphasis_mark = TextEmphasisMark::None);
     emphasis_painter::paint_emphasis_marks(
         surface.canvas(),
         &sr,
@@ -1486,14 +1562,16 @@ fn wpt_emphasis_painting_circle_renders() {
     let sr = Arc::new(shape_text("Test"));
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_emphasis_mark = TextEmphasisMark::Circle;
-    style.text_emphasis_fill = TextEmphasisFill::Filled;
-    style.text_emphasis_position = TextEmphasisPosition {
-        over: true,
-        right: true,
-    };
-    style.color = Color::BLACK;
-    style.text_emphasis_color = StyleColor::CurrentColor;
+    style.update_derived(|computed| computed.text_emphasis_mark = TextEmphasisMark::Circle);
+    style.update_derived(|computed| computed.text_emphasis_fill = TextEmphasisFill::Filled);
+    style.update_derived(|computed| {
+        computed.text_emphasis_position = TextEmphasisPosition {
+            over: true,
+            right: true,
+        }
+    });
+    style.update_derived(|computed| computed.color = Color::BLACK);
+    style.update_derived(|computed| computed.text_emphasis_color = StyleColor::CurrentColor);
     emphasis_painter::paint_emphasis_marks(
         surface.canvas(),
         &sr,
@@ -1510,10 +1588,10 @@ fn wpt_emphasis_painting_empty_text() {
     let sr = Arc::new(shape_text("Hello"));
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_emphasis_mark = TextEmphasisMark::Dot;
-    style.text_emphasis_fill = TextEmphasisFill::Filled;
-    style.color = Color::BLACK;
-    style.text_emphasis_color = StyleColor::CurrentColor;
+    style.update_derived(|computed| computed.text_emphasis_mark = TextEmphasisMark::Dot);
+    style.update_derived(|computed| computed.text_emphasis_fill = TextEmphasisFill::Filled);
+    style.update_derived(|computed| computed.color = Color::BLACK);
+    style.update_derived(|computed| computed.text_emphasis_color = StyleColor::CurrentColor);
     emphasis_painter::paint_emphasis_marks(surface.canvas(), &sr, (10.0, 50.0), &style, None);
     assert!(
         !has_non_white_pixels(&mut surface),
@@ -1527,14 +1605,16 @@ fn wpt_emphasis_painting_under_position() {
     let sr = Arc::new(shape_text("Under"));
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.text_emphasis_mark = TextEmphasisMark::Sesame;
-    style.text_emphasis_fill = TextEmphasisFill::Filled;
-    style.text_emphasis_position = TextEmphasisPosition {
-        over: false,
-        right: true,
-    };
-    style.color = Color::BLACK;
-    style.text_emphasis_color = StyleColor::CurrentColor;
+    style.update_derived(|computed| computed.text_emphasis_mark = TextEmphasisMark::Sesame);
+    style.update_derived(|computed| computed.text_emphasis_fill = TextEmphasisFill::Filled);
+    style.update_derived(|computed| {
+        computed.text_emphasis_position = TextEmphasisPosition {
+            over: false,
+            right: true,
+        }
+    });
+    style.update_derived(|computed| computed.color = Color::BLACK);
+    style.update_derived(|computed| computed.text_emphasis_color = StyleColor::CurrentColor);
     emphasis_painter::paint_emphasis_marks(
         surface.canvas(),
         &sr,
@@ -1665,13 +1745,15 @@ fn wpt_shadow_single_offset_renders() {
     let sr = Arc::new(shape_text("Shadow"));
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.color = Color::BLACK;
-    style.text_shadow = vec![TextShadow {
-        offset_x: 2.0,
-        offset_y: 2.0,
-        blur_radius: 0.0,
-        color: Color::from_rgba8(255, 0, 0, 255),
-    }];
+    style.update_derived(|computed| computed.color = Color::BLACK);
+    style.update_derived(|computed| {
+        computed.text_shadow = vec![TextShadow {
+            offset_x: 2.0,
+            offset_y: 2.0,
+            blur_radius: 0.0,
+            color: Color::from_rgba8(255, 0, 0, 255),
+        }]
+    });
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(
         has_non_white_pixels(&mut surface),
@@ -1698,21 +1780,23 @@ fn wpt_shadow_multiple() {
     let sr = Arc::new(shape_text("Multi Shadow"));
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.color = Color::BLACK;
-    style.text_shadow = vec![
-        TextShadow {
-            offset_x: 2.0,
-            offset_y: 2.0,
-            blur_radius: 0.0,
-            color: Color::from_rgba8(255, 0, 0, 255),
-        },
-        TextShadow {
-            offset_x: -2.0,
-            offset_y: -2.0,
-            blur_radius: 0.0,
-            color: Color::from_rgba8(0, 0, 255, 255),
-        },
-    ];
+    style.update_derived(|computed| computed.color = Color::BLACK);
+    style.update_derived(|computed| {
+        computed.text_shadow = vec![
+            TextShadow {
+                offset_x: 2.0,
+                offset_y: 2.0,
+                blur_radius: 0.0,
+                color: Color::from_rgba8(255, 0, 0, 255),
+            },
+            TextShadow {
+                offset_x: -2.0,
+                offset_y: -2.0,
+                blur_radius: 0.0,
+                color: Color::from_rgba8(0, 0, 255, 255),
+            },
+        ]
+    });
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -1723,13 +1807,15 @@ fn wpt_shadow_with_blur() {
     let sr = Arc::new(shape_text("Blurry"));
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.color = Color::BLACK;
-    style.text_shadow = vec![TextShadow {
-        offset_x: 0.0,
-        offset_y: 0.0,
-        blur_radius: 4.0,
-        color: Color::from_rgba8(255, 0, 0, 255),
-    }];
+    style.update_derived(|computed| computed.color = Color::BLACK);
+    style.update_derived(|computed| {
+        computed.text_shadow = vec![TextShadow {
+            offset_x: 0.0,
+            offset_y: 0.0,
+            blur_radius: 4.0,
+            color: Color::from_rgba8(255, 0, 0, 255),
+        }]
+    });
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(
         has_non_white_pixels(&mut surface),
@@ -1743,13 +1829,15 @@ fn wpt_shadow_zero_offset_zero_blur() {
     let sr = Arc::new(shape_text("Zero"));
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.color = Color::BLACK;
-    style.text_shadow = vec![TextShadow {
-        offset_x: 0.0,
-        offset_y: 0.0,
-        blur_radius: 0.0,
-        color: Color::from_rgba8(255, 0, 0, 255),
-    }];
+    style.update_derived(|computed| computed.color = Color::BLACK);
+    style.update_derived(|computed| {
+        computed.text_shadow = vec![TextShadow {
+            offset_x: 0.0,
+            offset_y: 0.0,
+            blur_radius: 0.0,
+            color: Color::from_rgba8(255, 0, 0, 255),
+        }]
+    });
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -1760,13 +1848,15 @@ fn wpt_shadow_large_offset() {
     let sr = Arc::new(shape_text("BigOffset"));
     let mut surface = make_surface(500, 200);
     let mut style = ComputedStyle::default();
-    style.color = Color::BLACK;
-    style.text_shadow = vec![TextShadow {
-        offset_x: 20.0,
-        offset_y: 20.0,
-        blur_radius: 0.0,
-        color: Color::from_rgba8(0, 128, 0, 255),
-    }];
+    style.update_derived(|computed| computed.color = Color::BLACK);
+    style.update_derived(|computed| {
+        computed.text_shadow = vec![TextShadow {
+            offset_x: 20.0,
+            offset_y: 20.0,
+            blur_radius: 0.0,
+            color: Color::from_rgba8(0, 128, 0, 255),
+        }]
+    });
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -1777,13 +1867,15 @@ fn wpt_shadow_transparent_color() {
     let sr = Arc::new(shape_text("Ghost"));
     let mut surface = make_surface(400, 100);
     let mut style = ComputedStyle::default();
-    style.color = Color::BLACK;
-    style.text_shadow = vec![TextShadow {
-        offset_x: 2.0,
-        offset_y: 2.0,
-        blur_radius: 0.0,
-        color: Color::from_rgba8(0, 0, 0, 0),
-    }];
+    style.update_derived(|computed| computed.color = Color::BLACK);
+    style.update_derived(|computed| {
+        computed.text_shadow = vec![TextShadow {
+            offset_x: 2.0,
+            offset_y: 2.0,
+            blur_radius: 0.0,
+            color: Color::from_rgba8(0, 0, 0, 0),
+        }]
+    });
     text_painter::paint_text_shadows(surface.canvas(), &sr, (10.0, 50.0), &style);
     assert!(
         !has_non_white_pixels(&mut surface),
@@ -1798,25 +1890,29 @@ fn wpt_shadow_blur_produces_more_pixels() {
 
     let mut no_blur_surface = make_surface(400, 100);
     let mut no_blur_style = ComputedStyle::default();
-    no_blur_style.color = Color::BLACK;
-    no_blur_style.text_shadow = vec![TextShadow {
-        offset_x: 2.0,
-        offset_y: 2.0,
-        blur_radius: 0.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
-    }];
+    no_blur_style.update_derived(|computed| computed.color = Color::BLACK);
+    no_blur_style.update_derived(|computed| {
+        computed.text_shadow = vec![TextShadow {
+            offset_x: 2.0,
+            offset_y: 2.0,
+            blur_radius: 0.0,
+            color: Color::from_rgba8(0, 0, 0, 255),
+        }]
+    });
     text_painter::paint_text_shadows(no_blur_surface.canvas(), &sr, (10.0, 50.0), &no_blur_style);
     let no_blur_px = count_non_white_pixels(&mut no_blur_surface);
 
     let mut blur_surface = make_surface(400, 100);
     let mut blur_style = ComputedStyle::default();
-    blur_style.color = Color::BLACK;
-    blur_style.text_shadow = vec![TextShadow {
-        offset_x: 2.0,
-        offset_y: 2.0,
-        blur_radius: 8.0,
-        color: Color::from_rgba8(0, 0, 0, 255),
-    }];
+    blur_style.update_derived(|computed| computed.color = Color::BLACK);
+    blur_style.update_derived(|computed| {
+        computed.text_shadow = vec![TextShadow {
+            offset_x: 2.0,
+            offset_y: 2.0,
+            blur_radius: 8.0,
+            color: Color::from_rgba8(0, 0, 0, 255),
+        }]
+    });
     text_painter::paint_text_shadows(blur_surface.canvas(), &sr, (10.0, 50.0), &blur_style);
     let blur_px = count_non_white_pixels(&mut blur_surface);
 
@@ -1833,33 +1929,37 @@ fn wpt_shadow_multiple_more_pixels_than_single() {
 
     let mut single_surface = make_surface(400, 100);
     let mut single_style = ComputedStyle::default();
-    single_style.color = Color::BLACK;
-    single_style.text_shadow = vec![TextShadow {
-        offset_x: 3.0,
-        offset_y: 3.0,
-        blur_radius: 0.0,
-        color: Color::from_rgba8(255, 0, 0, 255),
-    }];
+    single_style.update_derived(|computed| computed.color = Color::BLACK);
+    single_style.update_derived(|computed| {
+        computed.text_shadow = vec![TextShadow {
+            offset_x: 3.0,
+            offset_y: 3.0,
+            blur_radius: 0.0,
+            color: Color::from_rgba8(255, 0, 0, 255),
+        }]
+    });
     text_painter::paint_text_shadows(single_surface.canvas(), &sr, (10.0, 50.0), &single_style);
     let single_px = count_non_white_pixels(&mut single_surface);
 
     let mut multi_surface = make_surface(400, 100);
     let mut multi_style = ComputedStyle::default();
-    multi_style.color = Color::BLACK;
-    multi_style.text_shadow = vec![
-        TextShadow {
-            offset_x: 3.0,
-            offset_y: 3.0,
-            blur_radius: 0.0,
-            color: Color::from_rgba8(255, 0, 0, 255),
-        },
-        TextShadow {
-            offset_x: -3.0,
-            offset_y: -3.0,
-            blur_radius: 0.0,
-            color: Color::from_rgba8(0, 0, 255, 255),
-        },
-    ];
+    multi_style.update_derived(|computed| computed.color = Color::BLACK);
+    multi_style.update_derived(|computed| {
+        computed.text_shadow = vec![
+            TextShadow {
+                offset_x: 3.0,
+                offset_y: 3.0,
+                blur_radius: 0.0,
+                color: Color::from_rgba8(255, 0, 0, 255),
+            },
+            TextShadow {
+                offset_x: -3.0,
+                offset_y: -3.0,
+                blur_radius: 0.0,
+                color: Color::from_rgba8(0, 0, 255, 255),
+            },
+        ]
+    });
     text_painter::paint_text_shadows(multi_surface.canvas(), &sr, (10.0, 50.0), &multi_style);
     let multi_px = count_non_white_pixels(&mut multi_surface);
 

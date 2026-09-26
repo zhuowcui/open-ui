@@ -97,6 +97,10 @@ pub fn apply_text_transform(text: &str, transform: TextTransform, locale: Option
         TextTransform::Capitalize => locale_capitalize(text, locale),
         TextTransform::FullWidth => to_full_width(text),
         TextTransform::FullSizeKana => to_full_size_kana(text),
+        // CSS `math-auto` only substitutes a single typographic character in
+        // a MathML token. The MathML layout path performs that substitution;
+        // ordinary text is unchanged.
+        TextTransform::MathAuto => text.to_owned(),
     }
 }
 

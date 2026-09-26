@@ -38,6 +38,17 @@ pub struct LineInfo {
     /// Whether the ellipsis should appear at the start (left) of the line (RTL).
     pub ellipsis_at_start: bool,
 
+    /// Marker text for clamping. `None` uses U+2026 for text-overflow.
+    pub ellipsis_text: Option<String>,
+
+    /// Whether the generated ellipsis is a block/line-clamp marker rather
+    /// than an ordinary `text-overflow` marker.
+    pub ellipsis_is_line_clamp: bool,
+
+    /// Preserved logical-start spacing of a discarded atomic item at the
+    /// truncation boundary, inserted immediately before an end ellipsis.
+    pub ellipsis_inline_start_advance: LayoutUnit,
+
     /// Width of trailing spaces that "hang" past the line box end.
     ///
     /// CSS Text Level 3 §4.2: preserved trailing spaces hang when wrapping.
@@ -70,6 +81,9 @@ impl LineInfo {
             text_align: TextAlign::Start,
             has_ellipsis: false,
             ellipsis_at_start: false,
+            ellipsis_text: None,
+            ellipsis_is_line_clamp: false,
+            ellipsis_inline_start_advance: LayoutUnit::zero(),
             hang_width: LayoutUnit::zero(),
             has_forced_hyphen: false,
         }

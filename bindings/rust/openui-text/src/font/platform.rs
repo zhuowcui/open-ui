@@ -4,12 +4,26 @@
 //! Each instance owns an `SkTypeface`, a configured `SkFont`, and pre-computed
 //! `FontMetrics` for the resolved size.
 
+use openui_geometry::{
+    physical_font_size, RasterConfiguration, TextEdging, TextHinting, TextRasterConfiguration,
+};
 use skia_safe::{
     font_style::Slant as SkSlant, Font as SkFont, FontHinting, FontMetrics as SkFontMetrics,
-    FontStyle as SkFontStyle, Typeface,
+    FontStyle as SkFontStyle, GlyphId, Rect, Typeface,
 };
 
 use super::metrics::FontMetrics;
+use super::{FontFeatureDefault, FontMetricOverrides};
+
+/// Face-specific values resolved by `FontCollection` before a platform font
+/// instance is constructed.
+#[derive(Debug, Clone, Default)]
+pub(crate) struct ResolvedFontConfiguration {
+    pub allow_synthetic_weight: bool,
+    pub allow_synthetic_style: bool,
+    pub feature_defaults: Vec<FontFeatureDefault>,
+    pub metric_overrides: FontMetricOverrides,
+}
 
 /// Resolved platform font data — Skia typeface + font + cached metrics.
 ///
@@ -20,10 +34,133 @@ pub struct FontPlatformData {
     sk_font: SkFont,
     size: f32,
     metrics: FontMetrics,
+    vertical_metrics: Option<VerticalMetrics>,
     synthetic_bold: bool,
     /// Oblique angle in degrees for synthetic oblique synthesis.
     /// 0.0 for normal/italic styles. CSS default oblique is 14°.
     synthetic_oblique_angle: f32,
+    feature_defaults: Vec<FontFeatureDefault>,
+}
+
+/// OpenType `vhea`/`vmtx` data retained with a resolved face.
+///
+/// Skia exposes horizontal glyph placement but does not surface the vertical
+/// origin and advance used by CSS Writing Modes. Keeping this face-level table
+/// avoids reconstructing vertical metrics from horizontal ascent heuristics.
+struct VerticalMetrics {
+    advances: Vec<u16>,
+    top_side_bearings: Vec<i16>,
+    units_per_em: f32,
+}
+
+impl VerticalMetrics {
+    fn from_typeface(typeface: &Typeface) -> Option<Self> {
+        const VHEA: u32 = u32::from_be_bytes(*b"vhea");
+        const VMTX: u32 = u32::from_be_bytes(*b"vmtx");
+
+        let vhea = typeface.copy_table_data(VHEA)?;
+        let vhea = vhea.as_bytes();
+        let number_of_long_metrics = read_u16(vhea, 34)? as usize;
+        let glyph_count = typeface.count_glyphs();
+        if number_of_long_metrics == 0 || number_of_long_metrics > glyph_count {
+            return None;
+        }
+
+        let vmtx = typeface.copy_table_data(VMTX)?;
+        let vmtx = vmtx.as_bytes();
+        let required = number_of_long_metrics.checked_mul(4)?.checked_add(
+            glyph_count
+                .checked_sub(number_of_long_metrics)?
+                .checked_mul(2)?,
+        )?;
+        if vmtx.len() < required {
+            return None;
+        }
+
+        let mut advances = Vec::with_capacity(glyph_count);
+        let mut top_side_bearings = Vec::with_capacity(glyph_count);
+        for glyph in 0..glyph_count {
+            if glyph < number_of_long_metrics {
+                advances.push(read_u16(vmtx, glyph * 4)?);
+                top_side_bearings.push(read_i16(vmtx, glyph * 4 + 2)?);
+            } else {
+                advances.push(*advances.last()?);
+                let offset = number_of_long_metrics * 4 + (glyph - number_of_long_metrics) * 2;
+                top_side_bearings.push(read_i16(vmtx, offset)?);
+            }
+        }
+
+        Some(Self {
+            advances,
+            top_side_bearings,
+            units_per_em: typeface.units_per_em()? as f32,
+        })
+    }
+}
+
+fn read_u16(data: &[u8], offset: usize) -> Option<u16> {
+    Some(u16::from_be_bytes([
+        *data.get(offset)?,
+        *data.get(offset + 1)?,
+    ]))
+}
+
+fn read_i16(data: &[u8], offset: usize) -> Option<i16> {
+    read_u16(data, offset).map(|value| value as i16)
+}
+
+fn resolve_hinting(
+    requested_hinting: TextHinting,
+    requested_edging: TextEdging,
+    family_name: &str,
+    size: f32,
+    device_scale_factor: f64,
+) -> FontHinting {
+    let is_ahem = family_name.eq_ignore_ascii_case("Ahem");
+    let computed_size = size / device_scale_factor as f32;
+    // The unit-scale 20px proportional strike is light-fitted by the pinned
+    // Chromium font profile. Its unhinted outline moves the first ink row,
+    // while a 20px physical strike reached from a fractional device scale
+    // follows the unfitted policy.
+    let unit_scale_20px_strike =
+        (device_scale_factor - 1.0).abs() <= f64::EPSILON && (computed_size - 20.0).abs() <= 1.0e-4;
+    match requested_hinting {
+        // Chromium's Fontconfig `hinting=false` path still grid-fits the
+        // aliased 8px Ahem face. Skia's direct API needs slight hinting to
+        // reproduce those glyph bounds, while larger Ahem sizes remain truly
+        // unhinted. Select by face and computed size, not by test identity.
+        TextHinting::None if requested_edging == TextEdging::Alias && is_ahem && size <= 8.0 => {
+            FontHinting::Slight
+        }
+        // Chromium also grid-fits glyphs supplied by a fallback face (for
+        // example arrows absent from Ahem) before applying the same aliased
+        // coverage threshold.
+        TextHinting::None if requested_edging == TextEdging::Alias && !is_ahem => {
+            FontHinting::Slight
+        }
+        TextHinting::None => FontHinting::None,
+        // Chromium asks Fontconfig for render parameters for every resolved
+        // family and physical strike. The pinned proportional Sans/Serif
+        // faces are generally returned without outline fitting, while the
+        // exact 16px and 24px strikes remain lightly fitted. The pinned
+        // monospace face keeps light fitting at every strike. Preserve those
+        // family/strike distinctions instead of applying one global SkFont
+        // hinting mode to all document-owned fonts.
+        TextHinting::Slight
+            if requested_edging == TextEdging::SubpixelAntiAlias
+                && (family_name.eq_ignore_ascii_case("DejaVu Sans")
+                    || family_name.eq_ignore_ascii_case("DejaVu Serif"))
+                && (computed_size >= 16.0 || device_scale_factor > 1.0)
+                && (size - 16.0).abs() > 1.0e-4
+                && (size - 24.0).abs() > 1.0e-4
+                && !unit_scale_20px_strike =>
+        {
+            FontHinting::None
+        }
+        TextHinting::Slight => FontHinting::Slight,
+        TextHinting::Normal => FontHinting::Normal,
+        TextHinting::Full => FontHinting::Full,
+    }
 }
 
 impl FontPlatformData {
@@ -53,55 +190,123 @@ impl FontPlatformData {
         oblique_angle: f32,
         requested_weight: skia_safe::font_style::Weight,
     ) -> Self {
+        Self::with_synthetic_styles_and_native_metrics(
+            typeface,
+            size,
+            oblique_angle,
+            requested_weight,
+            false,
+            false,
+            false,
+        )
+    }
+
+    /// Create platform data with an optional native-control raster policy.
+    /// Native widget labels are rendered by Chromium's platform theme and do
+    /// not inherit the alias/no-hint profile used for deterministic author
+    /// text in pixel comparisons.
+    pub fn with_synthetic_styles_and_native_metrics(
+        typeface: Typeface,
+        size: f32,
+        oblique_angle: f32,
+        requested_weight: skia_safe::font_style::Weight,
+        native_control_text: bool,
+        embedded_document_text: bool,
+        native_button_text_metrics: bool,
+    ) -> Self {
+        Self::with_resolved_configuration(
+            typeface,
+            size,
+            oblique_angle,
+            requested_weight,
+            native_control_text,
+            embedded_document_text,
+            native_button_text_metrics,
+            RasterConfiguration::default(),
+            1.0,
+            ResolvedFontConfiguration {
+                allow_synthetic_weight: true,
+                allow_synthetic_style: true,
+                ..ResolvedFontConfiguration::default()
+            },
+        )
+    }
+
+    pub(crate) fn with_resolved_configuration(
+        typeface: Typeface,
+        size: f32,
+        mut oblique_angle: f32,
+        requested_weight: skia_safe::font_style::Weight,
+        native_control_text: bool,
+        embedded_document_text: bool,
+        native_button_text_metrics: bool,
+        raster_configuration: RasterConfiguration,
+        device_scale_factor: f64,
+        configuration: ResolvedFontConfiguration,
+    ) -> Self {
         // Font matching may return a regular face when a family has no bold
         // member (Ahem is the canonical example). CSS font synthesis requires
         // a synthetic bold face in that case; SkFont does not infer it from
         // the requested FontStyle after typeface matching.
-        let synthetic_bold = requested_weight >= skia_safe::font_style::Weight::SEMI_BOLD
+        let synthetic_bold = configuration.allow_synthetic_weight
+            && requested_weight >= skia_safe::font_style::Weight::SEMI_BOLD
             && typeface.font_style().weight() < skia_safe::font_style::Weight::SEMI_BOLD;
+        if !configuration.allow_synthetic_style {
+            oblique_angle = 0.0;
+        }
         let mut sk_font = SkFont::from_typeface(&typeface, size);
         sk_font.set_embolden(synthetic_bold);
-        // SP14 parity experiment: allow overriding rasterization settings via env
-        // vars so we can match headless Chromium without recompiling per combo.
-        // OPENUI_SUBPIXEL=0/1, OPENUI_HINTING=none/slight/normal/full,
-        // OPENUI_EDGING=alias/aa/subpixel, OPENUI_AUTOHINT=0/1, OPENUI_FORCE_AA=0/1.
-        let subpixel = std::env::var("OPENUI_SUBPIXEL").ok().as_deref() != Some("0");
-        sk_font.set_subpixel(subpixel);
-        let requested_hinting = std::env::var("OPENUI_HINTING").ok();
-        let requested_edging = std::env::var("OPENUI_EDGING").ok();
-        let is_ahem = typeface.family_name().eq_ignore_ascii_case("Ahem");
-        let hinting = match requested_hinting.as_deref() {
-            // The deterministic Ahem profile keeps the square-glyph face
-            // completely unhinted. Chromium still grid-fits glyphs supplied
-            // by a fallback face (for example arrows absent from Ahem) before
-            // applying the same aliased coverage threshold. Skia's direct
-            // unhinted fallback path otherwise expands one-pixel strokes.
-            Some("none") if requested_edging.as_deref() == Some("alias") && !is_ahem => {
-                FontHinting::Slight
-            }
-            Some("none") => FontHinting::None,
-            Some("normal") => FontHinting::Normal,
-            Some("full") => FontHinting::Full,
-            _ => FontHinting::Slight,
+        let family_name = typeface.family_name();
+        let deterministic_aliased_face = [
+            "Ahem",
+            "Droid Sans Fallback",
+            "Noto Sans Devanagari",
+            "Noto Color Emoji",
+            "DejaVu Sans",
+        ]
+        .iter()
+        .any(|family| family_name.eq_ignore_ascii_case(family));
+        // The comparison Fontconfig profile disables antialiasing only for
+        // its explicitly pinned deterministic faces.  A CSS family outside
+        // that set (for example the monospace face used by ::first-line)
+        // still receives Chromium's ordinary LCD/subpixel raster policy.
+        let escapes_aliased_profile = !native_control_text
+            && !embedded_document_text
+            && raster_configuration.author_text.edging == TextEdging::Alias
+            && !deterministic_aliased_face;
+        let settings = if native_control_text {
+            raster_configuration.native_text
+        } else if embedded_document_text {
+            raster_configuration.embedded_text
+        } else if escapes_aliased_profile {
+            TextRasterConfiguration::chromium_lcd()
+        } else {
+            raster_configuration.author_text
         };
+        let subpixel = settings.subpixel_positioning && !native_button_text_metrics;
+        sk_font.set_subpixel(subpixel);
+        let hinting = resolve_hinting(
+            settings.hinting,
+            settings.edging,
+            family_name.as_str(),
+            physical_font_size(size, device_scale_factor),
+            device_scale_factor,
+        );
         sk_font.set_hinting(hinting);
         sk_font.set_linear_metrics(subpixel);
         sk_font.set_embedded_bitmaps(true);
-        match requested_edging.as_deref() {
-            Some("alias") => {
+        match settings.edging {
+            TextEdging::Alias => {
                 sk_font.set_edging(skia_safe::font::Edging::Alias);
             }
-            Some("subpixel") => {
+            TextEdging::SubpixelAntiAlias => {
                 sk_font.set_edging(skia_safe::font::Edging::SubpixelAntiAlias);
             }
-            Some("aa") => {
+            TextEdging::AntiAlias => {
                 sk_font.set_edging(skia_safe::font::Edging::AntiAlias);
             }
-            _ => {}
         }
-        if std::env::var("OPENUI_AUTOHINT").ok().as_deref() == Some("1") {
-            sk_font.set_force_auto_hinting(true);
-        }
+        sk_font.set_force_auto_hinting(settings.force_autohint);
 
         // Apply synthetic oblique via skew if angle is non-zero.
         if oblique_angle != 0.0 {
@@ -109,15 +314,28 @@ impl FontPlatformData {
         }
 
         let (_, sk_metrics) = sk_font.metrics();
-        let metrics = Self::convert_metrics(&sk_metrics, &typeface, &sk_font);
+        let mut metrics = Self::convert_metrics(&sk_metrics, &typeface, &sk_font);
+        if let Some(value) = configuration.metric_overrides.ascent {
+            metrics.ascent = value * size;
+        }
+        if let Some(value) = configuration.metric_overrides.descent {
+            metrics.descent = value * size;
+        }
+        if let Some(value) = configuration.metric_overrides.line_gap {
+            metrics.line_gap = value * size;
+        }
+        metrics.line_spacing = metrics.ascent + metrics.descent + metrics.line_gap;
+        let vertical_metrics = VerticalMetrics::from_typeface(&typeface);
 
         Self {
             typeface,
             sk_font,
             size,
             metrics,
+            vertical_metrics,
             synthetic_bold,
             synthetic_oblique_angle: oblique_angle,
+            feature_defaults: configuration.feature_defaults,
         }
     }
 
@@ -145,6 +363,38 @@ impl FontPlatformData {
         &self.metrics
     }
 
+    /// OpenType vertical advance for a glyph, falling back to one em for a
+    /// face without `vhea`/`vmtx` data.
+    pub fn vertical_advance(&self, glyph: GlyphId) -> f32 {
+        self.vertical_metrics
+            .as_ref()
+            .and_then(|metrics| {
+                metrics
+                    .advances
+                    .get(glyph as usize)
+                    .map(|advance| (*advance, metrics.units_per_em))
+            })
+            .map(|(advance, units_per_em)| advance as f32 * self.size / units_per_em)
+            .unwrap_or(self.size)
+    }
+
+    /// Baseline Y relative to a glyph's vertical advance cell.
+    ///
+    /// OpenType defines the vertical origin as glyph `yMax` plus the `vmtx`
+    /// top-side-bearing. Skia bounds use a downward-positive device axis, so
+    /// `-bounds.top` is the scaled `yMax` contribution.
+    pub fn vertical_origin_y(&self, glyph: GlyphId) -> f32 {
+        let Some(metrics) = &self.vertical_metrics else {
+            return self.metrics.ascent;
+        };
+        let Some(top_side_bearing) = metrics.top_side_bearings.get(glyph as usize) else {
+            return self.metrics.ascent;
+        };
+        let mut bounds = [Rect::default()];
+        self.sk_font.get_bounds(&[glyph], &mut bounds, None);
+        -bounds[0].top + *top_side_bearing as f32 * self.size / metrics.units_per_em
+    }
+
     /// Whether CSS requested a bold weight that the selected family lacked.
     #[inline]
     pub fn is_synthetic_bold(&self) -> bool {
@@ -156,6 +406,12 @@ impl FontPlatformData {
     #[inline]
     pub fn synthetic_oblique_angle(&self) -> f32 {
         self.synthetic_oblique_angle
+    }
+
+    /// Defaults supplied by the selected application face. CSS declarations
+    /// are appended after these values so author settings win by tag.
+    pub fn feature_defaults(&self) -> &[FontFeatureDefault] {
+        &self.feature_defaults
     }
 
     /// Convert Skia's `SkFontMetrics` to our `FontMetrics`.
@@ -244,6 +500,120 @@ impl std::fmt::Debug for FontPlatformData {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn aliased_ahem_hinting_tracks_computed_font_size() {
+        assert_eq!(
+            resolve_hinting(TextHinting::None, TextEdging::Alias, "Ahem", 8.0, 1.0),
+            FontHinting::Slight
+        );
+        assert_eq!(
+            resolve_hinting(TextHinting::None, TextEdging::Alias, "Ahem", 10.0, 1.0),
+            FontHinting::None
+        );
+        // An 8 CSS-pixel face at 2x selects the 16 physical-pixel strike; it
+        // must not take the special 8px grid-fit path.
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::None,
+                TextEdging::Alias,
+                "Ahem",
+                physical_font_size(8.0, 2.0),
+                2.0,
+            ),
+            FontHinting::None
+        );
+    }
+
+    #[test]
+    fn author_lcd_light_hinting_is_immutable_across_device_scales() {
+        for scale in [1.0, 1.25, 1.5, 2.0, 3.0] {
+            assert_eq!(
+                resolve_hinting(
+                    TextHinting::Slight,
+                    TextEdging::SubpixelAntiAlias,
+                    "DejaVu Sans Mono",
+                    16.0 * scale as f32,
+                    scale,
+                ),
+                FontHinting::Slight
+            );
+        }
+    }
+
+    #[test]
+    fn chromium_lcd_hinting_tracks_pinned_fontconfig_family_policy() {
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans",
+                20.0,
+                1.0,
+            ),
+            FontHinting::Slight
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans",
+                20.0,
+                1.25,
+            ),
+            FontHinting::None
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Serif",
+                20.0,
+                1.25,
+            ),
+            FontHinting::None
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans Mono",
+                20.0,
+                1.25,
+            ),
+            FontHinting::Slight
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans",
+                30.0,
+                1.25,
+            ),
+            FontHinting::None
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans",
+                24.0,
+                1.0,
+            ),
+            FontHinting::Slight
+        );
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "DejaVu Sans",
+                12.5,
+                1.25,
+            ),
+            FontHinting::None
+        );
+    }
 
     #[test]
     fn stretch_62_5_maps_to_extra_condensed() {

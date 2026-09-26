@@ -27,8 +27,13 @@ jobs:
 
       - name: Check tracked C and C++ formatting
         run: |
+          # Generated ABI/style headers are verified against their generators
+          # in python-accountability; formatting them here would make those
+          # byte-for-byte generator checks fail.
           find src include examples -type f \
             \( -name '*.cc' -o -name '*.h' -o -name '*.c' \) \
+            ! -path 'include/openui.h' \
+            ! -path 'include/openui_style_properties.h' \
             -print0 | sort -z | \
             xargs -0 --no-run-if-empty clang-format-18 --dry-run --Werror
 

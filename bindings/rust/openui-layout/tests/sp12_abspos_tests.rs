@@ -16,8 +16,8 @@ fn root_space(w: i32, h: i32) -> ConstraintSpace {
 
 fn setup_abs_child(doc: &mut Document, parent: openui_dom::NodeId) -> openui_dom::NodeId {
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.position = Position::Absolute;
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.position = Position::Absolute);
     doc.append_child(parent, child);
     child
 }
@@ -30,17 +30,17 @@ fn abs_top_left() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(50.0);
-    doc.node_mut(abs).style.left = Length::px(100.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(150.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(150.0));
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -62,17 +62,17 @@ fn abs_right_bottom() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.right = Length::px(50.0);
-    doc.node_mut(abs).style.bottom = Length::px(30.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(100.0);
+    doc.update_resolved_style(abs, |style| style.right = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.bottom = Length::px(30.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(100.0));
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -95,19 +95,19 @@ fn abs_centering_auto_margins() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.left = Length::px(0.0);
-    doc.node_mut(abs).style.right = Length::px(0.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(100.0);
-    doc.node_mut(abs).style.margin_left = Length::auto();
-    doc.node_mut(abs).style.margin_right = Length::auto();
+    doc.update_resolved_style(abs, |style| style.left = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(abs, |style| style.margin_right = Length::auto());
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -127,19 +127,19 @@ fn abs_vertical_centering_auto_margins() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(0.0);
-    doc.node_mut(abs).style.bottom = Length::px(0.0);
-    doc.node_mut(abs).style.height = Length::px(200.0);
-    doc.node_mut(abs).style.width = Length::px(100.0);
-    doc.node_mut(abs).style.margin_top = Length::auto();
-    doc.node_mut(abs).style.margin_bottom = Length::auto();
+    doc.update_resolved_style(abs, |style| style.top = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.bottom = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.margin_top = Length::auto());
+    doc.update_resolved_style(abs, |style| style.margin_bottom = Length::auto());
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -159,17 +159,17 @@ fn abs_overconstrained_ltr() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.left = Length::px(100.0);
-    doc.node_mut(abs).style.right = Length::px(100.0);
-    doc.node_mut(abs).style.width = Length::px(700.0);
-    doc.node_mut(abs).style.height = Length::px(50.0);
+    doc.update_resolved_style(abs, |style| style.left = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(700.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(50.0));
     // Over-constrained: 100 + 700 + 100 = 900 > 800
     // LTR: right is ignored, left wins.
 
@@ -190,19 +190,19 @@ fn abs_overconstrained_rtl() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
-    doc.node_mut(container).style.direction = Direction::Rtl;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
+    doc.update_resolved_style(container, |style| style.direction = Direction::Rtl);
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.left = Length::px(100.0);
-    doc.node_mut(abs).style.right = Length::px(100.0);
-    doc.node_mut(abs).style.width = Length::px(700.0);
-    doc.node_mut(abs).style.height = Length::px(50.0);
-    doc.node_mut(abs).style.direction = Direction::Rtl;
+    doc.update_resolved_style(abs, |style| style.left = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(700.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.direction = Direction::Rtl);
     // Over-constrained RTL: left is ignored, right wins.
     // new_left = 800 - 100 - 700 = 0
 
@@ -224,17 +224,17 @@ fn abs_auto_width() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.left = Length::px(50.0);
-    doc.node_mut(abs).style.right = Length::px(50.0);
+    doc.update_resolved_style(abs, |style| style.left = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(50.0));
     // width is auto → compute from constraint: 800 - 50 - 50 = 700
-    doc.node_mut(abs).style.height = Length::px(100.0);
+    doc.update_resolved_style(abs, |style| style.height = Length::px(100.0));
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -254,17 +254,17 @@ fn abs_auto_height() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(20.0);
-    doc.node_mut(abs).style.bottom = Length::px(30.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(20.0));
+    doc.update_resolved_style(abs, |style| style.bottom = Length::px(30.0));
     // height is auto → compute from constraint: 600 - 20 - 30 = 550
-    doc.node_mut(abs).style.width = Length::px(200.0);
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -283,17 +283,17 @@ fn abs_percentage_values() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(1000.0);
-    doc.node_mut(container).style.height = Length::px(800.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(1000.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(800.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::percent(10.0); // 10% of 800 = 80
-    doc.node_mut(abs).style.left = Length::percent(5.0); // 5% of 1000 = 50
-    doc.node_mut(abs).style.width = Length::percent(50.0); // 50% of 1000 = 500
-    doc.node_mut(abs).style.height = Length::percent(25.0); // 25% of 800 = 200
+    doc.update_resolved_style(abs, |style| style.top = Length::percent(10.0)); // 10% of 800 = 80
+    doc.update_resolved_style(abs, |style| style.left = Length::percent(5.0)); // 5% of 1000 = 50
+    doc.update_resolved_style(abs, |style| style.width = Length::percent(50.0)); // 50% of 1000 = 500
+    doc.update_resolved_style(abs, |style| style.height = Length::percent(25.0)); // 25% of 800 = 200
 
     let space = root_space(1000, 800);
     let fragment = block_layout(&doc, vp, &space);
@@ -314,18 +314,18 @@ fn fixed_positioning_basic() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let fixed = doc.create_node(ElementTag::Div);
-    doc.node_mut(fixed).style.display = Display::Block;
-    doc.node_mut(fixed).style.position = Position::Fixed;
-    doc.node_mut(fixed).style.top = Length::px(10.0);
-    doc.node_mut(fixed).style.left = Length::px(20.0);
-    doc.node_mut(fixed).style.width = Length::px(300.0);
-    doc.node_mut(fixed).style.height = Length::px(200.0);
+    doc.update_resolved_style(fixed, |style| style.display = Display::Block);
+    doc.update_resolved_style(fixed, |style| style.position = Position::Fixed);
+    doc.update_resolved_style(fixed, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(fixed, |style| style.left = Length::px(20.0));
+    doc.update_resolved_style(fixed, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(fixed, |style| style.height = Length::px(200.0));
     doc.append_child(container, fixed);
 
     let space = root_space(800, 600);
@@ -351,16 +351,16 @@ fn abs_static_position_fallback() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     // All insets auto → static position fallback
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.width = Length::px(100.0);
-    doc.node_mut(abs).style.height = Length::px(50.0);
+    doc.update_resolved_style(abs, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(50.0));
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -380,19 +380,19 @@ fn abs_all_sides_specified() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(50.0);
-    doc.node_mut(abs).style.right = Length::px(100.0);
-    doc.node_mut(abs).style.bottom = Length::px(100.0);
-    doc.node_mut(abs).style.left = Length::px(50.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(150.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.bottom = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(150.0));
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -415,17 +415,17 @@ fn abs_negative_offsets() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(-20.0);
-    doc.node_mut(abs).style.left = Length::px(-30.0);
-    doc.node_mut(abs).style.width = Length::px(100.0);
-    doc.node_mut(abs).style.height = Length::px(50.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(-20.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(-30.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(50.0));
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -445,27 +445,27 @@ fn abs_nested() {
 
     // Outer container is the initial containing block
     let outer = doc.create_node(ElementTag::Div);
-    doc.node_mut(outer).style.display = Display::Block;
-    doc.node_mut(outer).style.width = Length::px(800.0);
-    doc.node_mut(outer).style.height = Length::px(600.0);
-    doc.node_mut(outer).style.position = Position::Relative; // establishes CB
+    doc.update_resolved_style(outer, |style| style.display = Display::Block);
+    doc.update_resolved_style(outer, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(outer, |style| style.height = Length::px(600.0));
+    doc.update_resolved_style(outer, |style| style.position = Position::Relative); // establishes CB
     doc.append_child(vp, outer);
 
     // Absolute child inside outer
     let abs1 = setup_abs_child(&mut doc, outer);
-    doc.node_mut(abs1).style.top = Length::px(50.0);
-    doc.node_mut(abs1).style.left = Length::px(50.0);
-    doc.node_mut(abs1).style.width = Length::px(400.0);
-    doc.node_mut(abs1).style.height = Length::px(300.0);
+    doc.update_resolved_style(abs1, |style| style.top = Length::px(50.0));
+    doc.update_resolved_style(abs1, |style| style.left = Length::px(50.0));
+    doc.update_resolved_style(abs1, |style| style.width = Length::px(400.0));
+    doc.update_resolved_style(abs1, |style| style.height = Length::px(300.0));
 
     // Nested absolute inside abs1
     let abs2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(abs2).style.display = Display::Block;
-    doc.node_mut(abs2).style.position = Position::Absolute;
-    doc.node_mut(abs2).style.top = Length::px(10.0);
-    doc.node_mut(abs2).style.left = Length::px(20.0);
-    doc.node_mut(abs2).style.width = Length::px(100.0);
-    doc.node_mut(abs2).style.height = Length::px(80.0);
+    doc.update_resolved_style(abs2, |style| style.display = Display::Block);
+    doc.update_resolved_style(abs2, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(abs2, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(abs2, |style| style.left = Length::px(20.0));
+    doc.update_resolved_style(abs2, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(abs2, |style| style.height = Length::px(80.0));
     doc.append_child(abs1, abs2);
 
     let space = root_space(800, 600);
@@ -495,29 +495,29 @@ fn abs_mixed_with_normal_flow() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     // Normal flow child
     let normal = doc.create_node(ElementTag::Div);
-    doc.node_mut(normal).style.display = Display::Block;
-    doc.node_mut(normal).style.height = Length::px(100.0);
+    doc.update_resolved_style(normal, |style| style.display = Display::Block);
+    doc.update_resolved_style(normal, |style| style.height = Length::px(100.0));
     doc.append_child(container, normal);
 
     // Absolute child
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(200.0);
-    doc.node_mut(abs).style.left = Length::px(300.0);
-    doc.node_mut(abs).style.width = Length::px(150.0);
-    doc.node_mut(abs).style.height = Length::px(75.0);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(300.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(150.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(75.0));
 
     // Another normal flow child
     let normal2 = doc.create_node(ElementTag::Div);
-    doc.node_mut(normal2).style.display = Display::Block;
-    doc.node_mut(normal2).style.height = Length::px(50.0);
+    doc.update_resolved_style(normal2, |style| style.display = Display::Block);
+    doc.update_resolved_style(normal2, |style| style.height = Length::px(50.0));
     doc.append_child(container, normal2);
 
     let space = root_space(800, 600);
@@ -552,17 +552,17 @@ fn abs_auto_left_with_right_width() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
     // left is auto, right=100, width=200
-    doc.node_mut(abs).style.right = Length::px(100.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(50.0);
+    doc.update_resolved_style(abs, |style| style.right = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(50.0));
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -582,17 +582,17 @@ fn abs_auto_top_with_bottom_height() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
     // top is auto, bottom=50, height=200
-    doc.node_mut(abs).style.bottom = Length::px(50.0);
-    doc.node_mut(abs).style.height = Length::px(200.0);
-    doc.node_mut(abs).style.width = Length::px(100.0);
+    doc.update_resolved_style(abs, |style| style.bottom = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(100.0));
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -612,17 +612,17 @@ fn abs_display_none_excluded() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = doc.create_node(ElementTag::Div);
-    doc.node_mut(abs).style.display = Display::None;
-    doc.node_mut(abs).style.position = Position::Absolute;
-    doc.node_mut(abs).style.top = Length::px(10.0);
-    doc.node_mut(abs).style.left = Length::px(20.0);
+    doc.update_resolved_style(abs, |style| style.display = Display::None);
+    doc.update_resolved_style(abs, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(abs, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(20.0));
     doc.append_child(container, abs);
 
     let space = root_space(800, 600);
@@ -641,23 +641,23 @@ fn abs_with_border_padding() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.top = Length::px(10.0);
-    doc.node_mut(abs).style.left = Length::px(20.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(100.0);
-    doc.node_mut(abs).style.padding_top = Length::px(5.0);
-    doc.node_mut(abs).style.padding_left = Length::px(10.0);
-    doc.node_mut(abs).style.border_top_width = 2;
-    doc.node_mut(abs).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(abs).style.border_left_width = 3;
-    doc.node_mut(abs).style.border_left_style = BorderStyle::Solid;
+    doc.update_resolved_style(abs, |style| style.top = Length::px(10.0));
+    doc.update_resolved_style(abs, |style| style.left = Length::px(20.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(abs, |style| style.padding_top = Length::px(5.0));
+    doc.update_resolved_style(abs, |style| style.padding_left = Length::px(10.0));
+    doc.update_resolved_style(abs, |style| style.border_top_width = 2);
+    doc.update_resolved_style(abs, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(abs, |style| style.border_left_width = 3);
+    doc.update_resolved_style(abs, |style| style.border_left_style = BorderStyle::Solid);
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);
@@ -681,19 +681,19 @@ fn abs_auto_margin_left_absorbs() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.position = Position::Relative;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.height = Length::px(600.0);
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.position = Position::Relative);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.height = Length::px(600.0));
     doc.append_child(vp, container);
 
     let abs = setup_abs_child(&mut doc, container);
-    doc.node_mut(abs).style.left = Length::px(0.0);
-    doc.node_mut(abs).style.right = Length::px(0.0);
-    doc.node_mut(abs).style.width = Length::px(200.0);
-    doc.node_mut(abs).style.height = Length::px(50.0);
-    doc.node_mut(abs).style.margin_left = Length::auto();
-    doc.node_mut(abs).style.margin_right = Length::px(100.0);
+    doc.update_resolved_style(abs, |style| style.left = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.right = Length::px(0.0));
+    doc.update_resolved_style(abs, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(abs, |style| style.height = Length::px(50.0));
+    doc.update_resolved_style(abs, |style| style.margin_left = Length::auto());
+    doc.update_resolved_style(abs, |style| style.margin_right = Length::px(100.0));
 
     let space = root_space(800, 600);
     let fragment = block_layout(&doc, vp, &space);

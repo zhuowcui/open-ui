@@ -104,7 +104,11 @@ pub struct PositionedFloat {
 /// ```
 #[inline]
 pub fn compute_margin_box_inline_size(float: &UnpositionedFloat) -> LayoutUnit {
-    float.margins.left + float.inline_size + float.margins.right
+    // Negative margins may pull the border box outside its containing block,
+    // but an exclusion rectangle cannot have a negative measure. A fully
+    // cancelled margin box consumes zero inline opportunity while the border
+    // box retains its independently resolved (possibly protruding) position.
+    (float.margins.left + float.inline_size + float.margins.right).clamp_negative_to_zero()
 }
 
 /// Position a float within a block formatting context.
@@ -133,7 +137,7 @@ pub fn position_float(
     float: &UnpositionedFloat,
     exclusion_space: &ExclusionSpace,
 ) -> (PositionedFloat, ExclusionArea) {
-    let margin_inline_size = compute_margin_box_inline_size(float);
+    let signed_margin_inline_size = float.margins.left + float.inline_size + float.margins.right;
     let exclusion_type = if float.is_left {
         ExclusionType::Left
     } else {
@@ -143,11 +147,19 @@ pub fn position_float(
     // Find a layout opportunity wide enough for the float's placement rules.
     let placement_min_inline_size = float
         .placement_min_inline_size
-        .unwrap_or(margin_inline_size);
-    let opportunity = exclusion_space.find_layout_opportunity(
-        &float.origin_bfc_offset,
+        .unwrap_or(signed_margin_inline_size);
+    let ordered_origin = BfcOffset::new(
+        float.origin_bfc_offset.line_offset,
+        float
+            .origin_bfc_offset
+            .block_offset
+            .max_of(exclusion_space.last_float_block_start()),
+    );
+    let opportunity = exclusion_space.find_layout_opportunity_for_float(
+        &ordered_origin,
         float.available_size,
         placement_min_inline_size,
+        float.is_left,
     );
 
     // Resolve the float's border-box position within the opportunity.
@@ -218,7 +230,12 @@ fn resolve_float_position(
 /// `(opportunity_end, block_end)` for right floats.
 fn compute_exclusion_rect(float: &UnpositionedFloat, opportunity: &LayoutOpportunity) -> BfcRect {
     let margin_inline_size = compute_margin_box_inline_size(float);
-    let margin_block_size = float.margins.top + float.block_size + float.margins.bottom;
+    // As in the inline axis, negative margins may fully cancel the float's
+    // margin-box measure. Keep the border box at its resolved negative visual
+    // offset, but represent its exclusion as a zero-height rectangle rather
+    // than constructing an inverted BFC rectangle.
+    let margin_block_size =
+        (float.margins.top + float.block_size + float.margins.bottom).clamp_negative_to_zero();
 
     let opp_block_start = opportunity.rect.block_start_offset();
 
@@ -309,6 +326,69 @@ mod tests {
         );
         // 10 (left) + 200 + 20 (right) = 230
         assert_eq!(compute_margin_box_inline_size(&f), lu(230));
+    }
+
+    #[test]
+    fn negative_margin_box_inline_size_clamps_to_zero() {
+        let f = make_float_with_margins(
+            60,
+            20,
+            false,
+            280,
+            BoxStrut::new(lu(0), lu(-100), lu(0), lu(0)),
+        );
+        assert_eq!(compute_margin_box_inline_size(&f), LayoutUnit::zero());
+    }
+
+    #[test]
+    fn signed_negative_margin_box_still_participates_in_float_placement() {
+        let mut space = ExclusionSpace::new();
+        space.add(ExclusionArea {
+            rect: BfcRect::new(
+                BfcOffset::new(lu(0), lu(0)),
+                BfcOffset::new(lu(150), lu(100)),
+            ),
+            exclusion_type: ExclusionType::Left,
+        });
+        let float = make_float_with_margins(
+            50,
+            100,
+            true,
+            100,
+            BoxStrut::new(lu(0), lu(0), lu(0), lu(-150)),
+        );
+
+        let (positioned, exclusion) = position_float(&float, &space);
+        assert_eq!(positioned.bfc_offset, BfcOffset::new(lu(0), lu(0)));
+        assert_eq!(exclusion.rect.inline_size(), LayoutUnit::zero());
+    }
+
+    #[test]
+    fn negative_margin_box_block_size_clamps_to_zero() {
+        let space = ExclusionSpace::new();
+        let float = make_float_with_margins(
+            50,
+            50,
+            true,
+            100,
+            BoxStrut::new(lu(-100), lu(0), lu(0), lu(0)),
+        );
+
+        let (positioned, exclusion) = position_float(&float, &space);
+        assert_eq!(positioned.bfc_offset.block_offset, lu(-100));
+        assert_eq!(exclusion.rect.block_size(), LayoutUnit::zero());
+    }
+
+    #[test]
+    fn later_float_cannot_start_above_prior_opposite_side_float() {
+        let mut space = ExclusionSpace::new();
+        let prior = make_float(40, 20, false, 100, 0, 50);
+        let (_, exclusion) = position_float(&prior, &space);
+        space.add(exclusion);
+
+        let later = make_float(50, 50, true, 100, 0, 30);
+        let (positioned, _) = position_float(&later, &space);
+        assert_eq!(positioned.bfc_offset.block_offset, lu(50));
     }
 
     // ── position_float: left float in empty space ────────────────────

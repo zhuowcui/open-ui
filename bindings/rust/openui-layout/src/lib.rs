@@ -5,16 +5,19 @@
 pub mod bfc_resolution;
 pub mod block;
 mod constraint_space;
+mod containment;
 pub mod css_sizing;
 pub mod exclusions;
 pub mod flex;
 mod fragment;
 pub mod fragmentation;
+pub mod grid;
 pub mod inflow_position;
 pub mod inline;
 pub mod intrinsic_sizing;
 pub mod layout_result;
 pub(crate) mod length_resolver;
+pub mod logical_geometry;
 pub mod margin_collapsing;
 pub mod multicol;
 pub mod new_formatting_context;
@@ -23,6 +26,7 @@ pub mod relative;
 pub mod ruby;
 pub mod size_constraints;
 pub mod sticky;
+pub mod table;
 
 pub use crate::inline::algorithm::inline_layout;
 pub use crate::inline::algorithm::{apply_inline_fragmentation, resume_inline_from_break_token};
@@ -36,10 +40,13 @@ pub use css_sizing::{
 };
 pub use exclusions::ExclusionSpace;
 pub use flex::flex_layout;
-pub use fragment::{Fragment, FragmentKind};
+pub use fragment::{
+    resolve_text_run_orientation, DecorationSlice, Fragment, FragmentKind, TextRunOrientation,
+};
 pub use fragmentation::{
     BlockBreakToken, BreakAppeal, BreakToken, FragmentainerSpace, InlineBreakToken,
 };
+pub use grid::grid_layout;
 pub use inflow_position::{InflowChildData, PreviousInflowPosition};
 pub use intrinsic_sizing::{
     compute_block_size_from_content, compute_intrinsic_block_sizes, compute_intrinsic_inline_sizes,
@@ -47,9 +54,13 @@ pub use intrinsic_sizing::{
 };
 pub use layout_result::{AdjoiningObjectTypes, BreakBetween, LayoutResult, LayoutStatus};
 pub use length_resolver::resolve_length;
+pub use logical_geometry::{
+    block_child_constraint_space, flex_child_constraint_space, LogicalLengthSides,
+    LogicalSizeLengths, ResolvedLogicalBox,
+};
 pub use multicol::{layout_columns, resolve_column_count_and_width};
 pub use new_formatting_context::{creates_new_formatting_context, layout_new_formatting_context};
-pub use out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate};
+pub use out_of_flow::{layout_out_of_flow_children, OutOfFlowCandidate, StaticPositionEdge};
 pub use relative::apply_relative_offset;
 pub use ruby::{clamp_overhang, compute_ruby_layout, max_ruby_overhang, RubyInfo, RubyLayout};
 pub use size_constraints::{
@@ -57,3 +68,4 @@ pub use size_constraints::{
     resolve_inline_size, resolve_size_constraints, SizeConstraint,
 };
 pub use sticky::{apply_sticky_offset, compute_sticky_offset, StickyPositionData};
+pub use table::table_layout;

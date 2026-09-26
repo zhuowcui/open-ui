@@ -1,0 +1,20 @@
+[
+  "wpt/css_flexbox/abspos_abspos-autopos-htb-ltr",
+  "wpt/css_flexbox/abspos_abspos-autopos-htb-rtl",
+  "wpt/css_flexbox/abspos_abspos-autopos-vlr-ltr",
+  "wpt/css_flexbox/abspos_abspos-autopos-vlr-rtl",
+  "wpt/css_flexbox/abspos_abspos-autopos-vrl-ltr",
+  "wpt/css_flexbox/abspos_abspos-autopos-vrl-rtl",
+  "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-001",
+  "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-001-ref",
+  "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-002",
+  "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-002-ref",
+  "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-003",
+  "wpt/css_flexbox/abspos_flex-abspos-staticpos-align-self-safe-003-ref",
+  "wpt/css_flexbox/flexbox-safe-overflow-position-001",
+  "wpt/css_flexbox/flexbox-safe-overflow-position-001-ref",
+  "wpt/css_flexbox/flexbox-safe-overflow-position-002",
+  "wpt/css_flexbox/flexbox-safe-overflow-position-003",
+  "wpt/css_flexbox/flexbox-safe-overflow-position-004",
+  "wpt/css_flexbox/flexbox-safe-overflow-position-005"
+]

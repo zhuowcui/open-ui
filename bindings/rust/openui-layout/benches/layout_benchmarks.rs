@@ -21,7 +21,7 @@ fn root_space() -> ConstraintSpace {
 /// Create a block child, set its display to Block, and append it to `parent`.
 fn add_block(doc: &mut Document, parent: NodeId) -> NodeId {
     let id = doc.create_node(ElementTag::Div);
-    doc.node_mut(id).style.display = Display::Block;
+    doc.update_resolved_style(id, |style| style.display = Display::Block);
     doc.append_child(parent, id);
     id
 }
@@ -29,15 +29,15 @@ fn add_block(doc: &mut Document, parent: NodeId) -> NodeId {
 /// Create a sized block child and append it to `parent`.
 fn add_sized_block(doc: &mut Document, parent: NodeId, w: f32, h: f32) -> NodeId {
     let id = add_block(doc, parent);
-    doc.node_mut(id).style.width = Length::px(w);
-    doc.node_mut(id).style.height = Length::px(h);
+    doc.update_resolved_style(id, |style| style.width = Length::px(w));
+    doc.update_resolved_style(id, |style| style.height = Length::px(h));
     id
 }
 
 /// Create an inline span child and append it to `parent`.
 fn add_inline(doc: &mut Document, parent: NodeId) -> NodeId {
     let id = doc.create_node(ElementTag::Span);
-    doc.node_mut(id).style.display = Display::Inline;
+    doc.update_resolved_style(id, |style| style.display = Display::Inline);
     doc.append_child(parent, id);
     id
 }
@@ -45,7 +45,7 @@ fn add_inline(doc: &mut Document, parent: NodeId) -> NodeId {
 /// Create a text node and append it to `parent`.
 fn add_text(doc: &mut Document, parent: NodeId, text: &str) -> NodeId {
     let id = doc.create_node(ElementTag::Text);
-    doc.node_mut(id).style.display = Display::Inline;
+    doc.update_resolved_style(id, |style| style.display = Display::Inline);
     doc.node_mut(id).text = Some(text.to_string());
     doc.append_child(parent, id);
     id
@@ -158,8 +158,8 @@ fn bench_margin_collapsing(c: &mut Criterion) {
                 let vp = doc.root();
                 for _ in 0..20 {
                     let id = add_sized_block(&mut doc, vp, 300.0, 40.0);
-                    doc.node_mut(id).style.margin_top = Length::px(20.0);
-                    doc.node_mut(id).style.margin_bottom = Length::px(15.0);
+                    doc.update_resolved_style(id, |style| style.margin_top = Length::px(20.0));
+                    doc.update_resolved_style(id, |style| style.margin_bottom = Length::px(15.0));
                 }
                 doc
             },
@@ -183,24 +183,24 @@ fn bench_mixed_sizing(c: &mut Criterion) {
 
                 // Percentage width
                 let pct = add_block(&mut doc, vp);
-                doc.node_mut(pct).style.width = Length::percent(50.0);
-                doc.node_mut(pct).style.height = Length::px(50.0);
+                doc.update_resolved_style(pct, |style| style.width = Length::percent(50.0));
+                doc.update_resolved_style(pct, |style| style.height = Length::px(50.0));
 
                 // Auto width (default)
                 let auto = add_block(&mut doc, vp);
-                doc.node_mut(auto).style.height = Length::px(50.0);
+                doc.update_resolved_style(auto, |style| style.height = Length::px(50.0));
 
                 // Min/max constrained
                 let mm = add_block(&mut doc, vp);
-                doc.node_mut(mm).style.width = Length::percent(80.0);
-                doc.node_mut(mm).style.min_width = Length::px(100.0);
-                doc.node_mut(mm).style.max_width = Length::px(400.0);
-                doc.node_mut(mm).style.height = Length::px(50.0);
+                doc.update_resolved_style(mm, |style| style.width = Length::percent(80.0));
+                doc.update_resolved_style(mm, |style| style.min_width = Length::px(100.0));
+                doc.update_resolved_style(mm, |style| style.max_width = Length::px(400.0));
+                doc.update_resolved_style(mm, |style| style.height = Length::px(50.0));
 
                 // Another percentage
                 let pct2 = add_block(&mut doc, vp);
-                doc.node_mut(pct2).style.width = Length::percent(75.0);
-                doc.node_mut(pct2).style.height = Length::px(50.0);
+                doc.update_resolved_style(pct2, |style| style.width = Length::percent(75.0));
+                doc.update_resolved_style(pct2, |style| style.height = Length::px(50.0));
 
                 doc
             },
@@ -223,11 +223,11 @@ fn bench_float_left_simple(c: &mut Criterion) {
                 let mut doc = Document::new();
                 let vp = doc.root();
                 // Overflow hidden on root to establish BFC for floats
-                doc.node_mut(vp).style.overflow_x = Overflow::Hidden;
-                doc.node_mut(vp).style.overflow_y = Overflow::Hidden;
+                doc.update_resolved_style(vp, |style| style.overflow_x = Overflow::Hidden);
+                doc.update_resolved_style(vp, |style| style.overflow_y = Overflow::Hidden);
                 for _ in 0..5 {
                     let id = add_sized_block(&mut doc, vp, 100.0, 80.0);
-                    doc.node_mut(id).style.float = Float::Left;
+                    doc.update_resolved_style(id, |style| style.float = Float::Left);
                 }
                 doc
             },
@@ -245,13 +245,13 @@ fn bench_float_text_wrap(c: &mut Criterion) {
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
-                doc.node_mut(vp).style.overflow_x = Overflow::Hidden;
-                doc.node_mut(vp).style.overflow_y = Overflow::Hidden;
+                doc.update_resolved_style(vp, |style| style.overflow_x = Overflow::Hidden);
+                doc.update_resolved_style(vp, |style| style.overflow_y = Overflow::Hidden);
 
                 // Left-floated image-like box
                 let float_box = add_sized_block(&mut doc, vp, 150.0, 150.0);
-                doc.node_mut(float_box).style.float = Float::Left;
-                doc.node_mut(float_box).style.margin_right = Length::px(10.0);
+                doc.update_resolved_style(float_box, |style| style.float = Float::Left);
+                doc.update_resolved_style(float_box, |style| style.margin_right = Length::px(10.0));
 
                 // Paragraph that wraps around the float
                 let para = add_block(&mut doc, vp);
@@ -279,17 +279,19 @@ fn bench_float_complex(c: &mut Criterion) {
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
-                doc.node_mut(vp).style.overflow_x = Overflow::Hidden;
-                doc.node_mut(vp).style.overflow_y = Overflow::Hidden;
+                doc.update_resolved_style(vp, |style| style.overflow_x = Overflow::Hidden);
+                doc.update_resolved_style(vp, |style| style.overflow_y = Overflow::Hidden);
                 for i in 0..20 {
                     let id = add_sized_block(&mut doc, vp, 80.0, 60.0);
-                    doc.node_mut(id).style.float = if i % 2 == 0 {
-                        Float::Left
-                    } else {
-                        Float::Right
-                    };
-                    doc.node_mut(id).style.margin_top = Length::px(5.0);
-                    doc.node_mut(id).style.margin_bottom = Length::px(5.0);
+                    doc.update_resolved_style(id, |style| {
+                        style.float = if i % 2 == 0 {
+                            Float::Left
+                        } else {
+                            Float::Right
+                        }
+                    });
+                    doc.update_resolved_style(id, |style| style.margin_top = Length::px(5.0));
+                    doc.update_resolved_style(id, |style| style.margin_bottom = Length::px(5.0));
                 }
                 doc
             },
@@ -314,15 +316,15 @@ fn bench_absolute_positioning(c: &mut Criterion) {
 
                 // Containing block with position: relative
                 let container = add_sized_block(&mut doc, vp, 600.0, 400.0);
-                doc.node_mut(container).style.position = Position::Relative;
+                doc.update_resolved_style(container, |style| style.position = Position::Relative);
 
                 for i in 0..10 {
                     let id = add_block(&mut doc, container);
-                    doc.node_mut(id).style.position = Position::Absolute;
-                    doc.node_mut(id).style.width = Length::px(80.0);
-                    doc.node_mut(id).style.height = Length::px(60.0);
-                    doc.node_mut(id).style.top = Length::px(i as f32 * 40.0);
-                    doc.node_mut(id).style.left = Length::px(i as f32 * 50.0);
+                    doc.update_resolved_style(id, |style| style.position = Position::Absolute);
+                    doc.update_resolved_style(id, |style| style.width = Length::px(80.0));
+                    doc.update_resolved_style(id, |style| style.height = Length::px(60.0));
+                    doc.update_resolved_style(id, |style| style.top = Length::px(i as f32 * 40.0));
+                    doc.update_resolved_style(id, |style| style.left = Length::px(i as f32 * 50.0));
                 }
                 doc
             },
@@ -342,9 +344,13 @@ fn bench_relative_offsets(c: &mut Criterion) {
                 let vp = doc.root();
                 for i in 0..20 {
                     let id = add_sized_block(&mut doc, vp, 200.0, 30.0);
-                    doc.node_mut(id).style.position = Position::Relative;
-                    doc.node_mut(id).style.top = Length::px(((i % 5) as f32) * 2.0);
-                    doc.node_mut(id).style.left = Length::px(((i % 3) as f32) * 5.0);
+                    doc.update_resolved_style(id, |style| style.position = Position::Relative);
+                    doc.update_resolved_style(id, |style| {
+                        style.top = Length::px(((i % 5) as f32) * 2.0)
+                    });
+                    doc.update_resolved_style(id, |style| {
+                        style.left = Length::px(((i % 3) as f32) * 5.0)
+                    });
                 }
                 doc
             },
@@ -366,36 +372,38 @@ fn bench_blog_layout(c: &mut Criterion) {
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
-                doc.node_mut(vp).style.overflow_x = Overflow::Hidden;
-                doc.node_mut(vp).style.overflow_y = Overflow::Hidden;
+                doc.update_resolved_style(vp, |style| style.overflow_x = Overflow::Hidden);
+                doc.update_resolved_style(vp, |style| style.overflow_y = Overflow::Hidden);
 
                 // Header
                 let header = add_sized_block(&mut doc, vp, 800.0, 60.0);
-                doc.node_mut(header).style.background_color = Color::from_rgba8(51, 51, 51, 255);
+                doc.update_resolved_style(header, |style| {
+                    style.background_color = Color::from_rgba8(51, 51, 51, 255)
+                });
 
                 // Main wrapper
                 let main = add_block(&mut doc, vp);
-                doc.node_mut(main).style.width = Length::px(800.0);
+                doc.update_resolved_style(main, |style| style.width = Length::px(800.0));
 
                 // Sidebar (floated left)
                 let sidebar = add_sized_block(&mut doc, main, 200.0, 500.0);
-                doc.node_mut(sidebar).style.float = Float::Left;
-                doc.node_mut(sidebar).style.margin_right = Length::px(20.0);
+                doc.update_resolved_style(sidebar, |style| style.float = Float::Left);
+                doc.update_resolved_style(sidebar, |style| style.margin_right = Length::px(20.0));
 
                 // Add sidebar items
                 for _ in 0..5 {
                     let item = add_sized_block(&mut doc, sidebar, 180.0, 40.0);
-                    doc.node_mut(item).style.margin_bottom = Length::px(10.0);
+                    doc.update_resolved_style(item, |style| style.margin_bottom = Length::px(10.0));
                 }
 
                 // Content area
                 let content = add_block(&mut doc, main);
-                doc.node_mut(content).style.margin_left = Length::px(220.0);
+                doc.update_resolved_style(content, |style| style.margin_left = Length::px(220.0));
 
                 // Article paragraphs
                 for _ in 0..8 {
                     let para = add_block(&mut doc, content);
-                    doc.node_mut(para).style.margin_bottom = Length::px(16.0);
+                    doc.update_resolved_style(para, |style| style.margin_bottom = Length::px(16.0));
                     add_text(
                         &mut doc,
                         para,
@@ -406,8 +414,10 @@ fn bench_blog_layout(c: &mut Criterion) {
 
                 // Footer
                 let footer = add_sized_block(&mut doc, vp, 800.0, 40.0);
-                doc.node_mut(footer).style.margin_top = Length::px(20.0);
-                doc.node_mut(footer).style.background_color = Color::from_rgba8(51, 51, 51, 255);
+                doc.update_resolved_style(footer, |style| style.margin_top = Length::px(20.0));
+                doc.update_resolved_style(footer, |style| {
+                    style.background_color = Color::from_rgba8(51, 51, 51, 255)
+                });
 
                 doc
             },
@@ -427,17 +437,17 @@ fn bench_form_layout(c: &mut Criterion) {
                 let vp = doc.root();
 
                 let form = add_block(&mut doc, vp);
-                doc.node_mut(form).style.width = Length::px(400.0);
-                doc.node_mut(form).style.padding_top = Length::px(20.0);
-                doc.node_mut(form).style.padding_right = Length::px(20.0);
-                doc.node_mut(form).style.padding_bottom = Length::px(20.0);
-                doc.node_mut(form).style.padding_left = Length::px(20.0);
+                doc.update_resolved_style(form, |style| style.width = Length::px(400.0));
+                doc.update_resolved_style(form, |style| style.padding_top = Length::px(20.0));
+                doc.update_resolved_style(form, |style| style.padding_right = Length::px(20.0));
+                doc.update_resolved_style(form, |style| style.padding_bottom = Length::px(20.0));
+                doc.update_resolved_style(form, |style| style.padding_left = Length::px(20.0));
 
                 // 10 labeled input rows
                 for _ in 0..10 {
                     let row = add_block(&mut doc, form);
-                    doc.node_mut(row).style.margin_bottom = Length::px(12.0);
-                    doc.node_mut(row).style.height = Length::px(30.0);
+                    doc.update_resolved_style(row, |style| style.margin_bottom = Length::px(12.0));
+                    doc.update_resolved_style(row, |style| style.height = Length::px(30.0));
 
                     // Label (inline)
                     let label = add_inline(&mut doc, row);
@@ -445,20 +455,28 @@ fn bench_form_layout(c: &mut Criterion) {
 
                     // Input-like box
                     let input = add_sized_block(&mut doc, row, 250.0, 28.0);
-                    doc.node_mut(input).style.border_top_width = 1;
-                    doc.node_mut(input).style.border_right_width = 1;
-                    doc.node_mut(input).style.border_bottom_width = 1;
-                    doc.node_mut(input).style.border_left_width = 1;
-                    doc.node_mut(input).style.border_top_style = BorderStyle::Solid;
-                    doc.node_mut(input).style.border_right_style = BorderStyle::Solid;
-                    doc.node_mut(input).style.border_bottom_style = BorderStyle::Solid;
-                    doc.node_mut(input).style.border_left_style = BorderStyle::Solid;
+                    doc.update_resolved_style(input, |style| style.border_top_width = 1);
+                    doc.update_resolved_style(input, |style| style.border_right_width = 1);
+                    doc.update_resolved_style(input, |style| style.border_bottom_width = 1);
+                    doc.update_resolved_style(input, |style| style.border_left_width = 1);
+                    doc.update_resolved_style(input, |style| {
+                        style.border_top_style = BorderStyle::Solid
+                    });
+                    doc.update_resolved_style(input, |style| {
+                        style.border_right_style = BorderStyle::Solid
+                    });
+                    doc.update_resolved_style(input, |style| {
+                        style.border_bottom_style = BorderStyle::Solid
+                    });
+                    doc.update_resolved_style(input, |style| {
+                        style.border_left_style = BorderStyle::Solid
+                    });
                 }
 
                 // Submit button
                 let btn = add_sized_block(&mut doc, form, 120.0, 36.0);
-                doc.node_mut(btn).style.margin_top = Length::px(16.0);
-                doc.node_mut(btn).style.background_color = Color::BLUE;
+                doc.update_resolved_style(btn, |style| style.margin_top = Length::px(16.0));
+                doc.update_resolved_style(btn, |style| style.background_color = Color::BLUE);
 
                 doc
             },
@@ -476,30 +494,39 @@ fn bench_grid_of_cards(c: &mut Criterion) {
             || {
                 let mut doc = Document::new();
                 let vp = doc.root();
-                doc.node_mut(vp).style.overflow_x = Overflow::Hidden;
-                doc.node_mut(vp).style.overflow_y = Overflow::Hidden;
+                doc.update_resolved_style(vp, |style| style.overflow_x = Overflow::Hidden);
+                doc.update_resolved_style(vp, |style| style.overflow_y = Overflow::Hidden);
 
                 let container = add_block(&mut doc, vp);
-                doc.node_mut(container).style.width = Length::px(800.0);
+                doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
 
                 // 4x4 grid using floated cards
                 for _ in 0..16 {
                     let card = add_sized_block(&mut doc, container, 180.0, 240.0);
-                    doc.node_mut(card).style.float = Float::Left;
-                    doc.node_mut(card).style.margin_right = Length::px(10.0);
-                    doc.node_mut(card).style.margin_bottom = Length::px(10.0);
+                    doc.update_resolved_style(card, |style| style.float = Float::Left);
+                    doc.update_resolved_style(card, |style| style.margin_right = Length::px(10.0));
+                    doc.update_resolved_style(card, |style| style.margin_bottom = Length::px(10.0));
 
                     // Card header
                     let card_header = add_sized_block(&mut doc, card, 180.0, 40.0);
-                    doc.node_mut(card_header).style.background_color =
-                        Color::from_rgba8(0, 120, 215, 255);
+                    doc.update_resolved_style(card_header, |style| {
+                        style.background_color = Color::from_rgba8(0, 120, 215, 255)
+                    });
 
                     // Card body text
                     let card_body = add_block(&mut doc, card);
-                    doc.node_mut(card_body).style.padding_top = Length::px(8.0);
-                    doc.node_mut(card_body).style.padding_right = Length::px(8.0);
-                    doc.node_mut(card_body).style.padding_bottom = Length::px(8.0);
-                    doc.node_mut(card_body).style.padding_left = Length::px(8.0);
+                    doc.update_resolved_style(card_body, |style| {
+                        style.padding_top = Length::px(8.0)
+                    });
+                    doc.update_resolved_style(card_body, |style| {
+                        style.padding_right = Length::px(8.0)
+                    });
+                    doc.update_resolved_style(card_body, |style| {
+                        style.padding_bottom = Length::px(8.0)
+                    });
+                    doc.update_resolved_style(card_body, |style| {
+                        style.padding_left = Length::px(8.0)
+                    });
                     add_text(
                         &mut doc,
                         card_body,
@@ -532,15 +559,15 @@ fn bench_flex_row_5_items(c: &mut Criterion) {
                 let vp = doc.root();
 
                 let flex = add_block(&mut doc, vp);
-                doc.node_mut(flex).style.display = Display::Flex;
-                doc.node_mut(flex).style.flex_direction = FlexDirection::Row;
-                doc.node_mut(flex).style.width = Length::px(600.0);
-                doc.node_mut(flex).style.height = Length::px(100.0);
+                doc.update_resolved_style(flex, |style| style.display = Display::Flex);
+                doc.update_resolved_style(flex, |style| style.flex_direction = FlexDirection::Row);
+                doc.update_resolved_style(flex, |style| style.width = Length::px(600.0));
+                doc.update_resolved_style(flex, |style| style.height = Length::px(100.0));
 
                 for _ in 0..5 {
                     let item = add_block(&mut doc, flex);
-                    doc.node_mut(item).style.flex_grow = 1.0;
-                    doc.node_mut(item).style.height = Length::px(80.0);
+                    doc.update_resolved_style(item, |style| style.flex_grow = 1.0);
+                    doc.update_resolved_style(item, |style| style.height = Length::px(80.0));
                 }
 
                 doc
@@ -561,15 +588,17 @@ fn bench_flex_column_10_items(c: &mut Criterion) {
                 let vp = doc.root();
 
                 let flex = add_block(&mut doc, vp);
-                doc.node_mut(flex).style.display = Display::Flex;
-                doc.node_mut(flex).style.flex_direction = FlexDirection::Column;
-                doc.node_mut(flex).style.width = Length::px(400.0);
-                doc.node_mut(flex).style.height = Length::px(600.0);
+                doc.update_resolved_style(flex, |style| style.display = Display::Flex);
+                doc.update_resolved_style(flex, |style| {
+                    style.flex_direction = FlexDirection::Column
+                });
+                doc.update_resolved_style(flex, |style| style.width = Length::px(400.0));
+                doc.update_resolved_style(flex, |style| style.height = Length::px(600.0));
 
                 for _ in 0..10 {
                     let item = add_block(&mut doc, flex);
-                    doc.node_mut(item).style.flex_grow = 1.0;
-                    doc.node_mut(item).style.width = Length::px(380.0);
+                    doc.update_resolved_style(item, |style| style.flex_grow = 1.0);
+                    doc.update_resolved_style(item, |style| style.width = Length::px(380.0));
                 }
 
                 doc
@@ -590,17 +619,17 @@ fn bench_flex_wrap_20_items(c: &mut Criterion) {
                 let vp = doc.root();
 
                 let flex = add_block(&mut doc, vp);
-                doc.node_mut(flex).style.display = Display::Flex;
-                doc.node_mut(flex).style.flex_direction = FlexDirection::Row;
-                doc.node_mut(flex).style.flex_wrap = FlexWrap::Wrap;
-                doc.node_mut(flex).style.width = Length::px(500.0);
+                doc.update_resolved_style(flex, |style| style.display = Display::Flex);
+                doc.update_resolved_style(flex, |style| style.flex_direction = FlexDirection::Row);
+                doc.update_resolved_style(flex, |style| style.flex_wrap = FlexWrap::Wrap);
+                doc.update_resolved_style(flex, |style| style.width = Length::px(500.0));
 
                 for _ in 0..20 {
                     let item = add_block(&mut doc, flex);
-                    doc.node_mut(item).style.width = Length::px(120.0);
-                    doc.node_mut(item).style.height = Length::px(80.0);
-                    doc.node_mut(item).style.margin_right = Length::px(5.0);
-                    doc.node_mut(item).style.margin_bottom = Length::px(5.0);
+                    doc.update_resolved_style(item, |style| style.width = Length::px(120.0));
+                    doc.update_resolved_style(item, |style| style.height = Length::px(80.0));
+                    doc.update_resolved_style(item, |style| style.margin_right = Length::px(5.0));
+                    doc.update_resolved_style(item, |style| style.margin_bottom = Length::px(5.0));
                 }
 
                 doc
@@ -625,7 +654,7 @@ fn bench_inline_short_text(c: &mut Criterion) {
                 let vp = doc.root();
 
                 let para = add_block(&mut doc, vp);
-                doc.node_mut(para).style.width = Length::px(400.0);
+                doc.update_resolved_style(para, |style| style.width = Length::px(400.0));
                 add_text(&mut doc, para, "Hello, world!");
 
                 doc
@@ -646,7 +675,7 @@ fn bench_inline_long_paragraph(c: &mut Criterion) {
                 let vp = doc.root();
 
                 let para = add_block(&mut doc, vp);
-                doc.node_mut(para).style.width = Length::px(600.0);
+                doc.update_resolved_style(para, |style| style.width = Length::px(600.0));
                 add_text(
                     &mut doc,
                     para,
@@ -677,12 +706,14 @@ fn bench_inline_mixed_spans(c: &mut Criterion) {
                 let vp = doc.root();
 
                 let para = add_block(&mut doc, vp);
-                doc.node_mut(para).style.width = Length::px(500.0);
+                doc.update_resolved_style(para, |style| style.width = Length::px(500.0));
 
                 for i in 0..10 {
                     let span = add_inline(&mut doc, para);
                     if i % 3 == 0 {
-                        doc.node_mut(span).style.font_weight = FontWeight::BOLD;
+                        doc.update_resolved_style(span, |style| {
+                            style.font_weight = FontWeight::BOLD
+                        });
                     }
                     add_text(&mut doc, span, "Inline span content. ");
                 }
@@ -713,10 +744,12 @@ fn bench_sizing_min_content_nested(c: &mut Criterion) {
                 let mut parent = vp;
                 for _ in 0..5 {
                     let child = add_block(&mut doc, parent);
-                    doc.node_mut(child).style.padding_top = Length::px(4.0);
-                    doc.node_mut(child).style.padding_right = Length::px(4.0);
-                    doc.node_mut(child).style.padding_bottom = Length::px(4.0);
-                    doc.node_mut(child).style.padding_left = Length::px(4.0);
+                    doc.update_resolved_style(child, |style| style.padding_top = Length::px(4.0));
+                    doc.update_resolved_style(child, |style| style.padding_right = Length::px(4.0));
+                    doc.update_resolved_style(child, |style| {
+                        style.padding_bottom = Length::px(4.0)
+                    });
+                    doc.update_resolved_style(child, |style| style.padding_left = Length::px(4.0));
                     parent = child;
                 }
                 add_text(
@@ -771,12 +804,12 @@ fn bench_sizing_min_max_constraints(c: &mut Criterion) {
                 let vp = doc.root();
 
                 let block = add_block(&mut doc, vp);
-                doc.node_mut(block).style.width = Length::percent(50.0);
-                doc.node_mut(block).style.min_width = Length::px(200.0);
-                doc.node_mut(block).style.max_width = Length::px(500.0);
-                doc.node_mut(block).style.height = Length::percent(40.0);
-                doc.node_mut(block).style.min_height = Length::px(100.0);
-                doc.node_mut(block).style.max_height = Length::px(300.0);
+                doc.update_resolved_style(block, |style| style.width = Length::percent(50.0));
+                doc.update_resolved_style(block, |style| style.min_width = Length::px(200.0));
+                doc.update_resolved_style(block, |style| style.max_width = Length::px(500.0));
+                doc.update_resolved_style(block, |style| style.height = Length::percent(40.0));
+                doc.update_resolved_style(block, |style| style.min_height = Length::px(100.0));
+                doc.update_resolved_style(block, |style| style.max_height = Length::px(300.0));
                 add_text(
                     &mut doc,
                     block,
@@ -806,13 +839,13 @@ fn bench_multicol_3_columns_20_blocks(c: &mut Criterion) {
                 let vp = doc.root();
 
                 let multicol = add_block(&mut doc, vp);
-                doc.node_mut(multicol).style.width = Length::px(600.0);
-                doc.node_mut(multicol).style.column_count = Some(3);
+                doc.update_resolved_style(multicol, |style| style.width = Length::px(600.0));
+                doc.update_resolved_style(multicol, |style| style.column_count = Some(3));
 
                 for _ in 0..20 {
                     let child = add_block(&mut doc, multicol);
-                    doc.node_mut(child).style.height = Length::px(30.0);
-                    doc.node_mut(child).style.margin_bottom = Length::px(8.0);
+                    doc.update_resolved_style(child, |style| style.height = Length::px(30.0));
+                    doc.update_resolved_style(child, |style| style.margin_bottom = Length::px(8.0));
                 }
 
                 doc
@@ -841,9 +874,13 @@ fn bench_fragmentation_break_token_chain(c: &mut Criterion) {
                 for i in 0..10 {
                     let child = add_sized_block(&mut doc, vp, 400.0, 50.0);
                     if i % 2 == 0 {
-                        doc.node_mut(child).style.break_after = BreakValue::Column;
+                        doc.update_resolved_style(child, |style| {
+                            style.break_after = BreakValue::Column
+                        });
                     } else {
-                        doc.node_mut(child).style.break_before = BreakValue::Column;
+                        doc.update_resolved_style(child, |style| {
+                            style.break_before = BreakValue::Column
+                        });
                     }
                 }
 
@@ -869,7 +906,7 @@ fn bench_text_inline_long_paragraph(c: &mut Criterion) {
                 let vp = doc.root();
 
                 let para = add_block(&mut doc, vp);
-                doc.node_mut(para).style.width = Length::px(500.0);
+                doc.update_resolved_style(para, |style| style.width = Length::px(500.0));
 
                 // ~200 words of lorem ipsum text
                 add_text(
@@ -914,7 +951,7 @@ fn bench_text_inline_mixed_bidi(c: &mut Criterion) {
                 let vp = doc.root();
 
                 let para = add_block(&mut doc, vp);
-                doc.node_mut(para).style.width = Length::px(400.0);
+                doc.update_resolved_style(para, |style| style.width = Length::px(400.0));
 
                 // LTR text
                 let ltr = add_inline(&mut doc, para);
@@ -922,8 +959,8 @@ fn bench_text_inline_mixed_bidi(c: &mut Criterion) {
 
                 // RTL span
                 let rtl = add_inline(&mut doc, para);
-                doc.node_mut(rtl).style.direction = Direction::Rtl;
-                doc.node_mut(rtl).style.unicode_bidi = UnicodeBidi::Embed;
+                doc.update_resolved_style(rtl, |style| style.direction = Direction::Rtl);
+                doc.update_resolved_style(rtl, |style| style.unicode_bidi = UnicodeBidi::Embed);
                 add_text(&mut doc, rtl, "\u{0645}\u{0631}\u{062D}\u{0628}\u{0627} \u{0628}\u{0627}\u{0644}\u{0639}\u{0627}\u{0644}\u{0645}");
 
                 // Back to LTR
@@ -932,8 +969,8 @@ fn bench_text_inline_mixed_bidi(c: &mut Criterion) {
 
                 // Another RTL span
                 let rtl2 = add_inline(&mut doc, para);
-                doc.node_mut(rtl2).style.direction = Direction::Rtl;
-                doc.node_mut(rtl2).style.unicode_bidi = UnicodeBidi::Embed;
+                doc.update_resolved_style(rtl2, |style| style.direction = Direction::Rtl);
+                doc.update_resolved_style(rtl2, |style| style.unicode_bidi = UnicodeBidi::Embed);
                 add_text(&mut doc, rtl2, "\u{0634}\u{0643}\u{0631}\u{0627}");
 
                 let end = add_inline(&mut doc, para);
@@ -956,7 +993,7 @@ fn bench_text_inline_line_breaking_stress(c: &mut Criterion) {
 
                 // Very narrow container to force many line breaks
                 let para = add_block(&mut doc, vp);
-                doc.node_mut(para).style.width = Length::px(80.0);
+                doc.update_resolved_style(para, |style| style.width = Length::px(80.0));
 
                 // 50 short words — each 3-6 chars — crammed into 80px
                 let words: Vec<&str> = vec![
@@ -996,17 +1033,18 @@ fn bench_sticky_basic(c: &mut Criterion) {
 
                 // Scrollable container
                 let container = add_block(&mut doc, vp);
-                doc.node_mut(container).style.width = Length::px(800.0);
-                doc.node_mut(container).style.overflow_y = Overflow::Scroll;
+                doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+                doc.update_resolved_style(container, |style| style.overflow_y = Overflow::Scroll);
 
                 // Sticky header — sticks to top during scroll
                 let sticky_header = add_block(&mut doc, container);
-                doc.node_mut(sticky_header).style.width = Length::px(800.0);
-                doc.node_mut(sticky_header).style.height = Length::px(40.0);
-                doc.node_mut(sticky_header).style.position = Position::Sticky;
-                doc.node_mut(sticky_header).style.top = Length::px(0.0);
-                doc.node_mut(sticky_header).style.background_color =
-                    Color::from_rgba8(220, 230, 255, 255);
+                doc.update_resolved_style(sticky_header, |style| style.width = Length::px(800.0));
+                doc.update_resolved_style(sticky_header, |style| style.height = Length::px(40.0));
+                doc.update_resolved_style(sticky_header, |style| style.position = Position::Sticky);
+                doc.update_resolved_style(sticky_header, |style| style.top = Length::px(0.0));
+                doc.update_resolved_style(sticky_header, |style| {
+                    style.background_color = Color::from_rgba8(220, 230, 255, 255)
+                });
 
                 // Content blocks that scroll behind the sticky header
                 for _ in 0..10 {
@@ -1015,10 +1053,10 @@ fn bench_sticky_basic(c: &mut Criterion) {
 
                 // Another sticky element mid-page
                 let sticky_mid = add_block(&mut doc, container);
-                doc.node_mut(sticky_mid).style.width = Length::px(800.0);
-                doc.node_mut(sticky_mid).style.height = Length::px(30.0);
-                doc.node_mut(sticky_mid).style.position = Position::Sticky;
-                doc.node_mut(sticky_mid).style.top = Length::px(40.0);
+                doc.update_resolved_style(sticky_mid, |style| style.width = Length::px(800.0));
+                doc.update_resolved_style(sticky_mid, |style| style.height = Length::px(30.0));
+                doc.update_resolved_style(sticky_mid, |style| style.position = Position::Sticky);
+                doc.update_resolved_style(sticky_mid, |style| style.top = Length::px(40.0));
 
                 for _ in 0..10 {
                     add_sized_block(&mut doc, container, 800.0, 60.0);
@@ -1084,21 +1122,23 @@ fn bench_position_fixed_children(c: &mut Criterion) {
 
                 // Fixed-position overlay (e.g. modal backdrop)
                 let overlay = add_block(&mut doc, vp);
-                doc.node_mut(overlay).style.position = Position::Fixed;
-                doc.node_mut(overlay).style.top = Length::px(0.0);
-                doc.node_mut(overlay).style.left = Length::px(0.0);
-                doc.node_mut(overlay).style.width = Length::px(800.0);
-                doc.node_mut(overlay).style.height = Length::px(600.0);
-                doc.node_mut(overlay).style.background_color = Color::from_rgba8(0, 0, 0, 128);
+                doc.update_resolved_style(overlay, |style| style.position = Position::Fixed);
+                doc.update_resolved_style(overlay, |style| style.top = Length::px(0.0));
+                doc.update_resolved_style(overlay, |style| style.left = Length::px(0.0));
+                doc.update_resolved_style(overlay, |style| style.width = Length::px(800.0));
+                doc.update_resolved_style(overlay, |style| style.height = Length::px(600.0));
+                doc.update_resolved_style(overlay, |style| {
+                    style.background_color = Color::from_rgba8(0, 0, 0, 128)
+                });
 
                 // Fixed-position dialog within the overlay
                 let dialog = add_block(&mut doc, vp);
-                doc.node_mut(dialog).style.position = Position::Fixed;
-                doc.node_mut(dialog).style.top = Length::px(150.0);
-                doc.node_mut(dialog).style.left = Length::px(200.0);
-                doc.node_mut(dialog).style.width = Length::px(400.0);
-                doc.node_mut(dialog).style.height = Length::px(300.0);
-                doc.node_mut(dialog).style.background_color = Color::WHITE;
+                doc.update_resolved_style(dialog, |style| style.position = Position::Fixed);
+                doc.update_resolved_style(dialog, |style| style.top = Length::px(150.0));
+                doc.update_resolved_style(dialog, |style| style.left = Length::px(200.0));
+                doc.update_resolved_style(dialog, |style| style.width = Length::px(400.0));
+                doc.update_resolved_style(dialog, |style| style.height = Length::px(300.0));
+                doc.update_resolved_style(dialog, |style| style.background_color = Color::WHITE);
 
                 doc
             },
@@ -1123,28 +1163,34 @@ fn bench_bfc_float_triggered(c: &mut Criterion) {
 
                 // BFC container (overflow:hidden establishes a new formatting context)
                 let bfc = add_block(&mut doc, vp);
-                doc.node_mut(bfc).style.width = Length::px(800.0);
-                doc.node_mut(bfc).style.overflow_x = Overflow::Hidden;
-                doc.node_mut(bfc).style.overflow_y = Overflow::Hidden;
+                doc.update_resolved_style(bfc, |style| style.width = Length::px(800.0));
+                doc.update_resolved_style(bfc, |style| style.overflow_x = Overflow::Hidden);
+                doc.update_resolved_style(bfc, |style| style.overflow_y = Overflow::Hidden);
 
                 // Several floats that trigger BFC deferral/resolution passes
                 for i in 0..6 {
                     let float_box = add_sized_block(&mut doc, bfc, 120.0, 80.0);
-                    doc.node_mut(float_box).style.float = if i % 2 == 0 {
-                        Float::Left
-                    } else {
-                        Float::Right
-                    };
-                    doc.node_mut(float_box).style.margin_right = Length::px(8.0);
-                    doc.node_mut(float_box).style.margin_bottom = Length::px(8.0);
+                    doc.update_resolved_style(float_box, |style| {
+                        style.float = if i % 2 == 0 {
+                            Float::Left
+                        } else {
+                            Float::Right
+                        }
+                    });
+                    doc.update_resolved_style(float_box, |style| {
+                        style.margin_right = Length::px(8.0)
+                    });
+                    doc.update_resolved_style(float_box, |style| {
+                        style.margin_bottom = Length::px(8.0)
+                    });
                 }
 
                 // Block children that must resolve their BFC block offset
                 for _ in 0..4 {
                     let child = add_sized_block(&mut doc, bfc, 200.0, 50.0);
                     // overflow:hidden on children also triggers new FC
-                    doc.node_mut(child).style.overflow_x = Overflow::Hidden;
-                    doc.node_mut(child).style.overflow_y = Overflow::Hidden;
+                    doc.update_resolved_style(child, |style| style.overflow_x = Overflow::Hidden);
+                    doc.update_resolved_style(child, |style| style.overflow_y = Overflow::Hidden);
                 }
 
                 doc

@@ -6,8 +6,10 @@
 //! sizes and offsets.
 
 use openui_dom::NodeId;
-use openui_geometry::{BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize};
-use openui_style::ComputedStyle;
+use openui_geometry::{
+    BoxStrut, LayoutUnit, PhysicalOffset, PhysicalRect, PhysicalSize, WritingDirectionMode,
+};
+use openui_style::{ComputedStyle, TextOrientation, WritingMode};
 use openui_text::ShapeResult;
 use std::sync::Arc;
 
@@ -30,6 +32,62 @@ pub enum FragmentKind {
     ColumnBox,
 }
 
+/// Resolved orientation of one shaped text run in physical fragment storage.
+///
+/// Inline layout is the authority for this value. Paint consumes it without
+/// re-reading CSS or attempting to split the run from its Unicode contents.
+/// `UnresolvedMixed` deliberately keeps genuinely mixed upright/rotated runs
+/// on the pre-W2B path instead of guessing at per-character transforms.
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum TextRunOrientation {
+    #[default]
+    Horizontal,
+    Upright,
+    Clockwise,
+    CounterClockwise,
+    UnresolvedMixed,
+}
+
+/// Resolve the paint orientation for a text run during inline construction.
+///
+/// Rotated vertical and sideways runs retain horizontal shaping and logical
+/// inline advance; the fragment projection converts that geometry to physical
+/// axes exactly once. Direction affects progression, never rotation handedness.
+pub fn resolve_text_run_orientation(style: &ComputedStyle, text: &str) -> TextRunOrientation {
+    if text.is_empty() || style.writing_mode == WritingMode::HorizontalTb {
+        return TextRunOrientation::Horizontal;
+    }
+
+    match style.writing_mode {
+        WritingMode::SidewaysRl => TextRunOrientation::Clockwise,
+        WritingMode::SidewaysLr => TextRunOrientation::CounterClockwise,
+        WritingMode::VerticalRl | WritingMode::VerticalLr => match style.text_orientation {
+            TextOrientation::Sideways => TextRunOrientation::Clockwise,
+            TextOrientation::Upright => TextRunOrientation::Upright,
+            TextOrientation::Mixed => {
+                let mut has_upright = false;
+                let mut has_rotated = false;
+                for character in text.chars() {
+                    if openui_text::is_upright_in_mixed_vertical(character) {
+                        has_upright = true;
+                    } else {
+                        has_rotated = true;
+                    }
+                    if has_upright && has_rotated {
+                        return TextRunOrientation::UnresolvedMixed;
+                    }
+                }
+                if has_upright {
+                    TextRunOrientation::Upright
+                } else {
+                    TextRunOrientation::Clockwise
+                }
+            }
+        },
+        WritingMode::HorizontalTb => TextRunOrientation::Horizontal,
+    }
+}
+
 /// Source-space coordinates for decorations sliced across fragmentainers.
 ///
 /// `box-decoration-break:slice` keeps one background positioning area for the
@@ -42,6 +100,18 @@ pub struct DecorationSlice {
     pub source_block_size: LayoutUnit,
 }
 
+/// One independently painted piece of a collapsed table structural border.
+///
+/// Collapsed-border conflict resolution can assign adjacent portions of one
+/// row edge to different table cells. Each winning portion has independent
+/// dash geometry, so paint must retain both its local border box and used
+/// side widths instead of clipping one full-row border path.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CollapsedBorderSegment {
+    pub rect: PhysicalRect,
+    pub border: BoxStrut,
+}
+
 /// Logical positioning inputs retained for an out-of-flow fragment that may
 /// later enter a fragmentation context.  A multicol ancestor maps these
 /// coordinates through its column geometry instead of reverse-engineering a
@@ -49,6 +119,9 @@ pub struct DecorationSlice {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PositionedFragmentationData {
     pub static_position: PhysicalOffset,
+    /// Physical-axis edge affinities retained with the static-position point.
+    pub static_position_horizontal_edge: crate::out_of_flow::StaticPositionEdge,
+    pub static_position_vertical_edge: crate::out_of_flow::StaticPositionEdge,
     pub containing_block_offset: PhysicalOffset,
     /// DOM node whose padding box supplies the used containing block.
     pub containing_block_node: NodeId,
@@ -65,6 +138,14 @@ pub struct PositionedFragmentationData {
     /// It is applied after logical fragmentation so paint movement never
     /// changes the selected fragmentainer.
     pub visual_offset: PhysicalOffset,
+    /// Physical reconstruction applied only after continuation selection.
+    /// Nested fragmentation uses this when an inner mapper has consumed a
+    /// source block-end coordinate that an outer mapper must retain as an
+    /// equivalent inline-row advance.
+    pub continuation_visual_offset: PhysicalOffset,
+    /// Source-space origin of the transformed containing block, when that
+    /// ancestor was elided while promoting this positioned fragment.
+    pub transform_containing_block_source_offset: Option<PhysicalOffset>,
     /// Logical fragmentainer selected by the owning multicol. This is set on
     /// continuations and lets an ancestor resume nested rows without deriving
     /// flow order from a translated paint offset.
@@ -75,12 +156,26 @@ pub struct PositionedFragmentationData {
     pub split_containing_block_source_offset: Option<LayoutUnit>,
 }
 
+/// A transformed ancestor removed when a positioned descendant is promoted
+/// into an owning multicol's continuation list.  `source_*` describes the
+/// unfragmented box in multicol coordinates; `fragment_*` is resolved for
+/// each generated continuation. Paint reapplies these boxes outer-to-inner.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PromotedTransformAncestor {
+    pub node_id: NodeId,
+    pub source_offset: PhysicalOffset,
+    pub source_size: PhysicalSize,
+    pub fragment_offset: PhysicalOffset,
+    pub fragment_size: PhysicalSize,
+}
+
 /// Authoritative geometry of a multicol fragment. Nested fragmentation uses
 /// this metadata to translate inner overflow-column continuations back into
 /// logical block flow without rediscovering column widths from paint offsets.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct MulticolFragmentationData {
     pub fragmentainer_block_size: LayoutUnit,
+    pub continuation_fragmentainer_block_size: LayoutUnit,
     pub column_inline_start: LayoutUnit,
     pub column_block_start: LayoutUnit,
     pub column_inline_stride: LayoutUnit,
@@ -128,9 +223,21 @@ pub struct Fragment {
     /// Text content for text fragments (the original string that was shaped).
     pub text_content: Option<String>,
 
+    /// Layout-resolved orientation for the complete text paint stack.
+    pub text_run_orientation: TextRunOrientation,
+
     /// Inherited style for anonymous fragments (e.g., ellipsis "…") that have
     /// no DOM node. Used by the painter to render with the correct color/font.
     pub inherited_style: Option<ComputedStyle>,
+
+    /// Whether anonymous text is the generated marker of a block/line clamp.
+    /// Paint consumes this after the anonymous fragment has lost its DOM
+    /// ancestry, so it can retain the same glyph-strike policy as its line.
+    pub is_line_clamp_marker: bool,
+
+    /// Fragment-local generated-marker paint state. Column markers share one
+    /// DOM pseudo node but produce one box per generated column.
+    pub paint_background_color_override: Option<openui_style::Color>,
 
     /// Distance from the fragment's top edge to the text baseline.
     /// Computed during layout; used by paint to avoid recomputing from metrics.
@@ -183,12 +290,56 @@ pub struct Fragment {
     /// The positioning inputs used to create an out-of-flow fragment.
     pub positioned_fragmentation: Option<PositionedFragmentationData>,
 
+    /// Transformed containing-block ancestors elided by positioned
+    /// fragmentation promotion.
+    pub promoted_transform_ancestors: Vec<PromotedTransformAncestor>,
+
+    /// Whether promoted transform replay paints this continuation's own
+    /// decoration box instead of reconstructing the complete unsliced source
+    /// decoration. Rotation/shear fragments use their local box; axis-aligned
+    /// transforms retain the source decoration positioning area.
+    pub promoted_transform_uses_fragment_decoration: bool,
+
     /// Resolved column geometry when this fragment is a multicol container.
     pub multicol_fragmentation: Option<MulticolFragmentationData>,
+
+    /// Writing direction of the fragmentation context that produced this
+    /// physical fragment. `None` means the fragment is not a fragmentainer or
+    /// an in-flow continuation. Paint uses this to map logical block slicing
+    /// to the physical X or Y axis without rediscovering layout state.
+    pub fragmentation_writing_direction: Option<WritingDirectionMode>,
 
     /// Optional block-axis limit for this fragment's own decorations
     /// (background/border/shadow), while leaving children free to overflow.
     pub decoration_paint_block_size: Option<LayoutUnit>,
+
+    /// Whether this structural fragment delegates its background and border
+    /// to a synthetic child with the same source style. Table wrappers use
+    /// this when captions sit outside the table-grid decoration box.
+    pub skip_box_decoration: bool,
+
+    /// Suppress authored corner radii for formatting-model-specific used
+    /// values. Collapsed tables ignore radii on the table box and internal
+    /// table boxes while preserving radii on ordinary descendants.
+    pub ignore_border_radius: bool,
+
+    /// Repaint the used border above descendants. Collapsed table structural
+    /// borders participate in a grid-wide border layer above cell backgrounds.
+    pub paint_border_after_children: bool,
+
+    /// Independently sized collapsed-table border pieces painted above cell
+    /// backgrounds. Empty means `border` uses the fragment's full border box.
+    pub collapsed_border_segments: Vec<CollapsedBorderSegment>,
+
+    /// Optional local rectangles that clip this fragment's table-structural
+    /// decoration while retaining the fragment border box as the background
+    /// positioning area. Row, row-group, and column backgrounds use these to
+    /// exclude separated-border spacing gaps.
+    pub decoration_clip_rects: Vec<PhysicalRect>,
+
+    /// Number of table rows occupied by a laid-out table-cell fragment.
+    /// Non-cell fragments and cells clamped to one available row use one.
+    pub table_row_span: usize,
 
     /// Shared source-space decoration geometry for a sliced continuation.
     /// `None` means this fragment owns an independent positioning area (the
@@ -330,7 +481,10 @@ impl Fragment {
             children: Vec::new(),
             shape_result: None,
             text_content: None,
+            text_run_orientation: TextRunOrientation::Horizontal,
             inherited_style: None,
+            is_line_clamp_marker: false,
+            paint_background_color_override: None,
             baseline_offset: 0.0,
             text_combine: None,
             overflow_rect: None,
@@ -341,8 +495,17 @@ impl Fragment {
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
             positioned_fragmentation: None,
+            promoted_transform_ancestors: Vec::new(),
+            promoted_transform_uses_fragment_decoration: false,
             multicol_fragmentation: None,
+            fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
+            skip_box_decoration: false,
+            ignore_border_radius: false,
+            paint_border_after_children: false,
+            collapsed_border_segments: Vec::new(),
+            decoration_clip_rects: Vec::new(),
+            table_row_span: 1,
             decoration_slice: None,
             paint_zero_block_outline: false,
             is_block_end_decoration_marker: false,
@@ -382,7 +545,10 @@ impl Fragment {
             children: Vec::new(),
             shape_result: Some(shape_result),
             text_content: Some(text_content),
+            text_run_orientation: TextRunOrientation::Horizontal,
             inherited_style: None,
+            is_line_clamp_marker: false,
+            paint_background_color_override: None,
             baseline_offset: 0.0,
             text_combine: None,
             overflow_rect: None,
@@ -393,8 +559,17 @@ impl Fragment {
             column_block_end_ink_overflow: LayoutUnit::zero(),
             fragmentation_visual_offset: PhysicalOffset::zero(),
             positioned_fragmentation: None,
+            promoted_transform_ancestors: Vec::new(),
+            promoted_transform_uses_fragment_decoration: false,
             multicol_fragmentation: None,
+            fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
+            skip_box_decoration: false,
+            ignore_border_radius: false,
+            paint_border_after_children: false,
+            collapsed_border_segments: Vec::new(),
+            decoration_clip_rects: Vec::new(),
+            table_row_span: 1,
             decoration_slice: None,
             paint_zero_block_outline: false,
             is_block_end_decoration_marker: false,
@@ -477,5 +652,75 @@ impl Fragment {
     #[inline]
     pub fn border_box_rect(&self) -> PhysicalRect {
         PhysicalRect::new(PhysicalOffset::zero(), self.size)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use openui_style::Direction;
+
+    #[test]
+    fn text_run_orientation_matrix_is_layout_authoritative() {
+        for direction in [Direction::Ltr, Direction::Rtl] {
+            for text_orientation in [
+                TextOrientation::Mixed,
+                TextOrientation::Upright,
+                TextOrientation::Sideways,
+            ] {
+                let mut style = ComputedStyle::default();
+                style.update_derived(|computed| computed.direction = direction);
+                style.update_derived(|computed| computed.text_orientation = text_orientation);
+
+                style.update_derived(|computed| computed.writing_mode = WritingMode::HorizontalTb);
+                assert_eq!(
+                    resolve_text_run_orientation(&style, "AHEM"),
+                    TextRunOrientation::Horizontal
+                );
+
+                style.update_derived(|computed| computed.writing_mode = WritingMode::SidewaysRl);
+                assert_eq!(
+                    resolve_text_run_orientation(&style, "AHEM"),
+                    TextRunOrientation::Clockwise
+                );
+
+                style.update_derived(|computed| computed.writing_mode = WritingMode::SidewaysLr);
+                assert_eq!(
+                    resolve_text_run_orientation(&style, "AHEM"),
+                    TextRunOrientation::CounterClockwise
+                );
+
+                for writing_mode in [WritingMode::VerticalRl, WritingMode::VerticalLr] {
+                    style.update_derived(|computed| computed.writing_mode = writing_mode);
+                    let expected = match text_orientation {
+                        TextOrientation::Mixed => TextRunOrientation::Clockwise,
+                        TextOrientation::Upright => TextRunOrientation::Upright,
+                        TextOrientation::Sideways => TextRunOrientation::Clockwise,
+                    };
+                    assert_eq!(
+                        resolve_text_run_orientation(&style, "Latin AHEM"),
+                        expected,
+                        "{writing_mode:?} {direction:?} {text_orientation:?}"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn vertical_mixed_keeps_upright_and_unsplit_mixed_runs_explicit() {
+        for writing_mode in [WritingMode::VerticalRl, WritingMode::VerticalLr] {
+            let mut style = ComputedStyle::default();
+            style.update_derived(|computed| computed.writing_mode = writing_mode);
+            style.update_derived(|computed| computed.text_orientation = TextOrientation::Mixed);
+            assert_eq!(
+                resolve_text_run_orientation(&style, "文"),
+                TextRunOrientation::Upright
+            );
+            assert_eq!(
+                resolve_text_run_orientation(&style, "A文"),
+                TextRunOrientation::UnresolvedMixed
+            );
+        }
     }
 }

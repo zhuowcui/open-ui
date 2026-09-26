@@ -1,0 +1,551 @@
+{
+  "chromium": {
+    "build_identity": "147.0.7727.24",
+    "pin_sha256": "58fea0f408f25bb556040cb338f0e33936421253d3beaa913e7544bf7d40b952",
+    "raster_oracle_build_identity": "147.0.7727.50"
+  },
+  "focused_cross_product": [
+    {
+      "device_scale": 1.0,
+      "logical_size_css_px": {
+        "height": 240.0,
+        "width": 320.0
+      },
+      "physical_size_px": {
+        "height": 240,
+        "width": 320
+      }
+    },
+    {
+      "device_scale": 1.25,
+      "logical_size_css_px": {
+        "height": 240.0,
+        "width": 320.0
+      },
+      "physical_size_px": {
+        "height": 300,
+        "width": 400
+      }
+    },
+    {
+      "device_scale": 1.5,
+      "logical_size_css_px": {
+        "height": 240.0,
+        "width": 320.0
+      },
+      "physical_size_px": {
+        "height": 360,
+        "width": 480
+      }
+    },
+    {
+      "device_scale": 2.0,
+      "logical_size_css_px": {
+        "height": 240.0,
+        "width": 320.0
+      },
+      "physical_size_px": {
+        "height": 480,
+        "width": 640
+      }
+    },
+    {
+      "device_scale": 3.0,
+      "logical_size_css_px": {
+        "height": 240.0,
+        "width": 320.0
+      },
+      "physical_size_px": {
+        "height": 720,
+        "width": 960
+      }
+    },
+    {
+      "device_scale": 1.0,
+      "logical_size_css_px": {
+        "height": 667.0,
+        "width": 375.0
+      },
+      "physical_size_px": {
+        "height": 667,
+        "width": 375
+      }
+    },
+    {
+      "device_scale": 1.25,
+      "logical_size_css_px": {
+        "height": 667.0,
+        "width": 375.0
+      },
+      "physical_size_px": {
+        "height": 834,
+        "width": 469
+      }
+    },
+    {
+      "device_scale": 1.5,
+      "logical_size_css_px": {
+        "height": 667.0,
+        "width": 375.0
+      },
+      "physical_size_px": {
+        "height": 1001,
+        "width": 563
+      }
+    },
+    {
+      "device_scale": 2.0,
+      "logical_size_css_px": {
+        "height": 667.0,
+        "width": 375.0
+      },
+      "physical_size_px": {
+        "height": 1334,
+        "width": 750
+      }
+    },
+    {
+      "device_scale": 3.0,
+      "logical_size_css_px": {
+        "height": 667.0,
+        "width": 375.0
+      },
+      "physical_size_px": {
+        "height": 2001,
+        "width": 1125
+      }
+    },
+    {
+      "device_scale": 1.0,
+      "logical_size_css_px": {
+        "height": 600.0,
+        "width": 800.0
+      },
+      "physical_size_px": {
+        "height": 600,
+        "width": 800
+      }
+    },
+    {
+      "device_scale": 1.25,
+      "logical_size_css_px": {
+        "height": 600.0,
+        "width": 800.0
+      },
+      "physical_size_px": {
+        "height": 750,
+        "width": 1000
+      }
+    },
+    {
+      "device_scale": 1.5,
+      "logical_size_css_px": {
+        "height": 600.0,
+        "width": 800.0
+      },
+      "physical_size_px": {
+        "height": 900,
+        "width": 1200
+      }
+    },
+    {
+      "device_scale": 2.0,
+      "logical_size_css_px": {
+        "height": 600.0,
+        "width": 800.0
+      },
+      "physical_size_px": {
+        "height": 1200,
+        "width": 1600
+      }
+    },
+    {
+      "device_scale": 3.0,
+      "logical_size_css_px": {
+        "height": 600.0,
+        "width": 800.0
+      },
+      "physical_size_px": {
+        "height": 1800,
+        "width": 2400
+      }
+    },
+    {
+      "device_scale": 1.0,
+      "logical_size_css_px": {
+        "height": 1200.0,
+        "width": 600.0
+      },
+      "physical_size_px": {
+        "height": 1200,
+        "width": 600
+      }
+    },
+    {
+      "device_scale": 1.25,
+      "logical_size_css_px": {
+        "height": 1200.0,
+        "width": 600.0
+      },
+      "physical_size_px": {
+        "height": 1500,
+        "width": 750
+      }
+    },
+    {
+      "device_scale": 1.5,
+      "logical_size_css_px": {
+        "height": 1200.0,
+        "width": 600.0
+      },
+      "physical_size_px": {
+        "height": 1800,
+        "width": 900
+      }
+    },
+    {
+      "device_scale": 2.0,
+      "logical_size_css_px": {
+        "height": 1200.0,
+        "width": 600.0
+      },
+      "physical_size_px": {
+        "height": 2400,
+        "width": 1200
+      }
+    },
+    {
+      "device_scale": 3.0,
+      "logical_size_css_px": {
+        "height": 1200.0,
+        "width": 600.0
+      },
+      "physical_size_px": {
+        "height": 3600,
+        "width": 1800
+      }
+    },
+    {
+      "device_scale": 1.0,
+      "logical_size_css_px": {
+        "height": 720.0,
+        "width": 1280.0
+      },
+      "physical_size_px": {
+        "height": 720,
+        "width": 1280
+      }
+    },
+    {
+      "device_scale": 1.25,
+      "logical_size_css_px": {
+        "height": 720.0,
+        "width": 1280.0
+      },
+      "physical_size_px": {
+        "height": 900,
+        "width": 1600
+      }
+    },
+    {
+      "device_scale": 1.5,
+      "logical_size_css_px": {
+        "height": 720.0,
+        "width": 1280.0
+      },
+      "physical_size_px": {
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "device_scale": 2.0,
+      "logical_size_css_px": {
+        "height": 720.0,
+        "width": 1280.0
+      },
+      "physical_size_px": {
+        "height": 1440,
+        "width": 2560
+      }
+    },
+    {
+      "device_scale": 3.0,
+      "logical_size_css_px": {
+        "height": 720.0,
+        "width": 1280.0
+      },
+      "physical_size_px": {
+        "height": 2160,
+        "width": 3840
+      }
+    },
+    {
+      "device_scale": 1.0,
+      "logical_size_css_px": {
+        "height": 1080.0,
+        "width": 1920.0
+      },
+      "physical_size_px": {
+        "height": 1080,
+        "width": 1920
+      }
+    },
+    {
+      "device_scale": 1.25,
+      "logical_size_css_px": {
+        "height": 1080.0,
+        "width": 1920.0
+      },
+      "physical_size_px": {
+        "height": 1350,
+        "width": 2400
+      }
+    },
+    {
+      "device_scale": 1.5,
+      "logical_size_css_px": {
+        "height": 1080.0,
+        "width": 1920.0
+      },
+      "physical_size_px": {
+        "height": 1620,
+        "width": 2880
+      }
+    },
+    {
+      "device_scale": 2.0,
+      "logical_size_css_px": {
+        "height": 1080.0,
+        "width": 1920.0
+      },
+      "physical_size_px": {
+        "height": 2160,
+        "width": 3840
+      }
+    },
+    {
+      "device_scale": 3.0,
+      "logical_size_css_px": {
+        "height": 1080.0,
+        "width": 1920.0
+      },
+      "physical_size_px": {
+        "height": 3240,
+        "width": 5760
+      }
+    },
+    {
+      "device_scale": 1.0,
+      "logical_size_css_px": {
+        "height": 1440.0,
+        "width": 2560.0
+      },
+      "physical_size_px": {
+        "height": 1440,
+        "width": 2560
+      }
+    },
+    {
+      "device_scale": 1.25,
+      "logical_size_css_px": {
+        "height": 1440.0,
+        "width": 2560.0
+      },
+      "physical_size_px": {
+        "height": 1800,
+        "width": 3200
+      }
+    },
+    {
+      "device_scale": 1.5,
+      "logical_size_css_px": {
+        "height": 1440.0,
+        "width": 2560.0
+      },
+      "physical_size_px": {
+        "height": 2160,
+        "width": 3840
+      }
+    },
+    {
+      "device_scale": 2.0,
+      "logical_size_css_px": {
+        "height": 1440.0,
+        "width": 2560.0
+      },
+      "physical_size_px": {
+        "height": 2880,
+        "width": 5120
+      }
+    },
+    {
+      "device_scale": 3.0,
+      "logical_size_css_px": {
+        "height": 1440.0,
+        "width": 2560.0
+      },
+      "physical_size_px": {
+        "height": 4320,
+        "width": 7680
+      }
+    },
+    {
+      "device_scale": 1.0,
+      "logical_size_css_px": {
+        "height": 1440.0,
+        "width": 3440.0
+      },
+      "physical_size_px": {
+        "height": 1440,
+        "width": 3440
+      }
+    },
+    {
+      "device_scale": 1.25,
+      "logical_size_css_px": {
+        "height": 1440.0,
+        "width": 3440.0
+      },
+      "physical_size_px": {
+        "height": 1800,
+        "width": 4300
+      }
+    },
+    {
+      "device_scale": 1.5,
+      "logical_size_css_px": {
+        "height": 1440.0,
+        "width": 3440.0
+      },
+      "physical_size_px": {
+        "height": 2160,
+        "width": 5160
+      }
+    },
+    {
+      "device_scale": 2.0,
+      "logical_size_css_px": {
+        "height": 1440.0,
+        "width": 3440.0
+      },
+      "physical_size_px": {
+        "height": 2880,
+        "width": 6880
+      }
+    },
+    {
+      "device_scale": 3.0,
+      "logical_size_css_px": {
+        "height": 1440.0,
+        "width": 3440.0
+      },
+      "physical_size_px": {
+        "height": 4320,
+        "width": 10320
+      }
+    }
+  ],
+  "font_byte_hashes": {
+    "bindings/rust/openui-text/fonts/Ahem.ttf": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+    "bindings/rust/openui-text/fonts/DejaVuSans-Bold.ttf": "5c1247acef7f2b8522a31742c76d6adcb5569bacc0be7ceaa4dc39dd252ce895",
+    "bindings/rust/openui-text/fonts/DejaVuSans.ttf": "ae7b7855e115a5966d8b1b3f80f254ccc117ec86f9965e202ee2940453837280",
+    "bindings/rust/openui-text/fonts/DejaVuSansMono-Bold.ttf": "3a3c502eeff669a231549e80df9f7c49de109bafe303170409e905d0b31a38fe",
+    "bindings/rust/openui-text/fonts/DejaVuSansMono.ttf": "c805f9436dbc268644c1d9584f01a601a653e028e08fd74b9b949f6cf8304d88",
+    "bindings/rust/openui-text/fonts/DejaVuSerif-Bold.ttf": "847b33e13925f19ff87e4d934d6b3cf7cac35ce16424f6f670e40c2f377cf2df",
+    "bindings/rust/openui-text/fonts/DejaVuSerif.ttf": "8f2c103bfa3fd5de71f1b92b18f21906b5a26871fb7e19a9a4c9af539c3cc7ab",
+    "bindings/rust/openui-text/fonts/DroidSansFallback-reduced.ttf": "27db42b79d0846f6fd01b3d6a8233df9a8a5ece80b042299dc4174c48213ffd3",
+    "bindings/rust/openui-text/fonts/NotoColorEmoji.ttf": "72a635cb3d2f3524c51620cdde406b217204e8a6a06c6a096ff8ed4b5fd6e27b",
+    "bindings/rust/openui-text/fonts/NotoSansDevanagari-Regular.ttf": "b1dffa1fccb30dc45287111834a9db15c652b05d4d67201abe73e67717017590"
+  },
+  "qualification_profiles": [
+    {
+      "device_scale": 1.0,
+      "logical_size_css_px": {
+        "height": 600.0,
+        "width": 800.0
+      },
+      "name": "legacy-800x600@1",
+      "physical_size_px": {
+        "height": 600,
+        "width": 800
+      },
+      "result": {
+        "exact": 5731,
+        "manifest_sha256": "787cd40ae63d06d5933efa89a4eba65a70d6327673b8056b83cae76ef3606001",
+        "ordered_id_sha256": "3dcab97aac9dd2b7b0b58150b4008e0b60631b098be226bf95f02ad1706942d3",
+        "total": 5731
+      },
+      "status": "qualified-immutable"
+    },
+    {
+      "device_scale": 2.0,
+      "logical_size_css_px": {
+        "height": 667.0,
+        "width": 375.0
+      },
+      "name": "mobile-375x667@2",
+      "physical_size_px": {
+        "height": 1334,
+        "width": 750
+      },
+      "status": "required"
+    },
+    {
+      "device_scale": 1.25,
+      "logical_size_css_px": {
+        "height": 720.0,
+        "width": 1280.0
+      },
+      "name": "desktop-1280x720@1.25",
+      "physical_size_px": {
+        "height": 900,
+        "width": 1600
+      },
+      "status": "required"
+    },
+    {
+      "device_scale": 1.5,
+      "logical_size_css_px": {
+        "height": 1080.0,
+        "width": 1920.0
+      },
+      "name": "desktop-1920x1080@1.5",
+      "physical_size_px": {
+        "height": 1620,
+        "width": 2880
+      },
+      "status": "required"
+    }
+  ],
+  "raster": {
+    "destination_color_space": "sRGB",
+    "device_transform_before_raster": true,
+    "exact_tolerance_pixels": 0,
+    "logical_recording": true,
+    "physical_surface": true,
+    "pixel_format": "N32 premultiplied RGBA",
+    "whole_frame_resampling": "forbidden"
+  },
+  "renderer_contract": "chromium-147-native-structure-v1",
+  "resource_hashes": {
+    "tools/accountability/data/wpt_ported/sp20_resource_manifest.json": "7b6ef91b6dcfccef8751fdd25b47a0e3a9a682e8b982474fe34bdf72cf331328",
+    "tools/qualification/manifests/complete-5731.json": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
+    "tools/qualification/manifests/focused-raster.json": "215b2eee97e6eacb7984ede2e8c8e11e5d049d1ffe948589083efc3258528c98"
+  },
+  "schema_version": 1,
+  "suite_manifests": {
+    "focused": {
+      "count": 16,
+      "evidence": "qualification-gate",
+      "path": "tools/qualification/manifests/focused-raster.json",
+      "sha256": "215b2eee97e6eacb7984ede2e8c8e11e5d049d1ffe948589083efc3258528c98"
+    },
+    "full": {
+      "count": 5731,
+      "evidence": "diagnostic-census",
+      "path": "tools/qualification/manifests/complete-5731.json",
+      "sha256": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f"
+    }
+  }
+}

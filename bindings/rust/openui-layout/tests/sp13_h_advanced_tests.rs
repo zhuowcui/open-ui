@@ -95,8 +95,8 @@ fn h1_first_line_only_first_line_gets_style() {
     // When first_line_style is set, effective style differs
     let mut block2 = ComputedStyle::initial();
     let mut fls = ComputedStyle::initial();
-    fls.font_size = 32.0;
-    block2.first_line_style = Some(Box::new(fls));
+    fls.update_derived(|computed| computed.font_size = 32.0);
+    block2.update_derived(|computed| computed.first_line_style = Some(Box::new(fls)));
     let eff2 = effective_first_line_style(&block2);
     assert_eq!(
         eff2.font_size, 32.0,
@@ -116,8 +116,8 @@ fn h1_first_line_resolve_returns_none_when_absent() {
 fn h1_first_line_resolve_returns_some_when_present() {
     let mut style = ComputedStyle::initial();
     let mut fls = ComputedStyle::initial();
-    fls.font_size = 48.0;
-    style.first_line_style = Some(Box::new(fls));
+    fls.update_derived(|computed| computed.font_size = 48.0);
+    style.update_derived(|computed| computed.first_line_style = Some(Box::new(fls)));
     let resolved = resolve_first_line_style(&style).unwrap();
     assert_eq!(resolved.font_size, 48.0);
 }
@@ -435,9 +435,11 @@ fn h4_initial_letter_style_computed_fields() {
     let mut style = ComputedStyle::initial();
     assert!(style.initial_letter.is_none());
 
-    style.initial_letter = Some(InitialLetter {
-        size: 3.0,
-        sink: None,
+    style.update_derived(|computed| {
+        computed.initial_letter = Some(InitialLetter {
+            size: 3.0,
+            sink: None,
+        })
     });
     let il = style.initial_letter.as_ref().unwrap();
     assert_eq!(il.size, 3.0);
@@ -491,9 +493,12 @@ fn integration_layout_with_new_defaults() {
     let div = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(div);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
-        node.style.width = Length::px(200.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(200.0));
     }
     doc.append_child(vp, div);
 
@@ -522,7 +527,7 @@ fn integration_layout_with_new_defaults() {
 #[test]
 fn integration_text_wrap_field_set() {
     let mut s = ComputedStyle::initial();
-    s.text_wrap = TextWrap::Balance;
+    s.update_derived(|computed| computed.text_wrap = TextWrap::Balance);
     assert_eq!(s.text_wrap, TextWrap::Balance);
     assert!(s.text_wrap.uses_scoring());
 }
@@ -530,9 +535,11 @@ fn integration_text_wrap_field_set() {
 #[test]
 fn integration_initial_letter_field_set() {
     let mut s = ComputedStyle::initial();
-    s.initial_letter = Some(InitialLetter {
-        size: 3.0,
-        sink: Some(2.0),
+    s.update_derived(|computed| {
+        computed.initial_letter = Some(InitialLetter {
+            size: 3.0,
+            sink: Some(2.0),
+        })
     });
     let il = s.initial_letter.as_ref().unwrap();
     assert_eq!(il.size, 3.0);

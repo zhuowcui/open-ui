@@ -43,12 +43,12 @@ fn large_cb() -> PhysicalRect {
 
 fn make_sticky_style(top: Length, right: Length, bottom: Length, left: Length) -> ComputedStyle {
     let mut s = ComputedStyle::initial();
-    s.display = Display::Block;
-    s.position = Position::Sticky;
-    s.top = top;
-    s.right = right;
-    s.bottom = bottom;
-    s.left = left;
+    s.update_derived(|computed| computed.display = Display::Block);
+    s.update_derived(|computed| computed.position = Position::Sticky);
+    s.update_derived(|computed| computed.top = top);
+    s.update_derived(|computed| computed.right = right);
+    s.update_derived(|computed| computed.bottom = bottom);
+    s.update_derived(|computed| computed.left = left);
     s
 }
 

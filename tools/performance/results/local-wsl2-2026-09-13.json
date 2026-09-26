@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "profile": "local-linux-headless-smoke",
+  "qualification": false,
+  "qualification_reason": "WSL2 developer machine; no exclusive runner, AT-SPI session, or physical GPU qualification",
+  "source_commit": "07e6fef96b680a3409696d07e8fe08b80ca62a03",
+  "pending_changes": "W10 hardening wave",
+  "environment": {
+    "kernel": "Linux 6.18.33.2-microsoft-standard-WSL2",
+    "architecture": "x86_64",
+    "cpu": "12th Gen Intel(R) Core(TM) i9-12900KF",
+    "logical_cpus": 20,
+    "rustc": "1.94.1 (e408947bf 2026-03-25)",
+    "build": "release"
+  },
+  "measurements": {
+    "warmup_interactions": 50000,
+    "interactions": 10000,
+    "interactions_per_second": 10992.023,
+    "p95_input_to_present_ms": 0.108,
+    "animation_frames": 120,
+    "hundred_ui_thread_animations_fps": 308.104,
+    "unchanged_layout_and_paint_work_zero": true,
+    "unchanged_raster_work_zero": true,
+    "owned_object_leak": false,
+    "rss_before_kib": 9216,
+    "rss_after_kib": 9344,
+    "rss_growth_percent": 1.389
+  },
+  "unmeasured_release_gates": [
+    "100 compositor-thread animations while the UI thread is blocked for 250 ms",
+    "idle CPU after platform event-loop settling",
+    "physical-GPU presentation",
+    "AT-SPI end-to-end operation"
+  ]
+}

@@ -82,8 +82,8 @@ pub fn compute_initial_letter_layout(
     let computed_font_size = font_size * size;
 
     // Query real font metrics at the computed size to derive the letter width.
-    let mut letter_style = ComputedStyle::default();
-    letter_style.font_size = computed_font_size;
+    let letter_style =
+        ComputedStyle::default().derive(|style| style.font_size = computed_font_size);
     let font_desc = style_to_font_description(&letter_style);
     let font = Font::new(font_desc);
     let metrics = font.font_metrics().copied().unwrap_or_default();
@@ -202,9 +202,7 @@ pub fn create_initial_letter_style(
     base_style: &ComputedStyle,
     layout: &InitialLetterLayout,
 ) -> ComputedStyle {
-    let mut style = base_style.clone();
-    style.font_size = layout.computed_font_size;
-    style
+    base_style.derive(|style| style.font_size = layout.computed_font_size)
 }
 
 /// Validate initial-letter property values.

@@ -1,0 +1,12 @@
+[target.x86_64-unknown-linux-gnu]
+rustflags = []
+
+[env]
+BINDGEN_EXTRA_CLANG_ARGS = ""
+CC = "clang"
+CXX = "clang++"
+CXXFLAGS = ""
+FORCE_SKIA_BUILD = "1"
+PKG_CONFIG_SYSROOT_DIR = ""
+SKIA_GN_ARGS = 'extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP", "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2", "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3" ]'
+SKIA_NINJA_COMMAND = "ninja"

@@ -42,21 +42,21 @@ fn make_float(
 #[test]
 fn overflow_hidden_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.overflow_x = Overflow::Hidden;
+    style.update_derived(|computed| computed.overflow_x = Overflow::Hidden);
     assert!(creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn overflow_scroll_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.overflow_x = Overflow::Scroll;
+    style.update_derived(|computed| computed.overflow_x = Overflow::Scroll);
     assert!(creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn overflow_auto_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.overflow_y = Overflow::Auto;
+    style.update_derived(|computed| computed.overflow_y = Overflow::Auto);
     assert!(creates_new_formatting_context(&style, false));
 }
 
@@ -64,77 +64,77 @@ fn overflow_auto_creates_new_bfc() {
 fn overflow_clip_does_not_create_new_bfc() {
     // Per CSS Overflow 3: overflow:clip does NOT establish a BFC.
     let mut style = ComputedStyle::initial();
-    style.overflow_x = Overflow::Clip;
+    style.update_derived(|computed| computed.overflow_x = Overflow::Clip);
     assert!(!creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn float_left_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.float = Float::Left;
+    style.update_derived(|computed| computed.float = Float::Left);
     assert!(creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn float_right_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.float = Float::Right;
+    style.update_derived(|computed| computed.float = Float::Right);
     assert!(creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn absolute_position_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.position = Position::Absolute;
+    style.update_derived(|computed| computed.position = Position::Absolute);
     assert!(creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn fixed_position_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.position = Position::Fixed;
+    style.update_derived(|computed| computed.position = Position::Fixed);
     assert!(creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn display_flow_root_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::FlowRoot;
+    style.update_derived(|computed| computed.display = Display::FlowRoot);
     assert!(creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn display_flex_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::Flex;
+    style.update_derived(|computed| computed.display = Display::Flex);
     assert!(creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn display_grid_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::Grid;
+    style.update_derived(|computed| computed.display = Display::Grid);
     assert!(creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn display_inline_block_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::InlineBlock;
+    style.update_derived(|computed| computed.display = Display::InlineBlock);
     assert!(creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn display_table_creates_new_bfc() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::Table;
+    style.update_derived(|computed| computed.display = Display::Table);
     assert!(creates_new_formatting_context(&style, false));
 }
 
 #[test]
 fn normal_block_does_not_create_bfc() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::Block;
+    style.update_derived(|computed| computed.display = Display::Block);
     assert!(!creates_new_formatting_context(&style, false));
 }
 
@@ -164,11 +164,11 @@ fn new_bfc_does_not_collapse_margins_with_parent() {
 #[test]
 fn new_bfc_margins_resolved_immediately() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::FlowRoot;
-    style.margin_top = Length::px(20.0);
-    style.margin_bottom = Length::px(10.0);
-    style.margin_left = Length::px(5.0);
-    style.margin_right = Length::px(15.0);
+    style.update_derived(|computed| computed.display = Display::FlowRoot);
+    style.update_derived(|computed| computed.margin_top = Length::px(20.0));
+    style.update_derived(|computed| computed.margin_bottom = Length::px(10.0));
+    style.update_derived(|computed| computed.margin_left = Length::px(5.0));
+    style.update_derived(|computed| computed.margin_right = Length::px(15.0));
 
     let (top, right, bottom, left) = resolve_new_fc_margins(&style, lu(800));
     assert_eq!(top, lu(20));
@@ -180,8 +180,8 @@ fn new_bfc_margins_resolved_immediately() {
 #[test]
 fn new_bfc_percentage_margins_resolve_against_container() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::FlowRoot;
-    style.margin_top = Length::percent(10.0); // 10% of 800 = 80
+    style.update_derived(|computed| computed.display = Display::FlowRoot);
+    style.update_derived(|computed| computed.margin_top = Length::percent(10.0)); // 10% of 800 = 80
 
     let (top, _right, _bottom, _left) = resolve_new_fc_margins(&style, lu(800));
     assert_eq!(top, lu(80));
@@ -360,11 +360,11 @@ fn child_space_inherits_fragmentation_from_parent() {
 #[test]
 fn layout_new_fc_resolves_margins() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::FlowRoot;
-    style.margin_top = Length::px(10.0);
-    style.margin_bottom = Length::px(20.0);
-    style.margin_left = Length::px(5.0);
-    style.margin_right = Length::px(15.0);
+    style.update_derived(|computed| computed.display = Display::FlowRoot);
+    style.update_derived(|computed| computed.margin_top = Length::px(10.0));
+    style.update_derived(|computed| computed.margin_bottom = Length::px(20.0));
+    style.update_derived(|computed| computed.margin_left = Length::px(5.0));
+    style.update_derived(|computed| computed.margin_right = Length::px(15.0));
 
     let parent_space = ConstraintSpace::for_root(lu(800), lu(600));
     let input = NewFcLayoutInput {
@@ -388,7 +388,7 @@ fn layout_new_fc_resolves_margins() {
 #[test]
 fn layout_new_fc_with_float_avoidance() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::FlowRoot;
+    style.update_derived(|computed| computed.display = Display::FlowRoot);
 
     let mut parent_excl = ExclusionSpace::new();
     parent_excl.add(make_float(ExclusionType::Left, 0, 0, 200, 100));
@@ -418,8 +418,8 @@ fn layout_new_fc_with_float_avoidance() {
 #[test]
 fn layout_new_fc_pushed_below_float() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::FlowRoot;
-    style.width = Length::px(700.0);
+    style.update_derived(|computed| computed.display = Display::FlowRoot);
+    style.update_derived(|computed| computed.width = Length::px(700.0));
 
     let mut parent_excl = ExclusionSpace::new();
     parent_excl.add(make_float(ExclusionType::Left, 0, 0, 700, 100));
@@ -448,7 +448,7 @@ fn layout_new_fc_pushed_below_float() {
 #[test]
 fn layout_new_fc_auto_width_fills_available() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::FlowRoot;
+    style.update_derived(|computed| computed.display = Display::FlowRoot);
     // width: auto (default)
 
     let parent_space = ConstraintSpace::for_root(lu(800), lu(600));
@@ -470,7 +470,7 @@ fn layout_new_fc_auto_width_fills_available() {
 #[test]
 fn layout_new_fc_auto_width_shrinks_beside_float() {
     let mut style = ComputedStyle::initial();
-    style.display = Display::FlowRoot;
+    style.update_derived(|computed| computed.display = Display::FlowRoot);
     // width: auto (default)
 
     let mut parent_excl = ExclusionSpace::new();

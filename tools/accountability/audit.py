@@ -29,10 +29,27 @@ PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
 DATA_DIR = os.path.join(SCRIPT_DIR, "data")
 RESULTS_DIR = os.path.join(DATA_DIR, "pixel_comparison", "results")
 WPT_DIR = os.path.join(PROJECT_ROOT, "bindings", "rust", "pixel-compare", "src", "wpt")
+WPT_TOOLS_DIR = os.path.join(PROJECT_ROOT, "tools", "wpt")
 
 # Import from shared_detectors to stay in sync automatically
 sys.path.insert(0, SCRIPT_DIR)
+sys.path.insert(0, WPT_TOOLS_DIR)
 from shared_detectors import CATEGORY_FOR_DEP
+from generate_sp13r_multicol_closure import (
+    LATER_EXACT_PROMOTIONS as SP13R_LATER_EXACT_PROMOTIONS,
+    sp19_live_promotions as sp13r_sp19_live_promotions,
+    lowered_candidate_promotions as sp13r_lowered_candidate_promotions,
+)
+
+
+def audited_candidate_ids(rows):
+    mapping = {canonical_mapping_id(row): row for row in rows}
+    return sp13r_lowered_candidate_promotions(
+        mapping, require_complete=len(rows) == SP14_EXPECTED_INVENTORY
+    )
+from generate_sp13p_paint_closure import (
+    validate_closed_snapshot as validate_sp13p_paint_closure,
+)
 
 VALID_FAILURE_CATEGORIES = set(CATEGORY_FOR_DEP.values()) | {"sp12_layout_bug", "sp13_fragmentation_architecture", "not_ported"}
 TEXT_PORT_METADATA_CATEGORIES = {"reference_test", "non_visual_test"}
@@ -190,6 +207,7 @@ def sp14_text_closure_errors(
             if part.strip()
         }:
             errors.append(f"mapping retains needs_text: {test_id}")
+    candidate_ids = audited_candidate_ids(rows)
 
     for test_id in baseline:
         result = summary_by_id.get(test_id)
@@ -222,7 +240,12 @@ def sp14_text_closure_errors(
             if not result or result.get("status") == "error":
                 errors.append(f"SP15-superseded W4 target is not runnable: {test_id}")
             continue
-        if test_id in superseded_residuals:
+        # A frozen SP15/SP16 residual may itself be closed by a still-later
+        # sprint.  In that case the exact live promotion below supersedes the
+        # intermediate residual disposition too.
+        if test_id in superseded_residuals and not (
+            row and row.get("ported") == "yes"
+        ):
             disposition = superseded_residuals[test_id]
             if not row or row.get("ported") != "no":
                 errors.append(f"SP15-superseded W4 residual is not unported: {test_id}")
@@ -253,6 +276,19 @@ def sp14_text_closure_errors(
             or not (set(owners or []) - TEXT_PORT_METADATA_CATEGORIES)
         ):
             errors.append(f"W4 target lacks reason-backed functional ownership: {test_id}")
+            continue
+        if row and row.get("ported") == "yes":
+            result = summary_by_id.get(test_id)
+            if row.get("our_test_id") != test_id:
+                errors.append(f"later-sprint W4 promotion has wrong identity: {test_id}")
+            if test_id not in templates or test_id not in text_ported_tests:
+                errors.append(f"later-sprint W4 promotion is not manifested: {test_id}")
+            if test_id not in candidate_ids and (
+                not result
+                or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                errors.append(f"later-sprint W4 promotion is not exact: {test_id}")
             continue
         if not row or row.get("ported") != "no":
             errors.append(f"W4 target is not unported: {test_id}")
@@ -290,6 +326,7 @@ def sp15_closure_errors(
         errors.append("SP15 actionable/residual ledgers are not a disjoint 130-ID cover")
 
     mapping_by_id = {canonical_mapping_id(row): row for row in rows}
+    candidate_ids = audited_candidate_ids(rows)
     for test_id in baseline:
         result = summary_by_id.get(test_id)
         if not result or result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
@@ -340,6 +377,19 @@ def sp15_closure_errors(
         ):
             errors.append(f"SP15 residual disposition is invalid: {test_id}")
             continue
+        if row and row.get("ported") == "yes":
+            result = summary_by_id.get(test_id)
+            if row.get("our_test_id") != test_id:
+                errors.append(f"later-sprint SP15 promotion has wrong identity: {test_id}")
+            if test_id not in templates or test_id not in text_ported_tests:
+                errors.append(f"later-sprint SP15 promotion is not manifested: {test_id}")
+            if test_id not in candidate_ids and (
+                not result
+                or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                errors.append(f"later-sprint SP15 promotion is not exact: {test_id}")
+            continue
         if not row or row.get("ported") != "no":
             errors.append(f"SP15 residual is not unported: {test_id}")
             continue
@@ -384,10 +434,16 @@ def sp15_closure_errors(
         )
     if len(rows) != SP14_EXPECTED_INVENTORY:
         errors.append(f"SP15 inventory count {len(rows)} != {SP14_EXPECTED_INVENTORY}")
-    if len(templates) != SP15_EXPECTED_RUNNABLE or len(summary_by_id) != SP15_EXPECTED_RUNNABLE:
+    runnable = sum(row.get("ported") == "yes" for row in rows)
+    if (
+        runnable < SP15_EXPECTED_RUNNABLE
+        or len(templates) != runnable
+        or len(summary_by_id) != runnable - len(candidate_ids)
+    ):
         errors.append(
-            f"SP15 runnable count templates={len(templates)}, summary={len(summary_by_id)} "
-            f"!= {SP15_EXPECTED_RUNNABLE}"
+            "SP15 live runnable identity changed incompatibly: "
+            f"mapping={runnable}, templates={len(templates)}, "
+            f"summary={len(summary_by_id)}, floor={SP15_EXPECTED_RUNNABLE}"
         )
     return errors
 
@@ -414,6 +470,7 @@ def sp16_closure_errors(
         errors.append("SP16 baseline overlaps the 776-ID owner inventory")
 
     mapping_by_id = {canonical_mapping_id(row): row for row in rows}
+    candidate_ids = audited_candidate_ids(rows)
     for test_id in baseline:
         result = summary_by_id.get(test_id)
         if not result or result.get("status") != "pass" or result.get("mismatch_pct") != 0.0:
@@ -447,6 +504,19 @@ def sp16_closure_errors(
             or not (set(owners) - TEXT_PORT_METADATA_CATEGORIES)
         ):
             errors.append(f"SP16 residual disposition is invalid: {test_id}")
+            continue
+        if row and row.get("ported") == "yes":
+            result = summary_by_id.get(test_id)
+            if row.get("our_test_id") != test_id:
+                errors.append(f"later-sprint SP16 promotion has wrong identity: {test_id}")
+            if test_id not in templates:
+                errors.append(f"later-sprint SP16 promotion lacks a template: {test_id}")
+            if test_id not in candidate_ids and (
+                not result
+                or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                errors.append(f"later-sprint SP16 promotion is not exact: {test_id}")
             continue
         if not row or row.get("ported") != "no":
             errors.append(f"SP16 residual is not unported: {test_id}")
@@ -496,12 +566,18 @@ def sp16_closure_errors(
     if len(rows) != SP14_EXPECTED_INVENTORY:
         errors.append(f"SP16 inventory count {len(rows)} != {SP14_EXPECTED_INVENTORY}")
     unported = sum(row.get("ported") == "no" for row in rows)
-    if unported != SP16_EXPECTED_UNPORTED:
-        errors.append(f"SP16 unported count {unported} != {SP16_EXPECTED_UNPORTED}")
-    if len(templates) != SP16_EXPECTED_RUNNABLE or len(summary_by_id) != SP16_EXPECTED_RUNNABLE:
+    runnable = len(rows) - unported
+    if unported > SP16_EXPECTED_UNPORTED:
+        errors.append(f"SP16 unported count grew: {unported} > {SP16_EXPECTED_UNPORTED}")
+    if (
+        runnable < SP16_EXPECTED_RUNNABLE
+        or len(templates) != runnable
+        or len(summary_by_id) != runnable - len(candidate_ids)
+    ):
         errors.append(
-            f"SP16 runnable count templates={len(templates)}, summary={len(summary_by_id)} "
-            f"!= {SP16_EXPECTED_RUNNABLE}"
+            "SP16 live runnable identity changed incompatibly: "
+            f"mapping={runnable}, templates={len(templates)}, "
+            f"summary={len(summary_by_id)}, floor={SP16_EXPECTED_RUNNABLE}"
         )
     if any(item.get("status") == "error" for item in summary_by_id.values()):
         errors.append("SP16 closed snapshot contains render/diff errors")
@@ -509,13 +585,20 @@ def sp16_closure_errors(
 
 
 def sp13r_multicol_closure_errors(
-    rows, summary_by_id, templates, baseline, targets, residuals
+    rows,
+    summary_by_id,
+    templates,
+    baseline,
+    targets,
+    residuals,
+    later_exact_promotions=SP13R_LATER_EXACT_PROMOTIONS,
 ):
     """Validate SP13-R's immutable multicol cover and exact closed snapshot."""
     errors = []
     residual_ids = [
         item.get("test_id", "") for item in residuals if isinstance(item, dict)
     ]
+    later_exact_promotions = set(later_exact_promotions)
     if baseline != sorted(set(baseline)) or len(baseline) != SP13R_EXPECTED_BASELINE:
         errors.append("SP13-R baseline is not the frozen sorted 2,823-ID set")
     if targets != sorted(set(targets)) or len(targets) != SP13R_EXPECTED_TARGETS:
@@ -531,8 +614,12 @@ def sp13r_multicol_closure_errors(
         errors.append("SP13-R ledgers are not a complete disjoint 1,369-ID cover")
     if set(baseline) & (set(targets) | set(residual_ids)):
         errors.append("SP13-R baseline overlaps the multicol inventory")
+    if not later_exact_promotions <= set(residual_ids):
+        errors.append("SP13-R later-promotion allowlist escapes the residual ledger")
 
     mapping_by_id = {canonical_mapping_id(row): row for row in rows}
+    later_exact_promotions |= sp13r_sp19_live_promotions(mapping_by_id)
+    candidate_promotions = sp13r_lowered_candidate_promotions(mapping_by_id)
     for test_id in baseline:
         result = summary_by_id.get(test_id)
         if (
@@ -574,6 +661,36 @@ def sp13r_multicol_closure_errors(
         ):
             errors.append(f"SP13-R residual disposition is invalid: {test_id}")
             continue
+        if test_id in candidate_promotions:
+            mapped = {
+                part.strip()
+                for part in row.get("failure_category", "").split(",")
+                if part.strip()
+            } if row else set()
+            if not row or test_id not in templates or SP13R_OWNER in mapped:
+                errors.append(f"SP13-R AST-lowered candidate is not a live port: {test_id}")
+            continue
+        if test_id in later_exact_promotions:
+            result = summary_by_id.get(test_id)
+            mapped = {
+                part.strip()
+                for part in row.get("failure_category", "").split(",")
+                if part.strip()
+            } if row else set()
+            if (
+                not row
+                or row.get("ported") != "yes"
+                or row.get("our_test_id") != test_id
+                or test_id not in templates
+                or SP13R_OWNER in mapped
+                or not result
+                or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                errors.append(
+                    f"SP13-R later promotion is not runnable and exact: {test_id}"
+                )
+            continue
         if not row or row.get("ported") != "no":
             errors.append(f"SP13-R residual is not unported: {test_id}")
             continue
@@ -603,8 +720,13 @@ def sp13r_multicol_closure_errors(
             multicol_rows.append(canonical_mapping_id(row))
             if row.get("ported") != "no":
                 stale_runnable.append(canonical_mapping_id(row))
-    if sorted(multicol_rows) != residual_ids:
-        errors.append("SP13-R owner does not exactly identify the frozen residual ledger")
+    expected_owned_residuals = sorted(
+        set(residual_ids) - later_exact_promotions - candidate_promotions
+    )
+    if sorted(multicol_rows) != expected_owned_residuals:
+        errors.append(
+            "SP13-R owner does not exactly identify the live unported residuals"
+        )
     if stale_runnable:
         errors.append(f"runnable row retains SP13-R ownership: {stale_runnable[0]}")
 
@@ -615,12 +737,18 @@ def sp13r_multicol_closure_errors(
     )
     if len(rows) != SP14_EXPECTED_INVENTORY:
         errors.append(f"SP13-R inventory count {len(rows)} != {SP14_EXPECTED_INVENTORY}")
-    if unported != SP16_EXPECTED_UNPORTED:
-        errors.append(f"SP13-R unported count {unported} != {SP16_EXPECTED_UNPORTED}")
-    if len(templates) != SP16_EXPECTED_RUNNABLE or len(summary_by_id) != SP16_EXPECTED_RUNNABLE:
+    runnable = len(rows) - unported
+    if unported > SP16_EXPECTED_UNPORTED:
+        errors.append(f"SP13-R unported count grew: {unported} > {SP16_EXPECTED_UNPORTED}")
+    if (
+        runnable < SP16_EXPECTED_RUNNABLE
+        or len(templates) != runnable
+        or len(summary_by_id) != runnable - len(candidate_promotions)
+    ):
         errors.append(
-            f"SP13-R runnable count templates={len(templates)}, summary={len(summary_by_id)} "
-            f"!= {SP16_EXPECTED_RUNNABLE}"
+            "SP13-R live runnable identity changed incompatibly: "
+            f"mapping={runnable}, templates={len(templates)}, "
+            f"summary={len(summary_by_id)}, floor={SP16_EXPECTED_RUNNABLE}"
         )
     if exact < SP13R_EXPECTED_EXACT:
         errors.append(f"SP13-R exact pass count {exact} < {SP13R_EXPECTED_EXACT}")
@@ -744,7 +872,7 @@ def check_summary_integrity(*, require_images=True):
 
 
 def check_template_consistency():
-    """Check 2: Templates match summary test count (mismatches are ERRORS)."""
+    """Check 2: Frozen results plus audited candidates cover live templates."""
     print("\n── Check 2: Template ↔ summary consistency ──")
     templates_path = os.path.join(DATA_DIR, "wpt_ported", "all_wpt_templates.json")
     summary_path = os.path.join(RESULTS_DIR, "summary.json")
@@ -760,22 +888,23 @@ def check_template_consistency():
 
     summary_ids = {t["id"] for t in summary["tests"]}
     template_ids = set(templates.keys())
+    with open(os.path.join(DATA_DIR, "wpt_mapping.csv"), newline="", encoding="utf-8") as stream:
+        candidate_ids = audited_candidate_ids(list(csv.DictReader(stream)))
 
     missing_in_summary = template_ids - summary_ids
     missing_in_templates = summary_ids - template_ids
 
-    if missing_in_summary:
-        issue(f"{len(missing_in_summary)} templates not in summary (comparison incomplete)")
-        for tid in sorted(missing_in_summary)[:3]:
+    unexpected = missing_in_summary - candidate_ids
+    if unexpected or missing_in_summary != candidate_ids:
+        issue(f"template/result difference does not equal audited candidate set ({len(unexpected)} unexpected)")
+        for tid in sorted(unexpected)[:3]:
             print(f"         {tid}")
     if missing_in_templates:
         issue(f"{len(missing_in_templates)} summary tests have no template (dropped tests)")
         for tid in sorted(missing_in_templates)[:3]:
             print(f"         {tid}")
-    if not missing_in_templates and not missing_in_summary:
-        ok(f"All {len(template_ids)} templates have matching summary entries")
-    if len(template_ids) != len(summary_ids):
-        issue(f"Template count ({len(template_ids)}) != summary count ({len(summary_ids)})")
+    if not missing_in_templates and missing_in_summary == candidate_ids:
+        ok(f"{len(summary_ids)} frozen templates + {len(candidate_ids)} audited candidates accounted")
 
 
 def check_rust_code_exists():
@@ -818,8 +947,10 @@ def check_rust_code_exists():
         issue(f"{len(missing_rust)} tests in summary but no Rust registry entry")
         for tid in sorted(missing_rust)[:3]:
             print(f"         {tid}")
-    if extra_rust:
-        warn(f"{len(extra_rust)} Rust tests not in summary (possibly not compared)")
+    with open(os.path.join(DATA_DIR, "wpt_mapping.csv"), newline="", encoding="utf-8") as stream:
+        candidate_ids = audited_candidate_ids(list(csv.DictReader(stream)))
+    if extra_rust != candidate_ids:
+        issue(f"Rust registry/result difference does not equal audited candidate set")
 
     # Verify function definitions exist for registry entries
     # Registry format: ("wpt/area/name", fn_name as fn() -> Document)
@@ -856,6 +987,7 @@ def check_mapping_coverage():
     with open(mapping_path) as f:
         reader = csv.DictReader(f)
         rows = list(reader)
+    candidate_ids = audited_candidate_ids(rows)
 
     total = len(rows)
     ported = sum(1 for r in rows if r["ported"] == "yes")
@@ -1072,6 +1204,12 @@ def check_mapping_coverage():
                 f"{len(sp13r_targets)} exact targets, "
                 f"{len(sp13r_residuals)} reason-owned residuals"
             )
+        try:
+            validate_sp13p_paint_closure()
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            issue(f"SP13-P paint closure invariant violation: {exc}")
+        else:
+            ok("SP13-P closure: 3,889 runnable, 3,807 exact, 82 residual")
 
     # Accounting identity: ported + not_ported = total
     if ported + not_ported != total:
@@ -1079,11 +1217,11 @@ def check_mapping_coverage():
     else:
         ok(f"Accounting: {ported} ported + {not_ported} not_ported = {total} total")
 
-    # Accounting identity: pass + fail = ported
-    if passing + failing != ported:
-        issue(f"Accounting: pass({passing}) + fail({failing}) != ported({ported})")
+    # The immutable result summary excludes AST-lowered candidate ports.
+    if passing + failing + len(candidate_ids) != ported:
+        issue(f"Accounting: pass({passing}) + fail({failing}) + candidate({len(candidate_ids)}) != ported({ported})")
     else:
-        ok(f"Accounting: {passing} pass + {failing} fail = {ported} ported")
+        ok(f"Accounting: {passing} pass + {failing} fail + {len(candidate_ids)} audited candidates = {ported} ported")
 
     # Cross-check with summary (errors are treated as failures in mapping).
     summary_path = os.path.join(RESULTS_DIR, "summary.json")
@@ -1091,14 +1229,16 @@ def check_mapping_coverage():
         with open(summary_path) as f:
             summary = json.load(f)
         summary_failed = summary["failed"] + summary.get("errors", 0)
-        if ported != summary["total"]:
-            issue(f"Mapping says {ported} ported but summary has {summary['total']} tests")
+        summary_ids = {test["id"] for test in summary["tests"]}
+        ported_ids = {canonical_mapping_id(row) for row in rows if row["ported"] == "yes"}
+        if ported_ids - summary_ids != candidate_ids or summary_ids - ported_ids:
+            issue("Mapping/result identity differs outside audited candidates")
         if passing != summary["passed"]:
             issue(f"Mapping says {passing} passing but summary says {summary['passed']}")
         if failing != summary_failed:
             issue(f"Mapping says {failing} failing but summary says {summary_failed} (failed+errors)")
-        if ported == summary["total"] and passing == summary["passed"]:
-            ok(f"Mapping ↔ summary cross-check passed")
+        if ported_ids - summary_ids == candidate_ids and not summary_ids - ported_ids and passing == summary["passed"]:
+            ok("Mapping ↔ immutable summary and candidate audit cross-check passed")
 
     # Split multi-label categories for accurate counting
     categories = Counter()

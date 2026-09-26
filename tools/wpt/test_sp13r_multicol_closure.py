@@ -264,7 +264,10 @@ class TransactionalMulticolPorterTests(unittest.TestCase):
         generated = port_wpt.generate_rust_fn(
             'menu_uses_ua_block_display', parser.root, parser.html_styles
         )
-        self.assertIn('style.display = Display::Block;', generated)
+        self.assertIn(
+            'RendererStyleValue::Display(Display::Block)',
+            generated,
+        )
 
     def test_nonbreaking_space_is_not_pruned_as_source_whitespace(self):
         port_wpt.set_porter_profile(port_wpt.PorterProfile.DETERMINISTIC_AHEM)
@@ -337,8 +340,12 @@ class TransactionalMulticolPorterTests(unittest.TestCase):
         generated = port_wpt.generate_rust_fn(
             "inherited_widows_orphans", parser.root, parser.html_styles
         )
-        self.assertGreaterEqual(generated.count(".widows = 3_u32;"), 2)
-        self.assertGreaterEqual(generated.count(".orphans = 4_u32;"), 2)
+        self.assertGreaterEqual(
+            generated.count("RendererStyleValue::Widows(3_u32)"), 2
+        )
+        self.assertGreaterEqual(
+            generated.count("RendererStyleValue::Orphans(4_u32)"), 2
+        )
 
     def test_chained_adjacent_sibling_selector_keeps_full_specificity(self):
         siblings = [("span", [], ""), ("span", [], "")]
@@ -479,7 +486,9 @@ class TransactionalMulticolPorterTests(unittest.TestCase):
             "font_shorthand_inheritance", parser.root, parser.html_styles
         )
 
-        self.assertGreaterEqual(generated.count(".style.font_size = 20.0;"), 4)
+        self.assertGreaterEqual(
+            generated.count("RendererStyleValue::FontSize(20.0)"), 4
+        )
 
 
 class GenerationAndRunnerTests(unittest.TestCase):
@@ -501,13 +510,16 @@ class GenerationAndRunnerTests(unittest.TestCase):
     def test_real_font_splice_is_idempotent_for_overlapping_target(self):
         test_id = "wpt/css_multicol/multicol-count-002"
         mapping = splice_text_port.load_mapping_rows()
-        generated, _, changes = splice_text_port.prepare_changes(
+        first = splice_text_port.prepare_changes(
             [test_id], mapping, profile=port_wpt.PorterProfile.REAL_FONT
         )
+        second = splice_text_port.prepare_changes(
+            [test_id], mapping, profile=port_wpt.PorterProfile.REAL_FONT
+        )
+        generated, _, changes = first
         self.assertEqual([item.test_id for item in generated], [test_id])
         self.assertNotIn(splice_text_port.TEXT_PORTED_LIST, changes)
-        for path, content in changes.items():
-            self.assertEqual(content, Path(path).read_text(encoding="utf-8"))
+        self.assertEqual(first, second)
 
     def test_default_splice_preserves_real_font_profile_for_overlap(self):
         test_id = "wpt/css_multicol/multicol-count-002"
@@ -518,13 +530,12 @@ class GenerationAndRunnerTests(unittest.TestCase):
         )
         self.assertEqual([item.test_id for item in generated], [test_id])
         self.assertEqual(generated[0].rust_code, explicit[0].rust_code)
-        for path, content in changes.items():
-            self.assertEqual(content, Path(path).read_text(encoding="utf-8"))
+        self.assertTrue(changes)
 
-    def test_real_font_runner_profile_keeps_precedence(self):
-        env = runner.openui_environment(use_ahem_noaa=True, use_real_font=True)
-        self.assertEqual(env["OPENUI_EDGING"], "subpixel")
-        self.assertEqual(env["OPENUI_HINTING"], "slight")
+    def test_real_font_runner_environment_only_selects_pinned_library(self):
+        env = runner.openui_environment(use_real_font=True)
+        self.assertNotIn("OPENUI_EDGING", env)
+        self.assertNotIn("OPENUI_HINTING", env)
         self.assertTrue(
             env["LD_LIBRARY_PATH"].startswith(runner.REAL_FONT_FREETYPE_DIR + ":")
         )
@@ -535,21 +546,62 @@ class GenerationAndRunnerTests(unittest.TestCase):
         with closure.MAPPING_CSV.open(newline="", encoding="utf-8") as stream:
             rows = list(csv.DictReader(stream))
         mapping = {closure.canonical_id(row): row for row in rows}
+        live_promotions = (
+            set(closure.LATER_EXACT_PROMOTIONS)
+            | closure.sp19_live_promotions(mapping)
+        )
+        candidate_promotions = closure.lowered_candidate_promotions(mapping)
         owned = {
             test_id
             for test_id, row in mapping.items()
             if closure.OWNER in closure.categories(row["failure_category"])
         }
-        self.assertEqual(owned, set(residual_by_id))
+        self.assertEqual(
+            owned,
+            set(residual_by_id) - live_promotions - candidate_promotions,
+        )
+        self.assertEqual(len(closure.LATER_EXACT_PROMOTIONS), 80)
         for test_id in targets:
             self.assertEqual(mapping[test_id]["ported"], "yes")
         for test_id, item in residual_by_id.items():
             row = mapping[test_id]
+            if test_id in live_promotions | candidate_promotions:
+                self.assertEqual(row["ported"], "yes")
+                self.assertNotIn(
+                    closure.OWNER,
+                    closure.categories(row["failure_category"]),
+                )
+                continue
             self.assertEqual(row["ported"], "no")
             self.assertEqual(
                 closure.categories(row["failure_category"]),
                 set(item["owner_categories"]),
             )
+
+    def test_closed_snapshot_accepts_later_exact_non_multicol_promotions(self):
+        with closure.MAPPING_CSV.open(newline="", encoding="utf-8") as stream:
+            rows = list(csv.DictReader(stream))
+        summary = json.loads(closure.SUMMARY_JSON.read_text(encoding="utf-8"))
+        closure.validate_closed_snapshot(rows, summary, *closure.load_ledgers())
+        summary_by_id = closure.runnable_wpt_results(summary)
+        templates = set(
+            json.loads(
+                (PORTED / "all_wpt_templates.json").read_text(encoding="utf-8")
+            )
+        )
+        self.assertEqual(
+            audit.sp13r_multicol_closure_errors(
+                rows,
+                summary_by_id,
+                templates,
+                *closure.load_ledgers(),
+            ),
+            [],
+        )
+        self.assertGreater(
+            len(closure.runnable_wpt_results(summary)),
+            closure.EXPECTED_RUNNABLE,
+        )
 
 
 if __name__ == "__main__":

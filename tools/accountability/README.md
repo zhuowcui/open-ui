@@ -45,21 +45,33 @@ Current verified snapshot:
 | Metric | Value |
 |---|---:|
 | Chromium SP12-scope inventory rows | 7673 |
-| Ported/runnable WPT tests | 3566 |
-| Runnable passes | 3267 |
-| Runnable failures | 299 |
+| Ported/runnable WPT tests | 5731 |
+| Runnable passes | 5731 |
+| Runnable failures | 0 |
 | Runnable render/diff errors | 0 |
-| Unported but explicitly categorized rows | 4107 |
+| Unported but explicitly categorized rows | 1942 |
 | Generic `not_ported` bucket rows | 0 |
 | `sp12_layout_bug` rows | 0 |
 | `needs_text` rows | 0 |
 | `needs_font_metrics` rows | 0 |
-| Runnable `sp13_multicol` rows | 0 |
-| Unported `sp13_multicol` residuals | 1018 |
+| Verified SP20 exact baseline | 4962 |
+| Verified SP20 static-visual targets | 769 |
+| Excluded SP20 JavaScript-dependent rows | 1912 |
+| Excluded SP20 nonvisual/crash-harness rows | 30 |
 
-This is the verified SP13-R snapshot: all 2823 frozen exact baseline IDs and all
-351 runnable multicol targets pass at 0.0% mismatch. The 1018 unported multicol
-rows remain reason-owned in the residual ledger.
+This is the verified SP20 snapshot: all 4,962 baseline IDs and 769 static-visual
+targets pass at 0.0% mismatch. Both the focused manifest and the complete WPT
+run are 5,731/5,731 exact with zero failures and zero render/diff errors. The
+remaining 1,942 rows retain explicit ownership: 1,912 require JavaScript and 30
+are nonvisual or crash-harness rows.
+
+The historical 0.0% result metadata is not a byte-exact current-renderer
+qualification. The required `frozen-pixel-replay` CI check compares fresh
+renders against the original 5,731 OpenUI PNGs without tolerance. Their bytes
+are preserved in `data/pixel_comparison/frozen-openui-5731-v1.tar.xz`, whose
+SHA-256 and exact manifest membership are checked by
+`restore_frozen_openui_archive.py`. Restoring it never overwrites a differing
+local PNG. The Chromium oracle PNGs and result metadata are not refrozen.
 
 ## Data Files
 

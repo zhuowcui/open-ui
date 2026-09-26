@@ -19,13 +19,13 @@ fn make_doc_with_text(texts: &[&str]) -> (Document, NodeId) {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         doc.append_child(block, t);
     }
     (doc, block)
@@ -36,17 +36,17 @@ fn make_doc_with_span(span_texts: &[&str]) -> (Document, NodeId) {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(block, span);
 
     for text in span_texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         doc.append_child(span, t);
     }
     (doc, block)
@@ -255,20 +255,20 @@ fn nested_spans_produce_correct_order() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let outer_span = doc.create_node(ElementTag::Span);
-    doc.node_mut(outer_span).style.display = Display::Inline;
+    doc.update_resolved_style(outer_span, |style| style.display = Display::Inline);
     doc.append_child(block, outer_span);
 
     let inner_span = doc.create_node(ElementTag::Span);
-    doc.node_mut(inner_span).style.display = Display::Inline;
+    doc.update_resolved_style(inner_span, |style| style.display = Display::Inline);
     doc.append_child(outer_span, inner_span);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("hello".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     doc.append_child(inner_span, text);
 
     let data = InlineItemsBuilder::collect(&doc, block);
@@ -321,13 +321,13 @@ fn pre_preserves_all_spaces() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("  hello  world  ".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
-    doc.node_mut(t).style.white_space = WhiteSpace::Pre;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t, |style| style.white_space = WhiteSpace::Pre);
     doc.append_child(block, t);
 
     let data = InlineItemsBuilder::collect(&doc, block);
@@ -342,13 +342,13 @@ fn pre_line_collapses_spaces_keeps_newlines() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("hello   \n   world".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
-    doc.node_mut(t).style.white_space = WhiteSpace::PreLine;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t, |style| style.white_space = WhiteSpace::PreLine);
     doc.append_child(block, t);
 
     let data = InlineItemsBuilder::collect(&doc, block);
@@ -368,17 +368,17 @@ fn multiple_text_nodes_have_separate_style_indices() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t1 = doc.create_node(ElementTag::Text);
     doc.node_mut(t1).text = Some("hello".to_string());
-    doc.node_mut(t1).style.font_size = 16.0;
+    doc.update_resolved_style(t1, |style| style.font_size = 16.0);
     doc.append_child(block, t1);
 
     let t2 = doc.create_node(ElementTag::Text);
     doc.node_mut(t2).text = Some("world".to_string());
-    doc.node_mut(t2).style.font_size = 24.0;
+    doc.update_resolved_style(t2, |style| style.font_size = 24.0);
     doc.append_child(block, t2);
 
     let data = InlineItemsBuilder::collect(&doc, block);
@@ -420,12 +420,12 @@ fn bidi_level_rtl() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("hello".to_string());
-    doc.node_mut(t).style.direction = Direction::Rtl;
+    doc.update_resolved_style(t, |style| style.direction = Direction::Rtl);
     doc.append_child(block, t);
 
     let data = InlineItemsBuilder::collect(&doc, block);
@@ -447,11 +447,11 @@ fn inline_block_produces_atomic_inline() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let ib = doc.create_node(ElementTag::Div);
-    doc.node_mut(ib).style.display = Display::InlineBlock;
+    doc.update_resolved_style(ib, |style| style.display = Display::InlineBlock);
     doc.append_child(block, ib);
 
     let data = InlineItemsBuilder::collect(&doc, block);
@@ -516,7 +516,7 @@ fn mixed_inline_elements_flatten_correctly() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t1 = doc.create_node(ElementTag::Text);
@@ -524,7 +524,7 @@ fn mixed_inline_elements_flatten_correctly() {
     doc.append_child(block, t1);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(block, span);
 
     let t2 = doc.create_node(ElementTag::Text);
@@ -551,7 +551,7 @@ fn no_children_produces_empty_items() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let data = InlineItemsBuilder::collect(&doc, block);
@@ -582,13 +582,13 @@ fn multiple_spans_with_text() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     // <span>a</span><span>b</span>
     for text in &["a", "b"] {
         let span = doc.create_node(ElementTag::Span);
-        doc.node_mut(span).style.display = Display::Inline;
+        doc.update_resolved_style(span, |style| style.display = Display::Inline);
         doc.append_child(block, span);
 
         let t = doc.create_node(ElementTag::Text);
@@ -606,7 +606,7 @@ fn multiple_spans_with_text() {
 fn style_to_font_description_preserves_size() {
     use openui_layout::inline::items_builder::style_to_font_description;
     let mut style = ComputedStyle::initial();
-    style.font_size = 24.0;
+    style.update_derived(|computed| computed.font_size = 24.0);
     let desc = style_to_font_description(&style);
     assert!((desc.size - 24.0).abs() < 0.01);
 }
@@ -616,7 +616,7 @@ fn style_to_font_description_preserves_weight() {
     use openui_layout::inline::items_builder::style_to_font_description;
     use openui_style::FontWeight;
     let mut style = ComputedStyle::initial();
-    style.font_weight = FontWeight::BOLD;
+    style.update_derived(|computed| computed.font_weight = FontWeight::BOLD);
     let desc = style_to_font_description(&style);
     assert!((desc.weight.0 - 700.0).abs() < 0.01);
 }
@@ -634,12 +634,12 @@ fn bidi_mixed_text_splits_into_runs() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("abc \u{05D0}\u{05D1}\u{05D2} def".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let mut data = InlineItemsBuilder::collect(&doc, block);
@@ -663,13 +663,13 @@ fn bidi_split_items_have_correct_levels() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     // Hebrew characters are RTL (odd bidi level), Latin are LTR (even level)
     doc.node_mut(t).text = Some("hello \u{05D0}\u{05D1}\u{05D2} world".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let mut data = InlineItemsBuilder::collect(&doc, block);
@@ -692,12 +692,12 @@ fn bidi_all_ltr_no_split() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("hello world".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let mut data = InlineItemsBuilder::collect(&doc, block);
@@ -747,17 +747,17 @@ fn open_close_tag_bidi_level_rtl_with_span() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
     doc.append_child(block, span);
 
     let text = doc.create_node(ElementTag::Text);
     // Arabic text — should be RTL (odd bidi level).
     doc.node_mut(text).text = Some("\u{0627}\u{0644}\u{0639}\u{0631}\u{0628}".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     doc.append_child(span, text);
 
     let mut data = InlineItemsBuilder::collect(&doc, block);

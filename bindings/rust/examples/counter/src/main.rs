@@ -6,14 +6,11 @@
 
 use openui::prelude::*;
 
-fn main() {
-    let mut app = App::new(800, 600);
+fn application_view() -> ViewNode {
+    // Reactive state: the counter value.
+    let count = create_signal(0_i32);
 
-    app.render(|| {
-        // Reactive state: the counter value.
-        let count = create_signal(0_i32);
-
-        view! {
+    view! {
             <div
                 style:display="flex"
                 style:flex-direction="column"
@@ -80,11 +77,26 @@ fn main() {
                     {format!("Current value: {}", count.get())}
                 </p>
             </div>
-        }
-    });
+    }
+}
+
+#[cfg(feature = "linux")]
+fn main() -> Result<(), Error> {
+    App::builder()
+        .title("Reactive Counter")
+        .size(LogicalSize::new(800.0, 600.0))
+        .build()?
+        .run(application_view)
+}
+
+#[cfg(not(feature = "linux"))]
+fn main() -> Result<(), Error> {
+    let mut app = HeadlessApp::new(ViewportMetrics::from_logical_size(800.0, 600.0, 1.0)?)?;
+    app.mount(application_view)?;
 
     // Render initial state (count = 0).
-    app.run_frames(1).render_to_png("counter.png");
+    app.render_png_to(0.0, "counter.png")?;
 
     println!("Rendered counter.png");
+    Ok(())
 }

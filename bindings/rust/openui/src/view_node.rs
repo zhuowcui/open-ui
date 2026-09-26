@@ -73,11 +73,10 @@ impl<T: IntoView> IntoView for Option<T> {
 pub fn mount_view(parent: &Element, view: ViewNode) {
     match view {
         ViewNode::Element(el) => {
-            parent.append_child(&el);
-            std::mem::forget(el);
+            parent.append_child(&el).expect("mount element");
         }
         ViewNode::Text(text) => {
-            parent.append_text_node(&text);
+            parent.append_text_node(&text).expect("mount text");
         }
         ViewNode::Fragment(nodes) => {
             for node in nodes {

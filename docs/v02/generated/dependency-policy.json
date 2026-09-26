@@ -1,0 +1,8 @@
+{
+  "license_policy": "Apache-2.0, MIT, BSD, ISC, Unicode, FTL, or separately reviewed",
+  "lockfile_sha256": "46e1fde9a3c4a876568dfd49f44548590fe6a750a5b780bb468bb09d0d0b0345",
+  "msrv": "1.85",
+  "prerelease_dependencies": [],
+  "schema_version": 1,
+  "security_policy": "cargo audit is a release and CI gate"
+}

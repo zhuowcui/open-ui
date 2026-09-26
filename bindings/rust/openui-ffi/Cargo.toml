@@ -1,0 +1,23 @@
+[package]
+name = "openui-ffi"
+version.workspace = true
+edition.workspace = true
+description = "Validated C ABI for the Open UI retained engine"
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
+publish = false
+build = "build.rs"
+
+[lib]
+crate-type = ["rlib", "staticlib", "cdylib"]
+
+[dependencies]
+openui-compositor = { version = "=0.2.0", path = "../openui-compositor" }
+openui-dom = { version = "=0.2.0", path = "../openui-dom" }
+openui-engine = { version = "=0.2.0", path = "../openui-engine" }
+openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
+openui-style = { version = "=0.2.0", path = "../openui-style" }

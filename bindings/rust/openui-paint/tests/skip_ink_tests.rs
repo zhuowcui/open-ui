@@ -93,19 +93,21 @@ fn count_non_white_in_row_range(surface: &mut Surface, row_start: i32, row_end: 
 
 fn default_underline_style() -> ComputedStyle {
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
     style
 }
 
 fn default_overline_style() -> ComputedStyle {
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::OVERLINE;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::OVERLINE);
     style
 }
 
 fn default_linethrough_style() -> ComputedStyle {
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::LINE_THROUGH;
+    style.update_derived(|computed| {
+        computed.text_decoration_line = TextDecorationLine::LINE_THROUGH
+    });
     style
 }
 
@@ -348,7 +350,8 @@ fn is_cjk(ch: char) -> bool {
 #[test]
 fn skip_ink_none_underline_draws_continuous() {
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::None;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::None);
     let mut surface = paint_and_check("Hello", &style, DecorationPhase::BeforeText);
     assert!(
         has_non_white_pixels(&mut surface),
@@ -359,7 +362,8 @@ fn skip_ink_none_underline_draws_continuous() {
 #[test]
 fn skip_ink_none_overline_draws_continuous() {
     let mut style = default_overline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::None;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::None);
     let mut surface = paint_and_check("Hello", &style, DecorationPhase::BeforeText);
     assert!(
         has_non_white_pixels(&mut surface),
@@ -376,7 +380,8 @@ fn skip_ink_none_does_not_create_gaps() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style_none = default_underline_style();
-    style_none.text_decoration_skip_ink = TextDecorationSkipInk::None;
+    style_none
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::None);
 
     let mut surface_none = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
@@ -390,7 +395,8 @@ fn skip_ink_none_does_not_create_gaps() {
     );
 
     let mut style_auto = default_underline_style();
-    style_auto.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style_auto
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface_auto = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
@@ -422,7 +428,8 @@ fn skip_ink_none_does_not_create_gaps() {
 #[test]
 fn skip_ink_auto_underline_creates_visible_decoration() {
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
     let mut surface = paint_and_check("Hello", &style, DecorationPhase::BeforeText);
     assert!(
         has_non_white_pixels(&mut surface),
@@ -433,7 +440,8 @@ fn skip_ink_auto_underline_creates_visible_decoration() {
 #[test]
 fn skip_ink_auto_overline_creates_visible_decoration() {
     let mut style = default_overline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
     let mut surface = paint_and_check("Hello", &style, DecorationPhase::BeforeText);
     assert!(
         has_non_white_pixels(&mut surface),
@@ -455,7 +463,7 @@ fn skip_ink_auto_is_default_behavior() {
 #[test]
 fn skip_ink_all_underline_visible() {
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::All;
+    style.update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::All);
     let mut surface = paint_and_check("Hello", &style, DecorationPhase::BeforeText);
     assert!(
         has_non_white_pixels(&mut surface),
@@ -466,7 +474,7 @@ fn skip_ink_all_underline_visible() {
 #[test]
 fn skip_ink_all_overline_visible() {
     let mut style = default_overline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::All;
+    style.update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::All);
     let mut surface = paint_and_check("Hello", &style, DecorationPhase::BeforeText);
     assert!(
         has_non_white_pixels(&mut surface),
@@ -486,7 +494,8 @@ fn skip_ink_not_applied_to_line_through_auto() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style = default_linethrough_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
@@ -511,7 +520,7 @@ fn skip_ink_not_applied_to_line_through_all() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style = default_linethrough_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::All;
+    style.update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::All);
 
     let mut surface = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
@@ -537,7 +546,8 @@ fn line_through_pixels_same_regardless_of_skip_ink() {
 
     // None
     let mut style_none = default_linethrough_style();
-    style_none.text_decoration_skip_ink = TextDecorationSkipInk::None;
+    style_none
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::None);
     let mut surface_none = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
         surface_none.canvas(),
@@ -551,7 +561,8 @@ fn line_through_pixels_same_regardless_of_skip_ink() {
 
     // Auto
     let mut style_auto = default_linethrough_style();
-    style_auto.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style_auto
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
     let mut surface_auto = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
         surface_auto.canvas(),
@@ -565,7 +576,8 @@ fn line_through_pixels_same_regardless_of_skip_ink() {
 
     // All
     let mut style_all = default_linethrough_style();
-    style_all.text_decoration_skip_ink = TextDecorationSkipInk::All;
+    style_all
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::All);
     let mut surface_all = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
         surface_all.canvas(),
@@ -656,7 +668,8 @@ fn empty_shape_result_no_intercepts() {
     let sr = ShapeResult::empty(TextDirection::Ltr);
     let metrics = FontMetrics::zero();
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface = make_surface(200, 50);
     decoration_painter::paint_text_decorations(
@@ -677,7 +690,8 @@ fn single_space_character() {
     let sr = Arc::new(shape_text(" "));
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface = make_surface(200, 100);
     decoration_painter::paint_text_decorations(
@@ -706,7 +720,8 @@ fn no_text_content_falls_back_to_no_cjk_filtering() {
     let sr = Arc::new(shape_text("Hello"));
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
@@ -728,8 +743,9 @@ fn no_text_content_falls_back_to_no_cjk_filtering() {
 #[test]
 fn skip_ink_auto_with_solid_style() {
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
-    style.text_decoration_style = TextDecorationStyle::Solid;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Solid);
     let mut surface = paint_and_check("Hello", &style, DecorationPhase::BeforeText);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -737,8 +753,9 @@ fn skip_ink_auto_with_solid_style() {
 #[test]
 fn skip_ink_auto_with_double_style() {
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
-    style.text_decoration_style = TextDecorationStyle::Double;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Double);
     let mut surface = paint_and_check("Hello", &style, DecorationPhase::BeforeText);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -746,8 +763,9 @@ fn skip_ink_auto_with_double_style() {
 #[test]
 fn skip_ink_auto_with_dotted_style() {
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
-    style.text_decoration_style = TextDecorationStyle::Dotted;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dotted);
     let mut surface = paint_and_check("Hello", &style, DecorationPhase::BeforeText);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -755,8 +773,9 @@ fn skip_ink_auto_with_dotted_style() {
 #[test]
 fn skip_ink_auto_with_dashed_style() {
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
-    style.text_decoration_style = TextDecorationStyle::Dashed;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Dashed);
     let mut surface = paint_and_check("Hello", &style, DecorationPhase::BeforeText);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -764,8 +783,9 @@ fn skip_ink_auto_with_dashed_style() {
 #[test]
 fn skip_ink_auto_with_wavy_style() {
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
-    style.text_decoration_style = TextDecorationStyle::Wavy;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Wavy);
     let mut surface = paint_and_check("Hello", &style, DecorationPhase::BeforeText);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -786,8 +806,10 @@ fn skip_ink_all_with_all_styles_no_crash() {
 
     for &deco_style in &styles {
         let mut style = default_underline_style();
-        style.text_decoration_skip_ink = TextDecorationSkipInk::All;
-        style.text_decoration_style = deco_style;
+        style.update_derived(|computed| {
+            computed.text_decoration_skip_ink = TextDecorationSkipInk::All
+        });
+        style.update_derived(|computed| computed.text_decoration_style = deco_style);
 
         let mut surface = make_surface(400, 100);
         decoration_painter::paint_text_decorations(
@@ -815,7 +837,8 @@ fn skip_ink_all_with_all_styles_no_crash() {
 fn multiple_characters_produce_decoration() {
     let text = "abcdefghij";
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
     let mut surface = paint_and_check(text, &style, DecorationPhase::BeforeText);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -826,7 +849,8 @@ fn long_text_with_descenders() {
     // the underline stripe, creating gaps.
     let text = "pgjyq pgjyq pgjyq";
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
     let mut surface = paint_and_check(text, &style, DecorationPhase::BeforeText);
     assert!(
         has_non_white_pixels(&mut surface),
@@ -845,8 +869,9 @@ fn skip_ink_with_small_font() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style = default_underline_style();
-    style.font_size = 10.0;
-    style.text_decoration_skip_ink = TextDecorationSkipInk::None;
+    style.update_derived(|computed| computed.font_size = 10.0);
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::None);
 
     let mut surface = make_surface(200, 100);
     decoration_painter::paint_text_decorations(
@@ -865,7 +890,8 @@ fn skip_ink_with_small_font() {
 
     // Now test with Auto — should also produce pixels (may have gaps
     // but still visible segments between them).
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
     let mut surface2 = make_surface(200, 100);
     decoration_painter::paint_text_decorations(
         surface2.canvas(),
@@ -887,8 +913,9 @@ fn skip_ink_with_large_font() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style = default_underline_style();
-    style.font_size = 48.0;
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style.update_derived(|computed| computed.font_size = 48.0);
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface = make_surface(400, 200);
     decoration_painter::paint_text_decorations(
@@ -914,8 +941,11 @@ fn skip_ink_with_explicit_thick_decoration() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style = default_underline_style();
-    style.text_decoration_thickness = TextDecorationThickness::Length(5.0);
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::Length(5.0)
+    });
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
@@ -937,8 +967,10 @@ fn skip_ink_with_from_font_thickness() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style = default_underline_style();
-    style.text_decoration_thickness = TextDecorationThickness::FromFont;
-    style.text_decoration_skip_ink = TextDecorationSkipInk::All;
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::FromFont
+    });
+    style.update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::All);
 
     let mut surface = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
@@ -964,8 +996,11 @@ fn skip_ink_with_underline_offset() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style = default_underline_style();
-    style.text_underline_offset = openui_geometry::Length::px(3.0);
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style.update_derived(|computed| {
+        computed.text_underline_offset = openui_geometry::Length::px(3.0)
+    });
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
@@ -987,21 +1022,22 @@ fn skip_ink_with_underline_offset() {
 #[test]
 fn style_skip_ink_can_be_set_to_none() {
     let mut style = ComputedStyle::default();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::None;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::None);
     assert_eq!(style.text_decoration_skip_ink, TextDecorationSkipInk::None);
 }
 
 #[test]
 fn style_skip_ink_can_be_set_to_all() {
     let mut style = ComputedStyle::default();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::All;
+    style.update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::All);
     assert_eq!(style.text_decoration_skip_ink, TextDecorationSkipInk::All);
 }
 
 #[test]
 fn style_skip_ink_preserves_value_through_clone() {
     let mut style = ComputedStyle::default();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::All;
+    style.update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::All);
     let cloned = style.clone();
     assert_eq!(cloned.text_decoration_skip_ink, TextDecorationSkipInk::All);
 }
@@ -1017,9 +1053,12 @@ fn skip_ink_auto_underline_and_overline() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style = ComputedStyle::default();
-    style.text_decoration_line =
-        TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::OVERLINE.0);
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style.update_derived(|computed| {
+        computed.text_decoration_line =
+            TextDecorationLine(TextDecorationLine::UNDERLINE.0 | TextDecorationLine::OVERLINE.0)
+    });
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
@@ -1045,7 +1084,8 @@ fn skip_ink_auto_underline_and_overline() {
 fn skip_ink_with_digits() {
     let text = "12345";
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
     let mut surface = paint_and_check(text, &style, DecorationPhase::BeforeText);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -1054,7 +1094,8 @@ fn skip_ink_with_digits() {
 fn skip_ink_with_punctuation() {
     let text = "Hello, world!";
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
     let mut surface = paint_and_check(text, &style, DecorationPhase::BeforeText);
     assert!(has_non_white_pixels(&mut surface));
 }
@@ -1070,8 +1111,9 @@ fn skip_ink_with_no_decoration_line_draws_nothing() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::NONE;
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::NONE);
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface = make_surface(200, 100);
     decoration_painter::paint_text_decorations(
@@ -1115,8 +1157,8 @@ fn all_skip_ink_values_with_all_phases_no_crash() {
         for &phase in &phases {
             for &line in &lines {
                 let mut style = ComputedStyle::default();
-                style.text_decoration_line = line;
-                style.text_decoration_skip_ink = skip_ink;
+                style.update_derived(|computed| computed.text_decoration_line = line);
+                style.update_derived(|computed| computed.text_decoration_skip_ink = skip_ink);
 
                 let mut surface = make_surface(400, 100);
                 decoration_painter::paint_text_decorations(
@@ -1141,7 +1183,7 @@ fn skip_ink_with_zero_width_shape_result() {
     let metrics = FontMetrics::zero();
 
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::All;
+    style.update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::All);
 
     let mut surface = make_surface(200, 50);
     decoration_painter::paint_text_decorations(
@@ -1170,7 +1212,8 @@ fn overlapping_intercepts_merged_gracefully() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style = default_underline_style();
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface = make_surface(400, 100);
     decoration_painter::paint_text_decorations(
@@ -1197,8 +1240,11 @@ fn skip_ink_with_custom_color() {
     let metrics = openui_paint::text_painter::metrics_from_shape_result(&sr);
 
     let mut style = default_underline_style();
-    style.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 255));
-    style.text_decoration_skip_ink = TextDecorationSkipInk::Auto;
+    style.update_derived(|computed| {
+        computed.text_decoration_color = StyleColor::Resolved(Color::from_rgba8(255, 0, 0, 255))
+    });
+    style
+        .update_derived(|computed| computed.text_decoration_skip_ink = TextDecorationSkipInk::Auto);
 
     let mut surface = make_surface(400, 100);
     decoration_painter::paint_text_decorations(

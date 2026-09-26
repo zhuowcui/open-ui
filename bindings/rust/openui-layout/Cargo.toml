@@ -1,14 +1,20 @@
 [package]
 name = "openui-layout"
-version = "0.1.0"
-edition = "2021"
-description = "Block/Flex/Grid/Inline layout algorithms extracted from Blink's NG layout engine"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
+description = "Exact block, flex, grid, inline, table, and fragmentation layout for Open UI"
 
 [dependencies]
-openui-style = { path = "../openui-style" }
-openui-geometry = { path = "../openui-geometry" }
-openui-dom = { path = "../openui-dom" }
-openui-text = { path = "../openui-text" }
+openui-style = { version = "=0.2.0", path = "../openui-style" }
+openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
+openui-dom = { version = "=0.2.0", path = "../openui-dom" }
+openui-text = { version = "=0.2.0", path = "../openui-text" }
 unicode-linebreak = "0.1"
 unicode-segmentation = "1.10"
 

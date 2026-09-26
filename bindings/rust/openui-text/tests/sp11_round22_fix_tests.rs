@@ -11,7 +11,7 @@ use std::sync::Arc;
 // ── Helper ──────────────────────────────────────────────────────────────
 
 fn get_test_font_data() -> Arc<openui_text::font::FontPlatformData> {
-    let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+    let mut cache = openui_text::FontCache::new();
     let desc = openui_text::FontDescription::default();
     cache
         .get_font_platform_data("sans-serif", &desc)
@@ -152,7 +152,7 @@ fn font_description_empty_locale_defaults_to_en() {
 fn platform_fallback_with_locale_does_not_panic() {
     // Verify that calling platform_fallback_for_character with a non-empty
     // locale doesn't panic (it used to always use "en").
-    let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+    let mut cache = openui_text::FontCache::new();
     let mut desc = openui_text::FontDescription::default();
     desc.locale = Some("ja".to_string());
     // This should not panic regardless of available fonts.

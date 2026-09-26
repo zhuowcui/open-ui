@@ -1,0 +1,18 @@
+[
+  "wpt/css_backgrounds/animations_background-color-animation-with-blur-ref",
+  "wpt/css_backgrounds/background-clip_clip-border-area-border-image",
+  "wpt/css_backgrounds/background-clip_clip-text-text-decorations",
+  "wpt/css_backgrounds/background-clip_clip-text-text-emphasis",
+  "wpt/css_backgrounds/background-image-001",
+  "wpt/css_backgrounds/background-position-subpixel-at-border.tentative",
+  "wpt/css_backgrounds/border-width-small-values-001-c",
+  "wpt/css_flexbox/flexbox-baseline-multi-line-horiz-001",
+  "wpt/css_flexbox/flexitem-stretch-range",
+  "wpt/css_flexbox/stretch-flex-item-checkbox-input",
+  "wpt/css_flexbox/stretch-flex-item-radio-input",
+  "wpt/css_multicol/multicol-block-no-clip-001",
+  "wpt/css_multicol/multicol-gap-fraction-002",
+  "wpt/css_multicol/subpixel-column-rule-width.tentative",
+  "wpt/css_sizing/image-fractional-height-with-wide-aspect-ratio",
+  "wpt/css_sizing/thin-element-render-ref"
+]

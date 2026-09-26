@@ -928,8 +928,8 @@ align-content-wrap-001,not_portable,,uses_javascript
 align-content-wrap-002,not_portable,,uses_javascript
 align-content-wrap-003,not_portable,,uses_javascript
 align-content-wrap-005,not_portable,,uses_javascript
-align-items-007,not_portable,,unsupported element: <img>
-align-items-008,not_portable,,uses_javascript
+align-items-007,ported,css_flexbox_align_items_007,
+align-items-008,ported,css_flexbox_align_items_008,
 align-items-baseline-column-horz,not_portable,,uses_javascript
 align-items-baseline-column-vert-lr-flexbox-item,not_portable,,uses_javascript
 align-items-baseline-column-vert-lr-grid-item,not_portable,,uses_javascript
@@ -951,419 +951,396 @@ align-items-baseline-vert-rl-column-horz-grid-item,not_portable,,uses_javascript
 align-items-baseline-vert-rl-column-horz-items,not_portable,,uses_javascript
 align-items-baseline-vert-rl-column-horz-table-item,not_portable,,uses_javascript
 align-self-014,not_portable,,uses_javascript
-anonymous-flex-item-001,not_portable,,uses_javascript
-anonymous-flex-item-003,not_portable,,uses_javascript
-anonymous-flex-item-005,not_portable,,uses_javascript
-anonymous-flex-item-006,not_portable,,uses_javascript
-anonymous-flex-item-restyle,not_portable,,uses_javascript
-aspect-ratio-intrinsic-size-001,not_portable,,unsupported element: <canvas>
-aspect-ratio-intrinsic-size-002,not_portable,,uses_javascript
-aspect-ratio-intrinsic-size-004,not_portable,,uses_javascript
-aspect-ratio-intrinsic-size-005,not_portable,,uses_javascript
-aspect-ratio-intrinsic-size-006,not_portable,,unsupported element: <img>
-aspect-ratio-intrinsic-size-007-ref,not_portable,,unsupported element: <svg>
-aspect-ratio-intrinsic-size-007,not_portable,,unsupported element: <img>
-aspect-ratio-intrinsic-size-009,not_portable,,unsupported property: writing-mode
-auto-margins-001-ref,not_portable,,unsupported property: writing-mode
+anonymous-flex-item-001,ported,css_flexbox_anonymous_flex_item_001,
+anonymous-flex-item-003,ported,css_flexbox_anonymous_flex_item_003,
+anonymous-flex-item-005,ported,css_flexbox_anonymous_flex_item_005,
+anonymous-flex-item-006,ported,css_flexbox_anonymous_flex_item_006,
+anonymous-flex-item-restyle,ported,css_flexbox_anonymous_flex_item_restyle,
+aspect-ratio-intrinsic-size-001,ported,css_flexbox_aspect_ratio_intrinsic_size_001,
+aspect-ratio-intrinsic-size-002,ported,css_flexbox_aspect_ratio_intrinsic_size_002,
+aspect-ratio-intrinsic-size-004,ported,css_flexbox_aspect_ratio_intrinsic_size_004,
+aspect-ratio-intrinsic-size-005,ported,css_flexbox_aspect_ratio_intrinsic_size_005,
+aspect-ratio-intrinsic-size-006,ported,css_flexbox_aspect_ratio_intrinsic_size_006,
+aspect-ratio-intrinsic-size-007-ref,ported,css_flexbox_aspect_ratio_intrinsic_size_007_ref,
+aspect-ratio-intrinsic-size-007,ported,css_flexbox_aspect_ratio_intrinsic_size_007,
+aspect-ratio-intrinsic-size-009,ported,css_flexbox_aspect_ratio_intrinsic_size_009,
+auto-margins-001-ref,ported,css_flexbox_auto_margins_001_ref,
 auto-margins-001,not_portable,,uses_javascript
-auto-margins-002,not_portable,,unsupported element: <img>
-auto-margins-003,not_portable,,unsupported property: writing-mode
-baseline-synthesis-001,not_portable,,unsupported property: writing-mode
-baseline-synthesis-002,not_portable,,unsupported property: writing-mode
-baseline-synthesis-003,not_portable,,unsupported property: writing-mode
-baseline-synthesis-004,not_portable,,unsupported property: writing-mode
-baseline-synthesis-vert-lr-line-under,not_portable,,style_block_unsupported property: writing-mode
+auto-margins-002,ported,css_flexbox_auto_margins_002,
+auto-margins-003,ported,css_flexbox_auto_margins_003,
+baseline-synthesis-001,ported,css_flexbox_baseline_synthesis_001,
+baseline-synthesis-002,ported,css_flexbox_baseline_synthesis_002,
+baseline-synthesis-003,ported,css_flexbox_baseline_synthesis_003,
+baseline-synthesis-004,ported,css_flexbox_baseline_synthesis_004,
+baseline-synthesis-vert-lr-line-under,ported,css_flexbox_baseline_synthesis_vert_lr_line_under,
 box-sizing-001,not_portable,,uses_javascript
 box-sizing-min-max-sizes-001,not_portable,,uses_javascript
-button-column-wrap-crash,not_portable,,unsupported element: <button>
-canvas-contain-size,not_portable,,unsupported property: contain
+button-column-wrap-crash,ported,css_flexbox_button_column_wrap_crash,
+canvas-contain-size,ported,css_flexbox_canvas_contain_size,
 canvas-dynamic-change-001,not_portable,,uses_javascript
 change-column-flex-width,not_portable,,uses_javascript
 column-flex-child-with-overflow-scroll,not_portable,,uses_javascript
 column-reverse-gap,not_portable,,uses_javascript
 columns-height-set-via-top-bottom,not_portable,,uses_javascript
 contain-size-layout-abspos-flex-container-crash,not_portable,,uses_javascript
-cross-axis-scrollbar,not_portable,,complex_css_selector: .flexbox::before
-css-flexbox-height-animation-stretch-ref,not_portable,,style_block_unsupported property: animation
-css-flexbox-height-animation-stretch,not_portable,,style_block_unsupported property: animation
-css-flexbox-img-expand-evenly,not_portable,,unsupported element: <img>
-css-flexbox-row-reverse-wrap-reverse,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-row-reverse-wrap,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-row-reverse,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-row-wrap-reverse,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-row-wrap,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-row,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-test1-ref,not_portable,,style_block_unsupported property: writing-mode
-css-flexbox-test1,not_portable,,style_block_unsupported property: writing-mode
-dynamic-baseline-change-nested,not_portable,,uses_javascript
-dynamic-baseline-change-ref,not_portable,,unsupported element: <canvas>
-dynamic-baseline-change,not_portable,,uses_javascript
-dynamic-bsize-change,not_portable,,uses_javascript
-dynamic-change-simplified-layout-002,not_portable,,uses_javascript
-dynamic-change-simplified-layout,not_portable,,uses_javascript
+cross-axis-scrollbar,ported,css_flexbox_cross_axis_scrollbar,
+css-flexbox-height-animation-stretch-ref,ported,css_flexbox_css_flexbox_height_animation_stretch_ref,
+css-flexbox-height-animation-stretch,ported,css_flexbox_css_flexbox_height_animation_stretch,
+css-flexbox-img-expand-evenly,ported,css_flexbox_css_flexbox_img_expand_evenly,
+css-flexbox-row-reverse-wrap-reverse,ported,css_flexbox_css_flexbox_row_reverse_wrap_reverse,
+css-flexbox-row-reverse-wrap,ported,css_flexbox_css_flexbox_row_reverse_wrap,
+css-flexbox-row-reverse,ported,css_flexbox_css_flexbox_row_reverse,
+css-flexbox-row-wrap-reverse,ported,css_flexbox_css_flexbox_row_wrap_reverse,
+css-flexbox-row-wrap,ported,css_flexbox_css_flexbox_row_wrap,
+css-flexbox-row,ported,css_flexbox_css_flexbox_row,
+css-flexbox-test1-ref,ported,css_flexbox_css_flexbox_test1_ref,
+css-flexbox-test1,ported,css_flexbox_css_flexbox_test1,
+dynamic-baseline-change-nested,ported,css_flexbox_dynamic_baseline_change_nested,
+dynamic-baseline-change-ref,ported,css_flexbox_dynamic_baseline_change_ref,
+dynamic-baseline-change,ported,css_flexbox_dynamic_baseline_change,
+dynamic-bsize-change,ported,css_flexbox_dynamic_bsize_change,
+dynamic-change-simplified-layout-002,ported,css_flexbox_dynamic_change_simplified_layout_002,
+dynamic-change-simplified-layout,ported,css_flexbox_dynamic_change_simplified_layout,
 dynamic-grid-flex-abspos,not_portable,,uses_javascript
 dynamic-isize-change-001,not_portable,,uses_javascript
 dynamic-isize-change-002,not_portable,,uses_javascript
 dynamic-isize-change-003,not_portable,,uses_javascript
 dynamic-isize-change-004,not_portable,,uses_javascript
-dynamic-orthogonal-flex-item,not_portable,,uses_javascript
-dynamic-stretch-change,not_portable,,uses_javascript
-empty-flex-box-and-margin-collapsing,not_portable,,unsupported display: grid
+dynamic-orthogonal-flex-item,ported,css_flexbox_dynamic_orthogonal_flex_item,
+dynamic-stretch-change,ported,css_flexbox_dynamic_stretch_change,
+empty-flex-box-and-margin-collapsing,ported,css_flexbox_empty_flex_box_and_margin_collapsing,
 fieldset-as-container-justify-center.tentative,not_portable,,uses_javascript
-fieldset-as-item-dynamic,not_portable,,uses_javascript
-fieldset-as-item-overflow,not_portable,,unsupported element: <fieldset>
-fieldset-baseline-alignment-ref,not_portable,,unsupported element: <fieldset>
-fieldset-baseline-alignment,not_portable,,unsupported element: <fieldset>
-fit-content-item-002,not_portable,,style_block_unsupported property: writing-mode
-fit-content-item-003,not_portable,,style_block_unsupported property: writing-mode
-fit-content-item-004,not_portable,,style_block_unsupported property: writing-mode
-fixed-table-layout-with-percentage-width-in-flex-item,not_portable,,style_block_unsupported property: table-layout
-fixedpos-video-in-abspos-quirk-crash,not_portable,,unsupported element: <video>
-flex-aspect-ratio-img-column-001,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-002,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-003,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-004,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-005,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-006,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-007,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-008,not_portable,,style_block_unsupported property: writing-mode
-flex-aspect-ratio-img-column-009,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-010,not_portable,,uses_javascript
+fieldset-as-item-dynamic,ported,css_flexbox_fieldset_as_item_dynamic,
+fieldset-as-item-overflow,ported,css_flexbox_fieldset_as_item_overflow,
+fieldset-baseline-alignment-ref,ported,css_flexbox_fieldset_baseline_alignment_ref,
+fieldset-baseline-alignment,ported,css_flexbox_fieldset_baseline_alignment,
+fit-content-item-002,ported,css_flexbox_fit_content_item_002,
+fit-content-item-003,ported,css_flexbox_fit_content_item_003,
+fit-content-item-004,ported,css_flexbox_fit_content_item_004,
+fixed-table-layout-with-percentage-width-in-flex-item,ported,css_flexbox_fixed_table_layout_with_percentage_width_in_flex_item,
+fixedpos-video-in-abspos-quirk-crash,ported,css_flexbox_fixedpos_video_in_abspos_quirk_crash,
+flex-aspect-ratio-img-column-001,ported,css_flexbox_flex_aspect_ratio_img_column_001,
+flex-aspect-ratio-img-column-002,ported,css_flexbox_flex_aspect_ratio_img_column_002,
+flex-aspect-ratio-img-column-003,ported,css_flexbox_flex_aspect_ratio_img_column_003,
+flex-aspect-ratio-img-column-004,ported,css_flexbox_flex_aspect_ratio_img_column_004,
+flex-aspect-ratio-img-column-005,ported,css_flexbox_flex_aspect_ratio_img_column_005,
+flex-aspect-ratio-img-column-006,ported,css_flexbox_flex_aspect_ratio_img_column_006,
+flex-aspect-ratio-img-column-007,ported,css_flexbox_flex_aspect_ratio_img_column_007,
+flex-aspect-ratio-img-column-008,ported,css_flexbox_flex_aspect_ratio_img_column_008,
+flex-aspect-ratio-img-column-009,ported,css_flexbox_flex_aspect_ratio_img_column_009,
+flex-aspect-ratio-img-column-010,ported,css_flexbox_flex_aspect_ratio_img_column_010,
 flex-aspect-ratio-img-column-011,not_portable,,uses_javascript
-flex-aspect-ratio-img-column-012,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-013,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-014,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-015,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-column-016,not_portable,,unsupported element: <img>
+flex-aspect-ratio-img-column-012,ported,css_flexbox_flex_aspect_ratio_img_column_012,
+flex-aspect-ratio-img-column-013,ported,css_flexbox_flex_aspect_ratio_img_column_013,
+flex-aspect-ratio-img-column-014,ported,css_flexbox_flex_aspect_ratio_img_column_014,
+flex-aspect-ratio-img-column-015,ported,css_flexbox_flex_aspect_ratio_img_column_015,
+flex-aspect-ratio-img-column-016,ported,css_flexbox_flex_aspect_ratio_img_column_016,
 flex-aspect-ratio-img-column-017,not_portable,,uses_javascript
-flex-aspect-ratio-img-column-018,not_portable,,unsupported element: <svg>
-flex-aspect-ratio-img-row-001,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-002,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-003,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-004,not_portable,,uses_javascript
+flex-aspect-ratio-img-column-018,ported,css_flexbox_flex_aspect_ratio_img_column_018,
+flex-aspect-ratio-img-row-001,ported,css_flexbox_flex_aspect_ratio_img_row_001,
+flex-aspect-ratio-img-row-002,ported,css_flexbox_flex_aspect_ratio_img_row_002,
+flex-aspect-ratio-img-row-003,ported,css_flexbox_flex_aspect_ratio_img_row_003,
+flex-aspect-ratio-img-row-004,ported,css_flexbox_flex_aspect_ratio_img_row_004,
 flex-aspect-ratio-img-row-005,not_portable,,uses_javascript
-flex-aspect-ratio-img-row-006,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-007,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-008,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-009,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-010,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-011,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-012,not_portable,,unsupported element: <img>
+flex-aspect-ratio-img-row-006,ported,css_flexbox_flex_aspect_ratio_img_row_006,
+flex-aspect-ratio-img-row-007,ported,css_flexbox_flex_aspect_ratio_img_row_007,
+flex-aspect-ratio-img-row-008,ported,css_flexbox_flex_aspect_ratio_img_row_008,
+flex-aspect-ratio-img-row-009,ported,css_flexbox_flex_aspect_ratio_img_row_009,
+flex-aspect-ratio-img-row-010,ported,css_flexbox_flex_aspect_ratio_img_row_010,
+flex-aspect-ratio-img-row-011,ported,css_flexbox_flex_aspect_ratio_img_row_011,
+flex-aspect-ratio-img-row-012,ported,css_flexbox_flex_aspect_ratio_img_row_012,
 flex-aspect-ratio-img-row-013,not_portable,,uses_javascript
-flex-aspect-ratio-img-row-014,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-row-015,not_portable,,unsupported element: <svg>
-flex-aspect-ratio-img-row-016,not_portable,,uses_javascript
-flex-aspect-ratio-img-row-017,not_portable,,unsupported element: <img>
-flex-aspect-ratio-img-vert-lr,not_portable,,style_block_unsupported property: writing-mode
+flex-aspect-ratio-img-row-014,ported,css_flexbox_flex_aspect_ratio_img_row_014,
+flex-aspect-ratio-img-row-015,ported,css_flexbox_flex_aspect_ratio_img_row_015,
+flex-aspect-ratio-img-row-016,ported,css_flexbox_flex_aspect_ratio_img_row_016,
+flex-aspect-ratio-img-row-017,ported,css_flexbox_flex_aspect_ratio_img_row_017,
+flex-aspect-ratio-img-vert-lr,ported,css_flexbox_flex_aspect_ratio_img_vert_lr,
 flex-basis-009,not_portable,,uses_javascript
 flex-basis-013,not_portable,,uses_javascript
 flex-basis-intrinsics-001,not_portable,,uses_javascript
 flex-column-relayout-assert,not_portable,,uses_javascript
-flex-container-max-content-001-ref,not_portable,,style_block_unsupported property: grid-template-columns
-flex-container-max-content-001,not_portable,,style_block_unsupported property: grid-template-columns
+flex-container-max-content-001-ref,ported,css_flexbox_flex_container_max_content_001_ref,
+flex-container-max-content-001,ported,css_flexbox_flex_container_max_content_001,
 flex-container-max-content-002.tentative,not_portable,,uses_javascript
-flex-container-min-content-001-ref,not_portable,,style_block_unsupported property: grid-template-columns
-flex-container-min-content-001,not_portable,,style_block_unsupported property: grid-template-columns
+flex-container-min-content-001-ref,ported,css_flexbox_flex_container_min_content_001_ref,
+flex-container-min-content-001,ported,css_flexbox_flex_container_min_content_001,
 flex-container-min-content-002.tentative,not_portable,,uses_javascript
 flex-direction-column-overlap-001,not_portable,,uses_javascript
 flex-direction-modify,not_portable,,uses_javascript
-flex-direction-row-vertical-ref,not_portable,,style_block_unsupported property: writing-mode
-flex-direction-row-vertical,not_portable,,style_block_unsupported property: writing-mode
+flex-direction-row-vertical-ref,ported,css_flexbox_flex_direction_row_vertical_ref,
+flex-direction-row-vertical,ported,css_flexbox_flex_direction_row_vertical,
 flex-direction-with-element-insert,not_portable,,uses_javascript
 flex-factor-less-than-one,not_portable,,uses_javascript
 flex-flow-013,not_portable,,uses_javascript
 flex-item-compressible-001,not_portable,,uses_javascript
 flex-item-compressible-002,not_portable,,uses_javascript
-flex-item-contains-size-layout-001,not_portable,,uses_javascript
+flex-item-contains-size-layout-001,ported,css_flexbox_flex_item_contains_size_layout_001,
 flex-item-contains-strict,not_portable,,uses_javascript
-flex-item-max-width-min-content,not_portable,,unsupported property: writing-mode
-flex-item-min-width-min-content,not_portable,,unsupported property: writing-mode
-flex-item-z-ordering-001,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-004,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-005,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-006,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-007,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-008,not_portable,,unsupported element: <img>
+flex-item-max-width-min-content,ported,css_flexbox_flex_item_max_width_min_content,
+flex-item-min-width-min-content,ported,css_flexbox_flex_item_min_width_min_content,
+flex-item-z-ordering-001,ported,css_flexbox_flex_item_z_ordering_001,
+flex-minimum-height-flex-items-004,ported,css_flexbox_flex_minimum_height_flex_items_004,
+flex-minimum-height-flex-items-005,ported,css_flexbox_flex_minimum_height_flex_items_005,
+flex-minimum-height-flex-items-006,ported,css_flexbox_flex_minimum_height_flex_items_006,
+flex-minimum-height-flex-items-007,ported,css_flexbox_flex_minimum_height_flex_items_007,
+flex-minimum-height-flex-items-008,ported,css_flexbox_flex_minimum_height_flex_items_008,
 flex-minimum-height-flex-items-009,not_portable,,uses_javascript
 flex-minimum-height-flex-items-010,not_portable,,uses_javascript
 flex-minimum-height-flex-items-012,not_portable,,uses_javascript
-flex-minimum-height-flex-items-019,not_portable,,uses_javascript
-flex-minimum-height-flex-items-020,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-021,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-022,not_portable,,unsupported element: <img>
-flex-minimum-height-flex-items-023,not_portable,,unsupported element: <img>
+flex-minimum-height-flex-items-019,ported,css_flexbox_flex_minimum_height_flex_items_019,
+flex-minimum-height-flex-items-020,ported,css_flexbox_flex_minimum_height_flex_items_020,
+flex-minimum-height-flex-items-021,ported,css_flexbox_flex_minimum_height_flex_items_021,
+flex-minimum-height-flex-items-022,ported,css_flexbox_flex_minimum_height_flex_items_022,
+flex-minimum-height-flex-items-023,ported,css_flexbox_flex_minimum_height_flex_items_023,
 flex-minimum-height-flex-items-025,not_portable,,uses_javascript
 flex-minimum-height-flex-items-031,not_portable,,uses_javascript
 flex-minimum-size-001,not_portable,,uses_javascript
 flex-minimum-size-002,not_portable,,uses_javascript
 flex-minimum-size-003,not_portable,,uses_javascript
-flex-minimum-width-flex-items-004,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-005,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-006,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-007,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-008,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-009,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-010,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-011,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-012,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-013,not_portable,,unsupported element: <img>
+flex-minimum-width-flex-items-004,ported,css_flexbox_flex_minimum_width_flex_items_004,
+flex-minimum-width-flex-items-005,ported,css_flexbox_flex_minimum_width_flex_items_005,
+flex-minimum-width-flex-items-006,ported,css_flexbox_flex_minimum_width_flex_items_006,
+flex-minimum-width-flex-items-007,ported,css_flexbox_flex_minimum_width_flex_items_007,
+flex-minimum-width-flex-items-008,ported,css_flexbox_flex_minimum_width_flex_items_008,
+flex-minimum-width-flex-items-009,ported,css_flexbox_flex_minimum_width_flex_items_009,
+flex-minimum-width-flex-items-010,ported,css_flexbox_flex_minimum_width_flex_items_010,
+flex-minimum-width-flex-items-011,ported,css_flexbox_flex_minimum_width_flex_items_011,
+flex-minimum-width-flex-items-012,ported,css_flexbox_flex_minimum_width_flex_items_012,
+flex-minimum-width-flex-items-013,ported,css_flexbox_flex_minimum_width_flex_items_013,
 flex-minimum-width-flex-items-014,not_portable,,uses_javascript
-flex-minimum-width-flex-items-015,not_portable,,unsupported element: <img>
-flex-minimum-width-flex-items-016,not_portable,,unsupported element: <img>
+flex-minimum-width-flex-items-015,ported,css_flexbox_flex_minimum_width_flex_items_015,
+flex-minimum-width-flex-items-016,ported,css_flexbox_flex_minimum_width_flex_items_016,
 flex-one-sets-flex-basis-to-zero-px,not_portable,,uses_javascript
 flex-outer-flexbox-column-recalculate-height-on-resize-001,not_portable,,uses_javascript
 flex-rounding,not_portable,,uses_javascript
 flex-shorthand-calc,not_portable,,uses_javascript
 flex-shorthand-flex-basis-middle,not_portable,,uses_javascript
-flex-vertical-align-effect,not_portable,,unsupported element: <input>
-flex-wrap-006,not_portable,,uses_javascript
-flexbox-align-self-baseline-horiz-001-ref,not_portable,,unsupported element: <table>
-flexbox-align-self-baseline-horiz-006-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-align-self-baseline-horiz-006,not_portable,,style_block_unsupported property: writing-mode
-flexbox-align-self-baseline-horiz-008-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-align-self-baseline-horiz-008,not_portable,,style_block_unsupported property: writing-mode
-flexbox-align-self-horiz-001-table,not_portable,,unsupported display: table
-flexbox-align-self-horiz-002-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-align-self-horiz-002,not_portable,,style_block_unsupported property: writing-mode
-flexbox-align-self-vert-001-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. -->
-      .centerParent"
-flexbox-align-self-vert-002-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. -->
-      .centerParent"
-flexbox-align-self-vert-003-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. For this to work"
-flexbox-align-self-vert-004-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. For this to work"
-flexbox-align-self-vert-rtl-001-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. -->
-      .centerParent"
-flexbox-align-self-vert-rtl-002-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. -->
-      .centerParent"
-flexbox-align-self-vert-rtl-003-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. For this to work"
-flexbox-align-self-vert-rtl-004-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. For this to work"
-flexbox-align-self-vert-rtl-005-ref,not_portable,,"complex_css_selector: and
-           then wrapping that inline-block in a helper-div that has
-           ""text-align:center"" set. -->
-      .centerParent"
-flexbox-baseline-nested-001-ref,not_portable,,unsupported element: <input>
-flexbox-baseline-nested-001,not_portable,,unsupported element: <input>
-flexbox-basic-block-horiz-001v,not_portable,,style_block_unsupported property: writing-mode
-flexbox-basic-block-vert-001v,not_portable,,style_block_unsupported property: writing-mode
-flexbox-basic-canvas-horiz-001-ref,not_portable,,unsupported element: <canvas>
-flexbox-basic-canvas-horiz-001,not_portable,,unsupported element: <canvas>
-flexbox-basic-canvas-horiz-001v,not_portable,,style_block_unsupported property: writing-mode
-flexbox-basic-canvas-vert-001-ref,not_portable,,unsupported element: <canvas>
-flexbox-basic-canvas-vert-001,not_portable,,unsupported element: <canvas>
-flexbox-basic-canvas-vert-001v,not_portable,,style_block_unsupported property: writing-mode
-flexbox-basic-fieldset-horiz-001-ref,not_portable,,unsupported element: <fieldset>
-flexbox-basic-fieldset-horiz-001,not_portable,,unsupported element: <fieldset>
-flexbox-basic-fieldset-vert-001-ref,not_portable,,unsupported element: <fieldset>
-flexbox-basic-fieldset-vert-001,not_portable,,unsupported element: <fieldset>
-flexbox-basic-iframe-horiz-001-ref,not_portable,,unsupported element: <iframe>
-flexbox-basic-iframe-horiz-001,not_portable,,unsupported element: <iframe>
-flexbox-basic-iframe-vert-001-ref,not_portable,,unsupported element: <iframe>
-flexbox-basic-iframe-vert-001,not_portable,,unsupported element: <iframe>
-flexbox-basic-img-horiz-001-ref,not_portable,,unsupported element: <img>
-flexbox-basic-img-horiz-001,not_portable,,unsupported element: <img>
-flexbox-basic-img-vert-001-ref,not_portable,,unsupported element: <img>
-flexbox-basic-img-vert-001,not_portable,,unsupported element: <img>
-flexbox-basic-textarea-horiz-001-ref,not_portable,,unsupported element: <textarea>
-flexbox-basic-textarea-horiz-001,not_portable,,unsupported element: <textarea>
-flexbox-basic-textarea-vert-001-ref,not_portable,,unsupported element: <textarea>
-flexbox-basic-textarea-vert-001,not_portable,,unsupported element: <textarea>
-flexbox-basic-video-horiz-001-ref,not_portable,,unsupported element: <video>
-flexbox-basic-video-horiz-001,not_portable,,unsupported element: <video>
-flexbox-basic-video-vert-001-ref,not_portable,,unsupported element: <video>
-flexbox-basic-video-vert-001,not_portable,,unsupported element: <video>
-flexbox-column-row-gap-002-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-column-row-gap-002,not_portable,,style_block_unsupported property: writing-mode
-flexbox-column-row-gap-004-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-column-row-gap-004,not_portable,,style_block_unsupported property: writing-mode
-flexbox-definite-cross-size-constrained-percentage-ref,not_portable,,unsupported element: <img>
-flexbox-definite-cross-size-constrained-percentage,not_portable,,unsupported element: <img>
+flex-vertical-align-effect,ported,css_flexbox_flex_vertical_align_effect,
+flex-wrap-006,ported,css_flexbox_flex_wrap_006,
+flexbox-align-self-baseline-horiz-001-ref,ported,css_flexbox_flexbox_align_self_baseline_horiz_001_ref,
+flexbox-align-self-baseline-horiz-006-ref,ported,css_flexbox_flexbox_align_self_baseline_horiz_006_ref,
+flexbox-align-self-baseline-horiz-006,ported,css_flexbox_flexbox_align_self_baseline_horiz_006,
+flexbox-align-self-baseline-horiz-008-ref,ported,css_flexbox_flexbox_align_self_baseline_horiz_008_ref,
+flexbox-align-self-baseline-horiz-008,ported,css_flexbox_flexbox_align_self_baseline_horiz_008,
+flexbox-align-self-horiz-001-table,ported,css_flexbox_flexbox_align_self_horiz_001_table,
+flexbox-align-self-horiz-002-ref,ported,css_flexbox_flexbox_align_self_horiz_002_ref,
+flexbox-align-self-horiz-002,ported,css_flexbox_flexbox_align_self_horiz_002,
+flexbox-align-self-vert-001-ref,ported,css_flexbox_flexbox_align_self_vert_001_ref,
+flexbox-align-self-vert-002-ref,ported,css_flexbox_flexbox_align_self_vert_002_ref,
+flexbox-align-self-vert-003-ref,ported,css_flexbox_flexbox_align_self_vert_003_ref,
+flexbox-align-self-vert-004-ref,ported,css_flexbox_flexbox_align_self_vert_004_ref,
+flexbox-align-self-vert-rtl-001-ref,ported,css_flexbox_flexbox_align_self_vert_rtl_001_ref,
+flexbox-align-self-vert-rtl-002-ref,ported,css_flexbox_flexbox_align_self_vert_rtl_002_ref,
+flexbox-align-self-vert-rtl-003-ref,ported,css_flexbox_flexbox_align_self_vert_rtl_003_ref,
+flexbox-align-self-vert-rtl-004-ref,ported,css_flexbox_flexbox_align_self_vert_rtl_004_ref,
+flexbox-align-self-vert-rtl-005-ref,ported,css_flexbox_flexbox_align_self_vert_rtl_005_ref,
+flexbox-baseline-nested-001-ref,ported,css_flexbox_flexbox_baseline_nested_001_ref,
+flexbox-baseline-nested-001,ported,css_flexbox_flexbox_baseline_nested_001,
+flexbox-basic-block-horiz-001v,ported,css_flexbox_flexbox_basic_block_horiz_001v,
+flexbox-basic-block-vert-001v,ported,css_flexbox_flexbox_basic_block_vert_001v,
+flexbox-basic-canvas-horiz-001-ref,ported,css_flexbox_flexbox_basic_canvas_horiz_001_ref,
+flexbox-basic-canvas-horiz-001,ported,css_flexbox_flexbox_basic_canvas_horiz_001,
+flexbox-basic-canvas-horiz-001v,ported,css_flexbox_flexbox_basic_canvas_horiz_001v,
+flexbox-basic-canvas-vert-001-ref,ported,css_flexbox_flexbox_basic_canvas_vert_001_ref,
+flexbox-basic-canvas-vert-001,ported,css_flexbox_flexbox_basic_canvas_vert_001,
+flexbox-basic-canvas-vert-001v,ported,css_flexbox_flexbox_basic_canvas_vert_001v,
+flexbox-basic-fieldset-horiz-001-ref,ported,css_flexbox_flexbox_basic_fieldset_horiz_001_ref,
+flexbox-basic-fieldset-horiz-001,ported,css_flexbox_flexbox_basic_fieldset_horiz_001,
+flexbox-basic-fieldset-vert-001-ref,ported,css_flexbox_flexbox_basic_fieldset_vert_001_ref,
+flexbox-basic-fieldset-vert-001,ported,css_flexbox_flexbox_basic_fieldset_vert_001,
+flexbox-basic-iframe-horiz-001-ref,ported,css_flexbox_flexbox_basic_iframe_horiz_001_ref,
+flexbox-basic-iframe-horiz-001,ported,css_flexbox_flexbox_basic_iframe_horiz_001,
+flexbox-basic-iframe-vert-001-ref,ported,css_flexbox_flexbox_basic_iframe_vert_001_ref,
+flexbox-basic-iframe-vert-001,ported,css_flexbox_flexbox_basic_iframe_vert_001,
+flexbox-basic-img-horiz-001-ref,ported,css_flexbox_flexbox_basic_img_horiz_001_ref,
+flexbox-basic-img-horiz-001,ported,css_flexbox_flexbox_basic_img_horiz_001,
+flexbox-basic-img-vert-001-ref,ported,css_flexbox_flexbox_basic_img_vert_001_ref,
+flexbox-basic-img-vert-001,ported,css_flexbox_flexbox_basic_img_vert_001,
+flexbox-basic-textarea-horiz-001-ref,ported,css_flexbox_flexbox_basic_textarea_horiz_001_ref,
+flexbox-basic-textarea-horiz-001,ported,css_flexbox_flexbox_basic_textarea_horiz_001,
+flexbox-basic-textarea-vert-001-ref,ported,css_flexbox_flexbox_basic_textarea_vert_001_ref,
+flexbox-basic-textarea-vert-001,ported,css_flexbox_flexbox_basic_textarea_vert_001,
+flexbox-basic-video-horiz-001-ref,ported,css_flexbox_flexbox_basic_video_horiz_001_ref,
+flexbox-basic-video-horiz-001,ported,css_flexbox_flexbox_basic_video_horiz_001,
+flexbox-basic-video-vert-001-ref,ported,css_flexbox_flexbox_basic_video_vert_001_ref,
+flexbox-basic-video-vert-001,ported,css_flexbox_flexbox_basic_video_vert_001,
+flexbox-column-row-gap-002-ref,ported,css_flexbox_flexbox_column_row_gap_002_ref,
+flexbox-column-row-gap-002,ported,css_flexbox_flexbox_column_row_gap_002,
+flexbox-column-row-gap-004-ref,ported,css_flexbox_flexbox_column_row_gap_004_ref,
+flexbox-column-row-gap-004,ported,css_flexbox_flexbox_column_row_gap_004,
+flexbox-definite-cross-size-constrained-percentage-ref,ported,css_flexbox_flexbox_definite_cross_size_constrained_percentage_ref,
+flexbox-definite-cross-size-constrained-percentage,ported,css_flexbox_flexbox_definite_cross_size_constrained_percentage,
 flexbox-dyn-resize-001,not_portable,,uses_javascript
-flexbox-flex-basis-content-001-ref,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-001a,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-001b,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-002-ref,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-002a,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-002b,not_portable,,complex_css_selector: .spacerChild::before
-flexbox-flex-basis-content-003-ref,not_portable,,unsupported element: <canvas>
-flexbox-flex-basis-content-003a,not_portable,,unsupported element: <canvas>
-flexbox-flex-basis-content-003b,not_portable,,unsupported element: <canvas>
-flexbox-flex-basis-content-004-ref,not_portable,,unsupported element: <canvas>
-flexbox-flex-basis-content-004a,not_portable,,unsupported element: <canvas>
-flexbox-flex-basis-content-004b,not_portable,,unsupported element: <canvas>
-flexbox-flex-wrap-flexing-003,not_portable,,unsupported property: writing-mode
-flexbox-iframe-intrinsic-size-001,not_portable,,unsupported element: <iframe>
-flexbox-ignores-first-letter,not_portable,,uses_javascript
-flexbox-justify-content-wmvert-001,not_portable,,style_block_unsupported property: writing-mode
+flexbox-flex-basis-content-001-ref,ported,css_flexbox_flexbox_flex_basis_content_001_ref,
+flexbox-flex-basis-content-001a,ported,css_flexbox_flexbox_flex_basis_content_001a,
+flexbox-flex-basis-content-001b,ported,css_flexbox_flexbox_flex_basis_content_001b,
+flexbox-flex-basis-content-002-ref,ported,css_flexbox_flexbox_flex_basis_content_002_ref,
+flexbox-flex-basis-content-002a,ported,css_flexbox_flexbox_flex_basis_content_002a,
+flexbox-flex-basis-content-002b,ported,css_flexbox_flexbox_flex_basis_content_002b,
+flexbox-flex-basis-content-003-ref,ported,css_flexbox_flexbox_flex_basis_content_003_ref,
+flexbox-flex-basis-content-003a,ported,css_flexbox_flexbox_flex_basis_content_003a,
+flexbox-flex-basis-content-003b,ported,css_flexbox_flexbox_flex_basis_content_003b,
+flexbox-flex-basis-content-004-ref,ported,css_flexbox_flexbox_flex_basis_content_004_ref,
+flexbox-flex-basis-content-004a,ported,css_flexbox_flexbox_flex_basis_content_004a,
+flexbox-flex-basis-content-004b,ported,css_flexbox_flexbox_flex_basis_content_004b,
+flexbox-flex-wrap-flexing-003,ported,css_flexbox_flexbox_flex_wrap_flexing_003,
+flexbox-iframe-intrinsic-size-001,ported,css_flexbox_flexbox_iframe_intrinsic_size_001,
+flexbox-ignores-first-letter,ported,css_flexbox_flexbox_ignores_first_letter,
+flexbox-justify-content-wmvert-001,ported,css_flexbox_flexbox_justify_content_wmvert_001,
 flexbox-justify-content-wmvert-002,not_portable,,uses_javascript
 flexbox-justify-content-wmvert-003,not_portable,,uses_javascript
 flexbox-lines-must-be-stretched-by-default,not_portable,,uses_javascript
-flexbox-mbp-horiz-002v,not_portable,,style_block_unsupported property: writing-mode
-flexbox-mbp-horiz-003v,not_portable,,style_block_unsupported property: writing-mode
-flexbox-min-height-auto-002-ref,not_portable,,unsupported element: <img>
-flexbox-min-height-auto-002a,not_portable,,unsupported element: <img>
-flexbox-min-height-auto-002b,not_portable,,unsupported element: <img>
-flexbox-min-height-auto-002c,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-002-ref,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-002a,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-002b,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-002c,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-005,not_portable,,unsupported element: <img>
-flexbox-min-width-auto-006,not_portable,,unsupported element: <img>
-flexbox-overflow-padding-002,not_portable,,style_block_unsupported property: writing-mode
+flexbox-mbp-horiz-002v,ported,css_flexbox_flexbox_mbp_horiz_002v,
+flexbox-mbp-horiz-003v,ported,css_flexbox_flexbox_mbp_horiz_003v,
+flexbox-min-height-auto-002-ref,ported,css_flexbox_flexbox_min_height_auto_002_ref,
+flexbox-min-height-auto-002a,ported,css_flexbox_flexbox_min_height_auto_002a,
+flexbox-min-height-auto-002b,ported,css_flexbox_flexbox_min_height_auto_002b,
+flexbox-min-height-auto-002c,ported,css_flexbox_flexbox_min_height_auto_002c,
+flexbox-min-width-auto-002-ref,ported,css_flexbox_flexbox_min_width_auto_002_ref,
+flexbox-min-width-auto-002a,ported,css_flexbox_flexbox_min_width_auto_002a,
+flexbox-min-width-auto-002b,ported,css_flexbox_flexbox_min_width_auto_002b,
+flexbox-min-width-auto-002c,ported,css_flexbox_flexbox_min_width_auto_002c,
+flexbox-min-width-auto-005,ported,css_flexbox_flexbox_min_width_auto_005,
+flexbox-min-width-auto-006,ported,css_flexbox_flexbox_min_width_auto_006,
+flexbox-overflow-padding-002,ported,css_flexbox_flexbox_overflow_padding_002,
 flexbox-root-node-001a,ported,css_flexbox_flexbox_root_node_001a,
 flexbox-root-node-001b,ported,css_flexbox_flexbox_root_node_001b,
-flexbox-safe-overflow-position-005,not_portable,,style_block_unsupported property: writing-mode
-flexbox-safe-overflow-position-006,not_portable,,style_block_vendor/unsupported prefix: -webkit-box-align
-flexbox-table-fixup-001,not_portable,,unsupported element: <td>
-flexbox-vert-lr-with-img,not_portable,,unsupported property: writing-mode
-flexbox-whitespace-handling-001-ref,not_portable,,unsupported element: <img>
-flexbox-whitespace-handling-001a,not_portable,,unsupported element: <img>
-flexbox-whitespace-handling-001b,not_portable,,unsupported element: <img>
-flexbox-with-pseudo-elements-001-ref,not_portable,,style_block_unsupported property: content
-flexbox-with-pseudo-elements-001,not_portable,,complex_css_selector: div.withBefore::before
-flexbox-with-pseudo-elements-002,not_portable,,complex_css_selector: .withBefore::before
-flexbox-with-pseudo-elements-003-ref,not_portable,,style_block_unsupported property: content
-flexbox-with-pseudo-elements-003,not_portable,,complex_css_selector: div.withBefore::before
-flexbox-writing-mode-001,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-002,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-003,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-004,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-005,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-006,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-007,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-008,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-009,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-010-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-010,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-011-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-011,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-012-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-012,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-013-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-013,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-014-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-014,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-015-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-015,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-016-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-016,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-slr-row-mix-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-slr-row-mix,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-slr-rtl,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-slr,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-srl-row-mix-ref,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-srl-row-mix,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-srl-rtl,not_portable,,style_block_unsupported property: writing-mode
-flexbox-writing-mode-srl,not_portable,,style_block_unsupported property: writing-mode
-flexbox_align-items-center-3,not_portable,,style_block_unsupported property: writing-mode
-flexbox_align-items-stretch-3,not_portable,,style_block_unsupported property: writing-mode
+flexbox-safe-overflow-position-005,ported,css_flexbox_flexbox_safe_overflow_position_005,
+flexbox-safe-overflow-position-006,ported,css_flexbox_flexbox_safe_overflow_position_006,
+flexbox-table-fixup-001,ported,css_flexbox_flexbox_table_fixup_001,
+flexbox-vert-lr-with-img,ported,css_flexbox_flexbox_vert_lr_with_img,
+flexbox-whitespace-handling-001-ref,ported,css_flexbox_flexbox_whitespace_handling_001_ref,
+flexbox-whitespace-handling-001a,ported,css_flexbox_flexbox_whitespace_handling_001a,
+flexbox-whitespace-handling-001b,ported,css_flexbox_flexbox_whitespace_handling_001b,
+flexbox-with-pseudo-elements-001-ref,ported,css_flexbox_flexbox_with_pseudo_elements_001_ref,
+flexbox-with-pseudo-elements-001,ported,css_flexbox_flexbox_with_pseudo_elements_001,
+flexbox-with-pseudo-elements-002,ported,css_flexbox_flexbox_with_pseudo_elements_002,
+flexbox-with-pseudo-elements-003-ref,ported,css_flexbox_flexbox_with_pseudo_elements_003_ref,
+flexbox-with-pseudo-elements-003,ported,css_flexbox_flexbox_with_pseudo_elements_003,
+flexbox-writing-mode-001,ported,css_flexbox_flexbox_writing_mode_001,
+flexbox-writing-mode-002,ported,css_flexbox_flexbox_writing_mode_002,
+flexbox-writing-mode-003,ported,css_flexbox_flexbox_writing_mode_003,
+flexbox-writing-mode-004,ported,css_flexbox_flexbox_writing_mode_004,
+flexbox-writing-mode-005,ported,css_flexbox_flexbox_writing_mode_005,
+flexbox-writing-mode-006,ported,css_flexbox_flexbox_writing_mode_006,
+flexbox-writing-mode-007,ported,css_flexbox_flexbox_writing_mode_007,
+flexbox-writing-mode-008,ported,css_flexbox_flexbox_writing_mode_008,
+flexbox-writing-mode-009,ported,css_flexbox_flexbox_writing_mode_009,
+flexbox-writing-mode-010-ref,ported,css_flexbox_flexbox_writing_mode_010_ref,
+flexbox-writing-mode-010,ported,css_flexbox_flexbox_writing_mode_010,
+flexbox-writing-mode-011-ref,ported,css_flexbox_flexbox_writing_mode_011_ref,
+flexbox-writing-mode-011,ported,css_flexbox_flexbox_writing_mode_011,
+flexbox-writing-mode-012-ref,ported,css_flexbox_flexbox_writing_mode_012_ref,
+flexbox-writing-mode-012,ported,css_flexbox_flexbox_writing_mode_012,
+flexbox-writing-mode-013-ref,ported,css_flexbox_flexbox_writing_mode_013_ref,
+flexbox-writing-mode-013,ported,css_flexbox_flexbox_writing_mode_013,
+flexbox-writing-mode-014-ref,ported,css_flexbox_flexbox_writing_mode_014_ref,
+flexbox-writing-mode-014,ported,css_flexbox_flexbox_writing_mode_014,
+flexbox-writing-mode-015-ref,ported,css_flexbox_flexbox_writing_mode_015_ref,
+flexbox-writing-mode-015,ported,css_flexbox_flexbox_writing_mode_015,
+flexbox-writing-mode-016-ref,ported,css_flexbox_flexbox_writing_mode_016_ref,
+flexbox-writing-mode-016,ported,css_flexbox_flexbox_writing_mode_016,
+flexbox-writing-mode-slr-row-mix-ref,ported,css_flexbox_flexbox_writing_mode_slr_row_mix_ref,
+flexbox-writing-mode-slr-row-mix,ported,css_flexbox_flexbox_writing_mode_slr_row_mix,
+flexbox-writing-mode-slr-rtl,ported,css_flexbox_flexbox_writing_mode_slr_rtl,
+flexbox-writing-mode-slr,ported,css_flexbox_flexbox_writing_mode_slr,
+flexbox-writing-mode-srl-row-mix-ref,ported,css_flexbox_flexbox_writing_mode_srl_row_mix_ref,
+flexbox-writing-mode-srl-row-mix,ported,css_flexbox_flexbox_writing_mode_srl_row_mix,
+flexbox-writing-mode-srl-rtl,ported,css_flexbox_flexbox_writing_mode_srl_rtl,
+flexbox-writing-mode-srl,ported,css_flexbox_flexbox_writing_mode_srl,
+flexbox_align-items-center-3,ported,css_flexbox_flexbox_align_items_center_3,
+flexbox_align-items-stretch-3,ported,css_flexbox_flexbox_align_items_stretch_3,
 flexbox_first-letter,not_portable,,uses_javascript
-flexbox_first-line,not_portable,,complex_css_selector: ul:first-child::first-line
-flexbox_flex-formatting-interop-ref,not_portable,,style_block_unsupported property: table-layout
-flexbox_flow-row-wrap-ref,not_portable,,complex_css_selector: div::after
-flexbox_flow-row-wrap-reverse-ref,not_portable,,complex_css_selector: div::after
-flexbox_generated-flex-ref,not_portable,,complex_css_selector: div::after
-flexbox_generated-flex,not_portable,,complex_css_selector: div::after
-flexbox_generated-nested-flex,not_portable,,complex_css_selector: div::after
-flexbox_generated-ref,not_portable,,complex_css_selector: div::after
-flexbox_generated,not_portable,,complex_css_selector: div::after
-flexbox_item-bottom-float-ref,not_portable,,complex_css_selector: div::after
-flexbox_item-float-ref,not_portable,,complex_css_selector: div::after
-flexbox_item-top-float-ref,not_portable,,complex_css_selector: div::after
-flexbox_item-vertical-align-ref,not_portable,,complex_css_selector: div::after
+flexbox_first-line,ported,css_flexbox_flexbox_first_line,
+flexbox_flex-formatting-interop-ref,ported,css_flexbox_flexbox_flex_formatting_interop_ref,
+flexbox_flow-row-wrap-ref,ported,css_flexbox_flexbox_flow_row_wrap_ref,
+flexbox_flow-row-wrap-reverse-ref,ported,css_flexbox_flexbox_flow_row_wrap_reverse_ref,
+flexbox_generated-flex-ref,ported,css_flexbox_flexbox_generated_flex_ref,
+flexbox_generated-flex,ported,css_flexbox_flexbox_generated_flex,
+flexbox_generated-nested-flex,ported,css_flexbox_flexbox_generated_nested_flex,
+flexbox_generated-ref,ported,css_flexbox_flexbox_generated_ref,
+flexbox_generated,ported,css_flexbox_flexbox_generated,
+flexbox_item-bottom-float-ref,ported,css_flexbox_flexbox_item_bottom_float_ref,
+flexbox_item-float-ref,ported,css_flexbox_flexbox_item_float_ref,
+flexbox_item-top-float-ref,ported,css_flexbox_flexbox_item_top_float_ref,
+flexbox_item-vertical-align-ref,ported,css_flexbox_flexbox_item_vertical_align_ref,
 flexbox_justifycontent-center-overflow,not_portable,,uses_javascript
-flexbox_justifycontent-end-ref,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-end-rtl-ref,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-end-rtl,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-end,not_portable,,unsupported display: inline-grid
+flexbox_justifycontent-end-ref,ported,css_flexbox_flexbox_justifycontent_end_ref,
+flexbox_justifycontent-end-rtl-ref,ported,css_flexbox_flexbox_justifycontent_end_rtl_ref,
+flexbox_justifycontent-end-rtl,ported,css_flexbox_flexbox_justifycontent_end_rtl,
+flexbox_justifycontent-end,ported,css_flexbox_flexbox_justifycontent_end,
 flexbox_justifycontent-rtl-001,not_portable,,uses_javascript
 flexbox_justifycontent-rtl-002,not_portable,,uses_javascript
-flexbox_justifycontent-start-ref,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-start-rtl-ref,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-start-rtl,not_portable,,unsupported display: inline-grid
-flexbox_justifycontent-start,not_portable,,unsupported display: inline-grid
-flexbox_object,not_portable,,unsupported element: <object>
+flexbox_justifycontent-start-ref,ported,css_flexbox_flexbox_justifycontent_start_ref,
+flexbox_justifycontent-start-rtl-ref,ported,css_flexbox_flexbox_justifycontent_start_rtl_ref,
+flexbox_justifycontent-start-rtl,ported,css_flexbox_flexbox_justifycontent_start_rtl,
+flexbox_justifycontent-start,ported,css_flexbox_flexbox_justifycontent_start,
+flexbox_object,ported,css_flexbox_flexbox_object,
 flexbox_quirks_body,ported,css_flexbox_flexbox_quirks_body,
-flexbox_rowspan-overflow-automatic,not_portable,,style_block_unsupported property: border-spacing
-flexbox_rowspan-overflow,not_portable,,style_block_unsupported property: table-layout
-flexbox_rowspan-ref,not_portable,,style_block_unsupported property: table-layout
-flexbox_rowspan,not_portable,,style_block_unsupported property: table-layout
-flexbox_rtl-direction-ref,not_portable,,complex_css_selector: div::after
-flexbox_stf-table-caption,not_portable,,unsupported display: table-caption
-flexbox_stf-table-cell,not_portable,,unsupported display: table-cell
-flexbox_stf-table-row-group,not_portable,,unsupported display: table-row-group
-flexbox_stf-table-row,not_portable,,unsupported display: table-row
-flexbox_stf-table-singleline-2,not_portable,,unsupported display: table
-flexbox_stf-table-singleline,not_portable,,unsupported display: table
-flexbox_stf-table,not_portable,,unsupported display: table
-flexbox_table-fixed-layout,not_portable,,style_block_unsupported property: table-layout
-flexbox_visibility-collapse-line-wrapping-ref,not_portable,,complex_css_selector: div::after
-flexbox_visibility-collapse-ref,not_portable,,complex_css_selector: div::after
+flexbox_rowspan-overflow-automatic,ported,css_flexbox_flexbox_rowspan_overflow_automatic,
+flexbox_rowspan-overflow,ported,css_flexbox_flexbox_rowspan_overflow,
+flexbox_rowspan-ref,ported,css_flexbox_flexbox_rowspan_ref,
+flexbox_rowspan,ported,css_flexbox_flexbox_rowspan,
+flexbox_rtl-direction-ref,ported,css_flexbox_flexbox_rtl_direction_ref,
+flexbox_stf-table-caption,ported,css_flexbox_flexbox_stf_table_caption,
+flexbox_stf-table-cell,ported,css_flexbox_flexbox_stf_table_cell,
+flexbox_stf-table-row-group,ported,css_flexbox_flexbox_stf_table_row_group,
+flexbox_stf-table-row,ported,css_flexbox_flexbox_stf_table_row,
+flexbox_stf-table-singleline-2,ported,css_flexbox_flexbox_stf_table_singleline_2,
+flexbox_stf-table-singleline,ported,css_flexbox_flexbox_stf_table_singleline,
+flexbox_stf-table,ported,css_flexbox_flexbox_stf_table,
+flexbox_table-fixed-layout,ported,css_flexbox_flexbox_table_fixed_layout,
+flexbox_visibility-collapse-line-wrapping-ref,ported,css_flexbox_flexbox_visibility_collapse_line_wrapping_ref,
+flexbox_visibility-collapse-ref,ported,css_flexbox_flexbox_visibility_collapse_ref,
 flexbox_width-change-and-relayout-children,not_portable,,uses_javascript
 flexbox_width-wrapping-column,not_portable,,uses_javascript
-flexbox_wrap-long-ref,not_portable,,complex_css_selector: div::after
-flexbox_wrap-ref,not_portable,,complex_css_selector: div::after
-flexbox_wrap-reverse-ref,not_portable,,complex_css_selector: div::after
-flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom,not_portable,,style_block_unsupported property: writing-mode
+flexbox_wrap-long-ref,ported,css_flexbox_flexbox_wrap_long_ref,
+flexbox_wrap-ref,ported,css_flexbox_flexbox_wrap_ref,
+flexbox_wrap-reverse-ref,ported,css_flexbox_flexbox_wrap_reverse_ref,
+flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom,ported,css_flexbox_flexbox_writing_mode_vertical_lays_out_contents_from_top_to_bottom,
 flexible-box-float,not_portable,,uses_javascript
 flexitem-no-margin-collapsing,not_portable,,uses_javascript
 flexitem-stretch-image,not_portable,,uses_javascript
-flexitem-stretch-range,not_portable,,unsupported element: <input>
-frame-flex-item-crash,not_portable,,uses_javascript
-frameset-crash,not_portable,,uses_javascript
-gap-001-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-001-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-001-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-001-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-002-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-002-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-002-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-002-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-003-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-003-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-003-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-003-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-004-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-004-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-004-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-004-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-005-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-005-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-005-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-005-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-006-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-006-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-006-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-006-rl,not_portable,,style_block_unsupported property: writing-mode
-gap-007-lr-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-007-lr,not_portable,,style_block_unsupported property: writing-mode
-gap-007-rl-ref,not_portable,,style_block_unsupported property: writing-mode
-gap-007-rl,not_portable,,style_block_unsupported property: writing-mode
+flexitem-stretch-range,ported,css_flexbox_flexitem_stretch_range,
+frame-flex-item-crash,ported,css_flexbox_frame_flex_item_crash,
+frameset-crash,ported,css_flexbox_frameset_crash,
+gap-001-lr-ref,ported,css_flexbox_gap_001_lr_ref,
+gap-001-lr,ported,css_flexbox_gap_001_lr,
+gap-001-rl-ref,ported,css_flexbox_gap_001_rl_ref,
+gap-001-rl,ported,css_flexbox_gap_001_rl,
+gap-002-lr-ref,ported,css_flexbox_gap_002_lr_ref,
+gap-002-lr,ported,css_flexbox_gap_002_lr,
+gap-002-rl-ref,ported,css_flexbox_gap_002_rl_ref,
+gap-002-rl,ported,css_flexbox_gap_002_rl,
+gap-003-lr-ref,ported,css_flexbox_gap_003_lr_ref,
+gap-003-lr,ported,css_flexbox_gap_003_lr,
+gap-003-rl-ref,ported,css_flexbox_gap_003_rl_ref,
+gap-003-rl,ported,css_flexbox_gap_003_rl,
+gap-004-lr-ref,ported,css_flexbox_gap_004_lr_ref,
+gap-004-lr,ported,css_flexbox_gap_004_lr,
+gap-004-rl-ref,ported,css_flexbox_gap_004_rl_ref,
+gap-004-rl,ported,css_flexbox_gap_004_rl,
+gap-005-lr-ref,ported,css_flexbox_gap_005_lr_ref,
+gap-005-lr,ported,css_flexbox_gap_005_lr,
+gap-005-rl-ref,ported,css_flexbox_gap_005_rl_ref,
+gap-005-rl,ported,css_flexbox_gap_005_rl,
+gap-006-lr-ref,ported,css_flexbox_gap_006_lr_ref,
+gap-006-lr,ported,css_flexbox_gap_006_lr,
+gap-006-rl-ref,ported,css_flexbox_gap_006_rl_ref,
+gap-006-rl,ported,css_flexbox_gap_006_rl,
+gap-007-lr-ref,ported,css_flexbox_gap_007_lr_ref,
+gap-007-lr,ported,css_flexbox_gap_007_lr,
+gap-007-rl-ref,ported,css_flexbox_gap_007_rl_ref,
+gap-007-rl,ported,css_flexbox_gap_007_rl,
 gap-017,not_portable,,uses_javascript
 gap-018,not_portable,,uses_javascript
-grid-flex-item-001,not_portable,,unsupported property: grid
-grid-flex-item-002,not_portable,,unsupported property: grid
-grid-flex-item-003,not_portable,,unsupported property: grid-template-rows
-grid-flex-item-004,not_portable,,unsupported property: grid-template-rows
-grid-flex-item-005,not_portable,,uses_javascript
-grid-flex-item-006,not_portable,,unsupported display: grid
-grid-flex-item-007,not_portable,,unsupported display: grid
+grid-flex-item-001,ported,css_flexbox_grid_flex_item_001,
+grid-flex-item-002,ported,css_flexbox_grid_flex_item_002,
+grid-flex-item-003,ported,css_flexbox_grid_flex_item_003,
+grid-flex-item-004,ported,css_flexbox_grid_flex_item_004,
+grid-flex-item-005,ported,css_flexbox_grid_flex_item_005,
+grid-flex-item-006,ported,css_flexbox_grid_flex_item_006,
+grid-flex-item-007,ported,css_flexbox_grid_flex_item_007,
 height-percentage-with-dynamic-container-size,not_portable,,uses_javascript
 hittest-anonymous-box,not_portable,,uses_javascript
 hittest-before-pseudo,not_portable,,uses_javascript
@@ -1385,7 +1362,7 @@ image-as-flexitem-size-006v,not_portable,,uses_javascript
 image-as-flexitem-size-007,not_portable,,uses_javascript
 image-as-flexitem-size-007v,not_portable,,uses_javascript
 image-items-flake-001,not_portable,,uses_javascript
-image-nested-within-definite-column-flexbox,not_portable,,unsupported element: <img>
+image-nested-within-definite-column-flexbox,ported,css_flexbox_image_nested_within_definite_column_flexbox,
 inheritance,not_portable,,uses_javascript
 inline-flex-editing-crash,not_portable,,uses_javascript
 inline-flex-editing-with-updating-text-crash,not_portable,,uses_javascript
@@ -1393,28 +1370,28 @@ inline-flex,not_portable,,uses_javascript
 inline-flexbox-vertical-rl-image-flexitem-crash-print,not_portable,,style_block_unsupported property: writing-mode
 inline-flexbox-wrap-vertically-width-calculation,not_portable,,uses_javascript
 intrinsic-width-orthogonal-writing-mode,not_portable,,uses_javascript
-item-with-table-with-infinite-max-intrinsic-width,not_portable,,unsupported element: <table>
+item-with-table-with-infinite-max-intrinsic-width,ported,css_flexbox_item_with_table_with_infinite_max_intrinsic_width,
 justify-content-006,not_portable,,uses_javascript
 justify-content-007,not_portable,,uses_javascript
 justify-content-rounding,not_portable,,uses_javascript
-justify-content-sideways-001,not_portable,,unsupported property: writing-mode
+justify-content-sideways-001,ported,css_flexbox_justify_content_sideways_001,
 justify-content_space-between-002,not_portable,,uses_javascript
 layout-with-inline-svg-001,not_portable,,uses_javascript
 main-axis-margin-rounding,not_portable,,uses_javascript
 max-width-violation,not_portable,,uses_javascript
-mixed-containing-blocks-crash,not_portable,,unsupported property: transform
+mixed-containing-blocks-crash,ported,css_flexbox_mixed_containing_blocks_crash,
 multiline-min-max,not_portable,,uses_javascript
 multiline-min-preferred-width,not_portable,,uses_javascript
 negative-overflow-002,not_portable,,uses_javascript
 negative-overflow-003,not_portable,,uses_javascript
 negative-overflow,not_portable,,uses_javascript
-nested-flex-image-loading-invalidates-intrinsic-sizes,not_portable,,unsupported element: <img>
-nested-orthogonal-flexbox-relayout,not_portable,,uses_javascript
+nested-flex-image-loading-invalidates-intrinsic-sizes,ported,css_flexbox_nested_flex_image_loading_invalidates_intrinsic_sizes,
+nested-orthogonal-flexbox-relayout,ported,css_flexbox_nested_orthogonal_flexbox_relayout,
 order_value,not_portable,,uses_javascript
-ortho-table-item-001,not_portable,,unsupported property: writing-mode
-orthogonal-flex-item-crash,not_portable,,uses_javascript
+ortho-table-item-001,ported,css_flexbox_ortho_table_item_001,
+orthogonal-flex-item-crash,ported,css_flexbox_orthogonal_flex_item_crash,
 orthogonal-writing-modes-and-intrinsic-sizing,not_portable,,uses_javascript
-overflow-auto-001,not_portable,,uses_javascript
+overflow-auto-001,ported,css_flexbox_overflow_auto_001,
 overflow-auto-002,not_portable,,uses_javascript
 overflow-auto-003,not_portable,,uses_javascript
 overflow-auto-004,not_portable,,uses_javascript
@@ -1422,44 +1399,44 @@ overflow-auto-005,not_portable,,uses_javascript
 overflow-auto-006,not_portable,,uses_javascript
 overflow-auto-007,not_portable,,uses_javascript
 overflow-auto-008,not_portable,,uses_javascript
-overflow-top-left-ref,not_portable,,style_block_unsupported property: writing-mode
-overflow-top-left,not_portable,,style_block_unsupported property: writing-mode
+overflow-top-left-ref,ported,css_flexbox_overflow_top_left_ref,
+overflow-top-left,ported,css_flexbox_overflow_top_left,
 percent-height-flex-items-cross-sizes-with-mutations,not_portable,,uses_javascript
-percentage-descendant-of-anonymous-flex-item,not_portable,,unsupported element: <button>
+percentage-descendant-of-anonymous-flex-item,ported,css_flexbox_percentage_descendant_of_anonymous_flex_item,
 percentage-heights-000,not_portable,,uses_javascript
 percentage-heights-001,not_portable,,uses_javascript
 percentage-heights-003,not_portable,,uses_javascript
 percentage-heights-011,not_portable,,uses_javascript
 percentage-heights-012,not_portable,,uses_javascript
 percentage-heights-013,not_portable,,uses_javascript
-percentage-heights-014,not_portable,,uses_javascript
-percentage-heights-020,not_portable,,unsupported element: <canvas>
-percentage-heights-022,not_portable,,unsupported element: <canvas>
-percentage-heights-023,not_portable,,unsupported element: <canvas>
+percentage-heights-014,ported,css_flexbox_percentage_heights_014,
+percentage-heights-020,ported,css_flexbox_percentage_heights_020,
+percentage-heights-022,ported,css_flexbox_percentage_heights_022,
+percentage-heights-023,ported,css_flexbox_percentage_heights_023,
 percentage-margins-001,not_portable,,uses_javascript
-percentage-max-height-001,not_portable,,unsupported element: <img>
-percentage-max-height-002,not_portable,,unsupported element: <img>
-percentage-max-height-003,not_portable,,unsupported element: <img>
-percentage-max-height-004,not_portable,,unsupported element: <img>
+percentage-max-height-001,ported,css_flexbox_percentage_max_height_001,
+percentage-max-height-002,ported,css_flexbox_percentage_max_height_002,
+percentage-max-height-003,ported,css_flexbox_percentage_max_height_003,
+percentage-max-height-004,ported,css_flexbox_percentage_max_height_004,
 percentage-max-width-cross-axis,not_portable,,uses_javascript
 percentage-padding-001,not_portable,,uses_javascript
-percentage-padding-003,not_portable,,uses_javascript
-percentage-padding-004,not_portable,,uses_javascript
+percentage-padding-003,ported,css_flexbox_percentage_padding_003,
+percentage-padding-004,ported,css_flexbox_percentage_padding_004,
 percentage-size-quirks-002,not_portable,,uses_javascript
 percentage-size-quirks,not_portable,,uses_javascript
-percentage-size-subitems-001,not_portable,,style_block_unsupported property: writing-mode
+percentage-size-subitems-001,ported,css_flexbox_percentage_size_subitems_001,
 percentage-size,not_portable,,uses_javascript
-position-absolute-scrollbar-freeze,not_portable,,uses_javascript
+position-absolute-scrollbar-freeze,ported,css_flexbox_position_absolute_scrollbar_freeze,
 position-relative-percentage-top-001,not_portable,,uses_javascript
 quirks-auto-block-size-with-percentage-item,not_portable,,uses_javascript
 radiobutton-min-size,not_portable,,uses_javascript
 relayout-align-items,not_portable,,uses_javascript
 relayout-image-load,not_portable,,uses_javascript
 relayout-input,not_portable,,uses_javascript
-relayout-intrinsic-block-size,not_portable,,unsupported element: <canvas>
+relayout-intrinsic-block-size,ported,css_flexbox_relayout_intrinsic_block_size,
 remove-out-of-flow-child-crash,not_portable,,uses_javascript
 remove-wrapped-001,not_portable,,uses_javascript
-remove-wrapped-002,not_portable,,uses_javascript
+remove-wrapped-002,ported,css_flexbox_remove_wrapped_002,
 scrollbars-auto-min-content-sizing,not_portable,,uses_javascript
 scrollbars-auto-ref,not_portable,,uses_javascript
 scrollbars-auto,not_portable,,uses_javascript
@@ -1469,121 +1446,121 @@ scrollbars-ref,not_portable,,uses_javascript
 scrollbars,not_portable,,uses_javascript
 select-as-flex-item-child-with-overflow,not_portable,,uses_javascript
 select-as-flex-item-with-overflow,not_portable,,uses_javascript
-select-element-multiple-ref,not_portable,,unsupported element: <select>
-select-element-multiple,not_portable,,unsupported element: <select>
-select-element-zero-height-001-ref,not_portable,,unsupported element: <select>
-select-element-zero-height-001,not_portable,,unsupported element: <select>
-select-element-zero-height-002-ref,not_portable,,unsupported element: <select>
-select-element-zero-height-002,not_portable,,unsupported element: <select>
+select-element-multiple-ref,ported,css_flexbox_select_element_multiple_ref,
+select-element-multiple,ported,css_flexbox_select_element_multiple,
+select-element-zero-height-001-ref,ported,css_flexbox_select_element_zero_height_001_ref,
+select-element-zero-height-001,ported,css_flexbox_select_element_zero_height_001,
+select-element-zero-height-002-ref,ported,css_flexbox_select_element_zero_height_002_ref,
+select-element-zero-height-002,ported,css_flexbox_select_element_zero_height_002,
 shrinking-column-flexbox,not_portable,,uses_javascript
 stretch-after-sibling-size-change,not_portable,,uses_javascript
-stretch-flex-item-checkbox-input-ref,not_portable,,unsupported element: <input>
-stretch-flex-item-checkbox-input,not_portable,,unsupported element: <input>
-stretch-flex-item-radio-input-ref,not_portable,,unsupported element: <input>
-stretch-flex-item-radio-input,not_portable,,unsupported element: <input>
-stretch-input-in-column,not_portable,,unsupported element: <input>
-stretch-obeys-min-max-002,not_portable,,unsupported property: writing-mode
+stretch-flex-item-checkbox-input-ref,ported,css_flexbox_stretch_flex_item_checkbox_input_ref,
+stretch-flex-item-checkbox-input,ported,css_flexbox_stretch_flex_item_checkbox_input,
+stretch-flex-item-radio-input-ref,ported,css_flexbox_stretch_flex_item_radio_input_ref,
+stretch-flex-item-radio-input,ported,css_flexbox_stretch_flex_item_radio_input,
+stretch-input-in-column,ported,css_flexbox_stretch_input_in_column,
+stretch-obeys-min-max-002,ported,css_flexbox_stretch_obeys_min_max_002,
 stretched-child-shrink-on-relayout,not_portable,,uses_javascript
-stretching-orthogonal-flows,not_portable,,unsupported property: writing-mode
-svg-no-natural-size-grandchild,not_portable,,unsupported element: <svg>
-svg-root-as-flex-item-001,not_portable,,unsupported element: <svg>
-svg-root-as-flex-item-002,not_portable,,unsupported element: <svg>
-svg-root-as-flex-item-003,not_portable,,unsupported element: <svg>
-svg-root-as-flex-item-004,not_portable,,unsupported element: <svg>
-svg-root-as-flex-item-005,not_portable,,unsupported element: <svg>
+stretching-orthogonal-flows,ported,css_flexbox_stretching_orthogonal_flows,
+svg-no-natural-size-grandchild,ported,css_flexbox_svg_no_natural_size_grandchild,
+svg-root-as-flex-item-001,ported,css_flexbox_svg_root_as_flex_item_001,
+svg-root-as-flex-item-002,ported,css_flexbox_svg_root_as_flex_item_002,
+svg-root-as-flex-item-003,ported,css_flexbox_svg_root_as_flex_item_003,
+svg-root-as-flex-item-004,ported,css_flexbox_svg_root_as_flex_item_004,
+svg-root-as-flex-item-005,ported,css_flexbox_svg_root_as_flex_item_005,
 svg-root-as-flex-item-006,not_portable,,uses_javascript
-synthesize-vrl-baseline,not_portable,,unsupported property: writing-mode
-table-as-flex-item-max-content,not_portable,,unsupported display: table
-table-as-item-auto-min-width,not_portable,,unsupported display: table
-table-as-item-change-cell,not_portable,,uses_javascript
+synthesize-vrl-baseline,ported,css_flexbox_synthesize_vrl_baseline,
+table-as-flex-item-max-content,ported,css_flexbox_table_as_flex_item_max_content,
+table-as-item-auto-min-width,ported,css_flexbox_table_as_item_auto_min_width,
+table-as-item-change-cell,ported,css_flexbox_table_as_item_change_cell,
 table-as-item-cross-size,not_portable,,uses_javascript
-table-as-item-fixed-min-width-2,not_portable,,unsupported display: table
-table-as-item-fixed-min-width-3,not_portable,,unsupported display: table
-table-as-item-fixed-min-width,not_portable,,unsupported display: table
-table-as-item-flex-cross-size,not_portable,,unsupported property: border-spacing
-table-as-item-inflexible-in-column-1,not_portable,,unsupported display: table
-table-as-item-inflexible-in-column-2,not_portable,,unsupported display: table
-table-as-item-inflexible-in-row-1,not_portable,,unsupported display: table
-table-as-item-inflexible-in-row-2,not_portable,,unsupported display: table
-table-as-item-large-intrinsic-size,not_portable,,unsupported property: border-spacing
-table-as-item-min-content-height-1.tentative,not_portable,,unsupported display: table
-table-as-item-min-content-height-2.tentative,not_portable,,unsupported display: table
-table-as-item-min-height-1,not_portable,,unsupported display: table
-table-as-item-narrow-content-2,not_portable,,unsupported display: table
-table-as-item-narrow-content,not_portable,,unsupported display: table
-table-as-item-percent-width-cell-001-ref,not_portable,,unsupported element: <table>
-table-as-item-percent-width-cell-001,not_portable,,unsupported element: <table>
-table-as-item-specified-height,not_portable,,unsupported display: table
-table-as-item-specified-width-vertical,not_portable,,unsupported property: writing-mode
-table-as-item-specified-width,not_portable,,unsupported display: table
-table-as-item-stretch-cross-size-2,not_portable,,unsupported property: border-spacing
-table-as-item-stretch-cross-size-3,not_portable,,unsupported property: border-spacing
-table-as-item-stretch-cross-size-4,not_portable,,unsupported display: table
-table-as-item-stretch-cross-size-5,not_portable,,unsupported display: table
-table-as-item-stretch-cross-size,not_portable,,unsupported property: border-spacing
-table-as-item-wide-content,not_portable,,unsupported display: table
-table-item-flex-percentage-min-width,not_portable,,unsupported display: table
-table-item-flex-percentage-width,not_portable,,unsupported display: table
-table-with-float-paint,not_portable,,unsupported display: table
-table-with-infinite-max-intrinsic-width,not_portable,,unsupported element: <table>
+table-as-item-fixed-min-width-2,ported,css_flexbox_table_as_item_fixed_min_width_2,
+table-as-item-fixed-min-width-3,ported,css_flexbox_table_as_item_fixed_min_width_3,
+table-as-item-fixed-min-width,ported,css_flexbox_table_as_item_fixed_min_width,
+table-as-item-flex-cross-size,ported,css_flexbox_table_as_item_flex_cross_size,
+table-as-item-inflexible-in-column-1,ported,css_flexbox_table_as_item_inflexible_in_column_1,
+table-as-item-inflexible-in-column-2,ported,css_flexbox_table_as_item_inflexible_in_column_2,
+table-as-item-inflexible-in-row-1,ported,css_flexbox_table_as_item_inflexible_in_row_1,
+table-as-item-inflexible-in-row-2,ported,css_flexbox_table_as_item_inflexible_in_row_2,
+table-as-item-large-intrinsic-size,ported,css_flexbox_table_as_item_large_intrinsic_size,
+table-as-item-min-content-height-1.tentative,ported,css_flexbox_table_as_item_min_content_height_1_tentative,
+table-as-item-min-content-height-2.tentative,ported,css_flexbox_table_as_item_min_content_height_2_tentative,
+table-as-item-min-height-1,ported,css_flexbox_table_as_item_min_height_1,
+table-as-item-narrow-content-2,ported,css_flexbox_table_as_item_narrow_content_2,
+table-as-item-narrow-content,ported,css_flexbox_table_as_item_narrow_content,
+table-as-item-percent-width-cell-001-ref,ported,css_flexbox_table_as_item_percent_width_cell_001_ref,
+table-as-item-percent-width-cell-001,ported,css_flexbox_table_as_item_percent_width_cell_001,
+table-as-item-specified-height,ported,css_flexbox_table_as_item_specified_height,
+table-as-item-specified-width-vertical,ported,css_flexbox_table_as_item_specified_width_vertical,
+table-as-item-specified-width,ported,css_flexbox_table_as_item_specified_width,
+table-as-item-stretch-cross-size-2,ported,css_flexbox_table_as_item_stretch_cross_size_2,
+table-as-item-stretch-cross-size-3,ported,css_flexbox_table_as_item_stretch_cross_size_3,
+table-as-item-stretch-cross-size-4,ported,css_flexbox_table_as_item_stretch_cross_size_4,
+table-as-item-stretch-cross-size-5,ported,css_flexbox_table_as_item_stretch_cross_size_5,
+table-as-item-stretch-cross-size,ported,css_flexbox_table_as_item_stretch_cross_size,
+table-as-item-wide-content,ported,css_flexbox_table_as_item_wide_content,
+table-item-flex-percentage-min-width,ported,css_flexbox_table_item_flex_percentage_min_width,
+table-item-flex-percentage-width,ported,css_flexbox_table_item_flex_percentage_width,
+table-with-float-paint,ported,css_flexbox_table_with_float_paint,
+table-with-infinite-max-intrinsic-width,ported,css_flexbox_table_with_infinite_max_intrinsic_width,
 table-with-percent-intrinsic-width,not_portable,,uses_javascript
 text-as-flexitem-size-001,not_portable,,uses_javascript
 total-min-max-violation-zero,not_portable,,uses_javascript
-webkit-box-vertical-writing-mode-ref,not_portable,,unsupported property: writing-mode
-webkit-box-vertical-writing-mode,not_portable,,unsupported property: writing-mode
-abspos_abspos-autopos-htb-ltr,not_portable,,style_block_unsupported property: writing-mode
-abspos_abspos-autopos-htb-rtl,not_portable,,style_block_unsupported property: writing-mode
-abspos_abspos-autopos-vlr-ltr,not_portable,,style_block_unsupported property: writing-mode
-abspos_abspos-autopos-vlr-rtl,not_portable,,style_block_unsupported property: writing-mode
-abspos_abspos-autopos-vrl-ltr,not_portable,,style_block_unsupported property: writing-mode
-abspos_abspos-autopos-vrl-rtl,not_portable,,style_block_unsupported property: writing-mode
+webkit-box-vertical-writing-mode-ref,ported,css_flexbox_webkit_box_vertical_writing_mode_ref,
+webkit-box-vertical-writing-mode,ported,css_flexbox_webkit_box_vertical_writing_mode,
+abspos_abspos-autopos-htb-ltr,ported,css_flexbox_abspos_abspos_autopos_htb_ltr,
+abspos_abspos-autopos-htb-rtl,ported,css_flexbox_abspos_abspos_autopos_htb_rtl,
+abspos_abspos-autopos-vlr-ltr,ported,css_flexbox_abspos_abspos_autopos_vlr_ltr,
+abspos_abspos-autopos-vlr-rtl,ported,css_flexbox_abspos_abspos_autopos_vlr_rtl,
+abspos_abspos-autopos-vrl-ltr,ported,css_flexbox_abspos_abspos_autopos_vrl_ltr,
+abspos_abspos-autopos-vrl-rtl,ported,css_flexbox_abspos_abspos_autopos_vrl_rtl,
 abspos_abspos-descendent-001,not_portable,,uses_javascript
-abspos_dynamic-align-self-001,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-content-001,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-001,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-002,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-003,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-004,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-005,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-006,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-007,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-008,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-rtl-001,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-rtl-002,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-rtl-003,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-rtl-004,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-safe-001-ref,not_portable,,style_block_unsupported property: writing-mode
-abspos_flex-abspos-staticpos-align-self-safe-001,not_portable,,style_block_unsupported property: writing-mode
-abspos_flex-abspos-staticpos-align-self-safe-002-ref,not_portable,,style_block_unsupported property: writing-mode
-abspos_flex-abspos-staticpos-align-self-safe-002,not_portable,,style_block_unsupported property: writing-mode
-abspos_flex-abspos-staticpos-align-self-safe-003-ref,not_portable,,style_block_unsupported property: writing-mode
-abspos_flex-abspos-staticpos-align-self-safe-003,not_portable,,style_block_unsupported property: writing-mode
-abspos_flex-abspos-staticpos-align-self-vertWM-001,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-vertWM-002,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-vertWM-003,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-align-self-vertWM-004,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-001,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-002,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-003,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-004,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-005,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-006,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-007,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-008,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-rtl-001,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-rtl-002,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-vertWM-001,not_portable,,uses_javascript
-abspos_flex-abspos-staticpos-justify-content-vertWM-002,not_portable,,uses_javascript
+abspos_dynamic-align-self-001,ported,css_flexbox_abspos_dynamic_align_self_001,
+abspos_flex-abspos-staticpos-align-content-001,ported,css_flexbox_abspos_flex_abspos_staticpos_align_content_001,
+abspos_flex-abspos-staticpos-align-self-001,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_001,
+abspos_flex-abspos-staticpos-align-self-002,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_002,
+abspos_flex-abspos-staticpos-align-self-003,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_003,
+abspos_flex-abspos-staticpos-align-self-004,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_004,
+abspos_flex-abspos-staticpos-align-self-005,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_005,
+abspos_flex-abspos-staticpos-align-self-006,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_006,
+abspos_flex-abspos-staticpos-align-self-007,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_007,
+abspos_flex-abspos-staticpos-align-self-008,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_008,
+abspos_flex-abspos-staticpos-align-self-rtl-001,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_rtl_001,
+abspos_flex-abspos-staticpos-align-self-rtl-002,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_rtl_002,
+abspos_flex-abspos-staticpos-align-self-rtl-003,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_rtl_003,
+abspos_flex-abspos-staticpos-align-self-rtl-004,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_rtl_004,
+abspos_flex-abspos-staticpos-align-self-safe-001-ref,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_safe_001_ref,
+abspos_flex-abspos-staticpos-align-self-safe-001,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_safe_001,
+abspos_flex-abspos-staticpos-align-self-safe-002-ref,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_safe_002_ref,
+abspos_flex-abspos-staticpos-align-self-safe-002,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_safe_002,
+abspos_flex-abspos-staticpos-align-self-safe-003-ref,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_safe_003_ref,
+abspos_flex-abspos-staticpos-align-self-safe-003,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_safe_003,
+abspos_flex-abspos-staticpos-align-self-vertWM-001,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_vertwm_001,
+abspos_flex-abspos-staticpos-align-self-vertWM-002,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_vertwm_002,
+abspos_flex-abspos-staticpos-align-self-vertWM-003,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_vertwm_003,
+abspos_flex-abspos-staticpos-align-self-vertWM-004,ported,css_flexbox_abspos_flex_abspos_staticpos_align_self_vertwm_004,
+abspos_flex-abspos-staticpos-justify-content-001,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_001,
+abspos_flex-abspos-staticpos-justify-content-002,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_002,
+abspos_flex-abspos-staticpos-justify-content-003,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_003,
+abspos_flex-abspos-staticpos-justify-content-004,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_004,
+abspos_flex-abspos-staticpos-justify-content-005,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_005,
+abspos_flex-abspos-staticpos-justify-content-006,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_006,
+abspos_flex-abspos-staticpos-justify-content-007,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_007,
+abspos_flex-abspos-staticpos-justify-content-008,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_008,
+abspos_flex-abspos-staticpos-justify-content-rtl-001,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_rtl_001,
+abspos_flex-abspos-staticpos-justify-content-rtl-002,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_rtl_002,
+abspos_flex-abspos-staticpos-justify-content-vertWM-001,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_vertwm_001,
+abspos_flex-abspos-staticpos-justify-content-vertWM-002,ported,css_flexbox_abspos_flex_abspos_staticpos_justify_content_vertwm_002,
 abspos_position-absolute-001,not_portable,,uses_javascript
 abspos_position-absolute-002,not_portable,,uses_javascript
 abspos_position-absolute-003,not_portable,,uses_javascript
 abspos_position-absolute-004,not_portable,,uses_javascript
 abspos_position-absolute-005,not_portable,,uses_javascript
-abspos_position-absolute-006,not_portable,,unsupported display: grid
-abspos_position-absolute-008,not_portable,,unsupported display: grid
-abspos_position-absolute-009,not_portable,,unsupported display: grid
-abspos_position-absolute-010,not_portable,,unsupported display: grid
-abspos_position-absolute-011,not_portable,,unsupported display: grid
+abspos_position-absolute-006,ported,css_flexbox_abspos_position_absolute_006,
+abspos_position-absolute-008,ported,css_flexbox_abspos_position_absolute_008,
+abspos_position-absolute-009,ported,css_flexbox_abspos_position_absolute_009,
+abspos_position-absolute-010,ported,css_flexbox_abspos_position_absolute_010,
+abspos_position-absolute-011,ported,css_flexbox_abspos_position_absolute_011,
 abspos_position-absolute-012,not_portable,,uses_javascript
 abspos_position-absolute-013,not_portable,,uses_javascript
 abspos_position-absolute-014,not_portable,,uses_javascript
@@ -1690,26 +1667,26 @@ parsing_order-computed,not_portable,,uses_javascript
 parsing_order-invalid,not_portable,,uses_javascript
 parsing_order-valid,not_portable,,uses_javascript
 parsing_webkit-aliases,not_portable,,uses_javascript
-intrinsic-size_auto-min-size-001,not_portable,,unsupported element: <img>
+intrinsic-size_auto-min-size-001,ported,css_flexbox_intrinsic_size_auto_min_size_001,
 intrinsic-size_col-wrap-004,not_portable,,uses_javascript
 intrinsic-size_col-wrap-005,not_portable,,uses_javascript
-intrinsic-size_col-wrap-009,not_portable,,uses_javascript
+intrinsic-size_col-wrap-009,ported,css_flexbox_intrinsic_size_col_wrap_009,
 intrinsic-size_col-wrap-010,not_portable,,uses_javascript
 intrinsic-size_col-wrap-018,not_portable,,uses_javascript
 intrinsic-size_col-wrap-019,not_portable,,uses_javascript
-intrinsic-size_col-wrap-crash,not_portable,,unsupported property: writing-mode
+intrinsic-size_col-wrap-crash,ported,css_flexbox_intrinsic_size_col_wrap_crash,
 intrinsic-size_row-005,not_portable,,uses_javascript
 intrinsic-size_row-008,not_portable,,uses_javascript
 intrinsic-size_row-compat-001,not_portable,,uses_javascript
 intrinsic-size_row-use-cases-001,not_portable,,uses_javascript
 intrinsic-size_row-wrap-001,not_portable,,uses_javascript
-interactive_flexbox_interactive_flex-basis-transitions,not_portable,,complex_css_selector: div:hover #test
-interactive_flexbox_interactive_flex-grow-transitions,not_portable,,complex_css_selector: div:hover #test
-interactive_flexbox_interactive_flex-shrink-transitions-invalid,not_portable,,complex_css_selector: div:hover #test
-interactive_flexbox_interactive_flex-shrink-transitions,not_portable,,complex_css_selector: div:hover #test
-interactive_flexbox_interactive_flex-transitions,not_portable,,complex_css_selector: div:hover #test
-interactive_flexbox_interactive_order-transitions-2,not_portable,,complex_css_selector: div:hover .test
-interactive_flexbox_interactive_order-transitions,not_portable,,complex_css_selector: div:hover .one
+interactive_flexbox_interactive_flex-basis-transitions,ported,css_flexbox_interactive_flexbox_interactive_flex_basis_transitions,
+interactive_flexbox_interactive_flex-grow-transitions,ported,css_flexbox_interactive_flexbox_interactive_flex_grow_transitions,
+interactive_flexbox_interactive_flex-shrink-transitions-invalid,ported,css_flexbox_interactive_flexbox_interactive_flex_shrink_transitions_invalid,
+interactive_flexbox_interactive_flex-shrink-transitions,ported,css_flexbox_interactive_flexbox_interactive_flex_shrink_transitions,
+interactive_flexbox_interactive_flex-transitions,ported,css_flexbox_interactive_flexbox_interactive_flex_transitions,
+interactive_flexbox_interactive_order-transitions-2,ported,css_flexbox_interactive_flexbox_interactive_order_transitions_2,
+interactive_flexbox_interactive_order-transitions,ported,css_flexbox_interactive_flexbox_interactive_order_transitions,
 animation_discrete-no-interpolation,not_portable,,uses_javascript
 animation_flex-basis-composition,not_portable,,uses_javascript
 animation_flex-basis-content-crash,not_portable,,uses_javascript
@@ -1724,8 +1701,8 @@ alignment_flex-align-baseline-004,not_portable,,uses_javascript
 alignment_flex-align-baseline-005,not_portable,,uses_javascript
 alignment_flex-align-baseline-006,not_portable,,uses_javascript
 alignment_flex-align-baseline-007,not_portable,,uses_javascript
-alignment_flex-align-baseline-column-vert-lr-rtl-wrap-reverse,not_portable,,style_block_unsupported property: writing-mode
-alignment_flex-align-baseline-column-vert-rl-rtl-wrap-reverse,not_portable,,style_block_unsupported property: writing-mode
+alignment_flex-align-baseline-column-vert-lr-rtl-wrap-reverse,ported,css_flexbox_alignment_flex_align_baseline_column_vert_lr_rtl_wrap_reverse,
+alignment_flex-align-baseline-column-vert-rl-rtl-wrap-reverse,ported,css_flexbox_alignment_flex_align_baseline_column_vert_rl_rtl_wrap_reverse,
 alignment_flex-align-baseline-fieldset-001,not_portable,,uses_javascript
 alignment_flex-align-baseline-fieldset-002,not_portable,,uses_javascript
 alignment_flex-align-baseline-fieldset-003,not_portable,,uses_javascript
@@ -1736,9 +1713,9 @@ alignment_flex-align-baseline-flex-004,not_portable,,uses_javascript
 alignment_flex-align-baseline-grid-001,not_portable,,uses_javascript
 alignment_flex-align-baseline-grid-002,not_portable,,uses_javascript
 alignment_flex-align-baseline-grid-003,not_portable,,uses_javascript
-alignment_flex-align-baseline-line-clamp-001.tentative,not_portable,,uses_javascript
-alignment_flex-align-baseline-line-clamp-002.tentative,not_portable,,uses_javascript
-alignment_flex-align-baseline-line-clamp-003.tentative,not_portable,,uses_javascript
+alignment_flex-align-baseline-line-clamp-001.tentative,ported,css_flexbox_alignment_flex_align_baseline_line_clamp_001_tentative,
+alignment_flex-align-baseline-line-clamp-002.tentative,ported,css_flexbox_alignment_flex_align_baseline_line_clamp_002_tentative,
+alignment_flex-align-baseline-line-clamp-003.tentative,ported,css_flexbox_alignment_flex_align_baseline_line_clamp_003_tentative,
 alignment_flex-align-baseline-multicol-001,not_portable,,uses_javascript
 alignment_flex-align-baseline-multicol-002,not_portable,,uses_javascript
 alignment_flex-align-baseline-multicol-003,not_portable,,uses_javascript
@@ -1750,3 +1727,25 @@ alignment_flex-align-baseline-table-002,not_portable,,uses_javascript
 alignment_flex-align-baseline-table-003,not_portable,,uses_javascript
 alignment_flex-content-alignment-with-abspos-001,not_portable,,uses_javascript
 alignment_multiline-align-self,not_portable,,uses_javascript
+flexbox-flex-direction-column,ported,css_flexbox_flexbox_flex_direction_column,
+flexbox-flex-direction-column-reverse,ported,css_flexbox_flexbox_flex_direction_column_reverse,
+flexbox-flex-direction-default,ported,css_flexbox_flexbox_flex_direction_default,
+flexbox-flex-direction-row,ported,css_flexbox_flexbox_flex_direction_row,
+flexbox-flex-direction-row-reverse,ported,css_flexbox_flexbox_flex_direction_row_reverse,
+flexbox-flex-wrap-wrap,ported,css_flexbox_flexbox_flex_wrap_wrap,
+flexbox-flex-wrap-wrap-reverse,ported,css_flexbox_flexbox_flex_wrap_wrap_reverse,
+align-content-002,ported,css_flexbox_align_content_002,
+align-content-004,ported,css_flexbox_align_content_004,
+align-content-007,ported,css_flexbox_align_content_007,
+align-items-002,ported,css_flexbox_align_items_002,
+justify-content-001,ported,css_flexbox_justify_content_001,
+justify-content-002,ported,css_flexbox_justify_content_002,
+justify-content-004,ported,css_flexbox_justify_content_004,
+justify-content-005,ported,css_flexbox_justify_content_005,
+align-items-001,ported,css_flexbox_align_items_001,
+align-content-001,ported,css_flexbox_align_content_001,
+align-content-003,ported,css_flexbox_align_content_003,
+align-content-005,ported,css_flexbox_align_content_005,
+align-items-003,ported,css_flexbox_align_items_003,
+align-items-004,ported,css_flexbox_align_items_004,
+justify-content-003,ported,css_flexbox_justify_content_003,

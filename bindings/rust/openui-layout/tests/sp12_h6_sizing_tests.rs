@@ -1780,12 +1780,12 @@ fn doc_with_one_child(child_w: f32, child_h: f32) -> (Document, NodeId) {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(child_w);
-    doc.node_mut(child).style.height = Length::px(child_h);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(child_w));
+    doc.update_resolved_style(child, |style| style.height = Length::px(child_h));
     doc.append_child(parent, child);
     (doc, parent)
 }
@@ -1794,13 +1794,13 @@ fn doc_with_children(sizes: &[(f32, f32)]) -> (Document, NodeId) {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
     for &(w, h) in sizes {
         let child = doc.create_node(ElementTag::Div);
-        doc.node_mut(child).style.display = Display::Block;
-        doc.node_mut(child).style.width = Length::px(w);
-        doc.node_mut(child).style.height = Length::px(h);
+        doc.update_resolved_style(child, |style| style.display = Display::Block);
+        doc.update_resolved_style(child, |style| style.width = Length::px(w));
+        doc.update_resolved_style(child, |style| style.height = Length::px(h));
         doc.append_child(parent, child);
     }
     (doc, parent)
@@ -1827,7 +1827,7 @@ fn intrinsic_min_content_empty_is_zero() {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
     assert_eq!(sizes.min_content_inline_size, lu(0));
@@ -1970,16 +1970,16 @@ fn intrinsic_with_parent_padding() {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.padding_top = Length::px(10.0);
-    doc.node_mut(parent).style.padding_right = Length::px(10.0);
-    doc.node_mut(parent).style.padding_bottom = Length::px(10.0);
-    doc.node_mut(parent).style.padding_left = Length::px(10.0);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(parent, |style| style.padding_right = Length::px(10.0));
+    doc.update_resolved_style(parent, |style| style.padding_bottom = Length::px(10.0));
+    doc.update_resolved_style(parent, |style| style.padding_left = Length::px(10.0));
     doc.append_child(root, parent);
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(100.0);
-    doc.node_mut(child).style.height = Length::px(40.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(40.0));
     doc.append_child(parent, child);
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
     // 100 + padding(10+10) = 120
@@ -1991,20 +1991,24 @@ fn intrinsic_with_parent_border() {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.border_top_width = 5;
-    doc.node_mut(parent).style.border_right_width = 5;
-    doc.node_mut(parent).style.border_bottom_width = 5;
-    doc.node_mut(parent).style.border_left_width = 5;
-    doc.node_mut(parent).style.border_top_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_right_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_bottom_style = BorderStyle::Solid;
-    doc.node_mut(parent).style.border_left_style = BorderStyle::Solid;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.border_top_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_right_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_bottom_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_left_width = 5);
+    doc.update_resolved_style(parent, |style| style.border_top_style = BorderStyle::Solid);
+    doc.update_resolved_style(parent, |style| {
+        style.border_right_style = BorderStyle::Solid
+    });
+    doc.update_resolved_style(parent, |style| {
+        style.border_bottom_style = BorderStyle::Solid
+    });
+    doc.update_resolved_style(parent, |style| style.border_left_style = BorderStyle::Solid);
     doc.append_child(root, parent);
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(80.0);
-    doc.node_mut(child).style.height = Length::px(30.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(80.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(30.0));
     doc.append_child(parent, child);
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
     assert_eq!(
@@ -2020,15 +2024,15 @@ fn intrinsic_nested_propagation() {
     let mut doc = Document::new();
     let root = doc.root();
     let grandparent = doc.create_node(ElementTag::Div);
-    doc.node_mut(grandparent).style.display = Display::Block;
+    doc.update_resolved_style(grandparent, |style| style.display = Display::Block);
     doc.append_child(root, grandparent);
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(grandparent, parent);
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(200.0);
-    doc.node_mut(child).style.height = Length::px(60.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(60.0));
     doc.append_child(parent, child);
     let sizes = compute_intrinsic_block_sizes(&doc, grandparent);
     assert_eq!(sizes.min_content_inline_size, luf(200.0));
@@ -2043,17 +2047,17 @@ fn intrinsic_display_none_skipped() {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
     let visible = doc.create_node(ElementTag::Div);
-    doc.node_mut(visible).style.display = Display::Block;
-    doc.node_mut(visible).style.width = Length::px(100.0);
-    doc.node_mut(visible).style.height = Length::px(50.0);
+    doc.update_resolved_style(visible, |style| style.display = Display::Block);
+    doc.update_resolved_style(visible, |style| style.width = Length::px(100.0));
+    doc.update_resolved_style(visible, |style| style.height = Length::px(50.0));
     doc.append_child(parent, visible);
     let hidden = doc.create_node(ElementTag::Div);
-    doc.node_mut(hidden).style.display = Display::None;
-    doc.node_mut(hidden).style.width = Length::px(300.0);
-    doc.node_mut(hidden).style.height = Length::px(200.0);
+    doc.update_resolved_style(hidden, |style| style.display = Display::None);
+    doc.update_resolved_style(hidden, |style| style.width = Length::px(300.0));
+    doc.update_resolved_style(hidden, |style| style.height = Length::px(200.0));
     doc.append_child(parent, hidden);
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
     assert_eq!(sizes.min_content_inline_size, luf(100.0));
@@ -2067,7 +2071,7 @@ fn block_size_from_content_simple_sum() {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
     let child_boxes = [lu(50), lu(30), lu(40)];
     let result = compute_block_size_from_content(&doc, parent, &child_boxes);
@@ -2079,7 +2083,7 @@ fn block_size_from_content_single() {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
     let child_boxes = [lu(75)];
     let result = compute_block_size_from_content(&doc, parent, &child_boxes);
@@ -2091,7 +2095,7 @@ fn block_size_from_content_empty() {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
     let child_boxes: [LayoutUnit; 0] = [];
     let result = compute_block_size_from_content(&doc, parent, &child_boxes);
@@ -2103,8 +2107,8 @@ fn block_size_content_clamped_by_min_h() {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.min_height = Length::px(200.0);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.min_height = Length::px(200.0));
     doc.append_child(root, parent);
     let child_boxes = [lu(50)];
     let result = compute_block_size_from_content(&doc, parent, &child_boxes);
@@ -2116,8 +2120,8 @@ fn block_size_content_clamped_by_max_h() {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
-    doc.node_mut(parent).style.max_height = Length::px(80.0);
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
+    doc.update_resolved_style(parent, |style| style.max_height = Length::px(80.0));
     doc.append_child(root, parent);
     let child_boxes = [lu(60), lu(90)];
     let result = compute_block_size_from_content(&doc, parent, &child_boxes);
@@ -2157,13 +2161,13 @@ fn intrinsic_child_min_width_constraint() {
     let mut doc = Document::new();
     let root = doc.root();
     let parent = doc.create_node(ElementTag::Div);
-    doc.node_mut(parent).style.display = Display::Block;
+    doc.update_resolved_style(parent, |style| style.display = Display::Block);
     doc.append_child(root, parent);
     let child = doc.create_node(ElementTag::Div);
-    doc.node_mut(child).style.display = Display::Block;
-    doc.node_mut(child).style.width = Length::px(80.0);
-    doc.node_mut(child).style.min_width = Length::px(120.0);
-    doc.node_mut(child).style.height = Length::px(30.0);
+    doc.update_resolved_style(child, |style| style.display = Display::Block);
+    doc.update_resolved_style(child, |style| style.width = Length::px(80.0));
+    doc.update_resolved_style(child, |style| style.min_width = Length::px(120.0));
+    doc.update_resolved_style(child, |style| style.height = Length::px(30.0));
     doc.append_child(parent, child);
     let sizes = compute_intrinsic_block_sizes(&doc, parent);
     assert_eq!(sizes.min_content_inline_size, luf(120.0));
@@ -2719,8 +2723,8 @@ fn stretch_resolves_against_available_size() {
 #[test]
 fn replaced_explicit_both_640x480() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(640.0);
-    style.height = Length::px(480.0);
+    style.update_derived(|computed| computed.width = Length::px(640.0));
+    style.update_derived(|computed| computed.height = Length::px(480.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(640.0));
     assert_eq!(sizes.min_content_block_size, luf(480.0));
@@ -2729,8 +2733,8 @@ fn replaced_explicit_both_640x480() {
 #[test]
 fn replaced_explicit_both_100x100() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(100.0);
-    style.height = Length::px(100.0);
+    style.update_derived(|computed| computed.width = Length::px(100.0));
+    style.update_derived(|computed| computed.height = Length::px(100.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(100.0));
     assert_eq!(sizes.min_content_block_size, luf(100.0));
@@ -2739,8 +2743,8 @@ fn replaced_explicit_both_100x100() {
 #[test]
 fn replaced_explicit_both_1x1() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(1.0);
-    style.height = Length::px(1.0);
+    style.update_derived(|computed| computed.width = Length::px(1.0));
+    style.update_derived(|computed| computed.height = Length::px(1.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(1.0));
     assert_eq!(sizes.min_content_block_size, luf(1.0));
@@ -2749,8 +2753,8 @@ fn replaced_explicit_both_1x1() {
 #[test]
 fn replaced_explicit_both_800x600() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(800.0);
-    style.height = Length::px(600.0);
+    style.update_derived(|computed| computed.width = Length::px(800.0));
+    style.update_derived(|computed| computed.height = Length::px(600.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(800.0));
     assert_eq!(sizes.max_content_inline_size, luf(800.0));
@@ -2763,7 +2767,7 @@ fn replaced_explicit_both_800x600() {
 #[test]
 fn replaced_width_only_600() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(600.0);
+    style.update_derived(|computed| computed.width = Length::px(600.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(600.0));
     // Default AR = 300:150 = 2:1, height = 600/2 = 300
@@ -2773,7 +2777,7 @@ fn replaced_width_only_600() {
 #[test]
 fn replaced_width_only_150() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(150.0);
+    style.update_derived(|computed| computed.width = Length::px(150.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(150.0));
     // 150/2 = 75
@@ -2783,7 +2787,7 @@ fn replaced_width_only_150() {
 #[test]
 fn replaced_width_only_300() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(300.0);
+    style.update_derived(|computed| computed.width = Length::px(300.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(300.0));
     assert_eq!(sizes.min_content_block_size, luf(150.0));
@@ -2792,7 +2796,7 @@ fn replaced_width_only_300() {
 #[test]
 fn replaced_width_only_900() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(900.0);
+    style.update_derived(|computed| computed.width = Length::px(900.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(900.0));
     assert_eq!(sizes.min_content_block_size, luf(450.0));
@@ -2803,7 +2807,7 @@ fn replaced_width_only_900() {
 #[test]
 fn replaced_height_only_300() {
     let mut style = ComputedStyle::initial();
-    style.height = Length::px(300.0);
+    style.update_derived(|computed| computed.height = Length::px(300.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     // Default AR = 2:1, width = 300*2 = 600
     assert_eq!(sizes.min_content_inline_size, luf(600.0));
@@ -2813,7 +2817,7 @@ fn replaced_height_only_300() {
 #[test]
 fn replaced_height_only_75() {
     let mut style = ComputedStyle::initial();
-    style.height = Length::px(75.0);
+    style.update_derived(|computed| computed.height = Length::px(75.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(150.0));
     assert_eq!(sizes.min_content_block_size, luf(75.0));
@@ -2822,7 +2826,7 @@ fn replaced_height_only_75() {
 #[test]
 fn replaced_height_only_150() {
     let mut style = ComputedStyle::initial();
-    style.height = Length::px(150.0);
+    style.update_derived(|computed| computed.height = Length::px(150.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(300.0));
     assert_eq!(sizes.min_content_block_size, luf(150.0));
@@ -2831,7 +2835,7 @@ fn replaced_height_only_150() {
 #[test]
 fn replaced_height_only_450() {
     let mut style = ComputedStyle::initial();
-    style.height = Length::px(450.0);
+    style.update_derived(|computed| computed.height = Length::px(450.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(900.0));
     assert_eq!(sizes.min_content_block_size, luf(450.0));
@@ -2862,9 +2866,9 @@ fn replaced_default_min_equals_max() {
 #[test]
 fn replaced_max_width_clamps() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(500.0);
-    style.height = Length::px(250.0);
-    style.max_width = Length::px(300.0);
+    style.update_derived(|computed| computed.width = Length::px(500.0));
+    style.update_derived(|computed| computed.height = Length::px(250.0));
+    style.update_derived(|computed| computed.max_width = Length::px(300.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     // Intrinsic sizes report what the style says; constraint applied during layout
     assert_eq!(sizes.min_content_inline_size, luf(500.0));
@@ -2922,8 +2926,8 @@ fn replaced_pct_width_100() {
 #[test]
 fn replaced_min_equals_max_explicit() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(400.0);
-    style.height = Length::px(300.0);
+    style.update_derived(|computed| computed.width = Length::px(400.0));
+    style.update_derived(|computed| computed.height = Length::px(300.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, sizes.max_content_inline_size);
     assert_eq!(sizes.min_content_block_size, sizes.max_content_block_size);
@@ -2932,7 +2936,7 @@ fn replaced_min_equals_max_explicit() {
 #[test]
 fn replaced_width_only_min_eq_max() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(200.0);
+    style.update_derived(|computed| computed.width = Length::px(200.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, sizes.max_content_inline_size);
 }
@@ -2940,7 +2944,7 @@ fn replaced_width_only_min_eq_max() {
 #[test]
 fn replaced_height_only_min_eq_max() {
     let mut style = ComputedStyle::initial();
-    style.height = Length::px(100.0);
+    style.update_derived(|computed| computed.height = Length::px(100.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_block_size, sizes.max_content_block_size);
 }
@@ -3216,7 +3220,7 @@ fn edge_nested_pct_50_of_50() {
         .width_pct(50.0)
         .height(50.0)
         .add_child()
-        .with_style(|s| s.width = Length::percent(50.0))
+        .with_style(|s| s.update_derived(|computed| computed.width = Length::percent(50.0)))
         .height(30.0)
         .done()
         .done();
@@ -3232,7 +3236,7 @@ fn edge_nested_pct_25_of_50() {
         .width_pct(50.0)
         .height(50.0)
         .add_child()
-        .with_style(|s| s.width = Length::percent(25.0))
+        .with_style(|s| s.update_derived(|computed| computed.width = Length::percent(25.0)))
         .height(20.0)
         .done()
         .done();
@@ -3248,7 +3252,7 @@ fn edge_nested_pct_100_of_100() {
         .width_pct(100.0)
         .height(50.0)
         .add_child()
-        .with_style(|s| s.width = Length::percent(100.0))
+        .with_style(|s| s.update_derived(|computed| computed.width = Length::percent(100.0)))
         .height(30.0)
         .done()
         .done();
@@ -5161,7 +5165,7 @@ fn layout_nested_50_50_width() {
         .width_pct(50.0)
         .height(40.0)
         .add_child()
-        .with_style(|s| s.width = Length::percent(50.0))
+        .with_style(|s| s.update_derived(|computed| computed.width = Length::percent(50.0)))
         .height(20.0)
         .done()
         .done();
@@ -5177,7 +5181,7 @@ fn layout_nested_100_50_width() {
         .width_pct(100.0)
         .height(40.0)
         .add_child()
-        .with_style(|s| s.width = Length::percent(50.0))
+        .with_style(|s| s.update_derived(|computed| computed.width = Length::percent(50.0)))
         .height(20.0)
         .done()
         .done();
@@ -5193,7 +5197,7 @@ fn layout_nested_75_50_width() {
         .width_pct(75.0)
         .height(40.0)
         .add_child()
-        .with_style(|s| s.width = Length::percent(50.0))
+        .with_style(|s| s.update_derived(|computed| computed.width = Length::percent(50.0)))
         .height(20.0)
         .done()
         .done();
@@ -5208,7 +5212,7 @@ fn layout_nested_auto_50_width() {
     b.add_child()
         .height(40.0)
         .add_child()
-        .with_style(|s| s.width = Length::percent(50.0))
+        .with_style(|s| s.update_derived(|computed| computed.width = Length::percent(50.0)))
         .height(20.0)
         .done()
         .done();
@@ -5224,7 +5228,7 @@ fn layout_nested_fixed_pct_width() {
         .width(400.0)
         .height(40.0)
         .add_child()
-        .with_style(|s| s.width = Length::percent(50.0))
+        .with_style(|s| s.update_derived(|computed| computed.width = Length::percent(50.0)))
         .height(20.0)
         .done()
         .done();
@@ -5395,8 +5399,8 @@ fn layout_large_padding() {
 #[test]
 fn replaced_w_400_h_200() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(400.0);
-    style.height = Length::px(200.0);
+    style.update_derived(|computed| computed.width = Length::px(400.0));
+    style.update_derived(|computed| computed.height = Length::px(200.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(400.0));
     assert_eq!(sizes.max_content_inline_size, luf(400.0));
@@ -5407,8 +5411,8 @@ fn replaced_w_400_h_200() {
 #[test]
 fn replaced_w_1920_h_1080() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(1920.0);
-    style.height = Length::px(1080.0);
+    style.update_derived(|computed| computed.width = Length::px(1920.0));
+    style.update_derived(|computed| computed.height = Length::px(1080.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(1920.0));
     assert_eq!(sizes.min_content_block_size, luf(1080.0));
@@ -5417,7 +5421,7 @@ fn replaced_w_1920_h_1080() {
 #[test]
 fn replaced_w_only_1200() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(1200.0);
+    style.update_derived(|computed| computed.width = Length::px(1200.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(1200.0));
     assert_eq!(sizes.min_content_block_size, luf(600.0));
@@ -5426,7 +5430,7 @@ fn replaced_w_only_1200() {
 #[test]
 fn replaced_h_only_600() {
     let mut style = ComputedStyle::initial();
-    style.height = Length::px(600.0);
+    style.update_derived(|computed| computed.height = Length::px(600.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(1200.0));
     assert_eq!(sizes.min_content_block_size, luf(600.0));
@@ -5435,7 +5439,7 @@ fn replaced_h_only_600() {
 #[test]
 fn replaced_w_only_50() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(50.0);
+    style.update_derived(|computed| computed.width = Length::px(50.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(50.0));
     assert_eq!(sizes.min_content_block_size, luf(25.0));
@@ -5444,7 +5448,7 @@ fn replaced_w_only_50() {
 #[test]
 fn replaced_h_only_25() {
     let mut style = ComputedStyle::initial();
-    style.height = Length::px(25.0);
+    style.update_derived(|computed| computed.height = Length::px(25.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(50.0));
     assert_eq!(sizes.min_content_block_size, luf(25.0));
@@ -5840,8 +5844,8 @@ fn macro_child_size() {
 fn with_container_style_override() {
     let r = BlockTestBuilder::new(800, 600)
         .with_container_style(|s| {
-            s.padding_top = Length::px(10.0);
-            s.padding_bottom = Length::px(10.0);
+            s.update_derived(|computed| computed.padding_top = Length::px(10.0));
+            s.update_derived(|computed| computed.padding_bottom = Length::px(10.0));
         })
         .build();
     r.assert_container_width(800);
@@ -5854,7 +5858,7 @@ fn with_style_closure_on_child() {
         .width(200.0)
         .height(100.0)
         .with_style(|s| {
-            s.margin_left = Length::px(50.0);
+            s.update_derived(|computed| computed.margin_left = Length::px(50.0));
         })
         .done();
     let r = b.build();
@@ -5929,7 +5933,7 @@ fn style_builder_display_inline_block() {
 fn style_builder_with_closure() {
     let style = style_builder()
         .with(|s| {
-            s.margin_top = Length::px(20.0);
+            s.update_derived(|computed| computed.margin_top = Length::px(20.0));
         })
         .build();
     assert_eq!(style.margin_top, Length::px(20.0));
@@ -6784,7 +6788,7 @@ fn layout_nested_border_box_inner() {
         .width(300.0)
         .height(100.0)
         .padding(10, 10, 10, 10)
-        .with_style(|s| s.box_sizing = BoxSizing::BorderBox)
+        .with_style(|s| s.update_derived(|computed| computed.box_sizing = BoxSizing::BorderBox))
         .done()
         .done();
     let r = b.build();
@@ -7064,7 +7068,7 @@ fn layout_nested_pct_width_in_fixed() {
         .width(500.0)
         .height(100.0)
         .add_child()
-        .with_style(|s| s.width = Length::percent(60.0))
+        .with_style(|s| s.update_derived(|computed| computed.width = Length::percent(60.0)))
         .height(50.0)
         .done()
         .done();
@@ -7294,7 +7298,7 @@ fn sizing_kw_stretch_debug() {
 #[test]
 fn replaced_w_only_1_px() {
     let mut style = ComputedStyle::initial();
-    style.width = Length::px(1.0);
+    style.update_derived(|computed| computed.width = Length::px(1.0));
     let sizes = compute_replaced_intrinsic_sizes(&style);
     assert_eq!(sizes.min_content_inline_size, luf(1.0));
 }

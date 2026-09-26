@@ -58,16 +58,16 @@ fn half_leading_preserves_subpixel_line_height_1_2_font_16() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.font_size = 16.0;
-    doc.node_mut(block).style.line_height = LineHeight::Number(1.2);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.font_size = 16.0);
+    doc.update_resolved_style(block, |style| style.line_height = LineHeight::Number(1.2));
     doc.append_child(root, block);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Hello".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
-    doc.node_mut(text).style.font_size = 16.0;
-    doc.node_mut(text).style.line_height = LineHeight::Number(1.2);
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
+    doc.update_resolved_style(text, |style| style.font_size = 16.0);
+    doc.update_resolved_style(text, |style| style.line_height = LineHeight::Number(1.2));
     doc.append_child(block, text);
 
     let constraint = make_constraint_width(800);
@@ -106,17 +106,17 @@ fn percentage_padding_on_inline_resolves_against_containing_block() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
-    doc.node_mut(span).style.padding_left = Length::percent(10.0);
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
+    doc.update_resolved_style(span, |style| style.padding_left = Length::percent(10.0));
     doc.append_child(block, span);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Hello".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     doc.append_child(span, text);
 
     // The constraint says available = 200px, percentage_resolution = 200px.
@@ -149,17 +149,17 @@ fn open_tag_percentage_padding_uses_containing_block_not_line_available() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
-    doc.node_mut(span).style.padding_left = Length::percent(10.0);
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
+    doc.update_resolved_style(span, |style| style.padding_left = Length::percent(10.0));
     doc.append_child(block, span);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Test".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     doc.append_child(span, text);
 
     // Collect items and check via line breaker directly.
@@ -200,10 +200,10 @@ fn ellipsis_trimming_does_not_split_grapheme_clusters() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_overflow = TextOverflow::Ellipsis;
-    doc.node_mut(block).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(block).style.white_space = WhiteSpace::Nowrap;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_overflow = TextOverflow::Ellipsis);
+    doc.update_resolved_style(block, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(block, |style| style.white_space = WhiteSpace::Nowrap);
     doc.append_child(root, block);
 
     // Use text with multi-byte chars. Even simple accented chars are good
@@ -211,7 +211,7 @@ fn ellipsis_trimming_does_not_split_grapheme_clusters() {
     // code points with combining marks.
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Héllo Wörld Tëst".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     doc.append_child(block, text);
 
     // Narrow enough to trigger ellipsis truncation
@@ -244,16 +244,16 @@ fn rtl_narrow_container_ellipsis_at_start() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.direction = Direction::Rtl;
-    doc.node_mut(block).style.text_overflow = TextOverflow::Ellipsis;
-    doc.node_mut(block).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(block).style.white_space = WhiteSpace::Nowrap;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.direction = Direction::Rtl);
+    doc.update_resolved_style(block, |style| style.text_overflow = TextOverflow::Ellipsis);
+    doc.update_resolved_style(block, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(block, |style| style.white_space = WhiteSpace::Nowrap);
     doc.append_child(root, block);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Hello World Test".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     doc.append_child(block, text);
 
     // Use a container width of 1px — narrower than the ellipsis character.
@@ -279,16 +279,16 @@ fn rtl_ellipsis_at_start_via_line_breaker() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.direction = Direction::Rtl;
-    doc.node_mut(block).style.text_overflow = TextOverflow::Ellipsis;
-    doc.node_mut(block).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(block).style.white_space = WhiteSpace::Nowrap;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.direction = Direction::Rtl);
+    doc.update_resolved_style(block, |style| style.text_overflow = TextOverflow::Ellipsis);
+    doc.update_resolved_style(block, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(block, |style| style.white_space = WhiteSpace::Nowrap);
     doc.append_child(root, block);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Hello World Foo Bar Baz Qux".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
     doc.append_child(block, text);
 
     // Container is 80px — enough for some text + ellipsis, but not all.

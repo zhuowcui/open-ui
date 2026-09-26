@@ -96,9 +96,11 @@ fn double_overline_second_line_is_above_first() {
     let gap = thickness * 1.5; // 3.0
 
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::OVERLINE;
-    style.text_decoration_style = TextDecorationStyle::Double;
-    style.text_decoration_thickness = TextDecorationThickness::Length(thickness);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::OVERLINE);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Double);
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::Length(thickness)
+    });
 
     let mut surface = make_surface(300, 100);
     decoration_painter::paint_text_decorations(
@@ -139,9 +141,11 @@ fn double_underline_second_line_is_below_first() {
     let thickness = 2.0;
 
     let mut style = ComputedStyle::default();
-    style.text_decoration_line = TextDecorationLine::UNDERLINE;
-    style.text_decoration_style = TextDecorationStyle::Double;
-    style.text_decoration_thickness = TextDecorationThickness::Length(thickness);
+    style.update_derived(|computed| computed.text_decoration_line = TextDecorationLine::UNDERLINE);
+    style.update_derived(|computed| computed.text_decoration_style = TextDecorationStyle::Double);
+    style.update_derived(|computed| {
+        computed.text_decoration_thickness = TextDecorationThickness::Length(thickness)
+    });
 
     let mut surface = make_surface(300, 100);
     decoration_painter::paint_text_decorations(

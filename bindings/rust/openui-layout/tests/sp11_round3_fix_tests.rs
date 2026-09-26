@@ -23,13 +23,13 @@ fn make_text_block(texts: &[&str], _width: i32) -> (Document, NodeId) {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         doc.append_child(block, t);
     }
     (doc, block)
@@ -122,17 +122,17 @@ fn ellipsis_inherits_parent_text_color() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_overflow = TextOverflow::Ellipsis;
-    doc.node_mut(block).style.overflow_x = Overflow::Hidden;
-    doc.node_mut(block).style.white_space = WhiteSpace::Nowrap;
-    doc.node_mut(block).style.color = Color::RED;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_overflow = TextOverflow::Ellipsis);
+    doc.update_resolved_style(block, |style| style.overflow_x = Overflow::Hidden);
+    doc.update_resolved_style(block, |style| style.white_space = WhiteSpace::Nowrap);
+    doc.update_resolved_style(block, |style| style.color = Color::RED);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("This is very long text that overflows container".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
-    doc.node_mut(t).style.white_space = WhiteSpace::Nowrap;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
+    doc.update_resolved_style(t, |style| style.white_space = WhiteSpace::Nowrap);
     doc.append_child(block, t);
 
     let sp = ConstraintSpace::for_block_child(lu_i(80), lu_i(600), lu_i(80), lu_i(600), false);
@@ -174,18 +174,18 @@ fn atomic_inline_tall_expands_line_height() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let t = doc.create_node(ElementTag::Text);
     doc.node_mut(t).text = Some("text ".to_string());
-    doc.node_mut(t).style.display = Display::Inline;
+    doc.update_resolved_style(t, |style| style.display = Display::Inline);
     doc.append_child(block, t);
 
     let atomic = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic).style.display = Display::InlineBlock;
-    doc.node_mut(atomic).style.width = Length::px(50.0);
-    doc.node_mut(atomic).style.height = Length::px(100.0);
+    doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(atomic, |style| style.height = Length::px(100.0));
     doc.append_child(block, atomic);
 
     let sp = ConstraintSpace::for_block_child(lu_i(400), lu_i(600), lu_i(400), lu_i(600), false);
@@ -208,14 +208,14 @@ fn atomic_inline_middle_splits_height() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
 
     let atomic = doc.create_node(ElementTag::Div);
-    doc.node_mut(atomic).style.display = Display::InlineBlock;
-    doc.node_mut(atomic).style.width = Length::px(50.0);
-    doc.node_mut(atomic).style.height = Length::px(80.0);
-    doc.node_mut(atomic).style.vertical_align = VerticalAlign::Middle;
+    doc.update_resolved_style(atomic, |style| style.display = Display::InlineBlock);
+    doc.update_resolved_style(atomic, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(atomic, |style| style.height = Length::px(80.0));
+    doc.update_resolved_style(atomic, |style| style.vertical_align = VerticalAlign::Middle);
     doc.append_child(block, atomic);
 
     let sp = ConstraintSpace::for_block_child(lu_i(400), lu_i(600), lu_i(400), lu_i(600), false);

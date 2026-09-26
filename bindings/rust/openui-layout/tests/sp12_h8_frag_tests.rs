@@ -1525,7 +1525,7 @@ fn mc_from_style_none() {
 #[test]
 fn mc_from_style_count() {
     let mut s = ComputedStyle::initial();
-    s.column_count = Some(3);
+    s.update_derived(|computed| computed.column_count = Some(3));
     assert_eq!(
         ColumnLayoutAlgorithm::from_style(&s).unwrap().column_count,
         3
@@ -1559,13 +1559,13 @@ fn span_none_eq() {
 #[test]
 fn span_set_all() {
     let mut s = ComputedStyle::initial();
-    s.column_span = ColumnSpan::All;
+    s.update_derived(|computed| computed.column_span = ColumnSpan::All);
     assert_eq!(s.column_span, ColumnSpan::All);
 }
 #[test]
 fn span_set_none() {
     let mut s = ComputedStyle::initial();
-    s.column_span = ColumnSpan::None;
+    s.update_derived(|computed| computed.column_span = ColumnSpan::None);
     assert_eq!(s.column_span, ColumnSpan::None);
 }
 #[test]
@@ -1627,16 +1627,16 @@ fn span_after() {
 #[test]
 fn span_mutation() {
     let mut s = ComputedStyle::initial();
-    s.column_span = ColumnSpan::All;
+    s.update_derived(|computed| computed.column_span = ColumnSpan::All);
     assert_eq!(s.column_span, ColumnSpan::All);
-    s.column_span = ColumnSpan::None;
+    s.update_derived(|computed| computed.column_span = ColumnSpan::None);
     assert_eq!(s.column_span, ColumnSpan::None);
 }
 #[test]
 fn span_multi_styles() {
     let (mut a, mut b) = (ComputedStyle::initial(), ComputedStyle::initial());
-    a.column_span = ColumnSpan::All;
-    b.column_span = ColumnSpan::None;
+    a.update_derived(|computed| computed.column_span = ColumnSpan::All);
+    b.update_derived(|computed| computed.column_span = ColumnSpan::None);
     assert_ne!(a.column_span, b.column_span);
 }
 #[test]
@@ -3043,15 +3043,15 @@ fn extra_mc_layout_result_size() {
 fn extra_mc_from_style_with_width() {
     use openui_geometry::Length;
     let mut s = ComputedStyle::initial();
-    s.column_width = Some(Length::px(200.0));
+    s.update_derived(|computed| computed.column_width = Some(Length::px(200.0)));
     assert!(ColumnLayoutAlgorithm::from_style(&s).is_some());
 }
 #[test]
 fn extra_mc_from_style_count_and_width() {
     use openui_geometry::Length;
     let mut s = ComputedStyle::initial();
-    s.column_count = Some(3);
-    s.column_width = Some(Length::px(150.0));
+    s.update_derived(|computed| computed.column_count = Some(3));
+    s.update_derived(|computed| computed.column_width = Some(Length::px(150.0)));
     let a = ColumnLayoutAlgorithm::from_style(&s).unwrap();
     assert_eq!(a.column_count, 3);
 }

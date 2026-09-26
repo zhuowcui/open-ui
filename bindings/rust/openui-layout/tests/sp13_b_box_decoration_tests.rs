@@ -63,18 +63,24 @@ fn make_span_in_block(
     let container = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(container);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
-        node.style.width = Length::px(container_width);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(container_width));
     }
     doc.append_child(vp, container);
 
     let span = doc.create_node(ElementTag::Span);
     {
         let node = doc.node_mut(span);
-        node.style.display = Display::Inline;
-        node.style.padding_left = Length::px(padding_left);
-        node.style.padding_right = Length::px(padding_right);
+        node.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        node.style
+            .update_derived(|computed| computed.padding_left = Length::px(padding_left));
+        node.style
+            .update_derived(|computed| computed.padding_right = Length::px(padding_right));
     }
     doc.append_child(container, span);
 
@@ -212,9 +218,12 @@ fn nested_spans_multi_line() {
     let container = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(container);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
-        node.style.width = Length::px(80.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(80.0));
     }
     doc.append_child(vp, container);
 
@@ -222,9 +231,12 @@ fn nested_spans_multi_line() {
     let outer_span = doc.create_node(ElementTag::Span);
     {
         let node = doc.node_mut(outer_span);
-        node.style.display = Display::Inline;
-        node.style.padding_left = Length::px(5.0);
-        node.style.padding_right = Length::px(5.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        node.style
+            .update_derived(|computed| computed.padding_left = Length::px(5.0));
+        node.style
+            .update_derived(|computed| computed.padding_right = Length::px(5.0));
     }
     doc.append_child(container, outer_span);
 
@@ -232,9 +244,12 @@ fn nested_spans_multi_line() {
     let inner_span = doc.create_node(ElementTag::Span);
     {
         let node = doc.node_mut(inner_span);
-        node.style.display = Display::Inline;
-        node.style.padding_left = Length::px(3.0);
-        node.style.padding_right = Length::px(3.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        node.style
+            .update_derived(|computed| computed.padding_left = Length::px(3.0));
+        node.style
+            .update_derived(|computed| computed.padding_right = Length::px(3.0));
     }
     doc.append_child(outer_span, inner_span);
 
@@ -274,19 +289,26 @@ fn box_decoration_break_clone_all_fragments_get_mbp() {
     let container = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(container);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
-        node.style.width = Length::px(80.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(80.0));
     }
     doc.append_child(vp, container);
 
     let span = doc.create_node(ElementTag::Span);
     {
         let node = doc.node_mut(span);
-        node.style.display = Display::Inline;
-        node.style.padding_left = Length::px(10.0);
-        node.style.padding_right = Length::px(10.0);
-        node.style.box_decoration_break = BoxDecorationBreak::Clone;
+        node.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        node.style
+            .update_derived(|computed| computed.padding_left = Length::px(10.0));
+        node.style
+            .update_derived(|computed| computed.padding_right = Length::px(10.0));
+        node.style
+            .update_derived(|computed| computed.box_decoration_break = BoxDecorationBreak::Clone);
     }
     doc.append_child(container, span);
 
@@ -322,9 +344,12 @@ fn multiple_spans_same_line_both_get_full_mbp() {
     let container = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(container);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
-        node.style.width = Length::px(500.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(500.0));
     }
     doc.append_child(vp, container);
 
@@ -332,9 +357,12 @@ fn multiple_spans_same_line_both_get_full_mbp() {
     let span1 = doc.create_node(ElementTag::Span);
     {
         let node = doc.node_mut(span1);
-        node.style.display = Display::Inline;
-        node.style.padding_left = Length::px(5.0);
-        node.style.padding_right = Length::px(5.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        node.style
+            .update_derived(|computed| computed.padding_left = Length::px(5.0));
+        node.style
+            .update_derived(|computed| computed.padding_right = Length::px(5.0));
     }
     doc.append_child(container, span1);
 
@@ -346,9 +374,12 @@ fn multiple_spans_same_line_both_get_full_mbp() {
     let span2 = doc.create_node(ElementTag::Span);
     {
         let node = doc.node_mut(span2);
-        node.style.display = Display::Inline;
-        node.style.padding_left = Length::px(8.0);
-        node.style.padding_right = Length::px(8.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        node.style
+            .update_derived(|computed| computed.padding_left = Length::px(8.0));
+        node.style
+            .update_derived(|computed| computed.padding_right = Length::px(8.0));
     }
     doc.append_child(container, span2);
 
@@ -407,17 +438,22 @@ fn empty_span_produces_no_crash() {
     let container = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(container);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
     }
     doc.append_child(vp, container);
 
     let span = doc.create_node(ElementTag::Span);
     {
         let node = doc.node_mut(span);
-        node.style.display = Display::Inline;
-        node.style.padding_left = Length::px(10.0);
-        node.style.padding_right = Length::px(10.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        node.style
+            .update_derived(|computed| computed.padding_left = Length::px(10.0));
+        node.style
+            .update_derived(|computed| computed.padding_right = Length::px(10.0));
     }
     doc.append_child(container, span);
 
@@ -441,22 +477,32 @@ fn span_with_padding_and_border_contributes_to_inline_size() {
     let container = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(container);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
-        node.style.width = Length::px(500.0);
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(500.0));
     }
     doc.append_child(vp, container);
 
     let span = doc.create_node(ElementTag::Span);
     {
         let node = doc.node_mut(span);
-        node.style.display = Display::Inline;
-        node.style.padding_left = Length::px(10.0);
-        node.style.padding_right = Length::px(10.0);
-        node.style.border_left_width = 2;
-        node.style.border_right_width = 2;
-        node.style.border_left_style = BorderStyle::Solid;
-        node.style.border_right_style = BorderStyle::Solid;
+        node.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        node.style
+            .update_derived(|computed| computed.padding_left = Length::px(10.0));
+        node.style
+            .update_derived(|computed| computed.padding_right = Length::px(10.0));
+        node.style
+            .update_derived(|computed| computed.border_left_width = 2);
+        node.style
+            .update_derived(|computed| computed.border_right_width = 2);
+        node.style
+            .update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        node.style
+            .update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
     }
     doc.append_child(container, span);
 
@@ -489,21 +535,30 @@ fn rtl_span_multi_line_reverses_inline_start_end() {
     let container = doc.create_node(ElementTag::Div);
     {
         let node = doc.node_mut(container);
-        node.style.display = Display::Block;
-        node.style.font_size = 16.0;
-        node.style.width = Length::px(500.0);
-        node.style.direction = Direction::Rtl;
+        node.style
+            .update_derived(|computed| computed.display = Display::Block);
+        node.style
+            .update_derived(|computed| computed.font_size = 16.0);
+        node.style
+            .update_derived(|computed| computed.width = Length::px(500.0));
+        node.style
+            .update_derived(|computed| computed.direction = Direction::Rtl);
     }
     doc.append_child(vp, container);
 
     let span = doc.create_node(ElementTag::Span);
     {
         let node = doc.node_mut(span);
-        node.style.display = Display::Inline;
-        node.style.direction = Direction::Rtl;
+        node.style
+            .update_derived(|computed| computed.display = Display::Inline);
+        node.style
+            .update_derived(|computed| computed.direction = Direction::Rtl);
         // In RTL, inline-start is the RIGHT side, inline-end is the LEFT side.
-        node.style.padding_left = Length::px(5.0); // This is inline-end in RTL
-        node.style.padding_right = Length::px(15.0); // This is inline-start in RTL
+        node.style
+            .update_derived(|computed| computed.padding_left = Length::px(5.0)); // This is inline-end in RTL
+        node.style
+            .update_derived(|computed| computed.padding_right = Length::px(15.0));
+        // This is inline-start in RTL
     }
     doc.append_child(container, span);
 

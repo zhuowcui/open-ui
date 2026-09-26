@@ -1,221 +1,138 @@
 # Open UI
 
-**Extract Chromium's rendering pipeline as a standalone, language-agnostic UI framework.**
+Open UI is a typed, reactive desktop and headless UI framework built around one
+pure-Rust renderer. Version 0.2 targets Linux on x86-64 and AArch64, with X11,
+Wayland, OpenGL presentation, automatic software fallback, and a co-equal C ABI.
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                   Application Code                       │
-│              (Rust, C, Python, Go, etc.)                 │
-├─────────────────────────────────────────────────────────┤
-│                    openui.h                               │
-│          Retained Scene Graph + Declarative API          │
-├──────────┬──────────┬───────────────┬───────────────────┤
-│  Style   │  Layout  │  Compositor   │       Skia        │
-│ System   │  Engine  │    (cc/)      │   (2D Graphics)   │
-├──────────┴──────────┴───────────────┴───────────────────┤
-│                 Platform Layer                            │
-│         (Linux/X11/Wayland → macOS → Windows)            │
-└─────────────────────────────────────────────────────────┘
+```text
+safe Rust API ─┐
+               ├─> openui-engine ─> style/layout/text ─> immutable scene
+typed C ABI ───┘                                           │
+Linux events ─────> interaction/accessibility ─────────────┼─> OpenGL window
+headless clock ────────────────────────────────────────────└─> exact Skia raster
 ```
 
-## What is this?
+The supported application path has no Blink/Chromium runtime, resource pack,
+HTML loader, CSS text parser, JavaScript engine, or network stack. Chromium 147
+is retained only as the frozen reference used to prove renderer compatibility.
 
-Chromium's rendering layer is native code magic — layout, compositing, and rasterization running at 60fps+ with world-class correctness. But it's buried under layers of web platform machinery (HTML/CSS/JS parsing, DOM, downloading, evaluation) that consume enormous memory and CPU.
+## Verified status
 
-**Open UI** extracts that rendering layer into four modular libraries with a stable C ABI:
+The current v0.2 release candidate has:
 
-| Library | Source | Purpose |
-|---|---|---|
-| `libopenui_skia` | Skia | 2D graphics rasterization |
-| `libopenui_compositor` | `cc/` | GPU-accelerated compositing, tiling, animations |
-| `libopenui_layout` | Blink LayoutNG | CSS layout (Block, Flex, Grid, Inline) |
-| `libopenui_style` | Blink Style | Cascade, inheritance, computed values |
-| **`libopenui`** | All above | Unified framework with declarative scene graph |
+- 5,731 of 5,731 frozen SP20 renders byte-identical at zero tolerance;
+- a 7/7 repository accountability audit over all 7,673 inventoried tests;
+- 36 application scenarios covering retained updates, controls, editing,
+  accessibility, resources, scrolling, animation, bidi, and multi-document use;
+- generation-checked Rust and C handles, deterministic manual clocks, immutable
+  scenes, X11/Wayland operation, software presentation, and OpenGL upload;
+- 84 frozen retained-engine/headless C exports with checked layouts and an ABI
+  checksum;
+- sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates in CI.
 
-Each layer is independently usable. Use the full stack for app development, or just Skia + Compositor for a game engine.
+This repository is not yet declaring the final v0.2 release. Physical-GPU and
+reference-machine qualification, automated AT-SPI operation, direct Skia GPU
+rendering, retained per-node layers, compositor-owned animation curves, a
+C-owned native event loop, and signed publication still remain. See
+[current status](docs/progress/current-status.md)
+and [release qualification](docs/v02/release.md).
 
-## Status
+## Rust quick start
 
-| Sub-Project | Status | Description |
-|---|---|---|
-| SP1: Research & Infrastructure | ✅ Done | Chromium checkout, build system, dependency analysis |
-| SP2: Skia Extraction | ✅ Done (deprecated) | Standalone Skia wrapper — replaced by direct blink integration |
-| SP3: Rendering Pipeline | ✅ Done | Blink style→layout→paint integrated, 20 tests |
-| SP4: DOM Adapter & C API | ✅ Done | 65-function C API, 130 tests passing |
-| SP5: Offscreen Rendering | ✅ Done | Rasterize to pixels/PNG, 14 pixel-perfect test pages, 196 tests |
-| SP6: Widget Coverage & SVG | ✅ Done | 117 elements, SVG, resource provider, 39 pixel-perfect pages |
-| SP7: Events & Animations | ✅ Done | Event system, CSS animations, hit-testing |
-| SP8: React-like Rust API | ✅ Done | `view!` macro, signals, components, 100 Rust tests, 99.1% pixel match |
-| SP9: Native Rendering Foundation | ✅ Done | Pure-Rust DOM/style/layout/paint foundation |
-| SP10: Flexbox | ✅ Done | Rust flex layout and WPT parity waves |
-| SP11: Text & Inline | ✅ Done | Text/inline work with remaining dependencies tracked |
-| SP12: Block/Layout Accountability | ✅ Done by ownership | 7,673 WPT inventory rows tracked, 3,406 runnable, 2,430 pass, 0 `sp12_layout_bug` |
+Rust 1.85 or newer, C/C++ build tools, and the host C runtime development files
+are required. A Chromium checkout is not.
 
-Current tracking docs:
+```toml
+[dependencies]
+openui = { version = "0.2.0", features = ["linux"] }
+```
 
-- [`docs/progress/current-status.md`](docs/progress/current-status.md) — latest verified WPT snapshot and next recommendation.
-- [`docs/architecture/rust-wpt-accountability.md`](docs/architecture/rust-wpt-accountability.md) — WPT comparison/tracking architecture.
-- [`docs/engineering-principles.md`](docs/engineering-principles.md) — coding philosophy and completion standards.
-
-See [`docs/plan/`](docs/plan/) for the full project roadmap.
-
-## Rust Framework — `view!` Macro (SP8)
-
-Write React-like UIs in Rust that render through Chromium's Blink pipeline:
-
-```rust
+```rust,no_run
 use openui::prelude::*;
 
-fn main() {
-    let mut app = App::new(800, 600);
-    app.render(|| {
-        let count = create_signal(0_i32);
-        view! {
-            <div style:text-align="center" style:padding="40px">
-                <h1>"Counter: " {count.get()}</h1>
-                <button on:click={move |_| count.set(count.get() + 1)}>
-                    "Increment"
-                </button>
-            </div>
-        }
-    });
-    app.run_frames(1).render_to_png("counter.png");
+fn main() -> Result<(), Error> {
+    let count = create_signal(0_i32);
+    let app = App::builder()
+        .title("Open UI")
+        .size(LogicalSize::new(800.0, 600.0))
+        .backend(BackendPreference::Auto)
+        .build()?;
+
+    app.run(move || view! {
+        <button
+            style:display={Display::Flex}
+            style:padding="8px 16px"
+            on:click={move |_| count.update(|value| *value += 1)}
+        >
+            {count.get()}
+        </button>
+    })
 }
 ```
 
-### Pixel Comparison: Framework vs Real Chromium
-
-10 web apps were built identically in HTML and with the `view!` macro, then
-pixel-compared. Screenshots in `tests/pixel_apps/screenshots/`.
-
-| Comparison | Match |
-|---|---|
-| Pipeline (`load_html`) vs Web (headless Chromium) | **99.32%** |
-| Framework (`view!` macro) vs Pipeline | **99.64%** |
-| **Framework (`view!` macro) vs Web** | **99.11%** |
-
-| App | Framework vs Web |
-|---|---|
-| 01 Landing Page | 99.37% |
-| 02 Pricing Table | 98.83% |
-| 03 Login Form | 99.75% |
-| 04 Profile Card | 99.44% |
-| 05 Navigation Bar | 99.37% |
-| 06 Data Table | 99.26% |
-| 07 Dashboard Stats | 99.32% |
-| 08 Blog Post | 97.51% |
-| 09 Settings Panel | 99.28% |
-| 10 Kanban Board | 98.98% |
-
-Remaining differences are text anti-aliasing between DummyPageHolder and the
-full Chromium compositor. Background colors, borders, layout, and structure
-match perfectly.
-
-## Getting Started
-
-See **[`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md)** for complete setup instructions, build guide, and architecture details.
-
-### Quick Build (assumes Chromium already checked out)
+From this checkout:
 
 ```bash
-cd ~/chromium/src
-
-# Build all Open UI targets
-./third_party/ninja/ninja -C out/Release openui_lib openui_api_test openui_c_test openui_render_test openui_c_render_test openui_render_pages -j24
-
-# Run unit tests (176 total)
-./out/Release/openui_api_test         # 78 tests
-./out/Release/openui_c_test           # 32 tests
-./out/Release/openui_render_test      # 20 tests
-./out/Release/openui_c_render_test    # 46 tests
-
-# Run pixel comparison (39 pages at 0% tolerance)
-./out/Release/openui_render_pages --html tests/pixel_comparison/html_pages html_renders/
-./out/Release/openui_render_pages openui_renders/ --html-dir tests/pixel_comparison/html_pages
-node tests/pixel_comparison/compare_pixels.js html_renders openui_renders 0
+cd bindings/rust
+cargo run --locked --package hello                 # deterministic hello.png
+cargo run --locked --package hello --features linux # native Linux window
+cargo run --locked --package framework-test -- --headless /tmp/openui-framework-test.png
+cargo run --locked --package framework-test --features linux -- --window
 ```
 
-## Chromium Version
+Use `OUI_BACKEND=software` or `OUI_BACKEND=opengl` to force a window backend.
+Headless applications use `HeadlessApp::render_at(time)` for repeatable frames.
+The [framework test app](bindings/rust/examples/framework-test/README.md) checks
+a reactive click and writes the resulting PNG in headless mode.
+If the linker reports missing `Scrt1.o` or `crti.o`, the host C runtime
+development files are absent. On the Chromium-equipped maintainer machine,
+the checked-in `.cargo/config.chromium.toml` supplies a pinned sysroot; add
+`--config .cargo/config.chromium.toml` immediately after `cargo` in the
+commands above.
 
-Pinned to **M147** (`147.0.7727.24`). See [`CHROMIUM_VERSION`](CHROMIUM_VERSION).
+## Native SDK
 
-## Project Structure
+The v0.2 header uses length-delimited UTF-8, versioned configuration structs,
+tagged style values, checked ownership, and structured thread-local errors.
 
-```
-open-ui/
-├── src/                  # Framework source code
-│   ├── skia/             # Skia integration + C API
-│   ├── compositor/       # Compositor + C API
-│   ├── layout/           # Layout engine + C API
-│   ├── style/            # Style system + C API
-│   ├── scene_graph/      # Unified scene graph
-│   └── platform/         # Platform abstraction
-├── include/openui/       # Public C API headers
-├── bindings/rust/        # Rust crate
-├── third_party/chromium/ # Chromium sources (sparse submodule)
-├── examples/             # Demo applications
-├── docs/                 # Architecture docs & plans
-└── tools/                # Analysis & build scripts
+```bash
+python3 tools/release/build_v02_linux.py \
+  --target x86_64-unknown-linux-gnu --format sdk --format deb
 ```
 
-## License
+The release driver emits headers, static/shared libraries, pkg-config and CMake
+metadata, C and Rust examples, detached debug symbols, licenses, an SPDX SBOM,
+checksums, and SLSA-style provenance. RPM production runs on Fedora through the
+release workflow. See [packaging instructions](docs/v02/packaging.md).
 
-Apache-2.0. See [LICENSE](LICENSE).
+## Repository map
 
-## Pixel Comparison Screenshots
-
-All 39 test pages render identically through both the HTML pipeline and C API at **0% pixel tolerance**.
-
-### Element Test Sheets (15 pages)
-
-| Test | Screenshot | Description |
-|---|---|---|
-| Semantic Blocks | ![](docs/screenshots/sp6/test_semantic_blocks.png) | `<section>`, `<article>`, `<aside>`, `<header>`, `<footer>`, `<nav>`, `<main>`, `<figure>`, `<address>` |
-| Inline Text | ![](docs/screenshots/sp6/test_inline_text.png) | `<strong>`, `<em>`, `<code>`, `<kbd>`, `<mark>`, `<sub>`, `<sup>`, `<abbr>`, `<time>` |
-| Headings & Text | ![](docs/screenshots/sp6/test_headings_text.png) | `<h1>`–`<h6>`, `<p>`, `<blockquote>`, `<pre>`, `<hr>` |
-| Lists | ![](docs/screenshots/sp6/test_lists.png) | `<ul>`, `<ol>`, `<li>`, `<dl>`, `<dt>`, `<dd>`, nested lists |
-| Tables | ![](docs/screenshots/sp6/test_tables.png) | `<table>`, `<thead>`, `<tbody>`, `<tfoot>`, colspan/rowspan, border-collapse |
-| Forms | ![](docs/screenshots/sp6/test_forms.png) | `<input>`, `<select>`, `<textarea>`, `<button>`, `<fieldset>`, `<progress>`, `<meter>` |
-| Flexbox | ![](docs/screenshots/sp6/test_flexbox.png) | All flex properties: direction, wrap, grow/shrink, align, justify, gap |
-| Grid | ![](docs/screenshots/sp6/test_grid.png) | Grid template, areas, auto-flow, span, gap, alignment |
-| Positioning | ![](docs/screenshots/sp6/test_positioning.png) | static, relative, absolute, fixed, sticky, z-index stacking |
-| Box Model | ![](docs/screenshots/sp6/test_box_model.png) | margin, padding, border, box-sizing, outline, overflow |
-| Colors & Backgrounds | ![](docs/screenshots/sp6/test_colors_backgrounds.png) | Linear/radial gradients, multiple backgrounds, opacity |
-| Transforms & Filters | ![](docs/screenshots/sp6/test_transforms_filters.png) | rotate, scale, skew, translate, perspective, CSS filters |
-| Advanced CSS | ![](docs/screenshots/sp6/test_advanced_css.png) | clip-path, columns, writing-mode, aspect-ratio, blend modes |
-| SVG Shapes | ![](docs/screenshots/sp6/test_svg_shapes.png) | `<rect>`, `<circle>`, `<ellipse>`, `<line>`, `<polygon>`, `<path>` |
-| SVG Advanced | ![](docs/screenshots/sp6/test_svg_advanced.png) | Gradients, filters, clip-path, masks, text paths |
-
-### Rich Website Integration Tests (10 pages)
-
-| Test | Screenshot | Description |
-|---|---|---|
-| Blog | ![](docs/screenshots/sp6/website_blog.png) | Article layout with sidebar, typography, tags |
-| E-Commerce | ![](docs/screenshots/sp6/website_ecommerce.png) | Product grid, cards, pricing, cart |
-| Dashboard | ![](docs/screenshots/sp6/website_dashboard.png) | Sidebar nav, charts area, stat cards, table |
-| Landing Page | ![](docs/screenshots/sp6/website_landing.png) | Hero section, features grid, CTA, footer |
-| Portfolio | ![](docs/screenshots/sp6/website_portfolio.png) | Project cards, skills grid, about section |
-| News Portal | ![](docs/screenshots/sp6/website_news.png) | Multi-column layout, headlines, categories |
-| Documentation | ![](docs/screenshots/sp6/website_docs.png) | Side nav, code blocks, API reference tables |
-| Social Media | ![](docs/screenshots/sp6/website_social.png) | Feed, posts, profiles, interactions |
-| Email Client | ![](docs/screenshots/sp6/website_email.png) | Folder list, message list, message view |
-| Analytics | ![](docs/screenshots/sp6/website_analytics.png) | Dashboard with charts, KPIs, data tables |
-
-### SP5 Core Pages (14 pages)
-
-| Test | Screenshot |
+| Path | Purpose |
 |---|---|
-| Red Box | ![](docs/screenshots/sp6/red_box.png) |
-| RGB Flex | ![](docs/screenshots/sp6/rgb_flex.png) |
-| Border Box | ![](docs/screenshots/sp6/border_box.png) |
-| Nested Flex | ![](docs/screenshots/sp6/nested_flex.png) |
-| Grid Colors | ![](docs/screenshots/sp6/grid_colors.png) |
-| Rounded Shadows | ![](docs/screenshots/sp6/rounded_shadows.png) |
-| Transforms | ![](docs/screenshots/sp6/transforms.png) |
-| Opacity Gradients | ![](docs/screenshots/sp6/opacity_gradients.png) |
-| Positioning Z-Index | ![](docs/screenshots/sp6/positioning_zindex.png) |
-| Overflow Clipping | ![](docs/screenshots/sp6/overflow_clipping.png) |
-| Complex UI | ![](docs/screenshots/sp6/complex_ui.png) |
-| Typography | ![](docs/screenshots/sp6/typography.png) |
-| Borders & Shadows | ![](docs/screenshots/sp6/borders_shadows.png) |
-| Dashboard Layout | ![](docs/screenshots/sp6/dashboard_layout.png) |
+| `bindings/rust/openui` | Safe application framework and reactive runtime |
+| `bindings/rust/openui-engine` | Retained document, interaction, animation, resources, accessibility |
+| `bindings/rust/openui-compositor` | Immutable scenes and raster scheduling |
+| `bindings/rust/openui-platform` | Feature-gated Linux event loop and presentation |
+| `bindings/rust/openui-ffi` | Validated static/shared C ABI |
+| `bindings/rust/openui-{style,layout,text,paint}` | Exact rendering pipeline |
+| `include/` | Generated v0.2 C headers |
+| `examples/c_v02/` | C examples matching the Rust examples |
+| `tools/accountability/` | Frozen exact-render inventory and audit |
+| `tools/release/` | Contract generation and reproducible packaging |
+| `docs/v02/` | Supported architecture and release contract |
+
+Historical GN/Blink and SP2 experiments remain in Git for provenance, but are
+excluded from the workspace and v0.2 packages. They are not supported engines.
+
+## Documentation
+
+- [Development](docs/DEVELOPMENT.md)
+- [Architecture](docs/architecture/rendering-pipeline-overview.md)
+- [CI and release gates](docs/CI.md)
+- [Rust/C migration guide](docs/v02/migration-v01-v02.md)
+- [Unsupported features](docs/v02/unsupported-features.md)
+- [Typed style reference](docs/v02/generated/style-properties.md)
+- [C ABI guide](bindings/rust/openui-ffi/README.md)
+
+Open UI is licensed under Apache-2.0. Bundled font and dependency notices are
+preserved with the relevant sources and release artifacts.

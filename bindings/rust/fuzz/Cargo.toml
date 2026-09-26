@@ -1,0 +1,62 @@
+[package]
+name = "openui-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "=0.4.13"
+openui-dom = { path = "../openui-dom" }
+openui-engine = { path = "../openui-engine" }
+openui-ffi = { path = "../openui-ffi" }
+openui-style = { path = "../openui-style" }
+
+[[bin]]
+name = "ffi_style_values"
+path = "fuzz_targets/ffi_style_values.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "tree_mutations"
+path = "fuzz_targets/tree_mutations.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "event_sequences"
+path = "fuzz_targets/event_sequences.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "resources"
+path = "fuzz_targets/resources.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "animation_sampling"
+path = "fuzz_targets/animation_sampling.rs"
+test = false
+doc = false
+bench = false
+
+[workspace]
+members = ["."]
+
+[patch.crates-io]
+skia-safe = { git = "https://github.com/rust-skia/rust-skia.git", rev = "a31b86ba3b767344d39af3b8c30043003d8fc991" }
+skia-bindings = { git = "https://github.com/rust-skia/rust-skia.git", rev = "a31b86ba3b767344d39af3b8c30043003d8fc991" }
+skrifa = { path = "../vendor/skrifa-v0_40" }
+read-fonts = { path = "../vendor/read-fonts-v0_37" }
+font-types = { path = "../vendor/font-types-v0_11" }
+bytemuck = { path = "../vendor/bytemuck-v1" }
+bytemuck_derive = { path = "../vendor/bytemuck_derive-v1" }

@@ -1,0 +1,1536 @@
+language,v0.1_symbol,v0.2_disposition,replacement
+c,oui_bitmap_free,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_advance_focus,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_advance_time,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_advance_time_by,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_begin_frame,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_body,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_create,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_destroy,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_dispatch_key_event,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_dispatch_mouse_event,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_dispatch_wheel_event,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_get_focused_element,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_get_time,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_hit_test,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_layout,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_load_html,removed,typed node construction
+c,oui_document_render_to_bitmap,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_render_to_png,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_render_to_png_buffer,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_set_resource_provider,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_set_viewport,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_document_update_all,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_append_child,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_append_text,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_blur,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_clear_styles,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_create,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_create_text_child,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_destroy,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_first_child,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_focus,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_get_attribute,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_get_bounding_rect,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_get_computed_style,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_get_height,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_get_offset_x,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_get_offset_y,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_get_scroll_height,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_get_scroll_left,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_get_scroll_top,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_get_scroll_width,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_get_width,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_has_focus,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_insert_before,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_next_sibling,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_parent,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_remove_all_child_nodes,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_remove_attribute,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_remove_child,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_remove_event_callback,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_remove_style,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_scroll_by,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_scroll_to,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_align_items,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_attribute,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_background_color,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_class,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_color,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_display,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_event_callback,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_flex_basis,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_flex_direction,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_flex_grow,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_flex_shrink,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_flex_wrap,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_font_family,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_font_size,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_font_style,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_font_weight,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_height,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_id,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_image_data,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_image_encoded,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_justify_content,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_line_height,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_margin,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_max_height,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_max_width,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_min_height,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_min_width,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_opacity,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_overflow,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_padding,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_position,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_style,replaced,typed property setters / oui_element_set_property
+c,oui_element_set_text_align,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_text_content,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_width,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_element_set_z_index,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_free,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_init,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_shutdown,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_text_node_destroy,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+c,oui_text_node_set_data,replaced,openui-ffi v0.2 equivalent or explicit typed operation
+rust,AdjoiningObjectTypes,migrate,safe openui v0.2 API over openui-engine
+rust,AlignItems,migrate,safe openui v0.2 API over openui-engine
+rust,AnimationSnapshot,migrate,safe openui v0.2 API over openui-engine
+rust,App,migrate,safe openui v0.2 API over openui-engine
+rust,AspectRatio,migrate,safe openui v0.2 API over openui-engine
+rust,BackgroundAttachment,migrate,safe openui v0.2 API over openui-engine
+rust,BackgroundClip,migrate,safe openui v0.2 API over openui-engine
+rust,BackgroundLayer,migrate,safe openui v0.2 API over openui-engine
+rust,BackgroundPosition,migrate,safe openui v0.2 API over openui-engine
+rust,BackgroundRepeat,migrate,safe openui v0.2 API over openui-engine
+rust,BackgroundSize,migrate,safe openui v0.2 API over openui-engine
+rust,BfcBlockOffsetState,migrate,safe openui v0.2 API over openui-engine
+rust,BfcDelta,migrate,safe openui v0.2 API over openui-engine
+rust,BfcOffset,migrate,safe openui v0.2 API over openui-engine
+rust,BfcRect,migrate,safe openui v0.2 API over openui-engine
+rust,BidiParagraph,migrate,safe openui v0.2 API over openui-engine
+rust,BidiRun,migrate,safe openui v0.2 API over openui-engine
+rust,Bitmap,migrate,safe openui v0.2 API over openui-engine
+rust,BlockBreakToken,migrate,safe openui v0.2 API over openui-engine
+rust,BlockEllipsis,migrate,safe openui v0.2 API over openui-engine
+rust,BlockInInlineInfo,migrate,safe openui v0.2 API over openui-engine
+rust,BorderCollapse,migrate,safe openui v0.2 API over openui-engine
+rust,BorderImage,migrate,safe openui v0.2 API over openui-engine
+rust,BorderImageLength,migrate,safe openui v0.2 API over openui-engine
+rust,BorderImageRepeat,migrate,safe openui v0.2 API over openui-engine
+rust,BorderSide,migrate,safe openui v0.2 API over openui-engine
+rust,BorderStyle,migrate,safe openui v0.2 API over openui-engine
+rust,BoxDecorationBreak,migrate,safe openui v0.2 API over openui-engine
+rust,BoxShadow,migrate,safe openui v0.2 API over openui-engine
+rust,BoxSizing,migrate,safe openui v0.2 API over openui-engine
+rust,BoxStrut,migrate,safe openui v0.2 API over openui-engine
+rust,BreakAppeal,migrate,safe openui v0.2 API over openui-engine
+rust,BreakBetween,migrate,safe openui v0.2 API over openui-engine
+rust,BreakCandidate,migrate,safe openui v0.2 API over openui-engine
+rust,BreakInside,migrate,safe openui v0.2 API over openui-engine
+rust,BreakPoint,migrate,safe openui v0.2 API over openui-engine
+rust,BreakToken,migrate,safe openui v0.2 API over openui-engine
+rust,BreakValue,migrate,safe openui v0.2 API over openui-engine
+rust,ByteToCharMap,migrate,safe openui v0.2 API over openui-engine
+rust,CaptionSide,migrate,safe openui v0.2 API over openui-engine
+rust,ChildBreakInfo,migrate,safe openui v0.2 API over openui-engine
+rust,ChildIter,migrate,safe openui v0.2 API over openui-engine
+rust,ChildMarginInfo,migrate,safe openui v0.2 API over openui-engine
+rust,Clear,migrate,safe openui v0.2 API over openui-engine
+rust,ClearType,migrate,safe openui v0.2 API over openui-engine
+rust,CollapseCheckParams,migrate,safe openui v0.2 API over openui-engine
+rust,CollapseType,migrate,safe openui v0.2 API over openui-engine
+rust,CollapsedBorderSegment,migrate,safe openui v0.2 API over openui-engine
+rust,Color,migrate,safe openui v0.2 API over openui-engine
+rust,ColumnFill,migrate,safe openui v0.2 API over openui-engine
+rust,ColumnLayoutAlgorithm,migrate,safe openui v0.2 API over openui-engine
+rust,ColumnLayoutResult,migrate,safe openui v0.2 API over openui-engine
+rust,ColumnPosition,migrate,safe openui v0.2 API over openui-engine
+rust,ColumnRule,migrate,safe openui v0.2 API over openui-engine
+rust,ColumnSpan,migrate,safe openui v0.2 API over openui-engine
+rust,ColumnWrap,migrate,safe openui v0.2 API over openui-engine
+rust,ComputedStyle,migrate,safe openui v0.2 API over openui-engine
+rust,ConicGradient,migrate,safe openui v0.2 API over openui-engine
+rust,ConstraintSpace,migrate,safe openui v0.2 API over openui-engine
+rust,ConstraintSpaceBuilder,migrate,safe openui v0.2 API over openui-engine
+rust,ContainIntrinsicLength,migrate,safe openui v0.2 API over openui-engine
+rust,ContainerAxis,migrate,safe openui v0.2 API over openui-engine
+rust,ContainerComparison,migrate,safe openui v0.2 API over openui-engine
+rust,ContainerCondition,migrate,safe openui v0.2 API over openui-engine
+rust,ContainerQueryProperty,migrate,safe openui v0.2 API over openui-engine
+rust,ContainerQueryRule,migrate,safe openui v0.2 API over openui-engine
+rust,ContainerType,migrate,safe openui v0.2 API over openui-engine
+rust,Containment,migrate,safe openui v0.2 API over openui-engine
+rust,ContentAlignment,migrate,safe openui v0.2 API over openui-engine
+rust,ContentAlignmentResult,migrate,safe openui v0.2 API over openui-engine
+rust,ContentDistribution,migrate,safe openui v0.2 API over openui-engine
+rust,ContentPosition,migrate,safe openui v0.2 API over openui-engine
+rust,ContentVisibility,migrate,safe openui v0.2 API over openui-engine
+rust,CounterOperation,migrate,safe openui v0.2 API over openui-engine
+rust,CounterStyle,migrate,safe openui v0.2 API over openui-engine
+rust,CssImage,migrate,safe openui v0.2 API over openui-engine
+rust,CssLinearGradient,migrate,safe openui v0.2 API over openui-engine
+rust,DecorationLineKind,migrate,safe openui v0.2 API over openui-engine
+rust,DecorationPhase,migrate,safe openui v0.2 API over openui-engine
+rust,DecorationSlice,migrate,safe openui v0.2 API over openui-engine
+rust,Direction,migrate,safe openui v0.2 API over openui-engine
+rust,Display,migrate,safe openui v0.2 API over openui-engine
+rust,Display,migrate,safe openui v0.2 API over openui-engine
+rust,Document,migrate,safe openui v0.2 API over openui-engine
+rust,Document,migrate,safe openui v0.2 API over openui-engine
+rust,DynChild,migrate,safe openui v0.2 API over openui-engine
+rust,EastAsianForm,migrate,safe openui v0.2 API over openui-engine
+rust,EastAsianWidth,migrate,safe openui v0.2 API over openui-engine
+rust,EffectId,migrate,safe openui v0.2 API over openui-engine
+rust,Element,migrate,safe openui v0.2 API over openui-engine
+rust,ElementTag,migrate,safe openui v0.2 API over openui-engine
+rust,EmptyCells,migrate,safe openui v0.2 API over openui-engine
+rust,EncodedImageResource,migrate,safe openui v0.2 API over openui-engine
+rust,Event,migrate,safe openui v0.2 API over openui-engine
+rust,ExclusionArea,migrate,safe openui v0.2 API over openui-engine
+rust,ExclusionSpace,migrate,safe openui v0.2 API over openui-engine
+rust,ExclusionType,migrate,safe openui v0.2 API over openui-engine
+rust,FirstLetterExtraction,migrate,safe openui v0.2 API over openui-engine
+rust,FirstLetterMetrics,migrate,safe openui v0.2 API over openui-engine
+rust,FirstLetterStyle,migrate,safe openui v0.2 API over openui-engine
+rust,FirstLineContext,migrate,safe openui v0.2 API over openui-engine
+rust,FirstLineOverrides,migrate,safe openui v0.2 API over openui-engine
+rust,FirstLineProperty,migrate,safe openui v0.2 API over openui-engine
+rust,FitnessClass,migrate,safe openui v0.2 API over openui-engine
+rust,FlexDirection,migrate,safe openui v0.2 API over openui-engine
+rust,FlexDirection,migrate,safe openui v0.2 API over openui-engine
+rust,FlexItem,migrate,safe openui v0.2 API over openui-engine
+rust,FlexLine,migrate,safe openui v0.2 API over openui-engine
+rust,FlexWrap,migrate,safe openui v0.2 API over openui-engine
+rust,FlexWrap,migrate,safe openui v0.2 API over openui-engine
+rust,FlexerState,migrate,safe openui v0.2 API over openui-engine
+rust,Float,migrate,safe openui v0.2 API over openui-engine
+rust,FloatAvoidanceResult,migrate,safe openui v0.2 API over openui-engine
+rust,FloatPlaceholder,migrate,safe openui v0.2 API over openui-engine
+rust,Font,migrate,safe openui v0.2 API over openui-engine
+rust,FontCache,migrate,safe openui v0.2 API over openui-engine
+rust,FontDescription,migrate,safe openui v0.2 API over openui-engine
+rust,FontFallbackList,migrate,safe openui v0.2 API over openui-engine
+rust,FontFamily,migrate,safe openui v0.2 API over openui-engine
+rust,FontFamilyList,migrate,safe openui v0.2 API over openui-engine
+rust,FontFeature,migrate,safe openui v0.2 API over openui-engine
+rust,FontMetrics,migrate,safe openui v0.2 API over openui-engine
+rust,FontOpticalSizing,migrate,safe openui v0.2 API over openui-engine
+rust,FontOrientation,migrate,safe openui v0.2 API over openui-engine
+rust,FontPalette,migrate,safe openui v0.2 API over openui-engine
+rust,FontPlatformData,migrate,safe openui v0.2 API over openui-engine
+rust,FontRelativeLengthResolver,migrate,safe openui v0.2 API over openui-engine
+rust,FontRelativeUnit,migrate,safe openui v0.2 API over openui-engine
+rust,FontSmoothing,migrate,safe openui v0.2 API over openui-engine
+rust,FontStretch,migrate,safe openui v0.2 API over openui-engine
+rust,FontStyle,migrate,safe openui v0.2 API over openui-engine
+rust,FontStyleEnum,migrate,safe openui v0.2 API over openui-engine
+rust,FontSynthesis,migrate,safe openui v0.2 API over openui-engine
+rust,FontVariantAlternates,migrate,safe openui v0.2 API over openui-engine
+rust,FontVariantCaps,migrate,safe openui v0.2 API over openui-engine
+rust,FontVariantEastAsian,migrate,safe openui v0.2 API over openui-engine
+rust,FontVariantLigatures,migrate,safe openui v0.2 API over openui-engine
+rust,FontVariantNumeric,migrate,safe openui v0.2 API over openui-engine
+rust,FontVariantPosition,migrate,safe openui v0.2 API over openui-engine
+rust,FontVariation,migrate,safe openui v0.2 API over openui-engine
+rust,FontWeight,migrate,safe openui v0.2 API over openui-engine
+rust,For,migrate,safe openui v0.2 API over openui-engine
+rust,FormControlRole,migrate,safe openui v0.2 API over openui-engine
+rust,Fragment,migrate,safe openui v0.2 API over openui-engine
+rust,FragmentKind,migrate,safe openui v0.2 API over openui-engine
+rust,FragmentainerSpace,migrate,safe openui v0.2 API over openui-engine
+rust,GeneratedContentItem,migrate,safe openui v0.2 API over openui-engine
+rust,GenericFontFamily,migrate,safe openui v0.2 API over openui-engine
+rust,GradientColorSpace,migrate,safe openui v0.2 API over openui-engine
+rust,GradientStop,migrate,safe openui v0.2 API over openui-engine
+rust,GradientStopPosition,migrate,safe openui v0.2 API over openui-engine
+rust,GridAutoFlow,migrate,safe openui v0.2 API over openui-engine
+rust,GridAutoFlowDirection,migrate,safe openui v0.2 API over openui-engine
+rust,GridLine,migrate,safe openui v0.2 API over openui-engine
+rust,GridPlacement,migrate,safe openui v0.2 API over openui-engine
+rust,GridRepetition,migrate,safe openui v0.2 API over openui-engine
+rust,GridTemplateAreas,migrate,safe openui v0.2 API over openui-engine
+rust,GridTrackBreadth,migrate,safe openui v0.2 API over openui-engine
+rust,GridTrackComponent,migrate,safe openui v0.2 API over openui-engine
+rust,GridTrackList,migrate,safe openui v0.2 API over openui-engine
+rust,GridTrackSize,migrate,safe openui v0.2 API over openui-engine
+rust,HangingPunctuation,migrate,safe openui v0.2 API over openui-engine
+rust,Hyphenation,migrate,safe openui v0.2 API over openui-engine
+rust,Hyphens,migrate,safe openui v0.2 API over openui-engine
+rust,ImagePatchPhase,migrate,safe openui v0.2 API over openui-engine
+rust,ImageResourceId,migrate,safe openui v0.2 API over openui-engine
+rust,InflowChildData,migrate,safe openui v0.2 API over openui-engine
+rust,InitialLetter,migrate,safe openui v0.2 API over openui-engine
+rust,InitialLetterLayout,migrate,safe openui v0.2 API over openui-engine
+rust,InlineBoxState,migrate,safe openui v0.2 API over openui-engine
+rust,InlineBreakToken,migrate,safe openui v0.2 API over openui-engine
+rust,InlineItem,migrate,safe openui v0.2 API over openui-engine
+rust,InlineItemResult,migrate,safe openui v0.2 API over openui-engine
+rust,InlineItemType,migrate,safe openui v0.2 API over openui-engine
+rust,InlineItemsBuilder,migrate,safe openui v0.2 API over openui-engine
+rust,InlineItemsData,migrate,safe openui v0.2 API over openui-engine
+rust,IntoView,migrate,safe openui v0.2 API over openui-engine
+rust,IntrinsicSizes,migrate,safe openui v0.2 API over openui-engine
+rust,ItemAlignment,migrate,safe openui v0.2 API over openui-engine
+rust,ItemPosition,migrate,safe openui v0.2 API over openui-engine
+rust,JustifyContent,migrate,safe openui v0.2 API over openui-engine
+rust,KeyEventType,migrate,safe openui v0.2 API over openui-engine
+rust,LayoutOpportunity,migrate,safe openui v0.2 API over openui-engine
+rust,LayoutResult,migrate,safe openui v0.2 API over openui-engine
+rust,LayoutStatus,migrate,safe openui v0.2 API over openui-engine
+rust,LayoutUnit,migrate,safe openui v0.2 API over openui-engine
+rust,Length,migrate,safe openui v0.2 API over openui-engine
+rust,Length,migrate,safe openui v0.2 API over openui-engine
+rust,LengthType,migrate,safe openui v0.2 API over openui-engine
+rust,LigatureState,migrate,safe openui v0.2 API over openui-engine
+rust,LineAvailability,migrate,safe openui v0.2 API over openui-engine
+rust,LineBreak,migrate,safe openui v0.2 API over openui-engine
+rust,LineBreaker,migrate,safe openui v0.2 API over openui-engine
+rust,LineBreakerCheckpoint,migrate,safe openui v0.2 API over openui-engine
+rust,LineClamp,migrate,safe openui v0.2 API over openui-engine
+rust,LineClampContext,migrate,safe openui v0.2 API over openui-engine
+rust,LineFlexer,migrate,safe openui v0.2 API over openui-engine
+rust,LineHeight,migrate,safe openui v0.2 API over openui-engine
+rust,LineInfo,migrate,safe openui v0.2 API over openui-engine
+rust,LinearGradient,migrate,safe openui v0.2 API over openui-engine
+rust,LinearGradientStop,migrate,safe openui v0.2 API over openui-engine
+rust,ListStylePosition,migrate,safe openui v0.2 API over openui-engine
+rust,ListStyleType,migrate,safe openui v0.2 API over openui-engine
+rust,LogicalBoxStrut,migrate,safe openui v0.2 API over openui-engine
+rust,LogicalLengthSides,migrate,safe openui v0.2 API over openui-engine
+rust,LogicalOffset,migrate,safe openui v0.2 API over openui-engine
+rust,LogicalRect,migrate,safe openui v0.2 API over openui-engine
+rust,LogicalSize,migrate,safe openui v0.2 API over openui-engine
+rust,LogicalSizeLengths,migrate,safe openui v0.2 API over openui-engine
+rust,MarginCollapsingState,migrate,safe openui v0.2 API over openui-engine
+rust,MarginStrut,migrate,safe openui v0.2 API over openui-engine
+rust,MarginTrim,migrate,safe openui v0.2 API over openui-engine
+rust,Memo,migrate,safe openui v0.2 API over openui-engine
+rust,MinMaxSizes,migrate,safe openui v0.2 API over openui-engine
+rust,Modifiers,migrate,safe openui v0.2 API over openui-engine
+rust,MouseButton,migrate,safe openui v0.2 API over openui-engine
+rust,MouseEventType,migrate,safe openui v0.2 API over openui-engine
+rust,MulticolFragmentationData,migrate,safe openui v0.2 API over openui-engine
+rust,NewFcLayoutInput,migrate,safe openui v0.2 API over openui-engine
+rust,NewFcLayoutResult,migrate,safe openui v0.2 API over openui-engine
+rust,NodeData,migrate,safe openui v0.2 API over openui-engine
+rust,NodeId,migrate,safe openui v0.2 API over openui-engine
+rust,NumericFigure,migrate,safe openui v0.2 API over openui-engine
+rust,NumericFraction,migrate,safe openui v0.2 API over openui-engine
+rust,NumericSpacing,migrate,safe openui v0.2 API over openui-engine
+rust,ObjectFit,migrate,safe openui v0.2 API over openui-engine
+rust,ObjectPosition,migrate,safe openui v0.2 API over openui-engine
+rust,OofPlaceholder,migrate,safe openui v0.2 API over openui-engine
+rust,OuiAlignItems,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiBitmap,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiDisplay,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiDocument,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiElement,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiError,migrate,safe openui v0.2 API over openui-engine
+rust,OuiEvent,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiEventCallback,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiFlexDirection,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiFlexWrap,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiFontStyle,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiInitConfig,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiJustifyContent,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiKeyEventType,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiLength,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiModifiers,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiMouseButton,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiMouseEventType,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiOverflow,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiPosition,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiRect,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiResourceFreeFunc,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiResourceProviderFunc,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiResourceResponse,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiStatus,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiTextAlign,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiTextNode,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OuiUnit,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,OutOfFlowCandidate,migrate,safe openui v0.2 API over openui-engine
+rust,Overflow,migrate,safe openui v0.2 API over openui-engine
+rust,Overflow,migrate,safe openui v0.2 API over openui-engine
+rust,OverflowAlignment,migrate,safe openui v0.2 API over openui-engine
+rust,OverflowClipBox,migrate,safe openui v0.2 API over openui-engine
+rust,OverflowWrap,migrate,safe openui v0.2 API over openui-engine
+rust,ParentMarginInfo,migrate,safe openui v0.2 API over openui-engine
+rust,PatternTrie,migrate,safe openui v0.2 API over openui-engine
+rust,PendingFloats,migrate,safe openui v0.2 API over openui-engine
+rust,PhysicalOffset,migrate,safe openui v0.2 API over openui-engine
+rust,PhysicalRect,migrate,safe openui v0.2 API over openui-engine
+rust,PhysicalSize,migrate,safe openui v0.2 API over openui-engine
+rust,Position,migrate,safe openui v0.2 API over openui-engine
+rust,Position,migrate,safe openui v0.2 API over openui-engine
+rust,PositionArea,migrate,safe openui v0.2 API over openui-engine
+rust,PositionedFloat,migrate,safe openui v0.2 API over openui-engine
+rust,PositionedFragmentationData,migrate,safe openui v0.2 API over openui-engine
+rust,PreviousInflowPosition,migrate,safe openui v0.2 API over openui-engine
+rust,PromotedTransformAncestor,migrate,safe openui v0.2 API over openui-engine
+rust,PseudoElementKind,migrate,safe openui v0.2 API over openui-engine
+rust,QuotePair,migrate,safe openui v0.2 API over openui-engine
+rust,RadialGradient,migrate,safe openui v0.2 API over openui-engine
+rust,RadialGradientShape,migrate,safe openui v0.2 API over openui-engine
+rust,RadialGradientSize,migrate,safe openui v0.2 API over openui-engine
+rust,Rect,migrate,safe openui v0.2 API over openui-engine
+rust,ReplacedContent,migrate,safe openui v0.2 API over openui-engine
+rust,ReplacedResourceKind,migrate,safe openui v0.2 API over openui-engine
+rust,Resize,migrate,safe openui v0.2 API over openui-engine
+rust,ResolvedColumns,migrate,safe openui v0.2 API over openui-engine
+rust,ResolvedEmphasisMark,migrate,safe openui v0.2 API over openui-engine
+rust,ResolvedLogicalBox,migrate,safe openui v0.2 API over openui-engine
+rust,RubyAlign,migrate,safe openui v0.2 API over openui-engine
+rust,RubyInfo,migrate,safe openui v0.2 API over openui-engine
+rust,RubyLayout,migrate,safe openui v0.2 API over openui-engine
+rust,RubyPosition,migrate,safe openui v0.2 API over openui-engine
+rust,RunSegment,migrate,safe openui v0.2 API over openui-engine
+rust,RunSegmenter,migrate,safe openui v0.2 API over openui-engine
+rust,Runtime,migrate,safe openui v0.2 API over openui-engine
+rust,ScopeId,migrate,safe openui v0.2 API over openui-engine
+rust,ScoreLineBreaker,migrate,safe openui v0.2 API over openui-engine
+rust,ScoreParams,migrate,safe openui v0.2 API over openui-engine
+rust,ScoreResult,migrate,safe openui v0.2 API over openui-engine
+rust,ScoredBreak,migrate,safe openui v0.2 API over openui-engine
+rust,ScrollButtonDirection,migrate,safe openui v0.2 API over openui-engine
+rust,ScrollMarkerGroup,migrate,safe openui v0.2 API over openui-engine
+rust,ScrollSnapAlign,migrate,safe openui v0.2 API over openui-engine
+rust,ScrollSnapAxis,migrate,safe openui v0.2 API over openui-engine
+rust,ScrollTargetGroup,migrate,safe openui v0.2 API over openui-engine
+rust,ScrollbarGutter,migrate,safe openui v0.2 API over openui-engine
+rust,ScrollbarWidth,migrate,safe openui v0.2 API over openui-engine
+rust,ShapeOutside,migrate,safe openui v0.2 API over openui-engine
+rust,ShapeResult,migrate,safe openui v0.2 API over openui-engine
+rust,ShapeResultCharacterData,migrate,safe openui v0.2 API over openui-engine
+rust,ShapeResultRun,migrate,safe openui v0.2 API over openui-engine
+rust,Show,migrate,safe openui v0.2 API over openui-engine
+rust,Signal,migrate,safe openui v0.2 API over openui-engine
+rust,SignalId,migrate,safe openui v0.2 API over openui-engine
+rust,SizeConstraint,migrate,safe openui v0.2 API over openui-engine
+rust,SizingKeyword,migrate,safe openui v0.2 API over openui-engine
+rust,StaticPositionEdge,migrate,safe openui v0.2 API over openui-engine
+rust,StickyConstraintRect,migrate,safe openui v0.2 API over openui-engine
+rust,StickyPositionData,migrate,safe openui v0.2 API over openui-engine
+rust,StyleColor,migrate,safe openui v0.2 API over openui-engine
+rust,TabSize,migrate,safe openui v0.2 API over openui-engine
+rust,TableLayout,migrate,safe openui v0.2 API over openui-engine
+rust,TextAlign,migrate,safe openui v0.2 API over openui-engine
+rust,TextAlign,migrate,safe openui v0.2 API over openui-engine
+rust,TextAlignLast,migrate,safe openui v0.2 API over openui-engine
+rust,TextCombineLayout,migrate,safe openui v0.2 API over openui-engine
+rust,TextCombineUpright,migrate,safe openui v0.2 API over openui-engine
+rust,TextDecorationLine,migrate,safe openui v0.2 API over openui-engine
+rust,TextDecorationSkipInk,migrate,safe openui v0.2 API over openui-engine
+rust,TextDecorationStyle,migrate,safe openui v0.2 API over openui-engine
+rust,TextDecorationThickness,migrate,safe openui v0.2 API over openui-engine
+rust,TextDirection,migrate,safe openui v0.2 API over openui-engine
+rust,TextEmphasisFill,migrate,safe openui v0.2 API over openui-engine
+rust,TextEmphasisMark,migrate,safe openui v0.2 API over openui-engine
+rust,TextEmphasisPosition,migrate,safe openui v0.2 API over openui-engine
+rust,TextJustify,migrate,safe openui v0.2 API over openui-engine
+rust,TextNode,migrate,safe openui v0.2 API over openui-engine
+rust,TextOrientation,migrate,safe openui v0.2 API over openui-engine
+rust,TextOverflow,migrate,safe openui v0.2 API over openui-engine
+rust,TextRasterPolicy,migrate,safe openui v0.2 API over openui-engine
+rust,TextRendering,migrate,safe openui v0.2 API over openui-engine
+rust,TextRunOrientation,migrate,safe openui v0.2 API over openui-engine
+rust,TextShadow,migrate,safe openui v0.2 API over openui-engine
+rust,TextShaper,migrate,safe openui v0.2 API over openui-engine
+rust,TextTransform,migrate,safe openui v0.2 API over openui-engine
+rust,TextUnderlinePosition,migrate,safe openui v0.2 API over openui-engine
+rust,TextWrap,migrate,safe openui v0.2 API over openui-engine
+rust,Transform2D,migrate,safe openui v0.2 API over openui-engine
+rust,UnicodeBidi,migrate,safe openui v0.2 API over openui-engine
+rust,UnpositionedFloat,migrate,safe openui v0.2 API over openui-engine
+rust,UsedLineHeightMetrics,migrate,safe openui v0.2 API over openui-engine
+rust,VerticalAlign,migrate,safe openui v0.2 API over openui-engine
+rust,ViewNode,migrate,safe openui v0.2 API over openui-engine
+rust,Visibility,migrate,safe openui v0.2 API over openui-engine
+rust,WebkitBoxOrient,migrate,safe openui v0.2 API over openui-engine
+rust,WhiteSpace,migrate,safe openui v0.2 API over openui-engine
+rust,WordBreak,migrate,safe openui v0.2 API over openui-engine
+rust,WritingDirectionMode,migrate,safe openui v0.2 API over openui-engine
+rust,WritingMode,migrate,safe openui v0.2 API over openui-engine
+rust,WritingModeConverter,migrate,safe openui v0.2 API over openui-engine
+rust,abs,migrate,safe openui v0.2 API over openui-engine
+rust,add,migrate,safe openui v0.2 API over openui-engine
+rust,add,migrate,safe openui v0.2 API over openui-engine
+rust,add,migrate,safe openui v0.2 API over openui-engine
+rust,add_child_token,migrate,safe openui v0.2 API over openui-engine
+rust,add_epsilon,migrate,safe openui v0.2 API over openui-engine
+rust,adjoining_margin_resolve,migrate,safe openui v0.2 API over openui-engine
+rust,adjust_for_float_avoidance,migrate,safe openui v0.2 API over openui-engine
+rust,advance_focus,migrate,safe openui v0.2 API over openui-engine
+rust,advance_time,migrate,safe openui v0.2 API over openui-engine
+rust,advance_time_by,migrate,safe openui v0.2 API over openui-engine
+rust,algorithm,migrate,safe openui v0.2 API over openui-engine
+rust,algorithm,migrate,safe openui v0.2 API over openui-engine
+rust,all,migrate,safe openui v0.2 API over openui-engine
+rust,all_exclusions,migrate,safe openui v0.2 API over openui-engine
+rust,app,migrate,safe openui v0.2 API over openui-engine
+rust,app,migrate,safe openui v0.2 API over openui-engine
+rust,append,migrate,safe openui v0.2 API over openui-engine
+rust,append_break,migrate,safe openui v0.2 API over openui-engine
+rust,append_child,migrate,safe openui v0.2 API over openui-engine
+rust,append_child,migrate,safe openui v0.2 API over openui-engine
+rust,append_normal,migrate,safe openui v0.2 API over openui-engine
+rust,append_text_node,migrate,safe openui v0.2 API over openui-engine
+rust,append_word_break,migrate,safe openui v0.2 API over openui-engine
+rust,apply_aspect_ratio,migrate,safe openui v0.2 API over openui-engine
+rust,apply_aspect_ratio_with_auto,migrate,safe openui v0.2 API over openui-engine
+rust,apply_bidi,migrate,safe openui v0.2 API over openui-engine
+rust,apply_box_sizing_adjustment,migrate,safe openui v0.2 API over openui-engine
+rust,apply_first_letter_style,migrate,safe openui v0.2 API over openui-engine
+rust,apply_first_line_overrides,migrate,safe openui v0.2 API over openui-engine
+rust,apply_first_line_style,migrate,safe openui v0.2 API over openui-engine
+rust,apply_inline_fragmentation,migrate,safe openui v0.2 API over openui-engine
+rust,apply_inter_character_justification,migrate,safe openui v0.2 API over openui-engine
+rust,apply_justification,migrate,safe openui v0.2 API over openui-engine
+rust,apply_patterns,migrate,safe openui v0.2 API over openui-engine
+rust,apply_relative_offset,migrate,safe openui v0.2 API over openui-engine
+rust,apply_size_override_inline,migrate,safe openui v0.2 API over openui-engine
+rust,apply_sticky_offset,migrate,safe openui v0.2 API over openui-engine
+rust,apply_text_transform,migrate,safe openui v0.2 API over openui-engine
+rust,as_raw,migrate,safe openui v0.2 API over openui-engine
+rust,as_raw,migrate,safe openui v0.2 API over openui-engine
+rust,as_raw,migrate,safe openui v0.2 API over openui-engine
+rust,attribute,migrate,safe openui v0.2 API over openui-engine
+rust,auto,migrate,safe openui v0.2 API over openui-engine
+rust,auto,migrate,safe openui v0.2 API over openui-engine
+rust,auto,migrate,safe openui v0.2 API over openui-engine
+rust,auto,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,auto,migrate,safe openui v0.2 API over openui-engine
+rust,auto_length,migrate,safe openui v0.2 API over openui-engine
+rust,available_width_with_exclusion,migrate,safe openui v0.2 API over openui-engine
+rust,balance_columns,migrate,safe openui v0.2 API over openui-engine
+rust,balance_columns_with_margins,migrate,safe openui v0.2 API over openui-engine
+rust,balance_score,migrate,safe openui v0.2 API over openui-engine
+rust,base_direction,migrate,safe openui v0.2 API over openui-engine
+rust,batch,migrate,safe openui v0.2 API over openui-engine
+rust,begin_frame,migrate,safe openui v0.2 API over openui-engine
+rust,bfc_offset,migrate,safe openui v0.2 API over openui-engine
+rust,bfc_offset_resolved,migrate,safe openui v0.2 API over openui-engine
+rust,bfc_resolution,migrate,safe openui v0.2 API over openui-engine
+rust,bfc_resolution,migrate,safe openui v0.2 API over openui-engine
+rust,bidi,migrate,safe openui v0.2 API over openui-engine
+rust,bidi,migrate,safe openui v0.2 API over openui-engine
+rust,bits,migrate,safe openui v0.2 API over openui-engine
+rust,block,migrate,safe openui v0.2 API over openui-engine
+rust,block,migrate,safe openui v0.2 API over openui-engine
+rust,block,migrate,safe openui v0.2 API over openui-engine
+rust,block_child_constraint_space,migrate,safe openui v0.2 API over openui-engine
+rust,block_end,migrate,safe openui v0.2 API over openui-engine
+rust,block_end_offset,migrate,safe openui v0.2 API over openui-engine
+rust,block_layout,migrate,safe openui v0.2 API over openui-engine
+rust,block_offset,migrate,safe openui v0.2 API over openui-engine
+rust,block_size,migrate,safe openui v0.2 API over openui-engine
+rust,block_size,migrate,safe openui v0.2 API over openui-engine
+rust,block_size,migrate,safe openui v0.2 API over openui-engine
+rust,block_start_offset,migrate,safe openui v0.2 API over openui-engine
+rust,block_sum,migrate,safe openui v0.2 API over openui-engine
+rust,block_sum,migrate,safe openui v0.2 API over openui-engine
+rust,blur,migrate,safe openui v0.2 API over openui-engine
+rust,body,migrate,safe openui v0.2 API over openui-engine
+rust,body_element,migrate,safe openui v0.2 API over openui-engine
+rust,body_overflow_is_propagated,migrate,safe openui v0.2 API over openui-engine
+rust,border_box_rect,migrate,safe openui v0.2 API over openui-engine
+rust,both_edges,migrate,safe openui v0.2 API over openui-engine
+rust,bottom,migrate,safe openui v0.2 API over openui-engine
+rust,bounding_rect,migrate,safe openui v0.2 API over openui-engine
+rust,box_strut,migrate,safe openui v0.2 API over openui-engine
+rust,break_after_appeal,migrate,safe openui v0.2 API over openui-engine
+rust,break_before,migrate,safe openui v0.2 API over openui-engine
+rust,break_before_appeal,migrate,safe openui v0.2 API over openui-engine
+rust,break_into_lines,migrate,safe openui v0.2 API over openui-engine
+rust,build,migrate,safe openui v0.2 API over openui-engine
+rust,build_english_trie,migrate,safe openui v0.2 API over openui-engine
+rust,build_first_line_style,migrate,safe openui v0.2 API over openui-engine
+rust,build_new_fc_constraint_space,migrate,safe openui v0.2 API over openui-engine
+rust,byte_to_char_offset,migrate,safe openui v0.2 API over openui-engine
+rust,cache,migrate,safe openui v0.2 API over openui-engine
+rust,cache,migrate,safe openui v0.2 API over openui-engine
+rust,calc_offset,migrate,safe openui v0.2 API over openui-engine
+rust,calc_percent_px,migrate,safe openui v0.2 API over openui-engine
+rust,candidates_from_word_widths,migrate,safe openui v0.2 API over openui-engine
+rust,canvas_background_source,migrate,safe openui v0.2 API over openui-engine
+rust,ceil,migrate,safe openui v0.2 API over openui-engine
+rust,ceil_i32,migrate,safe openui v0.2 API over openui-engine
+rust,center,migrate,safe openui v0.2 API over openui-engine
+rust,char_advance_for_emphasis,migrate,safe openui v0.2 API over openui-engine
+rust,char_orientation,migrate,safe openui v0.2 API over openui-engine
+rust,char_orientation,migrate,safe openui v0.2 API over openui-engine
+rust,character,migrate,safe openui v0.2 API over openui-engine
+rust,checkpoint,migrate,safe openui v0.2 API over openui-engine
+rust,children,migrate,safe openui v0.2 API over openui-engine
+rust,clamp,migrate,safe openui v0.2 API over openui-engine
+rust,clamp,migrate,safe openui v0.2 API over openui-engine
+rust,clamp_indefinite_to_zero,migrate,safe openui v0.2 API over openui-engine
+rust,clamp_negative_to_zero,migrate,safe openui v0.2 API over openui-engine
+rust,clamp_overhang,migrate,safe openui v0.2 API over openui-engine
+rust,clear,migrate,safe openui v0.2 API over openui-engine
+rust,clear_styles,migrate,safe openui v0.2 API over openui-engine
+rust,clearance_offset,migrate,safe openui v0.2 API over openui-engine
+rust,clearance_prevents_collapsing,migrate,safe openui v0.2 API over openui-engine
+rust,clone_ref,migrate,safe openui v0.2 API over openui-engine
+rust,collapse_margins,migrate,safe openui v0.2 API over openui-engine
+rust,collapse_spaces_preserve_newlines,migrate,safe openui v0.2 API over openui-engine
+rust,collapse_whitespace,migrate,safe openui v0.2 API over openui-engine
+rust,collect,migrate,safe openui v0.2 API over openui-engine
+rust,collect_font_features,migrate,safe openui v0.2 API over openui-engine
+rust,collect_for_children,migrate,safe openui v0.2 API over openui-engine
+rust,color,migrate,safe openui v0.2 API over openui-engine
+rust,combined_inline_advance,migrate,safe openui v0.2 API over openui-engine
+rust,component,migrate,safe openui v0.2 API over openui-engine
+rust,compute_automatic_size,migrate,safe openui v0.2 API over openui-engine
+rust,compute_bfc_block_offset_estimate,migrate,safe openui v0.2 API over openui-engine
+rust,compute_block_size_from_content,migrate,safe openui v0.2 API over openui-engine
+rust,compute_child_intrinsic_contribution,migrate,safe openui v0.2 API over openui-engine
+rust,compute_clip_rect,migrate,safe openui v0.2 API over openui-engine
+rust,compute_column_positions,migrate,safe openui v0.2 API over openui-engine
+rust,compute_column_rule_positions,migrate,safe openui v0.2 API over openui-engine
+rust,compute_definite_size,migrate,safe openui v0.2 API over openui-engine
+rust,compute_emphasis_offset,migrate,safe openui v0.2 API over openui-engine
+rust,compute_exclusion_rect,migrate,safe openui v0.2 API over openui-engine
+rust,compute_flex_min_max_sizes,migrate,safe openui v0.2 API over openui-engine
+rust,compute_float_avoidance_offset,migrate,safe openui v0.2 API over openui-engine
+rust,compute_grid_intrinsic_sizes,migrate,safe openui v0.2 API over openui-engine
+rust,compute_height,migrate,safe openui v0.2 API over openui-engine
+rust,compute_initial_letter_layout,migrate,safe openui v0.2 API over openui-engine
+rust,compute_intrinsic_block_sizes,migrate,safe openui v0.2 API over openui-engine
+rust,compute_intrinsic_inline_sizes,migrate,safe openui v0.2 API over openui-engine
+rust,compute_intrinsic_inline_sizes_with_block_size,migrate,safe openui v0.2 API over openui-engine
+rust,compute_line_availability,migrate,safe openui v0.2 API over openui-engine
+rust,compute_line_availability_for_block_size,migrate,safe openui v0.2 API over openui-engine
+rust,compute_margin_box_inline_size,migrate,safe openui v0.2 API over openui-engine
+rust,compute_replaced_intrinsic_sizes,migrate,safe openui v0.2 API over openui-engine
+rust,compute_replaced_intrinsic_sizes_for_node,migrate,safe openui v0.2 API over openui-engine
+rust,compute_ruby_layout,migrate,safe openui v0.2 API over openui-engine
+rust,compute_shrink_to_fit_width,migrate,safe openui v0.2 API over openui-engine
+rust,compute_sink_offset,migrate,safe openui v0.2 API over openui-engine
+rust,compute_sticky_constraint_rect,migrate,safe openui v0.2 API over openui-engine
+rust,compute_sticky_offset,migrate,safe openui v0.2 API over openui-engine
+rust,compute_table_intrinsic_sizes,migrate,safe openui v0.2 API over openui-engine
+rust,compute_text_combine,migrate,safe openui v0.2 API over openui-engine
+rust,computed,migrate,safe openui v0.2 API over openui-engine
+rust,constrain_block_size,migrate,safe openui v0.2 API over openui-engine
+rust,constrain_inline_size,migrate,safe openui v0.2 API over openui-engine
+rust,constraint_space,migrate,safe openui v0.2 API over openui-engine
+rust,consume,migrate,safe openui v0.2 API over openui-engine
+rust,consume,migrate,safe openui v0.2 API over openui-engine
+rust,consume,migrate,safe openui v0.2 API over openui-engine
+rust,consume_atomic_layout,migrate,safe openui v0.2 API over openui-engine
+rust,consume_block_size,migrate,safe openui v0.2 API over openui-engine
+rust,consume_layout,migrate,safe openui v0.2 API over openui-engine
+rust,contains,migrate,safe openui v0.2 API over openui-engine
+rust,contains,migrate,safe openui v0.2 API over openui-engine
+rust,contains,migrate,safe openui v0.2 API over openui-engine
+rust,contains_emoji,migrate,safe openui v0.2 API over openui-engine
+rust,content,migrate,safe openui v0.2 API over openui-engine
+rust,content_offset,migrate,safe openui v0.2 API over openui-engine
+rust,content_size,migrate,safe openui v0.2 API over openui-engine
+rust,context,migrate,safe openui v0.2 API over openui-engine
+rust,context,migrate,safe openui v0.2 API over openui-engine
+rust,convert_logical_size_between,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,crate,migrate,safe openui v0.2 API over openui-engine
+rust,create,migrate,safe openui v0.2 API over openui-engine
+rust,create_effect,migrate,safe openui v0.2 API over openui-engine
+rust,create_initial_letter_style,migrate,safe openui v0.2 API over openui-engine
+rust,create_memo,migrate,safe openui v0.2 API over openui-engine
+rust,create_node,migrate,safe openui v0.2 API over openui-engine
+rust,create_scope,migrate,safe openui v0.2 API over openui-engine
+rust,create_signal,migrate,safe openui v0.2 API over openui-engine
+rust,create_text_child,migrate,safe openui v0.2 API over openui-engine
+rust,creates_new_formatting_context,migrate,safe openui v0.2 API over openui-engine
+rust,creates_new_formatting_context,migrate,safe openui v0.2 API over openui-engine
+rust,cross_axis_margin_extent,migrate,safe openui v0.2 API over openui-engine
+rust,css_sizing,migrate,safe openui v0.2 API over openui-engine
+rust,css_sizing,migrate,safe openui v0.2 API over openui-engine
+rust,current_document,migrate,safe openui v0.2 API over openui-engine
+rust,decode_image_resource,migrate,safe openui v0.2 API over openui-engine
+rust,decode_image_resource_at_size,migrate,safe openui v0.2 API over openui-engine
+rust,decode_raster_resource_for_draw,migrate,safe openui v0.2 API over openui-engine
+rust,decoration_painter,migrate,safe openui v0.2 API over openui-engine
+rust,default_list,migrate,safe openui v0.2 API over openui-engine
+rust,default_mark_for_writing_mode,migrate,safe openui v0.2 API over openui-engine
+rust,default_position_for_writing_mode,migrate,safe openui v0.2 API over openui-engine
+rust,description,migrate,safe openui v0.2 API over openui-engine
+rust,description,migrate,safe openui v0.2 API over openui-engine
+rust,dispatch_click,migrate,safe openui v0.2 API over openui-engine
+rust,dispatch_key,migrate,safe openui v0.2 API over openui-engine
+rust,dispatch_key_event,migrate,safe openui v0.2 API over openui-engine
+rust,dispatch_mouse_event,migrate,safe openui v0.2 API over openui-engine
+rust,dispatch_mouse_move,migrate,safe openui v0.2 API over openui-engine
+rust,dispatch_wheel,migrate,safe openui v0.2 API over openui-engine
+rust,dispatch_wheel_event,migrate,safe openui v0.2 API over openui-engine
+rust,dispose_scope,migrate,safe openui v0.2 API over openui-engine
+rust,document,migrate,safe openui v0.2 API over openui-engine
+rust,document,migrate,safe openui v0.2 API over openui-engine
+rust,document,migrate,safe openui v0.2 API over openui-engine
+rust,document_element,migrate,safe openui v0.2 API over openui-engine
+rust,document_mut,migrate,safe openui v0.2 API over openui-engine
+rust,effect,migrate,safe openui v0.2 API over openui-engine
+rust,effect,migrate,safe openui v0.2 API over openui-engine
+rust,effective_border_bottom,migrate,safe openui v0.2 API over openui-engine
+rust,effective_border_left,migrate,safe openui v0.2 API over openui-engine
+rust,effective_border_right,migrate,safe openui v0.2 API over openui-engine
+rust,effective_border_top,migrate,safe openui v0.2 API over openui-engine
+rust,effective_first_line_style,migrate,safe openui v0.2 API over openui-engine
+rust,effective_outline_width,migrate,safe openui v0.2 API over openui-engine
+rust,effective_sink,migrate,safe openui v0.2 API over openui-engine
+rust,element,migrate,safe openui v0.2 API over openui-engine
+rust,element,migrate,safe openui v0.2 API over openui-engine
+rust,em,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,em,migrate,safe openui v0.2 API over openui-engine
+rust,emoji,migrate,safe openui v0.2 API over openui-engine
+rust,emoji,migrate,safe openui v0.2 API over openui-engine
+rust,emphasis,migrate,safe openui v0.2 API over openui-engine
+rust,emphasis,migrate,safe openui v0.2 API over openui-engine
+rust,emphasis_painter,migrate,safe openui v0.2 API over openui-engine
+rust,empty,migrate,safe openui v0.2 API over openui-engine
+rust,encompass,migrate,safe openui v0.2 API over openui-engine
+rust,english,migrate,safe openui v0.2 API over openui-engine
+rust,english_from_css_limits,migrate,safe openui v0.2 API over openui-engine
+rust,english_with_limits,migrate,safe openui v0.2 API over openui-engine
+rust,enums,migrate,safe openui v0.2 API over openui-engine
+rust,epsilon,migrate,safe openui v0.2 API over openui-engine
+rust,establishes_new_bfc_for_collapsing,migrate,safe openui v0.2 API over openui-engine
+rust,establishes_new_fc,migrate,safe openui v0.2 API over openui-engine
+rust,events,migrate,safe openui v0.2 API over openui-engine
+rust,events,migrate,safe openui v0.2 API over openui-engine
+rust,exclusion_space,migrate,safe openui v0.2 API over openui-engine
+rust,exclusion_space,migrate,safe openui v0.2 API over openui-engine
+rust,exclusions,migrate,safe openui v0.2 API over openui-engine
+rust,exclusions,migrate,safe openui v0.2 API over openui-engine
+rust,exhaust,migrate,safe openui v0.2 API over openui-engine
+rust,expand_tabs,migrate,safe openui v0.2 API over openui-engine
+rust,extract_first_letter,migrate,safe openui v0.2 API over openui-engine
+rust,fallback,migrate,safe openui v0.2 API over openui-engine
+rust,fallback_count,migrate,safe openui v0.2 API over openui-engine
+rust,fallback_index_for_text,migrate,safe openui v0.2 API over openui-engine
+rust,fallback_list,migrate,safe openui v0.2 API over openui-engine
+rust,features,migrate,safe openui v0.2 API over openui-engine
+rust,finalize_margins,migrate,safe openui v0.2 API over openui-engine
+rust,find_anchor_named,migrate,safe openui v0.2 API over openui-engine
+rust,find_best_break_point,migrate,safe openui v0.2 API over openui-engine
+rust,find_break_opportunities,migrate,safe openui v0.2 API over openui-engine
+rust,find_layout_opportunity,migrate,safe openui v0.2 API over openui-engine
+rust,find_layout_opportunity_for_float,migrate,safe openui v0.2 API over openui-engine
+rust,find_opportunity_for_auto_sized_bfc,migrate,safe openui v0.2 API over openui-engine
+rust,find_opportunity_for_bfc,migrate,safe openui v0.2 API over openui-engine
+rust,find_optimal_breaks,migrate,safe openui v0.2 API over openui-engine
+rust,find_soft_hyphens,migrate,safe openui v0.2 API over openui-engine
+rust,first_child,migrate,safe openui v0.2 API over openui-engine
+rust,first_letter,migrate,safe openui v0.2 API over openui-engine
+rust,first_line,migrate,safe openui v0.2 API over openui-engine
+rust,fit_content,migrate,safe openui v0.2 API over openui-engine
+rust,fit_content_percent,migrate,safe openui v0.2 API over openui-engine
+rust,fit_content_px,migrate,safe openui v0.2 API over openui-engine
+rust,flex,migrate,safe openui v0.2 API over openui-engine
+rust,flex,migrate,safe openui v0.2 API over openui-engine
+rust,flex,migrate,safe openui v0.2 API over openui-engine
+rust,flex_base_margin_box_size,migrate,safe openui v0.2 API over openui-engine
+rust,flex_child_constraint_space,migrate,safe openui v0.2 API over openui-engine
+rust,flex_layout,migrate,safe openui v0.2 API over openui-engine
+rust,flexed_border_box_size,migrate,safe openui v0.2 API over openui-engine
+rust,flexed_margin_box_size,migrate,safe openui v0.2 API over openui-engine
+rust,float_prevents_collapsing,migrate,safe openui v0.2 API over openui-engine
+rust,float_utils,migrate,safe openui v0.2 API over openui-engine
+rust,float_utils,migrate,safe openui v0.2 API over openui-engine
+rust,floor,migrate,safe openui v0.2 API over openui-engine
+rust,floor_i32,migrate,safe openui v0.2 API over openui-engine
+rust,focus,migrate,safe openui v0.2 API over openui-engine
+rust,font,migrate,safe openui v0.2 API over openui-engine
+rust,font,migrate,safe openui v0.2 API over openui-engine
+rust,font,migrate,safe openui v0.2 API over openui-engine
+rust,font,migrate,safe openui v0.2 API over openui-engine
+rust,font_metrics,migrate,safe openui v0.2 API over openui-engine
+rust,font_orientation,migrate,safe openui v0.2 API over openui-engine
+rust,font_size,migrate,safe openui v0.2 API over openui-engine
+rust,font_types,migrate,safe openui v0.2 API over openui-engine
+rust,for_anonymous_box,migrate,safe openui v0.2 API over openui-engine
+rust,for_block_child,migrate,safe openui v0.2 API over openui-engine
+rust,for_block_child_from_parent,migrate,safe openui v0.2 API over openui-engine
+rust,for_block_child_with_writing_direction,migrate,safe openui v0.2 API over openui-engine
+rust,for_flex_child,migrate,safe openui v0.2 API over openui-engine
+rust,for_flex_child_from_parent,migrate,safe openui v0.2 API over openui-engine
+rust,for_flex_child_with_writing_direction,migrate,safe openui v0.2 API over openui-engine
+rust,for_pseudo,migrate,safe openui v0.2 API over openui-engine
+rust,for_root,migrate,safe openui v0.2 API over openui-engine
+rust,for_root_with_writing_direction,migrate,safe openui v0.2 API over openui-engine
+rust,fr,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,fr,migrate,safe openui v0.2 API over openui-engine
+rust,fraction,migrate,safe openui v0.2 API over openui-engine
+rust,fragment,migrate,safe openui v0.2 API over openui-engine
+rust,fragment,migrate,safe openui v0.2 API over openui-engine
+rust,fragmentation,migrate,safe openui v0.2 API over openui-engine
+rust,fragmentation,migrate,safe openui v0.2 API over openui-engine
+rust,frame_time,migrate,safe openui v0.2 API over openui-engine
+rust,from_computed_style,migrate,safe openui v0.2 API over openui-engine
+rust,from_f32,migrate,safe openui v0.2 API over openui-engine
+rust,from_f32_ceil,migrate,safe openui v0.2 API over openui-engine
+rust,from_f32_floor,migrate,safe openui v0.2 API over openui-engine
+rust,from_f32_round,migrate,safe openui v0.2 API over openui-engine
+rust,from_f64,migrate,safe openui v0.2 API over openui-engine
+rust,from_font_size,migrate,safe openui v0.2 API over openui-engine
+rust,from_hex,migrate,safe openui v0.2 API over openui-engine
+rust,from_i32,migrate,safe openui v0.2 API over openui-engine
+rust,from_legacy_page_break,migrate,safe openui v0.2 API over openui-engine
+rust,from_legacy_page_break_inside,migrate,safe openui v0.2 API over openui-engine
+rust,from_length,migrate,safe openui v0.2 API over openui-engine
+rust,from_metrics,migrate,safe openui v0.2 API over openui-engine
+rust,from_parent,migrate,safe openui v0.2 API over openui-engine
+rust,from_position_and_size,migrate,safe openui v0.2 API over openui-engine
+rust,from_ratio,migrate,safe openui v0.2 API over openui-engine
+rust,from_raw,migrate,safe openui v0.2 API over openui-engine
+rust,from_raw_borrowed,migrate,safe openui v0.2 API over openui-engine
+rust,from_raw_borrowed,migrate,safe openui v0.2 API over openui-engine
+rust,from_raw_i64,migrate,safe openui v0.2 API over openui-engine
+rust,from_rgba8,migrate,safe openui v0.2 API over openui-engine
+rust,from_rgba_f32,migrate,safe openui v0.2 API over openui-engine
+rust,from_style,migrate,safe openui v0.2 API over openui-engine
+rust,from_style,migrate,safe openui v0.2 API over openui-engine
+rust,from_style,migrate,safe openui v0.2 API over openui-engine
+rust,from_style,migrate,safe openui v0.2 API over openui-engine
+rust,from_xywh,migrate,safe openui v0.2 API over openui-engine
+rust,generic,migrate,safe openui v0.2 API over openui-engine
+rust,generic_family_name,migrate,safe openui v0.2 API over openui-engine
+rust,get,migrate,safe openui v0.2 API over openui-engine
+rust,get,migrate,safe openui v0.2 API over openui-engine
+rust,get,migrate,safe openui v0.2 API over openui-engine
+rust,get,migrate,safe openui v0.2 API over openui-engine
+rust,get_attribute,migrate,safe openui v0.2 API over openui-engine
+rust,get_computed_style,migrate,safe openui v0.2 API over openui-engine
+rust,get_focused_element,migrate,safe openui v0.2 API over openui-engine
+rust,get_font_platform_data,migrate,safe openui v0.2 API over openui-engine
+rust,get_time,migrate,safe openui v0.2 API over openui-engine
+rust,glyph_range_for_char_range,migrate,safe openui v0.2 API over openui-engine
+rust,grid,migrate,safe openui v0.2 API over openui-engine
+rust,grid,migrate,safe openui v0.2 API over openui-engine
+rust,grid_layout,migrate,safe openui v0.2 API over openui-engine
+rust,handle_margin_after_child,migrate,safe openui v0.2 API over openui-engine
+rust,handle_margin_before_child,migrate,safe openui v0.2 API over openui-engine
+rust,has_block_children,migrate,safe openui v0.2 API over openui-engine
+rust,has_block_fragmentation,migrate,safe openui v0.2 API over openui-engine
+rust,has_block_size_containment,migrate,safe openui v0.2 API over openui-engine
+rust,has_border_radius,migrate,safe openui v0.2 API over openui-engine
+rust,has_child_break_tokens,migrate,safe openui v0.2 API over openui-engine
+rust,has_content,migrate,safe openui v0.2 API over openui-engine
+rust,has_first_letter_content,migrate,safe openui v0.2 API over openui-engine
+rust,has_floats,migrate,safe openui v0.2 API over openui-engine
+rust,has_focus,migrate,safe openui v0.2 API over openui-engine
+rust,has_inline_children,migrate,safe openui v0.2 API over openui-engine
+rust,has_inline_size_containment,migrate,safe openui v0.2 API over openui-engine
+rust,has_layout_containment,migrate,safe openui v0.2 API over openui-engine
+rust,has_line_through,migrate,safe openui v0.2 API over openui-engine
+rust,has_outline,migrate,safe openui v0.2 API over openui-engine
+rust,has_overline,migrate,safe openui v0.2 API over openui-engine
+rust,has_paint_containment,migrate,safe openui v0.2 API over openui-engine
+rust,has_remaining_forced_break,migrate,safe openui v0.2 API over openui-engine
+rust,has_remaining_visible_content,migrate,safe openui v0.2 API over openui-engine
+rust,has_size_containment,migrate,safe openui v0.2 API over openui-engine
+rust,has_underline,migrate,safe openui v0.2 API over openui-engine
+rust,has_visible_border,migrate,safe openui v0.2 API over openui-engine
+rust,height,migrate,safe openui v0.2 API over openui-engine
+rust,height,migrate,safe openui v0.2 API over openui-engine
+rust,height,migrate,safe openui v0.2 API over openui-engine
+rust,height,migrate,safe openui v0.2 API over openui-engine
+rust,hit_test,migrate,safe openui v0.2 API over openui-engine
+rust,horizontal_ltr,migrate,safe openui v0.2 API over openui-engine
+rust,hyphen_byte_locations,migrate,safe openui v0.2 API over openui-engine
+rust,hyphen_locations,migrate,safe openui v0.2 API over openui-engine
+rust,hyphenation,migrate,safe openui v0.2 API over openui-engine
+rust,hyphenation,migrate,safe openui v0.2 API over openui-engine
+rust,hypothetical_main_axis_margin_box_size,migrate,safe openui v0.2 API over openui-engine
+rust,id,migrate,safe openui v0.2 API over openui-engine
+rust,image_resource,migrate,safe openui v0.2 API over openui-engine
+rust,image_resource,migrate,safe openui v0.2 API over openui-engine
+rust,image_resource_count,migrate,safe openui v0.2 API over openui-engine
+rust,index,migrate,safe openui v0.2 API over openui-engine
+rust,index,migrate,safe openui v0.2 API over openui-engine
+rust,inflow_position,migrate,safe openui v0.2 API over openui-engine
+rust,inflow_position,migrate,safe openui v0.2 API over openui-engine
+rust,initial,migrate,safe openui v0.2 API over openui-engine
+rust,initial_letter,migrate,safe openui v0.2 API over openui-engine
+rust,inject_css,removed,typed node construction
+rust,inline,migrate,safe openui v0.2 API over openui-engine
+rust,inline_end,migrate,safe openui v0.2 API over openui-engine
+rust,inline_layout,migrate,safe openui v0.2 API over openui-engine
+rust,inline_layout_for_children,migrate,safe openui v0.2 API over openui-engine
+rust,inline_layout_from_items,migrate,safe openui v0.2 API over openui-engine
+rust,inline_offset,migrate,safe openui v0.2 API over openui-engine
+rust,inline_size,migrate,safe openui v0.2 API over openui-engine
+rust,inline_size,migrate,safe openui v0.2 API over openui-engine
+rust,inline_size,migrate,safe openui v0.2 API over openui-engine
+rust,inline_sum,migrate,safe openui v0.2 API over openui-engine
+rust,inline_sum,migrate,safe openui v0.2 API over openui-engine
+rust,insert_before,migrate,safe openui v0.2 API over openui-engine
+rust,insert_pattern,migrate,safe openui v0.2 API over openui-engine
+rust,insert_pseudo_element,migrate,safe openui v0.2 API over openui-engine
+rust,int_ascent,migrate,safe openui v0.2 API over openui-engine
+rust,int_descent,migrate,safe openui v0.2 API over openui-engine
+rust,int_line_spacing,migrate,safe openui v0.2 API over openui-engine
+rust,intrinsic_sizing,migrate,safe openui v0.2 API over openui-engine
+rust,intrinsic_sizing,migrate,safe openui v0.2 API over openui-engine
+rust,is_absolutely_positioned,migrate,safe openui v0.2 API over openui-engine
+rust,is_acceptable,migrate,safe openui v0.2 API over openui-engine
+rust,is_auto,migrate,safe openui v0.2 API over openui-engine
+rust,is_avoid,migrate,safe openui v0.2 API over openui-engine
+rust,is_avoid,migrate,safe openui v0.2 API over openui-engine
+rust,is_block_level,migrate,safe openui v0.2 API over openui-engine
+rust,is_calculated,migrate,safe openui v0.2 API over openui-engine
+rust,is_clipping,migrate,safe openui v0.2 API over openui-engine
+rust,is_column,migrate,safe openui v0.2 API over openui-engine
+rust,is_content_or_intrinsic,migrate,safe openui v0.2 API over openui-engine
+rust,is_emoji,migrate,safe openui v0.2 API over openui-engine
+rust,is_emoji_modifier,migrate,safe openui v0.2 API over openui-engine
+rust,is_emoji_presentation_selector,migrate,safe openui v0.2 API over openui-engine
+rust,is_empty,migrate,safe openui v0.2 API over openui-engine
+rust,is_empty,migrate,safe openui v0.2 API over openui-engine
+rust,is_empty,migrate,safe openui v0.2 API over openui-engine
+rust,is_empty,migrate,safe openui v0.2 API over openui-engine
+rust,is_empty,migrate,safe openui v0.2 API over openui-engine
+rust,is_empty,migrate,safe openui v0.2 API over openui-engine
+rust,is_empty,migrate,safe openui v0.2 API over openui-engine
+rust,is_empty,migrate,safe openui v0.2 API over openui-engine
+rust,is_empty,migrate,safe openui v0.2 API over openui-engine
+rust,is_exhausted,migrate,safe openui v0.2 API over openui-engine
+rust,is_exhausted,migrate,safe openui v0.2 API over openui-engine
+rust,is_finished,migrate,safe openui v0.2 API over openui-engine
+rust,is_fit_content,migrate,safe openui v0.2 API over openui-engine
+rust,is_fit_content_function,migrate,safe openui v0.2 API over openui-engine
+rust,is_fixed,migrate,safe openui v0.2 API over openui-engine
+rust,is_flex,migrate,safe openui v0.2 API over openui-engine
+rust,is_flipped_blocks,migrate,safe openui v0.2 API over openui-engine
+rust,is_flipped_blocks,migrate,safe openui v0.2 API over openui-engine
+rust,is_flipped_lines,migrate,safe openui v0.2 API over openui-engine
+rust,is_flipped_lines,migrate,safe openui v0.2 API over openui-engine
+rust,is_forced,migrate,safe openui v0.2 API over openui-engine
+rust,is_forced,migrate,safe openui v0.2 API over openui-engine
+rust,is_grid,migrate,safe openui v0.2 API over openui-engine
+rust,is_horizontal,migrate,safe openui v0.2 API over openui-engine
+rust,is_horizontal,migrate,safe openui v0.2 API over openui-engine
+rust,is_in_flow,migrate,safe openui v0.2 API over openui-engine
+rust,is_in_flow,migrate,safe openui v0.2 API over openui-engine
+rust,is_indefinite,migrate,safe openui v0.2 API over openui-engine
+rust,is_inline_level,migrate,safe openui v0.2 API over openui-engine
+rust,is_ltr,migrate,safe openui v0.2 API over openui-engine
+rust,is_max_content,migrate,safe openui v0.2 API over openui-engine
+rust,is_min_content,migrate,safe openui v0.2 API over openui-engine
+rust,is_new_formatting_context,migrate,safe openui v0.2 API over openui-engine
+rust,is_none,migrate,safe openui v0.2 API over openui-engine
+rust,is_none,migrate,safe openui v0.2 API over openui-engine
+rust,is_none,migrate,safe openui v0.2 API over openui-engine
+rust,is_none,migrate,safe openui v0.2 API over openui-engine
+rust,is_normal,migrate,safe openui v0.2 API over openui-engine
+rust,is_nowrap,migrate,safe openui v0.2 API over openui-engine
+rust,is_opaque,migrate,safe openui v0.2 API over openui-engine
+rust,is_out_of_flow,migrate,safe openui v0.2 API over openui-engine
+rust,is_over,migrate,safe openui v0.2 API over openui-engine
+rust,is_percent,migrate,safe openui v0.2 API over openui-engine
+rust,is_positioned,migrate,safe openui v0.2 API over openui-engine
+rust,is_raised,migrate,safe openui v0.2 API over openui-engine
+rust,is_regional_indicator,migrate,safe openui v0.2 API over openui-engine
+rust,is_resolved,migrate,safe openui v0.2 API over openui-engine
+rust,is_reverse,migrate,safe openui v0.2 API over openui-engine
+rust,is_rtl,migrate,safe openui v0.2 API over openui-engine
+rust,is_rtl,migrate,safe openui v0.2 API over openui-engine
+rust,is_scroll_container,migrate,safe openui v0.2 API over openui-engine
+rust,is_scrollable,migrate,safe openui v0.2 API over openui-engine
+rust,is_soft_hyphen,migrate,safe openui v0.2 API over openui-engine
+rust,is_specified,migrate,safe openui v0.2 API over openui-engine
+rust,is_stable,migrate,safe openui v0.2 API over openui-engine
+rust,is_stretch,migrate,safe openui v0.2 API over openui-engine
+rust,is_success,migrate,safe openui v0.2 API over openui-engine
+rust,is_synthetic_bold,migrate,safe openui v0.2 API over openui-engine
+rust,is_table_internal,migrate,safe openui v0.2 API over openui-engine
+rust,is_table_wrapper,migrate,safe openui v0.2 API over openui-engine
+rust,is_tag_character,migrate,safe openui v0.2 API over openui-engine
+rust,is_text_combine_active,migrate,safe openui v0.2 API over openui-engine
+rust,is_text_presentation_selector,migrate,safe openui v0.2 API over openui-engine
+rust,is_transparent,migrate,safe openui v0.2 API over openui-engine
+rust,is_under,migrate,safe openui v0.2 API over openui-engine
+rust,is_unresolved,migrate,safe openui v0.2 API over openui-engine
+rust,is_upright_in_mixed_vertical,migrate,safe openui v0.2 API over openui-engine
+rust,is_vertical,migrate,safe openui v0.2 API over openui-engine
+rust,is_vertical,migrate,safe openui v0.2 API over openui-engine
+rust,is_wrap,migrate,safe openui v0.2 API over openui-engine
+rust,is_wrap_reverse,migrate,safe openui v0.2 API over openui-engine
+rust,is_zero_width_joiner,migrate,safe openui v0.2 API over openui-engine
+rust,item,migrate,safe openui v0.2 API over openui-engine
+rust,item_count,migrate,safe openui v0.2 API over openui-engine
+rust,items,migrate,safe openui v0.2 API over openui-engine
+rust,items_builder,migrate,safe openui v0.2 API over openui-engine
+rust,iter,migrate,safe openui v0.2 API over openui-engine
+rust,join_break_between,migrate,safe openui v0.2 API over openui-engine
+rust,last_float_block_start,migrate,safe openui v0.2 API over openui-engine
+rust,last_hyphen_before,migrate,safe openui v0.2 API over openui-engine
+rust,last_soft_hyphen_before,migrate,safe openui v0.2 API over openui-engine
+rust,layout,migrate,safe openui v0.2 API over openui-engine
+rust,layout,migrate,safe openui v0.2 API over openui-engine
+rust,layout_columns,migrate,safe openui v0.2 API over openui-engine
+rust,layout_new_formatting_context,migrate,safe openui v0.2 API over openui-engine
+rust,layout_out_of_flow_children,migrate,safe openui v0.2 API over openui-engine
+rust,layout_result,migrate,safe openui v0.2 API over openui-engine
+rust,layout_result,migrate,safe openui v0.2 API over openui-engine
+rust,layout_systems,migrate,safe openui v0.2 API over openui-engine
+rust,layout_unit,migrate,safe openui v0.2 API over openui-engine
+rust,len,migrate,safe openui v0.2 API over openui-engine
+rust,len,migrate,safe openui v0.2 API over openui-engine
+rust,len,migrate,safe openui v0.2 API over openui-engine
+rust,len,migrate,safe openui v0.2 API over openui-engine
+rust,length,migrate,safe openui v0.2 API over openui-engine
+rust,length,migrate,safe openui v0.2 API over openui-engine
+rust,length_resolver,migrate,safe openui v0.2 API over openui-engine
+rust,length_type,migrate,safe openui v0.2 API over openui-engine
+rust,level_at,migrate,safe openui v0.2 API over openui-engine
+rust,level_at_byte,migrate,safe openui v0.2 API over openui-engine
+rust,levels,migrate,safe openui v0.2 API over openui-engine
+rust,line,migrate,safe openui v0.2 API over openui-engine
+rust,line_breaker,migrate,safe openui v0.2 API over openui-engine
+rust,line_end_offset,migrate,safe openui v0.2 API over openui-engine
+rust,line_in_exclusion_zone,migrate,safe openui v0.2 API over openui-engine
+rust,line_info,migrate,safe openui v0.2 API over openui-engine
+rust,line_start_offset,migrate,safe openui v0.2 API over openui-engine
+rust,line_width,migrate,safe openui v0.2 API over openui-engine
+rust,link,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,load_html,removed,typed node construction
+rust,load_html,removed,typed node construction
+rust,logical_geometry,migrate,safe openui v0.2 API over openui-engine
+rust,logical_geometry,migrate,safe openui v0.2 API over openui-engine
+rust,logical_offset,migrate,safe openui v0.2 API over openui-engine
+rust,logical_rect,migrate,safe openui v0.2 API over openui-engine
+rust,logical_size,migrate,safe openui v0.2 API over openui-engine
+rust,main_axis_margin_extent,migrate,safe openui v0.2 API over openui-engine
+rust,margin_collapsing,migrate,safe openui v0.2 API over openui-engine
+rust,margin_strut,migrate,safe openui v0.2 API over openui-engine
+rust,marker_required_when_exhausted,migrate,safe openui v0.2 API over openui-engine
+rust,materialize_generated_content,migrate,safe openui v0.2 API over openui-engine
+rust,max,migrate,safe openui v0.2 API over openui-engine
+rust,max_content,migrate,safe openui v0.2 API over openui-engine
+rust,max_of,migrate,safe openui v0.2 API over openui-engine
+rust,max_ruby_overhang,migrate,safe openui v0.2 API over openui-engine
+rust,merge_struts,migrate,safe openui v0.2 API over openui-engine
+rust,metrics,migrate,safe openui v0.2 API over openui-engine
+rust,metrics,migrate,safe openui v0.2 API over openui-engine
+rust,metrics_from_shape_result,migrate,safe openui v0.2 API over openui-engine
+rust,min,migrate,safe openui v0.2 API over openui-engine
+rust,min_content,migrate,safe openui v0.2 API over openui-engine
+rust,min_max_sizes,migrate,safe openui v0.2 API over openui-engine
+rust,min_of,migrate,safe openui v0.2 API over openui-engine
+rust,mount_view,migrate,safe openui v0.2 API over openui-engine
+rust,mul_div,migrate,safe openui v0.2 API over openui-engine
+rust,multicol,migrate,safe openui v0.2 API over openui-engine
+rust,multicol,migrate,safe openui v0.2 API over openui-engine
+rust,nearly_max,migrate,safe openui v0.2 API over openui-engine
+rust,nearly_min,migrate,safe openui v0.2 API over openui-engine
+rust,needs_relayout,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new,migrate,safe openui v0.2 API over openui-engine
+rust,new_auto,migrate,safe openui v0.2 API over openui-engine
+rust,new_box,migrate,safe openui v0.2 API over openui-engine
+rust,new_fc_end_margin_strut,migrate,safe openui v0.2 API over openui-engine
+rust,new_formatting_context,migrate,safe openui v0.2 API over openui-engine
+rust,new_formatting_context,migrate,safe openui v0.2 API over openui-engine
+rust,new_resolved,migrate,safe openui v0.2 API over openui-engine
+rust,new_text,migrate,safe openui v0.2 API over openui-engine
+rust,new_unresolved,migrate,safe openui v0.2 API over openui-engine
+rust,new_with_estimate,migrate,safe openui v0.2 API over openui-engine
+rust,next_float_bottom,migrate,safe openui v0.2 API over openui-engine
+rust,next_line,migrate,safe openui v0.2 API over openui-engine
+rust,next_sibling,migrate,safe openui v0.2 API over openui-engine
+rust,node,migrate,safe openui v0.2 API over openui-engine
+rust,node_count,migrate,safe openui v0.2 API over openui-engine
+rust,node_mut,migrate,safe openui v0.2 API over openui-engine
+rust,none,migrate,safe openui v0.2 API over openui-engine
+rust,none,migrate,safe openui v0.2 API over openui-engine
+rust,none,migrate,safe openui v0.2 API over openui-engine
+rust,none,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,num_exclusions,migrate,safe openui v0.2 API over openui-engine
+rust,num_glyphs,migrate,safe openui v0.2 API over openui-engine
+rust,offset_for_x_position,migrate,safe openui v0.2 API over openui-engine
+rust,offset_x,migrate,safe openui v0.2 API over openui-engine
+rust,offset_y,migrate,safe openui v0.2 API over openui-engine
+rust,on,migrate,safe openui v0.2 API over openui-engine
+rust,on_cleanup,migrate,safe openui v0.2 API over openui-engine
+rust,openui_macros,migrate,safe openui v0.2 API over openui-engine
+rust,openui_macros,migrate,safe openui v0.2 API over openui-engine
+rust,oui_bitmap_free,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_advance_focus,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_advance_time,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_advance_time_by,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_begin_frame,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_body,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_create,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_destroy,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_dispatch_key_event,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_dispatch_mouse_event,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_dispatch_wheel_event,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_get_focused_element,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_get_time,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_hit_test,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_layout,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_load_html,removed,typed node construction
+rust,oui_document_render_to_bitmap,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_render_to_png,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_render_to_png_buffer,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_set_resource_provider,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_set_viewport,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_document_update_all,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_append_child,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_append_text,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_blur,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_clear_styles,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_create,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_create_text_child,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_destroy,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_first_child,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_focus,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_get_attribute,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_get_bounding_rect,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_get_computed_style,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_get_height,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_get_offset_x,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_get_offset_y,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_get_scroll_height,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_get_scroll_left,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_get_scroll_top,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_get_scroll_width,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_get_width,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_has_focus,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_insert_before,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_next_sibling,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_parent,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_remove_all_child_nodes,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_remove_attribute,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_remove_child,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_remove_event_callback,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_remove_style,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_scroll_by,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_scroll_to,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_align_items,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_attribute,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_background_color,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_class,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_color,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_display,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_event_callback,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_flex_basis,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_flex_direction,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_flex_grow,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_flex_shrink,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_flex_wrap,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_font_family,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_font_size,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_font_style,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_font_weight,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_height,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_id,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_image_data,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_image_encoded,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_justify_content,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_line_height,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_margin,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_max_height,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_max_width,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_min_height,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_min_width,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_opacity,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_overflow,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_padding,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_position,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_style,replaced,typed property setters / oui_element_set_property
+rust,oui_element_set_text_align,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_text_content,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_width,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_element_set_z_index,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_free,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_init,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_shutdown,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_text_node_destroy,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,oui_text_node_set_data,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,out_of_flow,migrate,safe openui v0.2 API over openui-engine
+rust,out_of_flow,migrate,safe openui v0.2 API over openui-engine
+rust,overlaps_float,migrate,safe openui v0.2 API over openui-engine
+rust,padding_box_size,migrate,safe openui v0.2 API over openui-engine
+rust,paint_emphasis_marks,migrate,safe openui v0.2 API over openui-engine
+rust,paint_fragment,migrate,safe openui v0.2 API over openui-engine
+rust,paint_svg_resource_patch,migrate,safe openui v0.2 API over openui-engine
+rust,paint_text,migrate,safe openui v0.2 API over openui-engine
+rust,paint_text_combine,migrate,safe openui v0.2 API over openui-engine
+rust,paint_text_decorations,migrate,safe openui v0.2 API over openui-engine
+rust,paint_text_shadows,migrate,safe openui v0.2 API over openui-engine
+rust,paint_text_with_raster_policy,migrate,safe openui v0.2 API over openui-engine
+rust,paint_transform,migrate,safe openui v0.2 API over openui-engine
+rust,paint_vertical_text,migrate,safe openui v0.2 API over openui-engine
+rust,painter,migrate,safe openui v0.2 API over openui-engine
+rust,painter,migrate,safe openui v0.2 API over openui-engine
+rust,paragraph,migrate,safe openui v0.2 API over openui-engine
+rust,parent,migrate,safe openui v0.2 API over openui-engine
+rust,pct,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,pct,migrate,safe openui v0.2 API over openui-engine
+rust,percent,migrate,safe openui v0.2 API over openui-engine
+rust,physical_offset,migrate,safe openui v0.2 API over openui-engine
+rust,physical_rect,migrate,safe openui v0.2 API over openui-engine
+rust,physical_size,migrate,safe openui v0.2 API over openui-engine
+rust,physical_size,migrate,safe openui v0.2 API over openui-engine
+rust,pixels,migrate,safe openui v0.2 API over openui-engine
+rust,platform,migrate,safe openui v0.2 API over openui-engine
+rust,platform_fallback_for_character,migrate,safe openui v0.2 API over openui-engine
+rust,position_all,migrate,safe openui v0.2 API over openui-engine
+rust,position_float,migrate,safe openui v0.2 API over openui-engine
+rust,prelude,migrate,safe openui v0.2 API over openui-engine
+rust,prepend_child,migrate,safe openui v0.2 API over openui-engine
+rust,preprocess_text_for_shaping,migrate,safe openui v0.2 API over openui-engine
+rust,primary,migrate,safe openui v0.2 API over openui-engine
+rust,primary_font,migrate,safe openui v0.2 API over openui-engine
+rust,process_white_space,migrate,safe openui v0.2 API over openui-engine
+rust,px,migrate,safe openui v0.2 API over openui-engine
+rust,px,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,px,migrate,safe openui v0.2 API over openui-engine
+rust,quantized_image_patch,migrate,safe openui v0.2 API over openui-engine
+rust,quantized_repeated_image,migrate,safe openui v0.2 API over openui-engine
+rust,quirky_container_sum,migrate,safe openui v0.2 API over openui-engine
+rust,raw,migrate,safe openui v0.2 API over openui-engine
+rust,register_image_resource,migrate,safe openui v0.2 API over openui-engine
+rust,relative,migrate,safe openui v0.2 API over openui-engine
+rust,relative,migrate,safe openui v0.2 API over openui-engine
+rust,relative,migrate,safe openui v0.2 API over openui-engine
+rust,rem,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,rem,migrate,safe openui v0.2 API over openui-engine
+rust,remaining,migrate,safe openui v0.2 API over openui-engine
+rust,remaining_block_size,migrate,safe openui v0.2 API over openui-engine
+rust,remaining_width,migrate,safe openui v0.2 API over openui-engine
+rust,remove_all_children,migrate,safe openui v0.2 API over openui-engine
+rust,remove_attribute,migrate,safe openui v0.2 API over openui-engine
+rust,remove_child,migrate,safe openui v0.2 API over openui-engine
+rust,remove_event,migrate,safe openui v0.2 API over openui-engine
+rust,remove_style,migrate,safe openui v0.2 API over openui-engine
+rust,render,migrate,safe openui v0.2 API over openui-engine
+rust,render,migrate,safe openui v0.2 API over openui-engine
+rust,render_to_bitmap,migrate,safe openui v0.2 API over openui-engine
+rust,render_to_bitmap,migrate,safe openui v0.2 API over openui-engine
+rust,render_to_png,migrate,safe openui v0.2 API over openui-engine
+rust,render_to_png,migrate,safe openui v0.2 API over openui-engine
+rust,render_to_png,migrate,safe openui v0.2 API over openui-engine
+rust,render_to_png_buffer,migrate,safe openui v0.2 API over openui-engine
+rust,render_to_png_buffer,migrate,safe openui v0.2 API over openui-engine
+rust,render_to_surface,migrate,safe openui v0.2 API over openui-engine
+rust,renderer,migrate,safe openui v0.2 API over openui-engine
+rust,renderer,migrate,safe openui v0.2 API over openui-engine
+rust,requires_scoring,migrate,safe openui v0.2 API over openui-engine
+rust,resolve,migrate,safe openui v0.2 API over openui-engine
+rust,resolve,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_align_self,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_bfc_block_offset,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_block_size,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_border,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_column_count_and_width,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_content_alignment,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_cross_auto_margins,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_emphasis_color,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_emphasis_mark,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_first_line_style,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_inline_size,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_length,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_main_auto_margins,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_margin_or_padding,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_margins,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_new_fc_margins,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_padding,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_preferred_size,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_size_constraints,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_sizing_keyword,migrate,safe openui v0.2 API over openui-engine
+rust,resolve_text_run_orientation,migrate,safe openui v0.2 API over openui-engine
+rust,resolved_offset,migrate,safe openui v0.2 API over openui-engine
+rust,restore,migrate,safe openui v0.2 API over openui-engine
+rust,resume_inline_from_break_token,migrate,safe openui v0.2 API over openui-engine
+rust,right,migrate,safe openui v0.2 API over openui-engine
+rust,root,migrate,safe openui v0.2 API over openui-engine
+rust,round,migrate,safe openui v0.2 API over openui-engine
+rust,round_i32,migrate,safe openui v0.2 API over openui-engine
+rust,ruby,migrate,safe openui v0.2 API over openui-engine
+rust,ruby,migrate,safe openui v0.2 API over openui-engine
+rust,run,migrate,safe openui v0.2 API over openui-engine
+rust,run_frames,migrate,safe openui v0.2 API over openui-engine
+rust,runs,migrate,safe openui v0.2 API over openui-engine
+rust,runtime,migrate,safe openui v0.2 API over openui-engine
+rust,runtime,migrate,safe openui v0.2 API over openui-engine
+rust,safe_to_break_before,migrate,safe openui v0.2 API over openui-engine
+rust,scope,migrate,safe openui v0.2 API over openui-engine
+rust,scope,migrate,safe openui v0.2 API over openui-engine
+rust,score_line_break,migrate,safe openui v0.2 API over openui-engine
+rust,score_line_breaker,migrate,safe openui v0.2 API over openui-engine
+rust,scroll_by,migrate,safe openui v0.2 API over openui-engine
+rust,scroll_height,migrate,safe openui v0.2 API over openui-engine
+rust,scroll_left,migrate,safe openui v0.2 API over openui-engine
+rust,scroll_to,migrate,safe openui v0.2 API over openui-engine
+rust,scroll_top,migrate,safe openui v0.2 API over openui-engine
+rust,scroll_width,migrate,safe openui v0.2 API over openui-engine
+rust,scrollable_overflow,migrate,safe openui v0.2 API over openui-engine
+rust,segment,migrate,safe openui v0.2 API over openui-engine
+rust,segmenter,migrate,safe openui v0.2 API over openui-engine
+rust,set,migrate,safe openui v0.2 API over openui-engine
+rust,set_align_items,migrate,safe openui v0.2 API over openui-engine
+rust,set_attribute,migrate,safe openui v0.2 API over openui-engine
+rust,set_attribute,migrate,safe openui v0.2 API over openui-engine
+rust,set_available_size,migrate,safe openui v0.2 API over openui-engine
+rust,set_background_color,migrate,safe openui v0.2 API over openui-engine
+rust,set_bfc_offset,migrate,safe openui v0.2 API over openui-engine
+rust,set_block_offset_in_fragmentainer,migrate,safe openui v0.2 API over openui-engine
+rust,set_class,migrate,safe openui v0.2 API over openui-engine
+rust,set_color,migrate,safe openui v0.2 API over openui-engine
+rust,set_container_white_space,migrate,safe openui v0.2 API over openui-engine
+rust,set_data,migrate,safe openui v0.2 API over openui-engine
+rust,set_display,migrate,safe openui v0.2 API over openui-engine
+rust,set_exclusion_space,migrate,safe openui v0.2 API over openui-engine
+rust,set_flex_basis,migrate,safe openui v0.2 API over openui-engine
+rust,set_flex_direction,migrate,safe openui v0.2 API over openui-engine
+rust,set_flex_grow,migrate,safe openui v0.2 API over openui-engine
+rust,set_flex_shrink,migrate,safe openui v0.2 API over openui-engine
+rust,set_flex_wrap,migrate,safe openui v0.2 API over openui-engine
+rust,set_floats_bfc_block_offset,migrate,safe openui v0.2 API over openui-engine
+rust,set_font_family,migrate,safe openui v0.2 API over openui-engine
+rust,set_font_size,migrate,safe openui v0.2 API over openui-engine
+rust,set_font_style,migrate,safe openui v0.2 API over openui-engine
+rust,set_font_weight,migrate,safe openui v0.2 API over openui-engine
+rust,set_fragmentainer_block_size,migrate,safe openui v0.2 API over openui-engine
+rust,set_height,migrate,safe openui v0.2 API over openui-engine
+rust,set_hyphens,migrate,safe openui v0.2 API over openui-engine
+rust,set_id,migrate,safe openui v0.2 API over openui-engine
+rust,set_image_data,migrate,safe openui v0.2 API over openui-engine
+rust,set_image_encoded,migrate,safe openui v0.2 API over openui-engine
+rust,set_is_fixed_block_size,migrate,safe openui v0.2 API over openui-engine
+rust,set_is_fixed_inline_size,migrate,safe openui v0.2 API over openui-engine
+rust,set_is_initial_block_size_indefinite,migrate,safe openui v0.2 API over openui-engine
+rust,set_is_new_formatting_context,migrate,safe openui v0.2 API over openui-engine
+rust,set_is_resuming,migrate,safe openui v0.2 API over openui-engine
+rust,set_justify_content,migrate,safe openui v0.2 API over openui-engine
+rust,set_legacy_canvas_body,migrate,safe openui v0.2 API over openui-engine
+rust,set_line_height,migrate,safe openui v0.2 API over openui-engine
+rust,set_margin,migrate,safe openui v0.2 API over openui-engine
+rust,set_max_height,migrate,safe openui v0.2 API over openui-engine
+rust,set_max_width,migrate,safe openui v0.2 API over openui-engine
+rust,set_min_height,migrate,safe openui v0.2 API over openui-engine
+rust,set_min_width,migrate,safe openui v0.2 API over openui-engine
+rust,set_needs_first_baseline,migrate,safe openui v0.2 API over openui-engine
+rust,set_needs_last_baseline,migrate,safe openui v0.2 API over openui-engine
+rust,set_opacity,migrate,safe openui v0.2 API over openui-engine
+rust,set_overflow,migrate,safe openui v0.2 API over openui-engine
+rust,set_overflow_clip,migrate,safe openui v0.2 API over openui-engine
+rust,set_padding,migrate,safe openui v0.2 API over openui-engine
+rust,set_percentage_resolution_size,migrate,safe openui v0.2 API over openui-engine
+rust,set_position,migrate,safe openui v0.2 API over openui-engine
+rust,set_resource_provider,migrate,safe openui v0.2 API over openui-engine
+rust,set_resource_provider,migrate,safe openui v0.2 API over openui-engine
+rust,set_stretch_block_size,migrate,safe openui v0.2 API over openui-engine
+rust,set_stretch_inline_size,migrate,safe openui v0.2 API over openui-engine
+rust,set_style,replaced,typed property setters / oui_element_set_property
+rust,set_text,migrate,safe openui v0.2 API over openui-engine
+rust,set_text_align,migrate,safe openui v0.2 API over openui-engine
+rust,set_text_align,migrate,safe openui v0.2 API over openui-engine
+rust,set_viewport,migrate,safe openui v0.2 API over openui-engine
+rust,set_viewport,migrate,safe openui v0.2 API over openui-engine
+rust,set_width,migrate,safe openui v0.2 API over openui-engine
+rust,set_writing_direction,migrate,safe openui v0.2 API over openui-engine
+rust,set_writing_direction_from_parent,migrate,safe openui v0.2 API over openui-engine
+rust,set_z_index,migrate,safe openui v0.2 API over openui-engine
+rust,shape,migrate,safe openui v0.2 API over openui-engine
+rust,shape_result,migrate,safe openui v0.2 API over openui-engine
+rust,shape_text,migrate,safe openui v0.2 API over openui-engine
+rust,shaper,migrate,safe openui v0.2 API over openui-engine
+rust,shaping,migrate,safe openui v0.2 API over openui-engine
+rust,shaping,migrate,safe openui v0.2 API over openui-engine
+rust,should_break_after,migrate,safe openui v0.2 API over openui-engine
+rust,should_break_before,migrate,safe openui v0.2 API over openui-engine
+rust,should_draw_emphasis_mark,migrate,safe openui v0.2 API over openui-engine
+rust,should_hyphenate,migrate,safe openui v0.2 API over openui-engine
+rust,should_margins_collapse_through,migrate,safe openui v0.2 API over openui-engine
+rust,should_resolve_bfc_offset,migrate,safe openui v0.2 API over openui-engine
+rust,should_use_scoring,migrate,safe openui v0.2 API over openui-engine
+rust,shrink,migrate,safe openui v0.2 API over openui-engine
+rust,shrink_to,migrate,safe openui v0.2 API over openui-engine
+rust,shrink_to_fit_inline_size,migrate,safe openui v0.2 API over openui-engine
+rust,signal,migrate,safe openui v0.2 API over openui-engine
+rust,signal,migrate,safe openui v0.2 API over openui-engine
+rust,single,migrate,safe openui v0.2 API over openui-engine
+rust,size,migrate,safe openui v0.2 API over openui-engine
+rust,size,migrate,safe openui v0.2 API over openui-engine
+rust,size_constraints,migrate,safe openui v0.2 API over openui-engine
+rust,size_constraints,migrate,safe openui v0.2 API over openui-engine
+rust,sk_font,migrate,safe openui v0.2 API over openui-engine
+rust,snapshot,migrate,safe openui v0.2 API over openui-engine
+rust,snapshot,migrate,safe openui v0.2 API over openui-engine
+rust,split_first_letter,migrate,safe openui v0.2 API over openui-engine
+rust,split_shaping_runs,migrate,safe openui v0.2 API over openui-engine
+rust,start,migrate,safe openui v0.2 API over openui-engine
+rust,sticky,migrate,safe openui v0.2 API over openui-engine
+rust,sticky,migrate,safe openui v0.2 API over openui-engine
+rust,stretch,migrate,safe openui v0.2 API over openui-engine
+rust,stride,migrate,safe openui v0.2 API over openui-engine
+rust,strip_soft_hyphens,migrate,safe openui v0.2 API over openui-engine
+rust,style,migrate,safe openui v0.2 API over openui-engine
+rust,style,migrate,safe openui v0.2 API over openui-engine
+rust,style_mut,migrate,safe openui v0.2 API over openui-engine
+rust,style_to_font_description,migrate,safe openui v0.2 API over openui-engine
+rust,style_to_font_description,migrate,safe openui v0.2 API over openui-engine
+rust,sub_range,migrate,safe openui v0.2 API over openui-engine
+rust,success,migrate,safe openui v0.2 API over openui-engine
+rust,sum,migrate,safe openui v0.2 API over openui-engine
+rust,suppress_marker,migrate,safe openui v0.2 API over openui-engine
+rust,synthetic_oblique_angle,migrate,safe openui v0.2 API over openui-engine
+rust,table,migrate,safe openui v0.2 API over openui-engine
+rust,table,migrate,safe openui v0.2 API over openui-engine
+rust,table_layout,migrate,safe openui v0.2 API over openui-engine
+rust,tag_to_u32,migrate,safe openui v0.2 API over openui-engine
+rust,text,migrate,safe openui v0.2 API over openui-engine
+rust,text_combine,migrate,safe openui v0.2 API over openui-engine
+rust,text_node,migrate,safe openui v0.2 API over openui-engine
+rust,text_node,migrate,safe openui v0.2 API over openui-engine
+rust,text_painter,migrate,safe openui v0.2 API over openui-engine
+rust,to_f32,migrate,safe openui v0.2 API over openui-engine
+rust,to_f32_rect,migrate,safe openui v0.2 API over openui-engine
+rust,to_f64,migrate,safe openui v0.2 API over openui-engine
+rust,to_i32,migrate,safe openui v0.2 API over openui-engine
+rust,to_logical,migrate,safe openui v0.2 API over openui-engine
+rust,to_logical_offset,migrate,safe openui v0.2 API over openui-engine
+rust,to_logical_rect,migrate,safe openui v0.2 API over openui-engine
+rust,to_logical_size,migrate,safe openui v0.2 API over openui-engine
+rust,to_physical,migrate,safe openui v0.2 API over openui-engine
+rust,to_physical_offset,migrate,safe openui v0.2 API over openui-engine
+rust,to_physical_rect,migrate,safe openui v0.2 API over openui-engine
+rust,to_physical_size,migrate,safe openui v0.2 API over openui-engine
+rust,to_pixel_snapped,migrate,safe openui v0.2 API over openui-engine
+rust,to_sk_color4f,migrate,safe openui v0.2 API over openui-engine
+rust,to_sk_font_style,migrate,safe openui v0.2 API over openui-engine
+rust,to_skia_features,migrate,safe openui v0.2 API over openui-engine
+rust,to_text_blob,migrate,safe openui v0.2 API over openui-engine
+rust,to_text_blob_with_lcd_origin,migrate,safe openui v0.2 API over openui-engine
+rust,to_text_blob_with_raster_policy,migrate,safe openui v0.2 API over openui-engine
+rust,to_writing_direction,migrate,safe openui v0.2 API over openui-engine
+rust,transform,migrate,safe openui v0.2 API over openui-engine
+rust,transform,migrate,safe openui v0.2 API over openui-engine
+rust,transition_penalty,migrate,safe openui v0.2 API over openui-engine
+rust,tree,migrate,safe openui v0.2 API over openui-engine
+rust,typeface,migrate,safe openui v0.2 API over openui-engine
+rust,unconstrained,migrate,safe openui v0.2 API over openui-engine
+rust,unicode_script,migrate,safe openui v0.2 API over openui-engine
+rust,union,migrate,safe openui v0.2 API over openui-engine
+rust,unite,migrate,safe openui v0.2 API over openui-engine
+rust,update,migrate,safe openui v0.2 API over openui-engine
+rust,update_all,migrate,safe openui v0.2 API over openui-engine
+rust,used_line_height,migrate,safe openui v0.2 API over openui-engine
+rust,used_line_height_metrics,migrate,safe openui v0.2 API over openui-engine
+rust,uses_horizontal_shaping,migrate,safe openui v0.2 API over openui-engine
+rust,uses_lcd_author_text,migrate,safe openui v0.2 API over openui-engine
+rust,uses_native_control_text,migrate,safe openui v0.2 API over openui-engine
+rust,uses_scoring,migrate,safe openui v0.2 API over openui-engine
+rust,uses_vertical_metrics,migrate,safe openui v0.2 API over openui-engine
+rust,validate_initial_letter,migrate,safe openui v0.2 API over openui-engine
+rust,value,migrate,safe openui v0.2 API over openui-engine
+rust,vertical_advance,migrate,safe openui v0.2 API over openui-engine
+rust,vertical_origin_y,migrate,safe openui v0.2 API over openui-engine
+rust,vh,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,vh,migrate,safe openui v0.2 API over openui-engine
+rust,view,migrate,safe openui v0.2 API over openui-engine
+rust,view_node,migrate,safe openui v0.2 API over openui-engine
+rust,view_node,migrate,safe openui v0.2 API over openui-engine
+rust,visual_runs,migrate,safe openui v0.2 API over openui-engine
+rust,vw,historical,openui-ffi (C callers) or openui-engine (Rust callers)
+rust,vw,migrate,safe openui v0.2 API over openui-engine
+rust,width,migrate,safe openui v0.2 API over openui-engine
+rust,width,migrate,safe openui v0.2 API over openui-engine
+rust,width,migrate,safe openui v0.2 API over openui-engine
+rust,width,migrate,safe openui v0.2 API over openui-engine
+rust,width,migrate,safe openui v0.2 API over openui-engine
+rust,width,migrate,safe openui v0.2 API over openui-engine
+rust,width_for_line,migrate,safe openui v0.2 API over openui-engine
+rust,width_for_range,migrate,safe openui v0.2 API over openui-engine
+rust,with_distribution,migrate,safe openui v0.2 API over openui-engine
+rust,with_document,migrate,safe openui v0.2 API over openui-engine
+rust,with_drop_cap,migrate,safe openui v0.2 API over openui-engine
+rust,with_family_and_size,migrate,safe openui v0.2 API over openui-engine
+rust,with_oblique_angle,migrate,safe openui v0.2 API over openui-engine
+rust,with_overflow,migrate,safe openui v0.2 API over openui-engine
+rust,with_synthetic_styles,migrate,safe openui v0.2 API over openui-engine
+rust,with_synthetic_styles_and_native_metrics,migrate,safe openui v0.2 API over openui-engine
+rust,writing_direction,migrate,safe openui v0.2 API over openui-engine
+rust,writing_direction,migrate,safe openui v0.2 API over openui-engine
+rust,writing_mode,migrate,safe openui v0.2 API over openui-engine
+rust,x,migrate,safe openui v0.2 API over openui-engine
+rust,x_position_for_offset,migrate,safe openui v0.2 API over openui-engine
+rust,y,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine
+rust,zero,migrate,safe openui v0.2 API over openui-engine

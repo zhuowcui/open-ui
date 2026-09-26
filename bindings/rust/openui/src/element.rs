@@ -1,623 +1,772 @@
-//! Safe wrapper around a DOM element in the Blink rendering tree.
-//!
-//! An [`Element`] is always associated with a [`Document`](crate::Document).
-//! Elements obtained via tree traversal (e.g. `first_child`, `parent`) are
-//! *borrowed* — they do not destroy the underlying C object on drop. Elements
-//! created with [`Element::create`] are *owned* and will call
-//! `oui_element_destroy` when dropped.
+//! Generation-checked element handles for the native retained engine.
 
-use crate::events::{
-    event_trampoline, free_all_callbacks_for, free_callback, store_callback, Event,
+use crate::document::{Document, DocumentInner};
+use crate::events::{Event, Listener};
+use crate::style::{Error, Rect};
+use openui_dom::ElementTag;
+use openui_engine::{
+    AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole, AnimationId,
+    AnimationTimeline, NodeHandle, ScrollAnimationId, WeakNode,
 };
-use crate::style::{
-    check_status, AlignItems, Display, FlexDirection, FlexWrap, FontStyle, JustifyContent, Length,
-    OuiError, Overflow, Position, Rect, TextAlign,
+use openui_style::{
+    AnimationOptions, Display, Keyframes, PropertyKeyframes, Style, StyleProperty, StyleValue,
+    TimelineAxis, TimelineRange,
 };
-use std::ffi::{c_void, CStr, CString};
+use std::rc::{Rc, Weak};
 
-/// An element in the document tree.
-///
-/// If `owned` is `true` (created via [`Element::create`]), the underlying C
-/// element is destroyed when this value is dropped. Borrowed elements
-/// (obtained from tree traversal or `Document::body`) do **not** destroy their
-/// backing C object.
+#[derive(Clone)]
 pub struct Element {
-    raw: *mut openui_sys::OuiElement,
-    owned: bool,
+    pub(crate) document: Document,
+    pub(crate) handle: NodeHandle,
+}
+
+impl std::fmt::Debug for Element {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Element")
+            .field("document", &self.handle.document_id())
+            .field("index", &self.handle.index())
+            .field("generation", &self.handle.generation())
+            .finish()
+    }
+}
+
+#[derive(Clone)]
+pub struct WeakElement {
+    document: Weak<DocumentInner>,
+    handle: WeakNode,
+}
+
+impl WeakElement {
+    pub fn upgrade(&self) -> Option<Element> {
+        let inner = self.document.upgrade()?;
+        let document = Document { inner };
+        let handle = document
+            .with_engine(|engine| self.handle.upgrade(engine))
+            .ok()?
+            .ok()?;
+        Some(Element { document, handle })
+    }
 }
 
 impl Element {
-    /// Create a new element with the given HTML tag name.
-    ///
-    /// The element is initially detached — call `append_child` on a parent
-    /// to insert it into the document tree.
-    pub fn create(doc: &crate::Document, tag: &str) -> Result<Self, OuiError> {
-        let c_tag = CString::new(tag).map_err(|_| OuiError::InvalidArgument)?;
-        let raw = unsafe { openui_sys::oui_element_create(doc.as_raw(), c_tag.as_ptr()) };
-        if raw.is_null() {
-            return Err(OuiError::CreationFailed);
+    pub fn create(document: &Document, tag: &str) -> Result<Self, Error> {
+        let (tag_kind, display) = tag_definition(tag)?;
+        let handle = document.with_engine_mut(|engine| engine.create_element(tag_kind))?;
+        if let Some(display) = display {
+            document.with_engine_mut(|engine| {
+                engine.set_property(handle, StyleProperty::Display, display.into())
+            })?;
         }
-        Ok(Element { raw, owned: true })
+        Ok(Self::from_handle(document.clone(), handle))
     }
 
-    /// Wrap a raw FFI pointer.
-    ///
-    /// If `owned` is `true`, the element will be destroyed on drop.
-    pub(crate) fn from_raw(raw: *mut openui_sys::OuiElement, owned: bool) -> Self {
-        Element { raw, owned }
+    pub(crate) fn from_handle(document: Document, handle: NodeHandle) -> Self {
+        Self { document, handle }
     }
 
-    // ─── DOM tree manipulation ──────────────────────────────
-
-    /// Append `child` as the last child of this element.
-    pub fn append_child(&self, child: &Element) {
-        unsafe { openui_sys::oui_element_append_child(self.raw, child.raw) };
-    }
-
-    /// Append a DOM text node to this element.
-    ///
-    /// Creates a proper `Text` node in the DOM (not wrapped in a `<span>`).
-    /// This preserves correct CSS selector behavior when text and elements
-    /// are siblings (e.g., `$9<span>/mo</span>`).
-    pub fn append_text_node(&self, text: &str) {
-        let c_text = std::ffi::CString::new(text).expect("text contains null byte");
-        unsafe { openui_sys::oui_element_append_text(self.raw, c_text.as_ptr()) };
-    }
-
-    /// Create and append a DOM Text node, returning a mutable handle.
-    ///
-    /// Unlike [`append_text_node`](Self::append_text_node), the returned
-    /// [`TextNode`](crate::TextNode) can be updated later via
-    /// [`set_data`](crate::TextNode::set_data), making it suitable for
-    /// reactive text content.
-    pub fn create_text_child(&self, text: &str) -> crate::TextNode {
-        let c_text = CString::new(text).unwrap_or_default();
-        let raw = unsafe { openui_sys::oui_element_create_text_child(self.raw, c_text.as_ptr()) };
-        assert!(!raw.is_null(), "failed to create text child");
-        unsafe { crate::TextNode::from_raw(raw) }
-    }
-
-    /// Remove `child` from this element's children.
-    pub fn remove_child(&self, child: &Element) {
-        unsafe { openui_sys::oui_element_remove_child(self.raw, child.raw) };
-    }
-
-    /// Insert `child` before `before` in this element's child list.
-    pub fn insert_before(&self, child: &Element, before: &Element) {
-        unsafe { openui_sys::oui_element_insert_before(self.raw, child.raw, before.raw) };
-    }
-
-    /// Get the first child element, if any.
-    pub fn first_child(&self) -> Option<Element> {
-        let raw = unsafe { openui_sys::oui_element_first_child(self.raw) };
-        if raw.is_null() {
-            None
-        } else {
-            Some(Element::from_raw(raw, false))
+    pub fn downgrade(&self) -> WeakElement {
+        WeakElement {
+            document: Rc::downgrade(&self.document.inner),
+            handle: self.handle.downgrade(),
         }
     }
 
-    /// Get the next sibling element, if any.
-    pub fn next_sibling(&self) -> Option<Element> {
-        let raw = unsafe { openui_sys::oui_element_next_sibling(self.raw) };
-        if raw.is_null() {
-            None
-        } else {
-            Some(Element::from_raw(raw, false))
+    pub fn append_child(&self, child: &Element) -> Result<(), Error> {
+        if !Rc::ptr_eq(&self.document.inner, &child.document.inner) {
+            return Err(openui_engine::EngineError::WrongDocument.into());
         }
+        self.document
+            .with_engine_mut(|engine| engine.append_or_move_child(self.handle, child.handle))
     }
 
-    /// Get the parent element, if any.
-    pub fn parent(&self) -> Option<Element> {
-        let raw = unsafe { openui_sys::oui_element_parent(self.raw) };
-        if raw.is_null() {
-            None
-        } else {
-            Some(Element::from_raw(raw, false))
+    pub fn insert_before(&self, child: &Element, before: &Element) -> Result<(), Error> {
+        if !Rc::ptr_eq(&self.document.inner, &child.document.inner)
+            || !Rc::ptr_eq(&self.document.inner, &before.document.inner)
+        {
+            return Err(openui_engine::EngineError::WrongDocument.into());
         }
-    }
-
-    // ─── Generic style ──────────────────────────────────────
-
-    /// Set a CSS property by name and string value.
-    pub fn set_style(&self, property: &str, value: &str) -> Result<(), OuiError> {
-        let c_prop = CString::new(property).map_err(|_| OuiError::InvalidArgument)?;
-        let c_val = CString::new(value).map_err(|_| OuiError::InvalidArgument)?;
-        check_status(unsafe {
-            openui_sys::oui_element_set_style(self.raw, c_prop.as_ptr(), c_val.as_ptr())
+        self.document.with_engine_mut(|engine| {
+            engine.insert_before(self.handle, child.handle, before.handle)
         })
     }
 
-    /// Remove a CSS property by name.
-    pub fn remove_style(&self, property: &str) -> Result<(), OuiError> {
-        let c_prop = CString::new(property).map_err(|_| OuiError::InvalidArgument)?;
-        check_status(unsafe { openui_sys::oui_element_remove_style(self.raw, c_prop.as_ptr()) })
-    }
-
-    /// Clear all inline styles.
-    pub fn clear_styles(&self) {
-        unsafe { openui_sys::oui_element_clear_styles(self.raw) };
-    }
-
-    /// Get the computed value of a CSS property.
-    ///
-    /// Returns `None` if the property has no computed value.
-    pub fn get_computed_style(&self, property: &str) -> Option<String> {
-        let c_prop = CString::new(property).ok()?;
-        let ptr = unsafe { openui_sys::oui_element_get_computed_style(self.raw, c_prop.as_ptr()) };
-        if ptr.is_null() {
-            None
-        } else {
-            let s = unsafe { CStr::from_ptr(ptr) }
-                .to_string_lossy()
-                .into_owned();
-            unsafe { openui_sys::oui_free(ptr as *mut c_void) };
-            Some(s)
+    pub fn remove_child(&self, child: &Element) -> Result<(), Error> {
+        if !Rc::ptr_eq(&self.document.inner, &child.document.inner) {
+            return Err(openui_engine::EngineError::WrongDocument.into());
         }
+        let parent = self
+            .document
+            .with_engine(|engine| engine.parent(child.handle))??;
+        if parent != Some(self.handle) {
+            return Err(openui_engine::EngineError::InvalidSibling.into());
+        }
+        self.document.remove_node(child.handle)
     }
 
-    // ─── Attributes ─────────────────────────────────────────
+    pub fn remove(&self) -> Result<(), Error> {
+        self.document.remove_node(self.handle)
+    }
 
-    /// Set an HTML attribute.
-    pub fn set_attribute(&self, name: &str, value: &str) -> Result<(), OuiError> {
-        let c_name = CString::new(name).map_err(|_| OuiError::InvalidArgument)?;
-        let c_val = CString::new(value).map_err(|_| OuiError::InvalidArgument)?;
-        check_status(unsafe {
-            openui_sys::oui_element_set_attribute(self.raw, c_name.as_ptr(), c_val.as_ptr())
+    pub fn first_child(&self) -> Result<Option<Element>, Error> {
+        let child = self
+            .document
+            .with_engine(|engine| engine.children(self.handle))??
+            .into_iter()
+            .next();
+        Ok(child.map(|handle| Self::from_handle(self.document.clone(), handle)))
+    }
+
+    pub fn next_sibling(&self) -> Result<Option<Element>, Error> {
+        let parent = self
+            .document
+            .with_engine(|engine| engine.parent(self.handle))??;
+        let Some(parent) = parent else {
+            return Ok(None);
+        };
+        let siblings = self
+            .document
+            .with_engine(|engine| engine.children(parent))??;
+        let next = siblings
+            .iter()
+            .position(|handle| *handle == self.handle)
+            .and_then(|index| siblings.get(index + 1))
+            .copied();
+        Ok(next.map(|handle| Self::from_handle(self.document.clone(), handle)))
+    }
+
+    pub fn parent(&self) -> Result<Option<Element>, Error> {
+        let parent = self
+            .document
+            .with_engine(|engine| engine.parent(self.handle))??;
+        Ok(parent.map(|handle| Self::from_handle(self.document.clone(), handle)))
+    }
+
+    pub fn append_text_node(&self, text: &str) -> Result<(), Error> {
+        let handle = self
+            .document
+            .with_engine_mut(|engine| engine.create_text(text))?;
+        self.document
+            .with_engine_mut(|engine| engine.append_child(self.handle, handle))
+    }
+
+    pub fn create_text_child(&self, text: &str) -> Result<crate::TextNode, Error> {
+        let handle = self
+            .document
+            .with_engine_mut(|engine| engine.create_text(text))?;
+        self.document
+            .with_engine_mut(|engine| engine.append_child(self.handle, handle))?;
+        Ok(crate::TextNode::from_handle(
+            self.document.clone(),
+            handle,
+            true,
+        ))
+    }
+
+    pub fn set_property(&self, property: StyleProperty, value: StyleValue) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_property(self.handle, property, value))
+    }
+
+    pub fn set_language(&self, language: &openui_style::LanguageTag) -> Result<(), Error> {
+        self.set_attribute("lang", language.as_str())
+    }
+
+    pub fn apply_style(&self, style: &Style) -> Result<(), Error> {
+        self.document.transaction(|_| {
+            for declaration in style.declarations() {
+                self.set_property(declaration.property, declaration.value.clone())?;
+            }
+            Ok(())
         })
     }
 
-    /// Remove an HTML attribute.
-    pub fn remove_attribute(&self, name: &str) -> Result<(), OuiError> {
-        let c_name = CString::new(name).map_err(|_| OuiError::InvalidArgument)?;
-        check_status(unsafe { openui_sys::oui_element_remove_attribute(self.raw, c_name.as_ptr()) })
+    /// Atomically replace a supported pseudo-element declaration list.
+    pub fn set_pseudo_style(
+        &self,
+        target: openui_style::PseudoStyleTarget,
+        style: &Style,
+    ) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_pseudo_style(self.handle, target, style))
     }
 
-    /// Get the value of an HTML attribute.
-    ///
-    /// Returns `None` if the attribute is not set.
-    pub fn get_attribute(&self, name: &str) -> Option<String> {
-        let c_name = CString::new(name).ok()?;
-        let ptr = unsafe { openui_sys::oui_element_get_attribute(self.raw, c_name.as_ptr()) };
-        if ptr.is_null() {
-            None
+    pub fn animate<T>(
+        &self,
+        property: StyleProperty,
+        keyframes: Keyframes<T>,
+        options: AnimationOptions,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        let keyframes = PropertyKeyframes::typed(property, keyframes)?;
+        self.document.with_engine_mut(|engine| {
+            engine.animate(self.handle, keyframes, options, AnimationTimeline::Document)
+        })
+    }
+
+    pub fn animate_on_scroll<T>(
+        &self,
+        property: StyleProperty,
+        keyframes: Keyframes<T>,
+        options: AnimationOptions,
+        source: &Element,
+        axis: TimelineAxis,
+        range: TimelineRange,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        self.ensure_same_document(source)?;
+        let keyframes = PropertyKeyframes::typed(property, keyframes)?;
+        self.document.with_engine_mut(|engine| {
+            engine.animate(
+                self.handle,
+                keyframes,
+                options,
+                AnimationTimeline::Scroll {
+                    source: source.handle,
+                    axis,
+                    range,
+                },
+            )
+        })
+    }
+
+    pub fn animate_on_view<T>(
+        &self,
+        property: StyleProperty,
+        keyframes: Keyframes<T>,
+        options: AnimationOptions,
+        subject: &Element,
+        axis: TimelineAxis,
+        range: TimelineRange,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        self.ensure_same_document(subject)?;
+        let keyframes = PropertyKeyframes::typed(property, keyframes)?;
+        self.document.with_engine_mut(|engine| {
+            engine.animate(
+                self.handle,
+                keyframes,
+                options,
+                AnimationTimeline::View {
+                    subject: subject.handle,
+                    axis,
+                    range,
+                },
+            )
+        })
+    }
+
+    pub fn transition<T>(
+        &self,
+        property: StyleProperty,
+        to: T,
+        options: AnimationOptions,
+    ) -> Result<AnimationId, Error>
+    where
+        T: Into<StyleValue>,
+    {
+        self.document
+            .with_engine_mut(|engine| engine.transition(self.handle, property, to, options))
+    }
+
+    pub fn smooth_scroll_to(
+        &self,
+        x: f64,
+        y: f64,
+        duration_ms: f64,
+        easing: openui_style::Easing,
+    ) -> Result<ScrollAnimationId, Error> {
+        self.document.with_engine_mut(|engine| {
+            engine.smooth_scroll_to(self.handle, x, y, duration_ms, easing)
+        })
+    }
+
+    pub fn settle_scroll_snap(
+        &self,
+        snap_points_x: &[f64],
+        snap_points_y: &[f64],
+        duration_ms: f64,
+        easing: openui_style::Easing,
+    ) -> Result<Option<ScrollAnimationId>, Error> {
+        self.document.with_engine_mut(|engine| {
+            engine.settle_scroll_snap(
+                self.handle,
+                snap_points_x,
+                snap_points_y,
+                duration_ms,
+                easing,
+            )
+        })
+    }
+
+    fn ensure_same_document(&self, other: &Element) -> Result<(), Error> {
+        if Rc::ptr_eq(&self.document.inner, &other.document.inner) {
+            Ok(())
         } else {
-            let s = unsafe { CStr::from_ptr(ptr) }
-                .to_string_lossy()
-                .into_owned();
-            unsafe { openui_sys::oui_free(ptr as *mut c_void) };
-            Some(s)
+            Err(openui_engine::EngineError::WrongDocument.into())
         }
     }
 
-    /// Set the element's `id` attribute.
-    pub fn set_id(&self, id: &str) -> Result<(), OuiError> {
-        let c_id = CString::new(id).map_err(|_| OuiError::InvalidArgument)?;
-        check_status(unsafe { openui_sys::oui_element_set_id(self.raw, c_id.as_ptr()) })
+    pub fn set_attribute(&self, name: &str, value: &str) -> Result<(), Error> {
+        self.document.with_engine_mut(|engine| {
+            engine.set_attribute(self.handle, name.to_owned(), value.to_owned())
+        })
     }
 
-    /// Set the element's `class` attribute (space-separated class names).
-    pub fn set_class(&self, classes: &str) -> Result<(), OuiError> {
-        let c_cls = CString::new(classes).map_err(|_| OuiError::InvalidArgument)?;
-        check_status(unsafe { openui_sys::oui_element_set_class(self.raw, c_cls.as_ptr()) })
+    pub fn remove_attribute(&self, name: &str) -> Result<bool, Error> {
+        self.document
+            .with_engine_mut(|engine| engine.remove_attribute(self.handle, name))
     }
 
-    // ─── Text content ───────────────────────────────────────
-
-    /// Set the text content of this element, replacing all children.
-    pub fn set_text(&self, text: &str) -> Result<(), OuiError> {
-        let c_text = CString::new(text).map_err(|_| OuiError::InvalidArgument)?;
-        unsafe { openui_sys::oui_element_set_text_content(self.raw, c_text.as_ptr()) };
-        Ok(())
+    pub fn get_attribute(&self, name: &str) -> Result<Option<String>, Error> {
+        self.document
+            .with_engine(|engine| {
+                engine
+                    .attribute(self.handle, name)
+                    .map(|value| value.map(str::to_owned))
+            })?
+            .map_err(Into::into)
     }
 
-    // ─── Layout dimensions ──────────────────────────────────
-
-    /// Set the element's width.
-    pub fn set_width(&self, length: Length) {
-        unsafe { openui_sys::oui_element_set_width(self.raw, length) };
+    pub fn set_id(&self, id: &str) -> Result<(), Error> {
+        self.set_attribute("id", id)
     }
 
-    /// Set the element's height.
-    pub fn set_height(&self, length: Length) {
-        unsafe { openui_sys::oui_element_set_height(self.raw, length) };
+    pub fn set_class(&self, classes: &str) -> Result<(), Error> {
+        self.set_attribute("class", classes)
     }
 
-    /// Set the element's minimum width.
-    pub fn set_min_width(&self, length: Length) {
-        unsafe { openui_sys::oui_element_set_min_width(self.raw, length) };
+    pub fn set_text(&self, text: &str) -> Result<(), Error> {
+        self.remove_all_children()?;
+        self.append_text_node(text)
     }
 
-    /// Set the element's minimum height.
-    pub fn set_min_height(&self, length: Length) {
-        unsafe { openui_sys::oui_element_set_min_height(self.raw, length) };
+    pub fn set_image_resource(
+        &self,
+        resource: openui_style::ImageResourceId,
+        intrinsic_size: Option<(f32, f32)>,
+    ) -> Result<(), Error> {
+        self.document.with_engine_mut(|engine| {
+            engine.set_image_resource(self.handle, resource, intrinsic_size)
+        })
     }
 
-    /// Set the element's maximum width.
-    pub fn set_max_width(&self, length: Length) {
-        unsafe { openui_sys::oui_element_set_max_width(self.raw, length) };
+    pub fn set_accessibility_role(&self, role: AccessibilityRole) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_accessibility_role(self.handle, role))
     }
 
-    /// Set the element's maximum height.
-    pub fn set_max_height(&self, length: Length) {
-        unsafe { openui_sys::oui_element_set_max_height(self.raw, length) };
+    pub fn set_accessibility_label(&self, label: &str) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_accessibility_label(self.handle, label))
     }
 
-    // ─── Box model ──────────────────────────────────────────
-
-    /// Set margin on all four sides (values in pixels).
-    pub fn set_margin(&self, top: f32, right: f32, bottom: f32, left: f32) {
-        unsafe {
-            openui_sys::oui_element_set_margin(
-                self.raw,
-                Length::px(top),
-                Length::px(right),
-                Length::px(bottom),
-                Length::px(left),
-            )
-        };
+    pub fn set_accessibility_description(&self, description: &str) -> Result<(), Error> {
+        self.document.with_engine_mut(|engine| {
+            engine.set_accessibility_description(self.handle, description)
+        })
     }
 
-    /// Set padding on all four sides (values in pixels).
-    pub fn set_padding(&self, top: f32, right: f32, bottom: f32, left: f32) {
-        unsafe {
-            openui_sys::oui_element_set_padding(
-                self.raw,
-                Length::px(top),
-                Length::px(right),
-                Length::px(bottom),
-                Length::px(left),
-            )
-        };
+    pub fn set_accessibility_value(&self, value: &str) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_accessibility_value(self.handle, value))
     }
 
-    // ─── Display, position, overflow ────────────────────────
-
-    /// Set the CSS `display` property.
-    pub fn set_display(&self, display: Display) {
-        unsafe { openui_sys::oui_element_set_display(self.raw, display.into()) };
+    pub fn set_accessibility_live(&self, live: AccessibilityLive) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_accessibility_live(self.handle, live))
     }
 
-    /// Set the CSS `position` property.
-    pub fn set_position(&self, position: Position) {
-        unsafe { openui_sys::oui_element_set_position(self.raw, position.into()) };
+    pub fn set_accessibility_hidden(&self, hidden: bool) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_accessibility_hidden(self.handle, hidden))
     }
 
-    /// Set the CSS `overflow` property.
-    pub fn set_overflow(&self, overflow: Overflow) {
-        unsafe { openui_sys::oui_element_set_overflow(self.raw, overflow.into()) };
+    pub fn set_accessibility_relation(
+        &self,
+        relation: AccessibilityRelation,
+        targets: &[Element],
+    ) -> Result<(), Error> {
+        if targets
+            .iter()
+            .any(|target| !Rc::ptr_eq(&self.document.inner, &target.document.inner))
+        {
+            return Err(openui_engine::EngineError::WrongDocument.into());
+        }
+        let handles: Vec<_> = targets.iter().map(|target| target.handle).collect();
+        self.document.with_engine_mut(|engine| {
+            engine.set_accessibility_relation(self.handle, relation, &handles)
+        })
     }
 
-    // ─── Flexbox ────────────────────────────────────────────
-
-    /// Set the flex direction.
-    pub fn set_flex_direction(&self, dir: FlexDirection) {
-        unsafe { openui_sys::oui_element_set_flex_direction(self.raw, dir.into()) };
+    pub fn perform_accessibility_action(&self, action: AccessibilityAction) -> Result<(), Error> {
+        self.document
+            .perform_accessibility_action(self.handle, action)
     }
 
-    /// Set the flex wrap mode.
-    pub fn set_flex_wrap(&self, wrap: FlexWrap) {
-        unsafe { openui_sys::oui_element_set_flex_wrap(self.raw, wrap.into()) };
+    pub fn bounding_rect(&self) -> Result<Option<Rect>, Error> {
+        self.document
+            .with_engine_mut(|engine| engine.bounds(self.handle))
     }
 
-    /// Set the `flex-grow` factor.
-    pub fn set_flex_grow(&self, val: f32) {
-        unsafe { openui_sys::oui_element_set_flex_grow(self.raw, val) };
+    pub fn width(&self) -> Result<f32, Error> {
+        Ok(self.bounding_rect()?.map_or(0.0, |rect| rect.width))
     }
 
-    /// Set the `flex-shrink` factor.
-    pub fn set_flex_shrink(&self, val: f32) {
-        unsafe { openui_sys::oui_element_set_flex_shrink(self.raw, val) };
+    pub fn height(&self) -> Result<f32, Error> {
+        Ok(self.bounding_rect()?.map_or(0.0, |rect| rect.height))
     }
 
-    /// Set the `flex-basis` length.
-    pub fn set_flex_basis(&self, length: Length) {
-        unsafe { openui_sys::oui_element_set_flex_basis(self.raw, length) };
+    pub fn scroll_left(&self) -> Result<f64, Error> {
+        Ok(self
+            .document
+            .with_engine(|engine| engine.scroll_offset(self.handle))??
+            .0)
     }
 
-    /// Set the `align-items` property.
-    pub fn set_align_items(&self, align: AlignItems) {
-        unsafe { openui_sys::oui_element_set_align_items(self.raw, align.into()) };
+    pub fn scroll_top(&self) -> Result<f64, Error> {
+        Ok(self
+            .document
+            .with_engine(|engine| engine.scroll_offset(self.handle))??
+            .1)
     }
 
-    /// Set the `justify-content` property.
-    pub fn set_justify_content(&self, justify: JustifyContent) {
-        unsafe { openui_sys::oui_element_set_justify_content(self.raw, justify.into()) };
+    pub fn scroll_to(&self, x: f64, y: f64) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.scroll_to(self.handle, x, y))
     }
 
-    // ─── Colors & visuals ───────────────────────────────────
-
-    /// Set the text colour as an RGBA value (e.g. `0xFF0000FF` for red).
-    pub fn set_color(&self, rgba: u32) {
-        unsafe { openui_sys::oui_element_set_color(self.raw, rgba) };
+    pub fn scroll_by(&self, dx: f64, dy: f64) -> Result<(), Error> {
+        let (x, y) = self
+            .document
+            .with_engine(|engine| engine.scroll_offset(self.handle))??;
+        self.scroll_to(x + dx, y + dy)
     }
 
-    /// Set the background colour as an RGBA value.
-    pub fn set_background_color(&self, rgba: u32) {
-        unsafe { openui_sys::oui_element_set_background_color(self.raw, rgba) };
+    pub fn control_value(&self) -> Result<Option<String>, Error> {
+        self.document
+            .with_engine(|engine| {
+                engine
+                    .control_state(self.handle)
+                    .map(|state| state.map(|state| state.value.clone()))
+            })?
+            .map_err(Into::into)
     }
 
-    /// Set the opacity (0.0 = transparent, 1.0 = opaque).
-    pub fn set_opacity(&self, val: f32) {
-        unsafe { openui_sys::oui_element_set_opacity(self.raw, val) };
+    pub fn control_display_value(&self) -> Result<Option<String>, Error> {
+        self.document
+            .with_engine(|engine| {
+                engine
+                    .control_state(self.handle)
+                    .map(|state| state.map(openui_engine::ControlState::display_value))
+            })?
+            .map_err(Into::into)
     }
 
-    /// Set the z-index stacking order.
-    pub fn set_z_index(&self, val: i32) {
-        unsafe { openui_sys::oui_element_set_z_index(self.raw, val) };
+    pub fn set_control_value(&self, value: &str) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_control_value(self.handle, value))
     }
 
-    // ─── Font / text ────────────────────────────────────────
-
-    /// Set the font family name.
-    pub fn set_font_family(&self, family: &str) -> Result<(), OuiError> {
-        let c_family = CString::new(family).map_err(|_| OuiError::InvalidArgument)?;
-        unsafe { openui_sys::oui_element_set_font_family(self.raw, c_family.as_ptr()) };
-        Ok(())
+    pub fn selection(&self) -> Result<Option<(usize, usize)>, Error> {
+        self.document
+            .with_engine(|engine| {
+                engine
+                    .control_state(self.handle)
+                    .map(|state| state.map(openui_engine::ControlState::selection))
+            })?
+            .map_err(Into::into)
     }
 
-    /// Set the font size in pixels.
-    pub fn set_font_size(&self, size: f32) {
-        unsafe { openui_sys::oui_element_set_font_size(self.raw, Length::px(size)) };
+    pub fn set_selection(&self, anchor: usize, focus: usize) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_selection(self.handle, anchor, focus))
     }
 
-    /// Set the font weight (100–900, with 400 = normal, 700 = bold).
-    pub fn set_font_weight(&self, weight: i32) {
-        unsafe { openui_sys::oui_element_set_font_weight(self.raw, weight) };
+    pub fn is_checked(&self) -> Result<bool, Error> {
+        self.control_flag(|state| state.checked)
     }
 
-    /// Set the font style.
-    pub fn set_font_style(&self, style: FontStyle) {
-        unsafe { openui_sys::oui_element_set_font_style(self.raw, style.into()) };
+    pub fn is_selected(&self) -> Result<bool, Error> {
+        self.control_flag(|state| state.selected)
     }
 
-    /// Set the line height.
-    pub fn set_line_height(&self, length: Length) {
-        unsafe { openui_sys::oui_element_set_line_height(self.raw, length) };
+    pub fn is_open(&self) -> Result<bool, Error> {
+        self.control_flag(|state| state.open)
     }
 
-    /// Set the text alignment.
-    pub fn set_text_align(&self, align: TextAlign) {
-        unsafe { openui_sys::oui_element_set_text_align(self.raw, align.into()) };
+    pub fn is_indeterminate(&self) -> Result<bool, Error> {
+        self.control_flag(|state| state.indeterminate)
     }
 
-    // ─── Geometry queries ───────────────────────────────────
-
-    /// X offset relative to the offset parent.
-    pub fn offset_x(&self) -> f32 {
-        unsafe { openui_sys::oui_element_get_offset_x(self.raw) }
+    pub fn set_checked(&self, checked: bool) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_checked(self.handle, checked))
     }
 
-    /// Y offset relative to the offset parent.
-    pub fn offset_y(&self) -> f32 {
-        unsafe { openui_sys::oui_element_get_offset_y(self.raw) }
+    pub fn set_indeterminate(&self, indeterminate: bool) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_indeterminate(self.handle, indeterminate))
     }
 
-    /// Computed width after layout.
-    pub fn width(&self) -> f32 {
-        unsafe { openui_sys::oui_element_get_width(self.raw) }
+    pub fn is_hovered(&self) -> Result<bool, Error> {
+        self.document
+            .with_engine(|engine| engine.is_hovered(self.handle))?
+            .map_err(Into::into)
     }
 
-    /// Computed height after layout.
-    pub fn height(&self) -> f32 {
-        unsafe { openui_sys::oui_element_get_height(self.raw) }
+    pub fn is_active(&self) -> Result<bool, Error> {
+        self.document
+            .with_engine(|engine| engine.is_active(self.handle))?
+            .map_err(Into::into)
     }
 
-    /// Bounding rectangle in document coordinates.
-    pub fn bounding_rect(&self) -> Rect {
-        unsafe { openui_sys::oui_element_get_bounding_rect(self.raw) }.into()
+    pub fn focus(&self) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.focus(self.handle))
     }
 
-    // ─── Scroll ─────────────────────────────────────────────
-
-    /// Total scrollable width.
-    pub fn scroll_width(&self) -> f32 {
-        unsafe { openui_sys::oui_element_get_scroll_width(self.raw) }
+    pub fn blur(&self) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.blur(self.handle))
     }
 
-    /// Total scrollable height.
-    pub fn scroll_height(&self) -> f32 {
-        unsafe { openui_sys::oui_element_get_scroll_height(self.raw) }
+    pub fn has_focus(&self) -> Result<bool, Error> {
+        self.document
+            .with_engine(|engine| engine.focused() == Some(self.handle))
     }
 
-    /// Current horizontal scroll position.
-    pub fn scroll_left(&self) -> f64 {
-        unsafe { openui_sys::oui_element_get_scroll_left(self.raw) }
+    pub fn set_pointer_capture(&self, pointer_id: u64) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.set_pointer_capture(pointer_id, self.handle))
     }
 
-    /// Current vertical scroll position.
-    pub fn scroll_top(&self) -> f64 {
-        unsafe { openui_sys::oui_element_get_scroll_top(self.raw) }
+    pub fn release_pointer_capture(&self, pointer_id: u64) -> Result<(), Error> {
+        self.document
+            .with_engine_mut(|engine| engine.release_pointer_capture(pointer_id, self.handle))
     }
 
-    /// Scroll to an absolute position.
-    pub fn scroll_to(&self, x: f64, y: f64) -> Result<(), OuiError> {
-        check_status(unsafe { openui_sys::oui_element_scroll_to(self.raw, x, y) })
-    }
-
-    /// Scroll by a relative delta.
-    pub fn scroll_by(&self, dx: f64, dy: f64) -> Result<(), OuiError> {
-        check_status(unsafe { openui_sys::oui_element_scroll_by(self.raw, dx, dy) })
-    }
-
-    // ─── Focus ──────────────────────────────────────────────
-
-    /// Give this element keyboard focus.
-    pub fn focus(&self) -> Result<(), OuiError> {
-        check_status(unsafe { openui_sys::oui_element_focus(self.raw) })
-    }
-
-    /// Remove keyboard focus from this element.
-    pub fn blur(&self) -> Result<(), OuiError> {
-        check_status(unsafe { openui_sys::oui_element_blur(self.raw) })
-    }
-
-    /// Check whether this element currently has keyboard focus.
-    pub fn has_focus(&self) -> bool {
-        unsafe { openui_sys::oui_element_has_focus(self.raw) != 0 }
-    }
-
-    // ─── Events ─────────────────────────────────────────────
-
-    /// Register an event listener on this element.
-    ///
-    /// The closure is stored in a global registry and invoked via a C
-    /// trampoline whenever the event fires. Only one callback per event
-    /// type per element is supported; calling `on()` again for the same
-    /// event type replaces the previous callback.
-    pub fn on<F>(&self, event_type: &str, callback: F) -> Result<(), OuiError>
+    pub fn on<F>(&self, event_type: &str, callback: F) -> Result<(), Error>
     where
         F: Fn(&Event) + 'static,
     {
-        let boxed: Box<dyn Fn(&Event)> = Box::new(callback);
-        let user_data = Box::into_raw(Box::new(boxed)) as *mut c_void;
-
-        store_callback(self.raw as usize, event_type, user_data);
-
-        let c_event_type = CString::new(event_type).map_err(|_| OuiError::InvalidArgument)?;
-        check_status(unsafe {
-            openui_sys::oui_element_set_event_callback(
-                self.raw,
-                c_event_type.as_ptr(),
-                Some(event_trampoline),
-                user_data,
-            )
-        })
+        self.add_listener(event_type, false, callback)
     }
 
-    /// Remove a previously registered event listener.
-    pub fn remove_event(&self, event_type: &str) -> Result<(), OuiError> {
-        free_callback(self.raw as usize, event_type);
-        let c_event_type = CString::new(event_type).map_err(|_| OuiError::InvalidArgument)?;
-        check_status(unsafe {
-            openui_sys::oui_element_remove_event_callback(self.raw, c_event_type.as_ptr())
-        })
+    pub fn on_capture<F>(&self, event_type: &str, callback: F) -> Result<(), Error>
+    where
+        F: Fn(&Event) + 'static,
+    {
+        self.add_listener(event_type, true, callback)
     }
 
-    // ─── Image injection ────────────────────────────────────
-
-    /// Set raw RGBA pixel data on an `<img>` element.
-    pub fn set_image_data(&self, pixels: &[u8], width: i32, height: i32) -> Result<(), OuiError> {
-        check_status(unsafe {
-            openui_sys::oui_element_set_image_data(self.raw, pixels.as_ptr(), width, height)
-        })
+    pub fn remove_event(&self, event_type: &str) -> Result<(), Error> {
+        self.document.remove_listeners(self.handle, event_type)
     }
 
-    /// Set encoded image data (PNG, JPEG, etc.) on an `<img>` element.
-    pub fn set_image_encoded(&self, data: &[u8]) -> Result<(), OuiError> {
-        check_status(unsafe {
-            openui_sys::oui_element_set_image_encoded(self.raw, data.as_ptr(), data.len())
-        })
-    }
-
-    // ─── Raw access ─────────────────────────────────────────
-
-    /// Get the underlying raw FFI pointer (for advanced use).
-    pub fn as_raw(&self) -> *mut openui_sys::OuiElement {
-        self.raw
-    }
-
-    /// Create a **borrowed** (non-owning) `Element` handle from a raw pointer.
-    ///
-    /// The returned element will **not** destroy the underlying C object
-    /// when dropped. This is used by the `view!` macro to create references
-    /// inside reactive effects.
-    ///
-    /// # Safety
-    ///
-    /// `raw` must point to a valid, live `OuiElement` for the entire
-    /// lifetime of the returned handle.
-    #[doc(hidden)]
-    pub unsafe fn from_raw_borrowed(raw: *mut openui_sys::OuiElement) -> Self {
-        Element { raw, owned: false }
-    }
-
-    /// Create a borrowed (non-owning) reference to the same underlying element.
-    ///
-    /// The returned `Element` will **not** call `oui_element_destroy` on drop.
-    /// This is useful for capturing an element reference inside closures or
-    /// effects without transferring ownership.
-    ///
-    /// # Example
-    /// ```ignore
-    /// let el = Element::create(doc, "div").unwrap();
-    /// let el_ref = el.clone_ref();
-    /// create_effect(move || {
-    ///     el_ref.set_text("updated").ok();
-    /// });
-    /// ```
-    pub fn clone_ref(&self) -> Element {
-        Element {
-            raw: self.raw,
-            owned: false,
+    pub fn remove_all_children(&self) -> Result<(), Error> {
+        let children = self
+            .document
+            .with_engine(|engine| engine.children(self.handle))??;
+        for child in children {
+            self.document.remove_node(child)?;
         }
+        Ok(())
     }
 
-    /// Remove and destroy all child elements.
-    ///
-    /// Recursively destroys every descendant wrapper (callbacks + C++ objects)
-    /// in the child subtrees, then removes any remaining non-Element children
-    /// (text nodes) from the DOM.
-    ///
-    /// Used by reactive components (`Show`, `For`, `DynChild`) to clear a
-    /// container before re-rendering.
-    pub fn remove_all_children(&self) {
-        // Recursively destroy all element wrappers in child subtrees.
-        loop {
-            let child_raw = unsafe { openui_sys::oui_element_first_child(self.raw) };
-            if child_raw.is_null() {
-                break;
-            }
-            Self::destroy_subtree(child_raw);
-        }
-        // Remove any remaining child nodes (text nodes, etc.)
-        // that are invisible to oui_element_first_child.
-        unsafe { openui_sys::oui_element_remove_all_child_nodes(self.raw) };
+    fn add_listener<F>(&self, event_type: &str, capture: bool, callback: F) -> Result<(), Error>
+    where
+        F: Fn(&Event) + 'static,
+    {
+        self.document.add_listener(
+            self.handle,
+            event_type,
+            Listener {
+                capture,
+                callback: Rc::new(callback),
+            },
+        )
     }
 
-    /// Recursively destroy an element and all its descendant wrappers.
-    ///
-    /// Walks the subtree depth-first (children before parent), freeing
-    /// Rust-side callbacks and destroying C++ wrappers for every descendant.
-    /// This ensures no detached `OuiElementImpl` wrappers leak after removal.
-    pub(crate) fn destroy_subtree(raw: *mut openui_sys::OuiElement) {
-        // Destroy all children first (depth-first).
-        loop {
-            let child = unsafe { openui_sys::oui_element_first_child(raw) };
-            if child.is_null() {
-                break;
-            }
-            Self::destroy_subtree(child);
-        }
-        // Free Rust-side callbacks for this element.
-        free_all_callbacks_for(raw as usize);
-        // Destroy the C++ wrapper (removes from DOM, unregisters, deletes).
-        unsafe { openui_sys::oui_element_destroy(raw) };
+    fn control_flag(
+        &self,
+        get: impl FnOnce(&openui_engine::ControlState) -> bool,
+    ) -> Result<bool, Error> {
+        self.document
+            .with_engine(|engine| {
+                engine
+                    .control_state(self.handle)
+                    .map(|state| state.is_some_and(get))
+            })?
+            .map_err(Into::into)
     }
 }
 
-impl Drop for Element {
-    fn drop(&mut self) {
-        if self.owned && !self.raw.is_null() {
-            free_all_callbacks_for(self.raw as usize);
-            unsafe { openui_sys::oui_element_destroy(self.raw) };
+fn tag_definition(tag: &str) -> Result<(ElementTag, Option<Display>), Error> {
+    use ElementTag as T;
+    let normalized = tag.to_ascii_lowercase();
+    let definition = match normalized.as_str() {
+        "div" | "main" | "nav" | "header" | "footer" | "section" | "article" | "aside" | "p"
+        | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "ul" | "ol" | "hr" => {
+            (T::Div, Some(Display::Block))
         }
-    }
+        "li" => (T::Div, Some(Display::ListItem)),
+        "span" | "a" | "label" | "strong" | "em" | "small" => (T::Span, Some(Display::Inline)),
+        "br" => (T::Break, None),
+        "wbr" => (T::WordBreak, None),
+        "ruby" => (T::Ruby, Some(Display::Inline)),
+        "rt" => (T::RubyText, Some(Display::Inline)),
+        "table" => (T::Table, Some(Display::Table)),
+        "caption" => (T::TableCaption, Some(Display::TableCaption)),
+        "colgroup" => (T::TableColumnGroup, Some(Display::TableColumnGroup)),
+        "col" => (T::TableColumn, Some(Display::TableColumn)),
+        "thead" => (T::TableHead, Some(Display::TableHeaderGroup)),
+        "tbody" => (T::TableBody, Some(Display::TableRowGroup)),
+        "tfoot" => (T::TableFoot, Some(Display::TableFooterGroup)),
+        "tr" => (T::TableRow, Some(Display::TableRow)),
+        "td" => (T::TableCell, Some(Display::TableCell)),
+        "th" => (T::TableHeaderCell, Some(Display::TableCell)),
+        "img" => (T::Image, Some(Display::InlineBlock)),
+        "canvas" => (T::Canvas, Some(Display::InlineBlock)),
+        "svg" => (T::Svg, Some(Display::InlineBlock)),
+        "iframe" => (T::IFrame, Some(Display::InlineBlock)),
+        "object" => (T::Object, Some(Display::InlineBlock)),
+        "audio" => (T::Audio, Some(Display::InlineBlock)),
+        "video" => (T::Video, Some(Display::InlineBlock)),
+        "input" => (T::Input, Some(Display::InlineBlock)),
+        "button" => (T::Button, Some(Display::InlineBlock)),
+        "meter" => (T::Meter, Some(Display::InlineBlock)),
+        "progress" => (T::Progress, Some(Display::InlineBlock)),
+        "fieldset" => (T::Fieldset, Some(Display::Block)),
+        "legend" => (T::Legend, Some(Display::Block)),
+        "details" => (T::Details, Some(Display::Block)),
+        "summary" => (T::Summary, Some(Display::Block)),
+        "textarea" => (T::TextArea, Some(Display::InlineBlock)),
+        "select" => (T::Select, Some(Display::InlineBlock)),
+        "option" => (T::Option, Some(Display::Block)),
+        "optgroup" => (T::OptGroup, Some(Display::Block)),
+        "form" => (T::Form, Some(Display::Block)),
+        "embed" => (T::Embed, Some(Display::InlineBlock)),
+        _ => return Err(Error::UnknownTag(tag.to_owned())),
+    };
+    Ok(definition)
 }
-
-// ─── Compile-time tests ─────────────────────────────────────
 
 #[cfg(test)]
 mod tests {
-    #[allow(unused_imports)]
     use super::*;
+    use crate::events::{EventPhase, Modifiers, MouseButton, MouseEventType};
+    use openui_style::{AnimationOptions, FillMode, Keyframes};
+    use std::cell::{Cell, RefCell};
 
-    // Ensure Element is not accidentally Send/Sync (it wraps a raw pointer
-    // into single-threaded Blink state).
-    // Element wraps a *mut OuiElement, which is !Send and !Sync.
-    // This compile-time assertion verifies Element is also !Send.
-    const _: () = {
-        fn _must_not_be_send<T: ?Sized>() {}
-        // *mut OuiElement is !Send, so Element (which contains it) is !Send.
-    };
+    #[test]
+    fn typed_animation_uses_manual_clock_and_dispatches_events() {
+        let document = Document::new(100, 100).unwrap();
+        let element = Element::create(&document, "div").unwrap();
+        document.body().append_child(&element).unwrap();
+        let ended = Rc::new(Cell::new(false));
+        let observed = ended.clone();
+        element
+            .on("animationend", move |_| observed.set(true))
+            .unwrap();
+        let animation = element
+            .animate(
+                StyleProperty::Opacity,
+                Keyframes::from_values(0.0_f32, 1.0_f32),
+                AnimationOptions {
+                    duration_ms: 100.0,
+                    fill: FillMode::Both,
+                    ..AnimationOptions::default()
+                },
+            )
+            .unwrap();
+        document.advance_time(50.0).unwrap();
+        assert_eq!(
+            document.animation_state(animation).unwrap().current_time_ms,
+            50.0
+        );
+        document.advance_time(100.0).unwrap();
+        assert!(ended.get());
+        assert_eq!(document.drain_animation_events().unwrap().len(), 2);
+    }
+
+    #[test]
+    fn stale_weak_and_cross_document_handles_are_safe() {
+        let a = Document::new(100, 100).unwrap();
+        let b = Document::new(100, 100).unwrap();
+        let parent = a.body();
+        let child = Element::create(&a, "div").unwrap();
+        parent.append_child(&child).unwrap();
+        let weak = child.downgrade();
+        child.remove().unwrap();
+        assert!(weak.upgrade().is_none());
+
+        let foreign = Element::create(&b, "div").unwrap();
+        assert!(parent.append_child(&foreign).is_err());
+    }
+
+    #[test]
+    fn events_capture_target_and_bubble_without_reentrant_borrows() {
+        let document = Document::new(100, 100).unwrap();
+        let root = document.body();
+        let button = Element::create(&document, "button").unwrap();
+        root.append_child(&button).unwrap();
+        button
+            .set_property(
+                StyleProperty::Width,
+                openui_style::LengthValue::px(40.0).into(),
+            )
+            .unwrap();
+        button
+            .set_property(
+                StyleProperty::Height,
+                openui_style::LengthValue::px(40.0).into(),
+            )
+            .unwrap();
+
+        let trace = Rc::new(RefCell::new(Vec::new()));
+        let capture_trace = trace.clone();
+        root.on_capture("click", move |event| {
+            capture_trace.borrow_mut().push(event.phase().unwrap());
+        })
+        .unwrap();
+        let target_trace = trace.clone();
+        let button_for_callback = button.clone();
+        button
+            .on("click", move |event| {
+                target_trace.borrow_mut().push(event.phase().unwrap());
+                button_for_callback
+                    .set_attribute("data-clicked", "true")
+                    .unwrap();
+            })
+            .unwrap();
+        let bubble_trace = trace.clone();
+        root.on("click", move |event| {
+            bubble_trace.borrow_mut().push(event.phase().unwrap());
+        })
+        .unwrap();
+
+        document
+            .dispatch_mouse_event(
+                MouseEventType::Up,
+                10.0,
+                10.0,
+                MouseButton::Left,
+                Modifiers::NONE,
+            )
+            .unwrap();
+        assert_eq!(
+            *trace.borrow(),
+            vec![EventPhase::Capture, EventPhase::Target, EventPhase::Bubble]
+        );
+        assert_eq!(
+            button.get_attribute("data-clicked").unwrap().as_deref(),
+            Some("true")
+        );
+    }
 }

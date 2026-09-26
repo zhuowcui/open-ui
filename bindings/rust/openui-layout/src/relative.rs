@@ -120,12 +120,12 @@ mod tests {
         left: Length,
     ) -> ComputedStyle {
         let mut s = ComputedStyle::initial();
-        s.display = Display::Block;
-        s.position = Position::Relative;
-        s.top = top;
-        s.right = right;
-        s.bottom = bottom;
-        s.left = left;
+        s.update_derived(|computed| computed.display = Display::Block);
+        s.update_derived(|computed| computed.position = Position::Relative);
+        s.update_derived(|computed| computed.top = top);
+        s.update_derived(|computed| computed.right = right);
+        s.update_derived(|computed| computed.bottom = bottom);
+        s.update_derived(|computed| computed.left = left);
         s
     }
 
@@ -243,7 +243,7 @@ mod tests {
             Length::auto(),
             Length::px(5.0),
         );
-        style.direction = Direction::Ltr;
+        style.update_derived(|computed| computed.direction = Direction::Ltr);
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
         // LTR: left wins — right is ignored
         assert_eq!(frag.offset.left.to_i32(), 5);
@@ -260,7 +260,7 @@ mod tests {
             Length::auto(),
             Length::px(999.0),
         );
-        style.direction = Direction::Rtl;
+        style.update_derived(|computed| computed.direction = Direction::Rtl);
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
         // RTL: right wins — left is ignored. right: 30px → offset.left -= 30
         assert_eq!(frag.offset.left.to_i32(), 70); // 100 - 30
@@ -305,9 +305,9 @@ mod tests {
     fn static_position_is_noop() {
         let mut frag = make_fragment(10, 20);
         let mut style = ComputedStyle::initial();
-        style.position = Position::Static;
-        style.top = Length::px(999.0);
-        style.left = Length::px(999.0);
+        style.update_derived(|computed| computed.position = Position::Static);
+        style.update_derived(|computed| computed.top = Length::px(999.0));
+        style.update_derived(|computed| computed.left = Length::px(999.0));
         apply_relative_offset(&mut frag, &style, cb_inline(), cb_block());
         // position:static → offsets are not applied
         assert_eq!(frag.offset.left.to_i32(), 10);

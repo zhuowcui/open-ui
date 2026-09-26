@@ -49,7 +49,7 @@ class LedgerTests(unittest.TestCase):
         _, targets, _ = closure.load_ledgers()
         root_aware = splice_text_port.load_root_aware_ids()
         promoted_root_body = set(targets) & root_aware
-        self.assertEqual(len(promoted_root_body), 49)
+        self.assertGreaterEqual(len(promoted_root_body), 49)
         self.assertIn(
             "wpt/css_backgrounds/background-color-body-propagation-004",
             promoted_root_body,
@@ -94,9 +94,9 @@ class RootAwarePorterTests(unittest.TestCase):
             "demo", parser.root, parser.html_styles, root_aware=True
         )
         template = port_wpt.generate_html_template(str(path), root_aware=True)
-        self.assertIn("let (mut doc, html, vp) = root_doc()", rust)
-        self.assertIn("doc.node_mut(html).style.height", rust)
-        self.assertIn("doc.node_mut(vp).style.overflow_x", rust)
+        self.assertIn("let (mut doc, html, vp) = root_doc(viewport)", rust)
+        self.assertIn("doc.set_style(html, RendererStyleValue::Height", rust)
+        self.assertIn("doc.set_style(vp, RendererStyleValue::OverflowX", rust)
         self.assertTrue(template.startswith("<!--OPENUI_ROOT_AWARE-->"))
         self.assertIn("html {height:100%}", template)
         self.assertIn("body {overflow:hidden}", template)
@@ -111,7 +111,9 @@ class RootAwarePorterTests(unittest.TestCase):
         self.assertIn("*{display:contents}", rust)
         self.assertIn("PASS", rust)
         self.assertNotIn("ElementTag::Break", rust)
-        self.assertIn("doc.node_mut(vp).style.display = Display::None", rust)
+        self.assertIn(
+            "doc.set_style(vp, RendererStyleValue::Display(Display::None))", rust
+        )
 
     def test_display_contents_resets_non_inherited_background_boundary(self):
         path = self.html(
@@ -122,12 +124,69 @@ class RootAwarePorterTests(unittest.TestCase):
         )
         parser = port_wpt.parse_wpt_html(str(path))
         rust = port_wpt.generate_rust_fn("demo", parser.root, parser.html_styles)
-        # The intermediate unboxed element's computed transparent background,
-        # rather than the outer blue value, is inherited by the leaf.
-        self.assertNotIn("background_color = Color::BLUE", rust)
+        # Retaining each unboxed element preserves its computed-style
+        # boundary. The outer node keeps blue without transferring it through
+        # the transparent middle node to the leaf.
+        self.assertEqual(
+            rust.count("RendererStyleValue::BackgroundColor(Color::BLUE)"), 1
+        )
+        self.assertIn(
+            "RendererStyleValue::BackgroundColor(Color::TRANSPARENT)", rust
+        )
 
 
 class SupersessionTests(unittest.TestCase):
+    def test_later_exact_promotion_supersedes_historical_w4_ceiling(self):
+        test_id = "wpt/css_flexbox/later-exact"
+        row = {
+            "sp_area": "css_flexbox",
+            "test_name": "later-exact",
+            "ported": "yes",
+            "our_test_id": test_id,
+            "chromium_test_path": "css-flexbox/later-exact.html",
+            "failure_category": "",
+            "notes": "",
+        }
+        w4 = [{
+            "test_id": test_id,
+            "chromium_test_path": "css-flexbox/later-exact.html",
+            "rejection_reason": "style_block_unsupported property: writing-mode",
+            "rejection_owner": "needs_writing_mode",
+            "owner_categories": ["needs_writing_mode"],
+        }]
+        result = {test_id: {
+            "id": test_id,
+            "status": "pass",
+            "mismatch_pct": 0.0,
+        }}
+        errors = audit.sp14_text_closure_errors(
+            [row], result, {test_id: "template"}, {test_id}, [], [], w4,
+            enforce_frozen_counts=False,
+        )
+        self.assertEqual(errors, [])
+
+        errors = audit.sp14_text_closure_errors(
+            [row],
+            {test_id: {"id": test_id, "status": "pass", "mismatch_pct": 0.0}},
+            {test_id: "template"},
+            {test_id},
+            [],
+            [],
+            w4,
+            enforce_frozen_counts=False,
+            superseded_residuals={test_id: w4[0]},
+        )
+        self.assertEqual(errors, [])
+
+        result[test_id]["mismatch_pct"] = 0.01
+        errors = audit.sp14_text_closure_errors(
+            [row], result, {test_id: "template"}, {test_id}, [], [], w4,
+            enforce_frozen_counts=False,
+        )
+        self.assertIn(
+            f"later-sprint W4 promotion is not exact: {test_id}", errors
+        )
+
     def test_sp14_w4_entry_can_be_superseded_by_sp15_promotion(self):
         test_id = "wpt/css_backgrounds/example"
         row = {

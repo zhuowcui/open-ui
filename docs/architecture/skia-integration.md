@@ -1,5 +1,11 @@
 # Skia Integration in Chromium — Architecture Reference
 
+> **Historical research, not the v0.2 implementation contract.** Open UI v0.2
+> uses lockfile-pinned rust-skia from the pure-Rust paint/compositor crates and
+> does not ship a Chromium application backend. See the
+> [Rendering pipeline overview](rendering-pipeline-overview.md) and
+> [dependency review](../v02/dependency-review.md).
+
 > **Open UI** · Architecture Document
 > Chromium M147 (`147.0.7727.24`) · June 2025
 

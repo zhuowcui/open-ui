@@ -57,21 +57,21 @@ fn rtl_span_asymmetric_padding_inline_start_is_right() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.direction = Direction::Rtl;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.direction = Direction::Rtl);
     doc.append_child(root, block);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
-    doc.node_mut(span).style.direction = Direction::Rtl;
-    doc.node_mut(span).style.padding_left = Length::px(5.0);
-    doc.node_mut(span).style.padding_right = Length::px(20.0);
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
+    doc.update_resolved_style(span, |style| style.direction = Direction::Rtl);
+    doc.update_resolved_style(span, |style| style.padding_left = Length::px(5.0));
+    doc.update_resolved_style(span, |style| style.padding_right = Length::px(20.0));
     doc.append_child(block, span);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Hello".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
-    doc.node_mut(text).style.direction = Direction::Rtl;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
+    doc.update_resolved_style(text, |style| style.direction = Direction::Rtl);
     doc.append_child(span, text);
 
     let mut items_data = InlineItemsBuilder::collect(&doc, block);
@@ -120,23 +120,23 @@ fn rtl_span_asymmetric_border_uses_correct_side() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.direction = Direction::Rtl;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.direction = Direction::Rtl);
     doc.append_child(root, block);
 
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
-    doc.node_mut(span).style.direction = Direction::Rtl;
-    doc.node_mut(span).style.border_left_width = 2;
-    doc.node_mut(span).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(span).style.border_right_width = 10;
-    doc.node_mut(span).style.border_right_style = BorderStyle::Solid;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
+    doc.update_resolved_style(span, |style| style.direction = Direction::Rtl);
+    doc.update_resolved_style(span, |style| style.border_left_width = 2);
+    doc.update_resolved_style(span, |style| style.border_left_style = BorderStyle::Solid);
+    doc.update_resolved_style(span, |style| style.border_right_width = 10);
+    doc.update_resolved_style(span, |style| style.border_right_style = BorderStyle::Solid);
     doc.append_child(block, span);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Test".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
-    doc.node_mut(text).style.direction = Direction::Rtl;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
+    doc.update_resolved_style(text, |style| style.direction = Direction::Rtl);
     doc.append_child(span, text);
 
     let mut items_data = InlineItemsBuilder::collect(&doc, block);
@@ -222,8 +222,8 @@ fn justify_prewrap_multiple_trailing_spaces_not_expanded() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Justify;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Justify);
     doc.append_child(root, block);
 
     // Use pre-wrap text with a newline to force a second line (justify
@@ -231,8 +231,8 @@ fn justify_prewrap_multiple_trailing_spaces_not_expanded() {
     // Put "hello world   \nnext" — first line has 3 trailing spaces.
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("hello world   \nnext".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
-    doc.node_mut(text).style.white_space = WhiteSpace::PreWrap;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
+    doc.update_resolved_style(text, |style| style.white_space = WhiteSpace::PreWrap);
     doc.append_child(block, text);
 
     let constraint = make_constraint_width(400);
@@ -269,15 +269,15 @@ fn justify_single_trailing_space_not_expanded() {
     let root = doc.root();
 
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.text_align = TextAlign::Justify;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.text_align = TextAlign::Justify);
     doc.append_child(root, block);
 
     // Use pre-wrap text with a newline to create a second line.
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("hello world \nnext".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
-    doc.node_mut(text).style.white_space = WhiteSpace::PreWrap;
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
+    doc.update_resolved_style(text, |style| style.white_space = WhiteSpace::PreWrap);
     doc.append_child(block, text);
 
     let constraint = make_constraint_width(400);

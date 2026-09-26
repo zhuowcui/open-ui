@@ -14,8 +14,8 @@ use openui_layout::{ConstraintSpace, Fragment, FragmentKind};
 #[allow(unused_imports)]
 use openui_style::{
     ComputedStyle, Direction, Display, HangingPunctuation, Hyphens, LineBreak, LineHeight,
-    OverflowWrap, TabSize, TextAlign, TextAlignLast, TextJustify, TextOrientation, TextTransform,
-    VerticalAlign, WhiteSpace, WordBreak, WritingMode,
+    OverflowWrap, TabSize, TextAlign, TextAlignLast, TextBoxEdge, TextBoxEdgeKeyword, TextBoxTrim,
+    TextJustify, TextOrientation, TextTransform, VerticalAlign, WhiteSpace, WordBreak, WritingMode,
 };
 
 // -- Helpers --
@@ -44,12 +44,12 @@ fn block_layout_text(texts: &[&str], width: i32) -> Fragment {
     let mut doc = Document::new();
     let vp = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(vp, block);
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         doc.append_child(block, t);
     }
     let sp = space(width, 600);
@@ -60,12 +60,12 @@ fn make_text_block(texts: &[&str], _width: i32) -> (Document, NodeId) {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
     doc.append_child(root, block);
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         doc.append_child(block, t);
     }
     (doc, block)
@@ -74,37 +74,45 @@ fn make_text_block(texts: &[&str], _width: i32) -> (Document, NodeId) {
 fn make_styled_text_block(
     texts: &[&str],
     width: i32,
-    style_fn: impl Fn(&mut ComputedStyle),
+    style_fn: impl Fn(&mut openui_style::ComputedStyleFields),
 ) -> Fragment {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    style_fn(&mut doc.node_mut(block).style);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, style_fn);
     doc.append_child(root, block);
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         let block_style = doc.node(block).style.clone();
-        doc.node_mut(t).style.text_align = block_style.text_align;
-        doc.node_mut(t).style.white_space = block_style.white_space;
-        doc.node_mut(t).style.word_break = block_style.word_break;
-        doc.node_mut(t).style.overflow_wrap = block_style.overflow_wrap;
-        doc.node_mut(t).style.line_break = block_style.line_break;
-        doc.node_mut(t).style.hyphens = block_style.hyphens;
-        doc.node_mut(t).style.text_transform = block_style.text_transform;
-        doc.node_mut(t).style.letter_spacing = block_style.letter_spacing;
-        doc.node_mut(t).style.word_spacing = block_style.word_spacing;
-        doc.node_mut(t).style.text_indent = block_style.text_indent.clone();
-        doc.node_mut(t).style.tab_size = block_style.tab_size.clone();
-        doc.node_mut(t).style.text_justify = block_style.text_justify;
-        doc.node_mut(t).style.text_align_last = block_style.text_align_last;
-        doc.node_mut(t).style.line_height = block_style.line_height.clone();
-        doc.node_mut(t).style.direction = block_style.direction;
-        doc.node_mut(t).style.writing_mode = block_style.writing_mode;
-        doc.node_mut(t).style.hanging_punctuation = block_style.hanging_punctuation.clone();
-        doc.node_mut(t).style.font_size = block_style.font_size;
+        doc.update_resolved_style(t, |style| style.text_align = block_style.text_align);
+        doc.update_resolved_style(t, |style| style.white_space = block_style.white_space);
+        doc.update_resolved_style(t, |style| style.word_break = block_style.word_break);
+        doc.update_resolved_style(t, |style| style.overflow_wrap = block_style.overflow_wrap);
+        doc.update_resolved_style(t, |style| style.line_break = block_style.line_break);
+        doc.update_resolved_style(t, |style| style.hyphens = block_style.hyphens);
+        doc.update_resolved_style(t, |style| style.text_transform = block_style.text_transform);
+        doc.update_resolved_style(t, |style| style.letter_spacing = block_style.letter_spacing);
+        doc.update_resolved_style(t, |style| style.word_spacing = block_style.word_spacing);
+        doc.update_resolved_style(t, |style| {
+            style.text_indent = block_style.text_indent.clone()
+        });
+        doc.update_resolved_style(t, |style| style.tab_size = block_style.tab_size.clone());
+        doc.update_resolved_style(t, |style| style.text_justify = block_style.text_justify);
+        doc.update_resolved_style(t, |style| {
+            style.text_align_last = block_style.text_align_last
+        });
+        doc.update_resolved_style(t, |style| {
+            style.line_height = block_style.line_height.clone()
+        });
+        doc.update_resolved_style(t, |style| style.direction = block_style.direction);
+        doc.update_resolved_style(t, |style| style.writing_mode = block_style.writing_mode);
+        doc.update_resolved_style(t, |style| {
+            style.hanging_punctuation = block_style.hanging_punctuation.clone()
+        });
+        doc.update_resolved_style(t, |style| style.font_size = block_style.font_size);
         doc.append_child(block, t);
     }
     let sp = space(width, 600);
@@ -154,18 +162,18 @@ fn first_block_child(fragment: &Fragment) -> &Fragment {
 fn layout_text_styled(
     texts: &[&str],
     width: i32,
-    block_style_fn: impl Fn(&mut ComputedStyle),
+    block_style_fn: impl Fn(&mut openui_style::ComputedStyleFields),
 ) -> Fragment {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    block_style_fn(&mut doc.node_mut(block).style);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, block_style_fn);
     doc.append_child(root, block);
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         doc.append_child(block, t);
     }
     let sp =
@@ -177,30 +185,33 @@ fn layout_text_styled(
 fn layout_text_inheriting(
     texts: &[&str],
     width: i32,
-    style_fn: impl Fn(&mut ComputedStyle),
+    style_fn: impl Fn(&mut openui_style::ComputedStyleFields),
 ) -> Fragment {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    style_fn(&mut doc.node_mut(block).style);
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, style_fn);
     doc.append_child(root, block);
     for text in texts {
         let t = doc.create_node(ElementTag::Text);
         doc.node_mut(t).text = Some(text.to_string());
-        doc.node_mut(t).style.display = Display::Inline;
+        doc.update_resolved_style(t, |style| style.display = Display::Inline);
         let bs = doc.node(block).style.clone();
-        doc.node_mut(t).style.white_space = bs.white_space;
-        doc.node_mut(t).style.word_break = bs.word_break;
-        doc.node_mut(t).style.overflow_wrap = bs.overflow_wrap;
-        doc.node_mut(t).style.line_break = bs.line_break;
-        doc.node_mut(t).style.hyphens = bs.hyphens;
-        doc.node_mut(t).style.letter_spacing = bs.letter_spacing;
-        doc.node_mut(t).style.word_spacing = bs.word_spacing;
-        doc.node_mut(t).style.line_height = bs.line_height.clone();
-        doc.node_mut(t).style.font_size = bs.font_size;
-        doc.node_mut(t).style.text_transform = bs.text_transform;
-        doc.node_mut(t).style.tab_size = bs.tab_size.clone();
+        doc.update_resolved_style(t, |style| style.white_space = bs.white_space);
+        doc.update_resolved_style(t, |style| style.word_break = bs.word_break);
+        doc.update_resolved_style(t, |style| style.overflow_wrap = bs.overflow_wrap);
+        doc.update_resolved_style(t, |style| style.line_break = bs.line_break);
+        doc.update_resolved_style(t, |style| style.hyphens = bs.hyphens);
+        doc.update_resolved_style(t, |style| {
+            style.hyphenate_character = bs.hyphenate_character.clone()
+        });
+        doc.update_resolved_style(t, |style| style.letter_spacing = bs.letter_spacing);
+        doc.update_resolved_style(t, |style| style.word_spacing = bs.word_spacing);
+        doc.update_resolved_style(t, |style| style.line_height = bs.line_height.clone());
+        doc.update_resolved_style(t, |style| style.font_size = bs.font_size);
+        doc.update_resolved_style(t, |style| style.text_transform = bs.text_transform);
+        doc.update_resolved_style(t, |style| style.tab_size = bs.tab_size.clone());
         doc.append_child(block, t);
     }
     let sp =
@@ -248,7 +259,7 @@ mod text_align {
     #[test]
     fn left_text_starts_at_zero() {
         let frag = layout_text_styled(&["Hi"], 800, |s| {
-            s.text_align = TextAlign::Left;
+            s.update_derived(|computed| computed.text_align = TextAlign::Left);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -258,7 +269,7 @@ mod text_align {
     #[test]
     fn right_text_offset_positive() {
         let frag = layout_text_styled(&["Hi"], 800, |s| {
-            s.text_align = TextAlign::Right;
+            s.update_derived(|computed| computed.text_align = TextAlign::Right);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -272,7 +283,7 @@ mod text_align {
     #[test]
     fn right_text_ends_near_container_edge() {
         let frag = layout_text_styled(&["Hi"], 800, |s| {
-            s.text_align = TextAlign::Right;
+            s.update_derived(|computed| computed.text_align = TextAlign::Right);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -288,7 +299,7 @@ mod text_align {
     #[test]
     fn center_text_approximately_centered() {
         let frag = layout_text_styled(&["Hi"], 800, |s| {
-            s.text_align = TextAlign::Center;
+            s.update_derived(|computed| computed.text_align = TextAlign::Center);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -306,7 +317,7 @@ mod text_align {
     #[test]
     fn center_short_word_positive_offset() {
         let frag = layout_text_styled(&["x"], 800, |s| {
-            s.text_align = TextAlign::Center;
+            s.update_derived(|computed| computed.text_align = TextAlign::Center);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -316,7 +327,7 @@ mod text_align {
     #[test]
     fn justify_single_line_not_justified() {
         let frag = layout_text_styled(&["Hello world"], 800, |s| {
-            s.text_align = TextAlign::Justify;
+            s.update_derived(|computed| computed.text_align = TextAlign::Justify);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -329,7 +340,7 @@ mod text_align {
             &["The quick brown fox jumps over the lazy dog and more text here"],
             200,
             |s| {
-                s.text_align = TextAlign::Justify;
+                s.update_derived(|computed| computed.text_align = TextAlign::Justify);
             },
         );
         assert!(
@@ -341,11 +352,11 @@ mod text_align {
     #[test]
     fn start_ltr_equals_left() {
         let frag_s = layout_text_styled(&["Hi"], 800, |s| {
-            s.text_align = TextAlign::Start;
-            s.direction = Direction::Ltr;
+            s.update_derived(|computed| computed.text_align = TextAlign::Start);
+            s.update_derived(|computed| computed.direction = Direction::Ltr);
         });
         let frag_l = layout_text_styled(&["Hi"], 800, |s| {
-            s.text_align = TextAlign::Left;
+            s.update_derived(|computed| computed.text_align = TextAlign::Left);
         });
         let ts = collect_text_fragments(&frag_s);
         let tl = collect_text_fragments(&frag_l);
@@ -356,8 +367,8 @@ mod text_align {
     #[test]
     fn start_rtl_text_offset_positive() {
         let frag = layout_text_styled(&["Hi"], 800, |s| {
-            s.text_align = TextAlign::Start;
-            s.direction = Direction::Rtl;
+            s.update_derived(|computed| computed.text_align = TextAlign::Start);
+            s.update_derived(|computed| computed.direction = Direction::Rtl);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -367,8 +378,8 @@ mod text_align {
     #[test]
     fn end_ltr_text_offset_positive() {
         let frag = layout_text_styled(&["Hi"], 800, |s| {
-            s.text_align = TextAlign::End;
-            s.direction = Direction::Ltr;
+            s.update_derived(|computed| computed.text_align = TextAlign::End);
+            s.update_derived(|computed| computed.direction = Direction::Ltr);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -378,8 +389,8 @@ mod text_align {
     #[test]
     fn end_rtl_text_starts_at_zero() {
         let frag = layout_text_styled(&["Hi"], 800, |s| {
-            s.text_align = TextAlign::End;
-            s.direction = Direction::Rtl;
+            s.update_derived(|computed| computed.text_align = TextAlign::End);
+            s.update_derived(|computed| computed.direction = Direction::Rtl);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -389,7 +400,7 @@ mod text_align {
     #[test]
     fn multiline_left_all_at_zero() {
         let frag = layout_text_styled(&["The quick brown fox jumps over the lazy dog"], 100, |s| {
-            s.text_align = TextAlign::Left;
+            s.update_derived(|computed| computed.text_align = TextAlign::Left);
         });
         for line in &frag.children {
             if line.kind == FragmentKind::Box {
@@ -404,7 +415,7 @@ mod text_align {
     #[test]
     fn multiline_right_all_positive_offset() {
         let frag = layout_text_styled(&["The quick brown fox jumps over the lazy dog"], 100, |s| {
-            s.text_align = TextAlign::Right;
+            s.update_derived(|computed| computed.text_align = TextAlign::Right);
         });
         let lines: Vec<_> = frag
             .children
@@ -423,7 +434,7 @@ mod text_align {
     #[test]
     fn multiline_center_offsets_positive() {
         let frag = layout_text_styled(&["The quick brown fox jumps over"], 100, |s| {
-            s.text_align = TextAlign::Center;
+            s.update_derived(|computed| computed.text_align = TextAlign::Center);
         });
         let lines: Vec<_> = frag
             .children
@@ -442,7 +453,7 @@ mod text_align {
     #[test]
     fn left_text_width_positive() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Left;
+            s.update_derived(|computed| computed.text_align = TextAlign::Left);
         });
         let texts = collect_text_fragments(&frag);
         assert!(!texts.is_empty());
@@ -452,10 +463,10 @@ mod text_align {
     #[test]
     fn right_position_differs_from_left() {
         let fl = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Left;
+            s.update_derived(|computed| computed.text_align = TextAlign::Left);
         });
         let fr = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Right;
+            s.update_derived(|computed| computed.text_align = TextAlign::Right);
         });
         let tl = collect_text_fragments(&fl);
         let tr = collect_text_fragments(&fr);
@@ -466,10 +477,10 @@ mod text_align {
     #[test]
     fn center_position_differs_from_left() {
         let fl = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Left;
+            s.update_derived(|computed| computed.text_align = TextAlign::Left);
         });
         let fc = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Center;
+            s.update_derived(|computed| computed.text_align = TextAlign::Center);
         });
         let tl = collect_text_fragments(&fl);
         let tc = collect_text_fragments(&fc);
@@ -480,7 +491,7 @@ mod text_align {
     #[test]
     fn left_produces_positive_height() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Left;
+            s.update_derived(|computed| computed.text_align = TextAlign::Left);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -488,7 +499,7 @@ mod text_align {
     #[test]
     fn right_produces_positive_height() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Right;
+            s.update_derived(|computed| computed.text_align = TextAlign::Right);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -496,7 +507,7 @@ mod text_align {
     #[test]
     fn center_produces_positive_height() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Center;
+            s.update_derived(|computed| computed.text_align = TextAlign::Center);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -504,7 +515,7 @@ mod text_align {
     #[test]
     fn justify_produces_positive_height() {
         let frag = layout_text_styled(&["Hello world"], 800, |s| {
-            s.text_align = TextAlign::Justify;
+            s.update_derived(|computed| computed.text_align = TextAlign::Justify);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -512,10 +523,10 @@ mod text_align {
     #[test]
     fn text_width_unchanged_by_alignment() {
         let fl = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Left;
+            s.update_derived(|computed| computed.text_align = TextAlign::Left);
         });
         let fr = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Right;
+            s.update_derived(|computed| computed.text_align = TextAlign::Right);
         });
         let tl = collect_text_fragments(&fl);
         let tr = collect_text_fragments(&fr);
@@ -530,7 +541,7 @@ mod text_align {
     #[test]
     fn empty_text_left_no_crash() {
         let frag = layout_text_styled(&[""], 800, |s| {
-            s.text_align = TextAlign::Left;
+            s.update_derived(|computed| computed.text_align = TextAlign::Left);
         });
         let _ = frag.size;
     }
@@ -538,7 +549,7 @@ mod text_align {
     #[test]
     fn empty_text_center_no_crash() {
         let frag = layout_text_styled(&[""], 800, |s| {
-            s.text_align = TextAlign::Center;
+            s.update_derived(|computed| computed.text_align = TextAlign::Center);
         });
         let _ = frag.size;
     }
@@ -588,8 +599,8 @@ mod text_align_last {
             &["The quick brown fox jumps over the lazy dog and more words"],
             200,
             |s| {
-                s.text_align = TextAlign::Justify;
-                s.text_align_last = TextAlignLast::Auto;
+                s.update_derived(|computed| computed.text_align = TextAlign::Justify);
+                s.update_derived(|computed| computed.text_align_last = TextAlignLast::Auto);
             },
         );
         let block = first_block_child(&frag);
@@ -614,8 +625,8 @@ mod text_align_last {
             &["The quick brown fox jumps over the lazy dog and more words"],
             200,
             |s| {
-                s.text_align = TextAlign::Left;
-                s.text_align_last = TextAlignLast::Center;
+                s.update_derived(|computed| computed.text_align = TextAlign::Left);
+                s.update_derived(|computed| computed.text_align_last = TextAlignLast::Center);
             },
         );
         let block = first_block_child(&frag);
@@ -640,8 +651,8 @@ mod text_align_last {
             &["The quick brown fox jumps over the lazy dog and more words"],
             200,
             |s| {
-                s.text_align = TextAlign::Left;
-                s.text_align_last = TextAlignLast::Right;
+                s.update_derived(|computed| computed.text_align = TextAlign::Left);
+                s.update_derived(|computed| computed.text_align_last = TextAlignLast::Right);
             },
         );
         let block = first_block_child(&frag);
@@ -666,8 +677,8 @@ mod text_align_last {
             &["The quick brown fox jumps over the lazy dog and more words"],
             200,
             |s| {
-                s.text_align = TextAlign::Right;
-                s.text_align_last = TextAlignLast::Left;
+                s.update_derived(|computed| computed.text_align = TextAlign::Right);
+                s.update_derived(|computed| computed.text_align_last = TextAlignLast::Left);
             },
         );
         let block = first_block_child(&frag);
@@ -692,8 +703,8 @@ mod text_align_last {
             &["The quick brown fox jumps over the lazy dog and more words"],
             200,
             |s| {
-                s.text_align = TextAlign::Right;
-                s.text_align_last = TextAlignLast::Start;
+                s.update_derived(|computed| computed.text_align = TextAlign::Right);
+                s.update_derived(|computed| computed.text_align_last = TextAlignLast::Start);
             },
         );
         let block = first_block_child(&frag);
@@ -718,8 +729,8 @@ mod text_align_last {
             &["The quick brown fox jumps over the lazy dog and more words"],
             200,
             |s| {
-                s.text_align = TextAlign::Left;
-                s.text_align_last = TextAlignLast::End;
+                s.update_derived(|computed| computed.text_align = TextAlign::Left);
+                s.update_derived(|computed| computed.text_align_last = TextAlignLast::End);
             },
         );
         let block = first_block_child(&frag);
@@ -741,8 +752,8 @@ mod text_align_last {
     #[test]
     fn single_line_last_applies() {
         let frag = make_styled_text_block(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Left;
-            s.text_align_last = TextAlignLast::Center;
+            s.update_derived(|computed| computed.text_align = TextAlign::Left);
+            s.update_derived(|computed| computed.text_align_last = TextAlignLast::Center);
         });
         let block = first_block_child(&frag);
         let texts = collect_text_fragments(block);
@@ -757,8 +768,8 @@ mod text_align_last {
             &["The quick brown fox jumps over the lazy dog and more words here now"],
             200,
             |s| {
-                s.text_align = TextAlign::Left;
-                s.text_align_last = TextAlignLast::Justify;
+                s.update_derived(|computed| computed.text_align = TextAlign::Left);
+                s.update_derived(|computed| computed.text_align_last = TextAlignLast::Justify);
             },
         );
         let block = first_block_child(&frag);
@@ -773,7 +784,7 @@ mod text_align_last {
     #[test]
     fn empty_no_crash() {
         let frag = make_styled_text_block(&[""], 800, |s| {
-            s.text_align_last = TextAlignLast::Center;
+            s.update_derived(|computed| computed.text_align_last = TextAlignLast::Center);
         });
         let _ = frag.size;
     }
@@ -820,7 +831,7 @@ mod white_space {
     fn normal_wraps_long_text() {
         let frag =
             layout_text_inheriting(&["The quick brown fox jumps over the lazy dog"], 100, |s| {
-                s.white_space = WhiteSpace::Normal;
+                s.update_derived(|computed| computed.white_space = WhiteSpace::Normal);
             });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -828,10 +839,10 @@ mod white_space {
     #[test]
     fn normal_collapses_multiple_spaces() {
         let fm = layout_text_inheriting(&["Hello     World"], 800, |s| {
-            s.white_space = WhiteSpace::Normal;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Normal);
         });
         let fs = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.white_space = WhiteSpace::Normal;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Normal);
         });
         let tm = collect_text_fragments(&fm);
         let ts = collect_text_fragments(&fs);
@@ -845,7 +856,7 @@ mod white_space {
     fn nowrap_no_wrapping() {
         let frag =
             layout_text_inheriting(&["The quick brown fox jumps over the lazy dog"], 100, |s| {
-                s.white_space = WhiteSpace::Nowrap;
+                s.update_derived(|computed| computed.white_space = WhiteSpace::Nowrap);
             });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -853,10 +864,10 @@ mod white_space {
     #[test]
     fn nowrap_collapses_spaces() {
         let fm = layout_text_inheriting(&["Hello     World"], 800, |s| {
-            s.white_space = WhiteSpace::Nowrap;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Nowrap);
         });
         let fs = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.white_space = WhiteSpace::Nowrap;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Nowrap);
         });
         let tm = collect_text_fragments(&fm);
         let ts = collect_text_fragments(&fs);
@@ -869,10 +880,10 @@ mod white_space {
     #[test]
     fn pre_preserves_spaces() {
         let fp = layout_text_inheriting(&["Hello     World"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
         });
         let fn_ = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.white_space = WhiteSpace::Normal;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Normal);
         });
         let tp = collect_text_fragments(&fp);
         let tn = collect_text_fragments(&fn_);
@@ -888,7 +899,7 @@ mod white_space {
     fn pre_no_wrapping() {
         let frag =
             layout_text_inheriting(&["The quick brown fox jumps over the lazy dog"], 100, |s| {
-                s.white_space = WhiteSpace::Pre;
+                s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
             });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -896,7 +907,7 @@ mod white_space {
     #[test]
     fn pre_preserves_newlines() {
         let frag = layout_text_inheriting(&["Hello\nWorld"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -905,7 +916,7 @@ mod white_space {
     fn pre_wrap_wraps() {
         let frag =
             layout_text_inheriting(&["The quick brown fox jumps over the lazy dog"], 100, |s| {
-                s.white_space = WhiteSpace::PreWrap;
+                s.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
             });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -913,10 +924,10 @@ mod white_space {
     #[test]
     fn pre_wrap_preserves_spaces() {
         let fp = layout_text_inheriting(&["Hello     World"], 800, |s| {
-            s.white_space = WhiteSpace::PreWrap;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
         });
         let fn_ = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.white_space = WhiteSpace::Normal;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Normal);
         });
         let tp = collect_text_fragments(&fp);
         let tn = collect_text_fragments(&fn_);
@@ -928,7 +939,7 @@ mod white_space {
     #[test]
     fn pre_wrap_preserves_newlines() {
         let frag = layout_text_inheriting(&["Hello\nWorld"], 800, |s| {
-            s.white_space = WhiteSpace::PreWrap;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -936,10 +947,10 @@ mod white_space {
     #[test]
     fn pre_line_collapses_spaces() {
         let fp = layout_text_inheriting(&["Hello     World"], 800, |s| {
-            s.white_space = WhiteSpace::PreLine;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::PreLine);
         });
         let fn_ = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.white_space = WhiteSpace::Normal;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Normal);
         });
         let tp = collect_text_fragments(&fp);
         let tn = collect_text_fragments(&fn_);
@@ -952,7 +963,7 @@ mod white_space {
     #[test]
     fn pre_line_preserves_newlines() {
         let frag = layout_text_inheriting(&["Hello\nWorld"], 800, |s| {
-            s.white_space = WhiteSpace::PreLine;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::PreLine);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -961,7 +972,7 @@ mod white_space {
     fn pre_line_wraps() {
         let frag =
             layout_text_inheriting(&["The quick brown fox jumps over the lazy dog"], 100, |s| {
-                s.white_space = WhiteSpace::PreLine;
+                s.update_derived(|computed| computed.white_space = WhiteSpace::PreLine);
             });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -969,10 +980,10 @@ mod white_space {
     #[test]
     fn break_spaces_preserves_spaces() {
         let fb = layout_text_inheriting(&["Hello     World"], 800, |s| {
-            s.white_space = WhiteSpace::BreakSpaces;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::BreakSpaces);
         });
         let fn_ = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.white_space = WhiteSpace::Normal;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Normal);
         });
         let tb = collect_text_fragments(&fb);
         let tn = collect_text_fragments(&fn_);
@@ -985,7 +996,7 @@ mod white_space {
     fn break_spaces_wraps() {
         let frag =
             layout_text_inheriting(&["The quick brown fox jumps over the lazy dog"], 100, |s| {
-                s.white_space = WhiteSpace::BreakSpaces;
+                s.update_derived(|computed| computed.white_space = WhiteSpace::BreakSpaces);
             });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -993,7 +1004,7 @@ mod white_space {
     #[test]
     fn normal_single_word_fits() {
         let frag = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.white_space = WhiteSpace::Normal;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Normal);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -1004,7 +1015,7 @@ mod white_space {
             &["A very long sentence that should not wrap at all nowrap"],
             100,
             |s| {
-                s.white_space = WhiteSpace::Nowrap;
+                s.update_derived(|computed| computed.white_space = WhiteSpace::Nowrap);
             },
         );
         assert_eq!(count_line_boxes(&frag), 1);
@@ -1017,10 +1028,10 @@ mod white_space {
     #[test]
     fn pre_with_tabs() {
         let ft = layout_text_inheriting(&["A\tB"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
         });
         let fs = layout_text_inheriting(&["A B"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
         });
         let tt = collect_text_fragments(&ft);
         let ts = collect_text_fragments(&fs);
@@ -1032,7 +1043,7 @@ mod white_space {
     #[test]
     fn normal_newlines_as_space() {
         let frag = layout_text_inheriting(&["Hello\nWorld"], 800, |s| {
-            s.white_space = WhiteSpace::Normal;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Normal);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -1040,7 +1051,7 @@ mod white_space {
     #[test]
     fn normal_positive_height() {
         let frag = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.white_space = WhiteSpace::Normal;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Normal);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1048,7 +1059,7 @@ mod white_space {
     #[test]
     fn pre_empty_newline() {
         let frag = layout_text_inheriting(&["\n"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
         });
         assert!(count_line_boxes(&frag) >= 1);
     }
@@ -1056,7 +1067,7 @@ mod white_space {
     #[test]
     fn pre_wrap_newline_break() {
         let frag = layout_text_inheriting(&["A\nB"], 800, |s| {
-            s.white_space = WhiteSpace::PreWrap;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1064,7 +1075,7 @@ mod white_space {
     #[test]
     fn break_spaces_newlines() {
         let frag = layout_text_inheriting(&["Hello\nWorld"], 800, |s| {
-            s.white_space = WhiteSpace::BreakSpaces;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::BreakSpaces);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1107,7 +1118,7 @@ mod word_break {
     #[test]
     fn normal_no_break_in_word() {
         let frag = layout_text_inheriting(&["Supercalifragilisticexpialidocious"], 100, |s| {
-            s.word_break = WordBreak::Normal;
+            s.update_derived(|computed| computed.word_break = WordBreak::Normal);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -1115,7 +1126,7 @@ mod word_break {
     #[test]
     fn break_all_breaks_word() {
         let frag = layout_text_inheriting(&["Supercalifragilisticexpialidocious"], 100, |s| {
-            s.word_break = WordBreak::BreakAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakAll);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1123,7 +1134,7 @@ mod word_break {
     #[test]
     fn break_all_narrow_many_lines() {
         let frag = layout_text_inheriting(&["Internationalization"], 50, |s| {
-            s.word_break = WordBreak::BreakAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakAll);
         });
         assert!(count_line_boxes(&frag) >= 3);
     }
@@ -1131,7 +1142,7 @@ mod word_break {
     #[test]
     fn keep_all_cjk_no_break() {
         let frag = layout_text_inheriting(&["Hello-World Foo-Bar"], 800, |s| {
-            s.word_break = WordBreak::KeepAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::KeepAll);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -1143,7 +1154,7 @@ mod word_break {
             &["\u{4E00}\u{4E8C}\u{4E09}\u{56DB}\u{4E94}\u{516D}\u{4E03}\u{516B}\u{4E5D}\u{5341}"],
             800,
             |s| {
-                s.word_break = WordBreak::Normal;
+                s.update_derived(|computed| computed.word_break = WordBreak::Normal);
             },
         );
         assert!(
@@ -1159,7 +1170,7 @@ mod word_break {
     #[test]
     fn break_all_short_one_line() {
         let frag = layout_text_inheriting(&["Hi"], 800, |s| {
-            s.word_break = WordBreak::BreakAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakAll);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -1167,7 +1178,7 @@ mod word_break {
     #[test]
     fn break_all_positive_height() {
         let frag = layout_text_inheriting(&["Hello"], 50, |s| {
-            s.word_break = WordBreak::BreakAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakAll);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1175,7 +1186,7 @@ mod word_break {
     #[test]
     fn normal_multi_words_wrap() {
         let frag = layout_text_inheriting(&["The quick brown fox jumps"], 80, |s| {
-            s.word_break = WordBreak::Normal;
+            s.update_derived(|computed| computed.word_break = WordBreak::Normal);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1183,7 +1194,7 @@ mod word_break {
     #[test]
     fn break_word_breaks_long() {
         let frag = layout_text_inheriting(&["Supercalifragilisticexpialidocious"], 100, |s| {
-            s.word_break = WordBreak::BreakWord;
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakWord);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1191,7 +1202,7 @@ mod word_break {
     #[test]
     fn keep_all_wraps_at_spaces() {
         let frag = layout_text_inheriting(&["Hello World Test"], 60, |s| {
-            s.word_break = WordBreak::KeepAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::KeepAll);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1199,7 +1210,7 @@ mod word_break {
     #[test]
     fn break_all_per_char() {
         let frag = layout_text_inheriting(&["ABCDEFGH"], 20, |s| {
-            s.word_break = WordBreak::BreakAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakAll);
         });
         assert!(count_line_boxes(&frag) >= 3);
     }
@@ -1207,7 +1218,7 @@ mod word_break {
     #[test]
     fn normal_empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 800, |s| {
-            s.word_break = WordBreak::Normal;
+            s.update_derived(|computed| computed.word_break = WordBreak::Normal);
         });
         let _ = frag.size;
     }
@@ -1215,7 +1226,7 @@ mod word_break {
     #[test]
     fn break_all_empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 800, |s| {
-            s.word_break = WordBreak::BreakAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakAll);
         });
         let _ = frag.size;
     }
@@ -1223,7 +1234,7 @@ mod word_break {
     #[test]
     fn keep_all_empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 800, |s| {
-            s.word_break = WordBreak::KeepAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::KeepAll);
         });
         let _ = frag.size;
     }
@@ -1231,7 +1242,7 @@ mod word_break {
     #[test]
     fn break_all_text_fits_container() {
         let frag = layout_text_inheriting(&["ABCDEFGHIJKLMNOP"], 80, |s| {
-            s.word_break = WordBreak::BreakAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakAll);
         });
         for line in &frag.children {
             if line.kind == FragmentKind::Box {
@@ -1246,7 +1257,7 @@ mod word_break {
     #[test]
     fn normal_single_word_wide() {
         let frag = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.word_break = WordBreak::Normal;
+            s.update_derived(|computed| computed.word_break = WordBreak::Normal);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -1254,7 +1265,7 @@ mod word_break {
     #[test]
     fn keep_all_positive_height() {
         let frag = layout_text_inheriting(&["\u{6F22}\u{5B57}"], 800, |s| {
-            s.word_break = WordBreak::KeepAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::KeepAll);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1296,7 +1307,7 @@ mod overflow_wrap {
     #[test]
     fn normal_long_word_overflows() {
         let frag = layout_text_inheriting(&["Supercalifragilisticexpialidocious"], 100, |s| {
-            s.overflow_wrap = OverflowWrap::Normal;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::Normal);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -1304,7 +1315,7 @@ mod overflow_wrap {
     #[test]
     fn break_word_breaks() {
         let frag = layout_text_inheriting(&["Supercalifragilisticexpialidocious"], 100, |s| {
-            s.overflow_wrap = OverflowWrap::BreakWord;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1312,7 +1323,7 @@ mod overflow_wrap {
     #[test]
     fn anywhere_breaks() {
         let frag = layout_text_inheriting(&["Supercalifragilisticexpialidocious"], 100, |s| {
-            s.overflow_wrap = OverflowWrap::Anywhere;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::Anywhere);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1320,7 +1331,7 @@ mod overflow_wrap {
     #[test]
     fn break_word_short_one_line() {
         let frag = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.overflow_wrap = OverflowWrap::BreakWord;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -1328,7 +1339,7 @@ mod overflow_wrap {
     #[test]
     fn anywhere_short_one_line() {
         let frag = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.overflow_wrap = OverflowWrap::Anywhere;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::Anywhere);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -1336,7 +1347,7 @@ mod overflow_wrap {
     #[test]
     fn break_word_wraps_at_spaces_first() {
         let frag = layout_text_inheriting(&["Hello World Test"], 80, |s| {
-            s.overflow_wrap = OverflowWrap::BreakWord;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1344,7 +1355,7 @@ mod overflow_wrap {
     #[test]
     fn break_word_narrow() {
         let frag = layout_text_inheriting(&["Internationalization"], 50, |s| {
-            s.overflow_wrap = OverflowWrap::BreakWord;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
         });
         assert!(count_line_boxes(&frag) >= 3);
     }
@@ -1352,7 +1363,7 @@ mod overflow_wrap {
     #[test]
     fn anywhere_narrow() {
         let frag = layout_text_inheriting(&["Internationalization"], 50, |s| {
-            s.overflow_wrap = OverflowWrap::Anywhere;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::Anywhere);
         });
         assert!(count_line_boxes(&frag) >= 3);
     }
@@ -1360,7 +1371,7 @@ mod overflow_wrap {
     #[test]
     fn normal_wraps_at_spaces() {
         let frag = layout_text_inheriting(&["Hello World foo bar"], 60, |s| {
-            s.overflow_wrap = OverflowWrap::Normal;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::Normal);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1368,7 +1379,7 @@ mod overflow_wrap {
     #[test]
     fn break_word_positive_height() {
         let frag = layout_text_inheriting(&["Hello"], 100, |s| {
-            s.overflow_wrap = OverflowWrap::BreakWord;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1376,7 +1387,7 @@ mod overflow_wrap {
     #[test]
     fn anywhere_positive_height() {
         let frag = layout_text_inheriting(&["Hello"], 100, |s| {
-            s.overflow_wrap = OverflowWrap::Anywhere;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::Anywhere);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1384,7 +1395,7 @@ mod overflow_wrap {
     #[test]
     fn break_word_empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 100, |s| {
-            s.overflow_wrap = OverflowWrap::BreakWord;
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
         });
         let _ = frag.size;
     }
@@ -1395,7 +1406,7 @@ mod overflow_wrap {
             &["Pneumonoultramicroscopicsilicovolcanoconiosis"],
             80,
             |s| {
-                s.overflow_wrap = OverflowWrap::Normal;
+                s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::Normal);
             },
         );
         let texts = collect_text_fragments(&frag);
@@ -1444,7 +1455,7 @@ mod text_transform {
     #[test]
     fn none_produces_fragments() {
         let frag = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.text_transform = TextTransform::None;
+            s.update_derived(|computed| computed.text_transform = TextTransform::None);
         });
         assert!(count_text_fragments(&frag) >= 1);
     }
@@ -1452,7 +1463,7 @@ mod text_transform {
     #[test]
     fn uppercase_succeeds() {
         let frag = layout_text_inheriting(&["hello world"], 800, |s| {
-            s.text_transform = TextTransform::Uppercase;
+            s.update_derived(|computed| computed.text_transform = TextTransform::Uppercase);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1460,7 +1471,7 @@ mod text_transform {
     #[test]
     fn lowercase_succeeds() {
         let frag = layout_text_inheriting(&["HELLO WORLD"], 800, |s| {
-            s.text_transform = TextTransform::Lowercase;
+            s.update_derived(|computed| computed.text_transform = TextTransform::Lowercase);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1468,7 +1479,7 @@ mod text_transform {
     #[test]
     fn capitalize_succeeds() {
         let frag = layout_text_inheriting(&["hello world"], 800, |s| {
-            s.text_transform = TextTransform::Capitalize;
+            s.update_derived(|computed| computed.text_transform = TextTransform::Capitalize);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1476,7 +1487,7 @@ mod text_transform {
     #[test]
     fn full_width_succeeds() {
         let frag = layout_text_inheriting(&["ABC"], 800, |s| {
-            s.text_transform = TextTransform::FullWidth;
+            s.update_derived(|computed| computed.text_transform = TextTransform::FullWidth);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1484,10 +1495,10 @@ mod text_transform {
     #[test]
     fn full_width_wider() {
         let fn_ = layout_text_inheriting(&["ABC"], 800, |s| {
-            s.text_transform = TextTransform::None;
+            s.update_derived(|computed| computed.text_transform = TextTransform::None);
         });
         let fw = layout_text_inheriting(&["ABC"], 800, |s| {
-            s.text_transform = TextTransform::FullWidth;
+            s.update_derived(|computed| computed.text_transform = TextTransform::FullWidth);
         });
         let tn = collect_text_fragments(&fn_);
         let tf = collect_text_fragments(&fw);
@@ -1513,7 +1524,7 @@ mod text_transform {
     #[test]
     fn none_empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 800, |s| {
-            s.text_transform = TextTransform::None;
+            s.update_derived(|computed| computed.text_transform = TextTransform::None);
         });
         let _ = frag.size;
     }
@@ -1521,7 +1532,7 @@ mod text_transform {
     #[test]
     fn uppercase_empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 800, |s| {
-            s.text_transform = TextTransform::Uppercase;
+            s.update_derived(|computed| computed.text_transform = TextTransform::Uppercase);
         });
         let _ = frag.size;
     }
@@ -1529,7 +1540,7 @@ mod text_transform {
     #[test]
     fn capitalize_single_char() {
         let frag = layout_text_inheriting(&["a"], 800, |s| {
-            s.text_transform = TextTransform::Capitalize;
+            s.update_derived(|computed| computed.text_transform = TextTransform::Capitalize);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1537,7 +1548,7 @@ mod text_transform {
     #[test]
     fn uppercase_wraps_narrow() {
         let frag = layout_text_inheriting(&["hello world test"], 80, |s| {
-            s.text_transform = TextTransform::Uppercase;
+            s.update_derived(|computed| computed.text_transform = TextTransform::Uppercase);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1545,10 +1556,10 @@ mod text_transform {
     #[test]
     fn lowercase_width_matches() {
         let fl = layout_text_inheriting(&["HELLO"], 800, |s| {
-            s.text_transform = TextTransform::Lowercase;
+            s.update_derived(|computed| computed.text_transform = TextTransform::Lowercase);
         });
         let fm = layout_text_inheriting(&["hello"], 800, |s| {
-            s.text_transform = TextTransform::None;
+            s.update_derived(|computed| computed.text_transform = TextTransform::None);
         });
         let tl = collect_text_fragments(&fl);
         let tm = collect_text_fragments(&fm);
@@ -1561,7 +1572,7 @@ mod text_transform {
     #[test]
     fn full_size_kana_succeeds() {
         let frag = layout_text_inheriting(&["\u{FF71}\u{FF72}\u{FF73}"], 800, |s| {
-            s.text_transform = TextTransform::FullSizeKana;
+            s.update_derived(|computed| computed.text_transform = TextTransform::FullSizeKana);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1608,7 +1619,7 @@ mod line_break {
             &["\u{4E00}\u{4E8C}\u{4E09}\u{56DB}\u{4E94}\u{516D}\u{4E03}\u{516B}\u{4E5D}\u{5341}"],
             800,
             |s| {
-                s.line_break = LineBreak::Auto;
+                s.update_derived(|computed| computed.line_break = LineBreak::Auto);
             },
         );
         assert!(
@@ -1624,7 +1635,7 @@ mod line_break {
             &["\u{4E00}\u{4E8C}\u{4E09}\u{56DB}\u{4E94}\u{516D}\u{4E03}\u{516B}\u{4E5D}\u{5341}"],
             800,
             |s| {
-                s.line_break = LineBreak::Loose;
+                s.update_derived(|computed| computed.line_break = LineBreak::Loose);
             },
         );
         assert!(
@@ -1640,7 +1651,7 @@ mod line_break {
             &["\u{4E00}\u{4E8C}\u{4E09}\u{56DB}\u{4E94}\u{516D}\u{4E03}\u{516B}\u{4E5D}\u{5341}"],
             800,
             |s| {
-                s.line_break = LineBreak::Normal;
+                s.update_derived(|computed| computed.line_break = LineBreak::Normal);
             },
         );
         assert!(
@@ -1656,7 +1667,7 @@ mod line_break {
             &["\u{4E00}\u{4E8C}\u{4E09}\u{56DB}\u{4E94}\u{516D}\u{4E03}\u{516B}\u{4E5D}\u{5341}"],
             800,
             |s| {
-                s.line_break = LineBreak::Strict;
+                s.update_derived(|computed| computed.line_break = LineBreak::Strict);
             },
         );
         assert!(
@@ -1669,7 +1680,7 @@ mod line_break {
     #[test]
     fn anywhere_breaks_within_word() {
         let frag = layout_text_inheriting(&["Helloworld"], 30, |s| {
-            s.line_break = LineBreak::Anywhere;
+            s.update_derived(|computed| computed.line_break = LineBreak::Anywhere);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1677,7 +1688,7 @@ mod line_break {
     #[test]
     fn anywhere_narrow_many_lines() {
         let frag = layout_text_inheriting(&["ABCDEFGHIJKLMN"], 20, |s| {
-            s.line_break = LineBreak::Anywhere;
+            s.update_derived(|computed| computed.line_break = LineBreak::Anywhere);
         });
         assert!(count_line_boxes(&frag) >= 4);
     }
@@ -1685,7 +1696,7 @@ mod line_break {
     #[test]
     fn auto_latin_wraps_at_spaces() {
         let frag = layout_text_inheriting(&["Hello World Test Foo"], 60, |s| {
-            s.line_break = LineBreak::Auto;
+            s.update_derived(|computed| computed.line_break = LineBreak::Auto);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1693,7 +1704,7 @@ mod line_break {
     #[test]
     fn strict_latin_wraps_at_spaces() {
         let frag = layout_text_inheriting(&["Hello World Test"], 60, |s| {
-            s.line_break = LineBreak::Strict;
+            s.update_derived(|computed| computed.line_break = LineBreak::Strict);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1701,7 +1712,7 @@ mod line_break {
     #[test]
     fn auto_positive_height() {
         let frag = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.line_break = LineBreak::Auto;
+            s.update_derived(|computed| computed.line_break = LineBreak::Auto);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1709,7 +1720,7 @@ mod line_break {
     #[test]
     fn anywhere_single_char() {
         let frag = layout_text_inheriting(&["X"], 800, |s| {
-            s.line_break = LineBreak::Anywhere;
+            s.update_derived(|computed| computed.line_break = LineBreak::Anywhere);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -1717,7 +1728,7 @@ mod line_break {
     #[test]
     fn loose_empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 800, |s| {
-            s.line_break = LineBreak::Loose;
+            s.update_derived(|computed| computed.line_break = LineBreak::Loose);
         });
         let _ = frag.size;
     }
@@ -1725,7 +1736,7 @@ mod line_break {
     #[test]
     fn strict_empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 800, |s| {
-            s.line_break = LineBreak::Strict;
+            s.update_derived(|computed| computed.line_break = LineBreak::Strict);
         });
         let _ = frag.size;
     }
@@ -1763,7 +1774,7 @@ mod hyphens {
     #[test]
     fn none_succeeds() {
         let frag = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.hyphens = Hyphens::None;
+            s.update_derived(|computed| computed.hyphens = Hyphens::None);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1771,7 +1782,7 @@ mod hyphens {
     #[test]
     fn manual_succeeds() {
         let frag = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.hyphens = Hyphens::Manual;
+            s.update_derived(|computed| computed.hyphens = Hyphens::Manual);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1779,7 +1790,7 @@ mod hyphens {
     #[test]
     fn auto_succeeds() {
         let frag = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.hyphens = Hyphens::Auto;
+            s.update_derived(|computed| computed.hyphens = Hyphens::Auto);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1788,16 +1799,36 @@ mod hyphens {
     fn manual_at_soft_hyphen() {
         let frag =
             layout_text_inheriting(&["Supercalifragilis\u{00AD}ticexpialidocious"], 150, |s| {
-                s.hyphens = Hyphens::Manual;
+                s.update_derived(|computed| computed.hyphens = Hyphens::Manual);
             });
         assert!(count_line_boxes(&frag) >= 1);
+    }
+
+    #[test]
+    fn authored_hyphenate_character_is_measured_and_emitted() {
+        let frag =
+            layout_text_inheriting(&["Supercalifragilis\u{00AD}ticexpialidocious"], 190, |s| {
+                s.update_derived(|computed| computed.hyphens = Hyphens::Manual);
+                s.update_derived(|computed| computed.hyphenate_character = Some("→".to_string()));
+            });
+        let fragments = collect_text_fragments(&frag);
+        assert!(
+            fragments
+                .iter()
+                .any(|fragment| fragment.text_content.as_deref() == Some("→")),
+            "the visible discretionary marker must use hyphenate-character: {:?}",
+            fragments
+                .iter()
+                .map(|fragment| fragment.text_content.as_deref())
+                .collect::<Vec<_>>()
+        );
     }
 
     #[test]
     fn none_ignores_soft_hyphen() {
         let frag =
             layout_text_inheriting(&["Supercalifragilis\u{00AD}ticexpialidocious"], 150, |s| {
-                s.hyphens = Hyphens::None;
+                s.update_derived(|computed| computed.hyphens = Hyphens::None);
             });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1805,15 +1836,38 @@ mod hyphens {
     #[test]
     fn auto_long_word() {
         let frag = layout_text_inheriting(&["Internationalization"], 100, |s| {
-            s.hyphens = Hyphens::Auto;
+            s.update_derived(|computed| computed.hyphens = Hyphens::Auto);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
 
     #[test]
+    fn auto_hyphenation_uses_ancestor_language_attribute() {
+        let mut doc =
+            Document::new_with_font_collection(openui_text::FontCollection::deterministic_test());
+        let root = doc.root();
+        doc.set_attribute(root, "lang", "en-US");
+        let block = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(block, |style| style.display = Display::Block);
+        doc.update_resolved_style(block, |style| style.hyphens = Hyphens::Auto);
+        doc.append_child(root, block);
+        let text = doc.create_node(ElementTag::Text);
+        doc.update_resolved_style(text, |style| style.display = Display::Inline);
+        doc.update_resolved_style(text, |style| style.hyphens = Hyphens::Auto);
+        doc.node_mut(text).text = Some("comprehension".to_string());
+        doc.append_child(block, text);
+        let space =
+            ConstraintSpace::for_block_child(lu_i(75), lu_i(600), lu_i(75), lu_i(600), false);
+        let fragment = inline_layout(&doc, block, &space);
+        assert!(collect_text_fragments(&fragment)
+            .iter()
+            .any(|fragment| fragment.text_content.as_deref() == Some("-")));
+    }
+
+    #[test]
     fn none_empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 800, |s| {
-            s.hyphens = Hyphens::None;
+            s.update_derived(|computed| computed.hyphens = Hyphens::None);
         });
         let _ = frag.size;
     }
@@ -1821,7 +1875,7 @@ mod hyphens {
     #[test]
     fn manual_wraps_at_spaces() {
         let frag = layout_text_inheriting(&["Hello World Test Foo"], 60, |s| {
-            s.hyphens = Hyphens::Manual;
+            s.update_derived(|computed| computed.hyphens = Hyphens::Manual);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1829,10 +1883,33 @@ mod hyphens {
     #[test]
     fn auto_wraps_at_spaces() {
         let frag = layout_text_inheriting(&["Hello World Test Foo"], 60, |s| {
-            s.hyphens = Hyphens::Auto;
+            s.update_derived(|computed| computed.hyphens = Hyphens::Auto);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
+}
+
+#[test]
+fn text_box_trim_changes_line_and_intrinsic_block_geometry() {
+    let untrimmed = layout_text_styled(&["CAP"], 300, |style| {
+        style.update_derived(|computed| computed.font_size = 20.0);
+        style.update_derived(|computed| computed.line_height = LineHeight::Length(60.0));
+    });
+    let trimmed = layout_text_styled(&["CAP"], 300, |style| {
+        style.update_derived(|computed| computed.font_size = 20.0);
+        style.update_derived(|computed| computed.line_height = LineHeight::Length(60.0));
+        style.update_derived(|computed| {
+            computed.text_box_edge = TextBoxEdge {
+                over: TextBoxEdgeKeyword::Cap,
+                under: TextBoxEdgeKeyword::Alphabetic,
+            }
+        });
+        style.update_derived(|computed| computed.text_box_trim = TextBoxTrim::TrimBoth);
+    });
+    assert!(trimmed.size.height < untrimmed.size.height);
+    let line = trimmed.children.first().expect("trimmed line");
+    assert!(line.baseline_offset >= 0.0);
+    assert!(line.size.height > LayoutUnit::zero());
 }
 
 // ==========================================================================
@@ -1850,10 +1927,10 @@ mod letter_spacing {
     #[test]
     fn positive_increases_width() {
         let f0 = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.letter_spacing = 0.0;
+            s.update_derived(|computed| computed.letter_spacing = 0.0);
         });
         let f5 = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.letter_spacing = 5.0;
+            s.update_derived(|computed| computed.letter_spacing = 5.0);
         });
         let t0 = collect_text_fragments(&f0);
         let t5 = collect_text_fragments(&f5);
@@ -1865,10 +1942,10 @@ mod letter_spacing {
     #[test]
     fn negative_decreases_width() {
         let f0 = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.letter_spacing = 0.0;
+            s.update_derived(|computed| computed.letter_spacing = 0.0);
         });
         let fn_ = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.letter_spacing = -1.0;
+            s.update_derived(|computed| computed.letter_spacing = -1.0);
         });
         let t0 = collect_text_fragments(&f0);
         let tn = collect_text_fragments(&fn_);
@@ -1881,7 +1958,7 @@ mod letter_spacing {
     fn zero_same_as_default() {
         let fd = layout_text(&["Hello"], 800);
         let fz = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.letter_spacing = 0.0;
+            s.update_derived(|computed| computed.letter_spacing = 0.0);
         });
         let td = collect_text_fragments(&fd);
         let tz = collect_text_fragments(&fz);
@@ -1894,7 +1971,7 @@ mod letter_spacing {
     #[test]
     fn large_causes_wrapping() {
         let frag = layout_text_inheriting(&["Hello World"], 100, |s| {
-            s.letter_spacing = 10.0;
+            s.update_derived(|computed| computed.letter_spacing = 10.0);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1902,7 +1979,7 @@ mod letter_spacing {
     #[test]
     fn single_char() {
         let frag = layout_text_inheriting(&["X"], 800, |s| {
-            s.letter_spacing = 5.0;
+            s.update_derived(|computed| computed.letter_spacing = 5.0);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1910,7 +1987,7 @@ mod letter_spacing {
     #[test]
     fn empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 800, |s| {
-            s.letter_spacing = 5.0;
+            s.update_derived(|computed| computed.letter_spacing = 5.0);
         });
         let _ = frag.size;
     }
@@ -1918,10 +1995,10 @@ mod letter_spacing {
     #[test]
     fn two_px_per_char() {
         let f0 = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.letter_spacing = 0.0;
+            s.update_derived(|computed| computed.letter_spacing = 0.0);
         });
         let f2 = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.letter_spacing = 2.0;
+            s.update_derived(|computed| computed.letter_spacing = 2.0);
         });
         let t0 = collect_text_fragments(&f0);
         let t2 = collect_text_fragments(&f2);
@@ -1938,7 +2015,7 @@ mod letter_spacing {
     #[test]
     fn cjk_characters() {
         let frag = layout_text_inheriting(&["\u{6F22}\u{5B57}"], 800, |s| {
-            s.letter_spacing = 5.0;
+            s.update_derived(|computed| computed.letter_spacing = 5.0);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1946,7 +2023,7 @@ mod letter_spacing {
     #[test]
     fn preserves_line_count_wide() {
         let frag = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.letter_spacing = 3.0;
+            s.update_derived(|computed| computed.letter_spacing = 3.0);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -1954,7 +2031,7 @@ mod letter_spacing {
     #[test]
     fn multiline_narrow() {
         let frag = layout_text_inheriting(&["The quick brown fox"], 80, |s| {
-            s.letter_spacing = 3.0;
+            s.update_derived(|computed| computed.letter_spacing = 3.0);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -1962,7 +2039,7 @@ mod letter_spacing {
     #[test]
     fn positive_height() {
         let frag = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.letter_spacing = 5.0;
+            s.update_derived(|computed| computed.letter_spacing = 5.0);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1970,7 +2047,7 @@ mod letter_spacing {
     #[test]
     fn large_value_lays_out() {
         let frag = layout_text_inheriting(&["AB"], 800, |s| {
-            s.letter_spacing = 100.0;
+            s.update_derived(|computed| computed.letter_spacing = 100.0);
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -1981,7 +2058,7 @@ mod letter_spacing {
     #[test]
     fn negative_large() {
         let frag = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.letter_spacing = -3.0;
+            s.update_derived(|computed| computed.letter_spacing = -3.0);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -1989,10 +2066,10 @@ mod letter_spacing {
     #[test]
     fn does_not_affect_height() {
         let f0 = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.letter_spacing = 0.0;
+            s.update_derived(|computed| computed.letter_spacing = 0.0);
         });
         let f5 = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.letter_spacing = 5.0;
+            s.update_derived(|computed| computed.letter_spacing = 5.0);
         });
         let diff = (f0.size.height - f5.size.height).to_f32().abs();
         assert!(diff < 2.0);
@@ -2014,10 +2091,10 @@ mod word_spacing {
     #[test]
     fn positive_increases_width() {
         let f0 = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.word_spacing = 0.0;
+            s.update_derived(|computed| computed.word_spacing = 0.0);
         });
         let f10 = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.word_spacing = 10.0;
+            s.update_derived(|computed| computed.word_spacing = 10.0);
         });
         let t0 = collect_text_fragments(&f0);
         let t10 = collect_text_fragments(&f10);
@@ -2029,10 +2106,10 @@ mod word_spacing {
     #[test]
     fn negative_decreases_width() {
         let f0 = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.word_spacing = 0.0;
+            s.update_derived(|computed| computed.word_spacing = 0.0);
         });
         let fn_ = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.word_spacing = -2.0;
+            s.update_derived(|computed| computed.word_spacing = -2.0);
         });
         let t0 = collect_text_fragments(&f0);
         let tn = collect_text_fragments(&fn_);
@@ -2044,10 +2121,10 @@ mod word_spacing {
     #[test]
     fn no_spaces_no_effect() {
         let f0 = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.word_spacing = 0.0;
+            s.update_derived(|computed| computed.word_spacing = 0.0);
         });
         let f10 = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.word_spacing = 10.0;
+            s.update_derived(|computed| computed.word_spacing = 10.0);
         });
         let t0 = collect_text_fragments(&f0);
         let t10 = collect_text_fragments(&f10);
@@ -2060,10 +2137,10 @@ mod word_spacing {
     #[test]
     fn two_spaces_double_effect() {
         let f0 = layout_text_inheriting(&["A B C"], 800, |s| {
-            s.word_spacing = 0.0;
+            s.update_derived(|computed| computed.word_spacing = 0.0);
         });
         let f5 = layout_text_inheriting(&["A B C"], 800, |s| {
-            s.word_spacing = 5.0;
+            s.update_derived(|computed| computed.word_spacing = 5.0);
         });
         let t0 = collect_text_fragments(&f0);
         let t5 = collect_text_fragments(&f5);
@@ -2080,7 +2157,7 @@ mod word_spacing {
     #[test]
     fn large_causes_wrapping() {
         let frag = layout_text_inheriting(&["Hello World"], 100, |s| {
-            s.word_spacing = 50.0;
+            s.update_derived(|computed| computed.word_spacing = 50.0);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -2088,7 +2165,7 @@ mod word_spacing {
     #[test]
     fn empty_no_crash() {
         let frag = layout_text_inheriting(&[""], 800, |s| {
-            s.word_spacing = 10.0;
+            s.update_derived(|computed| computed.word_spacing = 10.0);
         });
         let _ = frag.size;
     }
@@ -2096,10 +2173,10 @@ mod word_spacing {
     #[test]
     fn preserves_height() {
         let f0 = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.word_spacing = 0.0;
+            s.update_derived(|computed| computed.word_spacing = 0.0);
         });
         let f10 = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.word_spacing = 10.0;
+            s.update_derived(|computed| computed.word_spacing = 10.0);
         });
         let diff = (f0.size.height - f10.size.height).to_f32().abs();
         assert!(diff < 2.0);
@@ -2108,7 +2185,7 @@ mod word_spacing {
     #[test]
     fn single_word_one_line() {
         let frag = layout_text_inheriting(&["Hello"], 800, |s| {
-            s.word_spacing = 50.0;
+            s.update_derived(|computed| computed.word_spacing = 50.0);
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -2117,7 +2194,7 @@ mod word_spacing {
     fn zero_same_as_default() {
         let fd = layout_text(&["Hello World"], 800);
         let fz = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.word_spacing = 0.0;
+            s.update_derived(|computed| computed.word_spacing = 0.0);
         });
         let td = collect_text_fragments(&fd);
         let tz = collect_text_fragments(&fz);
@@ -2130,7 +2207,7 @@ mod word_spacing {
     #[test]
     fn many_words() {
         let frag = layout_text_inheriting(&["one two three four five six"], 800, |s| {
-            s.word_spacing = 5.0;
+            s.update_derived(|computed| computed.word_spacing = 5.0);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -2138,7 +2215,7 @@ mod word_spacing {
     #[test]
     fn positive_width() {
         let frag = layout_text_inheriting(&["A B"], 800, |s| {
-            s.word_spacing = 10.0;
+            s.update_derived(|computed| computed.word_spacing = 10.0);
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2149,7 +2226,7 @@ mod word_spacing {
     #[test]
     fn negative_large() {
         let frag = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.word_spacing = -5.0;
+            s.update_derived(|computed| computed.word_spacing = -5.0);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -2170,7 +2247,7 @@ mod text_indent {
     #[test]
     fn positive_offsets_first_line() {
         let frag = layout_text_styled(&["Hello World"], 800, |s| {
-            s.text_indent = Length::px(40.0);
+            s.update_derived(|computed| computed.text_indent = Length::px(40.0));
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2181,7 +2258,7 @@ mod text_indent {
     #[test]
     fn negative_indent() {
         let frag = layout_text_styled(&["Hello World"], 800, |s| {
-            s.text_indent = Length::px(-20.0);
+            s.update_derived(|computed| computed.text_indent = Length::px(-20.0));
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2192,7 +2269,7 @@ mod text_indent {
     #[test]
     fn zero_at_zero() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_indent = Length::px(0.0);
+            s.update_derived(|computed| computed.text_indent = Length::px(0.0));
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2206,7 +2283,7 @@ mod text_indent {
             &["The quick brown fox jumps over the lazy dog and more"],
             120,
             |s| {
-                s.text_indent = Length::px(30.0);
+                s.update_derived(|computed| computed.text_indent = Length::px(30.0));
             },
         );
         let lines: Vec<_> = frag
@@ -2230,7 +2307,7 @@ mod text_indent {
             &["The quick brown fox jumps over the lazy dog and more text"],
             120,
             |s| {
-                s.text_indent = Length::px(50.0);
+                s.update_derived(|computed| computed.text_indent = Length::px(50.0));
             },
         );
         let lines: Vec<_> = frag
@@ -2250,7 +2327,7 @@ mod text_indent {
     #[test]
     fn percentage() {
         let frag = layout_text_styled(&["Hello"], 500, |s| {
-            s.text_indent = Length::percent(10.0);
+            s.update_derived(|computed| computed.text_indent = Length::percent(10.0));
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2266,7 +2343,7 @@ mod text_indent {
     #[test]
     fn large_indent() {
         let frag = layout_text_styled(&["Hello"], 500, |s| {
-            s.text_indent = Length::px(400.0);
+            s.update_derived(|computed| computed.text_indent = Length::px(400.0));
         });
         assert!(!frag.children.is_empty());
     }
@@ -2274,7 +2351,7 @@ mod text_indent {
     #[test]
     fn auto_resolves_to_zero() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_indent = Length::auto();
+            s.update_derived(|computed| computed.text_indent = Length::auto());
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2285,8 +2362,8 @@ mod text_indent {
     #[test]
     fn with_center_alignment() {
         let frag = layout_text_styled(&["Hi"], 500, |s| {
-            s.text_indent = Length::px(20.0);
-            s.text_align = TextAlign::Center;
+            s.update_derived(|computed| computed.text_indent = Length::px(20.0));
+            s.update_derived(|computed| computed.text_align = TextAlign::Center);
         });
         assert!(!frag.children.is_empty());
     }
@@ -2294,8 +2371,8 @@ mod text_indent {
     #[test]
     fn with_right_alignment() {
         let frag = layout_text_styled(&["Hi"], 500, |s| {
-            s.text_indent = Length::px(20.0);
-            s.text_align = TextAlign::Right;
+            s.update_derived(|computed| computed.text_indent = Length::px(20.0));
+            s.update_derived(|computed| computed.text_align = TextAlign::Right);
         });
         assert!(!frag.children.is_empty());
     }
@@ -2303,10 +2380,10 @@ mod text_indent {
     #[test]
     fn does_not_affect_height() {
         let f0 = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_indent = Length::px(0.0);
+            s.update_derived(|computed| computed.text_indent = Length::px(0.0));
         });
         let f50 = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_indent = Length::px(50.0);
+            s.update_derived(|computed| computed.text_indent = Length::px(50.0));
         });
         let diff = (f0.size.height - f50.size.height).to_f32().abs();
         assert!(diff < 2.0);
@@ -2315,7 +2392,7 @@ mod text_indent {
     #[test]
     fn empty_no_crash() {
         let frag = layout_text_styled(&[""], 800, |s| {
-            s.text_indent = Length::px(50.0);
+            s.update_derived(|computed| computed.text_indent = Length::px(50.0));
         });
         let _ = frag.size;
     }
@@ -2323,7 +2400,7 @@ mod text_indent {
     #[test]
     fn indent_10px() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_indent = Length::px(10.0);
+            s.update_derived(|computed| computed.text_indent = Length::px(10.0));
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2334,7 +2411,7 @@ mod text_indent {
     #[test]
     fn indent_100px() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_indent = Length::px(100.0);
+            s.update_derived(|computed| computed.text_indent = Length::px(100.0));
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2345,7 +2422,7 @@ mod text_indent {
     #[test]
     fn negative_50px() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_indent = Length::px(-50.0);
+            s.update_derived(|computed| computed.text_indent = Length::px(-50.0));
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2374,8 +2451,8 @@ mod tab_size {
     #[test]
     fn custom_4_spaces() {
         let frag = layout_text_inheriting(&["A\tB"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
-            s.tab_size = TabSize::Spaces(4);
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
+            s.update_derived(|computed| computed.tab_size = TabSize::Spaces(4));
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -2383,8 +2460,8 @@ mod tab_size {
     #[test]
     fn tab_with_pre() {
         let frag = layout_text_inheriting(&["X\tY"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
-            s.tab_size = TabSize::Spaces(8);
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
+            s.update_derived(|computed| computed.tab_size = TabSize::Spaces(8));
         });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -2392,8 +2469,8 @@ mod tab_size {
     #[test]
     fn tab_with_pre_wrap() {
         let frag = layout_text_inheriting(&["X\tY"], 800, |s| {
-            s.white_space = WhiteSpace::PreWrap;
-            s.tab_size = TabSize::Spaces(8);
+            s.update_derived(|computed| computed.white_space = WhiteSpace::PreWrap);
+            s.update_derived(|computed| computed.tab_size = TabSize::Spaces(8));
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -2401,12 +2478,12 @@ mod tab_size {
     #[test]
     fn larger_tab_wider() {
         let f4 = layout_text_inheriting(&["A\tB"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
-            s.tab_size = TabSize::Spaces(4);
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
+            s.update_derived(|computed| computed.tab_size = TabSize::Spaces(4));
         });
         let f16 = layout_text_inheriting(&["A\tB"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
-            s.tab_size = TabSize::Spaces(16);
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
+            s.update_derived(|computed| computed.tab_size = TabSize::Spaces(16));
         });
         let t4 = collect_text_fragments(&f4);
         let t16 = collect_text_fragments(&f16);
@@ -2418,8 +2495,8 @@ mod tab_size {
     #[test]
     fn length_variant() {
         let frag = layout_text_inheriting(&["A\tB"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
-            s.tab_size = TabSize::Length(50.0);
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
+            s.update_derived(|computed| computed.tab_size = TabSize::Length(50.0));
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -2427,8 +2504,8 @@ mod tab_size {
     #[test]
     fn tab_size_1() {
         let frag = layout_text_inheriting(&["A\tB"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
-            s.tab_size = TabSize::Spaces(1);
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
+            s.update_derived(|computed| computed.tab_size = TabSize::Spaces(1));
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -2460,12 +2537,14 @@ mod hanging_punctuation {
     #[test]
     fn first_flag() {
         let frag = make_styled_text_block(&["\"Hello World\""], 800, |s| {
-            s.hanging_punctuation = HangingPunctuation {
-                first: true,
-                last: false,
-                force_end: false,
-                allow_end: false,
-            };
+            s.update_derived(|computed| {
+                computed.hanging_punctuation = HangingPunctuation {
+                    first: true,
+                    last: false,
+                    force_end: false,
+                    allow_end: false,
+                }
+            });
         });
         let block = first_block_child(&frag);
         assert!(block.size.height > LayoutUnit::zero());
@@ -2474,12 +2553,14 @@ mod hanging_punctuation {
     #[test]
     fn last_flag() {
         let frag = make_styled_text_block(&["Hello World."], 800, |s| {
-            s.hanging_punctuation = HangingPunctuation {
-                first: false,
-                last: true,
-                force_end: false,
-                allow_end: false,
-            };
+            s.update_derived(|computed| {
+                computed.hanging_punctuation = HangingPunctuation {
+                    first: false,
+                    last: true,
+                    force_end: false,
+                    allow_end: false,
+                }
+            });
         });
         let block = first_block_child(&frag);
         assert!(block.size.height > LayoutUnit::zero());
@@ -2488,12 +2569,14 @@ mod hanging_punctuation {
     #[test]
     fn force_end_flag() {
         let frag = make_styled_text_block(&["Hello World."], 800, |s| {
-            s.hanging_punctuation = HangingPunctuation {
-                first: false,
-                last: false,
-                force_end: true,
-                allow_end: false,
-            };
+            s.update_derived(|computed| {
+                computed.hanging_punctuation = HangingPunctuation {
+                    first: false,
+                    last: false,
+                    force_end: true,
+                    allow_end: false,
+                }
+            });
         });
         let block = first_block_child(&frag);
         assert!(block.size.height > LayoutUnit::zero());
@@ -2502,12 +2585,14 @@ mod hanging_punctuation {
     #[test]
     fn allow_end_flag() {
         let frag = make_styled_text_block(&["Hello World."], 800, |s| {
-            s.hanging_punctuation = HangingPunctuation {
-                first: false,
-                last: false,
-                force_end: false,
-                allow_end: true,
-            };
+            s.update_derived(|computed| {
+                computed.hanging_punctuation = HangingPunctuation {
+                    first: false,
+                    last: false,
+                    force_end: false,
+                    allow_end: true,
+                }
+            });
         });
         let block = first_block_child(&frag);
         assert!(block.size.height > LayoutUnit::zero());
@@ -2516,12 +2601,14 @@ mod hanging_punctuation {
     #[test]
     fn all_flags_true() {
         let frag = make_styled_text_block(&["\"Hello World.\""], 800, |s| {
-            s.hanging_punctuation = HangingPunctuation {
-                first: true,
-                last: true,
-                force_end: true,
-                allow_end: true,
-            };
+            s.update_derived(|computed| {
+                computed.hanging_punctuation = HangingPunctuation {
+                    first: true,
+                    last: true,
+                    force_end: true,
+                    allow_end: true,
+                }
+            });
         });
         let block = first_block_child(&frag);
         assert!(block.size.height > LayoutUnit::zero());
@@ -2568,8 +2655,8 @@ mod text_justify {
             &["The quick brown fox jumps over the lazy dog and more text here"],
             200,
             |s| {
-                s.text_align = TextAlign::Justify;
-                s.text_justify = TextJustify::Auto;
+                s.update_derived(|computed| computed.text_align = TextAlign::Justify);
+                s.update_derived(|computed| computed.text_justify = TextJustify::Auto);
             },
         );
         let block = first_block_child(&frag);
@@ -2582,8 +2669,8 @@ mod text_justify {
             &["The quick brown fox jumps over the lazy dog and more text here"],
             200,
             |s| {
-                s.text_align = TextAlign::Justify;
-                s.text_justify = TextJustify::None;
+                s.update_derived(|computed| computed.text_align = TextAlign::Justify);
+                s.update_derived(|computed| computed.text_justify = TextJustify::None);
             },
         );
         let block = first_block_child(&frag);
@@ -2594,8 +2681,8 @@ mod text_justify {
     fn inter_word_succeeds() {
         let frag =
             make_styled_text_block(&["The quick brown fox jumps over the lazy dog"], 200, |s| {
-                s.text_align = TextAlign::Justify;
-                s.text_justify = TextJustify::InterWord;
+                s.update_derived(|computed| computed.text_align = TextAlign::Justify);
+                s.update_derived(|computed| computed.text_justify = TextJustify::InterWord);
             });
         let block = first_block_child(&frag);
         assert!(block.size.height > LayoutUnit::zero());
@@ -2605,8 +2692,8 @@ mod text_justify {
     fn inter_character_succeeds() {
         let frag =
             make_styled_text_block(&["The quick brown fox jumps over the lazy dog"], 200, |s| {
-                s.text_align = TextAlign::Justify;
-                s.text_justify = TextJustify::InterCharacter;
+                s.update_derived(|computed| computed.text_align = TextAlign::Justify);
+                s.update_derived(|computed| computed.text_justify = TextJustify::InterCharacter);
             });
         let block = first_block_child(&frag);
         assert!(block.size.height > LayoutUnit::zero());
@@ -2618,8 +2705,8 @@ mod text_justify {
             &["Hello World testing text justify inter word spacing"],
             200,
             |s| {
-                s.text_align = TextAlign::Justify;
-                s.text_justify = TextJustify::InterWord;
+                s.update_derived(|computed| computed.text_align = TextAlign::Justify);
+                s.update_derived(|computed| computed.text_justify = TextJustify::InterWord);
             },
         );
         let block = first_block_child(&frag);
@@ -2629,7 +2716,7 @@ mod text_justify {
     #[test]
     fn none_empty_no_crash() {
         let frag = make_styled_text_block(&[""], 800, |s| {
-            s.text_justify = TextJustify::None;
+            s.update_derived(|computed| computed.text_justify = TextJustify::None);
         });
         let _ = frag.size;
     }
@@ -2645,8 +2732,8 @@ mod property_interactions {
     #[test]
     fn break_all_with_overflow_wrap() {
         let frag = layout_text_inheriting(&["Supercalifragilisticexpialidocious"], 100, |s| {
-            s.word_break = WordBreak::BreakAll;
-            s.overflow_wrap = OverflowWrap::BreakWord;
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakAll);
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -2654,8 +2741,8 @@ mod property_interactions {
     #[test]
     fn right_with_rtl() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Right;
-            s.direction = Direction::Rtl;
+            s.update_derived(|computed| computed.text_align = TextAlign::Right);
+            s.update_derived(|computed| computed.direction = Direction::Rtl);
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2666,8 +2753,8 @@ mod property_interactions {
     #[test]
     fn left_with_rtl() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_align = TextAlign::Left;
-            s.direction = Direction::Rtl;
+            s.update_derived(|computed| computed.text_align = TextAlign::Left);
+            s.update_derived(|computed| computed.direction = Direction::Rtl);
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2679,8 +2766,8 @@ mod property_interactions {
     fn nowrap_with_normal_word_break() {
         let frag =
             layout_text_inheriting(&["The quick brown fox jumps over the lazy dog"], 100, |s| {
-                s.white_space = WhiteSpace::Nowrap;
-                s.word_break = WordBreak::Normal;
+                s.update_derived(|computed| computed.white_space = WhiteSpace::Nowrap);
+                s.update_derived(|computed| computed.word_break = WordBreak::Normal);
             });
         assert_eq!(count_line_boxes(&frag), 1);
     }
@@ -2688,8 +2775,8 @@ mod property_interactions {
     #[test]
     fn normal_ws_with_break_all() {
         let frag = layout_text_inheriting(&["Supercalifragilistic"], 100, |s| {
-            s.white_space = WhiteSpace::Normal;
-            s.word_break = WordBreak::BreakAll;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Normal);
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakAll);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -2697,8 +2784,8 @@ mod property_interactions {
     #[test]
     fn letter_spacing_with_break_all() {
         let frag = layout_text_inheriting(&["HelloWorld"], 80, |s| {
-            s.letter_spacing = 5.0;
-            s.word_break = WordBreak::BreakAll;
+            s.update_derived(|computed| computed.letter_spacing = 5.0);
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakAll);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -2706,8 +2793,8 @@ mod property_interactions {
     #[test]
     fn indent_with_center() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_indent = Length::px(20.0);
-            s.text_align = TextAlign::Center;
+            s.update_derived(|computed| computed.text_indent = Length::px(20.0));
+            s.update_derived(|computed| computed.text_align = TextAlign::Center);
         });
         assert!(!frag.children.is_empty());
     }
@@ -2715,8 +2802,8 @@ mod property_interactions {
     #[test]
     fn indent_with_right() {
         let frag = layout_text_styled(&["Hello"], 800, |s| {
-            s.text_indent = Length::px(20.0);
-            s.text_align = TextAlign::Right;
+            s.update_derived(|computed| computed.text_indent = Length::px(20.0));
+            s.update_derived(|computed| computed.text_align = TextAlign::Right);
         });
         assert!(!frag.children.is_empty());
     }
@@ -2724,8 +2811,8 @@ mod property_interactions {
     #[test]
     fn keep_all_with_overflow_wrap_break_word() {
         let frag = layout_text_inheriting(&["Hello-World Foo-Bar Baz-Qux"], 50, |s| {
-            s.word_break = WordBreak::KeepAll;
-            s.overflow_wrap = OverflowWrap::BreakWord;
+            s.update_derived(|computed| computed.word_break = WordBreak::KeepAll);
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
         });
         assert!(frag.size.height > LayoutUnit::zero());
     }
@@ -2733,8 +2820,8 @@ mod property_interactions {
     #[test]
     fn letter_and_word_spacing() {
         let frag = layout_text_inheriting(&["Hello World"], 800, |s| {
-            s.letter_spacing = 2.0;
-            s.word_spacing = 5.0;
+            s.update_derived(|computed| computed.letter_spacing = 2.0);
+            s.update_derived(|computed| computed.word_spacing = 5.0);
         });
         let texts = collect_text_fragments(&frag);
         if !texts.is_empty() {
@@ -2745,8 +2832,8 @@ mod property_interactions {
     #[test]
     fn pre_with_line_break_anywhere() {
         let frag = layout_text_inheriting(&["Hello\nWorld"], 800, |s| {
-            s.white_space = WhiteSpace::Pre;
-            s.line_break = LineBreak::Anywhere;
+            s.update_derived(|computed| computed.white_space = WhiteSpace::Pre);
+            s.update_derived(|computed| computed.line_break = LineBreak::Anywhere);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -2757,8 +2844,8 @@ mod property_interactions {
             &["The quick brown fox jumps over the lazy dog and more text here"],
             200,
             |s| {
-                s.text_align = TextAlign::Justify;
-                s.letter_spacing = 1.0;
+                s.update_derived(|computed| computed.text_align = TextAlign::Justify);
+                s.update_derived(|computed| computed.letter_spacing = 1.0);
             },
         );
         let block = first_block_child(&frag);
@@ -2768,8 +2855,8 @@ mod property_interactions {
     #[test]
     fn text_transform_narrow() {
         let frag = layout_text_inheriting(&["hello world test"], 80, |s| {
-            s.text_transform = TextTransform::Uppercase;
-            s.word_break = WordBreak::Normal;
+            s.update_derived(|computed| computed.text_transform = TextTransform::Uppercase);
+            s.update_derived(|computed| computed.word_break = WordBreak::Normal);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -2777,8 +2864,8 @@ mod property_interactions {
     #[test]
     fn rtl_with_overflow_wrap() {
         let frag = layout_text_inheriting(&["Internationalization"], 100, |s| {
-            s.direction = Direction::Rtl;
-            s.overflow_wrap = OverflowWrap::BreakWord;
+            s.update_derived(|computed| computed.direction = Direction::Rtl);
+            s.update_derived(|computed| computed.overflow_wrap = OverflowWrap::BreakWord);
         });
         assert!(count_line_boxes(&frag) >= 2);
     }
@@ -2862,7 +2949,7 @@ mod unicode_edge_cases {
     fn very_long_word_break_all() {
         let long_word: String = std::iter::repeat('a').take(200).collect();
         let frag = layout_text_inheriting(&[&long_word], 100, |s| {
-            s.word_break = WordBreak::BreakAll;
+            s.update_derived(|computed| computed.word_break = WordBreak::BreakAll);
         });
         assert!(count_line_boxes(&frag) >= 5);
     }

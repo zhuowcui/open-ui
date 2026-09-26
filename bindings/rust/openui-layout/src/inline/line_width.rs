@@ -10,7 +10,7 @@
 
 use openui_geometry::{BfcOffset, LayoutUnit};
 
-use crate::exclusions::ExclusionSpace;
+use crate::exclusions::{ExclusionSpace, ExclusionType};
 
 /// Per-line available width result from an exclusion space query.
 ///
@@ -19,6 +19,10 @@ use crate::exclusions::ExclusionSpace;
 /// and right floats).
 #[derive(Debug, Clone, Copy)]
 pub struct LineAvailability {
+    /// Block offset where this opportunity begins. It can be below the
+    /// requested shelf when an oversized float leaves no inline space.
+    pub block_offset: LayoutUnit,
+
     /// Inline-start offset relative to the content edge of the container.
     /// Non-zero when left floats intrude into the content area.
     pub inline_start: LayoutUnit,
@@ -60,6 +64,7 @@ pub fn compute_line_availability(
         Some(es) if es.has_floats() => es,
         _ => {
             return LineAvailability {
+                block_offset: line_block_offset,
                 inline_start: LayoutUnit::zero(),
                 available_inline_size: container_inline_size,
             };
@@ -76,8 +81,72 @@ pub fn compute_line_availability(
     let available = opportunity.inline_size();
 
     LineAvailability {
+        block_offset: opportunity.rect.block_start_offset(),
         inline_start,
         available_inline_size: available,
+    }
+}
+
+/// Compute an opportunity that remains usable across the full line-box
+/// height. A float may begin below the line's block-start while still
+/// intersecting the line box; sampling only the first shelf would then place
+/// atomic inline content through that later float.
+pub fn compute_line_availability_for_block_size(
+    exclusion_space: Option<&ExclusionSpace>,
+    line_block_offset: LayoutUnit,
+    container_inline_size: LayoutUnit,
+    min_inline_size: LayoutUnit,
+    line_block_size: LayoutUnit,
+) -> LineAvailability {
+    let es = match exclusion_space {
+        Some(es) if es.has_floats() && line_block_size > LayoutUnit::zero() => es,
+        _ => {
+            return compute_line_availability(
+                exclusion_space,
+                line_block_offset,
+                container_inline_size,
+                min_inline_size,
+            );
+        }
+    };
+
+    let opportunity = es.find_opportunity_for_bfc(
+        &BfcOffset::new(LayoutUnit::zero(), line_block_offset),
+        container_inline_size,
+        min_inline_size,
+        line_block_size,
+    );
+
+    // A zero-height float has no positive-area BFC overlap, but CSS line-box
+    // construction still wraps a line whose block interval crosses the
+    // float's block coordinate. Apply that point exclusion only here; normal
+    // BFC opportunity queries deliberately retain their area semantics.
+    let opportunity_start = opportunity.rect.block_start_offset();
+    let opportunity_end = opportunity_start + line_block_size;
+    let mut line_start = opportunity.rect.line_start_offset();
+    let mut line_end = opportunity.rect.line_end_offset();
+    for exclusion in es.all_exclusions() {
+        let float_start = exclusion.rect.block_start_offset();
+        if exclusion.rect.block_size() != LayoutUnit::zero()
+            || float_start <= opportunity_start
+            || float_start >= opportunity_end
+        {
+            continue;
+        }
+        match exclusion.exclusion_type {
+            ExclusionType::Left => {
+                line_start = line_start.max_of(exclusion.rect.line_end_offset());
+            }
+            ExclusionType::Right => {
+                line_end = line_end.min_of(exclusion.rect.line_start_offset());
+            }
+        }
+    }
+
+    LineAvailability {
+        block_offset: opportunity.rect.block_start_offset(),
+        inline_start: line_start,
+        available_inline_size: (line_end - line_start).clamp_negative_to_zero(),
     }
 }
 
@@ -114,6 +183,10 @@ mod tests {
     use super::*;
     use crate::exclusions::{ExclusionArea, ExclusionType};
     use openui_geometry::BfcRect;
+
+    fn lu(value: i32) -> LayoutUnit {
+        LayoutUnit::from_i32(value)
+    }
 
     #[test]
     fn no_exclusion_space_returns_full_width() {
@@ -171,6 +244,93 @@ mod tests {
         );
         assert_eq!(result.inline_start, LayoutUnit::zero());
         assert_eq!(result.available_inline_size, LayoutUnit::from_f32(400.0));
+    }
+
+    #[test]
+    fn full_height_line_uses_narrowest_future_shelf() {
+        let mut es = ExclusionSpace::new();
+        es.add(ExclusionArea {
+            rect: BfcRect::new(BfcOffset::new(lu(0), lu(0)), BfcOffset::new(lu(50), lu(75))),
+            exclusion_type: ExclusionType::Left,
+        });
+        es.add(ExclusionArea {
+            rect: BfcRect::new(
+                BfcOffset::new(lu(0), lu(75)),
+                BfcOffset::new(lu(100), lu(150)),
+            ),
+            exclusion_type: ExclusionType::Left,
+        });
+
+        let result =
+            compute_line_availability_for_block_size(Some(&es), lu(50), lu(400), lu(200), lu(50));
+        assert_eq!(result.block_offset, lu(50));
+        assert_eq!(result.inline_start, lu(100));
+        assert_eq!(result.available_inline_size, lu(300));
+    }
+
+    #[test]
+    fn full_height_line_advances_when_shelves_have_no_common_space() {
+        let mut es = ExclusionSpace::new();
+        es.add(ExclusionArea {
+            rect: BfcRect::new(
+                BfcOffset::new(lu(0), lu(0)),
+                BfcOffset::new(lu(250), lu(75)),
+            ),
+            exclusion_type: ExclusionType::Left,
+        });
+        es.add(ExclusionArea {
+            rect: BfcRect::new(
+                BfcOffset::new(lu(150), lu(75)),
+                BfcOffset::new(lu(400), lu(150)),
+            ),
+            exclusion_type: ExclusionType::Right,
+        });
+
+        let result =
+            compute_line_availability_for_block_size(Some(&es), lu(50), lu(400), lu(100), lu(50));
+        assert_eq!(result.block_offset, lu(75));
+        assert_eq!(result.inline_start, lu(0));
+        assert_eq!(result.available_inline_size, lu(150));
+    }
+
+    #[test]
+    fn full_height_line_wraps_at_zero_height_float_coordinate() {
+        let mut es = ExclusionSpace::new();
+        es.add(ExclusionArea {
+            rect: BfcRect::new(BfcOffset::new(lu(0), lu(0)), BfcOffset::new(lu(10), lu(30))),
+            exclusion_type: ExclusionType::Left,
+        });
+        es.add(ExclusionArea {
+            rect: BfcRect::new(
+                BfcOffset::new(lu(0), lu(30)),
+                BfcOffset::new(lu(100), lu(30)),
+            ),
+            exclusion_type: ExclusionType::Left,
+        });
+
+        let result =
+            compute_line_availability_for_block_size(Some(&es), lu(20), lu(500), lu(300), lu(20));
+        assert_eq!(result.block_offset, lu(20));
+        assert_eq!(result.inline_start, lu(100));
+        assert_eq!(result.available_inline_size, lu(400));
+    }
+
+    #[test]
+    fn full_height_line_ignores_zero_height_float_at_its_start() {
+        let mut es = ExclusionSpace::new();
+        es.add(ExclusionArea {
+            rect: BfcRect::new(
+                BfcOffset::new(lu(0), lu(20)),
+                BfcOffset::new(lu(100), lu(20)),
+            ),
+            exclusion_type: ExclusionType::Left,
+        });
+
+        let result =
+            compute_line_availability_for_block_size(Some(&es), lu(20), lu(500), lu(300), lu(20));
+        assert_eq!(result.block_offset, lu(20));
+        assert_eq!(result.inline_start, LayoutUnit::zero());
+        assert_eq!(result.available_inline_size, lu(500));
     }
 
     #[test]

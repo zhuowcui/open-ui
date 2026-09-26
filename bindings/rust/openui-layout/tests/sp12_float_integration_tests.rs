@@ -21,35 +21,35 @@ fn root_space(w: i32, h: i32) -> ConstraintSpace {
 
 fn add_float(doc: &mut Document, parent: NodeId, width: f32, height: f32, float: Float) -> NodeId {
     let node = doc.create_node(ElementTag::Div);
-    doc.node_mut(node).style.display = Display::Block;
-    doc.node_mut(node).style.width = Length::px(width);
-    doc.node_mut(node).style.height = Length::px(height);
-    doc.node_mut(node).style.float = float;
+    doc.update_resolved_style(node, |style| style.display = Display::Block);
+    doc.update_resolved_style(node, |style| style.width = Length::px(width));
+    doc.update_resolved_style(node, |style| style.height = Length::px(height));
+    doc.update_resolved_style(node, |style| style.float = float);
     doc.append_child(parent, node);
     node
 }
 
 fn add_block(doc: &mut Document, parent: NodeId, height: f32) -> NodeId {
     let node = doc.create_node(ElementTag::Div);
-    doc.node_mut(node).style.display = Display::Block;
-    doc.node_mut(node).style.height = Length::px(height);
+    doc.update_resolved_style(node, |style| style.display = Display::Block);
+    doc.update_resolved_style(node, |style| style.height = Length::px(height));
     doc.append_child(parent, node);
     node
 }
 
 fn add_block_with_width(doc: &mut Document, parent: NodeId, width: f32, height: f32) -> NodeId {
     let node = doc.create_node(ElementTag::Div);
-    doc.node_mut(node).style.display = Display::Block;
-    doc.node_mut(node).style.width = Length::px(width);
-    doc.node_mut(node).style.height = Length::px(height);
+    doc.update_resolved_style(node, |style| style.display = Display::Block);
+    doc.update_resolved_style(node, |style| style.width = Length::px(width));
+    doc.update_resolved_style(node, |style| style.height = Length::px(height));
     doc.append_child(parent, node);
     node
 }
 
 fn add_container(doc: &mut Document, parent: NodeId, width: f32) -> NodeId {
     let node = doc.create_node(ElementTag::Div);
-    doc.node_mut(node).style.display = Display::Block;
-    doc.node_mut(node).style.width = Length::px(width);
+    doc.update_resolved_style(node, |style| style.display = Display::Block);
+    doc.update_resolved_style(node, |style| style.width = Length::px(width));
     doc.append_child(parent, node);
     node
 }
@@ -187,7 +187,7 @@ fn clear_left() {
     add_float(&mut doc, container, 200.0, 100.0, Float::Left);
 
     let block = add_block(&mut doc, container, 50.0);
-    doc.node_mut(block).style.clear = Clear::Left;
+    doc.update_resolved_style(block, |style| style.clear = Clear::Left);
 
     let space = root_space(800, 600);
     let frag = block_layout(&doc, vp, &space);
@@ -213,7 +213,7 @@ fn clear_right() {
     add_float(&mut doc, container, 200.0, 150.0, Float::Right);
 
     let block = add_block(&mut doc, container, 50.0);
-    doc.node_mut(block).style.clear = Clear::Right;
+    doc.update_resolved_style(block, |style| style.clear = Clear::Right);
 
     let space = root_space(800, 600);
     let frag = block_layout(&doc, vp, &space);
@@ -239,7 +239,7 @@ fn clear_both() {
     add_float(&mut doc, container, 200.0, 150.0, Float::Right);
 
     let block = add_block(&mut doc, container, 50.0);
-    doc.node_mut(block).style.clear = Clear::Both;
+    doc.update_resolved_style(block, |style| style.clear = Clear::Both);
 
     let space = root_space(800, 600);
     let frag = block_layout(&doc, vp, &space);
@@ -332,7 +332,7 @@ fn float_then_clear_then_float() {
     add_float(&mut doc, container, 200.0, 100.0, Float::Left);
 
     let cleared_block = add_block(&mut doc, container, 30.0);
-    doc.node_mut(cleared_block).style.clear = Clear::Left;
+    doc.update_resolved_style(cleared_block, |style| style.clear = Clear::Left);
 
     add_float(&mut doc, container, 300.0, 80.0, Float::Left);
 
@@ -395,13 +395,13 @@ fn float_left_with_margins() {
     let container = add_container(&mut doc, vp, 800.0);
 
     let float_node = doc.create_node(ElementTag::Div);
-    doc.node_mut(float_node).style.display = Display::Block;
-    doc.node_mut(float_node).style.width = Length::px(200.0);
-    doc.node_mut(float_node).style.height = Length::px(100.0);
-    doc.node_mut(float_node).style.float = Float::Left;
-    doc.node_mut(float_node).style.margin_left = Length::px(10.0);
-    doc.node_mut(float_node).style.margin_right = Length::px(20.0);
-    doc.node_mut(float_node).style.margin_top = Length::px(5.0);
+    doc.update_resolved_style(float_node, |style| style.display = Display::Block);
+    doc.update_resolved_style(float_node, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(float_node, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(float_node, |style| style.float = Float::Left);
+    doc.update_resolved_style(float_node, |style| style.margin_left = Length::px(10.0));
+    doc.update_resolved_style(float_node, |style| style.margin_right = Length::px(20.0));
+    doc.update_resolved_style(float_node, |style| style.margin_top = Length::px(5.0));
     doc.append_child(container, float_node);
 
     let space = root_space(800, 600);
@@ -427,7 +427,7 @@ fn block_after_expired_float_gets_full_width() {
     add_float(&mut doc, container, 200.0, 50.0, Float::Left);
 
     let cleared = add_block(&mut doc, container, 40.0);
-    doc.node_mut(cleared).style.clear = Clear::Left;
+    doc.update_resolved_style(cleared, |style| style.clear = Clear::Left);
 
     let space = root_space(800, 600);
     let frag = block_layout(&doc, vp, &space);
@@ -449,11 +449,11 @@ fn float_right_with_margins() {
     let container = add_container(&mut doc, vp, 800.0);
 
     let float_node = doc.create_node(ElementTag::Div);
-    doc.node_mut(float_node).style.display = Display::Block;
-    doc.node_mut(float_node).style.width = Length::px(200.0);
-    doc.node_mut(float_node).style.height = Length::px(100.0);
-    doc.node_mut(float_node).style.float = Float::Right;
-    doc.node_mut(float_node).style.margin_right = Length::px(30.0);
+    doc.update_resolved_style(float_node, |style| style.display = Display::Block);
+    doc.update_resolved_style(float_node, |style| style.width = Length::px(200.0));
+    doc.update_resolved_style(float_node, |style| style.height = Length::px(100.0));
+    doc.update_resolved_style(float_node, |style| style.float = Float::Right);
+    doc.update_resolved_style(float_node, |style| style.margin_right = Length::px(30.0));
     doc.append_child(container, float_node);
 
     let space = root_space(800, 600);
@@ -495,7 +495,7 @@ fn clear_none_no_effect() {
     add_float(&mut doc, container, 200.0, 100.0, Float::Left);
 
     let block = add_block(&mut doc, container, 50.0);
-    doc.node_mut(block).style.clear = Clear::None;
+    doc.update_resolved_style(block, |style| style.clear = Clear::None);
 
     let space = root_space(800, 600);
     let frag = block_layout(&doc, vp, &space);
@@ -517,7 +517,7 @@ fn clear_left_ignores_right_float() {
     add_float(&mut doc, container, 200.0, 100.0, Float::Right);
 
     let block = add_block(&mut doc, container, 50.0);
-    doc.node_mut(block).style.clear = Clear::Left;
+    doc.update_resolved_style(block, |style| style.clear = Clear::Left);
 
     let space = root_space(800, 600);
     let frag = block_layout(&doc, vp, &space);
@@ -536,14 +536,18 @@ fn float_in_container_with_border_padding() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
-    doc.node_mut(container).style.width = Length::px(800.0);
-    doc.node_mut(container).style.padding_left = Length::px(20.0);
-    doc.node_mut(container).style.padding_top = Length::px(10.0);
-    doc.node_mut(container).style.border_left_width = 5;
-    doc.node_mut(container).style.border_top_width = 5;
-    doc.node_mut(container).style.border_left_style = BorderStyle::Solid;
-    doc.node_mut(container).style.border_top_style = BorderStyle::Solid;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
+    doc.update_resolved_style(container, |style| style.width = Length::px(800.0));
+    doc.update_resolved_style(container, |style| style.padding_left = Length::px(20.0));
+    doc.update_resolved_style(container, |style| style.padding_top = Length::px(10.0));
+    doc.update_resolved_style(container, |style| style.border_left_width = 5);
+    doc.update_resolved_style(container, |style| style.border_top_width = 5);
+    doc.update_resolved_style(container, |style| {
+        style.border_left_style = BorderStyle::Solid
+    });
+    doc.update_resolved_style(container, |style| {
+        style.border_top_style = BorderStyle::Solid
+    });
     doc.append_child(vp, container);
 
     add_float(&mut doc, container, 200.0, 100.0, Float::Left);
@@ -646,7 +650,7 @@ fn clear_right_clears_tallest_right_float() {
     add_float(&mut doc, container, 100.0, 200.0, Float::Right);
 
     let block = add_block(&mut doc, container, 30.0);
-    doc.node_mut(block).style.clear = Clear::Right;
+    doc.update_resolved_style(block, |style| style.clear = Clear::Right);
 
     let space = root_space(800, 600);
     let frag = block_layout(&doc, vp, &space);
@@ -672,10 +676,10 @@ fn float_child_laid_out_with_correct_size() {
     let container = add_container(&mut doc, vp, 800.0);
 
     let float_node = doc.create_node(ElementTag::Div);
-    doc.node_mut(float_node).style.display = Display::Block;
-    doc.node_mut(float_node).style.width = Length::px(250.0);
-    doc.node_mut(float_node).style.height = Length::px(75.0);
-    doc.node_mut(float_node).style.float = Float::Left;
+    doc.update_resolved_style(float_node, |style| style.display = Display::Block);
+    doc.update_resolved_style(float_node, |style| style.width = Length::px(250.0));
+    doc.update_resolved_style(float_node, |style| style.height = Length::px(75.0));
+    doc.update_resolved_style(float_node, |style| style.float = Float::Left);
     doc.append_child(container, float_node);
 
     let space = root_space(800, 600);

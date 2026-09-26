@@ -1,0 +1,42 @@
+[package]
+name = "openui-platform"
+version.workspace = true
+edition.workspace = true
+description = "Feature-gated Linux window and input runtime for Open UI"
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
+
+[features]
+default = []
+linux = [
+    "dep:accesskit",
+    "dep:accesskit_winit",
+    "dep:gl",
+    "dep:glutin",
+    "dep:glutin-winit",
+    "dep:raw-window-handle",
+    "dep:smithay-clipboard",
+    "dep:softbuffer",
+    "dep:winit",
+    "dep:x11-clipboard",
+]
+
+[dependencies]
+openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
+accesskit = { version = "=0.25.0", optional = true }
+accesskit_winit = { version = "=0.34.0", default-features = false, features = ["accesskit_unix", "async-io", "rwh_06"], optional = true }
+gl = { version = "=0.14.0", optional = true }
+glutin = { version = "=0.32.3", default-features = false, features = ["egl", "glx", "wayland", "x11"], optional = true }
+glutin-winit = { version = "=0.5.0", default-features = false, features = ["egl", "glx", "wayland", "x11"], optional = true }
+raw-window-handle = { version = "=0.6.2", optional = true }
+smithay-clipboard = { version = "=0.7.3", optional = true }
+softbuffer = { version = "=0.4.8", default-features = false, features = ["x11", "x11-dlopen", "wayland", "wayland-dlopen"], optional = true }
+winit = { version = "=0.30.13", default-features = false, features = ["rwh_06", "x11", "wayland", "wayland-dlopen"], optional = true }
+x11-clipboard = { version = "=0.9.3", optional = true }
+
+[dev-dependencies]
+accesskit = "=0.25.0"

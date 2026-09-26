@@ -1,0 +1,29 @@
+{
+  "decoder": {
+    "chromium_build": "147.0.7727.50",
+    "codec": "vp9-profile-0",
+    "implementation": "libvpx",
+    "revision": "9a2d3d1f46afbdfa9b9820a9fd3aacb084e65e2f"
+  },
+  "fixture_count": 1,
+  "fixtures": [
+    {
+      "coded_size": [
+        2,
+        2
+      ],
+      "color_space": "srgb-full-range-identity",
+      "container": "video/webm",
+      "output_byte_length": 32,
+      "output_mime_type": "image/x-openui-rgba8",
+      "output_sha256": "5af842e2a6f10fac705d195ac11076b3dff249b01a5e285fb00f8cc4f3f64cff",
+      "source": "css/css-sizing/aspect-ratio/support/2x2-green.webm",
+      "source_byte_length": 559,
+      "source_sha256": "1702f1648bf13716817d740357271a9a072d9ce57ff496ebda4055a8ae18562f",
+      "timestamp_us": 0,
+      "transport_hex": "4f554952010000000200000002000000007f00ff007f00ff007f00ff007f00ff"
+    }
+  ],
+  "license": "WPT source fixture; see the pinned WPT checkout LICENSE.md",
+  "schema_version": 1
+}

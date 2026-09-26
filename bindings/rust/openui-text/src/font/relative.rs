@@ -7,7 +7,7 @@
 
 use openui_style::{ComputedStyle, LineHeight};
 
-use super::{Font, FontDescription, FontMetrics};
+use super::{Font, FontCollection, FontDescription, FontMetrics};
 
 /// CSS font-relative units supported by the deterministic SP16 profile.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -93,8 +93,16 @@ pub struct FontRelativeLengthResolver {
 impl FontRelativeLengthResolver {
     /// Resolve the primary face and capture all font-relative reference values.
     pub fn from_style(style: &ComputedStyle) -> Self {
+        Self::from_style_in_collection(style, FontCollection::system())
+    }
+
+    /// Resolve against an explicit document-owned collection.
+    pub fn from_style_in_collection(
+        style: &ComputedStyle,
+        collection: std::sync::Arc<FontCollection>,
+    ) -> Self {
         let description = FontDescription::from_computed_style(style);
-        let font = Font::new(description);
+        let font = Font::new_in_collection(description, collection);
         let metrics = font.font_metrics().copied().unwrap_or_default();
         Self::from_metrics(style.font_size, &style.line_height, &metrics)
     }

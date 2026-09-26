@@ -19,6 +19,9 @@ SUMMARY_JSON = DATA_DIR / "pixel_comparison" / "results" / "summary.json"
 BASELINE_JSON = PORTED_DIR / "sp13r_baseline_exact.json"
 TARGETS_JSON = PORTED_DIR / "sp13r_multicol_targets.json"
 RESIDUALS_JSON = PORTED_DIR / "sp13r_multicol_residuals.json"
+SP19_LAYOUT_TARGETS_JSON = SCRIPT_DIR / "sp19_layout_targets.json"
+SP20_TARGETS_JSON = SCRIPT_DIR / "sp20_targets.json"
+MUTATION_AUDIT_JSON = PROJECT_ROOT / "docs/renderer/generated/javascript-mutation-audit-v2.json"
 
 OWNER = "sp13_multicol"
 FALLBACK_CATEGORIES = {"sp12_layout_bug", "not_ported"}
@@ -29,6 +32,107 @@ EXPECTED_RESIDUALS = 1018
 EXPECTED_RUNNABLE = 3566
 EXPECTED_UNPORTED = 4107
 EXPECTED_EXACT = EXPECTED_BASELINE + EXPECTED_TARGETS
+LATER_EXACT_PROMOTIONS = frozenset({
+    "wpt/css_break/borders-006",
+    "wpt/css_break/borders-007",
+    "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-056",
+    "wpt/css_break/flexbox_single-line-column-flex-fragmentation-044",
+    "wpt/css_break/flexbox_single-line-row-flex-fragmentation-030",
+    "wpt/css_break/out-of-flow-in-multicolumn-063",
+    "wpt/css_break/out-of-flow-in-multicolumn-064",
+    "wpt/css_break/out-of-flow-in-multicolumn-066",
+    "wpt/css_break/out-of-flow-in-multicolumn-067",
+    "wpt/css_break/out-of-flow-in-multicolumn-093",
+    "wpt/css_break/out-of-flow-in-multicolumn-118",
+    "wpt/css_break/out-of-flow-in-multicolumn-119",
+    "wpt/css_break/overflow-clip-000",
+    "wpt/css_break/overflow-clip-001",
+    "wpt/css_break/overflow-clip-002",
+    "wpt/css_multicol/multicol-fill-balance-004",
+    "wpt/css_multicol/multicol-dynamic-add-004-ref",
+    "wpt/css_multicol/multicol-span-auto-size-in-vertical-writing-mode-001",
+    "wpt/css_multicol/multicol-span-auto-size-in-vertical-writing-mode-002",
+    "wpt/css_multicol/multicol-under-vertical-rl-scroll",
+    "wpt/css_multicol/orthogonal-writing-mode-shrink-to-fit",
+    "wpt/css_multicol/orthogonal-writing-mode-spanner",
+    "wpt/css_overflow/no-scrollable-overflow-vertical-rl",
+    "wpt/css_overflow/no-scrollable-overflow-vertical-rl-2",
+    "wpt/css_overflow/line-clamp_webkit-line-clamp-041-crash",
+    "wpt/css_overflow/line-clamp_webkit-line-clamp-042-crash",
+    "wpt/css_overflow/line-clamp_webkit-line-clamp-043",
+    "wpt/css_overflow/scroll-markers_column-scroll-marker-006-ref",
+    "wpt/css_overflow/scroll-markers_column-scroll-marker-007-ref",
+    "wpt/css_break/background-image-000",
+    "wpt/css_break/background-image-001",
+    "wpt/css_break/background-image-002",
+    "wpt/css_break/box-shadow-003",
+    "wpt/css_break/box-shadow-004",
+    "wpt/css_break/break-inside-avoid-min-block-size-2",
+    "wpt/css_break/break-inside-avoid-min-block-size-2-ref",
+    "wpt/css_break/flexbox_multi-line-column-flex-fragmentation-046",
+    "wpt/css_break/flexbox_multi-line-column-flex-fragmentation-047",
+    "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-057",
+    "wpt/css_break/flexbox_single-line-column-flex-fragmentation-045",
+    "wpt/css_break/flexbox_single-line-row-flex-fragmentation-031",
+    "wpt/css_break/rounded-clipped-border",
+    "wpt/css_break/table_table-col-paint-vlr-rtl-ref",
+    "wpt/css_break/table_table-col-paint-vrl-rtl-ref",
+    "wpt/css_break/table_table-collapsed-borders-paint-vlr-rtl-ref",
+    "wpt/css_break/table_table-collapsed-borders-paint-vrl-ltr-ref",
+    "wpt/css_break/table_table-grid-paint-vlr-rtl-ref",
+    "wpt/css_break/table_table-grid-paint-vrl-rtl-ref",
+    "wpt/css_break/table_table-row-paint-vlr-rtl-ref",
+    "wpt/css_break/table_table-row-paint-vrl-rtl-ref",
+    "wpt/css_break/table_table-section-paint-vlr-rtl-ref",
+    "wpt/css_break/table_table-section-paint-vrl-rtl-ref",
+    "wpt/css_flexbox/flexbox-column-row-gap-002",
+    "wpt/css_flexbox/flexbox-column-row-gap-004",
+    "wpt/css_flexbox/flexbox-column-row-gap-004-ref",
+    "wpt/css_multicol/column-fill-balance-orthog-block-001",
+    "wpt/css_multicol/crashtests_vertical-rl-column-rules-wide-columns",
+    "wpt/css_multicol/multicol-span-all-008",
+    "wpt/css_multicol/multicol-span-all-011",
+    "wpt/css_multicol/multicol-span-all-rule-002",
+    "wpt/css_position/multicol_static-position_vlr-in-multicol-ref",
+    "wpt/css_position/multicol_static-position_vlr-ltr-ltr-in-multicol",
+    "wpt/css_position/multicol_static-position_vlr-ltr-rtl-in-multicol.tentative",
+    "wpt/css_position/multicol_static-position_vlr-rtl-ltr-in-multicol.tentative",
+    "wpt/css_position/multicol_static-position_vlr-rtl-rtl-in-multicol",
+    "wpt/css_position/multicol_static-position_vrl-in-multicol-ref",
+    "wpt/css_position/multicol_static-position_vrl-ltr-ltr-in-multicol",
+    "wpt/css_position/multicol_static-position_vrl-ltr-rtl-in-multicol.tentative",
+    "wpt/css_position/multicol_static-position_vrl-rtl-ltr-in-multicol.tentative",
+    "wpt/css_position/multicol_static-position_vrl-rtl-rtl-in-multicol",
+    "wpt/css_position/multicol_vlr-in-multicols-ref",
+    "wpt/css_position/multicol_vlr-ltr-ltr-in-multicols",
+    "wpt/css_position/multicol_vlr-ltr-rtl-in-multicols.tentative",
+    "wpt/css_position/multicol_vlr-rtl-ltr-in-multicols.tentative",
+    "wpt/css_position/multicol_vlr-rtl-rtl-in-multicols",
+    "wpt/css_position/multicol_vrl-in-multicols-ref",
+    "wpt/css_position/multicol_vrl-ltr-ltr-in-multicols",
+    "wpt/css_position/multicol_vrl-ltr-rtl-in-multicols.tentative",
+    "wpt/css_position/multicol_vrl-rtl-ltr-in-multicols.tentative",
+    "wpt/css_position/multicol_vrl-rtl-rtl-in-multicols",
+})
+
+
+def sp19_live_promotions(mapping: dict[str, dict[str, str]]) -> set[str]:
+    """Return later closure targets installed by the current completed wave.
+
+    The historical function name remains part of the accountability audit's
+    public contract. SP20 can legitimately promote rows frozen as SP13-R
+    residuals, so include its pinned target manifest as another source of
+    live, exact promotions.
+    """
+    targets = set()
+    for path in (SP19_LAYOUT_TARGETS_JSON, SP20_TARGETS_JSON):
+        if path.is_file():
+            targets.update(json.loads(path.read_text(encoding="utf-8")))
+    return {
+        test_id
+        for test_id in targets
+        if mapping.get(test_id, {}).get("ported") == "yes"
+    }
 
 
 def categories(value: str) -> set[str]:
@@ -121,6 +225,31 @@ def runnable_wpt_results(summary: dict) -> dict[str, dict]:
     }
 
 
+def lowered_candidate_promotions(
+    mapping: dict[str, dict[str, str]], *, require_complete: bool = True
+) -> set[str]:
+    """Identify later AST-lowered ports outside the immutable 5,731-case result set."""
+    audit = json.loads(MUTATION_AUDIT_JSON.read_text(encoding="utf-8"))
+    if audit.get("schema_version") != 2 or len(audit.get("entries", [])) != 393:
+        raise ValueError("JavaScript mutation audit inventory changed")
+    entries = audit["entries"]
+    if len({entry["test_id"] for entry in entries}) != len(entries):
+        raise ValueError("JavaScript mutation audit has duplicate identities")
+    promotions = {
+        entry["test_id"] for entry in entries
+        if entry["disposition"] in {"lowered-exact", "ast-lowered-pending-exact"}
+        and isinstance(entry.get("mutation_ir"), dict)
+        and entry["mutation_ir"].get("lowerable") is True
+    }
+    if not require_complete:
+        promotions &= mapping.keys()
+    for test_id in promotions:
+        row = mapping.get(test_id)
+        if not row or row.get("ported") != "yes" or row.get("our_test_id") != test_id:
+            raise ValueError(f"AST-lowered candidate is not a live port: {test_id}")
+    return promotions
+
+
 def validate_closed_snapshot(
     rows: list[dict[str, str]], summary: dict, baseline: list, targets: list,
     residuals: list,
@@ -132,12 +261,29 @@ def validate_closed_snapshot(
     # 3,566-row closure count.
     summary_by_id = runnable_wpt_results(summary)
     mapping = {canonical_id(row): row for row in rows}
+    live_promotions = set(LATER_EXACT_PROMOTIONS) | sp19_live_promotions(mapping)
+    candidate_promotions = lowered_candidate_promotions(mapping)
     if len(rows) != 7673:
         raise ValueError(f"SP13-R mapping inventory changed: {len(rows)}")
-    if len(summary_by_id) != EXPECTED_RUNNABLE:
-        raise ValueError(f"SP13-R runnable inventory changed: {len(summary_by_id)}")
-    if sum(row.get("ported") == "no" for row in rows) != EXPECTED_UNPORTED:
-        raise ValueError("SP13-R unported inventory changed")
+    if len(mapping) != len(rows):
+        raise ValueError("SP13-R mapping contains duplicate identities")
+    ported_ids = {
+        test_id for test_id, row in mapping.items() if row.get("ported") == "yes"
+    }
+    unported = len(rows) - len(ported_ids)
+    if (
+        len(ported_ids) < EXPECTED_RUNNABLE
+        or set(summary_by_id) != ported_ids - candidate_promotions
+    ):
+        raise ValueError(
+            "SP13-R live runnable identity changed incompatibly: "
+            f"mapping={len(ported_ids)}, summary={len(summary_by_id)}, "
+            f"floor={EXPECTED_RUNNABLE}"
+        )
+    if unported > EXPECTED_UNPORTED:
+        raise ValueError(
+            f"SP13-R unported inventory grew: {unported} > {EXPECTED_UNPORTED}"
+        )
     if sum(
         item.get("status") == "pass" and item.get("mismatch_pct") == 0.0
         for item in summary_by_id.values()
@@ -161,6 +307,25 @@ def validate_closed_snapshot(
     for item in residuals:
         test_id = item["test_id"]
         row = mapping.get(test_id)
+        if test_id in candidate_promotions:
+            if OWNER in categories(row.get("failure_category", "")):
+                raise ValueError(f"AST-lowered candidate retains multicol ownership: {test_id}")
+            continue
+        if test_id in live_promotions:
+            result = summary_by_id.get(test_id)
+            if (
+                not row
+                or row.get("ported") != "yes"
+                or row.get("our_test_id") != test_id
+                or OWNER in categories(row.get("failure_category", ""))
+                or not result
+                or result.get("status") != "pass"
+                or result.get("mismatch_pct") != 0.0
+            ):
+                raise ValueError(
+                    f"SP13-R later promotion is not runnable and exact: {test_id}"
+                )
+            continue
         if not row or row.get("ported") != "no":
             raise ValueError(f"SP13-R residual unexpectedly became runnable: {test_id}")
         if categories(row.get("failure_category", "")) != set(item["owner_categories"]):

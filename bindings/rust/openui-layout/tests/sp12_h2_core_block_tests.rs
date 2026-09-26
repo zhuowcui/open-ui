@@ -66,8 +66,8 @@ fn nf_five_children_stack_vertically() {
 #[test]
 fn nf_children_with_margins_stack() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(50.0).margin(10, 0, 10, 0).done();
     b.add_child().height(50.0).margin(10, 0, 10, 0).done();
@@ -152,8 +152,8 @@ fn nf_fixed_width_left_auto_margin_right_fixed() {
         .width(200.0)
         .height(50.0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::px(50.0);
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::px(50.0));
         })
         .done();
     let r = b.build();
@@ -168,8 +168,8 @@ fn nf_fixed_width_right_auto_margin_left_fixed() {
         .width(200.0)
         .height(50.0)
         .with_style(|s| {
-            s.margin_left = Length::px(30.0);
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::px(30.0));
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -509,8 +509,8 @@ fn bm_margin_auto_left_only() {
         .width(200.0)
         .height(50.0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::px(0.0);
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::px(0.0));
         })
         .done();
     let r = b.build();
@@ -525,8 +525,8 @@ fn bm_margin_auto_right_only() {
         .width(200.0)
         .height(50.0)
         .with_style(|s| {
-            s.margin_left = Length::px(0.0);
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::px(0.0));
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -567,7 +567,7 @@ fn bm_percentage_margin_left() {
     b.add_child()
         .height(50.0)
         .with_style(|s| {
-            s.margin_left = Length::percent(10.0);
+            s.update_derived(|computed| computed.margin_left = Length::percent(10.0));
         })
         .done();
     let r = b.build();
@@ -582,7 +582,7 @@ fn bm_percentage_margin_right() {
     b.add_child()
         .height(50.0)
         .with_style(|s| {
-            s.margin_right = Length::percent(25.0);
+            s.update_derived(|computed| computed.margin_right = Length::percent(25.0));
         })
         .done();
     let r = b.build();
@@ -596,8 +596,8 @@ fn bm_percentage_margin_both_sides() {
     b.add_child()
         .height(50.0)
         .with_style(|s| {
-            s.margin_left = Length::percent(10.0);
-            s.margin_right = Length::percent(10.0);
+            s.update_derived(|computed| computed.margin_left = Length::percent(10.0));
+            s.update_derived(|computed| computed.margin_right = Length::percent(10.0));
         })
         .done();
     let r = b.build();
@@ -614,7 +614,7 @@ fn bm_negative_margin_left() {
     b.add_child()
         .height(50.0)
         .with_style(|s| {
-            s.margin_left = Length::px(-20.0);
+            s.update_derived(|computed| computed.margin_left = Length::px(-20.0));
         })
         .done();
     let r = b.build();
@@ -629,7 +629,7 @@ fn bm_negative_margin_right() {
     b.add_child()
         .height(50.0)
         .with_style(|s| {
-            s.margin_right = Length::px(-20.0);
+            s.update_derived(|computed| computed.margin_right = Length::px(-20.0));
         })
         .done();
     let r = b.build();
@@ -640,8 +640,8 @@ fn bm_negative_margin_right() {
 #[test]
 fn bm_negative_margin_top_shifts_up() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(50.0).done();
     b.add_child().height(50.0).margin_top(-10).done();
@@ -658,8 +658,8 @@ fn bm_negative_margin_both_sides_fixed_width() {
         .width(300.0)
         .height(50.0)
         .with_style(|s| {
-            s.margin_left = Length::px(-10.0);
-            s.margin_right = Length::px(-10.0);
+            s.update_derived(|computed| computed.margin_left = Length::px(-10.0));
+            s.update_derived(|computed| computed.margin_right = Length::px(-10.0));
         })
         .done();
     let r = b.build();
@@ -676,10 +676,10 @@ fn bm_margin_0_auto_centering() {
         .width(200.0)
         .height(50.0)
         .with_style(|s| {
-            s.margin_top = Length::px(0.0);
-            s.margin_bottom = Length::px(0.0);
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_top = Length::px(0.0));
+            s.update_derived(|computed| computed.margin_bottom = Length::px(0.0));
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done();
     let r = b.build();
@@ -707,7 +707,7 @@ fn bm_padding_percent_top() {
         .height(50.0)
         .with_style(|s| {
             // all padding-% resolves against containing block inline size
-            s.padding_top = Length::percent(10.0);
+            s.update_derived(|computed| computed.padding_top = Length::percent(10.0));
         })
         .done();
     let r = b.build();
@@ -721,8 +721,8 @@ fn bm_padding_percent_left_right() {
     b.add_child()
         .height(50.0)
         .with_style(|s| {
-            s.padding_left = Length::percent(5.0);
-            s.padding_right = Length::percent(5.0);
+            s.update_derived(|computed| computed.padding_left = Length::percent(5.0));
+            s.update_derived(|computed| computed.padding_right = Length::percent(5.0));
         })
         .done();
     let r = b.build();
@@ -736,7 +736,7 @@ fn bm_padding_percent_bottom() {
     b.add_child()
         .height(50.0)
         .with_style(|s| {
-            s.padding_bottom = Length::percent(25.0);
+            s.update_derived(|computed| computed.padding_bottom = Length::percent(25.0));
         })
         .done();
     let r = b.build();
@@ -881,8 +881,8 @@ fn bm_border_none_style_zero_width() {
     b.add_child()
         .height(50.0)
         .with_style(|s| {
-            s.border_top_width = 5;
-            s.border_top_style = BorderStyle::None;
+            s.update_derived(|computed| computed.border_top_width = 5);
+            s.update_derived(|computed| computed.border_top_style = BorderStyle::None);
         })
         .done();
     let r = b.build();
@@ -893,8 +893,8 @@ fn bm_border_none_style_zero_width() {
 #[test]
 fn bm_all_four_margins_different() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(200.0)
@@ -945,13 +945,13 @@ fn bm_padding_left_only() {
 #[test]
 fn bm_margin_percentage_top() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .height(50.0)
         .with_style(|s| {
-            s.margin_top = Length::percent(10.0);
+            s.update_derived(|computed| computed.margin_top = Length::percent(10.0));
         })
         .done();
     let r = b.build();
@@ -1125,8 +1125,8 @@ fn dt_flow_root_stacks_with_block() {
 fn dt_flow_root_does_not_collapse_margins() {
     // flow-root establishes a new BFC; margins should not collapse through it.
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(50.0).margin_bottom(20).done();
     b.add_child()
@@ -1450,7 +1450,7 @@ fn as_percentage_height_with_definite_parent() {
         .height(200.0)
         .add_child()
         .with_style(|s| {
-            s.height = Length::percent(50.0);
+            s.update_derived(|computed| computed.height = Length::percent(50.0));
         })
         .done()
         .done();
@@ -1466,7 +1466,7 @@ fn as_percentage_height_100pct() {
         .height(300.0)
         .add_child()
         .with_style(|s| {
-            s.height = Length::percent(100.0);
+            s.update_derived(|computed| computed.height = Length::percent(100.0));
         })
         .done()
         .done();
@@ -1481,7 +1481,7 @@ fn as_percentage_height_25pct() {
         .height(400.0)
         .add_child()
         .with_style(|s| {
-            s.height = Length::percent(25.0);
+            s.update_derived(|computed| computed.height = Length::percent(25.0));
         })
         .done()
         .done();
@@ -1496,7 +1496,7 @@ fn as_percentage_height_with_auto_parent_treated_as_auto() {
         .height_auto()
         .add_child()
         .with_style(|s| {
-            s.height = Length::percent(50.0);
+            s.update_derived(|computed| computed.height = Length::percent(50.0));
         })
         .done()
         .done();
@@ -2027,8 +2027,8 @@ fn re_replaced_positioned_at_origin() {
 #[test]
 fn re_replaced_with_margins() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .fixed_size(200.0, 100.0)
@@ -2110,7 +2110,7 @@ fn re_replaced_with_max_width_percentage() {
         .width(500.0)
         .height(100.0)
         .with_style(|s| {
-            s.max_width = Length::percent(50.0);
+            s.update_derived(|computed| computed.max_width = Length::percent(50.0));
         })
         .done();
     let r = b.build();
@@ -2268,8 +2268,8 @@ fn ec_margin_exceeds_container() {
 #[test]
 fn ec_large_vertical_margin() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(50.0).margin_top(500).done();
     let r = b.build();
@@ -2291,8 +2291,8 @@ fn ec_zero_padding_explicit() {
 #[test]
 fn ec_empty_container_with_padding() {
     let b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.padding_top = Length::px(20.0);
-        s.padding_bottom = Length::px(20.0);
+        s.update_derived(|computed| computed.padding_top = Length::px(20.0));
+        s.update_derived(|computed| computed.padding_bottom = Length::px(20.0));
     });
     let r = b.build();
     r.assert_child_count(0);
@@ -2301,10 +2301,10 @@ fn ec_empty_container_with_padding() {
 #[test]
 fn ec_empty_container_with_border() {
     let b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 5;
-        s.border_bottom_width = 5;
-        s.border_top_style = BorderStyle::Solid;
-        s.border_bottom_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 5);
+        s.update_derived(|computed| computed.border_bottom_width = 5);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
     });
     let r = b.build();
     r.assert_child_count(0);
@@ -2313,9 +2313,9 @@ fn ec_empty_container_with_border() {
 #[test]
 fn ec_container_with_padding_and_single_child() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.padding_top = Length::px(20.0);
-        s.padding_left = Length::px(10.0);
-        s.padding_right = Length::px(10.0);
+        s.update_derived(|computed| computed.padding_top = Length::px(20.0));
+        s.update_derived(|computed| computed.padding_left = Length::px(10.0));
+        s.update_derived(|computed| computed.padding_right = Length::px(10.0));
     });
     b.add_child().height(50.0).done();
     let r = b.build();
@@ -2541,17 +2541,17 @@ fn ec_nested_auto_height_chain() {
 #[test]
 fn ec_container_with_border_and_padding_child() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 2;
-        s.border_bottom_width = 2;
-        s.border_left_width = 3;
-        s.border_right_width = 3;
-        s.border_top_style = BorderStyle::Solid;
-        s.border_bottom_style = BorderStyle::Solid;
-        s.border_left_style = BorderStyle::Solid;
-        s.border_right_style = BorderStyle::Solid;
-        s.padding_top = Length::px(5.0);
-        s.padding_left = Length::px(10.0);
-        s.padding_right = Length::px(10.0);
+        s.update_derived(|computed| computed.border_top_width = 2);
+        s.update_derived(|computed| computed.border_bottom_width = 2);
+        s.update_derived(|computed| computed.border_left_width = 3);
+        s.update_derived(|computed| computed.border_right_width = 3);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_bottom_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_right_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.padding_top = Length::px(5.0));
+        s.update_derived(|computed| computed.padding_left = Length::px(10.0));
+        s.update_derived(|computed| computed.padding_right = Length::px(10.0));
     });
     b.add_child().height(50.0).done();
     let r = b.build();
@@ -2583,8 +2583,8 @@ fn ec_multiple_centered_children() {
 #[test]
 fn ec_child_with_all_box_model_properties() {
     let mut b = BlockTestBuilder::new(800, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child()
         .width(200.0)
@@ -2695,7 +2695,7 @@ fn ec_percentage_height_in_border_box_parent() {
         .box_sizing_border_box()
         .add_child()
         .with_style(|s| {
-            s.height = Length::percent(50.0);
+            s.update_derived(|computed| computed.height = Length::percent(50.0));
         })
         .done()
         .done();
@@ -2798,10 +2798,10 @@ fn nf_child_auto_width_with_border() {
 #[test]
 fn nf_container_with_border_children_position() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 5;
-        s.border_left_width = 5;
-        s.border_top_style = BorderStyle::Solid;
-        s.border_left_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 5);
+        s.update_derived(|computed| computed.border_left_width = 5);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
+        s.update_derived(|computed| computed.border_left_style = BorderStyle::Solid);
     });
     b.add_child().height(50.0).done();
     let r = b.build();
@@ -2870,8 +2870,8 @@ fn bm_uniform_border_3() {
 #[test]
 fn bm_margin_top_20_first_child() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(50.0).margin_top(20).done();
     let r = b.build();
@@ -2881,8 +2881,8 @@ fn bm_margin_top_20_first_child() {
 #[test]
 fn bm_margin_bottom_between_siblings() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(50.0).margin_bottom(30).done();
     b.add_child().height(60.0).done();
@@ -2924,7 +2924,7 @@ fn bm_auto_margin_left_pushes_right() {
         .width(100.0)
         .height(50.0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3185,7 +3185,7 @@ fn as_percentage_height_75pct() {
         .height(400.0)
         .add_child()
         .with_style(|s| {
-            s.height = Length::percent(75.0);
+            s.update_derived(|computed| computed.height = Length::percent(75.0));
         })
         .done()
         .done();
@@ -3302,8 +3302,8 @@ fn ec_child_with_only_border() {
 #[test]
 fn ec_nested_margins_with_border_separator() {
     let mut b = BlockTestBuilder::new(400, 600).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     b.add_child().height(50.0).margin(10, 0, 20, 0).done();
     b.add_child().height(60.0).margin(30, 0, 10, 0).done();
@@ -3318,8 +3318,8 @@ fn ec_nested_margins_with_border_separator() {
 #[test]
 fn ec_many_children_with_margins() {
     let mut b = BlockTestBuilder::new(400, 2000).with_container_style(|s| {
-        s.border_top_width = 1;
-        s.border_top_style = BorderStyle::Solid;
+        s.update_derived(|computed| computed.border_top_width = 1);
+        s.update_derived(|computed| computed.border_top_style = BorderStyle::Solid);
     });
     for _ in 0..5 {
         b.add_child()
@@ -3429,7 +3429,7 @@ fn ec_auto_margin_left_with_width_equal_container() {
         .width(400.0)
         .height(50.0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
         })
         .done();
     let r = b.build();
@@ -3505,8 +3505,8 @@ fn ec_nested_child_centered() {
         .width(200.0)
         .height(50.0)
         .with_style(|s| {
-            s.margin_left = Length::auto();
-            s.margin_right = Length::auto();
+            s.update_derived(|computed| computed.margin_left = Length::auto());
+            s.update_derived(|computed| computed.margin_right = Length::auto());
         })
         .done()
         .done();

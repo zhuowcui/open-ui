@@ -66,8 +66,8 @@ fn make_justification_test_result(
     };
 
     let font_data = {
-        // Use the global font cache to get a valid FontPlatformData
-        let mut cache = openui_text::font::cache::GLOBAL_FONT_CACHE.lock().unwrap();
+        // Use an isolated cache facade to get a valid FontPlatformData.
+        let mut cache = openui_text::FontCache::new();
         let desc = openui_text::FontDescription::default();
         cache
             .get_font_platform_data("sans-serif", &desc)

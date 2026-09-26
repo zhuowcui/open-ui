@@ -4,14 +4,29 @@
 //! Every enum, every initial value, every type is extracted character-by-character
 //! from Blink's generated `computed_style_base.h` and `computed_style_constants.h`.
 
+mod animation;
 mod color;
 mod computed;
 mod enums;
 mod font_types;
+mod layout_systems;
+mod property;
+mod typography;
 
+pub use animation::*;
 pub use color::{Color, StyleColor};
 pub use computed::{
-    AspectRatio, BoxShadow, ComputedStyle, GradientStopPosition, LinearGradient, LinearGradientStop,
+    AspectRatio, BackgroundLayer, BackgroundPosition, BackgroundRepeat, BackgroundSize,
+    BlockEllipsis, BorderImage, BorderImageLength, BorderImageRepeat, BoxShadow, ComputedStyle,
+    ComputedStyleBuilder, ComputedStyleFields, ConicGradient, CounterOperation, CounterStyle,
+    CssImage, CssLinearGradient, GeneratedContentItem, GradientColorSpace, GradientStop,
+    GradientStopPosition, ImageResourceId, LineClamp, LinearGradient, LinearGradientStop,
+    PositionArea, QuotePair, RadialGradient, RadialGradientShape, RadialGradientSize,
+    WebkitBoxOrient,
 };
 pub use enums::*;
 pub use font_types::*;
+pub use layout_systems::*;
+pub use openui_geometry::Length;
+pub use property::*;
+pub use typography::*;

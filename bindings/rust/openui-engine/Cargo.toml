@@ -1,0 +1,22 @@
+[package]
+name = "openui-engine"
+version.workspace = true
+edition.workspace = true
+description = "Retained document, interaction, and scene engine for Open UI"
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+categories.workspace = true
+keywords.workspace = true
+
+[dependencies]
+accesskit = "=0.25.0"
+openui-compositor = { version = "=0.2.0", path = "../openui-compositor" }
+openui-dom = { version = "=0.2.0", path = "../openui-dom" }
+openui-geometry = { version = "=0.2.0", path = "../openui-geometry" }
+openui-layout = { version = "=0.2.0", path = "../openui-layout" }
+openui-paint = { version = "=0.2.0", path = "../openui-paint" }
+openui-style = { version = "=0.2.0", path = "../openui-style" }
+openui-text = { version = "=0.2.0", path = "../openui-text" }
+unicode-segmentation = "1.10"

@@ -148,7 +148,7 @@ fn bidi_reorder_all_even_levels_preserves_order() {
     let mut doc = Document::new();
     let vp = doc.root();
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
     doc.append_child(vp, container);
 
     let t1 = doc.create_node(ElementTag::Text);
@@ -280,23 +280,23 @@ fn cross_node_pre_space_does_not_collapse_next() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
     doc.append_child(vp, container);
 
     // First child: pre-formatted text ending with a space
     let pre_span = doc.create_node(ElementTag::Span);
-    doc.node_mut(pre_span).style.display = Display::Inline;
-    doc.node_mut(pre_span).style.white_space = WhiteSpace::Pre;
+    doc.update_resolved_style(pre_span, |style| style.display = Display::Inline);
+    doc.update_resolved_style(pre_span, |style| style.white_space = WhiteSpace::Pre);
     doc.append_child(container, pre_span);
 
     let t1 = doc.create_node(ElementTag::Text);
     doc.node_mut(t1).text = Some("text ".to_string());
-    doc.node_mut(t1).style.white_space = WhiteSpace::Pre;
+    doc.update_resolved_style(t1, |style| style.white_space = WhiteSpace::Pre);
     doc.append_child(pre_span, t1);
 
     // Second child: normal text starting with a space
     let normal_span = doc.create_node(ElementTag::Span);
-    doc.node_mut(normal_span).style.display = Display::Inline;
+    doc.update_resolved_style(normal_span, |style| style.display = Display::Inline);
     doc.append_child(container, normal_span);
 
     let t2 = doc.create_node(ElementTag::Text);
@@ -322,11 +322,11 @@ fn cross_node_normal_spaces_still_collapse() {
     let vp = doc.root();
 
     let container = doc.create_node(ElementTag::Div);
-    doc.node_mut(container).style.display = Display::Block;
+    doc.update_resolved_style(container, |style| style.display = Display::Block);
     doc.append_child(vp, container);
 
     let s1 = doc.create_node(ElementTag::Span);
-    doc.node_mut(s1).style.display = Display::Inline;
+    doc.update_resolved_style(s1, |style| style.display = Display::Inline);
     doc.append_child(container, s1);
 
     let t1 = doc.create_node(ElementTag::Text);
@@ -334,7 +334,7 @@ fn cross_node_normal_spaces_still_collapse() {
     doc.append_child(s1, t1);
 
     let s2 = doc.create_node(ElementTag::Span);
-    doc.node_mut(s2).style.display = Display::Inline;
+    doc.update_resolved_style(s2, |style| style.display = Display::Inline);
     doc.append_child(container, s2);
 
     let t2 = doc.create_node(ElementTag::Text);

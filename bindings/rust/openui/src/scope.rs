@@ -8,11 +8,7 @@ use crate::runtime::{ScopeId, RUNTIME};
 ///
 /// Returns the [`ScopeId`] so the caller can dispose it later.
 pub fn create_scope(f: impl FnOnce()) -> ScopeId {
-    let id = RUNTIME.with(|rt| {
-        let mut rt = rt.borrow_mut();
-        let id = rt.create_scope_raw();
-        id
-    });
+    let id = RUNTIME.with(|rt| rt.borrow_mut().create_scope_raw());
 
     // Set as current scope, run f, restore previous scope
     let prev_scope = RUNTIME.with(|rt| {

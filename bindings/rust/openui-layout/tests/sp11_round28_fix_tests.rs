@@ -51,24 +51,28 @@ fn r28_valign_percentage_uses_int_line_spacing_for_normal() {
     let mut doc = Document::new();
     let root = doc.root();
     let block = doc.create_node(ElementTag::Div);
-    doc.node_mut(block).style.display = Display::Block;
-    doc.node_mut(block).style.font_size = 16.0;
+    doc.update_resolved_style(block, |style| style.display = Display::Block);
+    doc.update_resolved_style(block, |style| style.font_size = 16.0);
     doc.append_child(root, block);
 
     // Span with vertical-align: 50%
     let span = doc.create_node(ElementTag::Span);
-    doc.node_mut(span).style.display = Display::Inline;
-    doc.node_mut(span).style.vertical_align = VerticalAlign::Percentage(50.0);
-    doc.node_mut(span).style.font_size = 16.0;
-    doc.node_mut(span).style.line_height = LineHeight::Normal;
+    doc.update_resolved_style(span, |style| style.display = Display::Inline);
+    doc.update_resolved_style(span, |style| {
+        style.vertical_align = VerticalAlign::Percentage(50.0)
+    });
+    doc.update_resolved_style(span, |style| style.font_size = 16.0);
+    doc.update_resolved_style(span, |style| style.line_height = LineHeight::Normal);
     doc.append_child(block, span);
 
     let text = doc.create_node(ElementTag::Text);
     doc.node_mut(text).text = Some("Test".to_string());
-    doc.node_mut(text).style.display = Display::Inline;
-    doc.node_mut(text).style.font_size = 16.0;
-    doc.node_mut(text).style.line_height = LineHeight::Normal;
-    doc.node_mut(text).style.vertical_align = VerticalAlign::Percentage(50.0);
+    doc.update_resolved_style(text, |style| style.display = Display::Inline);
+    doc.update_resolved_style(text, |style| style.font_size = 16.0);
+    doc.update_resolved_style(text, |style| style.line_height = LineHeight::Normal);
+    doc.update_resolved_style(text, |style| {
+        style.vertical_align = VerticalAlign::Percentage(50.0)
+    });
     doc.append_child(span, text);
 
     let sp = make_constraint_width(800);
@@ -103,23 +107,27 @@ fn r28_valign_percentage_consistent_with_explicit_length() {
     let mut doc1 = Document::new();
     let root1 = doc1.root();
     let block1 = doc1.create_node(ElementTag::Div);
-    doc1.node_mut(block1).style.display = Display::Block;
-    doc1.node_mut(block1).style.font_size = 16.0;
+    doc1.update_resolved_style(block1, |style| style.display = Display::Block);
+    doc1.update_resolved_style(block1, |style| style.font_size = 16.0);
     doc1.append_child(root1, block1);
 
     let span1 = doc1.create_node(ElementTag::Span);
-    doc1.node_mut(span1).style.display = Display::Inline;
-    doc1.node_mut(span1).style.vertical_align = VerticalAlign::Percentage(50.0);
-    doc1.node_mut(span1).style.font_size = 16.0;
-    doc1.node_mut(span1).style.line_height = LineHeight::Normal;
+    doc1.update_resolved_style(span1, |style| style.display = Display::Inline);
+    doc1.update_resolved_style(span1, |style| {
+        style.vertical_align = VerticalAlign::Percentage(50.0)
+    });
+    doc1.update_resolved_style(span1, |style| style.font_size = 16.0);
+    doc1.update_resolved_style(span1, |style| style.line_height = LineHeight::Normal);
     doc1.append_child(block1, span1);
 
     let text1 = doc1.create_node(ElementTag::Text);
     doc1.node_mut(text1).text = Some("A".to_string());
-    doc1.node_mut(text1).style.display = Display::Inline;
-    doc1.node_mut(text1).style.font_size = 16.0;
-    doc1.node_mut(text1).style.line_height = LineHeight::Normal;
-    doc1.node_mut(text1).style.vertical_align = VerticalAlign::Percentage(50.0);
+    doc1.update_resolved_style(text1, |style| style.display = Display::Inline);
+    doc1.update_resolved_style(text1, |style| style.font_size = 16.0);
+    doc1.update_resolved_style(text1, |style| style.line_height = LineHeight::Normal);
+    doc1.update_resolved_style(text1, |style| {
+        style.vertical_align = VerticalAlign::Percentage(50.0)
+    });
     doc1.append_child(span1, text1);
 
     let sp = make_constraint_width(800);
@@ -129,23 +137,27 @@ fn r28_valign_percentage_consistent_with_explicit_length() {
     let mut doc2 = Document::new();
     let root2 = doc2.root();
     let block2 = doc2.create_node(ElementTag::Div);
-    doc2.node_mut(block2).style.display = Display::Block;
-    doc2.node_mut(block2).style.font_size = 16.0;
+    doc2.update_resolved_style(block2, |style| style.display = Display::Block);
+    doc2.update_resolved_style(block2, |style| style.font_size = 16.0);
     doc2.append_child(root2, block2);
 
     let span2 = doc2.create_node(ElementTag::Span);
-    doc2.node_mut(span2).style.display = Display::Inline;
-    doc2.node_mut(span2).style.vertical_align = VerticalAlign::Length(expected_shift);
-    doc2.node_mut(span2).style.font_size = 16.0;
-    doc2.node_mut(span2).style.line_height = LineHeight::Normal;
+    doc2.update_resolved_style(span2, |style| style.display = Display::Inline);
+    doc2.update_resolved_style(span2, |style| {
+        style.vertical_align = VerticalAlign::Length(expected_shift)
+    });
+    doc2.update_resolved_style(span2, |style| style.font_size = 16.0);
+    doc2.update_resolved_style(span2, |style| style.line_height = LineHeight::Normal);
     doc2.append_child(block2, span2);
 
     let text2 = doc2.create_node(ElementTag::Text);
     doc2.node_mut(text2).text = Some("A".to_string());
-    doc2.node_mut(text2).style.display = Display::Inline;
-    doc2.node_mut(text2).style.font_size = 16.0;
-    doc2.node_mut(text2).style.line_height = LineHeight::Normal;
-    doc2.node_mut(text2).style.vertical_align = VerticalAlign::Length(expected_shift);
+    doc2.update_resolved_style(text2, |style| style.display = Display::Inline);
+    doc2.update_resolved_style(text2, |style| style.font_size = 16.0);
+    doc2.update_resolved_style(text2, |style| style.line_height = LineHeight::Normal);
+    doc2.update_resolved_style(text2, |style| {
+        style.vertical_align = VerticalAlign::Length(expected_shift)
+    });
     doc2.append_child(span2, text2);
 
     let frag2 = inline_layout(&doc2, block2, &sp);

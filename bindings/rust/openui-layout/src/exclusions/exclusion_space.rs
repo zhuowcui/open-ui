@@ -118,6 +118,18 @@ impl ExclusionSpace {
         }
     }
 
+    /// Highest block-start reached by any previously placed float.
+    /// CSS 2.1 forbids a later float's outer top from being above it, even
+    /// when the floats occupy opposite inline sides and do not overlap.
+    pub fn last_float_block_start(&self) -> LayoutUnit {
+        self.left_floats
+            .iter()
+            .chain(&self.right_floats)
+            .map(|float| float.rect.block_start_offset())
+            .max()
+            .unwrap_or_default()
+    }
+
     /// Find the first layout opportunity at or below `offset` that has at
     /// least `min_inline_size` of inline space within `available_inline_size`.
     ///
@@ -206,6 +218,72 @@ impl ExclusionSpace {
                 ),
             ),
         }
+    }
+
+    /// Find a float placement shelf when its signed margin-box inline size
+    /// is negative. CSS float fitting compares the signed outer width, so a
+    /// sufficiently negative margin may fit even after opposing edges cross.
+    /// BfcRect cannot represent that inverted interval; expose the selected
+    /// physical side as a zero-width opportunity while preserving the shelf.
+    pub fn find_layout_opportunity_for_float(
+        &self,
+        offset: &BfcOffset,
+        available_inline_size: LayoutUnit,
+        min_inline_size: LayoutUnit,
+        is_left: bool,
+    ) -> LayoutOpportunity {
+        if min_inline_size >= LayoutUnit::zero() || !self.has_floats() {
+            return self.find_layout_opportunity(
+                offset,
+                available_inline_size,
+                min_inline_size.max_of(LayoutUnit::zero()),
+            );
+        }
+
+        let mut block_offset = offset.block_offset;
+        let mut shelf_edges = vec![block_offset];
+        for float in self.left_floats.iter().chain(&self.right_floats) {
+            let start = float.rect.block_start_offset();
+            let end = float.rect.block_end_offset();
+            if end > block_offset {
+                if start > block_offset {
+                    shelf_edges.push(start);
+                }
+                shelf_edges.push(end);
+            }
+        }
+        shelf_edges.sort_unstable();
+        shelf_edges.dedup();
+
+        for shelf_start in shelf_edges {
+            if shelf_start < block_offset {
+                continue;
+            }
+            let (left_edge, right_edge) =
+                self.compute_edges_at(shelf_start, offset.line_offset, available_inline_size);
+            if right_edge - left_edge >= min_inline_size {
+                let (line_start, line_end) = if right_edge >= left_edge {
+                    (left_edge, right_edge)
+                } else if is_left {
+                    (left_edge, left_edge)
+                } else {
+                    (right_edge, right_edge)
+                };
+                return LayoutOpportunity {
+                    rect: BfcRect::new(
+                        BfcOffset::new(line_start, shelf_start),
+                        BfcOffset::new(line_end, self.next_float_start_after(shelf_start)),
+                    ),
+                };
+            }
+            block_offset = shelf_start;
+        }
+
+        self.find_layout_opportunity(
+            &BfcOffset::new(offset.line_offset, block_offset),
+            available_inline_size,
+            LayoutUnit::zero(),
+        )
     }
 
     /// Find a layout opportunity where a BFC of the given block size fits
@@ -464,6 +542,21 @@ impl ExclusionSpace {
         !self.left_floats.is_empty() || !self.right_floats.is_empty()
     }
 
+    /// Whether a float exclusion intersects the shelf at `block_offset`.
+    ///
+    /// An inherited exclusion space can retain floats that ended above a
+    /// cleared descendant. Those historical entries must not make the
+    /// descendant use ancestor-wide float fitting rules at its new shelf.
+    pub fn has_active_float_at(&self, block_offset: LayoutUnit) -> bool {
+        self.left_floats
+            .iter()
+            .chain(&self.right_floats)
+            .any(|float| {
+                float.rect.block_start_offset() <= block_offset
+                    && float.rect.block_end_offset() > block_offset
+            })
+    }
+
     /// Number of float exclusions tracked.
     #[inline]
     pub fn num_exclusions(&self) -> usize {
@@ -687,6 +780,17 @@ mod tests {
         assert!(!space.has_floats());
         space.add(make_float(ExclusionType::Left, 0, 0, 100, 50));
         assert!(space.has_floats());
+    }
+
+    #[test]
+    fn active_float_query_excludes_ended_shelves() {
+        let mut space = ExclusionSpace::new();
+        space.add(make_float(ExclusionType::Left, 0, 10, 100, 50));
+
+        assert!(!space.has_active_float_at(lu(9)));
+        assert!(space.has_active_float_at(lu(10)));
+        assert!(space.has_active_float_at(lu(49)));
+        assert!(!space.has_active_float_at(lu(50)));
     }
 
     #[test]

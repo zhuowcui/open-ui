@@ -1,0 +1,102 @@
+{
+  "abi_version": "0x00020000",
+  "pointer_width": 64,
+  "types": {
+    "OuiAccessibilityUpdate": {
+      "align": 8,
+      "size": 40
+    },
+    "OuiAnimationEvent": {
+      "align": 8,
+      "size": 48
+    },
+    "OuiAnimationOptions": {
+      "align": 8,
+      "size": 104
+    },
+    "OuiAnimationState": {
+      "align": 8,
+      "size": 48
+    },
+    "OuiAnimationTimeline": {
+      "align": 8,
+      "size": 40
+    },
+    "OuiAppConfig": {
+      "align": 8,
+      "size": 40
+    },
+    "OuiBitmap": {
+      "align": 8,
+      "size": 32
+    },
+    "OuiColor": {
+      "align": 1,
+      "size": 4
+    },
+    "OuiDocumentConfig": {
+      "align": 8,
+      "size": 48
+    },
+    "OuiEasing": {
+      "align": 8,
+      "size": 48
+    },
+    "OuiErrorInfo": {
+      "align": 8,
+      "size": 24
+    },
+    "OuiEvent": {
+      "align": 8,
+      "size": 88
+    },
+    "OuiFontFaceDescriptor": {
+      "align": 8,
+      "size": 112
+    },
+    "OuiFontFaceInfo": {
+      "align": 8,
+      "size": 152
+    },
+    "OuiFontFeatureDefault": {
+      "align": 4,
+      "size": 8
+    },
+    "OuiFontUnicodeRange": {
+      "align": 4,
+      "size": 8
+    },
+    "OuiKeyframe": {
+      "align": 8,
+      "size": 80
+    },
+    "OuiLength": {
+      "align": 4,
+      "size": 8
+    },
+    "OuiRect": {
+      "align": 4,
+      "size": 16
+    },
+    "OuiStylePayload": {
+      "align": 8,
+      "size": 8
+    },
+    "OuiStyleValue": {
+      "align": 8,
+      "size": 16
+    },
+    "OuiTransformOperation": {
+      "align": 4,
+      "size": 48
+    },
+    "OuiUtf8": {
+      "align": 8,
+      "size": 16
+    },
+    "OuiViewportMetrics": {
+      "align": 8,
+      "size": 40
+    }
+  }
+}

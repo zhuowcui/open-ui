@@ -1,0 +1,57 @@
+{
+  "fixtures": [
+    {
+      "byte_length": 27276,
+      "derivation": "ttc-v1-one-face-offset-adjustment-v1",
+      "format": "otc",
+      "path": "fixture.otc",
+      "sha256": "d646722927f94b620e35e3ed3a99ad34e856b400dd2fb191a51d3d357a97d216",
+      "source": "css/css-font-loading/resources/Rochester.otf",
+      "source_sha256": "235f7207a202026a0a73c38c64713d58eace082bdf605f5abd2a28166fab61aa"
+    },
+    {
+      "byte_length": 27260,
+      "format": "otf",
+      "path": "fixture.otf",
+      "sha256": "235f7207a202026a0a73c38c64713d58eace082bdf605f5abd2a28166fab61aa",
+      "source": "css/css-font-loading/resources/Rochester.otf",
+      "source_sha256": "235f7207a202026a0a73c38c64713d58eace082bdf605f5abd2a28166fab61aa"
+    },
+    {
+      "byte_length": 16028,
+      "format": "ttc",
+      "path": "fixture.ttc",
+      "sha256": "29456016c3d05578b3702eb38258f2872e82048c811ae7e5927406ec8048dc55",
+      "source": "css/css-fonts/variations/resources/ahem.ttc",
+      "source_sha256": "29456016c3d05578b3702eb38258f2872e82048c811ae7e5927406ec8048dc55"
+    },
+    {
+      "byte_length": 21768,
+      "format": "ttf",
+      "path": "fixture.ttf",
+      "sha256": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448",
+      "source": "preload/resources/font.ttf",
+      "source_sha256": "b719ecb31c5b21fc573c03f6421c74ac63c271a5a3ff841e34f9705fb94b8448"
+    },
+    {
+      "byte_length": 2112,
+      "format": "woff",
+      "path": "fixture.woff",
+      "sha256": "4e0e5135fa60f01e456e74ea50af23537d39cfc7822ab01dfa499a6efd8544e0",
+      "source": "css/css-fonts/support/fonts/pass.woff",
+      "source_sha256": "4e0e5135fa60f01e456e74ea50af23537d39cfc7822ab01dfa499a6efd8544e0"
+    },
+    {
+      "byte_length": 106560,
+      "format": "woff2",
+      "path": "fixture.woff2",
+      "sha256": "984e2d1e7062a65a5ac746f38520a9ce0e1058e33533bfddd243bb5cfba061d4",
+      "source": "css/css-font-loading/resources/GenR102.woff2",
+      "source_sha256": "984e2d1e7062a65a5ac746f38520a9ce0e1058e33533bfddd243bb5cfba061d4"
+    }
+  ],
+  "license_path": "LICENSE-WPT.md",
+  "license_sha256": "5fac07febb0e2a97fb0d7b0def149ec08b642e1ba4b9c345283ab1cbd2af6570",
+  "schema_version": 1,
+  "source_checkout": "pinned Chromium WPT"
+}

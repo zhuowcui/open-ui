@@ -149,6 +149,12 @@ impl Default for StyleColor {
     }
 }
 
+impl From<Color> for StyleColor {
+    fn from(value: Color) -> Self {
+        Self::Resolved(value)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
