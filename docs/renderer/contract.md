@@ -41,6 +41,11 @@ with the Acorn copy in the pinned Chromium checkout and emits an ordered
 mutation IR. Pure synchronous mutations remain pending until their native
 Engine lowering is exact across all four profiles. Every rejected case carries
 an AST-derived behavioral reason; porter syntax is never a final disposition.
+At clean checkpoint `5acc962a`, the 36 AST-lowered pending cases produced
+21/144 exact comparisons, 123 differences, and zero errors. None was exact
+at all four required profiles, so none was admitted. The
+[pending-candidate evidence index](generated/pending-mutation-candidates-v1.json)
+records every profile result and links each case to its ordered mutation IR.
 
 Application and system font ownership, registration limits, and C handle
 lifetime rules are documented in [font collections](font-collections.md).

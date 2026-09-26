@@ -9,7 +9,7 @@ claimed by source code alone.
 | Frozen headless replay | 5,549/5,731 byte-identical on clean checkpoint `5acc962a`; 182 changed | fail |
 | Original Chromium exactness | 186 historical passes report nonzero channel deltas; one immutable archived image differs from pinned Chromium by 4,348 pixels | blocked: conflicts with frozen replay |
 | Four-profile renderer matrix | 21,108/22,924 exact in the last complete diagnostic census | open |
-| Expanded deterministic manifest | 200 admitted cases; 36 lowered cases await exact qualification | open |
+| Expanded deterministic manifest | 200 admitted cases; 36 additional AST-lowered cases ran 21/144 exact comparisons; zero were exact at all four profiles | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust/C application contract | 36 scenarios, 93 existing exports, four C examples and C++ consumer | pass |
