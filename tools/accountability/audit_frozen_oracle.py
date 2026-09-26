@@ -149,9 +149,64 @@ def matrix_audit(report_path: Path, ids: list[str], images: dict[str, bytes]) ->
     }
 
 
+def prior_local_capture_audit(
+    prior_root: Path, report_path: Path, ids: list[str], images: dict[str, bytes]
+) -> dict[str, object]:
+    """Describe ignored workstation captures; never treat them as pinned proof."""
+
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    legacy = next(item for item in report["profiles"] if item["profile"] == "legacy-800x600@1")
+    rows = {item["id"]: item for item in legacy["tests"]}
+    counts = {
+        "archived_openui_vs_prior_chromium_different": 0,
+        "prior_vs_current_fixture_different": 0,
+        "prior_vs_live_chromium_different": 0,
+        "oracle_difference_without_fixture_change": 0,
+    }
+    changed_oracles = []
+    input_hashes = []
+    for test_id in ids:
+        prior = prior_root / test_id
+        current = report_path.parent / "legacy-800x600@1" / test_id
+        prior_html = (prior / "test.html").read_bytes()
+        prior_chrome_png = (prior / "chromium.png").read_bytes()
+        current_html = (current / "test.html").read_bytes()
+        prior_oracle = rgba_sha256(prior_chrome_png)
+        live_oracle = rows[test_id]["chromium_rgba_sha256"]
+        fixture_changed = prior_html != current_html
+        oracle_changed = prior_oracle != live_oracle
+        input_hashes.append((test_id, sha256(prior_html), sha256(prior_chrome_png)))
+        if rgba_sha256(images[f"{test_id}/openui.png"]) != prior_oracle:
+            counts["archived_openui_vs_prior_chromium_different"] += 1
+        if fixture_changed:
+            counts["prior_vs_current_fixture_different"] += 1
+        if oracle_changed:
+            counts["prior_vs_live_chromium_different"] += 1
+            if not fixture_changed:
+                counts["oracle_difference_without_fixture_change"] += 1
+            changed_oracles.append(
+                {
+                    "test_id": test_id,
+                    "prior_fixture_sha256": sha256(prior_html),
+                    "current_fixture_sha256": sha256(current_html),
+                    "prior_chromium_rgba_sha256": prior_oracle,
+                    "live_chromium_rgba_sha256": live_oracle,
+                }
+            )
+    return {
+        "evidence_kind": "local-ignored-captures-diagnostic",
+        "prior_input_manifest_sha256": sha256(
+            json.dumps(input_hashes, separators=(",", ":")).encode()
+        ),
+        "counts": counts,
+        "changed_oracles": changed_oracles,
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--matrix-report", type=Path)
+    parser.add_argument("--prior-local-captures", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--require-original-exact", action="store_true")
     args = parser.parse_args()
@@ -168,6 +223,12 @@ def main() -> None:
     }
     if args.matrix_report is not None:
         report["live_matrix"] = matrix_audit(args.matrix_report, ids, images)
+    if args.prior_local_captures is not None:
+        if args.matrix_report is None:
+            raise SystemExit("--prior-local-captures requires --matrix-report")
+        report["prior_local_captures"] = prior_local_capture_audit(
+            args.prior_local_captures, args.matrix_report, ids, images
+        )
     output = json.dumps(report, indent=2, sort_keys=True) + "\n"
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
