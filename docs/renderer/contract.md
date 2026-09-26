@@ -79,6 +79,14 @@ channel deltas, scale behavior, and unreviewed ownership are recorded in the
 The primitive gate remains open, and all three residuals are unowned. The
 previous [v1 index](generated/focused-primitive-raster-v1.json) remains as
 historical evidence at 884/960 exact.
+An explicit Ganesh raster run on Mesa llvmpipe completed the same clean
+40-profile suites. Its [backend comparison](generated/ganesh-raster-comparison-v1.json)
+records 408/640 focused and 624/960 primitive exact, compared with CPU Skia's
+640/640 and 900/960. All Chromium oracle hashes matched across backends;
+Ganesh changed 508 CPU-exact comparisons to different and repaired none of the
+60 CPU primitive residuals. The renderer code was unchanged between the CPU
+and Ganesh source checkpoints. This diagnostic does not qualify Ganesh or
+change the portable CPU selection.
 The runner defaults to `bindings/rust/target/release/pixel_compare`. Rebuild
 that executable from the clean checkpoint with the pinned toolchain and pass
 its path explicitly using `--pixel-compare`; a recent debug build does not

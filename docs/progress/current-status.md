@@ -57,9 +57,11 @@ load it.
 
 ## Release blockers
 
-- Direct Skia Ganesh raster now builds behind an explicit backend selection,
-  but it has not passed deterministic focused, primitive, and full-census
-  qualification. OpenGL presentation still uploads a CPU-rasterized frame.
+- Direct Skia Ganesh raster builds behind explicit backend selection. On the
+  clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json),
+  it reached 408/640 focused and 624/960 primitive exact, below CPU Skia's
+  640/640 and 900/960. It remains unpromoted; OpenGL presentation still uploads
+  a CPU-rasterized frame.
 - The four-profile Chromium census and primitive matrix fail exactness;
   972 census residual IDs and three primitive IDs have no reviewed owner.
 - The C ABI covers the retained engine and headless renderer, but does not yet
