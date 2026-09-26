@@ -72,9 +72,12 @@ python3 tools/qualification/run_renderer_matrix.py --suite full \
   --test-id wpt/css_backgrounds/background-image-gradient-interpolation-repaint-ref \
   --profile legacy-800x600@1 \
   --pixel-compare bindings/rust/target/debug/pixel_compare \
+  --cache-dir out/frozen-conflict-cache \
+  --oracle-cache-dir out/frozen-conflict-oracle \
   --results-dir out/frozen-conflict
 python3 tools/accountability/audit_frozen_oracle.py \
-  --example-report out/frozen-conflict/full-summary.json
+  --example-report out/frozen-conflict/full-summary.json \
+  --image-cache-dir out/frozen-conflict-cache
 ```
 
 The matrix command exits nonzero because the current renderer is not exact

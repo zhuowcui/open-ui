@@ -76,7 +76,10 @@ def historical_audit(ids: list[str]) -> dict[str, object]:
     }
 
 
-def matrix_audit(report_path: Path, ids: list[str], images: dict[str, bytes]) -> dict[str, object]:
+def matrix_audit(
+    report_path: Path, ids: list[str], images: dict[str, bytes],
+    image_cache_dir: Path | None = None,
+) -> dict[str, object]:
     from tools.qualification import residuals
 
     raw = report_path.read_bytes()
@@ -132,9 +135,8 @@ def matrix_audit(report_path: Path, ids: list[str], images: dict[str, bytes]) ->
             live_oracle = report_path.parent / "legacy-800x600@1" / test_id / "chromium.png"
             if not live_oracle.is_file():
                 live_oracle = (
-                    Path(report["chromium"]["oracle_cache"]).parent
-                    / row["chromium_png_cache_path"]
-                )
+                    image_cache_dir or Path(report["chromium"]["oracle_cache"]).parent
+                ) / row["chromium_png_cache_path"]
             if not live_oracle.is_file() or sha256(live_oracle.read_bytes()) != row["chromium_png_sha256"]:
                 raise ValueError("minimized example's live oracle PNG is unavailable or changed")
             with tempfile.TemporaryDirectory() as directory:
@@ -172,7 +174,8 @@ def matrix_audit(report_path: Path, ids: list[str], images: dict[str, bytes]) ->
 
 
 def minimal_conflict_audit(
-    report_path: Path, ids: list[str], images: dict[str, bytes]
+    report_path: Path, ids: list[str], images: dict[str, bytes],
+    image_cache_dir: Path | None = None,
 ) -> dict[str, object]:
     """Prove the frozen and live-oracle requirements conflict for one fixture."""
 
@@ -206,9 +209,8 @@ def minimal_conflict_audit(
         raise ValueError("example report must contain exactly the rendered fixture")
     row = rows[0]
     oracle_path = (
-        Path(report["chromium"]["oracle_cache"]).parent
-        / row["chromium_png_cache_path"]
-    )
+        image_cache_dir or Path(report["chromium"]["oracle_cache"]).parent
+    ) / row["chromium_png_cache_path"]
     oracle_png = oracle_path.read_bytes()
     if sha256(oracle_png) != row["chromium_png_sha256"]:
         raise ValueError("example Chromium capture bytes changed")
@@ -243,6 +245,7 @@ def minimal_conflict_audit(
         "frozen_openui_rgba_sha256": archived_rgba,
         "live_chromium_png_sha256": sha256(oracle_png),
         "live_chromium_rgba_sha256": oracle_rgba,
+        "live_chromium_source": row["chromium_oracle_source"],
         "current_openui_rgba_sha256": row["openui_rgba_sha256"],
         "mismatched_pixels": difference["mismatched_pixels"],
         "mismatch_bounds": difference["mismatch_bounds"],
@@ -329,6 +332,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--matrix-report", type=Path)
     parser.add_argument("--example-report", type=Path)
+    parser.add_argument("--image-cache-dir", type=Path)
     parser.add_argument("--prior-local-captures", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--require-original-exact", action="store_true")
@@ -345,10 +349,12 @@ def main() -> None:
         "historical": historical_audit(ids),
     }
     if args.matrix_report is not None:
-        report["live_matrix"] = matrix_audit(args.matrix_report, ids, images)
+        report["live_matrix"] = matrix_audit(
+            args.matrix_report, ids, images, args.image_cache_dir
+        )
     if args.example_report is not None:
         report["minimal_conflict"] = minimal_conflict_audit(
-            args.example_report, ids, images
+            args.example_report, ids, images, args.image_cache_dir
         )
         report["status"] = "blocked-immutable-archive-oracle-conflict"
     if args.prior_local_captures is not None:
