@@ -142,6 +142,20 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.18.0
+
+      - name: Install Chromium-locked Acorn parser
+        run: |
+          parser_root="$RUNNER_TEMP/chromium-acorn"
+          npm install --prefix "$parser_root" --no-save --ignore-scripts \
+            --no-package-lock --no-audit --no-fund --no-progress acorn@8.14.0
+          parser="$parser_root/node_modules/acorn/dist/acorn.mjs"
+          test "$(sha256sum "$parser" | cut -d ' ' -f 1)" = \
+            402f6759c744ea2ca501c1dc4ded8b1c54c9066cc7a741837057dcb68bc64c93
+          printf 'CHROMIUM_ACORN=%s\n' "$parser" >> "$GITHUB_ENV"
+
       - name: Fetch pinned Chromium 147 WPT sources
         run: |
           chromium_src="$RUNNER_TEMP/chromium-src"

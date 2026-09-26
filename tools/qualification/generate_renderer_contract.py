@@ -12,6 +12,7 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -40,14 +41,18 @@ PRIMITIVE_MANIFEST = ROOT / "tools/qualification/manifests/primitive-raster.json
 EXPANDED_MANIFEST = ROOT / "tools/qualification/manifests/expanded-v1.json"
 RESIDUAL_OWNERSHIP = ROOT / "tools/qualification/residual-ownership-v2.json"
 MEDIA_FIRST_FRAMES = ROOT / "docs/renderer/generated/media-first-frames-v1.json"
-WPT_ROOT = (
-    Path.home()
-    / "chromium/src/third_party/blink/web_tests/external/wpt/css"
-)
-ACORN = (
-    Path.home()
-    / "chromium/src/third_party/node/node_modules/acorn/dist/acorn.mjs"
-)
+WPT_ROOT = Path(
+    os.environ.get(
+        "CHROMIUM_WPT_CSS",
+        str(Path.home() / "chromium/src/third_party/blink/web_tests/external/wpt/css"),
+    )
+).expanduser()
+ACORN = Path(
+    os.environ.get(
+        "CHROMIUM_ACORN",
+        str(Path.home() / "chromium/src/third_party/node/node_modules/acorn/dist/acorn.mjs"),
+    )
+).expanduser()
 MUTATION_IR = ROOT / "tools/wpt/javascript_mutation_ir.mjs"
 sys.path.insert(0, str(ROOT))
 

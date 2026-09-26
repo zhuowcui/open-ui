@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import os
 import pathlib
 import subprocess
 import sys
@@ -252,10 +253,15 @@ class RendererMatrixTests(unittest.TestCase):
         self.assertFalse(matches(None, 375, 667, 2))
 
     def test_ast_mutation_audit_distinguishes_sync_writes_from_async_behavior(self):
-        acorn = (
-            pathlib.Path.home()
-            / "chromium/src/third_party/node/node_modules/acorn/dist/acorn.mjs"
-        )
+        acorn = pathlib.Path(
+            os.environ.get(
+                "CHROMIUM_ACORN",
+                str(
+                    pathlib.Path.home()
+                    / "chromium/src/third_party/node/node_modules/acorn/dist/acorn.mjs"
+                ),
+            )
+        ).expanduser()
         if not acorn.is_file():
             self.skipTest("pinned Chromium Acorn checkout is unavailable")
         documents = [
