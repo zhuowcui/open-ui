@@ -31,6 +31,9 @@ jobs:
       FORCE_SKIA_BUILD: "1"
       LIBCLANG_PATH: /usr/lib/llvm-18/lib
       PKG_CONFIG_SYSROOT_DIR: ""
+      # The fragmented multicol integration case exceeds libtest's 2 MiB
+      # worker-thread default; application threads use a larger stack.
+      RUST_MIN_STACK: "4194304"
       SKIA_GN_ARGS: >-
         extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP",
         "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2",
@@ -93,9 +96,29 @@ jobs:
   python-accountability:
     name: python-accountability
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
+    env:
+      CHROMIUM_WPT_ROOT: ${{ runner.temp }}/chromium-src/third_party/blink/web_tests/external/wpt
+      CHROMIUM_WPT_CSS: ${{ runner.temp }}/chromium-src/third_party/blink/web_tests/external/wpt/css
     steps:
       - uses: actions/checkout@v6
+
+      - name: Fetch pinned Chromium 147 WPT sources
+        run: |
+          chromium_src="$RUNNER_TEMP/chromium-src"
+          chromium_commit=09d377d9438dc95267369f74a073acd81bdde38f
+          git init --quiet "$chromium_src"
+          git -C "$chromium_src" remote add origin https://github.com/chromium/chromium.git
+          git -C "$chromium_src" sparse-checkout init --cone
+          git -C "$chromium_src" sparse-checkout set \
+            third_party/blink/web_tests/external/wpt/css \
+            third_party/blink/web_tests/external/wpt/fonts \
+            third_party/blink/web_tests/external/wpt/images \
+            third_party/blink/web_tests/external/wpt/media
+          git -C "$chromium_src" fetch --depth 1 --filter=blob:none origin "$chromium_commit"
+          git -C "$chromium_src" checkout --detach --quiet FETCH_HEAD
+          test "$(git -C "$chromium_src" rev-parse HEAD)" = "$chromium_commit"
+          test -f "$CHROMIUM_WPT_CSS/CSS2/floats/adjoining-floats-dynamic.html"
 
       - name: Run frozen closure and porter tests
         run: |
