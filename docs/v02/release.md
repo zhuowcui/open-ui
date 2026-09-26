@@ -7,7 +7,7 @@ claimed by source code alone.
 | Gate | Current evidence | State |
 |---|---|---|
 | Frozen headless replay | 5,549/5,731 byte-identical on clean checkpoint `5acc962a`; 182 changed | fail |
-| Original Chromium exactness | 186 historical passes report nonzero channel deltas; comparator omitted the rightmost 15 pixels | blocked |
+| Original Chromium exactness | 186 historical passes report nonzero channel deltas; one immutable archived image differs from pinned Chromium by 4,348 pixels | blocked: conflicts with frozen replay |
 | Four-profile renderer matrix | 21,108/22,924 exact in the last complete diagnostic census | open |
 | Expanded deterministic manifest | 200 admitted cases; 36 lowered cases await exact qualification | open |
 | Accountability | 7/7 over 7,673 rows | pass |
@@ -39,6 +39,15 @@ differences up to 4 and excluded the rightmost 15 pixels. At least 186 of its
 archived result totals and generated kickoff baseline remain immutable
 historical records, not zero-tolerance qualification evidence. See the
 [frozen oracle audit](../renderer/frozen-oracle-audit.md).
+
+The archived image for
+`wpt/css_backgrounds/background-image-gradient-interpolation-repaint-ref`
+differs from the pinned Chromium pixels at 800×600@1. Since frozen replay
+requires those archived bytes and the original matrix requires Chromium's
+pixels for the same fixture, the two mandatory gates cannot both pass. This
+is a release-contract blocker even if the current renderer's other residuals
+are repaired. The [minimal proof](../renderer/generated/frozen-oracle-audit-v1.json)
+preserves the inputs and measured difference.
 
 ## Release decision
 

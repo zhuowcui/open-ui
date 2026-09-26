@@ -171,6 +171,90 @@ def matrix_audit(report_path: Path, ids: list[str], images: dict[str, bytes]) ->
     }
 
 
+def minimal_conflict_audit(
+    report_path: Path, ids: list[str], images: dict[str, bytes]
+) -> dict[str, object]:
+    """Prove the frozen and live-oracle requirements conflict for one fixture."""
+
+    from tools.qualification import residuals
+
+    raw = report_path.read_bytes()
+    report = json.loads(raw)
+    contract_bytes = (ROOT / "docs/renderer/generated/qualification-contract-v2.json").read_bytes()
+    contract = json.loads(contract_bytes)
+    if EXAMPLE_ID not in ids:
+        raise ValueError("example is absent from the immutable manifest")
+    if report.get("suite") != "full" or report.get("complete_contract_scope"):
+        raise ValueError("example must come from a diagnostic full-suite selection")
+    if not report["source"]["clean"] or report["evidence"]["tolerance_pixels"] != 0:
+        raise ValueError("example requires clean source and zero pixel tolerance")
+    if report["commit"] != report["source"]["commit"]:
+        raise ValueError("example source commit identity is inconsistent")
+    if report["contract_sha256"] != sha256(contract_bytes):
+        raise ValueError("example uses a different qualification contract")
+    if report["id_manifest"]["sha256"] != sha256(MANIFEST.read_bytes()):
+        raise ValueError("example uses a different immutable manifest")
+    if report["chromium"]["build_identity"] != contract["chromium"]["raster_oracle_build_identity"]:
+        raise ValueError("example uses a different Chromium oracle build")
+    if report["openui"]["raster_backend_identity"]["backend"] != contract["raster"]["qualification_backend"]:
+        raise ValueError("example uses a different qualification raster backend")
+    profiles = report["profiles"]
+    if len(profiles) != 1 or profiles[0]["profile"] != "legacy-800x600@1":
+        raise ValueError("example requires only the legacy 800x600@1 profile")
+    rows = profiles[0]["tests"]
+    if len(rows) != 1 or rows[0]["id"] != EXAMPLE_ID or rows[0]["status"] == "error":
+        raise ValueError("example report must contain exactly the rendered fixture")
+    row = rows[0]
+    oracle_path = (
+        Path(report["chromium"]["oracle_cache"]).parent
+        / row["chromium_png_cache_path"]
+    )
+    oracle_png = oracle_path.read_bytes()
+    if sha256(oracle_png) != row["chromium_png_sha256"]:
+        raise ValueError("example Chromium capture bytes changed")
+    oracle_rgba = rgba_sha256(oracle_png)
+    if oracle_rgba != row["chromium_rgba_sha256"] or oracle_rgba != row["chromium_oracle_rgba_sha256"]:
+        raise ValueError("example Chromium capture differs from the immutable oracle")
+    archived_png = images[f"{EXAMPLE_ID}/openui.png"]
+    archived_rgba = rgba_sha256(archived_png)
+    if archived_rgba == oracle_rgba:
+        raise ValueError("example no longer proves a frozen/oracle conflict")
+    with tempfile.TemporaryDirectory() as directory:
+        archived_path = Path(directory) / "frozen.png"
+        archived_path.write_bytes(archived_png)
+        difference = residuals.analyze_image_difference(oracle_path, archived_path)
+    if not difference["comparable"] or not difference["mismatched_pixels"]:
+        raise ValueError("example pixels no longer prove the conflict")
+    fixture = json.loads(
+        (ROOT / "tools/accountability/data/wpt_ported/all_wpt_templates.json").read_text()
+    )[EXAMPLE_ID]
+    return {
+        "matrix_report_sha256": sha256(raw),
+        "matrix_commit": report["commit"],
+        "source_tree_sha256": report["source"]["source_tree_sha256"],
+        "chromium_binary_sha256": report["chromium"]["binary_sha256"],
+        "chromium_capture_harness_sha256": report["chromium"]["capture_harness_sha256"],
+        "openui_binary_sha256": report["openui"]["binary_sha256"],
+        "test_id": EXAMPLE_ID,
+        "profile": "legacy-800x600@1",
+        "fixture": fixture,
+        "fixture_sha256": sha256(fixture.encode()),
+        "frozen_openui_png_sha256": sha256(archived_png),
+        "frozen_openui_rgba_sha256": archived_rgba,
+        "live_chromium_png_sha256": sha256(oracle_png),
+        "live_chromium_rgba_sha256": oracle_rgba,
+        "current_openui_rgba_sha256": row["openui_rgba_sha256"],
+        "mismatched_pixels": difference["mismatched_pixels"],
+        "mismatch_bounds": difference["mismatch_bounds"],
+        "connected_region_count": difference["connected_region_count"],
+        "maximum_absolute_channel_delta": {
+            name: stats["maximum_absolute_delta"]
+            for name, stats in difference["channel_deltas"].items()
+        },
+        "both_required_pixel_gates_can_pass_on_same_image": False,
+    }
+
+
 def prior_local_capture_audit(
     prior_root: Path, report_path: Path, ids: list[str], images: dict[str, bytes]
 ) -> dict[str, object]:
@@ -244,6 +328,7 @@ def prior_local_capture_audit(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--matrix-report", type=Path)
+    parser.add_argument("--example-report", type=Path)
     parser.add_argument("--prior-local-captures", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--require-original-exact", action="store_true")
@@ -261,6 +346,10 @@ def main() -> None:
     }
     if args.matrix_report is not None:
         report["live_matrix"] = matrix_audit(args.matrix_report, ids, images)
+    if args.example_report is not None:
+        report["minimal_conflict"] = minimal_conflict_audit(
+            args.example_report, ids, images
+        )
     if args.prior_local_captures is not None:
         if args.matrix_report is None:
             raise SystemExit("--prior-local-captures requires --matrix-report")

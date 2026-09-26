@@ -31,6 +31,15 @@ channel differs by at most one. The historical and fresh Chromium captures
 have the same decoded RGBA hash for this fixture. No reference image was
 rewritten to obtain this result.
 
+The strict current renderer is only 12 pixels away from Chromium on this
+fixture, but that does not resolve the archive conflict. The archived Open UI
+RGBA hash is different from the pinned Chromium RGBA hash for the same fixture
+and profile. If a renderer passes frozen replay, its output must equal the
+archived bytes; if it passes the original Chromium gate, its decoded pixels
+must equal Chromium. Both requirements cannot hold for this fixture. The
+machine-readable [minimal proof](generated/frozen-oracle-audit-v1.json)
+records the hashes, capture and runner identities, bounds, and region count.
+
 The development workstation also retains ignored historical Chromium PNGs
 and `test.html` files. An optional comparison of those local files found 188
 archived Open UI images different from their then-current Chromium capture,
@@ -43,7 +52,9 @@ of zero. These ignored local files are diagnostic inputs, not
 part of the immutable archive or a release qualification source.
 
 Run `python3 tools/accountability/audit_frozen_oracle.py` to verify the
-archive hash and all historical metadata. Pass `--matrix-report` with a
+archive hash and all historical metadata. Pass `--example-report` with a
+clean-source, one-fixture legacy-profile matrix report to reproduce the
+minimal conflict. Pass `--matrix-report` with a
 complete, clean-source four-profile census to compare every frozen Open UI
 image against the live Chromium oracle and current renderer. The
 `--prior-local-captures` option adds the local historical-capture comparison
@@ -53,7 +64,25 @@ historical exactness conflict remains. A complete diagnostic report may be
 written as `docs/renderer/generated/frozen-oracle-audit-v1.json`; it is
 evidence, not a qualification override.
 
+From a clean checkout with the pinned Chromium and a freshly built
+`pixel_compare` binary, the minimal report is reproducible with:
+
+```sh
+python3 tools/qualification/run_renderer_matrix.py --suite full \
+  --test-id wpt/css_backgrounds/background-image-gradient-interpolation-repaint-ref \
+  --profile legacy-800x600@1 \
+  --pixel-compare bindings/rust/target/debug/pixel_compare \
+  --results-dir out/frozen-conflict
+python3 tools/accountability/audit_frozen_oracle.py \
+  --example-report out/frozen-conflict/full-summary.json
+```
+
+The matrix command exits nonzero because the current renderer is not exact
+on this example. Its report is diagnostic; the audit separately compares the
+immutable archive with the verified Chromium capture.
+
 The original archive, Chromium oracle, and 5,731-case manifest remain
-immutable. The release gate stays blocked until the historical claim is
-reconciled through reviewed evidence and the current four-profile matrix
-itself reaches 22,924 exact comparisons with zero errors.
+immutable. The conjunction of the original exactness and frozen replay gates
+is unsatisfiable for this fixture under those immutable inputs. The v0.2 final
+release is blocked under the declared contract; a future decision about its
+requirements must be explicit and must preserve this evidence.
