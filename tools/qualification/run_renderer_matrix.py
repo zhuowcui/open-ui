@@ -497,14 +497,22 @@ def compare_images(chromium: Path, openui: Path) -> tuple[int, str, str]:
     with Image.open(chromium) as expected_image, Image.open(openui) as actual_image:
         expected = expected_image.convert("RGBA")
         actual = actual_image.convert("RGBA")
+        expected_bytes = expected.tobytes()
+        actual_bytes = actual.tobytes()
+        expected_hash = bytes_sha256(expected_bytes)
+        actual_hash = bytes_sha256(actual_bytes)
         if expected.size != actual.size:
-            return -1, bytes_sha256(expected.tobytes()), bytes_sha256(actual.tobytes())
-        difference = ImageChops.difference(expected, actual).tobytes()
-        mismatched = sum(
-            any(difference[index:index + 4])
-            for index in range(0, len(difference), 4)
-        )
-        return mismatched, bytes_sha256(expected.tobytes()), bytes_sha256(actual.tobytes())
+            return -1, expected_hash, actual_hash
+        if expected_bytes == actual_bytes:
+            return 0, expected_hash, actual_hash
+        difference = ImageChops.difference(expected, actual)
+        mask = difference.getchannel("R")
+        for channel in ("G", "B", "A"):
+            mask = ImageChops.lighter(mask, difference.getchannel(channel))
+        # Pillow counts every nonzero channel maximum in native code. This is
+        # still an exact, whole-image RGBA comparison with no tolerance.
+        mismatched = sum(mask.histogram()[1:])
+        return mismatched, expected_hash, actual_hash
 
 
 def store_content_addressed_png(cache_dir: Path, source: Path, digest: str) -> str:

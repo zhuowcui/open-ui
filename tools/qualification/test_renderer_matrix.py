@@ -62,6 +62,33 @@ class RendererMatrixTests(unittest.TestCase):
             self.assertEqual(first_hash, second_hash)
             self.assertNotEqual(MATRIX.sha256(first), MATRIX.sha256(second))
 
+    def test_pixel_comparison_counts_each_changed_pixel_across_all_channels(self):
+        with tempfile.TemporaryDirectory() as directory:
+            expected = pathlib.Path(directory) / "expected.png"
+            actual = pathlib.Path(directory) / "actual.png"
+            first = Image.new("RGBA", (4, 1), (10, 20, 30, 255))
+            second = first.copy()
+            second.putpixel((0, 0), (11, 20, 30, 255))
+            second.putpixel((1, 0), (10, 20, 30, 254))
+            second.putpixel((2, 0), (10, 21, 31, 255))
+            first.save(expected)
+            second.save(actual)
+            mismatched, first_hash, second_hash = MATRIX.compare_images(expected, actual)
+            self.assertEqual(mismatched, 3)
+            self.assertNotEqual(first_hash, second_hash)
+            self.assertEqual(
+                MATRIX.residuals.analyze_image_difference(expected, actual)["mismatched_pixels"],
+                mismatched,
+            )
+
+    def test_pixel_comparison_rejects_size_mismatch(self):
+        with tempfile.TemporaryDirectory() as directory:
+            expected = pathlib.Path(directory) / "expected.png"
+            actual = pathlib.Path(directory) / "actual.png"
+            Image.new("RGBA", (2, 1), (0, 0, 0, 255)).save(expected)
+            Image.new("RGBA", (3, 1), (0, 0, 0, 255)).save(actual)
+            self.assertEqual(MATRIX.compare_images(expected, actual)[0], -1)
+
     def test_canonical_result_hash_ignores_mapping_insertion_order(self):
         self.assertEqual(
             MATRIX.canonical_sha256({"a": 1, "b": 2}),
