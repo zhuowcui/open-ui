@@ -16,6 +16,11 @@ The generated v2 contract records four complete-suite profiles and the
 40-profile focused viewport/scale cross-product. The 800×600@1 profile refers
 to the existing 5,731-case baseline by hash. The generator refuses to rewrite
 or accept drift in that legacy baseline.
+That baseline preserves historical pass records from a comparator with a
+four-level channel tolerance and a 15-pixel excluded right strip. Its
+5,731 passes are archival accountability data; exact Chromium equality must
+be established by the separate zero-tolerance qualification matrix. The
+[frozen oracle audit](frozen-oracle-audit.md) records the discrepancy.
 The Chromium source/API inventory remains pinned to `147.0.7727.24`; Linux
 pixel qualification records and verifies the installed `147.0.7727.50`
 Chrome-for-Testing raster oracle used by the frozen comparison harness.

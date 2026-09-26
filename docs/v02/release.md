@@ -6,10 +6,13 @@ claimed by source code alone.
 
 | Gate | Current evidence | State |
 |---|---|---|
-| Frozen headless rendering | fresh 5,731/5,731 byte replay, zero tolerance | pass |
+| Frozen headless replay | 5,731 archived Open UI PNGs are byte-identical on replay | pass for archive fidelity |
+| Original Chromium exactness | 186 historical passes report nonzero channel deltas; comparator omitted the rightmost 15 pixels | blocked |
+| Four-profile renderer matrix | 21,108/22,924 exact in the last complete diagnostic census | open |
+| Expanded deterministic manifest | 200 admitted cases; 36 lowered cases await exact qualification | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
-| Rust/C application contract | 36 scenarios, 84 frozen exports, four C examples and C++ consumer | pass |
+| Rust/C application contract | 36 scenarios, 93 existing exports, four C examples and C++ consumer | pass |
 | C-owned X11/Wayland application loop | no exported run/request-exit platform lifecycle yet | open |
 | C platform accessibility | retained setters/actions exist; full adapter tree is not exported | open |
 | Generated sources | style, ABI, migration, closure generators are read-only clean | pass |
@@ -28,6 +31,14 @@ claimed by source code alone.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
+
+The frozen replay checks the archived Open UI bytes; it does not prove those
+bytes equal Chromium. The historical pixel comparator accepted per-channel
+differences up to 4 and excluded the rightmost 15 pixels. At least 186 of its
+5,731 reported passes have a nonzero channel delta in the compared area. The
+archived result totals and generated kickoff baseline remain immutable
+historical records, not zero-tolerance qualification evidence. See the
+[frozen oracle audit](../renderer/frozen-oracle-audit.md).
 
 ## Release decision
 

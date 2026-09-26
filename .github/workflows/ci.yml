@@ -138,6 +138,9 @@ jobs:
           python3 tools/accountability/verify_frozen_openui_pixels.py \
             --pixel-compare bindings/rust/target/debug/pixel_compare --jobs 4
 
+      - name: Require exact provenance for frozen pass records
+        run: python3 tools/accountability/audit_frozen_oracle.py --require-original-exact
+
   python-accountability:
     name: python-accountability
     runs-on: ubuntu-24.04
@@ -182,6 +185,7 @@ jobs:
       - name: Run frozen closure and porter tests
         run: |
           python3 -m unittest \
+            tools.accountability.test_audit_frozen_oracle \
             tools.wpt.test_sp13p_paint_closure \
             tools.wpt.test_sp13r_multicol_closure \
             tools.wpt.test_sp14_text_port \
