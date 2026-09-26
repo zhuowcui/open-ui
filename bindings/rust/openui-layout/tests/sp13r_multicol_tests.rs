@@ -1217,7 +1217,8 @@ fn direct_text_flex_items_create_paintable_inline_fragments() {
 
 #[test]
 fn absolute_inline_shrink_to_fit_uses_shaped_max_content_width() {
-    let mut doc = Document::new();
+    let mut doc =
+        Document::new_with_font_collection(openui_text::FontCollection::deterministic_test());
     let absolute = doc.create_node(ElementTag::Span);
     doc.update_resolved_style(absolute, |style| {
         style.update_derived(|computed| computed.display = Display::Inline);
@@ -1819,7 +1820,8 @@ fn spanner_inside_transparent_inline_splits_overflowed_block_content() {
 
 #[test]
 fn inline_break_token_resumes_after_oversized_inline_block_line() {
-    let mut doc = Document::new();
+    let mut doc =
+        Document::new_with_font_collection(openui_text::FontCollection::deterministic_test());
     let multicol = doc.create_node(ElementTag::Div);
     doc.update_resolved_style(multicol, |style| {
         style.update_derived(|computed| computed.display = Display::Block);
@@ -3730,7 +3732,8 @@ fn definite_overflow_continuation_is_parallel_to_following_sibling_flow() {
 
 #[test]
 fn mixed_inline_runs_fragment_at_line_boundaries_after_a_block() {
-    let mut doc = Document::new();
+    let mut doc =
+        Document::new_with_font_collection(openui_text::FontCollection::deterministic_test());
     let multicol = doc.create_node(ElementTag::Div);
     doc.update_resolved_style(multicol, |style| {
         style.update_derived(|computed| computed.display = Display::Block);
