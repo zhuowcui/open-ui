@@ -20,8 +20,8 @@ class FrozenOracleAuditTests(unittest.TestCase):
         images = frozen.frozen_images()
         image = images[f"{audit.EXAMPLE_ID}/openui.png"]
         self.assertEqual(
-            audit.rgba_sha256(image),
-            "a53d2d217b7d1cd83f5f2a0d3ba0c7b6b7746f0f1c8970b89421c60293fd7f8b",
+            audit.sha256(image),
+            "174e56f70e4481e1db0a3ec1e981c3e60265e8f5c4185746ffdaf3d54647311b",
         )
 
 

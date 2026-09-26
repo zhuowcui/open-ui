@@ -115,7 +115,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends \
             build-essential clang curl libclang-18-dev libfontconfig1-dev \
-            libfreetype-dev libgl1-mesa-dev ninja-build pkg-config python3
+            libfreetype-dev libgl1-mesa-dev ninja-build pkg-config python3 python3-pil
           rustup toolchain install 1.94.1 --profile minimal
           rustup default 1.94.1
 

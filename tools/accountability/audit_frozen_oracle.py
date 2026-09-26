@@ -9,6 +9,7 @@ archive with the zero-tolerance Chromium oracle without rewriting either.
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import io
 import json
@@ -16,12 +17,9 @@ import sys
 import tempfile
 from pathlib import Path
 
-from PIL import Image, ImageChops
-
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
-from tools.accountability import pixel_diff, restore_frozen_openui_archive as frozen  # noqa: E402
-from tools.qualification import residuals  # noqa: E402
+from tools.accountability import restore_frozen_openui_archive as frozen  # noqa: E402
 
 MANIFEST = ROOT / "tools/qualification/manifests/complete-5731.json"
 HISTORICAL_RESULTS = ROOT / "tools/accountability/data/pixel_comparison/results"
@@ -33,14 +31,24 @@ def sha256(value: bytes) -> str:
 
 
 def rgba_sha256(png: bytes) -> str:
+    from PIL import Image
+
     with Image.open(io.BytesIO(png)) as image:
         return sha256(image.convert("RGBA").tobytes())
 
 
 def historical_audit(ids: list[str]) -> dict[str, object]:
-    tolerance = pixel_diff.compare_images.__defaults__[0]
+    comparator_source = (ROOT / "tools/accountability/pixel_diff.py").read_text(encoding="utf-8")
+    comparator_ast = ast.parse(comparator_source)
+    comparator = next(
+        node for node in comparator_ast.body
+        if isinstance(node, ast.FunctionDef) and node.name == "compare_images"
+    )
+    tolerance = ast.literal_eval(comparator.args.defaults[-1])
     if tolerance != 4:
         raise ValueError(f"historical comparator policy changed: {tolerance}")
+    if "compare_w = max(1, w - 15)" not in comparator_source:
+        raise ValueError("historical comparator's excluded strip changed")
     positive = []
     compared_widths = set()
     for test_id in ids:
@@ -69,6 +77,8 @@ def historical_audit(ids: list[str]) -> dict[str, object]:
 
 
 def matrix_audit(report_path: Path, ids: list[str], images: dict[str, bytes]) -> dict[str, object]:
+    from tools.qualification import residuals
+
     raw = report_path.read_bytes()
     report = json.loads(raw)
     contract_bytes = (ROOT / "docs/renderer/generated/qualification-contract-v2.json").read_bytes()
@@ -165,6 +175,8 @@ def prior_local_capture_audit(
     prior_root: Path, report_path: Path, ids: list[str], images: dict[str, bytes]
 ) -> dict[str, object]:
     """Describe ignored workstation captures; never treat them as pinned proof."""
+
+    from PIL import Image, ImageChops
 
     report = json.loads(report_path.read_text(encoding="utf-8"))
     legacy = next(item for item in report["profiles"] if item["profile"] == "legacy-800x600@1")
