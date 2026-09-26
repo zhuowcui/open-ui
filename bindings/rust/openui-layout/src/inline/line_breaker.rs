@@ -811,7 +811,15 @@ impl<'a> LineBreaker<'a> {
             } else {
                 text_width
             };
-        let discardable_space = item.end_collapse_type == CollapseType::Collapsible
+        let next_is_forced_break = self
+            .items_data
+            .items
+            .get(item_index + 1)
+            .is_some_and(|next| {
+                next.item_type == InlineItemType::Control && next.is_end_collapsible_newline
+            });
+        let discardable_space = next_is_forced_break
+            && item.end_collapse_type == CollapseType::Collapsible
             && text_slice.chars().all(|ch| ch.is_ascii_whitespace());
 
         // Independently shaped homogeneous runs can quantize one LayoutUnit
