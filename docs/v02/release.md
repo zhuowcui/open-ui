@@ -6,7 +6,7 @@ claimed by source code alone.
 
 | Gate | Current evidence | State |
 |---|---|---|
-| Frozen headless replay | 5,731 archived Open UI PNGs are byte-identical on replay | pass for archive fidelity |
+| Frozen headless replay | 5,549/5,731 byte-identical on clean checkpoint `5acc962a`; 182 changed | fail |
 | Original Chromium exactness | 186 historical passes report nonzero channel deltas; comparator omitted the rightmost 15 pixels | blocked |
 | Four-profile renderer matrix | 21,108/22,924 exact in the last complete diagnostic census | open |
 | Expanded deterministic manifest | 200 admitted cases; 36 lowered cases await exact qualification | open |
