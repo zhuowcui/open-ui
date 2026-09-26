@@ -13,6 +13,13 @@ both paths supported would make interaction, accessibility, animation, and
 platform work land twice and would leave pixel behavior dependent on which API
 an application chose.
 
+**Evidence correction (2026-09-26):** “Exact” above describes the historical
+claim, not the pixels proven by its comparator. The archived records used a
+channel tolerance of 4 and excluded the rightmost 15 pixels. The architecture
+decision and frozen compatibility bytes remain in force; the
+[frozen oracle audit](../renderer/frozen-oracle-audit.md) now blocks release
+qualification from relying on that historical claim.
+
 ## Decision
 
 Version 0.2 has one rendering engine. `openui-engine` owns documents and turns
@@ -66,4 +73,3 @@ a supported application runtime or release dependency. Linux and headless
 closure takes priority over other operating systems and graphics APIs. macOS,
 Windows, mobile platforms, Vulkan, browser execution, network fetching, media,
 and specialized native pickers remain explicitly deferred.
-
