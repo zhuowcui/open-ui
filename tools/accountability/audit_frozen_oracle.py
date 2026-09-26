@@ -16,7 +16,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageChops
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
@@ -174,8 +174,10 @@ def prior_local_capture_audit(
         "prior_vs_current_fixture_different": 0,
         "prior_vs_live_chromium_different": 0,
         "oracle_difference_without_fixture_change": 0,
+        "prior_difference_hidden_by_historical_metric": 0,
     }
     changed_oracles = []
+    hidden_differences = []
     input_hashes = []
     for test_id in ids:
         prior = prior_root / test_id
@@ -188,8 +190,19 @@ def prior_local_capture_audit(
         fixture_changed = prior_html != current_html
         oracle_changed = prior_oracle != live_oracle
         input_hashes.append((test_id, sha256(prior_html), sha256(prior_chrome_png)))
-        if rgba_sha256(images[f"{test_id}/openui.png"]) != prior_oracle:
+        archive_differs = rgba_sha256(images[f"{test_id}/openui.png"]) != prior_oracle
+        if archive_differs:
             counts["archived_openui_vs_prior_chromium_different"] += 1
+            historical = json.loads((prior / "result.json").read_text(encoding="utf-8"))
+            if historical["max_channel_diff"] == 0:
+                with Image.open(io.BytesIO(images[f"{test_id}/openui.png"])) as archived, Image.open(io.BytesIO(prior_chrome_png)) as prior_image:
+                    difference = ImageChops.difference(
+                        archived.convert("RGBA"), prior_image.convert("RGBA")
+                    ).convert("RGB")
+                    if difference.crop((0, 0, 785, 600)).getbbox() is not None:
+                        raise ValueError(f"historical zero metric conceals a compared-area difference: {test_id}")
+                counts["prior_difference_hidden_by_historical_metric"] += 1
+                hidden_differences.append(test_id)
         if fixture_changed:
             counts["prior_vs_current_fixture_different"] += 1
         if oracle_changed:
@@ -212,6 +225,7 @@ def prior_local_capture_audit(
         ),
         "counts": counts,
         "changed_oracles": changed_oracles,
+        "hidden_difference_ids": hidden_differences,
     }
 
 

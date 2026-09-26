@@ -37,7 +37,9 @@ archived Open UI images different from their then-current Chromium capture,
 162 historical fixture documents different from the current fixture document,
 and 15 historical Chromium captures different from the fresh oracle. All 15
 changed captures belong to changed fixtures; none changed when the fixture
-bytes stayed the same. These ignored local files are diagnostic inputs, not
+bytes stayed the same. Two of the 188 image differences occur only in the
+excluded right strip and consequently have a reported maximum channel delta
+of zero. These ignored local files are diagnostic inputs, not
 part of the immutable archive or a release qualification source.
 
 Run `python3 tools/accountability/audit_frozen_oracle.py` to verify the
