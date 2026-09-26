@@ -55,7 +55,12 @@ viewport/scale profiles. Residual investigations use `--suite residual` for
 the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
-complete, byte-exact, error-free, and produced from a clean source tree.
+complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
+The runner defaults to `bindings/rust/target/release/pixel_compare`. Rebuild
+that executable from the clean checkpoint with the pinned toolchain and pass
+its path explicitly using `--pixel-compare`; a recent debug build does not
+refresh the release executable. Matrix reports record the executable SHA-256,
+while the frozen byte replay uses its own explicitly selected executable.
 `expanded-v1.json` composes the immutable original manifest with only
 four-profile-exact AST-lowered additions. Its original, expanded, and admitted
 counts are carried in every matrix report; pending candidates are never
