@@ -71,12 +71,14 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
-At clean checkpoint `5acc962a`, the fresh CPU runner produced 640/640 exact
-focused comparisons and 884/960 exact primitive comparisons. The 76 primitive
-differences are limited to four IDs; their per-profile bounds, region counts,
+At clean checkpoint `2701be5a`, the fresh CPU runner produced 640/640 exact
+focused comparisons and 900/960 exact primitive comparisons. The 60 primitive
+differences are limited to three IDs; their per-profile bounds, region counts,
 channel deltas, scale behavior, and unreviewed ownership are recorded in the
-[focused and primitive evidence index](generated/focused-primitive-raster-v1.json).
-The primitive gate remains open, and all four residuals are unowned.
+[focused and primitive evidence index](generated/focused-primitive-raster-v2.json).
+The primitive gate remains open, and all three residuals are unowned. The
+previous [v1 index](generated/focused-primitive-raster-v1.json) remains as
+historical evidence at 884/960 exact.
 The runner defaults to `bindings/rust/target/release/pixel_compare`. Rebuild
 that executable from the clean checkpoint with the pinned toolchain and pass
 its path explicitly using `--pixel-compare`; a recent debug build does not
@@ -105,12 +107,17 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The fresh
-[v2 diagnostic index](generated/four-profile-census-v2.json), with its clean
-source identity recorded inside the file, contains 21,111 exact,
-1,813 different, and zero errored comparisons across the four required
-profiles, with 1,016 residual test IDs still unowned. The previous v1 index
-remains unchanged at 21,108 exact and 1,019 residual IDs. Neither is a
-qualification result.
+[v3 diagnostic index](generated/four-profile-census-v3.json), with its clean
+source identity recorded inside the file, contains 21,155 exact,
+1,769 different, and zero errored comparisons across the four required
+profiles, with 972 residual test IDs still unowned. Compared with the
+[v2 index](generated/four-profile-census-v2.json), 44 comparisons became exact,
+none regressed, and every Chromium oracle hash stayed unchanged. The v1 and v2
+indices remain historical evidence. None is a qualification result.
+The repaired cohort was earlier inline text reaching a later block's border:
+that later decoration must paint in the block phase before the earlier text
+ink. The change applies by fragment geometry, while preserving atomic flex,
+grid, mask, and paint-containment groups outside the established text path.
 
 Results can be resumed through a content-addressed cache; decoded evidence PNGs
 are retained by content hash. Chromium captures live in a separate immutable,
