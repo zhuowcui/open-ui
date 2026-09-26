@@ -320,6 +320,42 @@ pub(crate) fn destroy(address: usize, expected: HandleKind) -> Result<LocalHandl
     Ok(removed)
 }
 
+#[cfg(test)]
+mod miri_handle_tests {
+    use super::*;
+
+    #[test]
+    fn opaque_handles_reject_wrong_kind_thread_and_reuse() {
+        let first = register(LocalHandle::Buffer(Rc::new(vec![1, 2, 3]))).unwrap();
+        assert_eq!(
+            get(first, HandleKind::Document).err().unwrap().status,
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(
+            std::thread::spawn(move || get(first, HandleKind::Buffer).err().unwrap().status)
+                .join()
+                .unwrap(),
+            OuiStatus::WrongThread
+        );
+        assert!(matches!(
+            get(first, HandleKind::Buffer),
+            Ok(LocalHandle::Buffer(_))
+        ));
+        destroy(first, HandleKind::Buffer).unwrap_or_else(|error| panic!("{}", error.message));
+        assert_eq!(
+            get(first, HandleKind::Buffer).err().unwrap().status,
+            OuiStatus::InvalidHandle
+        );
+        let second = register(LocalHandle::Buffer(Rc::new(vec![4]))).unwrap();
+        assert_ne!(first, second);
+        assert_eq!(
+            get(first, HandleKind::Buffer).err().unwrap().status,
+            OuiStatus::InvalidHandle
+        );
+        destroy(second, HandleKind::Buffer).unwrap_or_else(|error| panic!("{}", error.message));
+    }
+}
+
 pub(crate) fn document(address: usize) -> Result<Rc<DocumentState>, ApiError> {
     match get(address, HandleKind::Document)? {
         LocalHandle::Document(value) => Ok(value),

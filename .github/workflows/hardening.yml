@@ -117,9 +117,9 @@ jobs:
             libfreetype-dev libgl1-mesa-dev ninja-build pkg-config
       - name: Install pinned nightly Miri
         run: rustup toolchain install nightly-2026-09-01 --profile minimal --component miri,rust-src
-      - name: Exercise safe generation-checked handles
+      - name: Exercise opaque handle ownership under Miri
         working-directory: bindings/rust
-        run: cargo +nightly-2026-09-01 miri test --package openui-engine stale_and_cross_document_handles_are_rejected
+        run: cargo +nightly-2026-09-01 miri test --package openui-ffi opaque_handles_reject_wrong_kind_thread_and_reuse
 
   native-sanitizers:
     if: github.event_name != 'pull_request'

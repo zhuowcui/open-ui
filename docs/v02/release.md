@@ -13,7 +13,7 @@ claimed by source code alone.
 | Expanded deterministic manifest | Prior v1 admitted 200; fresh run retains 197 exact additions and [demotes three](../renderer/generated/expanded-requalification-v1.json). None of the 36 original pending cases met all four profiles | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
-| Rust 1.85 MSRV | manual hardening run found an unsupported string-boundary call; compatible implementation is committed, hosted rerun pending | open |
+| Rust 1.85 MSRV | compatible string-boundary implementation is committed. The next hosted run found locked Wayland/Zbus dependencies requiring Rust 1.86/1.87; the lockfile now selects versions declaring 1.85 support, with hosted rerun pending | open |
 | Rust/C application contract | 36 scenarios, 93 existing exports, four C examples and C++ consumer | pass |
 | C-owned X11/Wayland application loop | no exported run/request-exit platform lifecycle yet | open |
 | C platform accessibility | retained setters/actions exist; full adapter tree is not exported | open |
@@ -22,7 +22,7 @@ claimed by source code alone.
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
 | X11/Wayland software and Mesa GL | hosted PR hardening passed both smoke paths on the pushed evidence checkpoint; final-head rerun pending | provisional pass |
-| Miri/sanitizers/fuzz | manual hardening run: Miri lacked FreeType headers; sanitizer and fuzz runs reported Fontconfig leaks. Native C UBSan passed | fail; rerun after fixes |
+| Miri/sanitizers/fuzz | latest hardening run: Miri reached unsupported Skia C FFI; an actual opaque-handle registry test now avoids that FFI, with hosted rerun pending. ASan, LSan, and fuzz still report Fontconfig allocations at exit. Native C UBSan passed | fail |
 | x86-64/AArch64 SDK, deb, rpm | deterministic source pipeline and tag matrix | pending tag build |
 | Clean Ubuntu/Fedora install | release workflow consumer jobs | pending tag build |
 | Physical GPU/context loss | release-lab profile | open |
@@ -33,6 +33,16 @@ claimed by source code alone.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
+
+The [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36235389665)
+on checkpoint `e555c442` records every job: X11/Mesa and pure-Wayland
+conformance passed; native C UBSan passed; Rust 1.85 MSRV failed on dependency
+metadata; Miri failed when the Engine test called Skia C FFI; AddressSanitizer,
+LeakSanitizer, and fuzz failed on process-exit Fontconfig allocations. The
+ordinary [PR CI run](https://github.com/zhuowcui/open-ui/actions/runs/36235359772)
+passed Rust parity, Python accountability, platform conformance, and both
+format checks. Its strict frozen replay was still running when this status was
+written. Later check results must be recorded before qualification.
 
 The frozen replay checks the archived Open UI bytes; it does not prove those
 bytes equal Chromium. The historical pixel comparator accepted per-channel
