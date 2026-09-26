@@ -6,12 +6,14 @@ claimed by source code alone.
 
 | Gate | Current evidence | State |
 |---|---|---|
-| Frozen headless replay | 5,549/5,731 byte-identical on clean checkpoint `5acc962a`; 182 changed | fail |
-| Original Chromium exactness | 186 historical passes report nonzero channel deltas; one immutable archived image differs from pinned Chromium by 4,348 pixels | blocked: conflicts with frozen replay |
-| Four-profile renderer matrix | 21,108/22,924 exact in the last complete diagnostic census | open |
-| Expanded deterministic manifest | 200 admitted cases; 36 additional AST-lowered cases ran 21/144 exact comparisons; zero were exact at all four profiles | open |
+| Frozen headless replay | 5,549/5,731 byte-identical in the [complete replay](../renderer/generated/frozen-replay-v1.json); 182 changed | fail |
+| Original Chromium exactness | 203 frozen images differ from pinned Chromium; one minimal case differs by 4,348 pixels | blocked: conflicts with frozen replay |
+| Four-profile renderer matrix | 21,111/22,924 exact, 1,813 different, zero errors in the [fresh census](../renderer/generated/four-profile-census-v2.json) | fail |
+| Focused and primitive raster | 640/640 focused exact; 884/960 primitive exact with four unowned residual IDs | fail |
+| Expanded deterministic manifest | Prior v1 admitted 200; fresh run retains 197 exact additions and [demotes three](../renderer/generated/expanded-requalification-v1.json). None of the 36 original pending cases met all four profiles | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
+| Rust 1.85 MSRV | manual hardening run found an unsupported string-boundary call; compatible implementation is committed, hosted rerun pending | open |
 | Rust/C application contract | 36 scenarios, 93 existing exports, four C examples and C++ consumer | pass |
 | C-owned X11/Wayland application loop | no exported run/request-exit platform lifecycle yet | open |
 | C platform accessibility | retained setters/actions exist; full adapter tree is not exported | open |
@@ -19,8 +21,8 @@ claimed by source code alone.
 | No-work frame | zero layout, paint, and raster on unchanged snapshots | pass |
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
-| X11/Wayland software and Mesa GL | hosted smoke workflow | pending first hosted run |
-| Miri/sanitizers/fuzz | scheduled workflow | pending first scheduled run |
+| X11/Wayland software and Mesa GL | hosted PR hardening passed both smoke paths on the pushed evidence checkpoint; final-head rerun pending | provisional pass |
+| Miri/sanitizers/fuzz | manual hardening run: Miri lacked FreeType headers; sanitizer and fuzz runs reported Fontconfig leaks. Native C UBSan passed | fail; rerun after fixes |
 | x86-64/AArch64 SDK, deb, rpm | deterministic source pipeline and tag matrix | pending tag build |
 | Clean Ubuntu/Fedora install | release workflow consumer jobs | pending tag build |
 | Physical GPU/context loss | release-lab profile | open |

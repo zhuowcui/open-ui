@@ -9,6 +9,50 @@
     "passes_with_nonzero_compared_channel_delta": 186,
     "reported_passes": 5731
   },
+  "live_matrix": {
+    "chromium_binary_sha256": "0ba87684df0afc11faaea40ac57bd2f1d68b67191443b38215a36b90e6f08848",
+    "chromium_capture_harness_sha256": "1aa6f07a50e71c82ae715502b86f974915128f057c6963a6dfd49319fba3f582",
+    "commit": "5acc962a39047a0559d6743b69ee23ab459d96c0",
+    "legacy_profile": {
+      "all_three_exact": 5526,
+      "archive_vs_current_renderer_different": 182,
+      "archive_vs_live_oracle_different": 203,
+      "current_renderer_vs_live_oracle_different": 50
+    },
+    "legacy_profile_equality_classes": {
+      "all_three_distinct": 25,
+      "all_three_exact": 5526,
+      "archive_and_oracle_only": 2,
+      "archive_and_renderer_only": 23,
+      "renderer_and_oracle_only": 155
+    },
+    "matrix_report_sha256": "42a2c2aaaf8d15003e1c362e80ca23ba2ddb1f741a55b119c10a4806277db378",
+    "minimized_example": {
+      "connected_region_count": 403,
+      "current_openui_rgba_sha256": "970763877cdc6c2853c42da5d7cd8a219dfc43f355ebaab21b7c5c0be235fac1",
+      "frozen_openui_png_sha256": "174e56f70e4481e1db0a3ec1e981c3e60265e8f5c4185746ffdaf3d54647311b",
+      "frozen_openui_rgba_sha256": "a53d2d217b7d1cd83f5f2a0d3ba0c7b6b7746f0f1c8970b89421c60293fd7f8b",
+      "live_chromium_png_sha256": "36a3271da075b27d8069eea23552b78158962d85e7526e38cf5ab01f40720952",
+      "live_chromium_rgba_sha256": "9542aba815c29defd433c1bc60ba5b767e363fdb843015587fd9829f91d26cd9",
+      "maximum_absolute_channel_delta": {
+        "alpha": 0,
+        "blue": 1,
+        "green": 1,
+        "red": 1
+      },
+      "mismatch_bounds": {
+        "height": 99,
+        "width": 100,
+        "x": 20,
+        "y": 20
+      },
+      "mismatched_pixels": 4348,
+      "template": "<div style=\"width: 100px; height: 100px; background-image: linear-gradient(in oklch, yellow, blue)\"></div>",
+      "test_id": "wpt/css_backgrounds/background-image-gradient-interpolation-repaint-ref"
+    },
+    "openui_binary_sha256": "b3043d5b0fa7df8612748261ba58b3dda4ea14fb5e7336ea15264b996f4fd6a1",
+    "source_tree_sha256": "cc399d69a3ffa737ef588a4c91770265781cac50be08359d79d7355a0d718c15"
+  },
   "manifest_sha256": "2d68221f88c8280249b45c304338a9ab312918fd8c82d80ae1a46c0a26a8816f",
   "minimal_conflict": {
     "both_required_pixel_gates_can_pass_on_same_image": false,

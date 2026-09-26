@@ -40,6 +40,14 @@ must equal Chromium. Both requirements cannot hold for this fixture. The
 machine-readable [minimal proof](generated/frozen-oracle-audit-v1.json)
 records the hashes, capture and runner identities, bounds, and region count.
 
+The complete fresh legacy-profile audit found 5,526 cases where archive,
+renderer, and Chromium all agree. In 155 cases the current renderer equals
+Chromium while the archive differs; in 23 the renderer equals the archive
+while Chromium differs; in two the archive equals Chromium while the renderer
+differs; and in 25 all three differ. Thus 203 archived images differ from the
+live oracle, 182 from the current renderer, and 50 current renders from the
+oracle. These counts come from decoded RGBA hashes over the same 5,731 IDs.
+
 The development workstation also retains ignored historical Chromium PNGs
 and `test.html` files. An optional comparison of those local files found 188
 archived Open UI images different from their then-current Chromium capture,

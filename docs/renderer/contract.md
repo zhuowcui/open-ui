@@ -72,10 +72,14 @@ that executable from the clean checkpoint with the pinned toolchain and pass
 its path explicitly using `--pixel-compare`; a recent debug build does not
 refresh the release executable. Matrix reports record the executable SHA-256,
 while the frozen byte replay uses its own explicitly selected executable.
-`expanded-v1.json` composes the immutable original manifest with only
-four-profile-exact AST-lowered additions. Its original, expanded, and admitted
-counts are carried in every matrix report; pending candidates are never
-silently treated as admitted coverage.
+`expanded-v1.json` preserves the prior 200 AST-lowered admissions. A fresh
+four-profile run found 197 still exact and three different at one profile
+each. The [requalification ledger](generated/expanded-requalification-v1.json)
+records those pixels; `expanded-v2.json` retains only the 197 exact additions
+without changing the original 5,731 IDs or rewriting the prior manifest.
+This v2 selection is diagnostic until it is admitted by a future contract;
+neither the 36 originally pending cases nor the three demotions count as
+current exact coverage.
 Non-exact runs emit a v2 residual ledger whose pixel bounds, connected regions,
 channel deltas, scale behavior, reviewed root cause, owner, and minimized
 reproducer are all explicit. Test names and fixture keywords never select an
@@ -89,11 +93,13 @@ and common source/backend identities before emitting the versioned
 `generated/four-profile-census-v1.json` evidence index. Its default mode fails
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
-without rewriting it. The last complete diagnostic index, with its source
-identity recorded inside the file, contains 21,108 exact,
-1,816 different, and zero errored comparisons across the four required
-profiles, with 1,019 residual test IDs still unowned. It is not a qualification
-result.
+without rewriting it. The fresh
+[v2 diagnostic index](generated/four-profile-census-v2.json), with its clean
+source identity recorded inside the file, contains 21,111 exact,
+1,813 different, and zero errored comparisons across the four required
+profiles, with 1,016 residual test IDs still unowned. The previous v1 index
+remains unchanged at 21,108 exact and 1,019 residual IDs. Neither is a
+qualification result.
 
 Results can be resumed through a content-addressed cache; decoded evidence PNGs
 are retained by content hash. Chromium captures live in a separate immutable,

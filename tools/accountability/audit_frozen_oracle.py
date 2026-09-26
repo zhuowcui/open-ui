@@ -112,6 +112,13 @@ def matrix_audit(
         "current_renderer_vs_live_oracle_different": 0,
         "all_three_exact": 0,
     }
+    equality_classes = {
+        "all_three_exact": 0,
+        "archive_and_renderer_only": 0,
+        "archive_and_oracle_only": 0,
+        "renderer_and_oracle_only": 0,
+        "all_three_distinct": 0,
+    }
     example = None
     for row in profiles[0]["tests"]:
         test_id = row["id"]
@@ -131,6 +138,15 @@ def matrix_audit(
             counts["current_renderer_vs_live_oracle_different"] += 1
         if archive_rgba == renderer_rgba == oracle_rgba:
             counts["all_three_exact"] += 1
+            equality_classes["all_three_exact"] += 1
+        elif archive_rgba == renderer_rgba:
+            equality_classes["archive_and_renderer_only"] += 1
+        elif archive_rgba == oracle_rgba:
+            equality_classes["archive_and_oracle_only"] += 1
+        elif renderer_rgba == oracle_rgba:
+            equality_classes["renderer_and_oracle_only"] += 1
+        else:
+            equality_classes["all_three_distinct"] += 1
         if test_id == EXAMPLE_ID:
             live_oracle = report_path.parent / "legacy-800x600@1" / test_id / "chromium.png"
             if not live_oracle.is_file():
@@ -169,6 +185,7 @@ def matrix_audit(
         "chromium_capture_harness_sha256": report["chromium"]["capture_harness_sha256"],
         "openui_binary_sha256": report["openui"]["binary_sha256"],
         "legacy_profile": counts,
+        "legacy_profile_equality_classes": equality_classes,
         "minimized_example": example,
     }
 
