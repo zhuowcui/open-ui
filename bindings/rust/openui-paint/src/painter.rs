@@ -6008,12 +6008,20 @@ fn prepaint_in_flow_block_decorations(
         }
         let style = &doc.node(fragment.node_id).style;
         if !style.display.is_block_level()
+            // Flex/grid containers resolve item stacking around their own
+            // decoration; moving it ahead of negative-z items changes that
+            // paint order when item ink reaches the container border.
+            || style.display.is_flex()
+            || style.display.is_grid()
             || style.float != openui_style::Float::None
             || style.transform != openui_style::Transform2D::IDENTITY
             || style.filter_blur > 0.0
             || style.filter_grayscale > 0.0
             || style.clip_path_inset.is_some()
-            || !uses_deterministic_text_profile(style)
+            // A mask or paint-containment group must composite the background
+            // with its descendants, so its decoration stays in that group.
+            || !style.mask_layers.is_empty()
+            || style.has_paint_containment()
             || style.visibility != Visibility::Visible
             || style.opacity < 1.0
         {
