@@ -37,7 +37,7 @@ The ordinary CI verifies the scenario manifest and performance schema. The
 hardening workflow runs all 36 scenarios, Mesa OpenGL on X11 through Xvfb, and
 software presentation on a pure headless Wayland compositor for pull requests.
 Its scheduled/manual jobs additionally compile the public headless and Linux
-surfaces at the Rust 1.85 MSRV, run generation-checked handle tests under Miri,
+surfaces at the Rust 1.85 MSRV, check C opaque-handle ownership under Miri,
 exercise the C ABI under AddressSanitizer and LeakSanitizer, run C consumers
 under UndefinedBehaviorSanitizer, and execute bounded sessions of all five
 fuzz targets.

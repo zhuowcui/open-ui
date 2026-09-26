@@ -13,7 +13,7 @@ attestation identity.
   separate strict audit of historical Chromium pass provenance;
 - generated style, C ABI, migration, and SP13-R through SP20 closure checks;
 - versioned renderer profiles, author-style inventory, and JavaScript disposition checks;
-- 204 Python porter/closure tests and the 7/7 repository audit;
+- Python porter/closure tests and the 7/7 repository audit;
 - C ABI export/layout checks plus C and C++ consumers;
 - application conformance and performance artifact validation.
 
@@ -25,7 +25,7 @@ Wayland session with software presentation.
 
 Weekly/manual jobs use pinned `nightly-2026-09-01` for:
 
-- Miri generation/ownership tests;
+- Miri checks for C opaque-handle kind, thread, destruction, and token reuse;
 - Rust address and leak sanitizers at the C ABI boundary;
 - C/C++ undefined-behavior sanitizer consumers;
 - all five libFuzzer targets.
@@ -49,7 +49,7 @@ The workflow does not publish crates.io packages automatically. Compatible
 crates must be published in the dependency order documented in
 `docs/v02/packaging.md` after every final gate is recorded.
 
-## Local release-equivalent checks
+## Local source checks
 
 ```bash
 cd bindings/rust
