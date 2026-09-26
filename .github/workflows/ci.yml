@@ -78,6 +78,55 @@ jobs:
           --package openui
           --package openui-ffi
 
+      - name: Build and verify the C ABI
+        run: |
+          cargo build --manifest-path bindings/rust/Cargo.toml \
+            --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' \
+            --locked --package openui-ffi
+          python3 tools/ffi/verify_abi.py
+
+  frozen-pixel-replay:
+    name: frozen-pixel-replay
+    needs: rust-parity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      BINDGEN_EXTRA_CLANG_ARGS: ""
+      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_RUSTFLAGS: ""
+      CC: clang
+      CLANGCC: clang
+      CLANGCXX: clang++
+      CXX: clang++
+      CXXFLAGS: ""
+      FORCE_SKIA_BUILD: "1"
+      LIBCLANG_PATH: /usr/lib/llvm-18/lib
+      PKG_CONFIG_SYSROOT_DIR: ""
+      RUST_MIN_STACK: "4194304"
+      SKIA_GN_ARGS: >-
+        extra_cflags += [ "-DSK_SUPPORT_LEGACY_CONIC_CHOP",
+        "-DSK_USE_FREETYPE_EMBOLDEN", "-DSK_GAMMA_EXPONENT=1.2",
+        "-DSK_GAMMA_CONTRAST=0.2", "-fno-strict-aliasing", "-msse3" ]
+      SKIA_NINJA_COMMAND: ninja
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust and Skia build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            build-essential clang curl libclang-18-dev libfontconfig1-dev \
+            libfreetype-dev libgl1-mesa-dev ninja-build pkg-config python3
+          rustup toolchain install 1.94.1 --profile minimal
+          rustup default 1.94.1
+
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.cargo/git
+            ~/.cargo/registry
+            bindings/rust/target
+          key: rust-parity-v1-${{ runner.os }}-1.94.1-${{ hashFiles('bindings/rust/Cargo.lock', 'bindings/rust/Cargo.toml', 'bindings/rust/**/Cargo.toml') }}
+
       - name: Replay frozen Open UI pixels
         run: |
           cargo build --manifest-path bindings/rust/Cargo.toml \
@@ -85,13 +134,6 @@ jobs:
             --locked --package pixel-compare
           python3 tools/accountability/verify_frozen_openui_pixels.py \
             --pixel-compare bindings/rust/target/debug/pixel_compare --jobs 4
-
-      - name: Build and verify the C ABI
-        run: |
-          cargo build --manifest-path bindings/rust/Cargo.toml \
-            --config 'target.x86_64-unknown-linux-gnu.rustflags=[]' \
-            --locked --package openui-ffi
-          python3 tools/ffi/verify_abi.py
 
   python-accountability:
     name: python-accountability

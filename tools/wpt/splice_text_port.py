@@ -31,7 +31,10 @@ from dataclasses import dataclass
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 WPT_ROOT = os.path.expanduser(
-    "~/chromium/src/third_party/blink/web_tests/external/wpt/css"
+    os.environ.get(
+        "CHROMIUM_WPT_CSS",
+        "~/chromium/src/third_party/blink/web_tests/external/wpt/css",
+    )
 )
 MAPPING_CSV = os.path.join(
     PROJECT_ROOT, "tools", "accountability", "data", "wpt_mapping.csv"
