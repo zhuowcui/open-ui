@@ -33,7 +33,8 @@ fn wpt_like_text_item(
     direction: Direction,
     font_size: f32,
 ) -> (Document, NodeId, NodeId) {
-    let mut doc = Document::new();
+    let mut doc =
+        Document::new_with_font_collection(openui_text::FontCollection::deterministic_test());
     let container = doc.create_node(ElementTag::Div);
     doc.update_resolved_style(container, |style| {
         style.update_derived(|computed| computed.display = Display::Flex);
