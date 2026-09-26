@@ -49,7 +49,9 @@ def json_bytes(value: object) -> bytes:
 
 def baseline() -> bytes:
     summary = json.loads(SUMMARY.read_text())
-    exact = [
+    # mismatch_pct is the historical comparator's tolerance-based metric.
+    # Preserve the immutable kickoff bytes without treating it as exact RGBA.
+    historical_passes = [
         row["id"]
         for row in summary["tests"]
         if row.get("status") == "pass" and row.get("mismatch_pct") == 0.0
@@ -59,8 +61,8 @@ def baseline() -> bytes:
         5731,
         0,
         0,
-    ) or len(exact) != 5731:
-        raise SystemExit("v0.2 contract requires the exact 5,731-case SP20 baseline")
+    ) or len(historical_passes) != 5731:
+        raise SystemExit("v0.2 contract requires the 5,731 historical SP20 pass records")
 
     font_paths = sorted(
         path
@@ -91,7 +93,7 @@ def baseline() -> bytes:
                 "exact": 5731,
                 "failed": 0,
                 "errors": 0,
-                "ordered_id_sha256": hashlib.sha256(("\n".join(exact) + "\n").encode()).hexdigest(),
+                "ordered_id_sha256": hashlib.sha256(("\n".join(historical_passes) + "\n").encode()).hexdigest(),
             },
             "frozen_inputs": {rel(path): sha256(path) for path in FROZEN_INPUTS},
             "font_inventory": {rel(path): sha256(path) for path in font_paths},
@@ -204,7 +206,7 @@ def main() -> None:
         drift = [rel(path) for path, data in artifacts.items() if not path.is_file() or path.read_bytes() != data]
         if drift:
             raise SystemExit("v0.2 generated contract drift: " + ", ".join(drift))
-        print("v0.2 contract: exact=5731/5731 generated=4 drift=0")
+        print("v0.2 contract: historical_passes=5731/5731 generated=4 drift=0")
         return
     OUT.mkdir(parents=True, exist_ok=True)
     for path, data in artifacts.items():
