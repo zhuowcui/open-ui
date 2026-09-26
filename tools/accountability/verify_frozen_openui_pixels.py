@@ -14,6 +14,7 @@ import tempfile
 from pathlib import Path
 
 import run_all_pixel_comparisons as runner
+import restore_frozen_openui_archive as frozen
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -71,6 +72,7 @@ def main() -> None:
     binary_before = sha256(args.pixel_compare)
 
     ids = load_ids(args.manifest)
+    archive_images = frozen.frozen_images()
     text_ids = load_set(runner.TEXT_PORTED_LIST)
     real_font_ids = load_set(runner.REAL_FONT_LIST)
     templates = dict(runner.HTML_TEMPLATES)
@@ -93,6 +95,8 @@ def main() -> None:
         expected = args.results_dir / test_id / "openui.png"
         if not expected.is_file():
             return index, test_id, "missing restored frozen openui.png", None
+        if expected.read_bytes() != archive_images[f"{test_id}/openui.png"]:
+            return index, test_id, "local frozen PNG differs from immutable archive", None
         template = templates.get(test_id, "")
         preserve_subpixel = bool(
             re.search(
@@ -170,11 +174,14 @@ def main() -> None:
         report = {
             "schema_version": 1,
             "evidence_kind": "frozen-openui-byte-replay",
+            "complete_manifest": len(ids) == 5731 and sha256(args.manifest) == sha256(MANIFEST),
             "qualified_archive_fidelity": (
                 not failures and bool(source_before["clean"])
                 and source_before == source_after and binary_before == binary_after
+                and len(ids) == 5731 and sha256(args.manifest) == sha256(MANIFEST)
             ),
             "manifest_sha256": sha256(args.manifest),
+            "frozen_archive_sha256": sha256(frozen.ARCHIVE),
             "pixel_compare_sha256": binary_before,
             "pixel_compare_stable": binary_before == binary_after,
             "source_before": source_before,
