@@ -21,12 +21,12 @@ OpenGL first and falls back to software during initialization or after a
 presentation failure. Every backend selection and fallback is reported through
 `PlatformEvent::BackendChanged`, including the diagnostic reason.
 
-The pinned rust-skia revision cannot currently compile its optional Ganesh GL
-API because its Rust `GpuStats` declaration is one field behind the bundled
-Skia C++ declaration. W8 therefore preserves the exact CPU Skia raster and uses
-OpenGL for composition/presentation. Direct picture replay into a Skia GPU
-surface remains blocked until that pinned dependency is repaired; the engine,
-scene generation, layout, damage, and resulting pixels are backend-independent.
+The pinned rust-skia revision now builds its optional Ganesh GL path. The
+renderer keeps CPU Skia as the portable qualification backend and uses OpenGL
+to present its frame. Direct picture replay into an offscreen Ganesh surface
+is explicitly selectable for comparison, but it is not a qualified release
+path until repeated runs are deterministic, the focused and primitive matrices
+are exact, and the complete census does not regress.
 
 Both paths tolerate zero-sized/minimized windows and resize their native
 surfaces before presentation. The software compositor caches the last raster by

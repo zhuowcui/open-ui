@@ -9,22 +9,27 @@ remain open.
 
 | Evidence | Result |
 |---|---:|
-| Frozen SP20 exact IDs | 5,731 |
-| Fresh byte-identical replay | 5,731 pass, 0 fail/error |
+| Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
+| Fresh byte-identical replay | 5,549 pass, 182 changed, 0 errors |
+| Fresh four-profile Chromium census | 21,111/22,924 exact, 1,813 different, 0 errors |
+| Focused / primitive 40-profile matrices | 640/640 / 884/960 exact |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 36 across 10 domains |
-| Frozen C exports | 84 |
+| Frozen / current C exports | 84 / 93 |
 | C examples / C++ consumers | 4 / 1 |
 | Workspace tests | pass |
-| Python closure tests | 204 pass |
+| Python closure and qualification tests | 231 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The exact baseline records the Chromium 147 reference identity, viewport,
-device scale, font inventory, resources, and per-result hashes. Chromium is a
-test oracle only; supported builds and packages do not link or load it.
+The frozen baseline records Chromium identity, viewport, device scale, fonts,
+resources, and result hashes. A fresh pinned Chromium capture differs from
+203 archived Open UI images. For one minimal fixture the archived and live
+pixels differ by 4,348 pixels, making the two immutable exactness gates
+contradictory. See the [audit](../renderer/frozen-oracle-audit.md). Chromium is
+a test oracle only; supported builds and packages do not link or load it.
 
 ## Implemented v0.2 surface
 
@@ -52,8 +57,13 @@ test oracle only; supported builds and packages do not link or load it.
 
 ## Release blockers
 
-- Direct Skia GPU raster is blocked by the pinned rust-skia `GpuStats` ABI
-  mismatch; OpenGL currently presents a CPU-rasterized exact frame.
+- Direct Skia Ganesh raster now builds behind an explicit backend selection,
+  but it has not passed deterministic focused, primitive, and full-census
+  qualification. OpenGL presentation still uploads a CPU-rasterized frame.
+- The four-profile Chromium census, primitive matrix, and frozen byte replay
+  fail exactness; 1,016 census residual IDs have no reviewed owner.
+- The frozen archive and pinned Chromium oracle disagree on the same fixture,
+  so the current immutable release contract cannot pass both gates.
 - The C ABI covers the retained engine and headless renderer, but does not yet
   export the owned Linux event loop or full platform accessibility tree.
 - Retained per-node layers and compositor-owned animation curves are incomplete,

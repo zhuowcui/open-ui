@@ -44,5 +44,6 @@ fuzz targets.
 
 These checks do not convert currently open product boundaries into passing
 claims. In particular, the immutable scene still lacks retained per-layer
-animation curves, and the pinned rust-skia build still prevents direct Skia
-GPU-surface replay. Their strict W8/W9/W10 release gates remain unqualified.
+animation curves. Direct Ganesh GPU-surface replay builds but has not passed
+the raster qualification matrices. Their strict W8/W9/W10 release gates remain
+unqualified.

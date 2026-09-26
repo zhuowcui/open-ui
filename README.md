@@ -20,20 +20,27 @@ is retained only as the frozen reference used to prove renderer compatibility.
 
 The current v0.2 release candidate has:
 
-- 5,731 of 5,731 frozen SP20 renders byte-identical at zero tolerance;
+- a fresh frozen replay with 5,549 of 5,731 renders byte-identical and 182
+  changed; the historical 5,731 pass records used a tolerant comparator;
+- a clean four-profile Chromium census with 21,111 of 22,924 comparisons
+  exact, 1,813 different, and zero render errors;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
 - 36 application scenarios covering retained updates, controls, editing,
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;
-- 84 frozen retained-engine/headless C exports with checked layouts and an ABI
-  checksum;
-- sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates in CI.
+- 84 frozen retained-engine/headless C exports, with 93 current exports and
+  checked layouts and an ABI checksum;
+- sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
+  in CI; several remain open or failing.
 
-This repository is not yet declaring the final v0.2 release. Physical-GPU and
-reference-machine qualification, automated AT-SPI operation, direct Skia GPU
-rendering, retained per-node layers, compositor-owned animation curves, a
-C-owned native event loop, and signed publication still remain. See
+The archived Open UI bytes and a fresh pinned Chromium capture disagree for
+the same minimal fixture, so the frozen replay and Chromium exactness gates
+cannot both pass with the current immutable inputs. This repository is not yet
+declaring the final v0.2 release. Physical-GPU and reference-machine
+qualification, automated AT-SPI operation, direct Skia GPU qualification,
+retained per-node layers, compositor-owned animation curves, a C-owned native
+event loop, and signed publication still remain. See
 [current status](docs/progress/current-status.md)
 and [release qualification](docs/v02/release.md).
 
