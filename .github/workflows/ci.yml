@@ -97,9 +97,6 @@ jobs:
     name: python-accountability
     runs-on: ubuntu-24.04
     timeout-minutes: 30
-    env:
-      CHROMIUM_WPT_ROOT: ${{ runner.temp }}/chromium-src/third_party/blink/web_tests/external/wpt
-      CHROMIUM_WPT_CSS: ${{ runner.temp }}/chromium-src/third_party/blink/web_tests/external/wpt/css
     steps:
       - uses: actions/checkout@v6
 
@@ -118,7 +115,10 @@ jobs:
           git -C "$chromium_src" fetch --depth 1 --filter=blob:none origin "$chromium_commit"
           git -C "$chromium_src" checkout --detach --quiet FETCH_HEAD
           test "$(git -C "$chromium_src" rev-parse HEAD)" = "$chromium_commit"
-          test -f "$CHROMIUM_WPT_CSS/CSS2/floats/adjoining-floats-dynamic.html"
+          wpt_root="$chromium_src/third_party/blink/web_tests/external/wpt"
+          test -f "$wpt_root/css/CSS2/floats/adjoining-floats-dynamic.html"
+          printf 'CHROMIUM_WPT_ROOT=%s\nCHROMIUM_WPT_CSS=%s\n' \
+            "$wpt_root" "$wpt_root/css" >> "$GITHUB_ENV"
 
       - name: Run frozen closure and porter tests
         run: |
