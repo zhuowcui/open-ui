@@ -350,6 +350,7 @@ def main() -> None:
         report["minimal_conflict"] = minimal_conflict_audit(
             args.example_report, ids, images
         )
+        report["status"] = "blocked-immutable-archive-oracle-conflict"
     if args.prior_local_captures is not None:
         if args.matrix_report is None:
             raise SystemExit("--prior-local-captures requires --matrix-report")

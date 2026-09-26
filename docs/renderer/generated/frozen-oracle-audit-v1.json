@@ -43,5 +43,5 @@
     "test_id": "wpt/css_backgrounds/background-image-gradient-interpolation-repaint-ref"
   },
   "schema_version": 1,
-  "status": "blocked-historical-exact-proof"
+  "status": "blocked-immutable-archive-oracle-conflict"
 }
