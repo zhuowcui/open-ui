@@ -14549,7 +14549,20 @@ fn paint_box_shadows(
                     border_rect
                 };
                 canvas.clip_rect(exclusion_rect, ClipOp::Difference, false);
-                canvas.draw_rect(shadow_rect, &paint);
+                if shadow.blur_radius == 0.0 && shadow.color.is_opaque() {
+                    // Match the physical edge coverage used by other flat CSS
+                    // rectangles. Skia's analytic AA packs a half-covered
+                    // shadow edge one channel step above Chromium at 1.5x.
+                    draw_css_coverage_rect(
+                        canvas,
+                        shadow_rect,
+                        &shadow.color,
+                        style.device_scale_factor,
+                        PhysicalCoveragePacking::Default,
+                    );
+                } else {
+                    canvas.draw_rect(shadow_rect, &paint);
+                }
             }
             canvas.restore();
         }
