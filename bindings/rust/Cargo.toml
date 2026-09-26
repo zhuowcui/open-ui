@@ -17,6 +17,7 @@ members = [
     "examples/counter",
     "examples/todo",
     "examples/dashboard",
+    "examples/framework-test",
     "pixel-compare",
 ]
 exclude = ["fuzz"]

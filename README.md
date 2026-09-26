@@ -39,8 +39,8 @@ and [release qualification](docs/v02/release.md).
 
 ## Rust quick start
 
-Rust 1.85 or newer and ordinary C/C++ build tools are required. A Chromium
-checkout is not.
+Rust 1.85 or newer, C/C++ build tools, and the host C runtime development files
+are required. A Chromium checkout is not.
 
 ```toml
 [dependencies]
@@ -76,10 +76,19 @@ From this checkout:
 cd bindings/rust
 cargo run --locked --package hello                 # deterministic hello.png
 cargo run --locked --package hello --features linux # native Linux window
+cargo run --locked --package framework-test -- --headless /tmp/openui-framework-test.png
+cargo run --locked --package framework-test --features linux -- --window
 ```
 
 Use `OUI_BACKEND=software` or `OUI_BACKEND=opengl` to force a window backend.
 Headless applications use `HeadlessApp::render_at(time)` for repeatable frames.
+The [framework test app](bindings/rust/examples/framework-test/README.md) checks
+a reactive click and writes the resulting PNG in headless mode.
+If the linker reports missing `Scrt1.o` or `crti.o`, the host C runtime
+development files are absent. On the Chromium-equipped maintainer machine,
+the checked-in `.cargo/config.chromium.toml` supplies a pinned sysroot; add
+`--config .cargo/config.chromium.toml` immediately after `cargo` in the
+commands above.
 
 ## Native SDK
 
