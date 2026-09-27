@@ -8,10 +8,10 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,181/22,924 exact, 1,743 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v13.json) | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v14.json) | pass |
+| Four-profile renderer matrix | 21,185/22,924 exact, 1,739 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v14.json) | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v15.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v4.json); 21,978/23,724 total comparisons exact, zero errors. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v5.json); 21,982/23,724 total comparisons exact, zero errors. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36313866551): locked headless and Linux checks passed at the prior pushed checkpoint | pass |
@@ -38,22 +38,21 @@ claimed by source code alone.
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
 
-The complete clean census at `2ff236ce` measured the flex negative-margin and
-max-content repair across all four profiles. Two comparisons became exact, none
-regressed, and all Chromium decoded image hashes stayed fixed. The remaining
-1,743 differences and 968 unreviewed residual IDs keep the renderer gate red.
-The [flex investigation](../renderer/flex-negative-margin-investigation.md)
-records the rejected initial diagnostic, minimized fixture, and remaining
-fractional border/background pixels. The focused and primitive matrices stayed
-640/640 and 960/960 exact. All 1,600 Open UI decoded hashes stayed fixed from
-the prior clean raster run.
+The complete clean census at `2dce665c` measured the flex negative-margin
+background-coverage repair across all four profiles. Four comparisons became
+exact, none regressed, and all Chromium decoded image hashes stayed fixed.
+The remaining 1,739 differences and 965 unreviewed residual IDs keep the
+renderer gate red. The [flex investigation](../renderer/flex-negative-margin-investigation.md)
+records the rejected fragmentation diagnostic and clean repair. The focused
+and primitive matrices stayed 640/640 and 960/960 exact. All 1,600 Open UI
+decoded hashes stayed fixed from the prior clean raster run.
 
-The clean expanded run at the same checkpoint measured 21,978/23,724 exact,
-1,746 different, and zero errors. All 200 native final-state additions kept
+The clean expanded run at the same checkpoint measured 21,982/23,724 exact,
+1,742 different, and zero errors. All 200 native final-state additions kept
 their prior four-profile statuses and all 800 Open UI/Chromium decoded hashes:
 197 remain exact and three remain demoted. The
-[v4 ledger](../renderer/generated/expanded-requalification-v4.json) and
-[v5 diagnostic selection](../../tools/qualification/manifests/expanded-v5.json)
+[v5 ledger](../renderer/generated/expanded-requalification-v5.json) and
+[v6 diagnostic selection](../../tools/qualification/manifests/expanded-v6.json)
 record this without changing the original manifest or Chromium oracle.
 
 The earlier clean expanded run at `d73077e7` gained ten exact

@@ -51,7 +51,8 @@ The clean expanded matrix measured 21,978/23,724 exact and retained the same
 197/200 additions exact at all four profiles. The 800 addition statuses and
 Open UI/Chromium decoded hashes did not change.
 
-Two fractional-scale comparisons in the negative-margin case remain different:
+At that v13 checkpoint, two fractional-scale comparisons in the
+negative-margin case remained different:
 
 | Profile | Different pixels | Bounds in physical pixels | Observed edge |
 |---|---:|---|---|
@@ -60,8 +61,48 @@ Two fractional-scale comparisons in the negative-margin case remain different:
 
 At 1.25 scale, one right-edge Open UI pixel is RGBA `(127,63,63,255)` while
 Chromium's is `(127,127,127,255)`, showing red parent color in Open UI's
-coverage. This is a separate border/background compositing residual. Its exact
-shared cause and owner are still unreviewed, so it is not qualified or
-suppressed. The census has 968 unowned residual test IDs overall. No fixture
+coverage. This was a separate border/background compositing residual at v13.
+The census then had 968 unowned residual test IDs overall. No fixture
 bytes, Chromium capture, archive image, comparator tolerance, or release gate
 was changed.
+
+## Background coverage closure
+
+The parent red background and its opaque green descendant occupied the same
+physical edge. The green box was wrapped in an anonymous line fragment, which
+the existing conservative paint occlusion check did not traverse. The green
+box also had no border, so its opaque children did not suppress its own hidden
+background. At fractional scales the extra coverage layers blended red into
+edge pixels that Chromium rendered from the common backdrop.
+
+The paint path now follows a single ordinary anonymous wrapper, includes its
+offset, and culls a borderless background only when a fully covering opaque
+in-flow child makes it invisible. It rejects clips, continuation decorations,
+out-of-flow candidates, transformed ancestry, and other paint-changing wrapper
+state. A unit regression covers the anonymous line and a clipped wrapper.
+
+The first clean diagnostic after that change was rejected: three previously
+exact comparisons in `css_break` and `css_multicol` regressed at fractional
+scale. A child can cover a local box yet move or clip within a fragmentainer,
+so the parent's background is still needed. The final rule preserves
+borderless backgrounds for fragment continuations and boxes with a multicolumn
+ancestor. A unit guard covers that ancestry. The diagnostic was not counted
+as progress.
+
+At clean checkpoint `2dce665c`, eight complete disjoint shards produced the
+[v14 census index](generated/four-profile-census-v14.json):
+**21,185/22,924 exact, 1,739 different, zero errors**. Relative to v13, only
+five Open UI images changed. The two fractional negative-margin comparisons,
+`flex-grow-006` at 1.25×, and `background-color-border-box` at 1.25× became
+exact. `background-clip-color` at 1.25× remains different, but its mismatched
+pixels fell from 225 to 150. No exact comparison regressed. All 22,924
+Chromium decoded hashes and oracle identities stayed fixed. The residual
+inventory is 965 unowned test IDs, so the complete release gate still fails.
+
+The clean [v15 raster index](generated/focused-primitive-raster-v15.json)
+records 640/640 focused and 960/960 primitive exact, with all 1,600 Open UI
+and Chromium hashes unchanged from v14. The clean expanded run measured
+21,982/23,724 exact; all 200 additions retained their four-profile statuses
+and decoded hashes. The [v5 requalification ledger](generated/expanded-requalification-v5.json)
+retains 197 exact additions and demotes three. The historical archive and
+Chromium oracle were not rewritten.

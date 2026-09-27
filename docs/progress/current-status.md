@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,181/22,924 exact, 1,743 different, 0 errors |
+| Fresh four-profile Chromium census | 21,185/22,924 exact, 1,739 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
@@ -25,26 +25,28 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v13.json)
-at `2ff236ce` made two more comparisons exact than v12, with no previously
-exact comparison regressing. Correct flex intrinsic sizing now preserves a
-negative item margin while keeping max-content at least min-content. Only the
-four profile images for `negative-margins-001` changed; every Chromium decoded
-pixel hash and oracle identity remained unchanged. The clean
-[v14 raster index](../renderer/generated/focused-primitive-raster-v14.json)
-confirms both 40-profile matrices stayed exact. The remaining two fractional
-profiles for that fixture still differ along the border/background coverage.
-The census still fails exactness, with 968 unowned residual test IDs. The
-[investigation](../renderer/flex-negative-margin-investigation.md) records the
-rejected broad diagnostic and the clean repair.
+The [latest complete clean census](../renderer/generated/four-profile-census-v14.json)
+at `2dce665c` made four more comparisons exact than v13, with no previously
+exact comparison regressing. Opaque-background culling now follows an
+anonymous line box while retaining the background inside multicolumn
+fragmentainers. Both remaining fractional profiles of
+`negative-margins-001` are exact; `flex-grow-006` and
+`background-color-border-box` each gained one exact profile. A fifth changed
+image, `background-clip-color` at 1.25×, remains different but fell from 225
+to 150 mismatched pixels. All 22,924 Chromium decoded hashes stayed fixed.
+The clean [v15 raster index](../renderer/generated/focused-primitive-raster-v15.json)
+confirms both 40-profile matrices stayed exact with all 1,600 Open UI and
+Chromium decoded hashes unchanged. The census still fails exactness, with 965
+unowned residual test IDs. The [investigation](../renderer/flex-negative-margin-investigation.md)
+records the cause, rejected diagnostic, and clean repair.
 
-The clean [expanded v4 requalification](../renderer/generated/expanded-requalification-v4.json)
-at `2ff236ce` measured 21,978/23,724 exact comparisons, 1,746 different,
+The clean [expanded v5 requalification](../renderer/generated/expanded-requalification-v5.json)
+at `2dce665c` measured 21,982/23,724 exact comparisons, 1,742 different,
 and zero errors. All 200 native final-state additions retained their prior
 four-profile statuses and Open UI/Chromium decoded hashes: 197 remain exact
-at all four profiles and three remain demoted. The two new exact comparisons
-belong to the original flex inventory, not the additions. The
-[v5 diagnostic selection](../../tools/qualification/manifests/expanded-v5.json)
+at all four profiles and three remain demoted. The four new exact comparisons
+belong to the original inventory. The
+[v6 diagnostic selection](../../tools/qualification/manifests/expanded-v6.json)
 retains only the 197 exact additions; it does not alter the original manifest.
 
 The historical baseline records Chromium identity, viewport, device scale,
@@ -89,7 +91,7 @@ load it.
   it reached 408/640 focused and 624/960 primitive exact, below CPU Skia's
   640/640 and 960/960. It remains unpromoted; OpenGL presentation still uploads
   a CPU-rasterized frame.
-- The four-profile Chromium census fails exactness; 968 residual test IDs
+- The four-profile Chromium census fails exactness; 965 residual test IDs
   have no reviewed owner. Both 40-profile CPU raster matrices are exact.
 - The C ABI covers the retained engine, headless renderer, and an owned full
   accessibility-tree snapshot, but does not yet export the owned Linux event loop.
