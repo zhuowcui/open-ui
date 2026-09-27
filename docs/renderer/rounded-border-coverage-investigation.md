@@ -99,6 +99,20 @@ from a dirty source tree. A subsequent clean run at `aa2d4d24` confirmed
 640/640 focused and 952/960 primitive exact comparisons with zero errors and
 the same eight one-level residuals. The primitive release gate remains open.
 
+The complete clean four-profile census at `b225a827` found 21,166/22,924
+exact comparisons, a net gain of five from the prior census, but it also
+changed five previously exact comparisons to different in the
+`border-top-{left,right}-radius-values-004` cases. The
+[v9 census index](generated/four-profile-census-v9.json) preserves that
+nonqualifying checkpoint. Chromium's `BorderWillArcInnerEdge` considers a
+corner radius present when either axis is nonzero. The first straight-side
+change required both axes, so it incorrectly treated one-axis elliptical
+corners as straight. The follow-up paint diagnostic keeps the full straight
+side only where an opaque same-color background reaches the inner border
+edge; border-only cases retain their prior curved-side clipping. The v9
+regressions must be cleared by a new complete clean census before that change
+can be promoted.
+
 The three full-suite `background-origin_origin-{border,padding,content}-box_with_radius`
 cases have identical diff signatures within each of the four required
 profiles in the [v8 census](generated/four-profile-census-v8.json). Their

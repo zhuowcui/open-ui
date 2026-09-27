@@ -6,7 +6,8 @@ style that has proven necessary to make progress safely.
 ## North Star
 
 Open UI should render the same UI as Chromium, pixel-for-pixel, while exposing a
-standalone UI engine rather than a browser.
+standalone native UI engine. Applications implement interaction in Rust through
+public `Document` and `Element` APIs; Open UI does not execute JavaScript.
 
 ## Completion Standard
 
@@ -40,13 +41,12 @@ Examples:
 
 ## Prefer Production Fixes
 
-Implement real layout, paint, and style behavior first. Pixel nudges are acceptable
-only as a last resort when:
-
-- the affected Chromium behavior is an antialiasing/compositing edge,
-- the gate is narrow and geometry/style-based,
-- nearby guard tests are validated,
-- and the workaround is documented by the surrounding code and accountability results.
+Implement shared layout, paint, style, and raster behavior that matches the
+pinned Chromium oracle. The v0.2 pixel gate uses exact decoded RGBA equality at
+every required profile, with zero tolerance. Do not add fixture-specific pixel
+corrections, post-raster output edits, exception lists, or rewritten reference
+images. Keep a residual open with measured bounds, channel deltas, a minimized
+reproducer, and reviewed ownership until its exact gate passes.
 
 ## Preserve User and Repo State
 
@@ -93,17 +93,12 @@ condition, continue work or clarify the condition; do not self-certify completio
 - For Rust layout work, prefer deterministic geometry helpers and focused unit tests
   before pixel-level tuning.
 
-## Recommended Next Phase
+## Current Work
 
-SP13-R is closed and SP17 is active on `agent/sp17-advanced-text` from the
-landed PR #1 main state. `docs/SP17-HANDOFF.md` is the historical kickoff
-contract; use `docs/SP17-PLAN.md` and `docs/progress/current-status.md` for the
-live W1O continuation. Preserve the 3,267-ID SP17 kickoff baseline (including
-the 2,823-ID SP13-R baseline and 351-ID exact target ledger) and the zero-pixel
-passing threshold. W1M closes the frozen 39-ID fallback/justify-self/margin and
-assertion-only flex abspos alignment cohort; W1N closes the four existing
-column-wrap fit-content cross-sizing failures; W1O closes the remaining
-auto-height percentage-basis and semantic-break failure. Reserve the disposition
-of tests with dynamic JavaScript in Chromium, upright/mixed-script and sideways
-text, including `flexbox-writing-mode-010` through 016, for W2. Open UI does
-not execute JavaScript; application interaction uses native Rust APIs.
+The active contract is v0.2 Linux and headless release closure. Use
+[`docs/renderer/contract.md`](renderer/contract.md) for the pixel gate and
+[`docs/progress/current-status.md`](progress/current-status.md) for measured
+progress. SP13–SP20 sprint documents are historical evidence. Chromium test
+files that contain scripts may be assessed for deterministic visual final
+states through native Rust fixtures; they do not create a JavaScript runtime
+requirement. Application interactions belong in the public native Rust API.

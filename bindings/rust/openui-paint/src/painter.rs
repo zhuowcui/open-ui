@@ -9576,6 +9576,93 @@ fn eccentric_outer_tangent_clip(
     None
 }
 
+fn single_saturated_corner_tangent_clips(
+    border_rect: Rect,
+    inner_rect: Rect,
+    radii: &[Point; 4],
+) -> Option<[Rect; 2]> {
+    if radii
+        .iter()
+        .filter(|radius| radius.x > 0.0 && radius.y > 0.0)
+        .count()
+        != 1
+    {
+        return None;
+    }
+    let (corner, radius) = radii
+        .iter()
+        .copied()
+        .enumerate()
+        .find(|(_, radius)| radius.x > 0.0 && radius.y > 0.0)?;
+    if radius.x < border_rect.width() - 0.01 || radius.y < border_rect.height() - 0.01 {
+        return None;
+    }
+    let center = match corner {
+        0 => Point::new(border_rect.left + radius.x, border_rect.top + radius.y),
+        1 => Point::new(border_rect.right - radius.x, border_rect.top + radius.y),
+        2 => Point::new(border_rect.right - radius.x, border_rect.bottom - radius.y),
+        _ => Point::new(border_rect.left + radius.x, border_rect.bottom - radius.y),
+    };
+    Some(match corner {
+        0 => [
+            Rect::from_ltrb(
+                inner_rect.right,
+                border_rect.top,
+                center.x,
+                border_rect.top + 1.0,
+            ),
+            Rect::from_ltrb(
+                border_rect.left,
+                inner_rect.bottom,
+                border_rect.left + 1.0,
+                center.y - 1.0,
+            ),
+        ],
+        1 => [
+            Rect::from_ltrb(
+                center.x,
+                border_rect.top,
+                inner_rect.left,
+                border_rect.top + 1.0,
+            ),
+            Rect::from_ltrb(
+                border_rect.right - 1.0,
+                inner_rect.bottom,
+                border_rect.right,
+                center.y - 1.0,
+            ),
+        ],
+        2 => [
+            Rect::from_ltrb(
+                center.x,
+                border_rect.bottom - 1.0,
+                inner_rect.left,
+                border_rect.bottom,
+            ),
+            Rect::from_ltrb(
+                border_rect.right - 1.0,
+                center.y + 1.0,
+                border_rect.right,
+                inner_rect.top,
+            ),
+        ],
+        _ => [
+            Rect::from_ltrb(
+                inner_rect.right,
+                border_rect.bottom - 1.0,
+                center.x,
+                border_rect.bottom,
+            ),
+            Rect::from_ltrb(
+                border_rect.left,
+                center.y + 1.0,
+                border_rect.left + 1.0,
+                inner_rect.top,
+            ),
+        ],
+    })
+}
+
 fn specified_border_radii(style: &ComputedStyle, rect: &Rect) -> [Point; 4] {
     if table_internal_ignores_border_radius(style.display) {
         return [Point::new(0.0, 0.0); 4];
@@ -9992,9 +10079,10 @@ fn draw_nonrenderable_uniform_rounded_border(
     border_rect: Rect,
     inner_rect: Rect,
     inner_radii: [Point; 4],
+    blend_with_background_at_inner_edge: bool,
     paint: &Paint,
 ) {
-    let has_radius = |radius: Point| radius.x > 0.0 && radius.y > 0.0;
+    let has_radius = |radius: Point| radius.x > 0.0 || radius.y > 0.0;
     for side in [
         BorderSide::Top,
         BorderSide::Right,
@@ -10007,10 +10095,10 @@ fn draw_nonrenderable_uniform_rounded_border(
             BorderSide::Bottom => !has_radius(inner_radii[2]) && !has_radius(inner_radii[3]),
             BorderSide::Left => !has_radius(inner_radii[3]) && !has_radius(inner_radii[0]),
         };
-        if straight {
-            // Blink's straight-side path fills the complete side
-            // rectangle. A side polygon would discard fractional coverage at
-            // the inner edge before the border can blend with the background.
+        if straight && blend_with_background_at_inner_edge {
+            // This opaque same-color border and background share a fractional
+            // inner edge. Fill its straight side in one rectangle so the side
+            // polygon does not discard the border's coverage there.
             let side_rect = match side {
                 BorderSide::Top => Rect::from_ltrb(
                     border_rect.left,
@@ -17488,6 +17576,14 @@ fn paint_borders(
                 return;
             }
             let nonrenderable_inner = radii_exceed_rect(&inner_rect, &inner_radii);
+            let blend_with_background_at_inner_edge = resolved.is_opaque()
+                && style.background_color == resolved
+                && matches!(
+                    style.background_clip,
+                    BackgroundClip::ContentBox | BackgroundClip::PaddingBox
+                )
+                && style.background_layers.is_empty()
+                && style.background_linear_gradient.is_none();
             let asymmetric_outer_radii = outer_radii
                 .iter()
                 .skip(1)
@@ -17507,6 +17603,7 @@ fn paint_borders(
                     border_rect,
                     inner_rect,
                     inner_radii,
+                    blend_with_background_at_inner_edge,
                     &fill_paint,
                 );
                 if asymmetric_outer_radii {
@@ -17525,9 +17622,34 @@ fn paint_borders(
                             border_rect,
                             inner_rect,
                             inner_radii,
+                            blend_with_background_at_inner_edge,
                             &fill_paint,
                         );
                         canvas.restore();
+                    }
+                    if !blend_with_background_at_inner_edge {
+                        if let Some(tangent_clips) = single_saturated_corner_tangent_clips(
+                            border_rect,
+                            inner_rect,
+                            &outer_radii,
+                        ) {
+                            for tangent_clip in tangent_clips {
+                                if tangent_clip.width() <= 0.0 || tangent_clip.height() <= 0.0 {
+                                    continue;
+                                }
+                                canvas.save();
+                                canvas.clip_rect(tangent_clip, ClipOp::Intersect, false);
+                                draw_nonrenderable_uniform_rounded_border(
+                                    canvas,
+                                    border_rect,
+                                    inner_rect,
+                                    inner_radii,
+                                    false,
+                                    &fill_paint,
+                                );
+                                canvas.restore();
+                            }
+                        }
                     }
                 }
                 if !outer_rrect_clipped {
