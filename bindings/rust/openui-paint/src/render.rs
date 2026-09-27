@@ -21,8 +21,39 @@ use crate::painter::paint_fragment;
 // Chromium 147's cc::LayerTreeSettings::max_untiled_layer_size.
 const MAX_UNTILED_LAYER_SIZE: i32 = 512;
 
-fn should_replay_untiled(direct_replay: bool, width: i32, height: i32) -> bool {
-    direct_replay || (width <= MAX_UNTILED_LAYER_SIZE && height <= MAX_UNTILED_LAYER_SIZE)
+fn should_replay_untiled(
+    direct_replay: bool,
+    width: i32,
+    height: i32,
+    content_requires_tiling: bool,
+) -> bool {
+    direct_replay
+        || (!content_requires_tiling
+            && width <= MAX_UNTILED_LAYER_SIZE
+            && height <= MAX_UNTILED_LAYER_SIZE)
+}
+
+/// A compositor layer can be wider than the viewport that exposes it. Decide
+/// its raster tile phase from the laid-out content footprint, including boxes
+/// extending past the viewport edge, rather than from the output surface alone.
+fn content_requires_tiling(fragment: &Fragment, scale: f64) -> bool {
+    fn include(fragment: &Fragment, parent_x: f64, parent_y: f64, bounds: &mut [f64; 4]) {
+        let openui_geometry::PhysicalOffset { left, top } = fragment.offset;
+        let x = parent_x + left.to_f64();
+        let y = parent_y + top.to_f64();
+        bounds[0] = bounds[0].min(x);
+        bounds[1] = bounds[1].min(y);
+        bounds[2] = bounds[2].max(x + fragment.size.width.to_f64());
+        bounds[3] = bounds[3].max(y + fragment.size.height.to_f64());
+        for child in &fragment.children {
+            include(child, x, y, bounds);
+        }
+    }
+
+    let mut bounds = [0.0; 4];
+    include(fragment, 0.0, 0.0, &mut bounds);
+    (bounds[2] - bounds[0]) * scale > f64::from(MAX_UNTILED_LAYER_SIZE)
+        || (bounds[3] - bounds[1]) * scale > f64::from(MAX_UNTILED_LAYER_SIZE)
 }
 
 fn has_promoted_non_axis_transform(fragment: &Fragment, doc: &Document) -> bool {
@@ -59,6 +90,7 @@ pub struct RecordedPicture {
     pub raster_configuration: RasterConfiguration,
     pub(crate) lcd_surface: bool,
     pub(crate) direct_replay: bool,
+    pub(crate) content_requires_tiling: bool,
     /// Retains immutable registered bytes for every face referenced by a
     /// scene, even if the live document unregisters that face immediately.
     pub(crate) retained_font_bytes: Arc<[Arc<[u8]>]>,
@@ -127,6 +159,7 @@ pub fn record_fragment(
         raster_configuration,
         lcd_surface,
         direct_replay: has_promoted_non_axis_transform(fragment, doc),
+        content_requires_tiling: content_requires_tiling(fragment, viewport.device_scale_factor()),
         retained_font_bytes: doc.font_collection().retained_face_bytes(),
     })
 }
@@ -148,10 +181,16 @@ pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String>
     let canvas_color = SkColor::WHITE;
     surface.canvas().clear(canvas_color);
     // Chromium 147 keeps layers no larger than 512x512 physical pixels
-    // untiled (`LayerTreeSettings::max_untiled_layer_size`). Replaying those
-    // pictures through a synthetic 256px tile changes analytic rrect coverage
-    // near the tile clip even though the assembled pixels are copied exactly.
-    if should_replay_untiled(recording.direct_replay, width, height) {
+    // untiled (`LayerTreeSettings::max_untiled_layer_size`). A viewport can
+    // expose only part of a larger layer, so its size alone is insufficient.
+    // Replaying truly small pictures through a synthetic 256px tile changes
+    // analytic rrect coverage near the tile clip.
+    if should_replay_untiled(
+        recording.direct_replay,
+        width,
+        height,
+        recording.content_requires_tiling,
+    ) {
         surface.canvas().scale((scale, scale));
         surface
             .canvas()
@@ -318,10 +357,36 @@ mod tests {
 
     #[test]
     fn chromium_sized_small_layers_replay_untiled() {
-        assert!(should_replay_untiled(false, 512, 512));
-        assert!(!should_replay_untiled(false, 513, 512));
-        assert!(!should_replay_untiled(false, 512, 513));
-        assert!(should_replay_untiled(true, 4096, 4096));
+        assert!(should_replay_untiled(false, 512, 512, false));
+        assert!(!should_replay_untiled(false, 513, 512, false));
+        assert!(!should_replay_untiled(false, 512, 513, false));
+        assert!(!should_replay_untiled(false, 320, 240, true));
+        assert!(should_replay_untiled(true, 4096, 4096, true));
+    }
+
+    #[test]
+    fn overflowing_content_uses_its_layer_size_for_tiling() {
+        let mut viewport = Fragment::new_box(
+            openui_dom::NodeId::NONE,
+            openui_geometry::PhysicalSize::new(
+                LayoutUnit::from_i32(320),
+                LayoutUnit::from_i32(240),
+            ),
+        );
+        let mut overflow = Fragment::new_box(
+            openui_dom::NodeId::NONE,
+            openui_geometry::PhysicalSize::new(
+                LayoutUnit::from_f64(396.875),
+                LayoutUnit::from_i32(57),
+            ),
+        );
+        overflow.offset =
+            openui_geometry::PhysicalOffset::new(LayoutUnit::from_i32(20), LayoutUnit::zero());
+        viewport.children.push(overflow);
+
+        assert!(!content_requires_tiling(&viewport, 1.0));
+        assert!(content_requires_tiling(&viewport, 1.25));
+        assert!(content_requires_tiling(&viewport, 1.5));
     }
 
     #[test]
