@@ -8,8 +8,8 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,160/22,924 exact, 1,764 different, zero errors in the [fresh census](../renderer/generated/four-profile-census-v6.json) | fail |
-| Focused and primitive raster | 640/640 focused exact; 908/960 primitive exact with three unowned residual IDs in the [raster index](../renderer/generated/focused-primitive-raster-v5.json) | fail |
+| Four-profile renderer matrix | 21,160/22,924 exact, 1,764 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v7.json) | fail |
+| Focused and primitive raster | 640/640 focused exact; 908/960 primitive exact with three unowned residual IDs in the [latest raster index](../renderer/generated/focused-primitive-raster-v6.json) | fail |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | Prior v1 admitted 200 test fixtures; fresh run retains 197 exact additions and [demotes three](../renderer/generated/expanded-requalification-v1.json). None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
 | Accountability | 7/7 over 7,673 rows | pass |

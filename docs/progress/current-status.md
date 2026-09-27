@@ -45,6 +45,9 @@ load it.
 - Core controls, routed pointer/keyboard/text/composition events, focus and
   modal containment, selection, Unicode editing, clipboard, undo/redo,
   scrolling, and pointer capture.
+- Public native element activation and details disclosure: `Element::click`,
+  `set_open`, and `is_open` use the same retained event and control path;
+  closed details content leaves layout and the accessibility tree.
 - Retained accessibility trees/actions and Linux AccessKit integration.
 - Winit X11/Wayland runtime, backend-correct clipboard, IME/data events,
   softbuffer presentation, and multiple isolated windows.
