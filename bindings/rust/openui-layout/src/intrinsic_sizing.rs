@@ -2036,6 +2036,10 @@ fn compute_flex_intrinsic_sizes(
     } else {
         (sum_main_min + total_main_gap, sum_main_max + total_main_gap)
     };
+    // Negative item margins may pull the summed max-content contribution
+    // below the min-content contribution. Intrinsic max-content still cannot
+    // be smaller than min-content (as in Blink's flex intrinsic sizing).
+    let max_main = max_main.max_of(min_main);
 
     // For column+wrap, the cross-axis (inline) size depends on wrapping.
     // When the container has a definite main-axis constraint (height/max-height),
@@ -3989,6 +3993,30 @@ mod tests {
 
         let sizes = compute_logical_intrinsic_inline_sizes(&doc, container);
         assert_eq!(sizes.max, LayoutUnit::from_i32(40));
+    }
+
+    #[test]
+    fn wrapped_flex_max_content_cannot_shrink_below_min_content() {
+        let mut doc = Document::new();
+        let container = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(container, |style| {
+            style.display = openui_style::Display::Flex;
+            style.flex_wrap = openui_style::FlexWrap::Wrap;
+        });
+        doc.append_child(doc.root(), container);
+
+        for (width, margin_left) in [(100.0, 0.0), (0.0, -10.0)] {
+            let item = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(item, |style| {
+                style.width = Length::px(width);
+                style.margin_left = Length::px(margin_left);
+            });
+            doc.append_child(container, item);
+        }
+
+        let sizes = compute_logical_intrinsic_inline_sizes(&doc, container);
+        assert_eq!(sizes.min, LayoutUnit::from_i32(100));
+        assert_eq!(sizes.max, sizes.min);
     }
 
     #[test]
