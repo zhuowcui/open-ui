@@ -5886,8 +5886,7 @@ fn paint_children_with_stacking_order(
     // content belongs to the same painting phase.
     for (position, &idx) in in_flow.iter().enumerate() {
         let child = &children[idx];
-        if child.node_id.is_none()
-            || child.kind != FragmentKind::Box
+        if child.kind != FragmentKind::Box
             || doc.node(child.node_id).tag == openui_dom::ElementTag::Text
         {
             continue;
@@ -15199,13 +15198,42 @@ fn has_negative_stacking_descendant(fragment: &Fragment, doc: &Document) -> bool
 /// child edges blend against that color instead of their shared backdrop.
 /// Keep this deliberately conservative. It recognizes only a single
 /// axis-aligned, unfragmented box whose own border-box background is opaque.
+/// An anonymous line may wrap an atomic inline box without changing where
+/// that box paints; include that line's offset when testing coverage.
 fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Document) -> bool {
     let inner_left = fragment.border.left;
     let inner_top = fragment.border.top;
     let inner_right = fragment.size.width - fragment.border.right;
     let inner_bottom = fragment.size.height - fragment.border.bottom;
 
-    fragment.children.iter().any(|child| {
+    fragment.children.iter().any(|first_child| {
+        let mut child = first_child;
+        let mut wrapper_offset = PhysicalOffset::zero();
+        while child.node_id.is_none() {
+            if child.kind != FragmentKind::Box
+                || child.children.len() != 1
+                || child.has_overflow_clip
+                || child.block_axis_clip_only
+                || child.inline_axis_clip_only
+                || child.skip_box_decoration
+                || child.decoration_paint_block_size.is_some()
+                || child.decoration_slice.is_some()
+                || !child.decoration_clip_rects.is_empty()
+                || !child.is_first_for_node
+                || !child.is_last_for_node
+                || child.inherited_style.is_some()
+                || child.paint_background_color_override.is_some()
+                || child.is_inline_box_fragment
+                || !child.oof_candidates.is_empty()
+                || !child.promoted_transform_ancestors.is_empty()
+            {
+                return false;
+            }
+            wrapper_offset.left += child.offset.left;
+            wrapper_offset.top += child.offset.top;
+            child = &child.children[0];
+        }
+
         if child.node_id.is_none()
             || child.kind != FragmentKind::Box
             || child.skip_box_decoration
@@ -15238,10 +15266,12 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
             return false;
         }
 
-        let child_right = child.offset.left + child.size.width;
-        let child_bottom = child.offset.top + child.size.height;
-        child.offset.left <= inner_left
-            && child.offset.top <= inner_top
+        let child_left = wrapper_offset.left + child.offset.left;
+        let child_top = wrapper_offset.top + child.offset.top;
+        let child_right = child_left + child.size.width;
+        let child_bottom = child_top + child.size.height;
+        child_left <= inner_left
+            && child_top <= inner_top
             && child_right >= inner_right
             && child_bottom >= inner_bottom
     })
@@ -15609,21 +15639,24 @@ fn paint_box_decoration_background(
     }
 
     // ── 2. Background color ──────────────────────────────────────────
-    let opaque_border_and_child_occlude_background = !has_radius
+    let opaque_child_occludes_background = !has_radius
         && style.border_image.is_none()
         && effective_background_clip == BackgroundClip::BorderBox
+        // Both an opaque solid ring and a borderless box can leave the
+        // parent's color fully hidden under a covering child. Retaining that
+        // color adds a second AA coverage layer at their shared edge.
         // A scroll container owns a distinct scroll backing. Its box
         // background remains part of that backing even when an opaque child
         // currently covers the complete scrollport; the child may move as
         // the scroll offset changes.
         && style.overflow_x == Overflow::Visible
         && style.overflow_y == Overflow::Visible
-        && side_specs.iter().all(|(width, border_style, color)| {
+        && (side_specs.iter().all(|(width, border_style, color)| {
             *width > 0.0 && *border_style == BorderStyle::Solid && color.is_opaque()
-        })
+        }) || side_specs.iter().all(|(width, _, _)| *width == 0.0))
         && opaque_in_flow_child_covers_inner_border_box(fragment, doc);
     let background_color_is_occluded = opacity_multiplier >= 1.0
-        && (opaque_border_and_child_occlude_background
+        && (opaque_child_occludes_background
             || style.background_layers.last().is_some_and(|layer| {
                 layer.clip == effective_background_clip
                     && matches!(
@@ -20104,6 +20137,26 @@ mod tests {
         ));
 
         parent_fragment.children[0].offset.left = LayoutUnit::from_i32(2);
+        assert!(!opaque_in_flow_child_covers_inner_border_box(
+            &parent_fragment,
+            &doc
+        ));
+
+        let mut inline_child = parent_fragment.children.pop().unwrap();
+        inline_child.offset = PhysicalOffset::zero();
+        let mut line = Fragment::new_box(
+            NodeId::NONE,
+            PhysicalSize::new(LayoutUnit::from_i32(100), LayoutUnit::from_i32(50)),
+        );
+        line.offset = PhysicalOffset::new(LayoutUnit::from_i32(1), LayoutUnit::from_i32(1));
+        line.children.push(inline_child);
+        parent_fragment.children.push(line);
+        assert!(
+            opaque_in_flow_child_covers_inner_border_box(&parent_fragment, &doc),
+            "an anonymous line does not hide its opaque in-flow child"
+        );
+
+        parent_fragment.children[0].has_overflow_clip = true;
         assert!(!opaque_in_flow_child_covers_inner_border_box(
             &parent_fragment,
             &doc
