@@ -72,7 +72,7 @@ load it.
 - Direct Skia Ganesh raster builds behind explicit backend selection. On the
   clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json),
   it reached 408/640 focused and 624/960 primitive exact, below CPU Skia's
-  640/640 and 900/960. It remains unpromoted; OpenGL presentation still uploads
+  640/640 and 960/960. It remains unpromoted; OpenGL presentation still uploads
   a CPU-rasterized frame.
 - The four-profile Chromium census fails exactness; 968 residual test IDs
   have no reviewed owner. Both 40-profile CPU raster matrices are exact.

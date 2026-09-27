@@ -8245,11 +8245,17 @@ fn compute_column_block_clip_rect(
         _ => {
             top -= start_ink;
             bottom += end_ink;
-            top = fragment
+            let child_top = fragment
                 .children
                 .iter()
                 .map(|child| (offset.top + child.offset.top).to_f32())
                 .fold(top, f32::min);
+            // A continuation may start fractionally above its column after
+            // LayoutUnit rounding. Preserve actual overflowing ink, but do
+            // not expand the clip for an offset smaller than one device cell.
+            if top - child_top >= (1.0 / device_scale) as f32 {
+                top = child_top;
+            }
         }
     }
 
