@@ -16002,7 +16002,21 @@ fn paint_box_decoration_background(
             } else {
                 let preserves_composited_edge_coverage = style.z_index.is_some_and(|z| z < 0)
                     || has_negative_stacking_descendant(fragment, doc);
-                if uses_squared_replaced_background_coverage(
+                if matches!(
+                    effective_background_clip,
+                    BackgroundClip::PaddingBox | BackgroundClip::ContentBox
+                ) {
+                    // Blink fills the CSS-pixel-snapped border box through a
+                    // hard CSS-pixel-snapped padding/content clip. Device
+                    // scale is applied after those layout-space edges are
+                    // selected: the fill can still have fractional device
+                    // coverage at its outer edge, while the hard clip does
+                    // not leak color into the neighboring physical cell.
+                    canvas.save();
+                    canvas.clip_rect(bg_rect, ClipOp::Intersect, false);
+                    canvas.draw_rect(background_box, &paint);
+                    canvas.restore();
+                } else if uses_squared_replaced_background_coverage(
                     style,
                     bg_rect,
                     node.replaced.map(|replaced| replaced.resource),
