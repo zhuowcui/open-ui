@@ -71,22 +71,24 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
-At clean checkpoint `c5621238`, the CPU runner produced 640/640 exact focused
-comparisons and 920/960 exact primitive comparisons. The 40 primitive
-differences all belong to one rounded-border ID; its per-profile bounds,
-region counts, channel deltas, scale behavior, and unreviewed ownership are
-recorded in the [focused and primitive evidence index](generated/focused-primitive-raster-v9.json).
+At clean checkpoint `aa2d4d24`, the CPU runner produced 640/640 exact focused
+comparisons and 952/960 exact primitive comparisons. The eight primitive
+differences all belong to one rounded-border ID at 1.25 scale; its per-profile
+bounds, region counts, channel deltas, scale behavior, and unreviewed ownership
+are recorded in the [focused and primitive evidence index](generated/focused-primitive-raster-v10.json).
 The primitive gate remains open. Compared with the
-[v8 index](generated/focused-primitive-raster-v8.json), eight fractional-scale
-shadow comparisons became exact. The other 1,592 Open UI decoded pixel hashes
-and all Chromium oracle identities and decoded hashes stayed unchanged.
+[v9 index](generated/focused-primitive-raster-v9.json), 32 rounded-border
+comparisons became exact. Only that ID's 40 Open UI decoded pixel hashes
+changed; all Chromium oracle identities and decoded hashes stayed unchanged.
+The v9 index records eight fractional-scale shadow comparisons becoming exact
+without changes to the other 1,592 Open UI decoded pixel hashes.
 The v8 and v7 indices record four gradient profiles becoming exact after the
 renderer selected tiles from the laid-out content footprint and clipped
 overflowing paint at the physical viewport edge. The gradient now matches at
 all 40 profiles. Earlier indices remain historical evidence.
 The [rounded border coverage investigation](rounded-border-coverage-investigation.md)
-isolates the remaining primitive failure. Its experimental output is
-diagnostic and does not change the gate.
+isolates the remaining primitive failure and distinguishes the clean v10
+improvement from earlier dirty diagnostics. The primitive gate stays open.
 An explicit Ganesh raster run on Mesa llvmpipe completed the same clean
 40-profile suites. Its [backend comparison](generated/ganesh-raster-comparison-v1.json)
 records 408/640 focused and 624/960 primitive exact, compared with CPU Skia's

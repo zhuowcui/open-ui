@@ -30,7 +30,7 @@ The current v0.2 release candidate has:
   on replay and 182 changed; these old screenshots are not pixel targets;
 - a clean four-profile Chromium census with 21,161 of 22,924 comparisons
   exact, 1,763 different, and zero render errors;
-- clean 40-profile raster matrices with 640/640 focused and 920/960 primitive
+- clean 40-profile raster matrices with 640/640 focused and 952/960 primitive
   comparisons exact;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
 - 37 application scenarios covering retained updates, controls, editing,

@@ -12,7 +12,7 @@ remain open.
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
 | Fresh four-profile Chromium census | 21,161/22,924 exact, 1,763 different, 0 errors |
-| Focused / primitive 40-profile matrices | 640/640 / 920/960 exact |
+| Focused / primitive 40-profile matrices | 640/640 / 952/960 exact |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
@@ -23,6 +23,11 @@ remain open.
 | Python closure and qualification tests | 231 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
+
+The complete four-profile census is from the earlier clean checkpoint. A clean
+filtered run at `aa2d4d24` made the rounded-border case exact at three of its
+four profiles, but the full census must be rerun before its aggregate count is
+updated.
 
 The historical baseline records Chromium identity, viewport, device scale,
 fonts, resources, and result hashes. A fresh pinned Chromium capture differs
