@@ -13,7 +13,7 @@ remain open.
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
 | Fresh four-profile Chromium census | 21,179/22,924 exact, 1,745 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
-| Expanded native final-state additions | 197/200 exact at all four profiles; three demoted |
+| Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
@@ -34,6 +34,15 @@ decoded pixel hash and oracle identity remained unchanged. The clean
 [v13 raster index](../renderer/generated/focused-primitive-raster-v13.json)
 confirms both 40-profile matrices stayed exact. The census still fails
 exactness.
+
+The clean [expanded v3 requalification](../renderer/generated/expanded-requalification-v3.json)
+at `d73077e7` measured 21,976/23,724 exact comparisons, 1,748 different,
+and zero errors. All 200 native final-state additions retained their prior
+four-profile statuses and Open UI/Chromium decoded hashes: 197 remain exact
+at all four profiles and three remain demoted. The ten new exact comparisons
+belong to the original `css_break` inventory, not the additions. The
+[v4 diagnostic selection](../../tools/qualification/manifests/expanded-v4.json)
+retains only the 197 exact additions; it does not alter the original manifest.
 
 The historical baseline records Chromium identity, viewport, device scale,
 fonts, resources, and result hashes. A fresh pinned Chromium capture differs

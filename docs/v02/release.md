@@ -11,7 +11,7 @@ claimed by source code alone.
 | Four-profile renderer matrix | 21,179/22,924 exact, 1,745 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v12.json) | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v13.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v2.json); 21,966/23,724 total comparisons exact, zero errors. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v3.json); 21,976/23,724 total comparisons exact, zero errors. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36313866551): locked headless and Linux checks passed at the prior pushed checkpoint | pass |
@@ -42,6 +42,14 @@ The complete clean census at `e942aebc` measured the multicolumn start-clip
 repair across all four profiles. Ten comparisons became exact, none regressed,
 and all Chromium decoded image hashes stayed fixed. The remaining 1,745
 differences and 968 unreviewed residual IDs keep the renderer gate red.
+
+The subsequent clean expanded run at `d73077e7` gained the same ten exact
+`css_break` comparisons and made no other Open UI image changes. The 200
+native final-state additions kept their prior statuses and decoded hashes;
+197 remain exact at all four required profiles. The
+[v3 requalification ledger](../renderer/generated/expanded-requalification-v3.json)
+and [v4 diagnostic selection](../../tools/qualification/manifests/expanded-v4.json)
+record this without changing the original manifest or Chromium oracle.
 
 The [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36235389665)
 on checkpoint `e555c442` records every job: X11/Mesa and pure-Wayland

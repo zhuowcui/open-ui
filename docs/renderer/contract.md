@@ -123,10 +123,18 @@ are exact at all four profiles and three differ at one profile each. Their
 statuses and all 800 Open UI and Chromium decoded hashes match the prior
 expanded run. The [v2 requalification ledger](generated/expanded-requalification-v2.json)
 records this result; `expanded-v3.json` retains only the 197 exact additions.
-The prior [v1 ledger](generated/expanded-requalification-v1.json) and
-`expanded-v2.json` manifest remain unchanged. This v3 selection is diagnostic
-until a new contract admits it; neither the 36 originally pending cases nor
-the three demotions count as current exact coverage.
+The later clean complete expanded matrix at `d73077e7` contains 21,976/23,724
+exact comparisons, 1,748 differences, and zero errors. Its ten gains are in
+the original `css_break` inventory. All 800 Open UI and Chromium decoded
+hashes and statuses for the 200 additions match the prior expanded run, and
+all Chromium oracle identities across the matrix remain fixed. The
+[v3 requalification ledger](generated/expanded-requalification-v3.json)
+records this result; `expanded-v4.json` again retains only the 197 exact
+additions. The prior [v1 ledger](generated/expanded-requalification-v1.json),
+`expanded-v2.json` manifest, and `expanded-v3.json` diagnostic selection
+remain unchanged. The v4 selection is diagnostic until a new contract admits
+it; neither the 36 originally pending cases nor the three demotions count as
+current exact coverage.
 Non-exact runs emit a v2 residual ledger whose pixel bounds, connected regions,
 channel deltas, scale behavior, reviewed root cause, owner, and minimized
 reproducer are all explicit. Test names and fixture keywords never select an
