@@ -15441,8 +15441,27 @@ fn paint_box_decoration_background(
 
     let decoration_clip_saved = decoration_block_size.is_some();
     if decoration_clip_saved {
+        // A truncated fragment decoration needs a hard block-axis cutoff.
+        // Its inline edges still own fractional device coverage; a hard clip
+        // at the logical border box would erase that edge before paint runs.
+        let snapping = RasterSnapping::new(style.device_scale_factor);
+        let clip_rect = if fragment_block_axis_is_x(fragment) {
+            Rect::from_ltrb(
+                border_box_rect.left,
+                snapping.logical_coordinate(border_box_rect.top, PhysicalSnap::Floor),
+                border_box_rect.right,
+                snapping.logical_coordinate(border_box_rect.bottom, PhysicalSnap::Ceil),
+            )
+        } else {
+            Rect::from_ltrb(
+                snapping.logical_coordinate(border_box_rect.left, PhysicalSnap::Floor),
+                border_box_rect.top,
+                snapping.logical_coordinate(border_box_rect.right, PhysicalSnap::Ceil),
+                border_box_rect.bottom,
+            )
+        };
         canvas.save();
-        canvas.clip_rect(border_box_rect, ClipOp::Intersect, false);
+        canvas.clip_rect(clip_rect, ClipOp::Intersect, false);
     }
 
     // When border-radius is set AND borders are uniform solid, use saveLayer
