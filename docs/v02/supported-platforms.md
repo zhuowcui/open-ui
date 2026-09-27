@@ -37,6 +37,10 @@ input. A browser DOM or Web API surface is not promised. If a product feature
 needs another element operation, expose it through the public native Rust API
 and the shared engine rather than introducing JavaScript.
 
+When a browser test uses a DOM or JavaScript call to reach a visual state,
+the corresponding application behavior belongs in a public Rust operation.
+A test-only Engine mutation does not by itself provide that application API.
+
 ## Deferred
 
 The following are not v0.2 defects or compatibility promises: macOS, Windows,

@@ -14510,6 +14510,7 @@ fn paint_box_shadows(
             // complete shadow shape and relying on the background to cover it
             // turns transparent fragmented boxes into solid shadow-colored
             // rectangles.
+            let rectangular_ancestor_clip = canvas.is_clip_rect();
             canvas.save();
             if has_border_radius {
                 let element_radii = normalized_border_radii(style, &border_rect);
@@ -14549,10 +14550,14 @@ fn paint_box_shadows(
                     border_rect
                 };
                 canvas.clip_rect(exclusion_rect, ClipOp::Difference, false);
-                if shadow.blur_radius == 0.0 && shadow.color.is_opaque() {
+                if shadow.blur_radius == 0.0
+                    && shadow.color.is_opaque()
+                    && rectangular_ancestor_clip
+                {
                     // Match the physical edge coverage used by other flat CSS
                     // rectangles. Skia's analytic AA packs a half-covered
                     // shadow edge one channel step above Chromium at 1.5x.
+                    // Preserve Skia's joint coverage at a curved ancestor clip.
                     draw_css_coverage_rect(
                         canvas,
                         shadow_rect,

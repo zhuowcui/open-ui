@@ -7,9 +7,9 @@ stacking order, visibility, and typed `pointer-events` eligibility.
 
 Events use capture, target, and bubble phases. Default actions run only after
 dispatch and may be canceled. Pointer state supplies enter/leave synthesis,
-active state, pointer capture, and click activation. Focus state supports typed
-pointer, keyboard, script, and accessibility origins, tab order, focus-visible,
-modal containment, and restoration when a modal closes.
+active state, pointer capture, and click activation. Focus state tracks pointer,
+keyboard, native API, and accessibility origins. It supports tab order,
+focus-visible, modal containment, and restoration when a modal closes.
 
 The engine owns control state for buttons, single-line and multiline text
 inputs, checkboxes, named radio groups, selects and options, ranges,
