@@ -70,6 +70,31 @@ unchanged. Both changes were reverted. A single antialiased path can recover
 the missing seam coverage, but it also changes corner coverage and needs a
 shared blend-rounding solution before it can qualify.
 
+Pinned Chromium's `BoxBorderPainter::PaintSide` sends sides with a curved inner
+edge through its side polygon and adjusted inner contour, but fills straight
+sides as complete side rectangles. Open UI had sent all four sides through the
+polygon path. Following Chromium's split repaired the missing fractional border
+contribution at `(142, 80)` and reduced the 40-profile total from 6,728 to
+5,624 differing pixels. No previously exact primitive comparison changed.
+
+Chromium's `BoxDecorationData::ComputeBleedAvoidance` shrinks the background
+under an opaque rounded border instead of adding an outer clip layer. Open UI
+had allowed that layer for `background-clip: content-box` because its layer
+guard checked only whether a *border-box* background was shrunk. Skipping the
+layer when the border obscures the background edge reduced the same residual
+to 2,640 differing pixels. Removing an older two-strip repaint for a single
+saturated corner then made 32 of its 40 profiles exact. In the remaining eight
+1.25-scale profiles, 112 pixels per profile differ by one gray level along the
+right and bottom content edges: Open UI stores 47, Chromium 48. The combined
+dirty diagnostic produced 952/960 exact primitive comparisons and 640/640
+exact focused comparisons, with zero errors. Only this primitive ID changed;
+none of the Chromium decoded hashes or previously exact Open UI comparisons
+changed. The neighboring `-003` fixture stayed exact at all four contract
+profiles, and the three `background-origin_origin-*-box_with_radius` residuals
+kept their prior mismatch counts. A filtered four-profile check of this ID
+improved from zero to three exact results. These runs are diagnostics from a
+dirty source tree, so they do not establish a release gate.
+
 The three full-suite `background-origin_origin-{border,padding,content}-box_with_radius`
 cases have identical diff signatures within each of the four required
 profiles in the [v8 census](generated/four-profile-census-v8.json). Their
@@ -78,9 +103,9 @@ paint change; the evidence does not assign every pixel in those cases to the
 border path.
 
 **Candidate owner:** `openui-paint` rounded-border coverage and layer compositing.
-Ownership remains unreviewed in the qualification ledger because this
-investigation does not yet account for every changed pixel. The next fix must
-preserve fractional side coverage without duplicating
-corner coverage, then match Chromium's channel rounding. It must pass all 40
-primitive profiles, the exact neighboring fixtures, and the full four-profile
-census without regression before the residual can be closed.
+Ownership remains unreviewed in the qualification ledger because the remaining
+1.25-scale rounding difference and full-census effects have not been closed.
+The next fix must match Chromium's shared content/border edge rounding without
+a fixture-specific pixel correction. It must pass all 40 primitive profiles,
+the exact neighboring fixtures, and the full four-profile census without
+regression before the residual can be closed.

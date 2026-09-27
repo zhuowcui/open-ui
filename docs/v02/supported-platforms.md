@@ -38,6 +38,12 @@ input. A browser DOM or Web API surface is not promised. Every element
 interaction needed by a consuming application must be available through a
 public native Rust method backed by the shared engine. An internal Engine
 operation or test-only fixture is not sufficient application API coverage.
+For example, the effects of looking up an element, activating it, focusing it,
+scrolling it, and changing an input value are available through
+`Document::element_by_id`, `Element::click`, `focus`, `scroll_to`, and
+`set_control_value`. If an application needs another element operation and the
+public Rust API cannot perform it, that is a native API gap to implement; it
+does not require JavaScript.
 
 When a browser test uses a DOM or JavaScript call to reach a visual state,
 we assess the state as a rendering case. If the same interaction is needed by

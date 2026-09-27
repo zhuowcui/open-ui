@@ -621,7 +621,8 @@ re-layouts, re-paints, and commits the new layer tree.
 
 `AnimationTimeline` provides a grouping mechanism.  Each timeline contains
 animations associated with specific elements (identified by `ElementId`).
-This maps to the Web Animations API grouping model:
+The following is Chromium's Web Animations grouping model, retained here as
+historical research. It is not an Open UI API diagram:
 
 ```
   AnimationHost
@@ -634,13 +635,10 @@ This maps to the Web Animations API grouping model:
 
 ### Worklet Animations
 
-`WorkletAnimation` allows user-defined JavaScript (via AnimationWorklet) to
-drive animation on the compositor thread.  The worklet's `animate()` callback
-runs in a worklet global scope on the compositor thread's task runner.
-
-This describes Chromium's worklet API only. Open UI does not implement a
-JavaScript worklet or a JavaScript runtime. Applications use the public native
-Rust API for element interactions and animation control.
+In Chromium, `WorkletAnimation` uses JavaScript callbacks. Open UI has no
+worklet or JavaScript runtime. Native Rust applications control animations
+through the public `Element` and `Document` methods; the compositor samples
+immutable animation state supplied by the engine.
 
 ---
 

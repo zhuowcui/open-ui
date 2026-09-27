@@ -16,6 +16,7 @@ claimed by source code alone.
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [hosted validation](https://github.com/zhuowcui/open-ui/actions/runs/36236727149): locked headless and Linux checks passed after the string-boundary fix and compatible Wayland/Zbus pins | pass |
 | Rust/C application contract | 37 scenarios, 102 existing exports, five C examples and C++ consumer; owned C accessibility-tree snapshots now exported, native C window loop still open | partial |
+| Native element interaction | Public Rust `Document` and `Element` APIs cover lookup, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | no exported run/request-exit platform lifecycle yet | open |
 | C platform accessibility | owned full-tree snapshots, node metadata/relations/focus, and changed/removed IDs export from the shared engine; automated AT-SPI operation in a C window remains unqualified | open |
 | Generated sources | style, ABI, migration, closure generators are read-only clean | pass |
