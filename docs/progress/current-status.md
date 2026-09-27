@@ -38,6 +38,9 @@ confirms both 40-profile matrices stayed exact with all 1,600 Open UI and
 Chromium decoded hashes unchanged. The census still fails exactness, with 949
 unowned residual test IDs. The [background-clip investigation](../renderer/background-clip-hard-clip-investigation.md)
 records the cause, rejected diagnostic, and clean repair.
+The [border-image seam investigation](../renderer/border-image-seam-investigation.md)
+records a separate six-case fractional-scale residual and a rejected
+offscreen-layer diagnostic; it changes no qualifying count.
 
 The clean [expanded v6 requalification](../renderer/generated/expanded-requalification-v6.json)
 at `8ca66ffd` measured 22,004/23,724 exact comparisons, 1,720 different,
