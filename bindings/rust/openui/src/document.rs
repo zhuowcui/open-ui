@@ -1,6 +1,6 @@
 //! Safe, single-thread-affine document API over `openui-engine`.
 
-use crate::element::Element;
+use crate::element::{class_tokens, validate_class_token, Element};
 use crate::events::{
     Event, EventPhase, KeyEventType, Listener, Modifiers, MouseButton, MouseEventType,
 };
@@ -80,6 +80,29 @@ impl Document {
     pub fn element_by_id(&self, id: &str) -> Result<Option<Element>, Error> {
         let handle = self.with_engine(|engine| engine.element_by_id(id))?;
         Ok(handle.map(|handle| Element::from_handle(self.clone(), handle)))
+    }
+
+    /// Find attached elements with a class token in document order.
+    pub fn elements_with_class(&self, class: &str) -> Result<Vec<Element>, Error> {
+        validate_class_token(class)?;
+        let handles = self.with_engine(|engine| {
+            let mut matches = Vec::new();
+            let mut pending = vec![engine.root()];
+            while let Some(handle) = pending.pop() {
+                if engine
+                    .attribute(handle, "class")?
+                    .is_some_and(|classes| class_tokens(classes).any(|token| token == class))
+                {
+                    matches.push(handle);
+                }
+                pending.extend(engine.children(handle)?.into_iter().rev());
+            }
+            Ok::<_, openui_engine::EngineError>(matches)
+        })??;
+        Ok(handles
+            .into_iter()
+            .map(|handle| Element::from_handle(self.clone(), handle))
+            .collect())
     }
 
     pub fn transaction<T>(

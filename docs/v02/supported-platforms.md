@@ -28,6 +28,7 @@ Browser-style effects are provided by native operations where v0.2 needs them:
 | Application task | Public Rust API |
 |---|---|
 | Create, find, clone, move, or remove elements | `Element::create`, `Document::element_by_id`, `clone_subtree`, `append_child`, `insert_before`, `remove` |
+| Find elements by class or change class tokens | `Document::elements_with_class`, `Element::has_class`, `add_class`, `remove_class` |
 | Change text, attributes, or typed style | `set_text`, `set_attribute`, `set_property` and generated typed setters |
 | Read resolved style | `Element::computed_style`, which returns an owned snapshot |
 | Handle input or activate an element | `Element::on`, `on_capture`, `click`; Rust callbacks in `view!` |
@@ -41,6 +42,8 @@ available through a public native Rust method backed by the shared engine.
 That includes browser-like operations on elements when applications need their
 behavior. An internal Engine operation or test-only fixture is not sufficient
 application API coverage.
+Class tokens are native element metadata; styling changes use typed style
+setters rather than a parsed CSS class rule.
 For example, the effects of looking up an element, activating it, focusing it,
 scrolling it, and changing an input value are available through
 `Document::element_by_id`, `Element::click`, `focus`, `scroll_to`, and

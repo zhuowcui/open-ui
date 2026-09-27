@@ -81,6 +81,41 @@ fn native_id_lookup_follows_attached_document_order() {
 }
 
 #[test]
+fn native_class_lookup_tracks_event_driven_updates_and_detachment() {
+    let document = document();
+    let first = child(&document, "div");
+    first.set_id("first").unwrap();
+    first.set_class(" active\tprimary ").unwrap();
+    let second = child(&document, "div");
+    second.set_id("second").unwrap();
+    let button = child(&document, "button");
+    let second_for_callback = second.clone();
+    button
+        .on("click", move |_| {
+            assert!(second_for_callback.add_class("active").unwrap());
+        })
+        .unwrap();
+
+    assert!(first.has_class("active").unwrap());
+    assert!(!second.has_class("active").unwrap());
+    button.click().unwrap();
+    assert!(!second.add_class("active").unwrap());
+    let ids: Vec<_> = document
+        .elements_with_class("active")
+        .unwrap()
+        .into_iter()
+        .map(|element| element.get_attribute("id").unwrap().unwrap())
+        .collect();
+    assert_eq!(ids, ["first", "second"]);
+
+    assert!(second.remove_class("active").unwrap());
+    assert!(!second.remove_class("active").unwrap());
+    assert!(document.elements_with_class("active token").is_err());
+    first.remove().unwrap();
+    assert!(document.elements_with_class("active").unwrap().is_empty());
+}
+
+#[test]
 fn computed_style_is_an_owned_native_snapshot() {
     let document = document();
     let element = child(&document, "div");

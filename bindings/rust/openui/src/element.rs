@@ -360,6 +360,47 @@ impl Element {
         self.set_attribute("class", classes)
     }
 
+    /// Check whether this element has a class token.
+    pub fn has_class(&self, class: &str) -> Result<bool, Error> {
+        validate_class_token(class)?;
+        Ok(self
+            .get_attribute("class")?
+            .is_some_and(|classes| class_tokens(&classes).any(|token| token == class)))
+    }
+
+    /// Add a class token, returning whether the attribute changed.
+    pub fn add_class(&self, class: &str) -> Result<bool, Error> {
+        validate_class_token(class)?;
+        let classes = self.get_attribute("class")?.unwrap_or_default();
+        let mut tokens: Vec<_> = class_tokens(&classes).collect();
+        if tokens.contains(&class) {
+            return Ok(false);
+        }
+        tokens.push(class);
+        self.set_class(&tokens.join(" "))?;
+        Ok(true)
+    }
+
+    /// Remove a class token, returning whether the attribute changed.
+    pub fn remove_class(&self, class: &str) -> Result<bool, Error> {
+        validate_class_token(class)?;
+        let Some(classes) = self.get_attribute("class")? else {
+            return Ok(false);
+        };
+        let tokens: Vec<_> = class_tokens(&classes).collect();
+        if !tokens.contains(&class) {
+            return Ok(false);
+        }
+        self.set_class(
+            &tokens
+                .into_iter()
+                .filter(|token| *token != class)
+                .collect::<Vec<_>>()
+                .join(" "),
+        )?;
+        Ok(true)
+    }
+
     pub fn set_text(&self, text: &str) -> Result<(), Error> {
         self.remove_all_children()?;
         self.append_text_node(text)
@@ -653,6 +694,24 @@ impl Element {
                     .map(|state| state.is_some_and(get))
             })?
             .map_err(Into::into)
+    }
+}
+
+pub(crate) fn class_tokens(classes: &str) -> impl Iterator<Item = &str> {
+    classes
+        .split(|ch| matches!(ch, ' ' | '\t' | '\n' | '\x0c' | '\r'))
+        .filter(|token| !token.is_empty())
+}
+
+pub(crate) fn validate_class_token(class: &str) -> Result<(), Error> {
+    if class.is_empty()
+        || class
+            .chars()
+            .any(|ch| matches!(ch, ' ' | '\t' | '\n' | '\x0c' | '\r'))
+    {
+        Err(Error::InvalidArgument("class must be one nonempty token"))
+    } else {
+        Ok(())
     }
 }
 

@@ -17,7 +17,7 @@ remain open.
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
-| Application conformance scenarios | 38 across 10 domains |
+| Application conformance scenarios | 39 across 10 domains |
 | Frozen / current C exports | 84 / 102 |
 | C examples / C++ consumers | 5 / 1 |
 | Workspace tests | pass |
@@ -73,6 +73,8 @@ load it.
 - Public native element activation and details disclosure: `Element::click`,
   `set_open`, and `is_open` use the same retained event and control path;
   closed details content leaves layout and the accessibility tree.
+- Public native class-token changes and attached-document class lookup use
+  the same retained tree from Rust callbacks.
 - Retained accessibility trees/actions and Linux AccessKit integration.
 - Winit X11/Wayland runtime, backend-correct clipboard, IME/data events,
   softbuffer presentation, and multiple isolated windows.

@@ -34,7 +34,7 @@ Those remain open until they run on the declared exclusive reference machine.
 ## Automated hardening
 
 The ordinary CI verifies the scenario manifest and performance schema. The
-hardening workflow runs all 38 scenarios, Mesa OpenGL on X11 through Xvfb, and
+hardening workflow runs all 39 scenarios, Mesa OpenGL on X11 through Xvfb, and
 software presentation on a pure headless Wayland compositor for pull requests.
 Its scheduled/manual jobs additionally compile the public headless and Linux
 surfaces at the Rust 1.85 MSRV, check C opaque-handle ownership under Miri,
