@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,157/22,924 exact, 1,767 different, 0 errors |
+| Fresh four-profile Chromium census | 21,160/22,924 exact, 1,764 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 908/960 exact |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |

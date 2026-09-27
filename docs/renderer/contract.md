@@ -118,17 +118,19 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The fresh
-[v5 diagnostic index](generated/four-profile-census-v5.json), with its clean
-source identity recorded inside the file, contains 21,157 exact,
-1,767 different, and zero errored comparisons across the four required
+[v6 diagnostic index](generated/four-profile-census-v6.json), with its clean
+source identity recorded inside the file, contains 21,160 exact,
+1,764 different, and zero errored comparisons across the four required
 profiles, with 971 residual test IDs still unowned. Compared with the
-[v3 index](generated/four-profile-census-v3.json), two shadow comparisons
-became exact, a third improved from 256 to five differing pixels, no case
-regressed, and every Chromium oracle hash stayed unchanged. The v4 index
-records an earlier checkpoint where partitioned shadow coverage added ten
-one-channel differences under a curved ancestor clip. The v5 checkpoint
-restored that case byte for byte through a general clip-shape guard. Earlier
-indices remain historical evidence. None is a qualification result.
+[v5 index](generated/four-profile-census-v5.json), three round-adjusted raster
+background comparisons at 1920×1080@1.5 became exact, with no regression and
+no changed Chromium oracle identity or decoded pixel hash across all 22,924
+comparisons. The v3 index recorded two shadow comparisons becoming exact and a
+third improving from 256 to five differing pixels. The v4 index recorded an
+earlier checkpoint where partitioned shadow coverage added ten one-channel
+differences under a curved ancestor clip; v5 restored that case byte for byte
+through a general clip-shape guard. Earlier indices remain historical evidence.
+None is a qualification result.
 The earlier v3 repair was inline text reaching a later block's border:
 that later decoration must paint in the block phase before the earlier text
 ink. The change applies by fragment geometry, while preserving atomic flex,

@@ -97,5 +97,6 @@ immutable archive with the verified Chromium capture.
 
 The original archive, Chromium oracle, and 5,731-case manifest remain
 immutable. This discrepancy is historical evidence, not a contradiction in
-the release contract. v0.2 still fails Chromium qualification because the
-complete four-profile census has 1,813 current renderer differences.
+the release contract. The census at this audit checkpoint had 1,813 renderer
+differences; see [current status](../progress/current-status.md) for the latest
+four-profile count. v0.2 still fails Chromium qualification.
