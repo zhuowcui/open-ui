@@ -31,8 +31,9 @@ pub use openui_geometry::{
 use openui_layout::Fragment;
 use openui_paint::record_fragment;
 use openui_style::{
-    apply_to_computed, Color, ComputedStyle, ImageResourceId, InvalidationClass, PseudoStyleTarget,
-    RendererInternalStyleValue, RendererStyleValue, Style, StyleProperty, StyleValue,
+    apply_to_computed, Color, ComputedStyle, Display, ImageResourceId, InvalidationClass,
+    PseudoStyleTarget, RendererInternalStyleValue, RendererStyleValue, Style, StyleProperty,
+    StyleValue,
 };
 pub use openui_text::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
@@ -596,6 +597,49 @@ impl Engine {
         Ok(())
     }
 
+    // A closed <details> keeps only its first direct <summary> in the visual
+    // tree. Apply this to the layout/paint view of the retained document, then
+    // restore authored styles so native tree inspection and later mutations
+    // still see the original elements and their display values.
+    fn hide_closed_details_content(&mut self) -> Vec<(NodeId, Display)> {
+        let details_nodes: Vec<_> = self
+            .slots
+            .iter()
+            .filter_map(|slot| slot.node)
+            .filter(|node| {
+                let data = self.document.node(*node);
+                data.tag == ElementTag::Details
+                    && !data.parent.is_none()
+                    && self.document.attribute(*node, "open").is_none()
+            })
+            .collect();
+        let mut hidden = Vec::new();
+        for details in details_nodes {
+            let mut first_summary_seen = false;
+            let children: Vec<_> = self.document.children(details).collect();
+            for child in children {
+                if self.document.node(child).tag == ElementTag::Summary && !first_summary_seen {
+                    first_summary_seen = true;
+                    continue;
+                }
+                let display = self.document.node(child).style.display;
+                if display != Display::None {
+                    hidden.push((child, display));
+                    self.document
+                        .update_resolved_style(child, |style| style.display = Display::None);
+                }
+            }
+        }
+        hidden
+    }
+
+    fn restore_closed_details_content(&mut self, hidden: Vec<(NodeId, Display)>) {
+        for (node, display) in hidden {
+            self.document
+                .update_resolved_style(node, |style| style.display = display);
+        }
+    }
+
     pub fn transaction<T>(
         &mut self,
         operation: impl FnOnce(&mut Self) -> Result<T, EngineError>,
@@ -844,7 +888,13 @@ impl Engine {
             )?;
         }
         self.sync_control_attribute(handle, &name, &value);
-        self.mark_dirty(InvalidationClass::Accessibility);
+        self.mark_dirty(
+            if name == "open" && self.document.node(node).tag == ElementTag::Details {
+                InvalidationClass::Subtree
+            } else {
+                InvalidationClass::Accessibility
+            },
+        );
         Ok(())
     }
 
@@ -874,7 +924,15 @@ impl Engine {
                 )?;
             }
             self.remove_control_attribute(handle, &name.to_ascii_lowercase());
-            self.mark_dirty(InvalidationClass::Accessibility);
+            self.mark_dirty(
+                if name.eq_ignore_ascii_case("open")
+                    && self.document.node(node).tag == ElementTag::Details
+                {
+                    InvalidationClass::Subtree
+                } else {
+                    InvalidationClass::Accessibility
+                },
+            );
         }
         Ok(removed)
     }
@@ -1292,6 +1350,7 @@ impl Engine {
                 .as_ref()
                 .ok_or_else(|| EngineError::Render("missing initial scene".into()));
         }
+        let hidden_details_content = self.hide_closed_details_content();
         let width = self.viewport.logical_width();
         let height = self.viewport.logical_height();
         if self.dirty.layout || self.latest_fragment.is_none() {
@@ -1318,8 +1377,9 @@ impl Engine {
             .as_ref()
             .expect("visual dirtiness always establishes a fragment")
             .clone();
-        let recording = record_fragment(&self.document, &fragment, self.viewport)
-            .map_err(EngineError::Render)?;
+        let recording = record_fragment(&self.document, &fragment, self.viewport);
+        self.restore_closed_details_content(hidden_details_content);
+        let recording = recording.map_err(EngineError::Render)?;
         self.stats.paints += 1;
         let generation = SceneGeneration(self.stats.scenes + 1);
         let damage = vec![SceneRect {

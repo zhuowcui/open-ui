@@ -103,6 +103,7 @@ the 2,823-ID SP13-R baseline and 351-ID exact target ledger) and the zero-pixel
 passing threshold. W1M closes the frozen 39-ID fallback/justify-self/margin and
 assertion-only flex abspos alignment cohort; W1N closes the four existing
 column-wrap fit-content cross-sizing failures; W1O closes the remaining
-auto-height percentage-basis and semantic-break failure. Reserve dynamic JavaScript,
-upright/mixed-script and sideways text,
-including `flexbox-writing-mode-010` through 016, for W2.
+auto-height percentage-basis and semantic-break failure. Reserve the disposition
+of tests with dynamic JavaScript in Chromium, upright/mixed-script and sideways
+text, including `flexbox-writing-mode-010` through 016, for W2. Open UI does
+not execute JavaScript; application interaction uses native Rust APIs.

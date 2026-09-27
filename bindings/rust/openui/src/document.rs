@@ -1162,4 +1162,81 @@ mod tests {
         assert!(checkbox.is_checked().unwrap());
         assert_eq!(document.accessibility_update().unwrap().nodes.len(), 1);
     }
+
+    #[test]
+    fn native_element_click_runs_callbacks_then_control_activation() {
+        let document = Document::new(200, 100).unwrap();
+        let checkbox = mounted(&document, "input");
+        checkbox.set_attribute("type", "checkbox").unwrap();
+        let cancel = Rc::new(Cell::new(true));
+        let observed = Rc::new(Cell::new(0));
+        let cancel_in_callback = cancel.clone();
+        let observed_in_callback = observed.clone();
+        let checkbox_in_callback = checkbox.clone();
+        checkbox
+            .on("click", move |event| {
+                observed_in_callback.set(observed_in_callback.get() + 1);
+                checkbox_in_callback.set_id("clicked").unwrap();
+                if cancel_in_callback.get() {
+                    event.prevent_default();
+                }
+            })
+            .unwrap();
+
+        checkbox.click().unwrap();
+        assert_eq!(observed.get(), 1);
+        assert!(!checkbox.is_checked().unwrap());
+        assert!(document.element_by_id("clicked").unwrap().is_some());
+
+        cancel.set(false);
+        checkbox.click().unwrap();
+        assert_eq!(observed.get(), 2);
+        assert!(checkbox.is_checked().unwrap());
+
+        let details = mounted(&document, "details");
+        details.set_open(true).unwrap();
+        assert!(details.is_open().unwrap());
+        details.set_open(false).unwrap();
+        assert!(!details.is_open().unwrap());
+        let summary = Element::create(&document, "summary").unwrap();
+        let content = Element::create(&document, "div").unwrap();
+        content
+            .set_property(StyleProperty::Width, LengthValue::px(20.0).into())
+            .unwrap();
+        content
+            .set_property(StyleProperty::Height, LengthValue::px(20.0).into())
+            .unwrap();
+        details.append_child(&summary).unwrap();
+        details.append_child(&content).unwrap();
+        assert!(content.bounding_rect().unwrap().is_none());
+        let content_id = document
+            .with_engine(|engine| engine.accessibility_node_id(content.handle))
+            .unwrap()
+            .unwrap();
+        assert!(!document
+            .accessibility_update()
+            .unwrap()
+            .nodes
+            .iter()
+            .any(|(id, _)| *id == content_id));
+        details.set_open(true).unwrap();
+        assert!(content.bounding_rect().unwrap().is_some());
+        assert!(document
+            .accessibility_update()
+            .unwrap()
+            .nodes
+            .iter()
+            .any(|(id, _)| *id == content_id));
+        summary.click().unwrap();
+        assert!(!details.is_open().unwrap());
+        assert!(content.bounding_rect().unwrap().is_none());
+        details
+            .perform_accessibility_action(AccessibilityAction::Expand)
+            .unwrap();
+        assert!(content.bounding_rect().unwrap().is_some());
+        details
+            .perform_accessibility_action(AccessibilityAction::Collapse)
+            .unwrap();
+        assert!(content.bounding_rect().unwrap().is_none());
+    }
 }

@@ -497,7 +497,32 @@ impl Element {
     }
 
     pub fn is_open(&self) -> Result<bool, Error> {
+        if self
+            .document
+            .with_engine(|engine| engine.element_tag(self.handle))??
+            == ElementTag::Details
+        {
+            return Ok(self.get_attribute("open")?.is_some());
+        }
         self.control_flag(|state| state.open)
+    }
+
+    /// Set whether a native details element is expanded.
+    pub fn set_open(&self, open: bool) -> Result<(), Error> {
+        if self
+            .document
+            .with_engine(|engine| engine.element_tag(self.handle))??
+            != ElementTag::Details
+        {
+            return Err(Error::InvalidArgument(
+                "set_open requires a details element",
+            ));
+        }
+        if open {
+            self.set_attribute("open", "")
+        } else {
+            self.remove_attribute("open").map(|_| ())
+        }
     }
 
     pub fn is_indeterminate(&self) -> Result<bool, Error> {
@@ -539,6 +564,11 @@ impl Element {
     pub fn has_focus(&self) -> Result<bool, Error> {
         self.document
             .with_engine(|engine| engine.focused() == Some(self.handle))
+    }
+
+    /// Dispatch a native click and run the element's default activation unless canceled.
+    pub fn click(&self) -> Result<(), Error> {
+        self.perform_accessibility_action(AccessibilityAction::Click)
     }
 
     pub fn set_pointer_capture(&self, pointer_id: u64) -> Result<(), Error> {

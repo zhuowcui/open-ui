@@ -74,5 +74,7 @@ or generic fallback ownership.
 SP15 owns the inline/layout and root/body propagation gaps exposed by deterministic
 text ports. SP16 remains the real-font metrics phase, SP17 owns writing modes/bidi and
 advanced text, and SP18 owns generated content and text effects. The W4 ledger also
-keeps existing JavaScript, image, grid, table, containment, and form-control systems
-explicitly accountable.
+keeps tests whose Chromium sources use JavaScript, along with image, grid,
+table, containment, and form-control work, explicitly accountable. Open UI
+implements application interaction through native Rust APIs and does not run
+those scripts.

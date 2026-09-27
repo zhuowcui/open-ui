@@ -232,7 +232,11 @@ impl Engine {
             }
             AccessibilityAction::Expand => {
                 let expanded = true;
-                self.sync_bool_attribute(handle, "open", expanded);
+                if self.element_tag(handle)? == ElementTag::Details {
+                    self.set_attribute(handle, "open", "")?;
+                } else {
+                    self.sync_bool_attribute(handle, "open", expanded);
+                }
                 if let Some(control) = self.controls.get_mut(&handle.index) {
                     control.open = expanded;
                 }
@@ -243,7 +247,11 @@ impl Engine {
             }
             AccessibilityAction::Collapse => {
                 let expanded = false;
-                self.sync_bool_attribute(handle, "open", expanded);
+                if self.element_tag(handle)? == ElementTag::Details {
+                    self.remove_attribute(handle, "open")?;
+                } else {
+                    self.sync_bool_attribute(handle, "open", expanded);
+                }
                 if let Some(control) = self.controls.get_mut(&handle.index) {
                     control.open = expanded;
                 }
@@ -410,12 +418,28 @@ impl Engine {
             .and_then(|semantic| semantic.role)
             .unwrap_or_else(|| inferred_role(data.tag, control.map(|state| state.role), is_root));
         let mut node = Node::new(role);
-        let mut children: Vec<_> = self
-            .document
-            .children(dom_id)
-            .filter_map(|child| self.node_slots.get(&child))
-            .map(|index| node_id(self.handle_for_slot(*index)))
+        let closed_details =
+            data.tag == ElementTag::Details && self.document.attribute(dom_id, "open").is_none();
+        let mut first_summary_seen = false;
+        let visible_children: Vec<_> = self
+            .children(handle)?
+            .into_iter()
+            .filter(|child| {
+                if !closed_details {
+                    return true;
+                }
+                let is_summary = self
+                    .resolve(*child)
+                    .is_ok_and(|node| self.document.node(node).tag == ElementTag::Summary);
+                if is_summary && !first_summary_seen {
+                    first_summary_seen = true;
+                    true
+                } else {
+                    false
+                }
+            })
             .collect();
+        let mut children: Vec<_> = visible_children.iter().copied().map(node_id).collect();
         if control.is_some_and(|state| is_editable(state.role)) {
             children.insert(0, text_node_id(handle));
         }
@@ -512,6 +536,8 @@ impl Engine {
             populate_control_accessibility(&mut node, control);
         } else if matches!(data.tag, ElementTag::Summary) {
             node.add_action(Action::Click);
+        } else if data.tag == ElementTag::Details {
+            node.set_expanded(!closed_details);
         }
         if data.style.overflow_x != openui_style::Overflow::Visible
             || data.style.overflow_y != openui_style::Overflow::Visible
@@ -556,7 +582,7 @@ impl Engine {
             }
             nodes.insert(id, text);
         }
-        for child in self.children(handle)? {
+        for child in visible_children {
             self.build_accessibility_subtree(child, false, nodes)?;
         }
         Ok(())
