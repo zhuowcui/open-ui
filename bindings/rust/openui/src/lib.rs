@@ -112,7 +112,7 @@ pub use text_node::{TextNode, WeakTextNode};
 pub mod typed_style {
     pub use openui_style::*;
 }
-pub use openui_style::{Style, StyleProperty, StyleValue};
+pub use openui_style::{ComputedStyle, Style, StyleProperty, StyleValue};
 pub use openui_text::{
     FontAxisRange, FontCollection, FontCollectionError, FontCollectionStats, FontContainerFormat,
     FontFaceDescriptor, FontFaceHandle, FontFaceInfo, FontFeatureDefault, FontMetricOverrides,

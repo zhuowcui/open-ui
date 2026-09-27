@@ -9,8 +9,8 @@ use openui_engine::{
     AnimationTimeline, NodeHandle, ScrollAnimationId, WeakNode,
 };
 use openui_style::{
-    AnimationOptions, Display, Keyframes, PropertyKeyframes, Style, StyleProperty, StyleValue,
-    TimelineAxis, TimelineRange,
+    AnimationOptions, ComputedStyle, Display, Keyframes, PropertyKeyframes, Style, StyleProperty,
+    StyleValue, TimelineAxis, TimelineRange,
 };
 use std::rc::{Rc, Weak};
 
@@ -176,6 +176,14 @@ impl Element {
     pub fn set_property(&self, property: StyleProperty, value: StyleValue) -> Result<(), Error> {
         self.document
             .with_engine_mut(|engine| engine.set_property(self.handle, property, value))
+    }
+
+    /// Return an owned snapshot of this element's resolved style.
+    /// Subsequent mutations do not change the returned value.
+    pub fn computed_style(&self) -> Result<ComputedStyle, Error> {
+        self.document
+            .with_engine(|engine| engine.computed_style(self.handle).cloned())?
+            .map_err(Into::into)
     }
 
     pub fn set_language(&self, language: &openui_style::LanguageTag) -> Result<(), Error> {

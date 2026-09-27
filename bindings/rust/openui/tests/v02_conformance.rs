@@ -81,6 +81,23 @@ fn native_id_lookup_follows_attached_document_order() {
 }
 
 #[test]
+fn computed_style_is_an_owned_native_snapshot() {
+    let document = document();
+    let element = child(&document, "div");
+    element.set_width(LengthValue::px(42.0)).unwrap();
+    let original = element.computed_style().unwrap();
+
+    element.set_width(LengthValue::px(84.0)).unwrap();
+    let updated = element.computed_style().unwrap();
+    assert_ne!(original.width, updated.width);
+    assert_eq!(original.width, Length::px(42.0));
+    assert_eq!(updated.width, Length::px(84.0));
+
+    element.remove().unwrap();
+    assert!(element.computed_style().is_err());
+}
+
+#[test]
 fn removed_weak_handle_expires() {
     let document = document();
     let element = child(&document, "div");

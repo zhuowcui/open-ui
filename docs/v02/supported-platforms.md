@@ -29,6 +29,7 @@ Browser-style effects are provided by native operations where v0.2 needs them:
 |---|---|
 | Create, find, clone, move, or remove elements | `Element::create`, `Document::element_by_id`, `clone_subtree`, `append_child`, `insert_before`, `remove` |
 | Change text, attributes, or typed style | `set_text`, `set_attribute`, `set_property` and generated typed setters |
+| Read resolved style | `Element::computed_style`, which returns an owned snapshot |
 | Handle input or activate an element | `Element::on`, `on_capture`, `click`; Rust callbacks in `view!` |
 | Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `bounding_rect`; `Document::hit_test` |
 | Update form controls or details | `set_control_value`, `set_selection`, `set_checked`, `set_open` |
