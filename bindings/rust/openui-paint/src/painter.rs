@@ -14618,11 +14618,15 @@ fn paint_box_shadows(
                     // Preserve Skia's joint coverage at a curved ancestor clip.
                     let trailing_phase =
                         (f64::from(shadow_rect.bottom) * style.device_scale_factor).rem_euclid(1.0);
-                    let packing = if trailing_phase > 0.5 + 1.0e-6 {
-                        PhysicalCoveragePacking::TrailingY
-                    } else {
-                        PhysicalCoveragePacking::Default
-                    };
+                    // Opaque fills are composited over the shadow's trailing
+                    // fringe; a transparent box leaves the shadow on the
+                    // ordinary coverage path (including inline fragments).
+                    let packing =
+                        if style.background_color.is_opaque() && trailing_phase > 0.5 + 1.0e-6 {
+                            PhysicalCoveragePacking::TrailingY
+                        } else {
+                            PhysicalCoveragePacking::Default
+                        };
                     // The first replay tile includes physical column 255 as
                     // overlap; the next tile owns the following visible
                     // columns. Keep the edge packing on each side of that
