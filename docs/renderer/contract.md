@@ -125,16 +125,17 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The fresh
-[v8 diagnostic index](generated/four-profile-census-v8.json), with its clean
-`c5621238` source identity recorded inside the file, contains 21,161 exact,
-1,763 different, and zero errored comparisons across the four required
-profiles, with 970 residual test IDs still unowned. Compared with the
-[v7 index](generated/four-profile-census-v7.json), only
-`wpt/css_backgrounds/box-shadow-001` at 1280×720@1.25 changed its Open UI
-decoded pixels, becoming exact. No previously exact comparison regressed, and
-all 22,924 Chromium oracle identities and decoded pixel hashes stayed
-unchanged. Earlier indices remain historical evidence. None is a qualification
-result while residuals remain.
+[v10 diagnostic index](generated/four-profile-census-v10.json), with its clean
+`0e83672b` source identity recorded inside the file, contains 21,168 exact,
+1,756 different, and zero errored comparisons across the four required
+profiles, with 969 residual test IDs still unowned. Compared with the
+[v8 index](generated/four-profile-census-v8.json), seven rounded-border and
+background comparisons became exact. No previously exact comparison regressed,
+and all 22,924 Chromium oracle identities and decoded pixel hashes stayed
+unchanged. The intermediate [v9 index](generated/four-profile-census-v9.json)
+records a paint checkpoint with five exact-to-different regressions; the v10
+checkpoint repairs them. Earlier indices remain historical evidence. None is
+a qualification result while residuals remain.
 The earlier v3 repair was inline text reaching a later block's border:
 that later decoration must paint in the block phase before the earlier text
 ink. The change applies by fragment geometry, while preserving atomic flex,

@@ -110,8 +110,14 @@ change required both axes, so it incorrectly treated one-axis elliptical
 corners as straight. The follow-up paint diagnostic keeps the full straight
 side only where an opaque same-color background reaches the inner border
 edge; border-only cases retain their prior curved-side clipping. The v9
-regressions must be cleared by a new complete clean census before that change
-can be promoted.
+regressions required a new complete clean census before that change could be
+promoted. The [v10 census](generated/four-profile-census-v10.json) at
+`0e83672b` cleared all five regressions and made seven previously different
+comparisons exact compared with v8, with zero errors. All 22,924 Chromium
+oracle identities and decoded hashes stayed fixed. The only remaining changed
+Open UI image among same-status comparisons is the 1280×720@1.25 content-box
+case: it improved from 203 to 112 differing pixels. The v10 census still has
+1,756 different comparisons across 969 unowned residual test IDs.
 
 The three full-suite `background-origin_origin-{border,padding,content}-box_with_radius`
 cases have identical diff signatures within each of the four required
@@ -122,7 +128,7 @@ border path.
 
 **Candidate owner:** `openui-paint` rounded-border coverage and layer compositing.
 Ownership remains unreviewed in the qualification ledger because the remaining
-1.25-scale rounding difference and full-census effects have not been closed.
+1.25-scale rounding difference has not been closed.
 The next fix must match Chromium's shared content/border edge rounding without
 a fixture-specific pixel correction. It must pass all 40 primitive profiles,
 the exact neighboring fixtures, and the full four-profile census without

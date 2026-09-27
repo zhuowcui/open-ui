@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,161/22,924 exact, 1,763 different, 0 errors |
+| Fresh four-profile Chromium census | 21,168/22,924 exact, 1,756 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 952/960 exact |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
@@ -24,10 +24,10 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The complete four-profile census is from the earlier clean checkpoint. A clean
-filtered run at `aa2d4d24` made the rounded-border case exact at three of its
-four profiles, but the full census must be rerun before its aggregate count is
-updated.
+The [latest complete clean census](../renderer/generated/four-profile-census-v10.json)
+at `0e83672b` made seven more comparisons exact than the prior census, with
+no previously exact comparison regressing. All Chromium decoded pixel hashes
+and oracle identities remained unchanged. The census still fails exactness.
 
 The historical baseline records Chromium identity, viewport, device scale,
 fonts, resources, and result hashes. A fresh pinned Chromium capture differs
@@ -72,7 +72,7 @@ load it.
   640/640 and 900/960. It remains unpromoted; OpenGL presentation still uploads
   a CPU-rasterized frame.
 - The four-profile Chromium census and primitive matrix fail exactness;
-  970 census residual IDs and one primitive ID have no reviewed owner.
+  969 census residual IDs and one primitive ID have no reviewed owner.
 - The C ABI covers the retained engine, headless renderer, and an owned full
   accessibility-tree snapshot, but does not yet export the owned Linux event loop.
 - Retained per-node layers and compositor-owned animation curves are incomplete,

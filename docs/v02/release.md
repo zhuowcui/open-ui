@@ -8,7 +8,7 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,161/22,924 exact, 1,763 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v8.json) | fail |
+| Four-profile renderer matrix | 21,168/22,924 exact, 1,756 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v10.json) | fail |
 | Focused and primitive raster | 640/640 focused exact; 952/960 primitive exact with one unowned residual ID in the [latest raster index](../renderer/generated/focused-primitive-raster-v10.json) | fail |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | Prior v1 admitted 200 test fixtures; fresh run retains 197 exact additions and [demotes three](../renderer/generated/expanded-requalification-v1.json). None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
@@ -38,10 +38,10 @@ claimed by source code alone.
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
 
-The latest complete four-profile census predates the rounded-border checkpoint
-`aa2d4d24`. A clean filtered run made that case exact at three of four profiles,
-but its result cannot be added to the complete-census count until the full
-manifest is rerun.
+The complete clean census at `0e83672b` measured the rounded-border repair
+across all four profiles. Seven comparisons became exact, none regressed,
+and all Chromium decoded image hashes stayed fixed. The remaining 1,756
+differences and unreviewed owners keep the renderer gate red.
 
 The [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36235389665)
 on checkpoint `e555c442` records every job: X11/Mesa and pure-Wayland
