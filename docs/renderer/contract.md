@@ -71,12 +71,14 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
-At clean checkpoint `aa2d4d24`, the CPU runner produced 640/640 exact focused
+At clean checkpoint `c691f102`, the CPU runner produced 640/640 exact focused
 comparisons and 952/960 exact primitive comparisons. The eight primitive
 differences all belong to one rounded-border ID at 1.25 scale; its per-profile
 bounds, region counts, channel deltas, scale behavior, and unreviewed ownership
-are recorded in the [focused and primitive evidence index](generated/focused-primitive-raster-v10.json).
-The primitive gate remains open. Compared with the
+are recorded in the [focused and primitive evidence index](generated/focused-primitive-raster-v11.json).
+The primitive gate remains open. All 1,600 Open UI and Chromium decoded image
+hashes and comparison statuses match the prior clean
+[v10 index](generated/focused-primitive-raster-v10.json). Compared with the
 [v9 index](generated/focused-primitive-raster-v9.json), 32 rounded-border
 comparisons became exact. Only that ID's 40 Open UI decoded pixel hashes
 changed; all Chromium oracle identities and decoded hashes stayed unchanged.
@@ -87,7 +89,7 @@ renderer selected tiles from the laid-out content footprint and clipped
 overflowing paint at the physical viewport edge. The gradient now matches at
 all 40 profiles. Earlier indices remain historical evidence.
 The [rounded border coverage investigation](rounded-border-coverage-investigation.md)
-isolates the remaining primitive failure and distinguishes the clean v10
+isolates the remaining primitive failure and distinguishes the clean v11
 improvement from earlier dirty diagnostics. The primitive gate stays open.
 An explicit Ganesh raster run on Mesa llvmpipe completed the same clean
 40-profile suites. Its [backend comparison](generated/ganesh-raster-comparison-v1.json)

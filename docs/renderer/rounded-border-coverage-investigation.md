@@ -2,7 +2,7 @@
 
 The CPU primitive test `wpt/css_backgrounds/background-clip-content-box-with-border-radius-002`
 still differs from Chromium at eight 1.25-scale profiles. The clean
-[v10 primitive evidence](generated/focused-primitive-raster-v10.json) records
+[v11 primitive evidence](generated/focused-primitive-raster-v11.json) records
 896 differing pixels across those profiles. The prior
 [v9 evidence](generated/focused-primitive-raster-v9.json) recorded 6,728
 differing pixels across all 40 profiles. Chromium remains the expected image.
@@ -97,7 +97,10 @@ kept their prior mismatch counts. A filtered four-profile check of this ID
 improved from zero to three exact results. Those first runs were diagnostics
 from a dirty source tree. A subsequent clean run at `aa2d4d24` confirmed
 640/640 focused and 952/960 primitive exact comparisons with zero errors and
-the same eight one-level residuals. The primitive release gate remains open.
+the same eight one-level residuals. The clean v11 run at `c691f102`
+reproduced those totals, and all 1,600 Open UI and Chromium decoded image
+hashes and statuses match the prior clean v10 run. The primitive release gate
+remains open.
 
 The complete clean four-profile census at `b225a827` found 21,166/22,924
 exact comparisons, a net gain of five from the prior census, but it also
