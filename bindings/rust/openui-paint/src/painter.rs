@@ -145,6 +145,7 @@ thread_local! {
     static FRAGMENTED_OOF_HOIST_ACTIVE: RefCell<bool> = const { RefCell::new(false) };
     static FRAGMENTED_INLINE_SKIP_AFTER: RefCell<Option<usize>> = const { RefCell::new(None) };
     static VIEWPORT_SIZE: RefCell<(f32, f32)> = const { RefCell::new((800.0, 600.0)) };
+    static RASTER_TILED_REPLAY: RefCell<bool> = const { RefCell::new(false) };
     static BROKEN_IMAGE: RefCell<Option<Image>> = const { RefCell::new(None) };
     static BROKEN_IMAGE_HIGH_RES: RefCell<Option<Image>> = const { RefCell::new(None) };
     static RASTERIZING_PROMOTED_TRANSFORM: RefCell<bool> = const { RefCell::new(false) };
@@ -170,6 +171,10 @@ struct OutlineCoverageKey {
 
 pub(crate) fn set_paint_viewport_size(width: f32, height: f32) {
     VIEWPORT_SIZE.with(|size| *size.borrow_mut() = (width, height));
+}
+
+pub(crate) fn set_paint_raster_tiled(tiled: bool) {
+    RASTER_TILED_REPLAY.with(|value| *value.borrow_mut() = tiled);
 }
 
 pub(crate) fn reset_picture_paint_state() {
@@ -8404,6 +8409,20 @@ fn half_open_physical_clip_rect(mut rect: Rect, device_scale: f64) -> Rect {
     rect
 }
 
+fn flat_shadow_exclusion_rect(rect: Rect, device_scale: f64) -> Rect {
+    // The flat shadow already carries fractional coverage at its border-box
+    // edge. Keep the hard exclusion clip inside that terminal physical cell
+    // so it does not discard the shadow's own partial sample before the
+    // element's opaque border and background are painted over it.
+    let snapping = RasterSnapping::new(device_scale);
+    let mut rect = rect;
+    rect.left = snapping.logical_coordinate(rect.left, PhysicalSnap::Ceil);
+    rect.top = snapping.logical_coordinate(rect.top, PhysicalSnap::Ceil);
+    rect.right = snapping.logical_coordinate(rect.right, PhysicalSnap::Floor);
+    rect.bottom = snapping.logical_coordinate(rect.bottom, PhysicalSnap::Floor);
+    rect
+}
+
 fn overflow_clip_reference_box(style: &ComputedStyle) -> OverflowClipBox {
     if style.overflow_x == Overflow::Clip || style.overflow_y == Overflow::Clip {
         style.overflow_clip_box
@@ -14576,7 +14595,12 @@ fn paint_box_shadows(
                 let shadow_rrect = RRect::new_rect_radii(shadow_rect, &normalized);
                 canvas.draw_rrect(shadow_rrect, &paint);
             } else {
-                let exclusion_rect = if style.background_color.is_opaque() {
+                let flat_opaque_shadow = shadow.blur_radius == 0.0
+                    && shadow.color.is_opaque()
+                    && rectangular_ancestor_clip;
+                let exclusion_rect = if style.background_color.is_opaque() && flat_opaque_shadow {
+                    flat_shadow_exclusion_rect(border_rect, style.device_scale_factor)
+                } else if style.background_color.is_opaque() {
                     // When an opaque box fill follows the shadow, Blink's
                     // half-open trailing edge leaves the boundary cell in the
                     // shadow mask and lets the later fill supply its partial
@@ -14587,21 +14611,71 @@ fn paint_box_shadows(
                     border_rect
                 };
                 canvas.clip_rect(exclusion_rect, ClipOp::Difference, false);
-                if shadow.blur_radius == 0.0
-                    && shadow.color.is_opaque()
-                    && rectangular_ancestor_clip
-                {
+                if flat_opaque_shadow {
                     // Match the physical edge coverage used by other flat CSS
                     // rectangles. Skia's analytic AA packs a half-covered
                     // shadow edge one channel step above Chromium at 1.5x.
                     // Preserve Skia's joint coverage at a curved ancestor clip.
-                    draw_css_coverage_rect(
-                        canvas,
-                        shadow_rect,
-                        &shadow.color,
-                        style.device_scale_factor,
-                        PhysicalCoveragePacking::Default,
-                    );
+                    let trailing_phase =
+                        (f64::from(shadow_rect.bottom) * style.device_scale_factor).rem_euclid(1.0);
+                    let packing = if trailing_phase > 0.5 + 1.0e-6 {
+                        PhysicalCoveragePacking::TrailingY
+                    } else {
+                        PhysicalCoveragePacking::Default
+                    };
+                    // The first replay tile includes physical column 255 as
+                    // overlap; the next tile owns the following visible
+                    // columns. Keep the edge packing on each side of that
+                    // raster boundary consistent with its tile-local clip.
+                    let tile_boundary = (crate::render::RASTER_TILE_SIZE_PX - 1) as f32
+                        / style.device_scale_factor as f32;
+                    let tiled_replay = RASTER_TILED_REPLAY.with(|value| *value.borrow());
+                    if tiled_replay
+                        && matches!(packing, PhysicalCoveragePacking::TrailingY)
+                        && shadow_rect.left < tile_boundary
+                        && shadow_rect.right > tile_boundary
+                    {
+                        draw_css_coverage_rect(
+                            canvas,
+                            Rect::from_ltrb(
+                                shadow_rect.left,
+                                shadow_rect.top,
+                                tile_boundary,
+                                shadow_rect.bottom,
+                            ),
+                            &shadow.color,
+                            style.device_scale_factor,
+                            packing,
+                        );
+                        draw_css_coverage_rect(
+                            canvas,
+                            Rect::from_ltrb(
+                                tile_boundary,
+                                shadow_rect.top,
+                                shadow_rect.right,
+                                shadow_rect.bottom,
+                            ),
+                            &shadow.color,
+                            style.device_scale_factor,
+                            PhysicalCoveragePacking::Default,
+                        );
+                    } else {
+                        let packing = if tiled_replay
+                            && matches!(packing, PhysicalCoveragePacking::TrailingY)
+                            && shadow_rect.left >= tile_boundary
+                        {
+                            PhysicalCoveragePacking::Default
+                        } else {
+                            packing
+                        };
+                        draw_css_coverage_rect(
+                            canvas,
+                            shadow_rect,
+                            &shadow.color,
+                            style.device_scale_factor,
+                            packing,
+                        );
+                    }
                 } else {
                     canvas.draw_rect(shadow_rect, &paint);
                 }

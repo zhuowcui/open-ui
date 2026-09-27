@@ -20,6 +20,8 @@ use crate::painter::paint_fragment;
 
 // Chromium 147's cc::LayerTreeSettings::max_untiled_layer_size.
 const MAX_UNTILED_LAYER_SIZE: i32 = 512;
+pub(crate) const RASTER_TILE_SIZE_PX: i32 = 256;
+const RASTER_TILE_STEP_PX: i32 = RASTER_TILE_SIZE_PX - 2;
 
 fn should_replay_untiled(
     direct_replay: bool,
@@ -134,6 +136,18 @@ pub fn record_fragment(
         || (raster_configuration.author_text.edging == TextEdging::Alias
             && doc.uses_lcd_author_text());
     let bounds = Rect::from_xywh(0.0, 0.0, width as f32, height as f32);
+    let direct_replay = has_promoted_non_axis_transform(fragment, doc);
+    let content_requires_tiling = content_requires_tiling(fragment, viewport.device_scale_factor());
+    let physical_width = i32::try_from(viewport.physical_width())
+        .map_err(|_| "physical viewport width exceeds Skia limit".to_string())?;
+    let physical_height = i32::try_from(viewport.physical_height())
+        .map_err(|_| "physical viewport height exceeds Skia limit".to_string())?;
+    crate::painter::set_paint_raster_tiled(!should_replay_untiled(
+        direct_replay,
+        physical_width,
+        physical_height,
+        content_requires_tiling,
+    ));
     let mut recorder = PictureRecorder::new();
     let recording_canvas = recorder.begin_recording(bounds, false);
     recording_canvas.clear(SkColor::WHITE);
@@ -158,8 +172,8 @@ pub fn record_fragment(
         viewport,
         raster_configuration,
         lcd_surface,
-        direct_replay: has_promoted_non_axis_transform(fragment, doc),
-        content_requires_tiling: content_requires_tiling(fragment, viewport.device_scale_factor()),
+        direct_replay,
+        content_requires_tiling,
         retained_font_bytes: doc.font_collection().retained_face_bytes(),
     })
 }
@@ -197,13 +211,11 @@ pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String>
             .draw_picture(&recording.picture, None, None);
         return Ok(surface);
     }
-    const TILE_SIZE: i32 = 256;
-    const TILE_STEP: i32 = TILE_SIZE - 2;
-    for tile_y in (0..height).step_by(TILE_STEP as usize) {
-        for tile_x in (0..width).step_by(TILE_STEP as usize) {
+    for tile_y in (0..height).step_by(RASTER_TILE_STEP_PX as usize) {
+        for tile_x in (0..width).step_by(RASTER_TILE_STEP_PX as usize) {
             let mut tile = create_raster_surface(
-                TILE_SIZE,
-                TILE_SIZE,
+                RASTER_TILE_SIZE_PX,
+                RASTER_TILE_SIZE_PX,
                 recording.raster_configuration,
                 recording.lcd_surface,
             )
@@ -218,8 +230,8 @@ pub fn rasterize_picture(recording: &RecordedPicture) -> Result<Surface, String>
             let crop_top = if tile_y == 0 { 0 } else { 1 };
             let destination_x = tile_x + crop_left;
             let destination_y = tile_y + crop_top;
-            let visible_right = (tile_x + TILE_SIZE - 1).min(width);
-            let visible_bottom = (tile_y + TILE_SIZE - 1).min(height);
+            let visible_right = (tile_x + RASTER_TILE_SIZE_PX - 1).min(width);
+            let visible_bottom = (tile_y + RASTER_TILE_SIZE_PX - 1).min(height);
             let visible_width = visible_right - destination_x;
             let visible_height = visible_bottom - destination_y;
             if visible_width <= 0 || visible_height <= 0 {
