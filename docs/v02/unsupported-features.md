@@ -16,8 +16,10 @@ experiment exists in the repository.
 
 - HTML loading, CSS text parsing, selectors, stylesheet injection, and a web
   cascade exposed as application APIs.
-- JavaScript or WebAssembly execution inside documents; application behavior
-  uses the public native Rust API and Rust event callbacks.
+- JavaScript execution or script bindings inside documents are outside the
+  product design, including future versions. Application behavior uses public
+  native Rust methods and Rust event callbacks. WebAssembly execution inside
+  documents is also unsupported.
 - HTTP, URL fetching, cookies, browser navigation, storage, service workers,
   and developer tools.
 - Embedded interactive documents, iframes, and media playback.

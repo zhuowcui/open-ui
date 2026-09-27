@@ -728,6 +728,22 @@ impl Engine {
             .collect())
     }
 
+    /// Find the first attached element with this ID in document order.
+    pub fn element_by_id(&self, id: &str) -> Option<NodeHandle> {
+        let mut stack = vec![self.document.root()];
+        while let Some(node) = stack.pop() {
+            let data = self.document.node(node);
+            if data.attributes.get("id").is_some_and(|value| value == id) {
+                if let Some(index) = self.node_slots.get(&node) {
+                    return Some(self.handle_for_slot(*index));
+                }
+            }
+            let children: Vec<_> = self.document.children(node).collect();
+            stack.extend(children.into_iter().rev());
+        }
+        None
+    }
+
     pub fn remove_children(&mut self, handle: NodeHandle) -> Result<(), EngineError> {
         let children = self.children(handle)?;
         for child in children {

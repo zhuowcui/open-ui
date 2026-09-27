@@ -16,9 +16,10 @@ The supported application path has no Blink/Chromium runtime, resource pack,
 HTML loader, CSS text parser, JavaScript engine, or network stack. Chromium 147
 is retained only as the frozen reference used to prove renderer compatibility.
 Applications handle interaction in native Rust through `openui::Document`,
-`openui::Element`, signals, and Rust event callbacks. Operations that need a
-browser-like effect on an element are exposed as native Rust methods, not as
-JavaScript or browser API bindings. See the
+`openui::Element`, signals, and Rust event callbacks. Document lookup by ID,
+element mutation, focus, scrolling, controls, and event handling use public
+Rust methods. Operations that need a browser-like effect on an element are
+exposed as native Rust methods, not as JavaScript or browser API bindings. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status
@@ -30,7 +31,7 @@ The current v0.2 release candidate has:
 - a clean four-profile Chromium census with 21,157 of 22,924 comparisons
   exact, 1,767 different, and zero render errors;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
-- 36 application scenarios covering retained updates, controls, editing,
+- 37 application scenarios covering retained updates, controls, editing,
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;

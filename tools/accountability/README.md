@@ -103,8 +103,10 @@ not it has a runnable Rust port.
 `not_ported` is not an acceptable long-term category. Unported rows must be
 assigned to named historical categories such as `needs_javascript`,
 `needs_writing_mode`, `sp13_fragmentation`, `needs_grid`, or
-`needs_table_layout`. `needs_javascript` labels a dependency in the WPT source
-or harness; it is not a planned JavaScript runtime for Open UI.
+`needs_table_layout`. `needs_javascript` labels a script in Chromium's WPT
+source that needs native final-state review; it is not a planned JavaScript
+runtime for Open UI. The consuming application receives public Rust methods
+for needed element interactions.
 
 ### Pixel Summary (`data/pixel_comparison/results/summary.json`)
 

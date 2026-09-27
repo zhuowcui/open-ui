@@ -53,6 +53,34 @@ fn batched_tree_transaction() {
 }
 
 #[test]
+fn native_id_lookup_follows_attached_document_order() {
+    let document = document();
+    let first = child(&document, "div");
+    first.set_id("container").unwrap();
+    let nested = Element::create(&document, "button").unwrap();
+    nested.set_id("action").unwrap();
+    first.append_child(&nested).unwrap();
+    let later = child(&document, "button");
+    later.set_id("action").unwrap();
+
+    let found = document.element_by_id("action").unwrap().unwrap();
+    assert_eq!(
+        found
+            .parent()
+            .unwrap()
+            .unwrap()
+            .get_attribute("id")
+            .unwrap()
+            .as_deref(),
+        Some("container")
+    );
+    first.remove().unwrap();
+    assert!(document.element_by_id("action").unwrap().is_some());
+    later.remove().unwrap();
+    assert!(document.element_by_id("action").unwrap().is_none());
+}
+
+#[test]
 fn removed_weak_handle_expires() {
     let document = document();
     let element = child(&document, "div");

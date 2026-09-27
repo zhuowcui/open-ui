@@ -33,7 +33,8 @@ Examples:
 - `sp13_fragmentation` for block fragmentation ownership,
 - `sp13_multicol` for multi-column layout ownership,
 - `needs_writing_mode` for vertical-flow and bidi dependencies,
-- `needs_javascript` for harness/runtime dependencies,
+- `needs_javascript` for Chromium WPT scripts requiring native final-state
+  assessment; it never calls for an Open UI JavaScript runtime,
 - `needs_grid` for CSS Grid dependencies,
 - `needs_complex_border` for paint-quality cases outside layout.
 

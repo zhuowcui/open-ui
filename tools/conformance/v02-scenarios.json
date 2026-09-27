@@ -17,6 +17,7 @@
   "scenarios": [
     { "id": "static_headless_scene", "domains": ["lifecycle"] },
     { "id": "batched_tree_transaction", "domains": ["lifecycle"] },
+    { "id": "native_id_lookup_follows_attached_document_order", "domains": ["lifecycle"] },
     { "id": "removed_weak_handle_expires", "domains": ["lifecycle"] },
     { "id": "cross_document_ownership_is_rejected", "domains": ["lifecycle"] },
     { "id": "large_list_updates_remain_mutable", "domains": ["lifecycle", "layout"] },

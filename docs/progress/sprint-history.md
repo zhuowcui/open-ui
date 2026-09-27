@@ -258,7 +258,9 @@ classified as SP12-owned layout bugs. Top owners include:
 - SP13 fragmentation and multicol,
 - SP15 inline layout and root/body viewport propagation,
 - SP11 font metrics,
-- future JavaScript/test harness support,
+- Chromium WPT scripts needing native final-state assessment (historically
+  called "future JavaScript/test harness support"; no Open UI JavaScript
+  runtime is planned),
 - future advanced selectors, writing modes, table/grid layout, generated content,
   form controls, canvas/SVG, and paint-quality features.
 

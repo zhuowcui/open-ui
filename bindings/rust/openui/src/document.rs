@@ -76,6 +76,12 @@ impl Document {
         Element::from_handle(self.clone(), handle)
     }
 
+    /// Find the first attached element with this ID in document order.
+    pub fn element_by_id(&self, id: &str) -> Result<Option<Element>, Error> {
+        let handle = self.with_engine(|engine| engine.element_by_id(id))?;
+        Ok(handle.map(|handle| Element::from_handle(self.clone(), handle)))
+    }
+
     pub fn transaction<T>(
         &self,
         operation: impl FnOnce(&Document) -> Result<T, Error>,

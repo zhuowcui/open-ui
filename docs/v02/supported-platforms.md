@@ -26,35 +26,44 @@ Browser-style effects are provided by native operations where v0.2 needs them:
 
 | Application task | Public Rust API |
 |---|---|
-| Create, move, or remove elements | `Element::create`, `append_child`, `insert_before`, `remove` |
+| Create, find, move, or remove elements | `Element::create`, `Document::element_by_id`, `append_child`, `insert_before`, `remove` |
 | Change text, attributes, or typed style | `set_text`, `set_attribute`, `set_property` and generated typed setters |
 | Handle input | `Element::on`, `on_capture`; Rust callbacks in `view!` |
 | Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `bounding_rect`; `Document::hit_test` |
 | Update form controls | `set_control_value`, `set_selection`, `set_checked` |
 
 These methods operate on the same retained document as rendering and native
-input. A browser DOM or Web API surface is not promised. If a product feature
-needs another element operation, expose it through the public native Rust API
-and the shared engine rather than introducing JavaScript.
+input. A browser DOM or Web API surface is not promised. Every element
+interaction needed by a consuming application must be available through a
+public native Rust method backed by the shared engine. An internal Engine
+operation or test-only fixture is not sufficient application API coverage.
 
 When a browser test uses a DOM or JavaScript call to reach a visual state,
-the corresponding application behavior belongs in a public Rust operation.
-A test-only Engine mutation does not by itself provide that application API.
+we assess the state as a rendering case. If the same interaction is needed by
+an application, we expose its behavior as a native Rust operation.
+
+## No JavaScript runtime
+
+Open UI does not run application or test JavaScript and does not provide a
+JavaScript engine, `eval`, script bindings, or a plan to add them. Chromium is
+the separate test oracle. Offline qualification tooling may read Chromium's
+WPT scripts as source data to identify a deterministic final visual state;
+Open UI constructs that state with native Rust operations. This does not make
+the script or its browser APIs part of the framework.
 
 ## Deferred
 
 The following are not v0.2 defects or compatibility promises: macOS, Windows,
-Android, iOS, Vulkan, Metal, Direct3D, JavaScript, navigation, browser DOM
+Android, iOS, Vulkan, Metal, Direct3D, navigation, browser DOM
 compatibility, URL fetching, HTML loading, runtime CSS parsing, file/date/color
 picker dialogs, media playback, interactive embedded documents, a visual
 inspector, and a general plugin ecosystem.
 
 The frozen WPT inventory contains 1,912 test files with JavaScript in their
-Chromium source and 30 nonvisual/crash-harness rows. Those scripts are not run
-by Open UI. Test tooling may read a script to construct a fixed native Rust
-fixture for its final visual state; the renderer then compares that state with
-Chromium at all four required profiles. This test process does not add a
-JavaScript runtime or browser API promise. The original 5,731-case inventory
+Chromium source and 30 nonvisual/crash-harness rows. Test tooling may read a
+script to construct a fixed native Rust fixture for its final visual state;
+the renderer then compares that state with Chromium at all four required
+profiles. The original 5,731-case inventory
 is immutable, but old Open UI screenshots are historical evidence, not
 expected pixels.
 

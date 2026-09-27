@@ -25,6 +25,7 @@ second implementation roadmap.
 - Continue renderer conformance by admitting new independently reviewed cases
   against Chromium without modifying historical evidence.
 
-Network fetching, embedded JavaScript, and browser execution are not roadmap
-requirements for the desktop framework. New application interaction is added
-through native Rust APIs over the shared retained engine.
+No JavaScript runtime, script bindings, or browser execution are planned for
+Open UI. New application interaction is added through public native Rust APIs
+over the shared retained engine. Network fetching is also outside this
+desktop framework's roadmap.
