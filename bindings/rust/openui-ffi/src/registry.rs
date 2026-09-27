@@ -1,6 +1,7 @@
 use crate::types::{OuiEventCallback, OuiStatus, OuiUtf8};
 use openui_engine::{
-    AnimationEvent, Engine, EngineError, FontCollectionError, FontFaceHandle, NodeHandle,
+    AccessibilityNode, AccessibilityNodeId, AnimationEvent, Engine, EngineError,
+    FontCollectionError, FontFaceHandle, NodeHandle,
 };
 use openui_style::{ImageResourceId, StyleValue};
 use std::cell::{Cell, RefCell};
@@ -22,6 +23,7 @@ pub(crate) enum HandleKind {
     FontFace,
     Listener,
     Buffer,
+    AccessibilitySnapshot,
 }
 
 #[derive(Clone)]
@@ -76,6 +78,18 @@ pub(crate) struct ListenerRecord {
 }
 
 #[derive(Clone)]
+pub(crate) struct AccessibilitySnapshotState {
+    pub document: Weak<DocumentState>,
+    pub generation: u64,
+    pub focus_id: u64,
+    pub reduced_motion: bool,
+    pub nodes: Vec<(AccessibilityNodeId, AccessibilityNode)>,
+    pub changed: Vec<u64>,
+    pub removed: Vec<u64>,
+    pub full_tree: bool,
+}
+
+#[derive(Clone)]
 pub(crate) enum LocalHandle {
     App(Rc<AppState>),
     Document(Rc<DocumentState>),
@@ -85,6 +99,7 @@ pub(crate) enum LocalHandle {
     FontFace(FontFaceRef),
     Listener(ListenerRef),
     Buffer(Rc<Vec<u8>>),
+    AccessibilitySnapshot(Rc<AccessibilitySnapshotState>),
 }
 
 impl LocalHandle {
@@ -98,6 +113,7 @@ impl LocalHandle {
             Self::FontFace(_) => HandleKind::FontFace,
             Self::Listener(_) => HandleKind::Listener,
             Self::Buffer(_) => HandleKind::Buffer,
+            Self::AccessibilitySnapshot(_) => HandleKind::AccessibilitySnapshot,
         }
     }
 }

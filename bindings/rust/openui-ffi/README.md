@@ -16,9 +16,12 @@ schemas:
 Regenerate with `python3 tools/ffi/generate_ffi.py`, or verify without writing
 with `python3 tools/ffi/generate_ffi.py --check`. After building the crate,
 `python3 tools/ffi/verify_abi.py` checks exact exports, compiles C and C++
-consumers, and runs the four C examples.
+consumers, and runs the five C examples.
 
 All opaque handles are generation-checked and thread-affine. Strings are
 length-delimited UTF-8. Every status failure records a thread-local structured
 error. Event callbacks are synchronous, may reenter the API on the owning
 thread, and remain registered until their `OuiListener` is destroyed.
+The owned `OuiAccessibilitySnapshot` API exposes node metadata, ordered
+relations, focus, and changed/removed IDs without retaining engine borrows.
+Snapshots remain readable after document destruction on their owning thread.

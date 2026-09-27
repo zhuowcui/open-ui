@@ -145,7 +145,7 @@ def main() -> None:
             for binary in binaries:
                 run([str(binary)])
     print(
-        f"C ABI verified: symbols={len(expected)} C_examples=4 C++=1 "
+        f"C ABI verified: symbols={len(expected)} C_examples={len(binaries)} C++=1 "
         f"library={library.name}"
     )
 

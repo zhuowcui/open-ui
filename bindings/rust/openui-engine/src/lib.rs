@@ -7,7 +7,7 @@ mod interaction;
 pub use accessibility::{
     AccessibilityAction, AccessibilityActionData, AccessibilityActionRequest, AccessibilityLive,
     AccessibilityNode, AccessibilityNodeId, AccessibilityPlatformAction, AccessibilityRelation,
-    AccessibilityRole, AccessibilityTreeUpdate,
+    AccessibilityRole, AccessibilityToggled, AccessibilityTreeUpdate,
 };
 
 pub use animation::{

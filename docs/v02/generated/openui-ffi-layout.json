@@ -2,6 +2,18 @@
   "abi_version": "0x00020000",
   "pointer_width": 64,
   "types": {
+    "OuiAccessibilityNodeInfo": {
+      "align": 8,
+      "size": 120
+    },
+    "OuiAccessibilityNodeState": {
+      "align": 8,
+      "size": 112
+    },
+    "OuiAccessibilitySnapshotInfo": {
+      "align": 8,
+      "size": 56
+    },
     "OuiAccessibilityUpdate": {
       "align": 8,
       "size": 40

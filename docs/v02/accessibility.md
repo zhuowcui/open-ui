@@ -30,6 +30,18 @@ included in accessibility update metadata for native consumers. The Linux
 platform crate owns the AccessKit winit/Unix adapter and forwards its action
 requests into this API; AT-SPI is not accessed from headless builds.
 
+C applications can request an owned `OuiAccessibilitySnapshot` from the same
+engine tree. The snapshot exposes every node's stable ID, role and role name,
+label, description, value, placeholder, bounds, state flags, supported core
+actions, ordered children, labelled-by, described-by, controls, and details
+relations. Control state includes selected, expanded, toggled, live region,
+numeric values, scroll offsets, and text selection/character lengths. Its
+metadata includes focus, generation, and reduced-motion preference. Passing a
+previous snapshot from the same document returns changed and removed IDs;
+each snapshot still contains the full current tree. A snapshot remains readable
+after its document is destroyed and must be destroyed on its owning thread.
+This API does not consume the Rust/AccessKit incremental update stream.
+
 The v0.2 accessibility scope covers the core interactive controls and their
 text editing behavior. Rich hypertext navigation beyond those controls remains
 deferred.

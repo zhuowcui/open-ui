@@ -18,9 +18,10 @@ network access.
 
 ## Native interaction API
 
-Application behavior runs in Rust. The public `openui` crate exposes retained
-`Document` and `Element` handles; the application may keep those handles and
-call native methods from Rust callbacks. There is no JavaScript execution,
+Rust application behavior runs in Rust. The public `openui` crate exposes
+retained `Document` and `Element` handles; the application may keep those
+handles and call native methods from Rust callbacks. C applications use the
+versioned C ABI over the same engine. There is no JavaScript execution,
 `eval`, script binding, or embedded browser runtime in the application path.
 Browser-style effects are provided by native operations where v0.2 needs them:
 

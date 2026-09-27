@@ -6,6 +6,7 @@
 // the remaining readable/writable-memory preconditions in its safety contract.
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
+mod accessibility_snapshot;
 mod generated;
 mod registry;
 mod types;
@@ -32,8 +33,9 @@ use openui_style::{
 };
 use registry::{
     borrow_engine, borrow_engine_mut, bytes, destroy, document, element, element_document, ffi,
-    ffi_preserve, ffi_value, get, last_error, register, utf8, ApiError, AppState, DocumentState,
-    ElementRef, FontFaceRef, HandleKind, ListenerRecord, ListenerRef, LocalHandle, ResourceRef,
+    ffi_preserve, ffi_value, get, last_error, register, utf8, AccessibilitySnapshotState, ApiError,
+    AppState, DocumentState, ElementRef, FontFaceRef, HandleKind, ListenerRecord, ListenerRef,
+    LocalHandle, ResourceRef,
 };
 use std::cell::{Cell, RefCell};
 use std::ffi::c_void;
@@ -2141,6 +2143,7 @@ pub extern "C" fn oui_element_set_accessibility_role(
             13 => AccessibilityRole::Heading,
             14 => AccessibilityRole::Status,
             15 => AccessibilityRole::Alert,
+            16 => AccessibilityRole::Unknown,
             _ => return Err(invalid("unknown accessibility role")),
         };
         engine.set_accessibility_role(element.node, role)?;
@@ -3216,6 +3219,27 @@ mod tests {
             (40, 8)
         );
         assert_eq!(
+            (
+                size_of::<OuiAccessibilitySnapshotInfo>(),
+                align_of::<OuiAccessibilitySnapshotInfo>()
+            ),
+            (56, 8)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiAccessibilityNodeInfo>(),
+                align_of::<OuiAccessibilityNodeInfo>()
+            ),
+            (120, 8)
+        );
+        assert_eq!(
+            (
+                size_of::<OuiAccessibilityNodeState>(),
+                align_of::<OuiAccessibilityNodeState>()
+            ),
+            (112, 8)
+        );
+        assert_eq!(
             (size_of::<OuiErrorInfo>(), align_of::<OuiErrorInfo>()),
             (24, 8)
         );
@@ -4147,11 +4171,53 @@ mod tests {
         );
         assert_eq!(update.full_tree, 1);
         assert!(update.updated_nodes >= 2);
+        let mut first_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                document,
+                ptr::null(),
+                &mut first_snapshot,
+            ),
+            OuiStatus::Ok
+        );
+        let mut state = OuiAccessibilityNodeState {
+            struct_size: size_of::<OuiAccessibilityNodeState>() as u32,
+            abi_version: OUI_ABI_VERSION,
+            ..Default::default()
+        };
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_node_state(
+                first_snapshot,
+                id,
+                &mut state,
+            ),
+            OuiStatus::Ok
+        );
+        assert_ne!(state.flags & (1 << 5), 0);
+        assert_eq!(state.flags & (1 << 6), 0);
         assert_eq!(
             oui_element_perform_accessibility_action(checkbox, 0, empty_utf8(), 0, 0),
             OuiStatus::Ok
         );
         assert_eq!(log, [42, 62, 72]);
+        let mut second_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                document,
+                first_snapshot,
+                &mut second_snapshot,
+            ),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_node_state(
+                second_snapshot,
+                id,
+                &mut state,
+            ),
+            OuiStatus::Ok
+        );
+        assert_ne!(state.flags & (1 << 6), 0);
         assert_eq!(
             oui_document_accessibility_update(document, &mut update),
             OuiStatus::Ok
@@ -4165,12 +4231,71 @@ mod tests {
         );
         assert_eq!(update.reduced_motion, 1);
 
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_destroy(second_snapshot),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_destroy(first_snapshot),
+            OuiStatus::Ok
+        );
+
         assert_eq!(oui_listener_destroy(click_listener), OuiStatus::Ok);
         assert_eq!(oui_listener_destroy(input_listener), OuiStatus::Ok);
         assert_eq!(oui_listener_destroy(change_listener), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(checkbox), OuiStatus::Ok);
         assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_accessibility_snapshot_rejects_wrong_document_and_outlives_its_document() {
+        let first_document = create_document(40, 40);
+        let second_document = create_document(40, 40);
+        let mut first_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                first_document,
+                ptr::null(),
+                &mut first_snapshot,
+            ),
+            OuiStatus::Ok
+        );
+        let mut unrelated_snapshot = ptr::null_mut();
+        assert_eq!(
+            accessibility_snapshot::oui_document_accessibility_snapshot(
+                second_document,
+                first_snapshot,
+                &mut unrelated_snapshot,
+            ),
+            OuiStatus::WrongDocument
+        );
+        assert!(unrelated_snapshot.is_null());
+        let mut info = OuiAccessibilitySnapshotInfo {
+            struct_size: size_of::<OuiAccessibilitySnapshotInfo>() as u32,
+            abi_version: OUI_ABI_VERSION + 1,
+            ..Default::default()
+        };
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_info(first_snapshot, &mut info),
+            OuiStatus::AbiMismatch
+        );
+        assert_eq!(oui_document_destroy(first_document), OuiStatus::Ok);
+        info.abi_version = OUI_ABI_VERSION;
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_info(first_snapshot, &mut info),
+            OuiStatus::Ok
+        );
+        assert!(info.node_count >= 1);
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_destroy(first_snapshot),
+            OuiStatus::Ok
+        );
+        assert_eq!(
+            accessibility_snapshot::oui_accessibility_snapshot_get_info(first_snapshot, &mut info),
+            OuiStatus::InvalidHandle
+        );
+        assert_eq!(oui_document_destroy(second_document), OuiStatus::Ok);
     }
 
     #[test]

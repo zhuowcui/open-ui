@@ -15,9 +15,9 @@ claimed by source code alone.
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [hosted validation](https://github.com/zhuowcui/open-ui/actions/runs/36236727149): locked headless and Linux checks passed after the string-boundary fix and compatible Wayland/Zbus pins | pass |
-| Rust/C application contract | 37 scenarios, 93 existing exports, four C examples and C++ consumer | pass |
+| Rust/C application contract | 37 scenarios, 102 existing exports, five C examples and C++ consumer; owned C accessibility-tree snapshots now exported, native C window loop still open | partial |
 | C-owned X11/Wayland application loop | no exported run/request-exit platform lifecycle yet | open |
-| C platform accessibility | retained setters/actions exist; full adapter tree is not exported | open |
+| C platform accessibility | owned full-tree snapshots, node metadata/relations/focus, and changed/removed IDs export from the shared engine; automated AT-SPI operation in a C window remains unqualified | open |
 | Generated sources | style, ABI, migration, closure generators are read-only clean | pass |
 | No-work frame | zero layout, paint, and raster on unchanged snapshots | pass |
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |

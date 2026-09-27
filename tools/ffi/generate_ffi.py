@@ -157,6 +157,9 @@ def outputs() -> dict[Path, bytes]:
             "OuiAnimationEvent": {"size": 48, "align": 8},
             "OuiEvent": {"size": 88, "align": 8},
             "OuiAccessibilityUpdate": {"size": 40, "align": 8},
+            "OuiAccessibilitySnapshotInfo": {"size": 56, "align": 8},
+            "OuiAccessibilityNodeInfo": {"size": 120, "align": 8},
+            "OuiAccessibilityNodeState": {"size": 112, "align": 8},
             "OuiErrorInfo": {"size": 24, "align": 8},
         },
     }

@@ -1,6 +1,14 @@
 OPENUI_0.2 {
   global:
     oui_abi_version;
+    oui_accessibility_snapshot_copy_changes;
+    oui_accessibility_snapshot_copy_character_lengths;
+    oui_accessibility_snapshot_copy_ids;
+    oui_accessibility_snapshot_copy_text;
+    oui_accessibility_snapshot_destroy;
+    oui_accessibility_snapshot_get_info;
+    oui_accessibility_snapshot_get_node;
+    oui_accessibility_snapshot_get_node_state;
     oui_app_create;
     oui_app_destroy;
     oui_app_document;
@@ -9,6 +17,7 @@ OPENUI_0.2 {
     oui_buffer_destroy;
     oui_buffer_length;
     oui_corner_radii_create;
+    oui_document_accessibility_snapshot;
     oui_document_accessibility_update;
     oui_document_advance_focus;
     oui_document_animation_cancel;

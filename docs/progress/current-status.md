@@ -17,8 +17,8 @@ remain open.
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 37 across 10 domains |
-| Frozen / current C exports | 84 / 93 |
-| C examples / C++ consumers | 4 / 1 |
+| Frozen / current C exports | 84 / 102 |
+| C examples / C++ consumers | 5 / 1 |
 | Workspace tests | pass |
 | Python closure and qualification tests | 231 pass |
 | Owned objects after 10,000 mutation soak | no growth/leak |
@@ -41,7 +41,8 @@ load it.
 - Direct safe Rust framework with signals, effects, scopes, `Show`, keyed
   `For`, components, `view!`, `AppBuilder`, and `HeadlessApp`.
 - Panic-contained C ABI with ownership/thread validation, structured errors,
-  compound builders, events, controls, animation, accessibility, and rendering.
+  compound builders, events, controls, animation, owned accessibility-tree
+  snapshots, and rendering.
 - Core controls, routed pointer/keyboard/text/composition events, focus and
   modal containment, selection, Unicode editing, clipboard, undo/redo,
   scrolling, and pointer capture.
@@ -67,8 +68,8 @@ load it.
   a CPU-rasterized frame.
 - The four-profile Chromium census and primitive matrix fail exactness;
   970 census residual IDs and one primitive ID have no reviewed owner.
-- The C ABI covers the retained engine and headless renderer, but does not yet
-  export the owned Linux event loop or full platform accessibility tree.
+- The C ABI covers the retained engine, headless renderer, and an owned full
+  accessibility-tree snapshot, but does not yet export the owned Linux event loop.
 - Retained per-node layers and compositor-owned animation curves are incomplete,
   so the strict blocked-UI 100-animation gate is not yet qualified.
 - Full preserve-3d and backface layer semantics remain incomplete.

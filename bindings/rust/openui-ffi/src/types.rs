@@ -42,6 +42,11 @@ pub struct OuiBuffer {
     _private: [u8; 0],
 }
 
+#[repr(C)]
+pub struct OuiAccessibilitySnapshot {
+    _private: [u8; 0],
+}
+
 #[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum OuiStatus {
@@ -342,6 +347,70 @@ pub struct OuiAccessibilityUpdate {
     pub full_tree: u8,
     pub reduced_motion: u8,
     pub reserved: u16,
+}
+
+pub const OUI_ACCESSIBILITY_NODE_HIDDEN: u32 = 1 << 0;
+pub const OUI_ACCESSIBILITY_NODE_REQUIRED: u32 = 1 << 1;
+pub const OUI_ACCESSIBILITY_NODE_READ_ONLY: u32 = 1 << 2;
+pub const OUI_ACCESSIBILITY_NODE_MODAL: u32 = 1 << 3;
+pub const OUI_ACCESSIBILITY_NODE_HAS_BOUNDS: u32 = 1 << 4;
+
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct OuiAccessibilitySnapshotInfo {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub generation: u64,
+    pub focus_id: u64,
+    pub node_count: usize,
+    pub changed_count: usize,
+    pub removed_count: usize,
+    pub full_tree: u8,
+    pub reduced_motion: u8,
+    pub reserved: [u8; 6],
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct OuiAccessibilityNodeInfo {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub id: u64,
+    pub role: u32,
+    pub flags: u32,
+    pub actions: u32,
+    pub reserved: u32,
+    pub bounds: OuiRect,
+    pub child_count: usize,
+    pub labelled_by_count: usize,
+    pub described_by_count: usize,
+    pub controls_count: usize,
+    pub details_count: usize,
+    pub label_length: usize,
+    pub description_length: usize,
+    pub value_length: usize,
+    pub role_name_length: usize,
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct OuiAccessibilityNodeState {
+    pub struct_size: u32,
+    pub abi_version: u32,
+    pub flags: u32,
+    pub live: u32,
+    pub numeric_value: f64,
+    pub numeric_min: f64,
+    pub numeric_max: f64,
+    pub numeric_step: f64,
+    pub scroll_x: f64,
+    pub scroll_y: f64,
+    pub placeholder_length: usize,
+    pub character_lengths_count: usize,
+    pub selection_anchor_node: u64,
+    pub selection_anchor_index: usize,
+    pub selection_focus_node: u64,
+    pub selection_focus_index: usize,
 }
 
 #[repr(C)]

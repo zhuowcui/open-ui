@@ -12,7 +12,7 @@ pub use accesskit::{
     Action as AccessibilityPlatformAction, ActionData as AccessibilityActionData,
     ActionRequest as AccessibilityActionRequest, Live as AccessibilityLive,
     Node as AccessibilityNode, NodeId as AccessibilityNodeId, Role as AccessibilityRole,
-    TreeUpdate as AccessibilityTreeUpdate,
+    Toggled as AccessibilityToggled, TreeUpdate as AccessibilityTreeUpdate,
 };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -208,6 +208,15 @@ impl Engine {
             tree_id: TreeId::ROOT,
             focus: self.focused.map(node_id).unwrap_or(root),
         })
+    }
+
+    /// Return a complete owned semantic tree without consuming the incremental
+    /// AccessKit update stream. Callers can compare successive snapshots.
+    pub fn accessibility_snapshot(&mut self) -> Result<Vec<(NodeId, Node)>, EngineError> {
+        self.update()?;
+        let mut nodes: Vec<_> = self.build_accessibility_nodes()?.into_iter().collect();
+        nodes.sort_by_key(|(id, _)| id.0);
+        Ok(nodes)
     }
 
     pub fn perform_accessibility_action(
@@ -844,6 +853,42 @@ mod tests {
         let changed = engine.accessibility_update().unwrap();
         assert_eq!(changed.nodes.len(), 1);
         assert_eq!(changed.nodes[0].1.toggled(), Some(Toggled::True));
+    }
+
+    #[test]
+    fn complete_snapshot_does_not_consume_incremental_updates() {
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(200.0, 100.0, 1.0).unwrap())
+                .unwrap();
+        let button = mounted_control(&mut engine, ElementTag::Button);
+        engine.set_accessibility_label(button, "Run").unwrap();
+        let id = engine.accessibility_node_id(button).unwrap();
+        let snapshot = engine.accessibility_snapshot().unwrap();
+        assert_eq!(
+            snapshot
+                .iter()
+                .find(|(node_id, _)| *node_id == id)
+                .unwrap()
+                .1
+                .label(),
+            Some("Run")
+        );
+        assert!(engine.accessibility_update().unwrap().tree.is_some());
+
+        engine.set_accessibility_label(button, "Stop").unwrap();
+        let snapshot = engine.accessibility_snapshot().unwrap();
+        assert_eq!(
+            snapshot
+                .iter()
+                .find(|(node_id, _)| *node_id == id)
+                .unwrap()
+                .1
+                .label(),
+            Some("Stop")
+        );
+        let update = engine.accessibility_update().unwrap();
+        assert_eq!(update.nodes.len(), 1);
+        assert_eq!(update.nodes[0].0, id);
     }
 
     #[test]

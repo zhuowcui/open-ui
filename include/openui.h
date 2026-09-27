@@ -20,6 +20,7 @@ typedef struct OuiResource OuiResource;
 typedef struct OuiFontFace OuiFontFace;
 typedef struct OuiListener OuiListener;
 typedef struct OuiBuffer OuiBuffer;
+typedef struct OuiAccessibilitySnapshot OuiAccessibilitySnapshot;
 
 typedef enum OuiStatus {
   OUI_OK = 0,
@@ -258,8 +259,69 @@ typedef enum OuiAccessibilityRole {
   OUI_ACCESSIBILITY_ROLE_DIALOG = 12,
   OUI_ACCESSIBILITY_ROLE_HEADING = 13,
   OUI_ACCESSIBILITY_ROLE_STATUS = 14,
-  OUI_ACCESSIBILITY_ROLE_ALERT = 15
+  OUI_ACCESSIBILITY_ROLE_ALERT = 15,
+  OUI_ACCESSIBILITY_ROLE_OTHER = 16
 } OuiAccessibilityRole;
+
+typedef enum OuiAccessibilityNodeFlags {
+  OUI_ACCESSIBILITY_NODE_HIDDEN = 1u << 0,
+  OUI_ACCESSIBILITY_NODE_REQUIRED = 1u << 1,
+  OUI_ACCESSIBILITY_NODE_READ_ONLY = 1u << 2,
+  OUI_ACCESSIBILITY_NODE_MODAL = 1u << 3,
+  OUI_ACCESSIBILITY_NODE_HAS_BOUNDS = 1u << 4
+} OuiAccessibilityNodeFlags;
+
+typedef enum OuiAccessibilityNodeActions {
+  OUI_ACCESSIBILITY_ACTION_CLICK_BIT = 1u << 0,
+  OUI_ACCESSIBILITY_ACTION_FOCUS_BIT = 1u << 1,
+  OUI_ACCESSIBILITY_ACTION_BLUR_BIT = 1u << 2,
+  OUI_ACCESSIBILITY_ACTION_INCREMENT_BIT = 1u << 3,
+  OUI_ACCESSIBILITY_ACTION_DECREMENT_BIT = 1u << 4,
+  OUI_ACCESSIBILITY_ACTION_EXPAND_BIT = 1u << 5,
+  OUI_ACCESSIBILITY_ACTION_COLLAPSE_BIT = 1u << 6,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_INTO_VIEW_BIT = 1u << 7,
+  OUI_ACCESSIBILITY_ACTION_SET_VALUE_BIT = 1u << 8,
+  OUI_ACCESSIBILITY_ACTION_REPLACE_SELECTED_TEXT_BIT = 1u << 9,
+  OUI_ACCESSIBILITY_ACTION_SET_TEXT_SELECTION_BIT = 1u << 10,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_DOWN_BIT = 1u << 11,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_UP_BIT = 1u << 12,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_LEFT_BIT = 1u << 13,
+  OUI_ACCESSIBILITY_ACTION_SCROLL_RIGHT_BIT = 1u << 14
+} OuiAccessibilityNodeActions;
+
+typedef enum OuiAccessibilitySnapshotText {
+  OUI_ACCESSIBILITY_TEXT_LABEL = 0,
+  OUI_ACCESSIBILITY_TEXT_DESCRIPTION = 1,
+  OUI_ACCESSIBILITY_TEXT_VALUE = 2,
+  OUI_ACCESSIBILITY_TEXT_ROLE_NAME = 3,
+  OUI_ACCESSIBILITY_TEXT_PLACEHOLDER = 4
+} OuiAccessibilitySnapshotText;
+
+typedef enum OuiAccessibilityStateFlags {
+  OUI_ACCESSIBILITY_STATE_DISABLED = 1u << 0,
+  OUI_ACCESSIBILITY_STATE_HAS_SELECTED = 1u << 1,
+  OUI_ACCESSIBILITY_STATE_SELECTED = 1u << 2,
+  OUI_ACCESSIBILITY_STATE_HAS_EXPANDED = 1u << 3,
+  OUI_ACCESSIBILITY_STATE_EXPANDED = 1u << 4,
+  OUI_ACCESSIBILITY_STATE_HAS_TOGGLED = 1u << 5,
+  OUI_ACCESSIBILITY_STATE_TOGGLED_TRUE = 1u << 6,
+  OUI_ACCESSIBILITY_STATE_TOGGLED_MIXED = 1u << 7,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_VALUE = 1u << 8,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_MIN = 1u << 9,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_MAX = 1u << 10,
+  OUI_ACCESSIBILITY_STATE_HAS_NUMERIC_STEP = 1u << 11,
+  OUI_ACCESSIBILITY_STATE_HAS_SCROLL_X = 1u << 12,
+  OUI_ACCESSIBILITY_STATE_HAS_SCROLL_Y = 1u << 13,
+  OUI_ACCESSIBILITY_STATE_HAS_TEXT_SELECTION = 1u << 14
+} OuiAccessibilityStateFlags;
+
+typedef enum OuiAccessibilitySnapshotIds {
+  OUI_ACCESSIBILITY_IDS_CHILDREN = 0,
+  OUI_ACCESSIBILITY_IDS_LABELLED_BY = 1,
+  OUI_ACCESSIBILITY_IDS_DESCRIBED_BY = 2,
+  OUI_ACCESSIBILITY_IDS_CONTROLS = 3,
+  OUI_ACCESSIBILITY_IDS_DETAILS = 4
+} OuiAccessibilitySnapshotIds;
 
 typedef enum OuiAccessibilityLive {
   OUI_ACCESSIBILITY_LIVE_OFF = 0,
@@ -572,6 +634,59 @@ typedef struct OuiAccessibilityUpdate {
   uint16_t reserved;
 } OuiAccessibilityUpdate;
 
+/* New snapshot structs are append-only and start with size and ABI version. */
+typedef struct OuiAccessibilitySnapshotInfo {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint64_t generation;
+  uint64_t focus_id;
+  size_t node_count;
+  size_t changed_count;
+  size_t removed_count;
+  uint8_t full_tree;
+  uint8_t reduced_motion;
+  uint8_t reserved[6];
+} OuiAccessibilitySnapshotInfo;
+
+typedef struct OuiAccessibilityNodeInfo {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint64_t id;
+  uint32_t role;
+  uint32_t flags;
+  uint32_t actions;
+  uint32_t reserved;
+  OuiRect bounds;
+  size_t child_count;
+  size_t labelled_by_count;
+  size_t described_by_count;
+  size_t controls_count;
+  size_t details_count;
+  size_t label_length;
+  size_t description_length;
+  size_t value_length;
+  size_t role_name_length;
+} OuiAccessibilityNodeInfo;
+
+typedef struct OuiAccessibilityNodeState {
+  uint32_t struct_size;
+  uint32_t abi_version;
+  uint32_t flags;
+  uint32_t live; /* 0 absent; otherwise OuiAccessibilityLive + 1 */
+  double numeric_value;
+  double numeric_min;
+  double numeric_max;
+  double numeric_step;
+  double scroll_x;
+  double scroll_y;
+  size_t placeholder_length;
+  size_t character_lengths_count;
+  uint64_t selection_anchor_node;
+  size_t selection_anchor_index;
+  uint64_t selection_focus_node;
+  size_t selection_focus_index;
+} OuiAccessibilityNodeState;
+
 typedef struct OuiErrorInfo {
   uint32_t struct_size;
   uint32_t abi_version;
@@ -594,6 +709,11 @@ typedef void (*OuiEventCallback)(OuiEvent* event, void* user_data);
  *   remain valid until its OuiListener is destroyed.
  * - Setting OUI_EVENT_DEFAULT_PREVENTED or OUI_EVENT_PROPAGATION_STOPPED in a
  *   callback updates dispatch state; callbacks must not retain OuiEvent*.
+ * - Accessibility snapshots own their nodes and strings. A snapshot remains
+ *   readable after its document is destroyed, on the snapshot's owning thread.
+ *   Destroy each snapshot after use. Output strings are raw UTF-8 bytes without
+ *   a terminator. The first copy call may use NULL and zero capacity to query
+ *   the required length or count.
  */
 
 uint32_t oui_abi_version(void);
@@ -620,6 +740,15 @@ OuiStatus oui_document_hit_test(OuiDocument* document, float x, float y, OuiElem
 OuiStatus oui_document_advance_focus(OuiDocument* document, int32_t direction, OuiElement** out_element);
 OuiStatus oui_document_set_modal_root(OuiDocument* document, OuiElement* root);
 OuiStatus oui_document_accessibility_update(OuiDocument* document, OuiAccessibilityUpdate* out_update);
+OuiStatus oui_document_accessibility_snapshot(OuiDocument* document, const OuiAccessibilitySnapshot* previous, OuiAccessibilitySnapshot** out_snapshot);
+OuiStatus oui_accessibility_snapshot_destroy(OuiAccessibilitySnapshot* snapshot);
+OuiStatus oui_accessibility_snapshot_get_info(const OuiAccessibilitySnapshot* snapshot, OuiAccessibilitySnapshotInfo* out_info);
+OuiStatus oui_accessibility_snapshot_get_node(const OuiAccessibilitySnapshot* snapshot, size_t index, OuiAccessibilityNodeInfo* out_node);
+OuiStatus oui_accessibility_snapshot_get_node_state(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, OuiAccessibilityNodeState* out_state);
+OuiStatus oui_accessibility_snapshot_copy_text(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint32_t field, uint8_t* destination, size_t capacity, size_t* out_length);
+OuiStatus oui_accessibility_snapshot_copy_character_lengths(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint8_t* destination, size_t capacity, size_t* out_count);
+OuiStatus oui_accessibility_snapshot_copy_ids(const OuiAccessibilitySnapshot* snapshot, uint64_t node_id, uint32_t kind, uint64_t* destination, size_t capacity, size_t* out_count);
+OuiStatus oui_accessibility_snapshot_copy_changes(const OuiAccessibilitySnapshot* snapshot, uint8_t removed, uint64_t* destination, size_t capacity, size_t* out_count);
 OuiStatus oui_document_set_reduced_motion(OuiDocument* document, uint8_t reduced);
 OuiStatus oui_document_set_animation_time(OuiDocument* document, double time_ms);
 OuiStatus oui_document_is_animating(OuiDocument* document, uint8_t* out_animating);
