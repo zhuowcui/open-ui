@@ -472,6 +472,43 @@ pub fn paint_fragment(
     doc: &Document,
     offset: PhysicalOffset,
 ) {
+    // A box that crosses a fractional viewport edge is cut by the physical
+    // viewport scissor before its overflowing ink reaches the terminal cell.
+    // A box ending at that edge keeps its own snapped edge coverage, so clip
+    // only boxes whose laid-out right edge is beyond the viewport.
+    let scale = doc.device_scale_factor();
+    let (viewport_width, _) = VIEWPORT_SIZE.with(|size| *size.borrow());
+    let physical_viewport_right = f64::from(viewport_width) * scale;
+    let fragment_left = (offset.left + fragment.offset.left).to_f64();
+    let fragment_right = fragment_left + fragment.size.width.to_f64();
+    let clips_fractional_terminal_column = physical_viewport_right.fract() > 1.0e-6
+        && fragment_left < f64::from(viewport_width)
+        && fragment_right > f64::from(viewport_width) + 1.0e-6;
+    if clips_fractional_terminal_column {
+        canvas.save();
+        canvas.clip_rect(
+            Rect::from_ltrb(
+                -100_000.0,
+                -100_000.0,
+                (physical_viewport_right.floor() / scale) as f32,
+                100_000.0,
+            ),
+            ClipOp::Intersect,
+            false,
+        );
+    }
+    paint_fragment_contents(canvas, fragment, doc, offset);
+    if clips_fractional_terminal_column {
+        canvas.restore();
+    }
+}
+
+fn paint_fragment_contents(
+    canvas: &Canvas,
+    fragment: &Fragment,
+    doc: &Document,
+    offset: PhysicalOffset,
+) {
     // Keep accumulated offset fractional (sub-pixel precision).
     // Pixel snapping happens only at the point of drawing (paint_box_decoration_background,
     // paint_text_fragment, etc.) using Blink's PixelSnappedIntRect approach:
