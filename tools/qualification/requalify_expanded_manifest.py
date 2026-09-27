@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 
 import residuals
@@ -28,7 +29,11 @@ def encoded(value: object) -> bytes:
     return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode()
 
 
-def requalify(report_path: Path) -> tuple[dict, dict]:
+def requalify(
+    report_path: Path,
+    ledger_output: Path = LEDGER,
+    manifest_output: Path = MANIFEST,
+) -> tuple[dict, dict]:
     contract = json.loads(CONTRACT.read_text())
     original = json.loads(ORIGINAL.read_text())
     prior = json.loads(PRIOR.read_text())
@@ -132,7 +137,9 @@ def requalify(report_path: Path) -> tuple[dict, dict]:
         "candidate_audit_sha256": sha256(AST_AUDIT),
         "prior_manifest": "expanded-v1.json",
         "prior_manifest_sha256": sha256(PRIOR),
-        "qualification_evidence": "../../../docs/renderer/generated/expanded-requalification-v1.json",
+        "qualification_evidence": Path(os.path.relpath(
+            ledger_output.resolve(), manifest_output.parent.resolve()
+        )).as_posix(),
         "qualification_evidence_sha256": hashlib.sha256(encoded(ledger)).hexdigest(),
         "policy": "Only additions exact at all four profiles in the requalification report are retained; this selection remains diagnostic until a new contract is admitted.",
         "additions": retained,
@@ -147,7 +154,9 @@ def main() -> None:
     parser.add_argument("--ledger-output", type=Path, default=LEDGER)
     parser.add_argument("--manifest-output", type=Path, default=MANIFEST)
     args = parser.parse_args()
-    ledger, manifest = requalify(args.matrix_report)
+    ledger, manifest = requalify(
+        args.matrix_report, args.ledger_output, args.manifest_output
+    )
     for path, value in ((args.ledger_output, ledger), (args.manifest_output, manifest)):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(encoded(value))

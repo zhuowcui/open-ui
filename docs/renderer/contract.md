@@ -105,14 +105,17 @@ its path explicitly using `--pixel-compare`; a recent debug build does not
 refresh the release executable. Matrix reports record the executable SHA-256.
 The optional historical byte replay uses its own explicitly selected
 executable and never substitutes for Chromium qualification.
-`expanded-v1.json` preserves the prior 200 AST-lowered admissions. A fresh
-four-profile run found 197 still exact and three different at one profile
-each. The [requalification ledger](generated/expanded-requalification-v1.json)
-records those pixels; `expanded-v2.json` retains only the 197 exact additions
-without changing the original 5,731 IDs or rewriting the prior manifest.
-This v2 selection is diagnostic until it is admitted by a future contract;
-neither the 36 originally pending cases nor the three demotions count as
-current exact coverage.
+`expanded-v1.json` preserves the prior 200 AST-lowered admissions. The clean
+complete expanded matrix at `1b652919` contains 21,966/23,724 exact
+comparisons, 1,758 differences, and zero errors. Of the 200 additions, 197
+are exact at all four profiles and three differ at one profile each. Their
+statuses and all 800 Open UI and Chromium decoded hashes match the prior
+expanded run. The [v2 requalification ledger](generated/expanded-requalification-v2.json)
+records this result; `expanded-v3.json` retains only the 197 exact additions.
+The prior [v1 ledger](generated/expanded-requalification-v1.json) and
+`expanded-v2.json` manifest remain unchanged. This v3 selection is diagnostic
+until a new contract admits it; neither the 36 originally pending cases nor
+the three demotions count as current exact coverage.
 Non-exact runs emit a v2 residual ledger whose pixel bounds, connected regions,
 channel deltas, scale behavior, reviewed root cause, owner, and minimized
 reproducer are all explicit. Test names and fixture keywords never select an

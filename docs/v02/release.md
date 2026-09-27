@@ -11,7 +11,7 @@ claimed by source code alone.
 | Four-profile renderer matrix | 21,169/22,924 exact, 1,755 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v11.json) | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v12.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Prior v1 admitted 200 test fixtures; fresh run retains 197 exact additions and [demotes three](../renderer/generated/expanded-requalification-v1.json). None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
+| Expanded native final-state fixtures | Clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v2.json); 21,966/23,724 total comparisons exact, zero errors. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36313866551): locked headless and Linux checks passed at the prior pushed checkpoint | pass |

@@ -13,6 +13,7 @@ remain open.
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
 | Fresh four-profile Chromium census | 21,169/22,924 exact, 1,755 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
+| Expanded native final-state additions | 197/200 exact at all four profiles; three demoted |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
