@@ -772,6 +772,70 @@ impl Engine {
             .collect())
     }
 
+    /// Duplicate an authored node and its descendants as a detached tree.
+    /// Runtime focus, scroll position, animations, and generated pseudo nodes
+    /// belong to the original presentation and are not copied.
+    pub fn clone_subtree(&mut self, source: NodeHandle) -> Result<NodeHandle, EngineError> {
+        let source_node = self.resolve(source)?;
+        if self.document.node(source_node).pseudo_kind.is_some() {
+            return Err(EngineError::InvalidInput("cannot clone a generated node"));
+        }
+        let mut pending = vec![(source, None)];
+        let mut root = None;
+        let mut clones = HashMap::new();
+        while let Some((original, parent)) = pending.pop() {
+            let node = self.resolve(original)?;
+            let mut data = self.document.node(node).clone();
+            if data.pseudo_kind.is_some() {
+                continue;
+            }
+            let children = self.children(original)?;
+            let authored = self.slots[original.index as usize].authored.clone();
+            let control = self.controls.get(&original.index).cloned();
+            let semantics = self.semantics.get(&original.index).cloned();
+            let duplicate = self.create_element(data.tag)?;
+            clones.insert(original, duplicate);
+            let duplicate_node = self.resolve(duplicate)?;
+            data.parent = NodeId::NONE;
+            data.first_child = NodeId::NONE;
+            data.last_child = NodeId::NONE;
+            data.next_sibling = NodeId::NONE;
+            data.prev_sibling = NodeId::NONE;
+            data.pseudo_origin = NodeId::NONE;
+            data.scroll_left = 0.0;
+            data.scroll_top = 0.0;
+            data.attributes.remove("data-oui-focused");
+            data.attributes.remove("data-oui-composition-start");
+            data.attributes.remove("data-oui-composition-end");
+            *self.document.node_mut(duplicate_node) = data;
+            self.slots[duplicate.index as usize].authored = authored;
+            if let Some(mut control) = control {
+                control.composition = None;
+                self.controls.insert(duplicate.index, control);
+            }
+            if let Some(semantics) = semantics {
+                self.semantics.insert(duplicate.index, semantics);
+            }
+            if let Some(parent) = parent {
+                self.append_child(parent, duplicate)?;
+            } else {
+                root = Some(duplicate);
+            }
+            pending.extend(
+                children
+                    .into_iter()
+                    .rev()
+                    .map(|child| (child, Some(duplicate))),
+            );
+        }
+        for duplicate in clones.values() {
+            if let Some(semantics) = self.semantics.get_mut(&duplicate.index) {
+                semantics.remap_cloned_relations(&clones);
+            }
+        }
+        Ok(root.expect("validated source produces a root clone"))
+    }
+
     /// Find the first attached element with this ID in document order.
     pub fn element_by_id(&self, id: &str) -> Option<NodeHandle> {
         let mut stack = vec![self.document.root()];

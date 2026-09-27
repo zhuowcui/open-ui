@@ -79,6 +79,17 @@ impl Element {
             .with_engine_mut(|engine| engine.append_or_move_child(self.handle, child.handle))
     }
 
+    /// Copy this element and its authored descendants into a detached tree.
+    /// The returned tree can be attached with [`Self::append_child`] or
+    /// [`Self::insert_before`]. Event listeners and running animations stay on
+    /// the original elements.
+    pub fn clone_subtree(&self) -> Result<Element, Error> {
+        let handle = self
+            .document
+            .with_engine_mut(|engine| engine.clone_subtree(self.handle))?;
+        Ok(Self::from_handle(self.document.clone(), handle))
+    }
+
     pub fn insert_before(&self, child: &Element, before: &Element) -> Result<(), Error> {
         if !Rc::ptr_eq(&self.document.inner, &child.document.inner)
             || !Rc::ptr_eq(&self.document.inner, &before.document.inner)
@@ -738,6 +749,74 @@ mod tests {
 
         let foreign = Element::create(&b, "div").unwrap();
         assert!(parent.append_child(&foreign).is_err());
+    }
+
+    #[test]
+    fn cloned_subtree_keeps_native_content_but_has_independent_handles() {
+        let document = Document::new(100, 100).unwrap();
+        let original = Element::create(&document, "div").unwrap();
+        original.set_id("original").unwrap();
+        original
+            .set_property(
+                StyleProperty::Width,
+                openui_style::LengthValue::px(42.0).into(),
+            )
+            .unwrap();
+        let input = Element::create(&document, "input").unwrap();
+        input.set_attribute("type", "text").unwrap();
+        input.set_control_value("edited").unwrap();
+        original.append_child(&input).unwrap();
+        document.body().append_child(&original).unwrap();
+
+        let clone = original.clone_subtree().unwrap();
+        assert!(clone.parent().unwrap().is_none());
+        assert_eq!(
+            clone.get_attribute("id").unwrap().as_deref(),
+            Some("original")
+        );
+        let cloned_input = clone.first_child().unwrap().unwrap();
+        assert_eq!(
+            cloned_input.control_value().unwrap().as_deref(),
+            Some("edited")
+        );
+        assert_eq!(
+            document
+                .with_engine(|engine| engine.computed_style(clone.handle).unwrap().width)
+                .unwrap(),
+            document
+                .with_engine(|engine| engine.computed_style(original.handle).unwrap().width)
+                .unwrap()
+        );
+
+        cloned_input.set_control_value("copy").unwrap();
+        clone
+            .set_property(
+                StyleProperty::Width,
+                openui_style::LengthValue::px(24.0).into(),
+            )
+            .unwrap();
+        clone.set_id("copy").unwrap();
+        document.body().append_child(&clone).unwrap();
+        assert_eq!(input.control_value().unwrap().as_deref(), Some("edited"));
+        assert_ne!(
+            document
+                .with_engine(|engine| engine.computed_style(clone.handle).unwrap().width)
+                .unwrap(),
+            document
+                .with_engine(|engine| engine.computed_style(original.handle).unwrap().width)
+                .unwrap()
+        );
+        assert_eq!(
+            original.get_attribute("id").unwrap().as_deref(),
+            Some("original")
+        );
+        assert!(document.element_by_id("copy").unwrap().is_some());
+        original.remove().unwrap();
+        assert!(original.clone_subtree().is_err());
+        assert_eq!(
+            cloned_input.control_value().unwrap().as_deref(),
+            Some("copy")
+        );
     }
 
     #[test]

@@ -27,7 +27,7 @@ Browser-style effects are provided by native operations where v0.2 needs them:
 
 | Application task | Public Rust API |
 |---|---|
-| Create, find, move, or remove elements | `Element::create`, `Document::element_by_id`, `append_child`, `insert_before`, `remove` |
+| Create, find, clone, move, or remove elements | `Element::create`, `Document::element_by_id`, `clone_subtree`, `append_child`, `insert_before`, `remove` |
 | Change text, attributes, or typed style | `set_text`, `set_attribute`, `set_property` and generated typed setters |
 | Handle input or activate an element | `Element::on`, `on_capture`, `click`; Rust callbacks in `view!` |
 | Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `bounding_rect`; `Document::hit_test` |

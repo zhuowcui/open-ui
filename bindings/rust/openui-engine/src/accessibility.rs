@@ -54,6 +54,23 @@ pub(crate) struct SemanticProperties {
     details: Vec<NodeHandle>,
 }
 
+impl SemanticProperties {
+    pub(crate) fn remap_cloned_relations(&mut self, clones: &HashMap<NodeHandle, NodeHandle>) {
+        for targets in [
+            &mut self.labelled_by,
+            &mut self.described_by,
+            &mut self.controls,
+            &mut self.details,
+        ] {
+            for target in targets {
+                if let Some(clone) = clones.get(target) {
+                    *target = *clone;
+                }
+            }
+        }
+    }
+}
+
 impl Engine {
     pub fn accessibility_node_id(&self, handle: NodeHandle) -> Result<NodeId, EngineError> {
         self.resolve(handle)?;
@@ -834,6 +851,27 @@ mod tests {
         assert_eq!(node.label(), Some("Ship"));
         assert!(node.bounds().is_some());
         assert!(node.supports_action(Action::Click));
+    }
+
+    #[test]
+    fn cloned_subtree_relations_target_cloned_descendants() {
+        let mut engine =
+            Engine::new(crate::ViewportMetrics::from_logical_size(200.0, 100.0, 1.0).unwrap())
+                .unwrap();
+        let group = engine.create_element(ElementTag::Div).unwrap();
+        let label = engine.create_element(ElementTag::Span).unwrap();
+        engine.append_child(group, label).unwrap();
+        engine
+            .set_accessibility_relation(group, AccessibilityRelation::LabelledBy, &[label])
+            .unwrap();
+        let cloned_group = engine.clone_subtree(group).unwrap();
+        let cloned_label = engine.children(cloned_group).unwrap()[0];
+        engine.append_child(engine.root(), cloned_group).unwrap();
+        let snapshot = engine.accessibility_snapshot().unwrap();
+        let cloned_id = engine.accessibility_node_id(cloned_group).unwrap();
+        let label_id = engine.accessibility_node_id(cloned_label).unwrap();
+        let (_, node) = snapshot.iter().find(|(id, _)| *id == cloned_id).unwrap();
+        assert_eq!(node.labelled_by(), &[label_id]);
     }
 
     #[test]
