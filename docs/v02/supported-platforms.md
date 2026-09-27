@@ -34,10 +34,12 @@ Browser-style effects are provided by native operations where v0.2 needs them:
 | Update form controls or details | `set_control_value`, `set_selection`, `set_checked`, `set_open` |
 
 These methods operate on the same retained document as rendering and native
-input. A browser DOM or Web API surface is not promised. Every element
-interaction needed by a consuming application must be available through a
-public native Rust method backed by the shared engine. An internal Engine
-operation or test-only fixture is not sufficient application API coverage.
+input. Open UI does not promise browser-compatible names or the entire Web API
+surface. Every element interaction needed by a consuming application must be
+available through a public native Rust method backed by the shared engine.
+That includes browser-like operations on elements when applications need their
+behavior. An internal Engine operation or test-only fixture is not sufficient
+application API coverage.
 For example, the effects of looking up an element, activating it, focusing it,
 scrolling it, and changing an input value are available through
 `Document::element_by_id`, `Element::click`, `focus`, `scroll_to`, and
@@ -46,8 +48,11 @@ public Rust API cannot perform it, that is a native API gap to implement; it
 does not require JavaScript.
 
 When a browser test uses a DOM or JavaScript call to reach a visual state,
-we assess the state as a rendering case. If the same interaction is needed by
-an application, we expose its behavior as a native Rust operation.
+we assess that final state as a rendering case. Separately, we review each
+element operation used to reach it: if a consuming application needs the
+behavior, the public Rust API must provide it and exercise the same retained
+document and event path. Pixel equality from a test-only fixture does not
+close an application API gap.
 
 ## No JavaScript runtime
 
@@ -55,16 +60,18 @@ Open UI does not run application or test JavaScript and does not provide a
 JavaScript engine, `eval`, script bindings, or a plan to add them. Chromium is
 the separate test oracle. Offline qualification tooling may read Chromium's
 WPT scripts as source data to identify a deterministic final visual state;
-Open UI constructs that state with native Rust operations. This does not make
-the script or its browser APIs part of the framework.
+Open UI constructs that state with native Rust operations. The script is input
+to offline qualification tooling only; no script is shipped to or executed by
+Open UI. Needed element behaviors become native Rust APIs, not script bindings.
 
 ## Deferred
 
 The following are not v0.2 defects or compatibility promises: macOS, Windows,
-Android, iOS, Vulkan, Metal, Direct3D, navigation, browser DOM
-compatibility, URL fetching, HTML loading, runtime CSS parsing, file/date/color
-picker dialogs, media playback, interactive embedded documents, a visual
-inspector, and a general plugin ecosystem.
+Android, iOS, Vulkan, Metal, Direct3D, navigation, browser-compatible DOM
+names and full Web API coverage, URL fetching, HTML loading, runtime CSS
+parsing, file/date/color picker dialogs, media playback, interactive embedded
+documents, a visual inspector, and a general plugin ecosystem. Needed native
+element operations remain part of the public Rust API contract above.
 
 The frozen WPT inventory contains 1,912 test files with JavaScript in their
 Chromium source and 30 nonvisual/crash-harness rows. Test tooling may read a

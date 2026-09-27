@@ -6,8 +6,10 @@ navigation, networking, iframe browsing contexts, storage, and media playback
 are not part of the renderer contract.
 Application interaction is implemented through the public native Rust API,
 including retained `Document` and `Element` methods and Rust callbacks. A
-test fixture that reaches a state through native Engine operations is evidence
-about rendering that state, not evidence of JavaScript or browser API support.
+test fixture that reaches a state through native Engine operations establishes
+rendering evidence for that state. Each element behavior needed by a consuming
+application also requires a public Rust operation over the same engine; fixture
+lowering alone does not complete application API coverage.
 
 Static media presentation may consume a generated first frame. Those pixels
 are decoded ahead of rendering by the Chromium-matched codec revision, bound
@@ -47,7 +49,8 @@ those scripts into an ordered mutation IR in `javascript-mutation-audit-v2.json`
 Open UI does not execute that JavaScript. Native Rust test fixtures reproduce
 only deterministic final visual states; a fixture is admitted only when its
 Engine operations are exact against Chromium across all four profiles. A
-script's behavioral or nonvisual outcome is outside pixel admission. Every
+script's behavioral or nonvisual outcome is outside **pixel** admission, but
+an application-needed interaction remains a native API obligation. Every
 rejected case carries an AST-derived reason; porter syntax is never a final
 disposition. Product interactions must be available through the public
 `openui` Rust API; test-only Engine lowering does not establish that coverage.
@@ -71,6 +74,14 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
+At clean checkpoint `e942aebc`, the CPU runner produced 640/640 exact focused
+comparisons and 960/960 exact primitive comparisons. The
+[v13 raster index](generated/focused-primitive-raster-v13.json) validates all
+40 profiles in each suite with zero errors. All 1,600 Open UI decoded hashes,
+Chromium oracle identities, and Chromium decoded hashes match the preceding
+clean v12 raster run. The
+[column start clip investigation](column-start-clip-investigation.md) records
+the shared fragmentainer repair and rejected broad diagnostic.
 At clean checkpoint `dad5c9e8`, the CPU runner produced 640/640 exact focused
 comparisons and 960/960 exact primitive comparisons. The
 [v12 raster index](generated/focused-primitive-raster-v12.json) validates all
@@ -129,15 +140,16 @@ and common source/backend identities before emitting the versioned
 `generated/four-profile-census-v1.json` evidence index. Its default mode fails
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
-without rewriting it. The fresh
-[v11 diagnostic index](generated/four-profile-census-v11.json), with its clean
-`dad5c9e8` source identity recorded inside the file, contains 21,169 exact,
-1,755 different, and zero errored comparisons across the four required
-profiles, with 968 residual test IDs still unowned. Compared with the
-[v10 index](generated/four-profile-census-v10.json), only the 1280×720@1.25
-rounded content-border image changed, becoming exact. No previously exact
-comparison regressed, and all 22,924 Chromium oracle identities and decoded
-pixel hashes stayed unchanged. The intermediate
+without rewriting it. The current
+[v12 diagnostic index](generated/four-profile-census-v12.json), with clean
+`e942aebc` source identity, contains 21,179 exact, 1,745 different, and zero
+errored comparisons across the four required profiles; 968 residual test IDs
+remain unowned. Compared with the
+[v11 index](generated/four-profile-census-v11.json), 24 Open UI decoded images
+changed across ten multicolumn test IDs: ten comparisons became exact, 14
+remain different, and none regressed from exact. All 22,924 Chromium oracle
+identities and decoded hashes stayed unchanged. The v11 index records the
+earlier 21,169 exact and 1,755 different comparisons. The intermediate
 [v9 index](generated/four-profile-census-v9.json) records a paint checkpoint
 with five exact-to-different regressions; v10 repaired them. Earlier indices
 remain historical evidence. None is a qualification result while residuals

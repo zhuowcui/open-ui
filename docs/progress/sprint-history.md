@@ -1,5 +1,11 @@
 # Open UI — Sprint Progress Record
 
+This is a historical record. References below to JavaScript or
+`needs_javascript` describe scripts in Chromium test sources and past test
+classification. Open UI executes no JavaScript. Applications use public native
+Rust APIs for element interaction; the current contract is in
+[supported platforms](../v02/supported-platforms.md#native-interaction-api).
+
 ## Sprint Overview
 
 | Sprint | Title | Tests | Review Rounds | Status |

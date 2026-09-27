@@ -18,8 +18,10 @@ experiment exists in the repository.
   cascade exposed as application APIs.
 - JavaScript execution or script bindings inside documents are outside the
   product design, including future versions. Application behavior uses public
-  native Rust methods and Rust event callbacks. WebAssembly execution inside
-  documents is also unsupported.
+  native Rust methods and Rust event callbacks. Browser-like element behavior
+  needed by an application must be implemented as a native Rust API, even when
+  Chromium tests express that behavior with a script. WebAssembly execution
+  inside documents is also unsupported.
 - HTTP, URL fetching, cookies, browser navigation, storage, service workers,
   and developer tools.
 - Embedded interactive documents, iframes, and media playback.
@@ -45,8 +47,8 @@ These are implementation gaps, not accepted final-v0.2 omissions:
 
 - direct Skia Ganesh raster builds behind an explicit selection but remains
   unqualified; OpenGL presentation currently uploads the CPU Skia frame;
-- the current four-profile Chromium census and primitive matrix do not meet
-  their exact gates;
+- the current four-profile Chromium census does not meet its exact gate; the
+  focused and primitive 40-profile CPU matrices are exact;
 - retained per-node compositor layers and compositor-owned immutable animation
   curves are incomplete;
 - the strict 100 promoted animations while the UI thread is blocked gate has

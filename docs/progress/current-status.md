@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,169/22,924 exact, 1,755 different, 0 errors |
+| Fresh four-profile Chromium census | 21,179/22,924 exact, 1,745 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles; three demoted |
 | Full inventory | 7,673 |
@@ -25,11 +25,14 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v11.json)
-at `dad5c9e8` made one more comparison exact than v10, with no previously
-exact comparison regressing. Only the 1280×720@1.25 content-box rounded-border
-Open UI image changed among all 22,924 comparisons; every Chromium decoded
-pixel hash and oracle identity remained unchanged. The census still fails
+The [latest complete clean census](../renderer/generated/four-profile-census-v12.json)
+at `e942aebc` made ten more comparisons exact than v11, with no previously
+exact comparison regressing. A shared multicolumn start clip now keeps
+subpixel continuations inside the column while preserving real overflow.
+Only 24 Open UI images changed among all 22,924 comparisons; every Chromium
+decoded pixel hash and oracle identity remained unchanged. The clean
+[v13 raster index](../renderer/generated/focused-primitive-raster-v13.json)
+confirms both 40-profile matrices stayed exact. The census still fails
 exactness.
 
 The historical baseline records Chromium identity, viewport, device scale,

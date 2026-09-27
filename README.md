@@ -18,8 +18,10 @@ is retained only as the frozen reference used to prove renderer compatibility.
 Rust applications handle interaction in native Rust through `openui::Document`,
 `openui::Element`, signals, and Rust event callbacks. Document lookup by ID,
 element mutation, focus, scrolling, controls, and event handling use public
-Rust methods. Operations that need a browser-like effect on an element are
-exposed as native Rust methods, not as JavaScript or browser API bindings. See the
+Rust methods. When an application needs an operation analogous to a browser
+element API, Open UI must expose that behavior through a public native Rust
+method on the retained document or element. The application never runs
+JavaScript. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status
@@ -28,8 +30,8 @@ The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
-- a clean four-profile Chromium census with 21,169 of 22,924 comparisons
-  exact, 1,755 different, and zero render errors;
+- a clean four-profile Chromium census with 21,179 of 22,924 comparisons
+  exact, 1,745 different, and zero render errors;
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
   comparisons exact;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
@@ -44,7 +46,7 @@ The current v0.2 release candidate has:
 
 Chromium is the sole pixel target. The archived Open UI bytes disagree with
 Chromium for some fixtures, which is why replaying old screenshots cannot be a
-release gate. The four-profile Chromium census still has 1,755 differences,
+release gate. The four-profile Chromium census still has 1,745 differences,
 so this repository is not yet declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia
 GPU qualification, retained per-node layers, compositor-owned animation

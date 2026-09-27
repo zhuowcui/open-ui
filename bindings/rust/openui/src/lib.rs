@@ -2,8 +2,9 @@
 //!
 //! Safe, direct Rust framework over the pure-Rust Open UI retained engine.
 //! Application interaction uses Rust callbacks and native [`Document`] and
-//! [`Element`] methods. Open UI does not execute JavaScript or expose browser
-//! script bindings.
+//! [`Element`] methods. Browser-like element behavior needed by applications
+//! belongs in this public native Rust API. Open UI does not execute JavaScript
+//! or expose browser script bindings.
 //!
 //! ```no_run
 //! use openui::prelude::*;
@@ -41,12 +42,12 @@
 //! | [`dispose_scope`] | Tear down a scope and its children |
 //! | [`on_cleanup`] | Register a cleanup callback in the current scope |
 //!
-//! ## DOM wrappers
+//! ## Native document and element handles
 //!
 //! | Type | Purpose |
 //! |------|---------|
 //! | [`Document`] | Native retained document and rendering context |
-//! | [`Element`] | A node in the DOM tree |
+//! | [`Element`] | A node in the retained document tree |
 //!
 //! ## View system
 //!
