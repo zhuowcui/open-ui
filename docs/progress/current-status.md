@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,185/22,924 exact, 1,739 different, 0 errors |
+| Fresh four-profile Chromium census | 21,207/22,924 exact, 1,717 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
@@ -25,28 +25,27 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v14.json)
-at `2dce665c` made four more comparisons exact than v13, with no previously
-exact comparison regressing. Opaque-background culling now follows an
-anonymous line box while retaining the background inside multicolumn
-fragmentainers. Both remaining fractional profiles of
-`negative-margins-001` are exact; `flex-grow-006` and
-`background-color-border-box` each gained one exact profile. A fifth changed
-image, `background-clip-color` at 1.25×, remains different but fell from 225
-to 150 mismatched pixels. All 22,924 Chromium decoded hashes stayed fixed.
-The clean [v15 raster index](../renderer/generated/focused-primitive-raster-v15.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v15.json)
+at `8ca66ffd` made 22 more comparisons exact than v14, with no previously
+exact comparison regressing. Square padding-box and content-box color
+backgrounds now fill their outer box through a hard layout-space clip, matching
+Chromium's paint order. The `background-clip-color` and margin-trim residuals
+became exact at 1.25×. Twenty-eight Open UI images changed; 22 became exact,
+while six still differ with smaller mismatch regions. All 22,924 Chromium
+decoded hashes stayed fixed. The clean
+[v16 raster index](../renderer/generated/focused-primitive-raster-v16.json)
 confirms both 40-profile matrices stayed exact with all 1,600 Open UI and
-Chromium decoded hashes unchanged. The census still fails exactness, with 965
-unowned residual test IDs. The [investigation](../renderer/flex-negative-margin-investigation.md)
+Chromium decoded hashes unchanged. The census still fails exactness, with 949
+unowned residual test IDs. The [background-clip investigation](../renderer/background-clip-hard-clip-investigation.md)
 records the cause, rejected diagnostic, and clean repair.
 
-The clean [expanded v5 requalification](../renderer/generated/expanded-requalification-v5.json)
-at `2dce665c` measured 21,982/23,724 exact comparisons, 1,742 different,
+The clean [expanded v6 requalification](../renderer/generated/expanded-requalification-v6.json)
+at `8ca66ffd` measured 22,004/23,724 exact comparisons, 1,720 different,
 and zero errors. All 200 native final-state additions retained their prior
 four-profile statuses and Open UI/Chromium decoded hashes: 197 remain exact
-at all four profiles and three remain demoted. The four new exact comparisons
+at all four profiles and three remain demoted. The 22 new exact comparisons
 belong to the original inventory. The
-[v6 diagnostic selection](../../tools/qualification/manifests/expanded-v6.json)
+[v7 diagnostic selection](../../tools/qualification/manifests/expanded-v7.json)
 retains only the 197 exact additions; it does not alter the original manifest.
 
 The historical baseline records Chromium identity, viewport, device scale,
@@ -91,7 +90,7 @@ load it.
   it reached 408/640 focused and 624/960 primitive exact, below CPU Skia's
   640/640 and 960/960. It remains unpromoted; OpenGL presentation still uploads
   a CPU-rasterized frame.
-- The four-profile Chromium census fails exactness; 965 residual test IDs
+- The four-profile Chromium census fails exactness; 949 residual test IDs
   have no reviewed owner. Both 40-profile CPU raster matrices are exact.
 - The C ABI covers the retained engine, headless renderer, and an owned full
   accessibility-tree snapshot, but does not yet export the owned Linux event loop.

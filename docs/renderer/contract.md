@@ -75,6 +75,14 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
 
+At clean checkpoint `8ca66ffd`, the CPU runner produced 640/640 exact focused
+comparisons and 960/960 exact primitive comparisons. The
+[v16 raster index](generated/focused-primitive-raster-v16.json) validates all
+40 profiles in each suite with zero errors. All 1,600 Open UI and Chromium
+decoded hashes match the preceding clean v15 raster run. The
+[background-clip investigation](background-clip-hard-clip-investigation.md)
+records the square inset-background paint repair.
+
 At clean checkpoint `2dce665c`, the CPU runner produced 640/640 exact focused
 comparisons and 960/960 exact primitive comparisons. The
 [v15 raster index](generated/focused-primitive-raster-v15.json) validates all
@@ -153,6 +161,16 @@ remain unchanged. The v4 selection is diagnostic until a new contract admits
 it; neither the 36 originally pending cases nor the three demotions count as
 current exact coverage.
 
+The clean expanded matrix at `8ca66ffd` contains 22,004/23,724 exact
+comparisons, 1,720 differences, and zero errors. Its 22 gains are in the
+original inventory. All 800 Open UI and Chromium decoded hashes and statuses
+for the 200 additions match the prior expanded run, and every Chromium oracle
+identity remains fixed. The
+[v6 requalification ledger](generated/expanded-requalification-v6.json)
+records this result; [expanded-v7.json](../../tools/qualification/manifests/expanded-v7.json)
+again retains only the 197 exact additions as a diagnostic selection. The
+original manifest and 36 pending candidates remain unchanged.
+
 The clean expanded matrix at `2dce665c` contains 21,982/23,724 exact
 comparisons, 1,742 differences, and zero errors. Its four gains are in the
 original inventory. All 800 Open UI and Chromium decoded hashes and statuses
@@ -187,6 +205,14 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
+[v15 diagnostic index](generated/four-profile-census-v15.json), with clean
+`8ca66ffd` source identity, contains 21,207 exact, 1,717 different, and zero
+errored comparisons across the four required profiles; 949 residual test IDs
+remain unowned. Eight complete disjoint shards share the same source, runner,
+backend, and oracle identities. Compared with v14, 28 Open UI images changed:
+22 comparisons became exact, six remaining differences shrank, and none
+regressed. All 22,924 Chromium oracle identities and decoded hashes stayed
+unchanged. The prior
 [v14 diagnostic index](generated/four-profile-census-v14.json), with clean
 `2dce665c` source identity, contains 21,185 exact, 1,739 different, and zero
 errored comparisons across the four required profiles; 965 residual test IDs
