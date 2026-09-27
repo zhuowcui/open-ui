@@ -4,14 +4,15 @@
 
 #include "openui.h"
 
-#define CHECK(call) do { \
-  OuiStatus status = (call); \
-  if (status != OUI_OK) { \
-    fprintf(stderr, "%s failed: %d\n", #call, (int)status); \
-    failed = 1; \
-    goto cleanup; \
-  } \
-} while (0)
+#define CHECK(call)                                           \
+  do {                                                        \
+    OuiStatus status = (call);                                \
+    if (status != OUI_OK) {                                   \
+      fprintf(stderr, "%s failed: %d\n", #call, (int)status); \
+      failed = 1;                                             \
+      goto cleanup;                                           \
+    }                                                         \
+  } while (0)
 
 static OuiUtf8 text(const char* value) {
   OuiUtf8 result = {(const uint8_t*)value, strlen(value)};
@@ -40,8 +41,8 @@ int main(void) {
   CHECK(oui_element_get_accessibility_id(button, &button_id));
   CHECK(oui_document_accessibility_snapshot(document, NULL, &first));
 
-  OuiAccessibilitySnapshotInfo snapshot_info = {
-      .struct_size = sizeof(snapshot_info), .abi_version = OUI_ABI_VERSION};
+  OuiAccessibilitySnapshotInfo snapshot_info = {.struct_size = sizeof(snapshot_info),
+                                                .abi_version = OUI_ABI_VERSION};
   CHECK(oui_accessibility_snapshot_get_info(first, &snapshot_info));
   if (!snapshot_info.full_tree || snapshot_info.node_count < 2 ||
       snapshot_info.changed_count != snapshot_info.node_count) {
@@ -50,8 +51,7 @@ int main(void) {
   }
   int found_button = 0;
   for (size_t index = 0; index < snapshot_info.node_count; ++index) {
-    OuiAccessibilityNodeInfo node = {
-        .struct_size = sizeof(node), .abi_version = OUI_ABI_VERSION};
+    OuiAccessibilityNodeInfo node = {.struct_size = sizeof(node), .abi_version = OUI_ABI_VERSION};
     CHECK(oui_accessibility_snapshot_get_node(first, index, &node));
     if (node.id == button_id) {
       found_button = node.role == OUI_ACCESSIBILITY_ROLE_BUTTON && node.label_length == 3 &&
@@ -62,8 +62,7 @@ int main(void) {
     failed = 1;
     goto cleanup;
   }
-  OuiAccessibilityNodeState state = {
-      .struct_size = sizeof(state), .abi_version = OUI_ABI_VERSION};
+  OuiAccessibilityNodeState state = {.struct_size = sizeof(state), .abi_version = OUI_ABI_VERSION};
   CHECK(oui_accessibility_snapshot_get_node_state(first, button_id, &state));
   if (state.live != OUI_ACCESSIBILITY_LIVE_POLITE + 1) {
     failed = 1;
@@ -71,8 +70,7 @@ int main(void) {
   }
   uint64_t child_id = 0;
   size_t child_count = 0;
-  CHECK(oui_accessibility_snapshot_copy_ids(first, root_id,
-                                            OUI_ACCESSIBILITY_IDS_CHILDREN,
+  CHECK(oui_accessibility_snapshot_copy_ids(first, root_id, OUI_ACCESSIBILITY_IDS_CHILDREN,
                                             &child_id, 1, &child_count));
   if (child_count != 1 || child_id != button_id) {
     failed = 1;
@@ -80,19 +78,16 @@ int main(void) {
   }
   uint8_t label[3];
   size_t length = 0;
-  CHECK(oui_accessibility_snapshot_copy_text(first, button_id,
-                                             OUI_ACCESSIBILITY_TEXT_LABEL,
-                                             NULL, 0, &length));
+  CHECK(oui_accessibility_snapshot_copy_text(first, button_id, OUI_ACCESSIBILITY_TEXT_LABEL, NULL,
+                                             0, &length));
   if (length != 3 ||
-      oui_accessibility_snapshot_copy_text(first, button_id,
-                                           OUI_ACCESSIBILITY_TEXT_LABEL,
-                                           label, 2, &length) != OUI_ERROR_BUFFER_TOO_SMALL) {
+      oui_accessibility_snapshot_copy_text(first, button_id, OUI_ACCESSIBILITY_TEXT_LABEL, label, 2,
+                                           &length) != OUI_ERROR_BUFFER_TOO_SMALL) {
     failed = 1;
     goto cleanup;
   }
-  CHECK(oui_accessibility_snapshot_copy_text(first, button_id,
-                                             OUI_ACCESSIBILITY_TEXT_LABEL,
-                                             label, sizeof(label), &length));
+  CHECK(oui_accessibility_snapshot_copy_text(first, button_id, OUI_ACCESSIBILITY_TEXT_LABEL, label,
+                                             sizeof(label), &length));
   if (length != 3 || memcmp(label, "Run", 3) != 0) {
     failed = 1;
     goto cleanup;
@@ -130,9 +125,8 @@ int main(void) {
   }
   CHECK(oui_document_destroy(document));
   document = NULL;
-  CHECK(oui_accessibility_snapshot_copy_text(first, button_id,
-                                             OUI_ACCESSIBILITY_TEXT_LABEL,
-                                             label, sizeof(label), &length));
+  CHECK(oui_accessibility_snapshot_copy_text(first, button_id, OUI_ACCESSIBILITY_TEXT_LABEL, label,
+                                             sizeof(label), &length));
   if (length != 3 || memcmp(label, "Run", 3) != 0) {
     failed = 1;
     goto cleanup;
@@ -140,11 +134,17 @@ int main(void) {
   puts("Owned accessibility snapshots and incremental changes: OK");
 
 cleanup:
-  if (third) oui_accessibility_snapshot_destroy(third);
-  if (second) oui_accessibility_snapshot_destroy(second);
-  if (first) oui_accessibility_snapshot_destroy(first);
-  if (button) oui_element_destroy(button);
-  if (root) oui_element_destroy(root);
-  if (document) oui_document_destroy(document);
+  if (third)
+    oui_accessibility_snapshot_destroy(third);
+  if (second)
+    oui_accessibility_snapshot_destroy(second);
+  if (first)
+    oui_accessibility_snapshot_destroy(first);
+  if (button)
+    oui_element_destroy(button);
+  if (root)
+    oui_element_destroy(root);
+  if (document)
+    oui_document_destroy(document);
   return failed;
 }
