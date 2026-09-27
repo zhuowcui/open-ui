@@ -71,17 +71,22 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
-At clean checkpoint `e05963db`, the CPU runner produced 640/640 exact focused
+At clean checkpoint `0d1c7e82`, the CPU runner produced 640/640 exact focused
 comparisons and 908/960 exact primitive comparisons. The 52 primitive
 differences are limited to three IDs; their per-profile bounds, region counts,
 channel deltas, scale behavior, and unreviewed ownership are recorded in the
-[focused and primitive evidence index](generated/focused-primitive-raster-v5.json).
-The primitive gate remains open, and all three residuals are unowned. Compared
-with the [v4 index](generated/focused-primitive-raster-v4.json), all 1,600 Open UI
+[focused and primitive evidence index](generated/focused-primitive-raster-v6.json).
+The primitive gate remains open, and all three residuals are unowned in the
+qualification ledger. The subsequent border investigation identifies one
+missing coverage contribution, but it does not close the full root cause. Compared
+with the [v5 index](generated/focused-primitive-raster-v5.json), all 1,600 Open UI
 decoded pixel hashes and Chromium oracle identities and decoded hashes stayed
 unchanged. The v2 index recorded eight fractional-scale shadow comparisons
 becoming exact; v3 records the same counts before the curved-clip guard. The v1
 index remains historical evidence at 884/960 exact.
+The [rounded border coverage investigation](rounded-border-coverage-investigation.md)
+isolates one of the remaining primitive failures. Its experimental output is
+diagnostic and does not change the gate.
 An explicit Ganesh raster run on Mesa llvmpipe completed the same clean
 40-profile suites. Its [backend comparison](generated/ganesh-raster-comparison-v1.json)
 records 408/640 focused and 624/960 primitive exact, compared with CPU Skia's
@@ -118,11 +123,12 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The fresh
-[v6 diagnostic index](generated/four-profile-census-v6.json), with its clean
+[v7 diagnostic index](generated/four-profile-census-v7.json), with its clean
 source identity recorded inside the file, contains 21,160 exact,
 1,764 different, and zero errored comparisons across the four required
 profiles, with 971 residual test IDs still unowned. Compared with the
-[v5 index](generated/four-profile-census-v5.json), three round-adjusted raster
+[v6 index](generated/four-profile-census-v6.json), all Open UI and Chromium
+decoded pixel hashes stayed unchanged. Compared with the v5 index, three round-adjusted raster
 background comparisons at 1920×1080@1.5 became exact, with no regression and
 no changed Chromium oracle identity or decoded pixel hash across all 22,924
 comparisons. The v3 index recorded two shadow comparisons becoming exact and a
