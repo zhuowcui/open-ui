@@ -71,14 +71,17 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
-At clean checkpoint `2701be5a`, the fresh CPU runner produced 640/640 exact
-focused comparisons and 900/960 exact primitive comparisons. The 60 primitive
+At clean checkpoint `f521ab9c`, the CPU runner produced 640/640 exact focused
+comparisons and 908/960 exact primitive comparisons. The 52 primitive
 differences are limited to three IDs; their per-profile bounds, region counts,
 channel deltas, scale behavior, and unreviewed ownership are recorded in the
-[focused and primitive evidence index](generated/focused-primitive-raster-v2.json).
-The primitive gate remains open, and all three residuals are unowned. The
-previous [v1 index](generated/focused-primitive-raster-v1.json) remains as
-historical evidence at 884/960 exact.
+[focused and primitive evidence index](generated/focused-primitive-raster-v4.json).
+The primitive gate remains open, and all three residuals are unowned. Compared
+with the [v2 index](generated/focused-primitive-raster-v2.json), eight
+fractional-scale shadow comparisons became exact, no case regressed, and every
+Chromium oracle hash was unchanged. The intervening v3 index records the same
+counts before the curved-clip guard; the v1 index remains historical evidence
+at 884/960 exact.
 An explicit Ganesh raster run on Mesa llvmpipe completed the same clean
 40-profile suites. Its [backend comparison](generated/ganesh-raster-comparison-v1.json)
 records 408/640 focused and 624/960 primitive exact, compared with CPU Skia's
@@ -115,14 +118,18 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The fresh
-[v3 diagnostic index](generated/four-profile-census-v3.json), with its clean
-source identity recorded inside the file, contains 21,155 exact,
-1,769 different, and zero errored comparisons across the four required
-profiles, with 972 residual test IDs still unowned. Compared with the
-[v2 index](generated/four-profile-census-v2.json), 44 comparisons became exact,
-none regressed, and every Chromium oracle hash stayed unchanged. The v1 and v2
+[v5 diagnostic index](generated/four-profile-census-v5.json), with its clean
+source identity recorded inside the file, contains 21,157 exact,
+1,767 different, and zero errored comparisons across the four required
+profiles, with 971 residual test IDs still unowned. Compared with the
+[v3 index](generated/four-profile-census-v3.json), two shadow comparisons
+became exact, a third improved from 256 to five differing pixels, no case
+regressed, and every Chromium oracle hash stayed unchanged. The v4 index
+records an earlier checkpoint where partitioned shadow coverage added ten
+one-channel differences under a curved ancestor clip. The v5 checkpoint
+restored that case byte for byte through a general clip-shape guard. Earlier
 indices remain historical evidence. None is a qualification result.
-The repaired cohort was earlier inline text reaching a later block's border:
+The earlier v3 repair was inline text reaching a later block's border:
 that later decoration must paint in the block phase before the earlier text
 ink. The change applies by fragment geometry, while preserving atomic flex,
 grid, mask, and paint-containment groups outside the established text path.
