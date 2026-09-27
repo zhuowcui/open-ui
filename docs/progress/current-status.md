@@ -11,8 +11,8 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,160/22,924 exact, 1,764 different, 0 errors |
-| Focused / primitive 40-profile matrices | 640/640 / 908/960 exact |
+| Fresh four-profile Chromium census | 21,161/22,924 exact, 1,763 different, 0 errors |
+| Focused / primitive 40-profile matrices | 640/640 / 920/960 exact |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
@@ -66,7 +66,7 @@ load it.
   640/640 and 900/960. It remains unpromoted; OpenGL presentation still uploads
   a CPU-rasterized frame.
 - The four-profile Chromium census and primitive matrix fail exactness;
-  971 census residual IDs and three primitive IDs have no reviewed owner.
+  970 census residual IDs and one primitive ID have no reviewed owner.
 - The C ABI covers the retained engine and headless renderer, but does not yet
   export the owned Linux event loop or full platform accessibility tree.
 - Retained per-node layers and compositor-owned animation curves are incomplete,

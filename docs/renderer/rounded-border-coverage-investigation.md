@@ -2,7 +2,7 @@
 
 The CPU primitive test `wpt/css_backgrounds/background-clip-content-box-with-border-radius-002`
 still differs from Chromium in all 40 focused profiles. The clean
-[v6 primitive evidence](generated/focused-primitive-raster-v6.json) records
+[v9 primitive evidence](generated/focused-primitive-raster-v9.json) records
 6,728 differing pixels for this ID. Chromium remains the expected image.
 
 The [reduced fixture](../../tools/qualification/reproducers/rounded-content-border-seam.html)
@@ -34,6 +34,17 @@ the shared corner also overpainted. All 40 profiles remained different.
 Chromium oracle identities and decoded hashes matched the clean run in
 all 40 profiles. The experimental paint change was reverted because it did
 not satisfy the exact gate. These diagnostics do not qualify a renderer build.
+
+Pinned Chromium 147's `BoxBorderPainter::ClipBorderSidePolygonCloseToEdges`
+uses antialiased side clipping and retains shared corner coverage for this
+complex border path. Open UI's current nonrenderable border path uses a hard
+side polygon before subtracting the antialiased inner contour. A read-only
+composition check on the 320×240@1.5 PNG shows why geometry alone is
+insufficient: adding half-covered black at `(142, 80)` moves Open UI's gray
+channel from 127 to 64, while Chromium stores 63. At 1.25 scale, the analogous
+edge moves from 63 to 47, while Chromium stores 48. That check changes no
+renderer or oracle pixels; it identifies the remaining coverage-packing and
+blend-rounding work.
 
 **Candidate owner:** `openui-paint` rounded-border coverage and layer compositing.
 Ownership remains unreviewed in the qualification ledger because this

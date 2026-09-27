@@ -71,27 +71,21 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
-At clean checkpoint `e787becc`, the CPU runner produced 640/640 exact focused
-comparisons and 912/960 exact primitive comparisons. The 48 primitive
-differences are limited to two IDs; their per-profile bounds, region counts,
-channel deltas, scale behavior, and unreviewed ownership are recorded in the
-[focused and primitive evidence index](generated/focused-primitive-raster-v8.json).
-The primitive gate remains open, and both residuals are unowned in the
-qualification ledger. The subsequent border investigation identifies one
-missing coverage contribution, but it does not close the full root cause.
-Compared with the [v7 index](generated/focused-primitive-raster-v7.json),
-the gradient's two remaining fractional-width profiles became exact when
-overflowing paint was clipped at the physical viewport edge. The other 1,598 Open UI
-decoded pixel hashes and all Chromium oracle identities and decoded hashes
-stayed unchanged. The v7 index records two earlier gradient profiles becoming
-exact after the renderer began selecting tiles from the laid-out content
-footprint; the gradient now matches at all 40 profiles. The v5 index recorded
-no pixel changes from v4. The v2
-index recorded eight fractional-scale shadow comparisons
-becoming exact; v3 records the same counts before the curved-clip guard. The v1
-index remains historical evidence at 884/960 exact.
+At clean checkpoint `c5621238`, the CPU runner produced 640/640 exact focused
+comparisons and 920/960 exact primitive comparisons. The 40 primitive
+differences all belong to one rounded-border ID; its per-profile bounds,
+region counts, channel deltas, scale behavior, and unreviewed ownership are
+recorded in the [focused and primitive evidence index](generated/focused-primitive-raster-v9.json).
+The primitive gate remains open. Compared with the
+[v8 index](generated/focused-primitive-raster-v8.json), eight fractional-scale
+shadow comparisons became exact. The other 1,592 Open UI decoded pixel hashes
+and all Chromium oracle identities and decoded hashes stayed unchanged.
+The v8 and v7 indices record four gradient profiles becoming exact after the
+renderer selected tiles from the laid-out content footprint and clipped
+overflowing paint at the physical viewport edge. The gradient now matches at
+all 40 profiles. Earlier indices remain historical evidence.
 The [rounded border coverage investigation](rounded-border-coverage-investigation.md)
-isolates one of the remaining primitive failures. Its experimental output is
+isolates the remaining primitive failure. Its experimental output is
 diagnostic and does not change the gate.
 An explicit Ganesh raster run on Mesa llvmpipe completed the same clean
 40-profile suites. Its [backend comparison](generated/ganesh-raster-comparison-v1.json)
@@ -129,25 +123,16 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The fresh
-[v7 diagnostic index](generated/four-profile-census-v7.json), with its clean
-source identity recorded inside the file, contains 21,160 exact,
-1,764 different, and zero errored comparisons across the four required
-profiles, with 971 residual test IDs still unowned. Compared with the
-[v6 index](generated/four-profile-census-v6.json), all Open UI and Chromium
-decoded pixel hashes stayed unchanged. Compared with the v5 index, three round-adjusted raster
-background comparisons at 1920×1080@1.5 became exact, with no regression and
-no changed Chromium oracle identity or decoded pixel hash across all 22,924
-comparisons. The v3 index recorded two shadow comparisons becoming exact and a
-third improving from 256 to five differing pixels. The v4 index recorded an
-earlier checkpoint where partitioned shadow coverage added ten one-channel
-differences under a curved ancestor clip; v5 restored that case byte for byte
-through a general clip-shape guard. Earlier indices remain historical evidence.
-None is a qualification result.
-The complete four-profile census has not yet been rerun at `e787becc`.
-Those four physical viewports already exceed the untiled-layer limit and
-have integral physical widths, so neither of the two new raster branches
-changes their replay path; a new clean census is still required to establish
-a current-source result.
+[v8 diagnostic index](generated/four-profile-census-v8.json), with its clean
+`c5621238` source identity recorded inside the file, contains 21,161 exact,
+1,763 different, and zero errored comparisons across the four required
+profiles, with 970 residual test IDs still unowned. Compared with the
+[v7 index](generated/four-profile-census-v7.json), only
+`wpt/css_backgrounds/box-shadow-001` at 1280×720@1.25 changed its Open UI
+decoded pixels, becoming exact. No previously exact comparison regressed, and
+all 22,924 Chromium oracle identities and decoded pixel hashes stayed
+unchanged. Earlier indices remain historical evidence. None is a qualification
+result while residuals remain.
 The earlier v3 repair was inline text reaching a later block's border:
 that later decoration must paint in the block phase before the earlier text
 ink. The change applies by fragment geometry, while preserving atomic flex,
