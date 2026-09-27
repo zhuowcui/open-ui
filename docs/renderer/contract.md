@@ -71,17 +71,17 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
-At clean checkpoint `f521ab9c`, the CPU runner produced 640/640 exact focused
+At clean checkpoint `e05963db`, the CPU runner produced 640/640 exact focused
 comparisons and 908/960 exact primitive comparisons. The 52 primitive
 differences are limited to three IDs; their per-profile bounds, region counts,
 channel deltas, scale behavior, and unreviewed ownership are recorded in the
-[focused and primitive evidence index](generated/focused-primitive-raster-v4.json).
+[focused and primitive evidence index](generated/focused-primitive-raster-v5.json).
 The primitive gate remains open, and all three residuals are unowned. Compared
-with the [v2 index](generated/focused-primitive-raster-v2.json), eight
-fractional-scale shadow comparisons became exact, no case regressed, and every
-Chromium oracle hash was unchanged. The intervening v3 index records the same
-counts before the curved-clip guard; the v1 index remains historical evidence
-at 884/960 exact.
+with the [v4 index](generated/focused-primitive-raster-v4.json), all 1,600 Open UI
+decoded pixel hashes and Chromium oracle identities and decoded hashes stayed
+unchanged. The v2 index recorded eight fractional-scale shadow comparisons
+becoming exact; v3 records the same counts before the curved-clip guard. The v1
+index remains historical evidence at 884/960 exact.
 An explicit Ganesh raster run on Mesa llvmpipe completed the same clean
 40-profile suites. Its [backend comparison](generated/ganesh-raster-comparison-v1.json)
 records 408/640 focused and 624/960 primitive exact, compared with CPU Skia's
