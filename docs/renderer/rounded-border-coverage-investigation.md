@@ -1,9 +1,10 @@
 # Rounded border and content-background coverage
 
 The CPU primitive test `wpt/css_backgrounds/background-clip-content-box-with-border-radius-002`
-still differs from Chromium at eight 1.25-scale profiles. The clean
-[v11 primitive evidence](generated/focused-primitive-raster-v11.json) records
-896 differing pixels across those profiles. The prior
+is exact against Chromium at all 40 required profiles in the clean
+[v12 primitive evidence](generated/focused-primitive-raster-v12.json). The
+preceding [v11 evidence](generated/focused-primitive-raster-v11.json) recorded
+896 differing pixels across eight 1.25-scale profiles. The older
 [v9 evidence](generated/focused-primitive-raster-v9.json) recorded 6,728
 differing pixels across all 40 profiles. Chromium remains the expected image.
 
@@ -11,7 +12,7 @@ The [reduced fixture](../../tools/qualification/reproducers/rounded-content-bord
 is a 50 × 50 CSS pixel black content background inside a
 25 pixel solid black border, with `background-clip: content-box` and a 100%
 top-left radius. The sibling `-003` fixture has an exact four-profile result,
-so the failure is specific to how this border and background meet, not a
+so the earlier failure was specific to how this border and background met, not a
 general inability to draw a rounded content clip.
 Captured with the pinned Chromium at 320 × 240 CSS pixels and 1.5 scale,
 the reduced fixture produced the same PNG bytes as the matrix fixture
@@ -100,7 +101,7 @@ from a dirty source tree. A subsequent clean run at `aa2d4d24` confirmed
 the same eight one-level residuals. The clean v11 run at `c691f102`
 reproduced those totals, and all 1,600 Open UI and Chromium decoded image
 hashes and statuses match the prior clean v10 run. The primitive release gate
-remains open.
+remained open at that checkpoint.
 
 The complete clean four-profile census at `b225a827` found 21,166/22,924
 exact comparisons, a net gain of five from the prior census, but it also
@@ -125,14 +126,35 @@ case: it improved from 203 to 112 differing pixels. The v10 census still has
 The three full-suite `background-origin_origin-{border,padding,content}-box_with_radius`
 cases have identical diff signatures within each of the four required
 profiles in the [v8 census](generated/four-profile-census-v8.json). Their
-shared rounded border is therefore a useful neighboring guard for the next
-paint change; the evidence does not assign every pixel in those cases to the
-border path.
+shared rounded border served as a neighboring guard for this paint change;
+their Open UI images remained byte-identical in v11. The evidence does not
+assign every pixel in those cases to the border path.
 
-**Candidate owner:** `openui-paint` rounded-border coverage and layer compositing.
-Ownership remains unreviewed in the qualification ledger because the remaining
-1.25-scale rounding difference has not been closed.
-The next fix must match Chromium's shared content/border edge rounding without
-a fixture-specific pixel correction. It must pass all 40 primitive profiles,
-the exact neighboring fixtures, and the full four-profile census without
-regression before the residual can be closed.
+The remaining v11 seam was 111 edge samples with Open UI gray 47 versus
+Chromium 48, plus one corner sample at 62 versus 63, at each 1.25-scale
+viewport. A pinned Chromium capture with the same content background and a
+transparent border produced gray 64 at the straight content edge. A temporary
+Open UI white-border diagnostic produced gray 63 there, isolating the
+background's edge rounding. These probes changed neither the oracle cache
+nor the checked-in fixture.
+
+Two dirty paint experiments were rejected. A float16 background layer made
+all 40 profiles different. Adding an antialiased content clip before the
+curved clip repaired the long seam but introduced 8–25 curved-corner
+differences per profile; intersecting the contours with Skia PathOps altered
+the curve more broadly. Reversing the clip order preserved the existing
+curved coverage while matching the straight edge: clip the nonrenderable
+rounded corners first, then clip the content rectangle with antialiasing, and
+fill the enclosing background rectangle. This is shared paint geometry, with
+no test-ID branch or output-pixel correction.
+
+At clean checkpoint `dad5c9e8`, the focused and primitive 40-profile suites
+are 640/640 and 960/960 exact. Only the eight formerly failing 1.25-scale
+Open UI images changed among their 1,600 comparisons. The clean
+[v11 full census](generated/four-profile-census-v11.json) is 21,169/22,924
+exact, 1,755 different, and zero errors. Relative to v10, only the
+1280×720@1.25 version of this test changed among all 22,924 Open UI images;
+it became exact. No exact comparison regressed, and all Chromium oracle
+identities and decoded hashes stayed fixed. This primitive residual is
+closed. The remaining full-census residuals require separate root-cause
+review and exact fixes.

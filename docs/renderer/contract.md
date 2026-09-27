@@ -71,17 +71,18 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
-At clean checkpoint `c691f102`, the CPU runner produced 640/640 exact focused
-comparisons and 952/960 exact primitive comparisons. The eight primitive
-differences all belong to one rounded-border ID at 1.25 scale; its per-profile
-bounds, region counts, channel deltas, scale behavior, and unreviewed ownership
-are recorded in the [focused and primitive evidence index](generated/focused-primitive-raster-v11.json).
-The primitive gate remains open. All 1,600 Open UI and Chromium decoded image
-hashes and comparison statuses match the prior clean
-[v10 index](generated/focused-primitive-raster-v10.json). Compared with the
-[v9 index](generated/focused-primitive-raster-v9.json), 32 rounded-border
-comparisons became exact. Only that ID's 40 Open UI decoded pixel hashes
-changed; all Chromium oracle identities and decoded hashes stayed unchanged.
+At clean checkpoint `dad5c9e8`, the CPU runner produced 640/640 exact focused
+comparisons and 960/960 exact primitive comparisons. The
+[v12 raster index](generated/focused-primitive-raster-v12.json) validates all
+40 viewport/scale profiles in each suite with zero errors and zero unowned
+residuals. Compared with the [v11 index](generated/focused-primitive-raster-v11.json),
+the eight 1.25-scale rounded content-border comparisons became exact. Only
+those eight Open UI decoded image hashes changed among the 1,600 comparisons;
+all Chromium oracle identities and decoded hashes stayed unchanged. The
+focused and primitive CPU gates are exact.
+The v11 index records the earlier 952/960 primitive state. Compared with the
+[v9 index](generated/focused-primitive-raster-v9.json), its preceding
+rounded-border change made 32 comparisons exact.
 The v9 index records eight fractional-scale shadow comparisons becoming exact
 without changes to the other 1,592 Open UI decoded pixel hashes.
 The v8 and v7 indices record four gradient profiles becoming exact after the
@@ -89,8 +90,7 @@ renderer selected tiles from the laid-out content footprint and clipped
 overflowing paint at the physical viewport edge. The gradient now matches at
 all 40 profiles. Earlier indices remain historical evidence.
 The [rounded border coverage investigation](rounded-border-coverage-investigation.md)
-isolates the remaining primitive failure and distinguishes the clean v11
-improvement from earlier dirty diagnostics. The primitive gate stays open.
+records the clip-order repair and its earlier diagnostics.
 An explicit Ganesh raster run on Mesa llvmpipe completed the same clean
 40-profile suites. Its [backend comparison](generated/ganesh-raster-comparison-v1.json)
 records 408/640 focused and 624/960 primitive exact, compared with CPU Skia's
@@ -127,17 +127,18 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The fresh
-[v10 diagnostic index](generated/four-profile-census-v10.json), with its clean
-`0e83672b` source identity recorded inside the file, contains 21,168 exact,
-1,756 different, and zero errored comparisons across the four required
-profiles, with 969 residual test IDs still unowned. Compared with the
-[v8 index](generated/four-profile-census-v8.json), seven rounded-border and
-background comparisons became exact. No previously exact comparison regressed,
-and all 22,924 Chromium oracle identities and decoded pixel hashes stayed
-unchanged. The intermediate [v9 index](generated/four-profile-census-v9.json)
-records a paint checkpoint with five exact-to-different regressions; the v10
-checkpoint repairs them. Earlier indices remain historical evidence. None is
-a qualification result while residuals remain.
+[v11 diagnostic index](generated/four-profile-census-v11.json), with its clean
+`dad5c9e8` source identity recorded inside the file, contains 21,169 exact,
+1,755 different, and zero errored comparisons across the four required
+profiles, with 968 residual test IDs still unowned. Compared with the
+[v10 index](generated/four-profile-census-v10.json), only the 1280×720@1.25
+rounded content-border image changed, becoming exact. No previously exact
+comparison regressed, and all 22,924 Chromium oracle identities and decoded
+pixel hashes stayed unchanged. The intermediate
+[v9 index](generated/four-profile-census-v9.json) records a paint checkpoint
+with five exact-to-different regressions; v10 repaired them. Earlier indices
+remain historical evidence. None is a qualification result while residuals
+remain.
 The earlier v3 repair was inline text reaching a later block's border:
 that later decoration must paint in the block phase before the earlier text
 ink. The change applies by fragment geometry, while preserving atomic flex,

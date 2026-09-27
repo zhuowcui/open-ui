@@ -28,9 +28,9 @@ The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
-- a clean four-profile Chromium census with 21,168 of 22,924 comparisons
-  exact, 1,756 different, and zero render errors;
-- clean 40-profile raster matrices with 640/640 focused and 952/960 primitive
+- a clean four-profile Chromium census with 21,169 of 22,924 comparisons
+  exact, 1,755 different, and zero render errors;
+- clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
   comparisons exact;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
 - 37 application scenarios covering retained updates, controls, editing,
@@ -44,7 +44,7 @@ The current v0.2 release candidate has:
 
 Chromium is the sole pixel target. The archived Open UI bytes disagree with
 Chromium for some fixtures, which is why replaying old screenshots cannot be a
-release gate. The four-profile Chromium census still has 1,756 differences,
+release gate. The four-profile Chromium census still has 1,755 differences,
 so this repository is not yet declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia
 GPU qualification, retained per-node layers, compositor-owned animation
