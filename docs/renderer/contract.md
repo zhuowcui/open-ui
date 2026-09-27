@@ -74,6 +74,14 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
+At clean checkpoint `2ff236ce`, the CPU runner produced 640/640 exact focused
+comparisons and 960/960 exact primitive comparisons. The
+[v14 raster index](generated/focused-primitive-raster-v14.json) validates all
+40 profiles in each suite with zero errors. All 1,600 Open UI decoded hashes,
+Chromium oracle identities, and Chromium decoded hashes match the preceding
+clean v13 raster run. The [flex negative-margin investigation](flex-negative-margin-investigation.md)
+records the shared intrinsic-sizing repair and its remaining fractional-scale
+border/background differences.
 At clean checkpoint `e942aebc`, the CPU runner produced 640/640 exact focused
 comparisons and 960/960 exact primitive comparisons. The
 [v13 raster index](generated/focused-primitive-raster-v13.json) validates all
@@ -135,6 +143,15 @@ additions. The prior [v1 ledger](generated/expanded-requalification-v1.json),
 remain unchanged. The v4 selection is diagnostic until a new contract admits
 it; neither the 36 originally pending cases nor the three demotions count as
 current exact coverage.
+The clean expanded matrix at `2ff236ce` contains 21,978/23,724 exact
+comparisons, 1,746 differences, and zero errors. Its two gains are in the
+original flex inventory. All 800 Open UI and Chromium decoded hashes and
+statuses for the 200 additions match the prior expanded run, and every
+Chromium oracle identity remains fixed. The
+[v4 requalification ledger](generated/expanded-requalification-v4.json)
+records this result; [expanded-v5.json](../../tools/qualification/manifests/expanded-v5.json)
+again retains only the 197 exact additions as a diagnostic selection. The
+original manifest and 36 pending candidates remain unchanged.
 Non-exact runs emit a v2 residual ledger whose pixel bounds, connected regions,
 channel deltas, scale behavior, reviewed root cause, owner, and minimized
 reproducer are all explicit. Test names and fixture keywords never select an
@@ -149,6 +166,14 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
+[v13 diagnostic index](generated/four-profile-census-v13.json), with clean
+`2ff236ce` source identity, contains 21,181 exact, 1,743 different, and zero
+errored comparisons across the four required profiles; 968 residual test IDs
+remain unowned. Eight complete disjoint shards share the same source, runner,
+backend, and oracle identities. Compared with v12, only the four Open UI images
+for `negative-margins-001` changed: two comparisons became exact, two retain
+fractional border/background differences, and none regressed. All 22,924
+Chromium oracle identities and decoded hashes stayed unchanged. The prior
 [v12 diagnostic index](generated/four-profile-census-v12.json), with clean
 `e942aebc` source identity, contains 21,179 exact, 1,745 different, and zero
 errored comparisons across the four required profiles; 968 residual test IDs

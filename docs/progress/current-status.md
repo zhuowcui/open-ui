@@ -11,13 +11,13 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,179/22,924 exact, 1,745 different, 0 errors |
+| Fresh four-profile Chromium census | 21,181/22,924 exact, 1,743 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
-| Application conformance scenarios | 37 across 10 domains |
+| Application conformance scenarios | 38 across 10 domains |
 | Frozen / current C exports | 84 / 102 |
 | C examples / C++ consumers | 5 / 1 |
 | Workspace tests | pass |
@@ -25,23 +25,26 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v12.json)
-at `e942aebc` made ten more comparisons exact than v11, with no previously
-exact comparison regressing. A shared multicolumn start clip now keeps
-subpixel continuations inside the column while preserving real overflow.
-Only 24 Open UI images changed among all 22,924 comparisons; every Chromium
-decoded pixel hash and oracle identity remained unchanged. The clean
-[v13 raster index](../renderer/generated/focused-primitive-raster-v13.json)
-confirms both 40-profile matrices stayed exact. The census still fails
-exactness.
+The [latest complete clean census](../renderer/generated/four-profile-census-v13.json)
+at `2ff236ce` made two more comparisons exact than v12, with no previously
+exact comparison regressing. Correct flex intrinsic sizing now preserves a
+negative item margin while keeping max-content at least min-content. Only the
+four profile images for `negative-margins-001` changed; every Chromium decoded
+pixel hash and oracle identity remained unchanged. The clean
+[v14 raster index](../renderer/generated/focused-primitive-raster-v14.json)
+confirms both 40-profile matrices stayed exact. The remaining two fractional
+profiles for that fixture still differ along the border/background coverage.
+The census still fails exactness, with 968 unowned residual test IDs. The
+[investigation](../renderer/flex-negative-margin-investigation.md) records the
+rejected broad diagnostic and the clean repair.
 
-The clean [expanded v3 requalification](../renderer/generated/expanded-requalification-v3.json)
-at `d73077e7` measured 21,976/23,724 exact comparisons, 1,748 different,
+The clean [expanded v4 requalification](../renderer/generated/expanded-requalification-v4.json)
+at `2ff236ce` measured 21,978/23,724 exact comparisons, 1,746 different,
 and zero errors. All 200 native final-state additions retained their prior
 four-profile statuses and Open UI/Chromium decoded hashes: 197 remain exact
-at all four profiles and three remain demoted. The ten new exact comparisons
-belong to the original `css_break` inventory, not the additions. The
-[v4 diagnostic selection](../../tools/qualification/manifests/expanded-v4.json)
+at all four profiles and three remain demoted. The two new exact comparisons
+belong to the original flex inventory, not the additions. The
+[v5 diagnostic selection](../../tools/qualification/manifests/expanded-v5.json)
 retains only the 197 exact additions; it does not alter the original manifest.
 
 The historical baseline records Chromium identity, viewport, device scale,

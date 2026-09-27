@@ -14,8 +14,9 @@ experiment exists in the repository.
 
 ## Browser services
 
-- HTML loading, CSS text parsing, selectors, stylesheet injection, and a web
-  cascade exposed as application APIs.
+- HTML loading, CSS text parsing, CSS selector parsing, stylesheet injection,
+  and a web cascade exposed as application APIs. Native element lookup and
+  traversal remain part of the public Rust interaction contract.
 - JavaScript execution or script bindings inside documents are outside the
   product design, including future versions. Application behavior uses public
   native Rust methods and Rust event callbacks. Browser-like element behavior
