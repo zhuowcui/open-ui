@@ -46,6 +46,37 @@ edge moves from 63 to 47, while Chromium stores 48. That check changes no
 renderer or oracle pixels; it identifies the remaining coverage-packing and
 blend-rounding work.
 
+A second dirty diagnostic replaced the hard side polygon with a round-corner
+path based on Chromium's `ClipBorderSidePolygonCloseToEdges` geometry, while
+keeping Open UI's existing antialiased inner-contour subtraction. It remained
+different in all 40 profiles and increased the aggregate differing pixels
+from 6,728 to 9,392. At `(142, 80)` in the 320×240@1.5 profile, the gray
+channel moved from 127 to 96; Chromium is 63. The two antialiased clips appear
+to multiply coverage in this CPU replay path. This diagnostic does not prove
+that Chromium's clip geometry is wrong or that a different raster backend
+would behave the same way. The code was reverted. A qualifying fix needs to
+match the combined clip and border coverage, including its final channel
+rounding, across the neighboring cases.
+
+Two further dirty diagnostics combined the side polygon and adjusted inner
+contour with Skia PathOps, then rasterized their difference as one
+antialiased path. Applying that to every side made `(142, 80)` exact at
+320×240@1.5 but increased the 40-profile total to 14,104 differing pixels.
+Restricting it to sides with two straight inner corners preserved the curved
+side pixels and reduced that 1.5-scale profile from 243 to 141 differences,
+but worsened the other four scales; the 40-profile total was 7,176. All 40
+profiles remained different, and all Chromium decoded hashes stayed
+unchanged. Both changes were reverted. A single antialiased path can recover
+the missing seam coverage, but it also changes corner coverage and needs a
+shared blend-rounding solution before it can qualify.
+
+The three full-suite `background-origin_origin-{border,padding,content}-box_with_radius`
+cases have identical diff signatures within each of the four required
+profiles in the [v8 census](generated/four-profile-census-v8.json). Their
+shared rounded border is therefore a useful neighboring guard for the next
+paint change; the evidence does not assign every pixel in those cases to the
+border path.
+
 **Candidate owner:** `openui-paint` rounded-border coverage and layer compositing.
 Ownership remains unreviewed in the qualification ledger because this
 investigation does not yet account for every changed pixel. The next fix must
