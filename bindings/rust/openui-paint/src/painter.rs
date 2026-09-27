@@ -15278,6 +15278,28 @@ fn opaque_in_flow_child_covers_inner_border_box(fragment: &Fragment, doc: &Docum
     })
 }
 
+/// A child may cover the local border box but still be moved or clipped in a
+/// fragmentainer. Preserve the parent's background in that context.
+fn borderless_background_can_be_occluded(fragment: &Fragment, doc: &Document) -> bool {
+    if !fragment.is_first_for_node
+        || !fragment.is_last_for_node
+        || fragment.break_token.is_some()
+        || fragment.block_axis_clip_only
+        || fragment.inline_axis_clip_only
+    {
+        return false;
+    }
+    let mut current = fragment.node_id;
+    while !current.is_none() {
+        let node = doc.node(current);
+        if node.style.column_count.is_some() || node.style.column_width.is_some() {
+            return false;
+        }
+        current = node.parent;
+    }
+    true
+}
+
 fn uses_squared_replaced_background_coverage(
     style: &ComputedStyle,
     rect: Rect,
@@ -15654,7 +15676,8 @@ fn paint_box_decoration_background(
         && style.overflow_y == Overflow::Visible
         && (side_specs.iter().all(|(width, border_style, color)| {
             *width > 0.0 && *border_style == BorderStyle::Solid && color.is_opaque()
-        }) || side_specs.iter().all(|(width, _, _)| *width == 0.0))
+        }) || (side_specs.iter().all(|(width, _, _)| *width == 0.0)
+            && borderless_background_can_be_occluded(fragment, doc)))
         && opaque_in_flow_child_covers_inner_border_box(fragment, doc);
     let background_color_is_occluded = opacity_multiplier >= 1.0
         && (opaque_child_occludes_background
@@ -20159,6 +20182,24 @@ mod tests {
 
         parent_fragment.children[0].has_overflow_clip = true;
         assert!(!opaque_in_flow_child_covers_inner_border_box(
+            &parent_fragment,
+            &doc
+        ));
+
+        assert!(borderless_background_can_be_occluded(
+            &parent_fragment,
+            &doc
+        ));
+        parent_fragment.is_first_for_node = false;
+        assert!(!borderless_background_can_be_occluded(
+            &parent_fragment,
+            &doc
+        ));
+        parent_fragment.is_first_for_node = true;
+        let columns = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(columns, |style| style.column_count = Some(2));
+        doc.append_child(columns, parent);
+        assert!(!borderless_background_can_be_occluded(
             &parent_fragment,
             &doc
         ));
