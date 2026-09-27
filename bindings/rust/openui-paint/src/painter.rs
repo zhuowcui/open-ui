@@ -5886,7 +5886,8 @@ fn paint_children_with_stacking_order(
     // content belongs to the same painting phase.
     for (position, &idx) in in_flow.iter().enumerate() {
         let child = &children[idx];
-        if child.kind != FragmentKind::Box
+        if child.node_id.is_none()
+            || child.kind != FragmentKind::Box
             || doc.node(child.node_id).tag == openui_dom::ElementTag::Text
         {
             continue;
