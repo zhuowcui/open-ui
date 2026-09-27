@@ -71,19 +71,22 @@ the five-scale 800×600 sweep plus the eight contract viewports at 1×, and use
 `--suite residual-cross` when that sweep does not isolate the interaction.
 The four-profile complete run is also qualifying only when it is
 complete, decoded-RGBA exact, error-free, and produced from a clean source tree.
-At clean checkpoint `56801b73`, the CPU runner produced 640/640 exact focused
-comparisons and 910/960 exact primitive comparisons. The 50 primitive
-differences are limited to three IDs; their per-profile bounds, region counts,
+At clean checkpoint `e787becc`, the CPU runner produced 640/640 exact focused
+comparisons and 912/960 exact primitive comparisons. The 48 primitive
+differences are limited to two IDs; their per-profile bounds, region counts,
 channel deltas, scale behavior, and unreviewed ownership are recorded in the
-[focused and primitive evidence index](generated/focused-primitive-raster-v7.json).
-The primitive gate remains open, and all three residuals are unowned in the
+[focused and primitive evidence index](generated/focused-primitive-raster-v8.json).
+The primitive gate remains open, and both residuals are unowned in the
 qualification ledger. The subsequent border investigation identifies one
 missing coverage contribution, but it does not close the full root cause.
-Compared with the [v6 index](generated/focused-primitive-raster-v6.json),
-two fractional-scale gradient profiles became exact after the renderer began
-selecting tiles from the laid-out content footprint. The other 1,598 Open UI
+Compared with the [v7 index](generated/focused-primitive-raster-v7.json),
+the gradient's two remaining fractional-width profiles became exact when
+overflowing paint was clipped at the physical viewport edge. The other 1,598 Open UI
 decoded pixel hashes and all Chromium oracle identities and decoded hashes
-stayed unchanged. The v5 index recorded no pixel changes from v4. The v2
+stayed unchanged. The v7 index records two earlier gradient profiles becoming
+exact after the renderer began selecting tiles from the laid-out content
+footprint; the gradient now matches at all 40 profiles. The v5 index recorded
+no pixel changes from v4. The v2
 index recorded eight fractional-scale shadow comparisons
 becoming exact; v3 records the same counts before the curved-clip guard. The v1
 index remains historical evidence at 884/960 exact.
@@ -140,10 +143,11 @@ earlier checkpoint where partitioned shadow coverage added ten one-channel
 differences under a curved ancestor clip; v5 restored that case byte for byte
 through a general clip-shape guard. Earlier indices remain historical evidence.
 None is a qualification result.
-The complete four-profile census has not yet been rerun at `56801b73`.
-Those four physical viewports already exceed the untiled-layer limit, so the
-content-footprint decision does not alter their raster replay path; a new clean
-census is still required to establish a current-source result.
+The complete four-profile census has not yet been rerun at `e787becc`.
+Those four physical viewports already exceed the untiled-layer limit and
+have integral physical widths, so neither of the two new raster branches
+changes their replay path; a new clean census is still required to establish
+a current-source result.
 The earlier v3 repair was inline text reaching a later block's border:
 that later decoration must paint in the block phase before the earlier text
 ink. The change applies by fragment geometry, while preserving atomic flex,
