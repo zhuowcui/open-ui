@@ -1632,6 +1632,11 @@ fn physical_quantized_image_patch_with_color_order(
                 )
             });
             let repeated_fixed_x = wrap_x.then(|| {
+                // A round-adjusted tile at a physical half-pixel origin keeps
+                // the exact 8/16 horizontal tie. Other repeated paths retain
+                // the accumulated scanline phase when a half-texel tie occurs.
+                let round_half_origin = !rebase_repeat_x_across_raster_tiles
+                    && (physical_destination.left.rem_euclid(1.0) - 0.5).abs() <= 1.0e-5;
                 repeated_subrect_sample_fixed_at(
                     min_x,
                     max_x - min_x + 1,
@@ -1639,7 +1644,9 @@ fn physical_quantized_image_patch_with_color_order(
                     physical_destination.width(),
                     physical_left + target_x,
                     rebase_repeat_x_across_raster_tiles,
-                    close_exact_phase_to_predecessor && coverage_bounds.is_some(),
+                    close_exact_phase_to_predecessor
+                        && coverage_bounds.is_some()
+                        && !round_half_origin,
                 )
             });
             let closes_x_to_predecessor = close_exact_phase_to_predecessor
