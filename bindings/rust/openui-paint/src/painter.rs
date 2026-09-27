@@ -15928,7 +15928,12 @@ fn paint_box_decoration_background(
                         bg_rect,
                         &clip_radii,
                     );
-                    canvas.draw_rect(bg_rect, &paint);
+                    // Blink clips the content contour, then fills the enclosing
+                    // background paint rect. Apply the curved contour before
+                    // the straight content edge so their shared AA coverage
+                    // is rounded once at the border/background seam.
+                    canvas.clip_rect(bg_rect, ClipOp::Intersect, true);
+                    canvas.draw_rect(border_box_rect, &paint);
                     canvas.restore();
                 }
             } else {
