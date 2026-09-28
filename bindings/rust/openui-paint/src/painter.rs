@@ -13629,6 +13629,79 @@ fn paint_background_layers(
                 }
             }
         }
+        let single_axis_raster_repeat = (matches!(
+            layer.repeat_x,
+            BackgroundRepeat::Repeat | BackgroundRepeat::Round
+        ) && xs.len() > 1
+            && layer.repeat_y == BackgroundRepeat::NoRepeat)
+            || (matches!(
+                layer.repeat_y,
+                BackgroundRepeat::Repeat | BackgroundRepeat::Round
+            ) && ys.len() > 1
+                && layer.repeat_x == BackgroundRepeat::NoRepeat);
+        let fractional_device_scale =
+            (style.device_scale_factor - style.device_scale_factor.round()).abs() > 1.0e-5;
+        // Blink's bitmap DrawPattern paints a resized one-axis repeat with
+        // one image shader over the complete destination. Separate physical
+        // patches lose the shared repeat phase at fractional device scales.
+        // Native-size repeats keep their existing packed sampling path.
+        if single_axis_raster_repeat && fractional_device_scale {
+            if let CssImage::Raster(id) = &layer.image {
+                if let Ok(image) = crate::image_resource::decode_image_resource(doc, *id) {
+                    let resizes_bitmap = (tile_width - image.width() as f32).abs() > 1.0e-5
+                        || (tile_height - image.height() as f32).abs() > 1.0e-5;
+                    if resizes_bitmap {
+                        let matrix = Matrix::scale_translate(
+                            (
+                                tile_width / image.width() as f32,
+                                tile_height / image.height() as f32,
+                            ),
+                            (image_left, image_top),
+                        );
+                        let mut paint = Paint::default();
+                        paint.set_anti_alias(true);
+                        paint.set_alpha_f(opacity_multiplier);
+                        paint.set_shader(image.to_shader(
+                            (
+                                if layer.repeat_x == BackgroundRepeat::NoRepeat {
+                                    TileMode::Clamp
+                                } else {
+                                    TileMode::Repeat
+                                },
+                                if layer.repeat_y == BackgroundRepeat::NoRepeat {
+                                    TileMode::Clamp
+                                } else {
+                                    TileMode::Repeat
+                                },
+                            ),
+                            SamplingOptions::from(FilterMode::Linear),
+                            &matrix,
+                        ));
+                        let bounds = background_image_paint_bounds(
+                            clip,
+                            image_left,
+                            image_top,
+                            tile_width,
+                            tile_height,
+                            layer.repeat_x != BackgroundRepeat::NoRepeat,
+                            layer.repeat_y != BackgroundRepeat::NoRepeat,
+                        );
+                        if bounds.width() > 0.0 && bounds.height() > 0.0 {
+                            draw_paint_with_physical_coverage(
+                                canvas,
+                                bounds,
+                                &paint,
+                                opacity_multiplier,
+                                style.device_scale_factor,
+                                !square_opaque_border_bleed_clip,
+                            );
+                        }
+                        canvas.restore();
+                        continue;
+                    }
+                }
+            }
+        }
         if recorded_one_axis_gradient_shader {
             let source_rect = Rect::from_xywh(0.0, 0.0, tile_width, tile_height);
             let mut recorder = PictureRecorder::new();
