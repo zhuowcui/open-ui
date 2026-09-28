@@ -29256,16 +29256,20 @@ fn layout_multicol(
                                     }
                                 }
                             }
-                            if part.decoration_paint_block_size.is_none() {
+                            if part.decoration_paint_block_size.is_none()
+                                && child_style.display == Display::Flex
+                                && !child_style.flex_direction.is_column()
+                                && !child_style.height.is_auto()
+                            {
                                 if let Some(slice) = part.decoration_slice {
                                     let remaining_decoration = (slice.source_block_size
                                         - slice.source_block_offset)
                                         .clamp_negative_to_zero();
                                     if remaining_decoration < visual_part_height {
-                                        // Fragmentainer geometry may extend a continuation
-                                        // beyond the principal box's authored block end. Keep
-                                        // its children in that visual interval, but stop its
-                                        // own sliced decoration at the source box end.
+                                        // A definite row flexbox can expand a continuation
+                                        // to the fragmentainer while keeping a shorter authored
+                                        // border box. Preserve its child overflow, but stop its
+                                        // own decoration at the source box end.
                                         part.decoration_paint_block_size =
                                             Some(remaining_decoration);
                                         part.decoration_limit_preserves_inline_coverage = true;
