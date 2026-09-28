@@ -8627,6 +8627,19 @@ fn antialias_rectangular_overflow_clip(
                     || matches!(style.overflow_y, Overflow::Hidden | Overflow::Clip))))
 }
 
+/// A repeated table body's visible slice can end inside its source row group.
+/// Keep that fragmentainer edge in logical coordinates so the body's final
+/// coverage composes with the repeated footer's start edge at fractional DPR.
+fn truncated_table_row_group_end(fragment: &Fragment, style: &ComputedStyle) -> bool {
+    style.display == Display::TableRowGroup
+        && fragment.has_overflow_clip
+        && fragment.block_axis_clip_only
+        && fragment
+            .children
+            .iter()
+            .any(|child| child.offset.top + child.size.height > fragment.size.height)
+}
+
 /// Whether Blink assigns this box a separately rastered scroll-contents
 /// layer. CPU qualification replays scroll contents in the destination
 /// display list so coverage and dithering retain the compositor-tile phase;
@@ -9098,7 +9111,9 @@ fn paint_with_overflow_clip(
         (clip_x, clip_y, clip_w, clip_h)
     };
     let clip_rect = Rect::from_xywh(clip_x, clip_y, clip_w, clip_h);
-    let clip_rect = if fragmented_outline_clip.is_some() {
+    let analytic_table_slice_end = style.device_scale_factor.fract().abs() > f64::EPSILON
+        && truncated_table_row_group_end(fragment, style);
+    let clip_rect = if fragmented_outline_clip.is_some() && !analytic_table_slice_end {
         // This is a layout-owned continuation boundary, just like the
         // surrounding anonymous ColumnBox. Close it on the same outward
         // physical cells so outgoing and incoming fragments retain
@@ -9153,7 +9168,8 @@ fn paint_with_overflow_clip(
         && !has_scroll_range
         && (style.overflow_x == Overflow::Scroll || style.overflow_y == Overflow::Scroll)
         && opaque_in_flow_child_covers_inner_border_box(fragment, doc);
-    let antialias_transformed_clip = antialias_rectangular_overflow_clip(fragment, doc, style)
+    let antialias_transformed_clip = analytic_table_slice_end
+        || antialias_rectangular_overflow_clip(fragment, doc, style)
         || (!composited_scroll_layer
             && style.device_scale_factor.fract().abs() > f64::EPSILON
             && (style.overflow_x == Overflow::Auto
