@@ -54,6 +54,13 @@ an application-needed interaction remains a native API obligation. Every
 rejected case carries an AST-derived reason; porter syntax is never a final
 disposition. Product interactions must be available through the public
 `openui` Rust API; test-only Engine lowering does not establish that coverage.
+At clean checkpoint `8950b426`, the 36 AST-lowered pending cases produced
+22/144 exact comparisons, 122 differences, and zero errors. One case,
+`adjoining-floats-dynamic`, is exact at all four required profiles and is
+eligible for a future expanded-manifest admission; it is not counted as
+admitted coverage yet. The other 35 remain open. The
+[v2 pending-candidate evidence index](generated/pending-mutation-candidates-v2.json)
+records every profile result and the ordered native mutation IR identity.
 At clean checkpoint `5acc962a`, the 36 AST-lowered pending cases produced
 21/144 exact comparisons, 123 differences, and zero errors. None was exact
 at all four required profiles, so none was admitted. The
@@ -245,6 +252,22 @@ and common source/backend identities before emitting a versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
+[v27 diagnostic index](generated/four-profile-census-v27.json), with clean
+`8950b426` source identity, contains 21,225 exact, 1,699 different, and zero
+errors across the four required profiles; 939 residual test IDs remain
+unowned. All residual statuses, bounds, pixel counts, and diff signatures
+match v26. The clean [v28 raster index](generated/focused-primitive-raster-v28.json)
+is 640/640 focused and 960/960 primitive exact. The clean
+[v13 expanded requalification](generated/expanded-requalification-v13.json)
+is 22,022/23,724 exact, 1,702 different, and zero errors. Its 200 prior
+additions retain the same four-profile statuses: 197 exact, three demoted.
+The [v14 diagnostic selection](../../tools/qualification/manifests/expanded-v14.json)
+retains those 197 exact additions. The
+[nested float investigation](nested-inline-float-propagation.md) records the
+source fix and the newly eligible pending case; the original release gate
+still fails.
+
+The prior
 [v26 diagnostic index](generated/four-profile-census-v26.json), with clean
 `954648fb` source identity, contains 21,225 exact, 1,699 different, and zero
 errors across the four required profiles; 939 residual test IDs remain

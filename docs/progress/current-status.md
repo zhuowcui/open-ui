@@ -14,6 +14,7 @@ remain open.
 | Fresh four-profile Chromium census | 21,225/22,924 exact, 1,699 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
+| Pending native final-state candidates | 1/36 newly eligible at all four profiles; 35 still differ |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
@@ -25,7 +26,24 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v26.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v27.json)
+at `8950b426` remains 21,225/22,924 exact, 1,699 different, and zero errors.
+All 939 residual test IDs and their pixel diff signatures match the prior
+clean census. The [v28 raster index](../renderer/generated/focused-primitive-raster-v28.json)
+is 640/640 focused and 960/960 primitive exact. The complete clean
+[v13 expanded requalification](../renderer/generated/expanded-requalification-v13.json)
+is 22,022/23,724 exact, 1,702 different, and zero errors; the same 197 of
+200 additions are exact at all four profiles and the same three are demoted.
+The [v14 diagnostic selection](../../tools/qualification/manifests/expanded-v14.json)
+retains those 197. The clean
+[v2 pending-candidate index](../renderer/generated/pending-mutation-candidates-v2.json)
+records 22/144 exact comparisons. `adjoining-floats-dynamic` is now exact at
+all four profiles and eligible for a future expanded-manifest admission; the
+other 35 cases remain open. The original renderer release gate still fails.
+The [nested float investigation](../renderer/nested-inline-float-propagation.md)
+records the shared layout fix and the separate sticky-position residual.
+
+The [prior complete clean census](../renderer/generated/four-profile-census-v26.json)
 at `954648fb` changed exactly eight Open UI images in four resized one-axis
 bitmap test/reference pairs at fractional scales. Two comparisons became
 exact, six moved closer, and none regressed. All 22,924 Chromium oracle

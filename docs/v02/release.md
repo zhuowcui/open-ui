@@ -8,10 +8,10 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,225/22,924 exact, 1,699 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v26.json) | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v27.json) | pass |
+| Four-profile renderer matrix | 21,225/22,924 exact, 1,699 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v27.json) | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v28.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v12.json); 22,015/23,724 total comparisons exact, 1,709 different, zero errors. A clean [selected-additions recheck](../renderer/generated/expanded-additions-recheck-v5.json) at the new renderer commit remains 797/800 exact, with all 800 decoded Open UI/Chromium images unchanged. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v13.json); 22,022/23,724 total comparisons exact, 1,702 different, zero errors. One of the 36 pending cases is [newly exact at all four profiles](../renderer/generated/pending-mutation-candidates-v2.json), but is not yet in the admitted manifest. Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
@@ -45,7 +45,23 @@ behavioral or nonvisual reasons is not a waiver for application interaction:
 needed element behavior must be available through the public native Rust API
 over the same retained document and event path.
 
-The latest clean census at `954648fb` changed eight original Open UI images
+The latest clean census at `8950b426` is
+[21,225/22,924 exact](../renderer/generated/four-profile-census-v27.json),
+with 1,699 differences, zero errors, and 939 unowned residual test IDs.
+Every residual diff signature matches the prior clean census, so the nested
+float fix did not change the original comparison inventory. The
+[v28 raster index](../renderer/generated/focused-primitive-raster-v28.json)
+is 640/640 focused and 960/960 primitive exact. The complete clean
+[v13 expanded requalification](../renderer/generated/expanded-requalification-v13.json)
+is 22,022/23,724 exact, with the same three failing additions. The
+[v14 diagnostic selection](../../tools/qualification/manifests/expanded-v14.json)
+retains only the 197 exact additions. The clean
+[v2 pending-candidate index](../renderer/generated/pending-mutation-candidates-v2.json)
+records one newly eligible case, `adjoining-floats-dynamic`, at four of four
+profiles. The other 35 pending cases remain open; the newly eligible case is
+not yet counted as admitted release coverage.
+
+The prior clean census at `954648fb` changed eight original Open UI images
 in the resized one-axis bitmap family at fractional scales. The PNG background
 now uses one shared image shader across its repeated destination, matching
 Chromium's pattern path. Two 1280×720@1.25 comparisons became exact, six

@@ -31,9 +31,12 @@ The current v0.2 release candidate has:
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
 - a clean four-profile Chromium census with 21,225 of 22,924 comparisons
-  exact, 1,699 different, and zero render errors;
+  exact, 1,699 different, and zero render errors in the
+  [latest evidence index](docs/renderer/generated/four-profile-census-v27.json);
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
   comparisons exact;
+- one of 36 pending native final-state cases now exact at all four profiles;
+  it remains outside admitted release coverage;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
 - 41 application scenarios covering retained updates, controls, editing,
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
