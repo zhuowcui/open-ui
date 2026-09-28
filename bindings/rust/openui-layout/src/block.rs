@@ -12128,6 +12128,65 @@ fn extend_positioned_containing_block_size(
     }
 }
 
+/// Read a forced break on the leading edge of a laid-out flex item.
+/// Row flex containers propagate breaks from every item in their first line.
+fn fragment_propagates_forced_break_before(fragment: &Fragment, doc: &Document) -> bool {
+    if fragment.node_id.is_none() {
+        return fragment
+            .children
+            .iter()
+            .find(|child| {
+                child.node_id.is_none() || !doc.node(child.node_id).style.is_out_of_flow()
+            })
+            .is_some_and(|child| fragment_propagates_forced_break_before(child, doc));
+    }
+    let style = &doc.node(fragment.node_id).style;
+    if style.break_before.is_forced() {
+        return true;
+    }
+    if is_monolithic_for_fragmentation(style) {
+        return false;
+    }
+    if propagated_break_before(doc, fragment.node_id).is_forced() {
+        return true;
+    }
+
+    if style.display == Display::Flex && !style.flex_direction.is_column() {
+        // A row flex item's break-before propagates through its first line,
+        // which can contain several items. The DOM-only propagation above
+        // sees only the first item and misses a break on its line sibling.
+        let mut first_line_top = None;
+        let mut first_line_bottom = LayoutUnit::zero();
+        for child in &fragment.children {
+            if !child.node_id.is_none() && doc.node(child.node_id).style.is_out_of_flow() {
+                continue;
+            }
+            if first_line_top.is_none_or(|top| child.offset.top < top) {
+                first_line_top = Some(child.offset.top);
+                first_line_bottom = child.offset.top + child.size.height;
+            }
+        }
+        let Some(first_line_top) = first_line_top else {
+            return false;
+        };
+        return fragment.children.iter().any(|child| {
+            (child.node_id.is_none() || !doc.node(child.node_id).style.is_out_of_flow())
+                && child.offset.top < first_line_bottom
+                && child.offset.top + child.size.height > first_line_top
+                && fragment_propagates_forced_break_before(child, doc)
+        });
+    }
+
+    // A leading descendant may itself be a row flex container. Continue
+    // through its laid-out first fragment rather than losing a forced break
+    // on a later item in that descendant's first line.
+    fragment
+        .children
+        .iter()
+        .find(|child| child.node_id.is_none() || !doc.node(child.node_id).style.is_out_of_flow())
+        .is_some_and(|child| fragment_propagates_forced_break_before(child, doc))
+}
+
 /// Resolve class-A breaks between the lines of a wrapped row flex container.
 ///
 /// Flex layout initially records the lines in one continuous coordinate
@@ -12188,9 +12247,7 @@ fn apply_row_flex_fragmentation_breaks(
         });
         let forces_before = indices.iter().any(|index| {
             let child = &fragment.children[*index];
-            !child.node_id.is_none()
-                && (doc.node(child.node_id).style.break_before.is_forced()
-                    || propagated_break_before(doc, child.node_id).is_forced())
+            !child.node_id.is_none() && fragment_propagates_forced_break_before(child, doc)
         });
         let avoids_inside = indices.iter().any(|index| {
             let child = &fragment.children[*index];

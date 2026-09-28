@@ -2024,6 +2024,73 @@ fn early_forced_row_flex_break_is_the_continuation_origin() {
 }
 
 #[test]
+fn nested_row_flex_break_propagates_only_from_its_first_line() {
+    for (forced_child, expected_top) in [(1, lu(100)), (2, lu(50))] {
+        let mut doc = Document::new();
+        let multicol = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(multicol, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(100.0);
+            style.height = Length::px(100.0);
+            style.column_count = Some(2);
+            style.column_gap = Some(Length::px(0.0));
+            style.column_fill = ColumnFill::Auto;
+        });
+        doc.append_child(doc.root(), multicol);
+
+        let outer = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(outer, |style| {
+            style.display = Display::Flex;
+            style.flex_wrap = FlexWrap::Wrap;
+        });
+        doc.append_child(multicol, outer);
+        let first = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(first, |style| {
+            style.width = Length::px(50.0);
+            style.height = Length::px(50.0);
+        });
+        doc.append_child(outer, first);
+
+        let nested = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(nested, |style| {
+            style.display = Display::Flex;
+            style.flex_wrap = FlexWrap::Wrap;
+            style.width = Length::px(50.0);
+        });
+        doc.append_child(outer, nested);
+        for (index, width) in [25.0, 25.0, 50.0].into_iter().enumerate() {
+            let child = doc.create_node(ElementTag::Div);
+            doc.update_resolved_style(child, |style| {
+                style.width = Length::px(width);
+                style.height = Length::px(25.0);
+                if index == forced_child {
+                    style.break_before = BreakValue::Column;
+                }
+            });
+            doc.append_child(nested, child);
+        }
+        let last = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(last, |style| {
+            style.width = Length::px(50.0);
+            style.height = Length::px(50.0);
+        });
+        doc.append_child(outer, last);
+
+        let fragment = block_layout(
+            &doc,
+            multicol,
+            &ConstraintSpace::for_block_child(lu(100), lu(600), lu(100), lu(600), false),
+        );
+        let column_fragments = columns(&fragment);
+        let first_outer = find_node(column_fragments[0], outer).expect("first flex slice");
+        assert_eq!(
+            find_node(first_outer, nested).unwrap().offset.top,
+            expected_top
+        );
+    }
+}
+
+#[test]
 fn fixed_row_flex_height_includes_an_early_forced_break_gap() {
     let mut doc = Document::new();
     let multicol = doc.create_node(ElementTag::Div);
