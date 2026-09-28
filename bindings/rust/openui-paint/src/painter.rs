@@ -12417,10 +12417,10 @@ fn paint_css_image_tile(
             generated_image_backing_scale(wrap_x, source_width, width, raster_scale);
         let raster_scale_y =
             generated_image_backing_scale(wrap_y, source_height, height, raster_scale);
-        // Blink dithers a concrete generated image before applying its repeat
-        // shader, so the complete tile uses a local ordered-dither origin even
-        // when only one axis repeats. Framebuffer anchoring either axis would
-        // make a non-8px repeat period alternate colors.
+        // The concrete-tile fallback dithers before applying its repeat
+        // shader, so the complete tile uses a local ordered-dither origin.
+        // Framebuffer anchoring either axis would make a non-8px repeat
+        // period alternate colors.
         let phase_x = generated_image_raster_phase(physical_left, uses_repeated_shader);
         let phase_y = generated_image_raster_phase(physical_top, uses_repeated_shader);
         let Some(mut surface) = surfaces::raster_n32_premul((width + phase_x, height + phase_y))
@@ -13349,10 +13349,9 @@ fn paint_background_layers(
             image_top,
             tile_height,
         );
-        // Repeated generated images are sampled as one concrete image shader.
-        // Rasterizing at the final (including `round`-adjusted) tile size lets
-        // linear filtering cross a fractional repeat seam without changing the
-        // gradient geometry to the pre-round authored size.
+        // The concrete-tile fallback rasterizes at the final (including
+        // `round`-adjusted) tile size. The recorded linear-gradient path below
+        // retains the gradient as a picture shader instead.
         let physical_tile_width = tile_width * style.device_scale_factor as f32;
         let physical_tile_height = tile_height * style.device_scale_factor as f32;
         let fractional_physical_tile = (physical_tile_width - physical_tile_width.round()).abs()
@@ -13377,6 +13376,21 @@ fn paint_background_layers(
             ) && ys.len() > 1,
             (tile_width, tile_height),
         );
+        // Blink records a generated background as a picture tile. In a
+        // one-axis linear-gradient repeat, the recorded shader preserves
+        // gradient color evaluation across the repeated tiles.
+        let recorded_one_axis_gradient_shader = matches!(layer.image, CssImage::LinearGradient(_))
+            && resample_from.is_some()
+            && ((matches!(
+                layer.repeat_x,
+                BackgroundRepeat::Repeat | BackgroundRepeat::Round
+            ) && xs.len() > 1
+                && layer.repeat_y == BackgroundRepeat::NoRepeat)
+                || (matches!(
+                    layer.repeat_y,
+                    BackgroundRepeat::Repeat | BackgroundRepeat::Round
+                ) && ys.len() > 1
+                    && layer.repeat_x == BackgroundRepeat::NoRepeat));
         canvas.save();
         let device_matrix = canvas.local_to_device_as_3x3();
         let antialias_transformed_clip = device_matrix.skew_x().abs() > f32::EPSILON
@@ -13404,9 +13418,8 @@ fn paint_background_layers(
             && xs.len() == 1
             && ys.len() == 1
             && clip_override.is_none();
-        let physical_generated_image_owns_rect_clip = generated_image
+        let repeated_generated_rect_clip = generated_image
             && resample_from.is_some()
-            && fractional_physical_clip_edge
             && matches!(
                 layer.repeat_x,
                 BackgroundRepeat::Repeat | BackgroundRepeat::Round
@@ -13416,7 +13429,10 @@ fn paint_background_layers(
                 BackgroundRepeat::Repeat | BackgroundRepeat::Round
             )
             && xs.len() > 1
-            && ys.len() > 1
+            && ys.len() > 1;
+        let physical_generated_image_owns_rect_clip = (recorded_one_axis_gradient_shader
+            || repeated_generated_rect_clip)
+            && fractional_physical_clip_edge
             && clip_override.is_none();
         if clip_override.is_some() {
             canvas.clip_rect(clip, ClipOp::Intersect, false);
@@ -13611,6 +13627,73 @@ fn paint_background_layers(
                     canvas.restore();
                     continue;
                 }
+            }
+        }
+        if recorded_one_axis_gradient_shader {
+            let source_rect = Rect::from_xywh(0.0, 0.0, tile_width, tile_height);
+            let mut recorder = PictureRecorder::new();
+            let recording_canvas = recorder.begin_recording(source_rect, false);
+            paint_css_image_tile(
+                recording_canvas,
+                doc,
+                style,
+                &layer.image,
+                source_rect,
+                false,
+                false,
+                false,
+                false,
+                None,
+                false,
+                false,
+                1.0,
+                None,
+                None,
+                None,
+                false,
+            );
+            if let Some(picture) = recorder.finish_recording_as_picture(None) {
+                let matrix = Matrix::translate((image_left, image_top));
+                let mut paint = Paint::default();
+                paint.set_anti_alias(true);
+                paint.set_alpha_f(opacity_multiplier);
+                paint.set_shader(picture.to_shader(
+                    (TileMode::Repeat, TileMode::Repeat),
+                    FilterMode::Linear,
+                    &matrix,
+                    None,
+                ));
+                let bounds = background_image_paint_bounds(
+                    clip,
+                    image_left,
+                    image_top,
+                    tile_width,
+                    tile_height,
+                    matches!(
+                        layer.repeat_x,
+                        BackgroundRepeat::Repeat | BackgroundRepeat::Round
+                    ),
+                    matches!(
+                        layer.repeat_y,
+                        BackgroundRepeat::Repeat | BackgroundRepeat::Round
+                    ),
+                );
+                if bounds.width() > 0.0 && bounds.height() > 0.0 {
+                    if physical_generated_image_owns_rect_clip {
+                        draw_paint_with_physical_coverage(
+                            canvas,
+                            bounds,
+                            &paint,
+                            opacity_multiplier,
+                            style.device_scale_factor,
+                            !square_opaque_border_bleed_clip,
+                        );
+                    } else {
+                        canvas.draw_rect(bounds, &paint);
+                    }
+                }
+                canvas.restore();
+                continue;
             }
         }
         let repeated_generated_shader = uses_single_repeated_generated_shader(
