@@ -61,3 +61,12 @@ At the following clean checkpoint `ef7214b3`, the
 640/640 focused and 960/960 primitive exact across 40 profiles in each
 suite. All 1,600 decoded Open UI images and Chromium oracle hashes matched
 the preceding clean raster run.
+
+The complete clean
+[v9 expanded requalification](generated/expanded-requalification-v9.json)
+at `de8304fe` measured 22,010/23,724 exact comparisons, 1,714 different,
+and zero errors. Since the prior v8 expanded run, only four original column
+images and statuses changed: `-060`, `-042`, `-043`, and `-045` became exact.
+All 200 native final-state additions and all 23,724 Chromium oracle
+identities and decoded hashes stayed unchanged. The same three additions
+remain demoted.

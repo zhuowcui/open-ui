@@ -11,7 +11,7 @@ claimed by source code alone.
 | Four-profile renderer matrix | 21,213/22,924 exact, 1,711 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v19.json) | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v20.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v8.json); 22,006/23,724 total comparisons exact, zero errors. A [clean recheck of all 200 additions](../renderer/generated/expanded-additions-recheck-v1.json) found the same 797/800 profile results and identical decoded hashes. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v9.json); 22,010/23,724 total comparisons exact, 1,714 different, zero errors. All 800 addition results and decoded Open UI/Chromium hashes match the prior full run. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
@@ -49,6 +49,15 @@ records the cause and neighboring guards. The remaining 1,711 differences and
 at `ef7214b3` is 640/640 focused and 960/960 primitive exact. All 1,600
 decoded Open UI images and Chromium oracle hashes match the preceding clean
 raster run.
+
+The complete clean expanded run at `de8304fe` measured 22,010/23,724 exact,
+1,714 different, and zero errors. Four original column comparisons became
+exact since the prior v8 expanded run; no other Open UI decoded image or
+status changed. All 23,724 Chromium oracle identities and decoded hashes
+stayed fixed. The [v9 ledger](../renderer/generated/expanded-requalification-v9.json)
+retains 197 of the 200 native additions at all four profiles and demotes the
+same three; the [v10 diagnostic selection](../../tools/qualification/manifests/expanded-v10.json)
+records that set without changing the original manifest.
 
 The complete clean census at `9f983df9` measured the nested positioned
 continuation repair across all four profiles. One comparison became exact,

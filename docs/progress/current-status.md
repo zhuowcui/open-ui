@@ -47,15 +47,22 @@ The [repeat-space shader investigation](../renderer/background-repeat-space-shad
 records two rejected 92-comparison sampling diagnostics and a clean restored
 runner; it also changes no qualifying count.
 
-The clean [expanded v8 requalification](../renderer/generated/expanded-requalification-v8.json)
-at `9f983df9` measured 22,006/23,724 exact comparisons, 1,718 different,
-and zero errors. All 200 native final-state additions retained their prior
-four-profile statuses and all 800 Open UI/Chromium decoded hashes: 197 remain
-exact at all four profiles and three remain demoted. The new exact comparison
-belongs to the original inventory. The
-[v9 diagnostic selection](../../tools/qualification/manifests/expanded-v9.json)
+The clean [expanded v9 requalification](../renderer/generated/expanded-requalification-v9.json)
+at `de8304fe` measured 22,010/23,724 exact comparisons, 1,714 different,
+and zero errors. Against the prior v8 expanded run, four original
+`out-of-flow-in-multicolumn-*` comparisons became exact: `-060` from the v18
+census repair and `-042`, `-043`, `-045` from the v19 repair. No other Open UI
+decoded image or status changed. All 23,724 Chromium oracle identities and
+decoded hashes stayed fixed. All 200 native final-state additions retained
+their prior four-profile statuses and all 800 decoded Open UI images: 197
+remain exact at all four profiles and three remain demoted. The
+[v10 diagnostic selection](../../tools/qualification/manifests/expanded-v10.json)
 retains only the 197 exact additions; it does not alter the original manifest.
-At clean checkpoint `93b00601`, a
+The prior [v8 ledger](../renderer/generated/expanded-requalification-v8.json)
+and [v9 selection](../../tools/qualification/manifests/expanded-v9.json)
+remain historical evidence.
+
+At the earlier clean checkpoint `93b00601`, a
 [four-profile additions recheck](../renderer/generated/expanded-additions-recheck-v1.json)
 rendered all 200 native additions: 797/800 profile comparisons exact, three
 different, and zero errors. The same three cases remain demoted. All 800

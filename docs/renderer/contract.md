@@ -244,7 +244,16 @@ records the shared repair and reduced evidence. The clean
 [v20 raster index](generated/focused-primitive-raster-v20.json) at `ef7214b3`
 remains 640/640 focused and 960/960 primitive exact. All 1,600 decoded
 Open UI images and Chromium oracle hashes match the preceding clean raster
-run. The prior
+run. The subsequent complete clean
+[v9 expanded requalification](generated/expanded-requalification-v9.json)
+at `de8304fe` measured 22,010/23,724 exact, 1,714 different, and zero
+errors. Compared with the prior v8 expanded run, four original column
+comparisons became exact and no other Open UI decoded image changed. All
+23,724 Chromium oracle identities and decoded hashes stayed fixed. The 200
+native final-state additions retained 797/800 exact profile comparisons;
+197 remain exact at all four profiles, and the same three are demoted. The
+[v10 diagnostic selection](../../tools/qualification/manifests/expanded-v10.json)
+does not change `complete-5731.json` or admit a failing case. The prior
 [v18 diagnostic index](generated/four-profile-census-v18.json), with clean
 `8269ea09` source identity, contains 21,210 exact, 1,714 different, and zero
 errored comparisons across the four required profiles; 947 residual test IDs
