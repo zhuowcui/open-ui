@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,209/22,924 exact, 1,715 different, 0 errors |
+| Fresh four-profile Chromium census | 21,210/22,924 exact, 1,714 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
@@ -25,17 +25,16 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v17.json)
-at `9f983df9` gained one exact comparison from v16:
-`out-of-flow-in-multicolumn-032` at 1280×720@1.25. A neighboring comparison
-changed but remains different by 125 pixels. No previously exact comparison
-regressed. Only two Open UI decoded images changed; all 22,924 Chromium oracle
-identities and decoded hashes stayed fixed. The clean
+The [latest complete clean census](../renderer/generated/four-profile-census-v18.json)
+at `8269ea09` gained one exact comparison from v17:
+`out-of-flow-in-multicolumn-060` at 1280×720@1.25. No previously exact
+comparison regressed. Only that Open UI decoded image changed; all 22,924
+Chromium oracle identities and decoded hashes stayed fixed. The prior clean
 [v18 raster index](../renderer/generated/focused-primitive-raster-v18.json)
 confirms both 40-profile matrices stayed exact with all 1,600 Open UI and
-Chromium decoded hashes unchanged. The census still fails exactness, with 948
+Chromium decoded hashes unchanged. The census still fails exactness, with 947
 unowned residual test IDs. The [multicolumn investigation](../renderer/multicol-nested-positioned-continuation.md)
-records the cause, reduced reproducer, and remaining seam. The prior
+records the cause, reduced reproducer, and repaired seam. The prior
 [fragment clip investigation](../renderer/fragment-decoration-clip-investigation.md)
 records the v16 repair.
 The [border-image seam investigation](../renderer/border-image-seam-investigation.md)

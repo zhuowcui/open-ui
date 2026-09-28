@@ -225,7 +225,17 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
-[v17 diagnostic index](generated/four-profile-census-v17.json), with clean
+[v18 diagnostic index](generated/four-profile-census-v18.json), with clean
+`8269ea09` source identity, contains 21,210 exact, 1,714 different, and zero
+errored comparisons across the four required profiles; 947 residual test IDs
+remain unowned. Eight complete disjoint debug-runner shards share the same
+source, runner, backend, and oracle identities. Compared with v17, only
+`out-of-flow-in-multicolumn-060` at 1280×720@1.25 changed its Open UI decoded
+image and became exact. No prior exact comparison regressed. All 22,924
+Chromium oracle identities and decoded hashes stayed unchanged. The
+[multicolumn investigation](multicol-nested-positioned-continuation.md)
+records the shared continuation paint-order repair.
+The prior [v17 diagnostic index](generated/four-profile-census-v17.json), with clean
 `9f983df9` source identity, contains 21,209 exact, 1,715 different, and zero
 errored comparisons across the four required profiles; 948 residual test IDs
 remain unowned. Eight complete disjoint shards share the same source, runner,
@@ -236,7 +246,7 @@ clean [v18 raster index](generated/focused-primitive-raster-v18.json) stayed
 640/640 focused and 960/960 primitive exact, with all 1,600 decoded Open UI
 and Chromium images unchanged. The
 [multicolumn investigation](multicol-nested-positioned-continuation.md)
-records the cause, reduced reproducer, and remaining seam. The prior
+records the cause, reduced reproducer, and then-remaining seam. The prior
 [v16 diagnostic index](generated/four-profile-census-v16.json), with clean
 `4b89fd05` source identity, contains 21,208 exact, 1,716 different, and zero
 errored comparisons across the four required profiles; 949 residual test IDs
