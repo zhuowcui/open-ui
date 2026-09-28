@@ -38,6 +38,11 @@ includes reduced reproductions of both masked errors. The clean
 remains 640/640 focused and 960/960 primitive exact, with all 1,600 Open UI
 and Chromium hashes unchanged from v23. The census still fails exactness,
 with 1,705 differences across 939 unowned residual test IDs.
+The clean [v2 selected-additions
+recheck](../renderer/generated/expanded-additions-recheck-v2.json) at
+`db763999` measured 797/800 exact, three different, and zero errors. All
+800 Open UI and Chromium hashes matched the prior full expanded run; this
+selection does not replace complete expanded-manifest qualification.
 
 The prior [v22 clean census](../renderer/generated/four-profile-census-v22.json)
 at `6e21bd9b` gained one exact comparison from v21:

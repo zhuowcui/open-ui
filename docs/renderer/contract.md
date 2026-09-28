@@ -66,6 +66,14 @@ decoded hashes and Chromium oracle identities and decoded hashes matched the
 prior clean expanded requalification; the same three additions remain
 demoted. This selected-ID report has `complete_contract_scope=false` and is
 not a complete expanded-manifest qualification.
+At clean checkpoint `db763999`, the [v2 selected-additions
+recheck](generated/expanded-additions-recheck-v2.json) again found 797/800
+exact, three different, and zero errors. Every one of its 800 Open UI
+decoded hashes and Chromium oracle identities/decoded hashes matched the
+preceding full expanded run. It uses the versioned
+[`expanded-additions-v2.json`](../../tools/qualification/manifests/expanded-additions-v2.json)
+ID list, and it remains a diagnostic selection with
+`complete_contract_scope=false`.
 
 Application and system font ownership, registration limits, and C handle
 lifetime rules are documented in [font collections](font-collections.md).

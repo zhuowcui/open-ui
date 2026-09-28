@@ -69,6 +69,8 @@ index](generated/focused-primitive-raster-v24.json) remains 640/640 and
 960/960 exact. All 1,600 Open UI decoded hashes and Chromium oracle
 identities/hashes match v23. A clean selected check of the 200 expanded
 native final-state additions retained 797/800 exact comparisons, three
-differences, and zero errors; all 800 Open UI and Chromium hashes matched
-the prior full expanded run. This selected check is diagnostic, not a full
-expanded-manifest qualification.
+differences, and zero errors. The [v2 selected-additions
+report](generated/expanded-additions-recheck-v2.json) records all 800
+comparisons from clean checkpoint `db763999`; all Open UI and Chromium
+hashes matched the prior full expanded run. This selected check is
+diagnostic, not a full expanded-manifest qualification.

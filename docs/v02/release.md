@@ -60,6 +60,11 @@ and 939 unowned residual test IDs keep the renderer gate red. The clean
 [v24 raster index](../renderer/generated/focused-primitive-raster-v24.json)
 is 640/640 focused and 960/960 primitive exact, with all 1,600 Open UI and
 Chromium hashes unchanged from v23.
+The clean [v2 selected-additions
+recheck](../renderer/generated/expanded-additions-recheck-v2.json) at
+`db763999` found 797/800 exact, three different, and zero errors, with all
+800 Open UI and Chromium hashes unchanged from the prior full expanded run.
+It is a diagnostic selection, not a complete expanded-manifest result.
 
 The prior clean census at `6e21bd9b` repaired the 1280×720@1.25
 `out-of-flow-in-multicolumn-046` comparison. A zero-height positioned parent
