@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,217/22,924 exact, 1,707 different, 0 errors |
+| Fresh four-profile Chromium census | 21,218/22,924 exact, 1,706 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
@@ -25,7 +25,21 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v21.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v22.json)
+at `6e21bd9b` gained one exact comparison from v21:
+`out-of-flow-in-multicolumn-046` at 1280×720@1.25. Its zero-height
+positioned parent no longer paints a background through the visual
+continuation needed by its absolute child. Only that Open UI decoded image
+changed; no previously exact comparison regressed. All 22,924 Chromium oracle
+identities and decoded hashes stayed fixed. The
+[zero-height continuation investigation](../renderer/multicol-zero-height-positioned-decoration.md)
+includes a reduced reproducer. The clean
+[v23 raster index](../renderer/generated/focused-primitive-raster-v23.json)
+remains 640/640 focused and 960/960 primitive exact, with all 1,600 Open UI
+and Chromium hashes unchanged from v22. The census still fails exactness,
+with 1,706 differences across 940 unowned residual test IDs.
+
+The prior [v21 clean census](../renderer/generated/four-profile-census-v21.json)
 at `99fd4432` gained three exact comparisons from v20:
 `flexbox_multi-line-row-flex-fragmentation-029` at 1280×720@1.25 and
 `-030` at 1280×720@1.25 and 1920×1080@1.5. Only those three Open UI decoded
@@ -72,7 +86,17 @@ The [repeat-space shader investigation](../renderer/background-repeat-space-shad
 records two rejected 92-comparison sampling diagnostics and a clean restored
 runner; it also changes no qualifying count.
 
-The clean [expanded v11 requalification](../renderer/generated/expanded-requalification-v11.json)
+The clean [expanded v12 requalification](../renderer/generated/expanded-requalification-v12.json)
+at `6e21bd9b` measured 22,015/23,724 exact comparisons, 1,709 different,
+and zero errors. Only the same original `-046` image changed from v11, and it
+became exact. All 23,724 Chromium oracle identities and decoded hashes stayed
+fixed. All 200 native additions kept their prior four-profile statuses and
+all 800 decoded Open UI images: 197 remain exact at all four profiles and
+three remain demoted. The
+[v13 diagnostic selection](../../tools/qualification/manifests/expanded-v13.json)
+retains those 197 additions without changing the original manifest.
+
+The prior clean [expanded v11 requalification](../renderer/generated/expanded-requalification-v11.json)
 at `99fd4432` measured 22,014/23,724 exact comparisons, 1,710 different,
 and zero errors. Only the same three original flex comparisons changed from
 v10. All 23,724 Chromium oracle identities and decoded hashes stayed fixed.

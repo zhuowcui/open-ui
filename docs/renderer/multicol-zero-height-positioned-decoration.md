@@ -41,3 +41,24 @@ and 38 different, up from 485/524. Only the original `-046` image at
 decoded hashes and all 524 Chromium oracle identities and decoded hashes
 stayed fixed. The 38 remaining family comparisons retain their failing status;
 this diagnostic is not a release qualification.
+
+## Clean verification
+
+At clean checkpoint `6e21bd9b`, eight disjoint shards produced the complete
+[v22 four-profile census](generated/four-profile-census-v22.json):
+**21,218/22,924 exact, 1,706 different, zero errors**. Comparing every row
+with v21 found only the original `-046` image at 1280×720@1.25 changed; it
+became exact from 125 differing pixels. No previously exact comparison
+regressed. All 22,924 Chromium oracle identities and decoded hashes stayed
+fixed. The remaining 940 residual test IDs have no reviewed owner, so the
+census is nonqualifying.
+
+The clean [v23 raster index](generated/focused-primitive-raster-v23.json)
+remained 640/640 focused and 960/960 primitive exact. All 1,600 Open UI
+decoded hashes and Chromium oracle identities/hashes matched v22. The
+complete clean [expanded v12 requalification](generated/expanded-requalification-v12.json)
+measured 22,015/23,724 exact, 1,709 different, zero errors. Only the same
+original `-046` comparison changed from v11. All 200 native additions kept
+their prior four-profile statuses and all 800 decoded hashes: 197 remain exact
+at all four profiles and three remain demoted. All 23,724 Chromium oracle
+identities and decoded hashes stayed fixed.

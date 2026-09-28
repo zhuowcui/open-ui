@@ -232,7 +232,27 @@ and common source/backend identities before emitting a versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
-[v21 diagnostic index](generated/four-profile-census-v21.json), with clean
+[v22 diagnostic index](generated/four-profile-census-v22.json), with clean
+`6e21bd9b` source identity, contains 21,218 exact, 1,706 different, and zero
+errored comparisons across the four required profiles; 940 residual test IDs
+remain unowned. Compared with v21, only
+`out-of-flow-in-multicolumn-046` at 1280×720@1.25 changed its Open UI decoded
+image, becoming exact. No prior exact comparison regressed. All 22,924
+Chromium oracle identities and decoded hashes stayed fixed. The
+[zero-height continuation investigation](multicol-zero-height-positioned-decoration.md)
+records the source rule and reduced evidence. The clean
+[v23 raster index](generated/focused-primitive-raster-v23.json) remains 640/640
+focused and 960/960 primitive exact, with all 1,600 Open UI and Chromium
+decoded hashes unchanged from v22. The complete clean
+[v12 expanded requalification](generated/expanded-requalification-v12.json)
+measured 22,015/23,724 exact, 1,709 different, and zero errors. Only that
+original column comparison changed; all 23,724 Chromium oracle identities
+and decoded hashes stayed fixed. Of the 200 native additions, 197 remain
+exact at all four profiles and three remain demoted. The
+[v13 diagnostic selection](../../tools/qualification/manifests/expanded-v13.json)
+does not change `complete-5731.json` or admit a failing case.
+
+The prior [v21 diagnostic index](generated/four-profile-census-v21.json), with clean
 `99fd4432` source identity, contains 21,217 exact, 1,707 different, and zero
 errored comparisons across the four required profiles; 941 residual test IDs
 remain unowned. Compared with v20, only
