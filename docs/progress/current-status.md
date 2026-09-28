@@ -40,6 +40,9 @@ remains the record for the v15 gains.
 The [border-image seam investigation](../renderer/border-image-seam-investigation.md)
 records a separate six-case fractional-scale residual and a rejected
 offscreen-layer diagnostic; it changes no qualifying count.
+The [repeat-space shader investigation](../renderer/background-repeat-space-shader-investigation.md)
+records two rejected 92-comparison sampling diagnostics and a clean restored
+runner; it also changes no qualifying count.
 
 The clean [expanded v7 requalification](../renderer/generated/expanded-requalification-v7.json)
 at `4b89fd05` measured 22,005/23,724 exact comparisons, 1,719 different,
