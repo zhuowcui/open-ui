@@ -25,7 +25,23 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v24.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v25.json)
+at `5c7aaa9c` changed exactly eight Open UI images in four one-axis repeated
+linear-gradient test/reference pairs. Their wrong-pixel counts fell sharply
+at fractional scales, but none became exact because the separate PNG edge
+still differs. No exact comparison regressed, and all 22,924 Chromium oracle
+identities and decoded hashes stayed fixed. The
+[gradient picture-shader investigation](../renderer/one-axis-gradient-picture-shader.md)
+records the source rule and remaining raster edge. The clean
+[v26 raster index](../renderer/generated/focused-primitive-raster-v26.json)
+remains 640/640 focused and 960/960 primitive exact, with all 1,600 Open UI
+and Chromium decoded images unchanged. The clean
+[v4 selected-additions recheck](../renderer/generated/expanded-additions-recheck-v4.json)
+remains 797/800 exact, with all 800 Open UI and Chromium decoded images
+unchanged. The release census still fails exactness with 1,701 differences
+across 939 unowned residual test IDs.
+
+The [prior complete clean census](../renderer/generated/four-profile-census-v24.json)
 at `2f560e46` gained four exact comparisons from v23 by painting mixed border
 styles in Chromium's alpha, style, and side order. Exactly 16 Open UI images
 changed across four border fixtures; none regressed, and all 22,924 Chromium
@@ -41,7 +57,7 @@ remains 797/800 exact with three differences and zero errors; all 800 decoded
 images and statuses are unchanged. The complete census still fails exactness
 with 1,701 differences across 939 unowned residual test IDs.
 
-The [prior complete clean census](../renderer/generated/four-profile-census-v23.json)
+An [earlier complete clean census](../renderer/generated/four-profile-census-v23.json)
 at `d0592ccd` gained one exact comparison from v22:
 `out-of-flow-in-multicolumn-047` at 1280×720@1.25. Its parent decoration
 now ends at its used block size, and the outer visual continuation no longer
