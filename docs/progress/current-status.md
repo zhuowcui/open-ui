@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,213/22,924 exact, 1,711 different, 0 errors |
+| Fresh four-profile Chromium census | 21,214/22,924 exact, 1,710 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
@@ -25,7 +25,19 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v19.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v20.json)
+at `89a0a1f3` gained one exact comparison from v19:
+`flexbox_multi-line-row-flex-fragmentation-027` at 1280×720@1.25.
+No previously exact comparison regressed. Only that Open UI decoded image
+changed; all 22,924 Chromium oracle identities and decoded hashes stayed
+fixed. The [first-line break investigation](../renderer/nested-row-flex-first-line-break.md)
+records the masked layout error, reduced reproducer, and neighboring guard.
+The clean [v21 raster index](../renderer/generated/focused-primitive-raster-v21.json)
+confirms 640/640 focused and 960/960 primitive exact, with all 1,600 Open UI
+and Chromium decoded hashes unchanged from v20. The census still fails
+exactness, with 943 unowned residual test IDs.
+
+The prior [v19 clean census](../renderer/generated/four-profile-census-v19.json)
 at `17952772` gained three exact comparisons from v18:
 `out-of-flow-in-multicolumn-042`, `-043`, and `-045` at 1280×720@1.25.
 No previously exact comparison regressed. Only those three Open UI decoded
@@ -35,7 +47,7 @@ records the cause, reduced reproducer, and authored-overflow guard. The clean
 [v20 raster index](../renderer/generated/focused-primitive-raster-v20.json)
 confirms both 40-profile matrices stayed exact with all 1,600 Open UI and
 Chromium decoded hashes unchanged from the preceding clean v19 raster run. The
-census still fails exactness, with 944 unowned residual test IDs. The prior
+census had 944 unowned residual test IDs. The prior
 [multicolumn investigation](../renderer/multicol-nested-positioned-continuation.md)
 records the v18 repair. The prior
 [fragment clip investigation](../renderer/fragment-decoration-clip-investigation.md)
@@ -47,7 +59,17 @@ The [repeat-space shader investigation](../renderer/background-repeat-space-shad
 records two rejected 92-comparison sampling diagnostics and a clean restored
 runner; it also changes no qualifying count.
 
-The clean [expanded v9 requalification](../renderer/generated/expanded-requalification-v9.json)
+The clean [expanded v10 requalification](../renderer/generated/expanded-requalification-v10.json)
+at `89a0a1f3` measured 22,011/23,724 exact comparisons, 1,713 different,
+and zero errors. Only the same original `-027` comparison changed from the
+previous full expanded run. All 23,724 Chromium oracle identities and decoded
+hashes stayed fixed. All 200 native additions kept their prior four-profile
+statuses and all 800 decoded Open UI images: 197 remain exact at all four
+profiles and three remain demoted. The
+[v11 diagnostic selection](../../tools/qualification/manifests/expanded-v11.json)
+retains only those 197 additions; it does not alter the original manifest.
+
+The prior clean [expanded v9 requalification](../renderer/generated/expanded-requalification-v9.json)
 at `de8304fe` measured 22,010/23,724 exact comparisons, 1,714 different,
 and zero errors. Against the prior v8 expanded run, four original
 `out-of-flow-in-multicolumn-*` comparisons became exact: `-060` from the v18
@@ -122,7 +144,7 @@ load it.
   still fails AddressSanitizer, LeakSanitizer, and fuzz on process-exit
   Fontconfig allocations. Its MSRV, Miri, Linux platform, and C UBSan jobs
   passed.
-- The four-profile Chromium census fails exactness; 944 residual test IDs
+- The four-profile Chromium census fails exactness; 943 residual test IDs
   have no reviewed owner. Both 40-profile CPU raster matrices are exact.
 - The C ABI covers the retained engine, headless renderer, and an owned full
   accessibility-tree snapshot, but does not yet export the owned Linux event loop.

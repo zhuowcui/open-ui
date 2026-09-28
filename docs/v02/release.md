@@ -8,10 +8,10 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,213/22,924 exact, 1,711 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v19.json) | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v20.json) | pass |
+| Four-profile renderer matrix | 21,214/22,924 exact, 1,710 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v20.json) | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v21.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v9.json); 22,010/23,724 total comparisons exact, 1,714 different, zero errors. All 800 addition results and decoded Open UI/Chromium hashes match the prior full run. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v10.json); 22,011/23,724 total comparisons exact, 1,713 different, zero errors. All 800 addition results and decoded Open UI/Chromium hashes match the prior full run. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
@@ -38,13 +38,32 @@ claimed by source code alone.
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
 
-The latest clean census at `17952772` repaired three fractional-scale
+The latest clean census at `89a0a1f3` repaired one fractional-scale nested
+row flex comparison. Exactly one Open UI decoded image changed and became
+pixel exact against Chromium. No previously exact comparison regressed; all
+22,924 Chromium oracle identities and decoded hashes stayed fixed. The
+[first-line break investigation](../renderer/nested-row-flex-first-line-break.md)
+records the reduced case and guard. The remaining 1,710 differences and 943
+unowned residual test IDs keep the renderer gate red. The clean
+[v21 raster index](../renderer/generated/focused-primitive-raster-v21.json)
+is 640/640 focused and 960/960 primitive exact. All 1,600 Open UI decoded
+images and Chromium oracle hashes match the preceding clean raster run.
+
+The complete clean expanded run at `89a0a1f3` measured 22,011/23,724 exact,
+1,713 different, and zero errors. Only that original flex comparison changed;
+all 23,724 Chromium oracle identities and decoded hashes stayed fixed. The
+[v10 ledger](../renderer/generated/expanded-requalification-v10.json) retains
+197 of the 200 native additions at all four profiles and demotes the same
+three; the [v11 diagnostic selection](../../tools/qualification/manifests/expanded-v11.json)
+records that set without changing the original manifest.
+
+The prior clean census at `17952772` repaired three fractional-scale
 `out-of-flow-in-multicolumn-*` comparisons. Exactly three Open UI decoded
 images changed, and each became pixel exact against Chromium. No previously
 exact comparison regressed; all 22,924 Chromium oracle identities and decoded
 hashes stayed fixed. The [relative continuation clip investigation](../renderer/multicol-relative-clip-translation.md)
-records the cause and neighboring guards. The remaining 1,711 differences and
-944 unowned residual test IDs keep the renderer gate red. The clean
+records the cause and neighboring guards. At that checkpoint, 1,711
+differences and 944 unowned residual test IDs kept the renderer gate red. The clean
 [v20 raster index](../renderer/generated/focused-primitive-raster-v20.json)
 at `ef7214b3` is 640/640 focused and 960/960 primitive exact. All 1,600
 decoded Open UI images and Chromium oracle hashes match the preceding clean

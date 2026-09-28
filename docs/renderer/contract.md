@@ -227,12 +227,33 @@ becomes a tolerance, allowlist, or alternate baseline.
 
 `tools/qualification/summarize_renderer_census.py` verifies the complete,
 disjoint shard set against the pinned manifest, profile geometry, report hashes,
-and common source/backend identities before emitting the versioned
-`generated/four-profile-census-v1.json` evidence index. Its default mode fails
+and common source/backend identities before emitting a versioned
+`generated/four-profile-census-v*.json` evidence index. Its default mode fails
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
-[v19 diagnostic index](generated/four-profile-census-v19.json), with clean
+[v20 diagnostic index](generated/four-profile-census-v20.json), with clean
+`89a0a1f3` source identity, contains 21,214 exact, 1,710 different, and zero
+errored comparisons across the four required profiles; 943 residual test IDs
+remain unowned. Compared with v19, only
+`flexbox_multi-line-row-flex-fragmentation-027` at 1280×720@1.25 changed its
+Open UI decoded image, becoming exact from 125 differing pixels. No prior
+exact comparison regressed. All 22,924 Chromium oracle identities and decoded
+hashes stayed unchanged. The [first-line break investigation](nested-row-flex-first-line-break.md)
+records the shared layout repair and reduced evidence. The clean
+[v21 raster index](generated/focused-primitive-raster-v21.json) remains 640/640
+focused and 960/960 primitive exact. All 1,600 decoded Open UI images and
+Chromium oracle hashes match the preceding clean raster run. The subsequent
+complete clean [v10 expanded requalification](generated/expanded-requalification-v10.json)
+measured 22,011/23,724 exact, 1,713 different, and zero errors. Only the
+same original flex comparison changed from the previous full expanded run;
+all 23,724 Chromium oracle identities and decoded hashes stayed fixed. The
+200 native additions retained 797/800 exact profile comparisons; 197 remain
+exact at all four profiles, and the same three are demoted. The
+[v11 diagnostic selection](../../tools/qualification/manifests/expanded-v11.json)
+does not change `complete-5731.json` or admit a failing case.
+
+The prior [v19 diagnostic index](generated/four-profile-census-v19.json), with clean
 `17952772` source identity, contains 21,213 exact, 1,711 different, and zero
 errored comparisons across the four required profiles; 944 residual test IDs
 remain unowned. Compared with v18, only `out-of-flow-in-multicolumn-042`,

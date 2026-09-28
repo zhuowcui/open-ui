@@ -33,6 +33,17 @@ In a diagnostic four-profile run of all 125
 comparisons became 444/500. Only `-027` at 1280×720@1.25 changed; it became
 exact, and all 500 Chromium decoded hashes stayed unchanged. The reduced
 no-absolute case also became [pixel exact](reproducers/flex-row-first-line-break-no-abs-after.png)
-at that profile. The other 56 differences in this family remain open. A clean
-complete census is required before this repair can be counted in the release
-matrix.
+at that profile. The other 56 differences in this family remain open.
+
+At clean checkpoint `89a0a1f3`, eight disjoint shards produced the complete
+[v20 census](generated/four-profile-census-v20.json): **21,214/22,924 exact,
+1,710 different, zero errors**. Against the prior v19 census, exactly this
+one Open UI decoded image changed and became exact. No previously exact
+comparison regressed, and all 22,924 Chromium oracle identities and decoded
+hashes stayed fixed. The clean [v21 raster index](generated/focused-primitive-raster-v21.json)
+remains 640/640 focused and 960/960 primitive exact, with all 1,600 decoded
+images unchanged from v20. The complete clean
+[expanded v10 run](generated/expanded-requalification-v10.json) measured
+22,011/23,724 exact; the 200 native additions retained their previous
+statuses and pixels. The release renderer gate remains open with 943 unowned
+residual test IDs.
