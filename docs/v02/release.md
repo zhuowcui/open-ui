@@ -8,10 +8,10 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,225/22,924 exact, 1,699 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v27.json) | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v28.json) | pass |
+| Four-profile renderer matrix | 21,227/22,924 exact, 1,697 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v28.json) | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v29.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v13.json); 22,022/23,724 total comparisons exact, 1,702 different, zero errors. One of the 36 pending cases is [newly exact at all four profiles](../renderer/generated/pending-mutation-candidates-v2.json), but is not yet in the admitted manifest. Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v14.json); 22,024/23,724 total comparisons exact, 1,700 different, zero errors. One of the 36 pending cases is [exact at all four profiles](../renderer/generated/pending-mutation-candidates-v3.json), but is not yet in the admitted manifest. Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
@@ -45,7 +45,25 @@ behavioral or nonvisual reasons is not a waiver for application interaction:
 needed element behavior must be available through the public native Rust API
 over the same retained document and event path.
 
-The latest clean census at `8950b426` is
+The latest clean census at `a0e3f4cd` is
+[21,227/22,924 exact](../renderer/generated/four-profile-census-v28.json),
+with 1,697 differences, zero errors, and 937 unowned residual test IDs. The
+[clipped replaced-background investigation](../renderer/clipped-replaced-background-coverage.md)
+records the shared coverage rule: two margin-trim comparisons became exact,
+and a third iframe comparison fell from 342 wrong pixels to six. Exactly three
+Open UI images changed; every Chromium oracle identity and decoded hash stayed
+fixed, and no exact comparison regressed. The clean
+[v29 raster index](../renderer/generated/focused-primitive-raster-v29.json)
+is 640/640 focused and 960/960 primitive exact. The complete clean
+[v14 expanded requalification](../renderer/generated/expanded-requalification-v14.json)
+is 22,024/23,724 exact, with 197 of 200 additions still exact and three
+demoted. The [v15 diagnostic selection](../../tools/qualification/manifests/expanded-v15.json)
+retains those 197. The clean
+[v3 pending-candidate index](../renderer/generated/pending-mutation-candidates-v3.json)
+again finds `adjoining-floats-dynamic` exact at all four profiles; it remains
+outside admitted release coverage pending a new contract manifest.
+
+The prior clean census at `8950b426` is
 [21,225/22,924 exact](../renderer/generated/four-profile-census-v27.json),
 with 1,699 differences, zero errors, and 939 unowned residual test IDs.
 Every residual diff signature matches the prior clean census, so the nested

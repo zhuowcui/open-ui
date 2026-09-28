@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,225/22,924 exact, 1,699 different, 0 errors |
+| Fresh four-profile Chromium census | 21,227/22,924 exact, 1,697 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Pending native final-state candidates | 1/36 newly eligible at all four profiles; 35 still differ |
@@ -26,7 +26,24 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v27.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v28.json)
+at `a0e3f4cd` is 21,227/22,924 exact, 1,697 different, and zero errors.
+The shared [clipped replaced-background coverage fix](../renderer/clipped-replaced-background-coverage.md)
+made two margin-trim comparisons exact and reduced a third iframe difference
+from 342 pixels to six. Only those three Open UI images changed, all 22,924
+Chromium oracle hashes stayed fixed, and no exact comparison regressed. The
+[v29 raster index](../renderer/generated/focused-primitive-raster-v29.json)
+is 640/640 focused and 960/960 primitive exact. The complete clean
+[v14 expanded requalification](../renderer/generated/expanded-requalification-v14.json)
+is 22,024/23,724 exact; all 200 additions have the same pixels and statuses,
+with 197 exact and three demoted. The
+[v15 diagnostic selection](../../tools/qualification/manifests/expanded-v15.json)
+retains those 197. The clean
+[v3 pending-candidate index](../renderer/generated/pending-mutation-candidates-v3.json)
+again records one of 36 cases exact at all four profiles. The release renderer
+gate still fails with 937 unowned residual test IDs.
+
+The [prior complete clean census](../renderer/generated/four-profile-census-v27.json)
 at `8950b426` remains 21,225/22,924 exact, 1,699 different, and zero errors.
 All 939 residual test IDs and their pixel diff signatures match the prior
 clean census. The [v28 raster index](../renderer/generated/focused-primitive-raster-v28.json)
