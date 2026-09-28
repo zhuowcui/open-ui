@@ -26484,6 +26484,12 @@ fn layout_multicol(
                                             .clamp_negative_to_zero()
                                             .min_of(overflow_part_height),
                                     );
+                                } else if child_height == LayoutUnit::zero() {
+                                    // The source box has no block decoration area.
+                                    // This continuation exists only to expose
+                                    // descendant overflow in later columns.
+                                    overflow_part.decoration_paint_block_size =
+                                        Some(LayoutUnit::zero());
                                 }
                                 overflow_part.has_overflow_clip = true;
                                 overflow_part.block_axis_clip_only = child_style.overflow_x
@@ -33361,6 +33367,61 @@ mod tests {
             .children
             .iter()
             .find_map(|child| fragment_for_node(child, node_id))
+    }
+
+    #[test]
+    fn zero_height_positioned_multicol_continuation_has_no_parent_decoration() {
+        let mut doc = Document::new();
+        let root = doc.root();
+        let outer = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(outer, |style| {
+            style.display = Display::Block;
+            style.width = Length::px(100.0);
+            style.height = Length::px(100.0);
+            style.column_count = Some(2);
+            style.column_fill = ColumnFill::Auto;
+            style.column_gap = Some(Length::px(0.0));
+        });
+        doc.append_child(root, outer);
+
+        let inner = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(inner, |style| {
+            style.display = Display::Block;
+            style.position = Position::Relative;
+            style.width = Length::px(50.0);
+            style.column_count = Some(2);
+            style.column_fill = ColumnFill::Auto;
+            style.column_gap = Some(Length::px(0.0));
+            style.background_color = Color::RED;
+        });
+        doc.append_child(outer, inner);
+
+        let positioned = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(positioned, |style| {
+            style.display = Display::Block;
+            style.position = Position::Absolute;
+            style.width = Length::px(50.0);
+            style.height = Length::px(200.0);
+            style.background_color = Color::GREEN;
+        });
+        doc.append_child(inner, positioned);
+
+        let space = ConstraintSpace::for_root(LayoutUnit::from_i32(800), LayoutUnit::from_i32(600));
+        let fragment = block_layout(&doc, root, &space);
+        let outer_fragment = fragment_for_node(&fragment, outer).unwrap();
+        let columns: Vec<_> = outer_fragment
+            .children
+            .iter()
+            .filter(|child| child.kind == FragmentKind::ColumnBox)
+            .collect();
+        assert_eq!(columns.len(), 2);
+        let next_column_inner = fragment_for_node(columns[1], inner).unwrap();
+        assert!(next_column_inner.size.height > LayoutUnit::zero());
+        assert_eq!(
+            next_column_inner.decoration_paint_block_size,
+            Some(LayoutUnit::zero())
+        );
+        assert!(fragment_for_node(columns[1], positioned).is_some());
     }
 
     #[test]
