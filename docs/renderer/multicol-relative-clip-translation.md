@@ -55,3 +55,9 @@ changed. No previously exact comparison regressed. All 22,924 Chromium oracle
 identities and decoded hashes stayed unchanged. The 944 remaining residual
 test IDs have no reviewed root cause and owner, so this is a nonqualifying
 diagnostic result, not a v0.2 release pass.
+
+At the following clean checkpoint `ef7214b3`, the
+[v20 raster index](generated/focused-primitive-raster-v20.json) stayed
+640/640 focused and 960/960 primitive exact across 40 profiles in each
+suite. All 1,600 decoded Open UI images and Chromium oracle hashes matched
+the preceding clean raster run.

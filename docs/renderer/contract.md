@@ -240,7 +240,11 @@ remain unowned. Compared with v18, only `out-of-flow-in-multicolumn-042`,
 each becoming exact from 125 differing pixels. No prior exact comparison
 regressed. All 22,924 Chromium oracle identities and decoded hashes stayed
 unchanged. The [relative continuation clip investigation](multicol-relative-clip-translation.md)
-records the shared repair and reduced evidence. The prior
+records the shared repair and reduced evidence. The clean
+[v20 raster index](generated/focused-primitive-raster-v20.json) at `ef7214b3`
+remains 640/640 focused and 960/960 primitive exact. All 1,600 decoded
+Open UI images and Chromium oracle hashes match the preceding clean raster
+run. The prior
 [v18 diagnostic index](generated/four-profile-census-v18.json), with clean
 `8269ea09` source identity, contains 21,210 exact, 1,714 different, and zero
 errored comparisons across the four required profiles; 947 residual test IDs

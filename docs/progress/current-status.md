@@ -32,9 +32,9 @@ No previously exact comparison regressed. Only those three Open UI decoded
 images changed; all 22,924 Chromium oracle identities and decoded hashes
 stayed fixed. The [relative continuation clip investigation](../renderer/multicol-relative-clip-translation.md)
 records the cause, reduced reproducer, and authored-overflow guard. The clean
-[v19 raster index](../renderer/generated/focused-primitive-raster-v19.json)
+[v20 raster index](../renderer/generated/focused-primitive-raster-v20.json)
 confirms both 40-profile matrices stayed exact with all 1,600 Open UI and
-Chromium decoded hashes unchanged at the preceding source checkpoint. The
+Chromium decoded hashes unchanged from the preceding clean v19 raster run. The
 census still fails exactness, with 944 unowned residual test IDs. The prior
 [multicolumn investigation](../renderer/multicol-nested-positioned-continuation.md)
 records the v18 repair. The prior
