@@ -14,7 +14,7 @@ claimed by source code alone.
 | Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v7.json); 22,005/23,724 total comparisons exact, zero errors. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
-| Rust 1.85 MSRV | [hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36313866551): locked headless and Linux checks passed at the prior pushed checkpoint | pass |
+| Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
 | Rust/C application contract | 39 scenarios, 102 existing exports, five C examples and C++ consumer; owned C accessibility-tree snapshots now exported, native C window loop still open | partial |
 | Native element interaction | Public Rust `Document` and `Element` APIs cover ID/class lookup, class-token updates, mutation, callbacks, activation, focus, scrolling, and controls; browser-style operations needed by applications must be exposed through native APIs | core implemented; remaining API coverage review open |
 | C-owned X11/Wayland application loop | no exported run/request-exit platform lifecycle yet | open |
@@ -23,10 +23,10 @@ claimed by source code alone.
 | No-work frame | zero layout, paint, and raster on unchanged snapshots | pass |
 | Mutation ownership | 10,000-iteration soak, no owned-object leak | pass |
 | Local performance smoke | 0.108 ms p95, 308 UI-thread animation fps, 1.389% RSS growth | non-qualifying pass |
-| X11/Wayland software and Mesa GL | [hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36313866551) passed both smoke paths at the prior pushed checkpoint; final-head rerun pending | provisional pass |
-| Miri C handle ownership | [hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36313866551): opaque-handle ownership test passed under pinned Miri | pass |
-| ASan/LSan/fuzz | [hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36313866551): all 18 FFI tests passed, then both sanitizers reported 10,476 bytes through Fontconfig at process exit; fuzz stopped on a 2,606-byte Fontconfig allocation report | fail |
-| Native C UBSan | [hosted hardening](https://github.com/zhuowcui/open-ui/actions/runs/36313866551): ABI consumers passed | pass |
+| X11/Wayland software and Mesa GL | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115) passed both smoke paths; physical release-lab tests remain open | provisional pass |
+| Miri C handle ownership | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): opaque-handle ownership test passed under pinned Miri | pass |
+| ASan/LSan/fuzz | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): all 18 FFI tests passed, then both sanitizers reported 10,476 bytes through Fontconfig at process exit; fuzz stopped on a 2,606-byte Fontconfig allocation report | fail |
+| Native C UBSan | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): ABI consumers passed | pass |
 | x86-64/AArch64 SDK, deb, rpm | deterministic source pipeline and tag matrix | pending tag build |
 | Clean Ubuntu/Fedora install | release workflow consumer jobs | pending tag build |
 | Physical GPU/context loss | release-lab profile | open |
@@ -94,8 +94,8 @@ on the current `ceebef52` evidence checkpoint passed X11/Mesa and pure-Wayland
 platform smoke, Miri handles, and C UBSan. AddressSanitizer and LeakSanitizer
 again failed after all 18 ABI tests passed: each reported 10,476 bytes in 236
 Fontconfig allocations at process exit. Fuzz failed on 2,606 bytes in 59
-Fontconfig allocations. The MSRV job was still running when this status was
-recorded. These failures keep hardening unqualified.
+Fontconfig allocations. The MSRV check passed. These failures keep hardening
+unqualified.
 
 The optional frozen replay checks the archived Open UI bytes; it does not prove
 those bytes equal Chromium. The historical pixel comparator accepted

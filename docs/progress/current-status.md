@@ -96,7 +96,8 @@ load it.
   a CPU-rasterized frame.
 - The [current hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36365378115)
   still fails AddressSanitizer, LeakSanitizer, and fuzz on process-exit
-  Fontconfig allocations. Its MSRV job was running when recorded.
+  Fontconfig allocations. Its MSRV, Miri, Linux platform, and C UBSan jobs
+  passed.
 - The four-profile Chromium census fails exactness; 949 residual test IDs
   have no reviewed owner. Both 40-profile CPU raster matrices are exact.
 - The C ABI covers the retained engine, headless renderer, and an owned full
