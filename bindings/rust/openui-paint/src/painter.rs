@@ -6250,7 +6250,7 @@ fn text_fragment_reaches_block(
 struct SharedColumnClip {
     rect: Rect,
     antialias: bool,
-    fragmentainer: bool,
+    translate_with_relative: bool,
 }
 
 struct SharedColumnDecoration<'a> {
@@ -6469,7 +6469,7 @@ fn collect_shared_column_decorations<'a>(
         // clips stay attached to their owning ancestor instead.
         let shift = fragment.fragmentation_visual_offset;
         for clip in &mut child_clips {
-            if clip.fragmentainer {
+            if clip.translate_with_relative {
                 clip.rect = Rect::from_ltrb(
                     clip.rect.left + shift.left.to_f32(),
                     clip.rect.top + shift.top.to_f32(),
@@ -6502,7 +6502,7 @@ fn collect_shared_column_decorations<'a>(
             child_clips.push(SharedColumnClip {
                 rect: physical_clip,
                 antialias: false,
-                fragmentainer: true,
+                translate_with_relative: true,
             });
         }
     } else if !fragment.node_id.is_none() {
@@ -6565,6 +6565,13 @@ fn collect_shared_column_decorations<'a>(
             return;
         }
         if has_authored_overflow_clip {
+            // An authored overflow box fixes the visible region for its
+            // descendants. Relative positioning inside it can move ink
+            // within that region, but cannot move the ancestor column's
+            // fragmentainer boundary beyond the overflow clip.
+            for clip in &mut child_clips {
+                clip.translate_with_relative = false;
+            }
             let (clip_x, clip_y, clip_width, clip_height) =
                 compute_overflow_clip_reference_rect(fragment, fragment_offset, style);
             let margin = style.overflow_clip_margin;
@@ -6603,7 +6610,7 @@ fn collect_shared_column_decorations<'a>(
                     outward_snap_rect_to_physical(logical_clip, style.device_scale_factor)
                 },
                 antialias,
-                fragmentainer: false,
+                translate_with_relative: false,
             });
         } else if fragment.has_overflow_clip {
             // Shared column-root decorations are lifted out of the ordinary
@@ -6632,7 +6639,7 @@ fn collect_shared_column_decorations<'a>(
             child_clips.push(SharedColumnClip {
                 rect: physical_clip,
                 antialias: false,
-                fragmentainer: true,
+                translate_with_relative: true,
             });
         }
     }
@@ -6767,7 +6774,7 @@ fn prepaint_shared_column_root_decorations(
                     doc.device_scale_factor(),
                 ),
                 antialias: false,
-                fragmentainer: true,
+                translate_with_relative: true,
             })
             .into_iter()
             .collect::<Vec<_>>();
