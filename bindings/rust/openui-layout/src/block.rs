@@ -2155,6 +2155,7 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
         // Handle float and OOF children first (leading floats), then lay out
         // inline content with float-aware per-line available width.
         let mut exclusion_space_inline = initial_exclusion_space(space);
+        let inherited_exclusion_space_inline = exclusion_space_inline.clone();
         let (mut items_data, float_placeholders) =
             if let Some(children) = virtual_marker_children.as_deref() {
                 crate::inline::items_builder::InlineItemsBuilder::collect_for_children_with_floats(
@@ -2964,7 +2965,8 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
             }
             inline_space.first_line_context = space.first_line_context.clone();
             if exclusion_space_inline.has_floats() {
-                inline_space.exclusion_space = Some(std::sync::Arc::new(exclusion_space_inline));
+                inline_space.exclusion_space =
+                    Some(std::sync::Arc::new(exclusion_space_inline.clone()));
             }
             let mut inline_fragment = if let Some(children) = virtual_marker_children.as_deref() {
                 crate::inline::algorithm::inline_layout_for_children(
@@ -3027,6 +3029,22 @@ pub fn block_layout(doc: &Document, node_id: NodeId, space: &ConstraintSpace) ->
                 }
             }
             block_offset = intrinsic_block_size;
+        }
+        // Floats collected from an inline formatting context still belong to
+        // the surrounding block formatting context. An ordinary block must
+        // pass their exclusions upward; a BFC root must include their lower
+        // margin edge in its automatic block size.
+        if exclusion_space_inline.has_floats() {
+            if space.is_new_formatting_context {
+                max_float_bottom = exclusion_space_inline
+                    .all_exclusions()
+                    .iter()
+                    .map(|exclusion| exclusion.rect.end_offset.block_offset)
+                    .fold(max_float_bottom, LayoutUnit::max_of);
+            } else {
+                float_exclusions_result = exclusion_space_inline
+                    .added_exclusions_since(&inherited_exclusion_space_inline);
+            }
         }
     } else if has_inline && has_block {
         // ── Mixed content: create anonymous block boxes (CSS 2.2 §9.2.1.1) ─
@@ -34181,6 +34199,67 @@ mod tests {
         assert_eq!(
             fragment_for_node(&fragment, parent).unwrap().size.height,
             LayoutUnit::from_i32(80)
+        );
+    }
+
+    #[test]
+    fn flow_root_contains_floats_from_nested_pure_inline_context() {
+        let mut doc = Document::new();
+        let flow_root = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(flow_root, |style| {
+            style.display = Display::FlowRoot;
+            style.width = Length::px(100.0);
+        });
+        doc.append_child(doc.root(), flow_root);
+
+        let leading_float = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(leading_float, |style| {
+            style.display = Display::Block;
+            style.float = Float::Right;
+            style.width = Length::px(50.0);
+            style.height = Length::px(50.0);
+        });
+        doc.append_child(flow_root, leading_float);
+
+        let wrapper = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(wrapper, |style| style.display = Display::Block);
+        doc.append_child(flow_root, wrapper);
+        let clearing = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(clearing, |style| {
+            style.display = Display::Block;
+            style.clear = Clear::Both;
+            style.height = Length::px(10.0);
+        });
+        doc.append_child(wrapper, clearing);
+        let inline_container = doc.create_node(ElementTag::Div);
+        doc.update_resolved_style(inline_container, |style| style.display = Display::Block);
+        doc.append_child(clearing, inline_container);
+        for _ in 0..2 {
+            let floated_span = doc.create_node(ElementTag::Span);
+            doc.update_resolved_style(floated_span, |style| {
+                style.display = Display::Block;
+                style.float = Float::Left;
+                style.width = Length::px(50.0);
+                style.height = Length::px(50.0);
+            });
+            doc.append_child(inline_container, floated_span);
+        }
+
+        let fragment = block_layout(
+            &doc,
+            doc.root(),
+            &ConstraintSpace::for_root(LayoutUnit::from_i32(200), LayoutUnit::from_i32(200)),
+        );
+        assert_eq!(
+            fragment_for_node(&fragment, inline_container)
+                .unwrap()
+                .float_exclusions
+                .len(),
+            3
+        );
+        assert_eq!(
+            fragment_for_node(&fragment, flow_root).unwrap().size.height,
+            LayoutUnit::from_i32(100)
         );
     }
 
