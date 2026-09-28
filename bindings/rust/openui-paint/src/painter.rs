@@ -18187,162 +18187,235 @@ fn paint_borders(
                     .border_left_color
                     .resolve(inherited_color)
                     .is_opaque());
-        // Chrome paint order: Top → Bottom → Right → Left (sorted by side priority).
-        // Top border: outer-top-left → outer-top-right → inner-top-right → inner-top-left
-        if bt > 0.0 {
-            let top_points =
-                if chromium_solid_border && style.border_top_style == BorderStyle::Solid {
-                    [(ox0, oy0), (ox1, oy0), (ox1, iy0), (ox0, iy0)]
-                } else if authored_uniform_3d {
-                    [(ox0, oy0), (ox1, oy0), (ix1, iy0), (ox0, iy0)]
-                } else {
-                    [(ox0, oy0), (ox1, oy0), (ix1, iy0), (ix0, iy0)]
-                };
-            paint_border_side_path(
-                canvas,
-                style.border_top_style,
-                &style.border_top_color,
-                inherited_color,
-                bt,
-                &top_points,
-                BorderSide::Top,
-                adjust_dashed_gap,
-                !matching_stroked_sides,
-                !all_side_colors_match,
-                antialias_solid_miters,
-                direct_analytic_solid_miters,
-                chromium_solid_border,
-                authored_uniform_3d_outer_edge,
-                platform_3d_fieldset_coverage,
-                style.device_scale_factor,
-            );
-        }
-        // Bottom border: outer-bottom-right → outer-bottom-left → inner-bottom-left → inner-bottom-right
-        if bb > 0.0 {
-            let bottom_points =
-                if chromium_solid_border && style.border_bottom_style == BorderStyle::Solid {
-                    [(ox1, oy1), (ox0, oy1), (ox0, iy1), (ox1, iy1)]
-                } else if authored_uniform_3d {
-                    [(ox1, oy1), (ox0, oy1), (ix0, iy1), (ox1, iy1)]
-                } else {
-                    [(ox1, oy1), (ox0, oy1), (ix0, iy1), (ix1, iy1)]
-                };
-            paint_border_side_path(
-                canvas,
-                style.border_bottom_style,
-                &style.border_bottom_color,
-                inherited_color,
-                bb,
-                &bottom_points,
-                BorderSide::Bottom,
-                adjust_dashed_gap,
-                !matching_stroked_sides,
-                !all_side_colors_match,
-                antialias_solid_miters,
-                direct_analytic_solid_miters,
-                chromium_solid_border,
-                authored_uniform_3d_outer_edge,
-                platform_3d_fieldset_coverage,
-                style.device_scale_factor,
-            );
-        }
-        // Right border: outer-top-right → outer-bottom-right → inner-bottom-right → inner-top-right
-        if br > 0.0 {
-            let right_color = style.border_right_color.resolve(inherited_color);
-            let right_top_miter = chromium_solid_border
-                && bt > 0.0
-                && right_color != style.border_top_color.resolve(inherited_color);
-            let right_bottom_miter = chromium_solid_border
-                && bb > 0.0
-                && right_color != style.border_bottom_color.resolve(inherited_color);
-            paint_border_side_path(
-                canvas,
-                style.border_right_style,
-                &style.border_right_color,
-                inherited_color,
-                br,
-                &[
-                    (ox1, oy0),
-                    (ox1, oy1),
-                    (
-                        ix1,
-                        if authored_uniform_3d {
-                            oy1
-                        } else if !chromium_solid_border || right_bottom_miter {
-                            iy1
-                        } else {
-                            oy1
-                        },
-                    ),
-                    (
-                        ix1,
-                        if !chromium_solid_border || right_top_miter {
-                            iy0
-                        } else {
-                            oy0
-                        },
-                    ),
-                ],
-                BorderSide::Right,
-                adjust_dashed_gap,
-                !matching_stroked_sides,
-                true,
-                antialias_solid_miters,
-                direct_analytic_solid_miters,
-                chromium_solid_border,
-                authored_uniform_3d_outer_edge,
-                platform_3d_fieldset_coverage,
-                style.device_scale_factor,
-            );
-        }
-        // Left border: outer-bottom-left → outer-top-left → inner-top-left → inner-bottom-left
-        if bl > 0.0 {
-            let left_color = style.border_left_color.resolve(inherited_color);
-            let left_top_miter = chromium_solid_border
-                && bt > 0.0
-                && left_color != style.border_top_color.resolve(inherited_color);
-            let left_bottom_miter = chromium_solid_border
-                && bb > 0.0
-                && left_color != style.border_bottom_color.resolve(inherited_color);
-            paint_border_side_path(
-                canvas,
-                style.border_left_style,
-                &style.border_left_color,
-                inherited_color,
-                bl,
-                &[
-                    (ox0, oy1),
-                    (ox0, oy0),
-                    (
-                        ix0,
-                        if authored_uniform_3d {
-                            oy0
-                        } else if !chromium_solid_border || left_top_miter {
-                            iy0
-                        } else {
-                            oy0
-                        },
-                    ),
-                    (
-                        ix0,
-                        if !chromium_solid_border || left_bottom_miter {
-                            iy1
-                        } else {
-                            oy1
-                        },
-                    ),
-                ],
-                BorderSide::Left,
-                adjust_dashed_gap,
-                !matching_stroked_sides,
-                !all_side_colors_match,
-                antialias_solid_miters,
-                direct_analytic_solid_miters,
-                chromium_solid_border,
-                authored_uniform_3d_outer_edge,
-                platform_3d_fieldset_coverage,
-                style.device_scale_factor,
-            );
+        // Blink paints lower-alpha sides first, then non-solid styles before
+        // solid styles. The side priority breaks ties within one style.
+        // Keeping that order matters for dotted edges: a later solid edge
+        // can overdraw a corner instead of requiring a miter clip.
+        let mut paint_order = [
+            BorderSide::Top,
+            BorderSide::Bottom,
+            BorderSide::Right,
+            BorderSide::Left,
+        ];
+        let side_key = |side: BorderSide| {
+            let (border_style, color, side_priority) = match side {
+                BorderSide::Top => (
+                    style.border_top_style,
+                    style.border_top_color.resolve(inherited_color),
+                    0,
+                ),
+                BorderSide::Bottom => (
+                    style.border_bottom_style,
+                    style.border_bottom_color.resolve(inherited_color),
+                    1,
+                ),
+                BorderSide::Right => (
+                    style.border_right_style,
+                    style.border_right_color.resolve(inherited_color),
+                    2,
+                ),
+                BorderSide::Left => (
+                    style.border_left_style,
+                    style.border_left_color.resolve(inherited_color),
+                    3,
+                ),
+            };
+            let style_priority = match border_style {
+                BorderStyle::None | BorderStyle::Hidden => 0,
+                BorderStyle::Dotted | BorderStyle::Dashed | BorderStyle::Double => 1,
+                BorderStyle::Inset
+                | BorderStyle::Groove
+                | BorderStyle::Outset
+                | BorderStyle::Ridge => 2,
+                BorderStyle::Solid => 3,
+            };
+            (color.a, style_priority, side_priority)
+        };
+        paint_order.sort_by(|a, b| {
+            let (alpha_a, style_a, side_a) = side_key(*a);
+            let (alpha_b, style_b, side_b) = side_key(*b);
+            alpha_a
+                .total_cmp(&alpha_b)
+                .then(style_a.cmp(&style_b))
+                .then(side_a.cmp(&side_b))
+        });
+        for side in paint_order {
+            // Top border: outer-top-left → outer-top-right → inner-top-right → inner-top-left
+            if side == BorderSide::Top && bt > 0.0 {
+                let top_points =
+                    if chromium_solid_border && style.border_top_style == BorderStyle::Solid {
+                        [(ox0, oy0), (ox1, oy0), (ox1, iy0), (ox0, iy0)]
+                    } else if authored_uniform_3d {
+                        [(ox0, oy0), (ox1, oy0), (ix1, iy0), (ox0, iy0)]
+                    } else {
+                        [(ox0, oy0), (ox1, oy0), (ix1, iy0), (ix0, iy0)]
+                    };
+                paint_border_side_path(
+                    canvas,
+                    style.border_top_style,
+                    &style.border_top_color,
+                    inherited_color,
+                    bt,
+                    &top_points,
+                    BorderSide::Top,
+                    adjust_dashed_gap,
+                    !matching_stroked_sides,
+                    !all_side_colors_match,
+                    antialias_solid_miters,
+                    direct_analytic_solid_miters,
+                    chromium_solid_border,
+                    authored_uniform_3d_outer_edge,
+                    platform_3d_fieldset_coverage,
+                    style.device_scale_factor,
+                );
+            }
+            // Bottom border: outer-bottom-right → outer-bottom-left → inner-bottom-left → inner-bottom-right
+            if side == BorderSide::Bottom && bb > 0.0 {
+                let bottom_points =
+                    if chromium_solid_border && style.border_bottom_style == BorderStyle::Solid {
+                        [(ox1, oy1), (ox0, oy1), (ox0, iy1), (ox1, iy1)]
+                    } else if authored_uniform_3d {
+                        [(ox1, oy1), (ox0, oy1), (ix0, iy1), (ox1, iy1)]
+                    } else {
+                        [(ox1, oy1), (ox0, oy1), (ix0, iy1), (ix1, iy1)]
+                    };
+                paint_border_side_path(
+                    canvas,
+                    style.border_bottom_style,
+                    &style.border_bottom_color,
+                    inherited_color,
+                    bb,
+                    &bottom_points,
+                    BorderSide::Bottom,
+                    adjust_dashed_gap,
+                    !matching_stroked_sides,
+                    !all_side_colors_match,
+                    antialias_solid_miters,
+                    direct_analytic_solid_miters,
+                    chromium_solid_border,
+                    authored_uniform_3d_outer_edge,
+                    platform_3d_fieldset_coverage,
+                    style.device_scale_factor,
+                );
+            }
+            // Right border: outer-top-right → outer-bottom-right → inner-bottom-right → inner-top-right
+            if side == BorderSide::Right && br > 0.0 {
+                let right_color = style.border_right_color.resolve(inherited_color);
+                let right_top_miter = chromium_solid_border
+                    && bt > 0.0
+                    && right_color != style.border_top_color.resolve(inherited_color);
+                let right_bottom_miter = chromium_solid_border
+                    && bb > 0.0
+                    && right_color != style.border_bottom_color.resolve(inherited_color);
+                paint_border_side_path(
+                    canvas,
+                    style.border_right_style,
+                    &style.border_right_color,
+                    inherited_color,
+                    br,
+                    &[
+                        (ox1, oy0),
+                        (ox1, oy1),
+                        (
+                            ix1,
+                            if authored_uniform_3d {
+                                oy1
+                            } else if !chromium_solid_border || right_bottom_miter {
+                                iy1
+                            } else {
+                                oy1
+                            },
+                        ),
+                        (
+                            ix1,
+                            if !chromium_solid_border || right_top_miter {
+                                iy0
+                            } else {
+                                oy0
+                            },
+                        ),
+                    ],
+                    BorderSide::Right,
+                    adjust_dashed_gap,
+                    !matching_stroked_sides
+                        && !(style.border_right_style == BorderStyle::Dotted
+                            && bt > 0.0
+                            && bb > 0.0
+                            && style.border_top_style == BorderStyle::Solid
+                            && style.border_bottom_style == BorderStyle::Solid
+                            && style.border_top_color.resolve(inherited_color).is_opaque()
+                            && style
+                                .border_bottom_color
+                                .resolve(inherited_color)
+                                .is_opaque()),
+                    !(style.border_right_style == BorderStyle::Dotted
+                        && ((bt > 0.0
+                            && matches!(
+                                style.border_top_style,
+                                BorderStyle::Dashed | BorderStyle::Dotted | BorderStyle::Double
+                            ))
+                            || (bb > 0.0
+                                && matches!(
+                                    style.border_bottom_style,
+                                    BorderStyle::Dashed | BorderStyle::Dotted | BorderStyle::Double
+                                )))),
+                    antialias_solid_miters,
+                    direct_analytic_solid_miters,
+                    chromium_solid_border,
+                    authored_uniform_3d_outer_edge,
+                    platform_3d_fieldset_coverage,
+                    style.device_scale_factor,
+                );
+            }
+            // Left border: outer-bottom-left → outer-top-left → inner-top-left → inner-bottom-left
+            if side == BorderSide::Left && bl > 0.0 {
+                let left_color = style.border_left_color.resolve(inherited_color);
+                let left_top_miter = chromium_solid_border
+                    && bt > 0.0
+                    && left_color != style.border_top_color.resolve(inherited_color);
+                let left_bottom_miter = chromium_solid_border
+                    && bb > 0.0
+                    && left_color != style.border_bottom_color.resolve(inherited_color);
+                paint_border_side_path(
+                    canvas,
+                    style.border_left_style,
+                    &style.border_left_color,
+                    inherited_color,
+                    bl,
+                    &[
+                        (ox0, oy1),
+                        (ox0, oy0),
+                        (
+                            ix0,
+                            if authored_uniform_3d {
+                                oy0
+                            } else if !chromium_solid_border || left_top_miter {
+                                iy0
+                            } else {
+                                oy0
+                            },
+                        ),
+                        (
+                            ix0,
+                            if !chromium_solid_border || left_bottom_miter {
+                                iy1
+                            } else {
+                                oy1
+                            },
+                        ),
+                    ],
+                    BorderSide::Left,
+                    adjust_dashed_gap,
+                    !matching_stroked_sides,
+                    !all_side_colors_match,
+                    antialias_solid_miters,
+                    direct_analytic_solid_miters,
+                    chromium_solid_border,
+                    authored_uniform_3d_outer_edge,
+                    platform_3d_fieldset_coverage,
+                    style.device_scale_factor,
+                );
+            }
         }
 
         // CPU Skia snaps the axis-aligned edges of opaque trapezoid fills,
