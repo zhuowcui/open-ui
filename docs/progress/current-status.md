@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,219/22,924 exact, 1,705 different, 0 errors |
+| Fresh four-profile Chromium census | 21,223/22,924 exact, 1,701 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
@@ -25,7 +25,23 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v23.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v24.json)
+at `2f560e46` gained four exact comparisons from v23 by painting mixed border
+styles in Chromium's alpha, style, and side order. Exactly 16 Open UI images
+changed across four border fixtures; none regressed, and all 22,924 Chromium
+oracle identities and decoded hashes stayed fixed. The
+[border paint-order investigation](../renderer/mixed-border-paint-order.md)
+records the compact case, source rule, rejected clip-only diagnostic, and
+four-profile pixel counts. The clean
+[v25 raster index](../renderer/generated/focused-primitive-raster-v25.json)
+remains 640/640 focused and 960/960 primitive exact, with all 1,600 Open UI
+and Chromium decoded hashes unchanged from v24. The clean
+[v3 selected-additions recheck](../renderer/generated/expanded-additions-recheck-v3.json)
+remains 797/800 exact with three differences and zero errors; all 800 decoded
+images and statuses are unchanged. The complete census still fails exactness
+with 1,701 differences across 939 unowned residual test IDs.
+
+The [prior complete clean census](../renderer/generated/four-profile-census-v23.json)
 at `d0592ccd` gained one exact comparison from v22:
 `out-of-flow-in-multicolumn-047` at 1280×720@1.25. Its parent decoration
 now ends at its used block size, and the outer visual continuation no longer

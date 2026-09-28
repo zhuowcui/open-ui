@@ -74,6 +74,11 @@ preceding full expanded run. It uses the versioned
 [`expanded-additions-v2.json`](../../tools/qualification/manifests/expanded-additions-v2.json)
 ID list, and it remains a diagnostic selection with
 `complete_contract_scope=false`.
+At clean checkpoint `2f560e46`, the
+[v3 selected-additions recheck](generated/expanded-additions-recheck-v3.json)
+again found 797/800 exact, three different, and zero errors. All 800 Open UI
+and Chromium decoded hashes and statuses matched v2. This selection does not
+replace a complete expanded-manifest run at the new renderer commit.
 
 Application and system font ownership, registration limits, and C handle
 lifetime rules are documented in [font collections](font-collections.md).
@@ -240,6 +245,21 @@ and common source/backend identities before emitting a versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
+[v24 diagnostic index](generated/four-profile-census-v24.json), with clean
+`2f560e46` source identity, contains 21,223 exact, 1,701 different, and zero
+errors across the four required profiles; 939 residual test IDs remain
+unowned. Compared with v23, 16 Open UI decoded images changed across four
+mixed-border fixtures, four comparisons became exact, and none regressed.
+All 22,924 Chromium oracle identities and decoded hashes stayed fixed. The
+[mixed-border paint-order investigation](mixed-border-paint-order.md) records
+the source rule and remaining pixels. The clean
+[v25 raster index](generated/focused-primitive-raster-v25.json) remains
+640/640 focused and 960/960 primitive exact, with all 1,600 decoded images
+unchanged. The clean
+[v3 selected-additions recheck](generated/expanded-additions-recheck-v3.json)
+remains 797/800 exact, with all 800 decoded images and statuses unchanged.
+
+The prior
 [v23 diagnostic index](generated/four-profile-census-v23.json), with clean
 `d0592ccd` source identity, contains 21,219 exact, 1,705 different, and zero
 errors across the four required profiles; 939 residual test IDs remain
