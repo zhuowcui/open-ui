@@ -26469,6 +26469,24 @@ fn layout_multicol(
                                     }
                                 }
                                 overflow_part.size.height = overflow_part_height;
+                                if should_continue_abspos_overflow
+                                    && crate::multicol::ColumnLayoutAlgorithm::from_style(
+                                        child_style,
+                                    )
+                                    .is_some()
+                                    && overflow_child_shift >= child_height
+                                    && !nested_multicol_has_own_overflow_columns
+                                {
+                                    // The inner column boxes already consumed
+                                    // their in-flow source. A visual continuation
+                                    // for a direct positioned descendant must
+                                    // not replay that source in the next outer
+                                    // fragmentainer.
+                                    overflow_part.children.retain(|child| {
+                                        child.kind != FragmentKind::ColumnBox
+                                            && child.kind != FragmentKind::ColumnRule
+                                    });
+                                }
                                 if monolithic_overflow_break_top.is_some() {
                                     let _ = retain_monolithic_descendants_for_slice(
                                         &mut overflow_part,
@@ -26484,12 +26502,21 @@ fn layout_multicol(
                                             .clamp_negative_to_zero()
                                             .min_of(overflow_part_height),
                                     );
-                                } else if child_height == LayoutUnit::zero() {
-                                    // The source box has no block decoration area.
-                                    // This continuation exists only to expose
-                                    // descendant overflow in later columns.
-                                    overflow_part.decoration_paint_block_size =
-                                        Some(LayoutUnit::zero());
+                                } else if child_height == LayoutUnit::zero()
+                                    || (should_continue_abspos_overflow
+                                        && child_style.position.is_positioned())
+                                {
+                                    // An out-of-flow descendant can extend a
+                                    // positioned box's visual continuation
+                                    // beyond its own used border box. Retain
+                                    // that continuation for descendant ink,
+                                    // but paint the box's background only in
+                                    // the remaining source interval.
+                                    overflow_part.decoration_paint_block_size = Some(
+                                        (child_height - overflow_child_shift)
+                                            .clamp_negative_to_zero()
+                                            .min_of(overflow_part_height),
+                                    );
                                 }
                                 overflow_part.has_overflow_clip = true;
                                 overflow_part.block_axis_clip_only = child_style.overflow_x
