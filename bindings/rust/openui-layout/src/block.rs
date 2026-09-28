@@ -15990,21 +15990,24 @@ fn fragment_direct_positioned_children_in_multicol(
                     && has_positioned_descendant(&fragment))
                 && extracted_nodes.insert(fragment.node_id);
             if is_nested_fragmentable_positioned {
-                if own_transform != openui_style::Transform2D::IDENTITY
-                    && has_positioned_descendant(&fragment)
-                {
-                    // A fragmented positioned transform can have positioned
-                    // overflow that extends beyond every fragment of its own
-                    // border box. Promote those descendants independently so
-                    // the owning multicol can materialize the additional
-                    // continuations, while replaying this transform at paint.
-                    let child_transform_source = Some((
-                        fragment.node_id,
-                        PhysicalOffset::new(
-                            absolute_offset.left - ancestor_authored_visual_offset.left,
-                            absolute_offset.top - ancestor_authored_visual_offset.top,
-                        ),
-                    ));
+                if has_positioned_descendant(&fragment) {
+                    // Positioned descendants may extend beyond every slice
+                    // of this box. Promote them while the parent still has
+                    // source-space geometry, so later columns can own their
+                    // continuations. A nonidentity local transform installs
+                    // a new source; otherwise retain the inherited one.
+                    let child_transform_source =
+                        if own_transform != openui_style::Transform2D::IDENTITY {
+                            Some((
+                                fragment.node_id,
+                                PhysicalOffset::new(
+                                    absolute_offset.left - ancestor_authored_visual_offset.left,
+                                    absolute_offset.top - ancestor_authored_visual_offset.top,
+                                ),
+                            ))
+                        } else {
+                            transform_containing_block_source
+                        };
                     extract_nested_positioned_fragments(
                         &mut fragment.children,
                         doc,
