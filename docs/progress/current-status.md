@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,218/22,924 exact, 1,706 different, 0 errors |
+| Fresh four-profile Chromium census | 21,219/22,924 exact, 1,705 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
@@ -25,7 +25,21 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v22.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v23.json)
+at `d0592ccd` gained one exact comparison from v22:
+`out-of-flow-in-multicolumn-047` at 1280×720@1.25. Its parent decoration
+now ends at its used block size, and the outer visual continuation no longer
+replays inner columns whose in-flow source was already consumed. Only that
+Open UI decoded image changed; no previously exact comparison regressed.
+All 22,924 Chromium oracle identities and decoded hashes stayed fixed. The
+[consumed nested columns investigation](../renderer/multicol-consumed-nested-columns.md)
+includes reduced reproductions of both masked errors. The clean
+[v24 raster index](../renderer/generated/focused-primitive-raster-v24.json)
+remains 640/640 focused and 960/960 primitive exact, with all 1,600 Open UI
+and Chromium hashes unchanged from v23. The census still fails exactness,
+with 1,705 differences across 939 unowned residual test IDs.
+
+The prior [v22 clean census](../renderer/generated/four-profile-census-v22.json)
 at `6e21bd9b` gained one exact comparison from v21:
 `out-of-flow-in-multicolumn-046` at 1280×720@1.25. Its zero-height
 positioned parent no longer paints a background through the visual

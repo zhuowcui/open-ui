@@ -232,7 +232,20 @@ and common source/backend identities before emitting a versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
-[v22 diagnostic index](generated/four-profile-census-v22.json), with clean
+[v23 diagnostic index](generated/four-profile-census-v23.json), with clean
+`d0592ccd` source identity, contains 21,219 exact, 1,705 different, and zero
+errors across the four required profiles; 939 residual test IDs remain
+unowned. Compared with v22, only `out-of-flow-in-multicolumn-047` at
+1280×720@1.25 changed its Open UI decoded image, becoming exact from 125
+differing pixels. No prior exact comparison regressed. All 22,924 Chromium
+oracle identities and decoded hashes stayed fixed. The
+[consumed nested columns investigation](multicol-consumed-nested-columns.md)
+records the source rules and reduced evidence. The clean
+[v24 raster index](generated/focused-primitive-raster-v24.json) remains
+640/640 focused and 960/960 primitive exact, with all 1,600 Open UI and
+Chromium decoded hashes unchanged from v23.
+
+The prior [v22 diagnostic index](generated/four-profile-census-v22.json), with clean
 `6e21bd9b` source identity, contains 21,218 exact, 1,706 different, and zero
 errored comparisons across the four required profiles; 940 residual test IDs
 remain unowned. Compared with v21, only

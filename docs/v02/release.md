@@ -8,8 +8,8 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,218/22,924 exact, 1,706 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v22.json) | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v23.json) | pass |
+| Four-profile renderer matrix | 21,219/22,924 exact, 1,705 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v23.json) | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v24.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v12.json); 22,015/23,724 total comparisons exact, 1,709 different, zero errors. All 800 addition results and decoded Open UI/Chromium hashes match the prior full run. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
 | Accountability | 7/7 over 7,673 rows | pass |
@@ -45,7 +45,23 @@ behavioral or nonvisual reasons is not a waiver for application interaction:
 needed element behavior must be available through the public native Rust API
 over the same retained document and event path.
 
-The latest clean census at `6e21bd9b` repaired the 1280×720@1.25
+The latest clean census at `d0592ccd` repaired the 1280×720@1.25
+`out-of-flow-in-multicolumn-047` comparison. The inner multicolumn source
+had already been consumed, but its column boxes were replayed inside an
+outer visual continuation. The same continuation also painted too much
+parent background. Both now follow the source interval, while the direct
+absolute child still paints in the later outer column. Only that Open UI
+decoded image changed, and it became exact against Chromium. No previously
+exact comparison regressed; all 22,924 Chromium oracle identities and
+decoded hashes stayed fixed. The
+[nested-column investigation](../renderer/multicol-consumed-nested-columns.md)
+records both reduced diagnostic variants. The remaining 1,705 differences
+and 939 unowned residual test IDs keep the renderer gate red. The clean
+[v24 raster index](../renderer/generated/focused-primitive-raster-v24.json)
+is 640/640 focused and 960/960 primitive exact, with all 1,600 Open UI and
+Chromium hashes unchanged from v23.
+
+The prior clean census at `6e21bd9b` repaired the 1280×720@1.25
 `out-of-flow-in-multicolumn-046` comparison. A zero-height positioned parent
 retains the visual continuation for its absolute child but paints no parent
 background in that extra area. Only that Open UI decoded image changed, and
