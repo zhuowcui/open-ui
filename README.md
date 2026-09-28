@@ -30,8 +30,8 @@ The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
-- a clean four-profile Chromium census with 21,223 of 22,924 comparisons
-  exact, 1,701 different, and zero render errors;
+- a clean four-profile Chromium census with 21,225 of 22,924 comparisons
+  exact, 1,699 different, and zero render errors;
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
   comparisons exact;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;

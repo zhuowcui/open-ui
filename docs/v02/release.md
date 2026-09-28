@@ -8,10 +8,10 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,223/22,924 exact, 1,701 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v25.json) | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v26.json) | pass |
+| Four-profile renderer matrix | 21,225/22,924 exact, 1,699 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v26.json) | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v27.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v12.json); 22,015/23,724 total comparisons exact, 1,709 different, zero errors. A clean [selected-additions recheck](../renderer/generated/expanded-additions-recheck-v4.json) at the new renderer commit remains 797/800 exact, with all 800 decoded Open UI/Chromium images unchanged. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v12.json); 22,015/23,724 total comparisons exact, 1,709 different, zero errors. A clean [selected-additions recheck](../renderer/generated/expanded-additions-recheck-v5.json) at the new renderer commit remains 797/800 exact, with all 800 decoded Open UI/Chromium images unchanged. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
@@ -45,7 +45,25 @@ behavioral or nonvisual reasons is not a waiver for application interaction:
 needed element behavior must be available through the public native Rust API
 over the same retained document and event path.
 
-The latest clean census at `5c7aaa9c` changed eight original Open UI images
+The latest clean census at `954648fb` changed eight original Open UI images
+in the resized one-axis bitmap family at fractional scales. The PNG background
+now uses one shared image shader across its repeated destination, matching
+Chromium's pattern path. Two 1280×720@1.25 comparisons became exact, six
+others moved closer, and no comparison regressed. All 22,924 Chromium oracle
+identities and decoded hashes stayed fixed. The
+[v26 census](../renderer/generated/four-profile-census-v26.json) is now
+21,225 exact, 1,699 different, and zero errors, with 939 unowned residual
+test IDs. The [bitmap pattern investigation](../renderer/resized-one-axis-bitmap-pattern.md)
+records the source path and remaining one-to-three-pixel differences. The
+clean [v27 raster index](../renderer/generated/focused-primitive-raster-v27.json)
+is 640/640 focused and 960/960 primitive exact; all 1,600 Open UI and
+Chromium decoded hashes stayed fixed. The clean
+[v5 selected-additions recheck](../renderer/generated/expanded-additions-recheck-v5.json)
+is 797/800 exact with three differences and zero errors; all 800 Open UI and
+Chromium decoded hashes stayed fixed. It does not replace a complete expanded
+manifest run.
+
+The prior clean census at `5c7aaa9c` changed eight original Open UI images
 in the one-axis repeated linear-gradient family. Their gradient interiors now
 match Chromium at the two fractional scales; each complete image still has
 93–98 differing pixels on a separate PNG image edge. No exact comparison

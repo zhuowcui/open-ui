@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,223/22,924 exact, 1,701 different, 0 errors |
+| Fresh four-profile Chromium census | 21,225/22,924 exact, 1,699 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
@@ -25,7 +25,22 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v25.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v26.json)
+at `954648fb` changed exactly eight Open UI images in four resized one-axis
+bitmap test/reference pairs at fractional scales. Two comparisons became
+exact, six moved closer, and none regressed. All 22,924 Chromium oracle
+identities and decoded hashes stayed fixed. The
+[shared bitmap-pattern investigation](../renderer/resized-one-axis-bitmap-pattern.md)
+records the source rule and remaining one-to-three-pixel differences. The
+clean [v27 raster index](../renderer/generated/focused-primitive-raster-v27.json)
+remains 640/640 focused and 960/960 primitive exact, with all 1,600 Open UI
+and Chromium decoded images unchanged. The clean
+[v5 selected-additions recheck](../renderer/generated/expanded-additions-recheck-v5.json)
+remains 797/800 exact, with all 800 Open UI and Chromium decoded images
+unchanged. The release census still fails exactness with 1,699 differences
+across 939 unowned residual test IDs.
+
+The [prior complete clean census](../renderer/generated/four-profile-census-v25.json)
 at `5c7aaa9c` changed exactly eight Open UI images in four one-axis repeated
 linear-gradient test/reference pairs. Their wrong-pixel counts fell sharply
 at fractional scales, but none became exact because the separate PNG edge
@@ -41,7 +56,7 @@ remains 797/800 exact, with all 800 Open UI and Chromium decoded images
 unchanged. The release census still fails exactness with 1,701 differences
 across 939 unowned residual test IDs.
 
-The [prior complete clean census](../renderer/generated/four-profile-census-v24.json)
+An [earlier complete clean census](../renderer/generated/four-profile-census-v24.json)
 at `2f560e46` gained four exact comparisons from v23 by painting mixed border
 styles in Chromium's alpha, style, and side order. Exactly 16 Open UI images
 changed across four border fixtures; none regressed, and all 22,924 Chromium

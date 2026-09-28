@@ -245,6 +245,23 @@ and common source/backend identities before emitting a versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
+[v26 diagnostic index](generated/four-profile-census-v26.json), with clean
+`954648fb` source identity, contains 21,225 exact, 1,699 different, and zero
+errors across the four required profiles; 939 residual test IDs remain
+unowned. Compared with v25, exactly eight Open UI decoded images changed in
+four resized one-axis bitmap test/reference pairs at fractional scales. Two
+comparisons became exact, six moved closer, and none regressed. All 22,924
+Chromium oracle identities and decoded hashes stayed fixed. The
+[resized bitmap pattern investigation](resized-one-axis-bitmap-pattern.md)
+records the source rule and remaining pixels. The clean
+[v27 raster index](generated/focused-primitive-raster-v27.json) remains
+640/640 focused and 960/960 primitive exact, with all 1,600 Open UI and
+Chromium decoded images unchanged. The clean
+[v5 selected-additions recheck](generated/expanded-additions-recheck-v5.json)
+remains 797/800 exact, with all 800 Open UI and Chromium decoded images and
+statuses unchanged.
+
+The prior
 [v25 diagnostic index](generated/four-profile-census-v25.json), with clean
 `5c7aaa9c` source identity, contains 21,223 exact, 1,701 different, and zero
 errors across the four required profiles; 939 residual test IDs remain
@@ -261,7 +278,7 @@ Chromium decoded images unchanged. The clean
 remains 797/800 exact, with all 800 Open UI and Chromium decoded images and
 statuses unchanged.
 
-The prior
+The earlier
 [v24 diagnostic index](generated/four-profile-census-v24.json), with clean
 `2f560e46` source identity, contains 21,223 exact, 1,701 different, and zero
 errors across the four required profiles; 939 residual test IDs remain
