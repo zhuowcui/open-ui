@@ -233,6 +233,10 @@ source, runner, backend, and oracle identities. Compared with v17, only
 `out-of-flow-in-multicolumn-060` at 1280×720@1.25 changed its Open UI decoded
 image and became exact. No prior exact comparison regressed. All 22,924
 Chromium oracle identities and decoded hashes stayed unchanged. The
+[v19 raster index](generated/focused-primitive-raster-v19.json) confirms
+640/640 focused and 960/960 primitive comparisons exact across their 40
+profiles. All 1,600 decoded Open UI images and Chromium oracle identities
+and hashes match the preceding clean v18 raster run. The
 [multicolumn investigation](multicol-nested-positioned-continuation.md)
 records the shared continuation paint-order repair.
 The prior [v17 diagnostic index](generated/four-profile-census-v17.json), with clean

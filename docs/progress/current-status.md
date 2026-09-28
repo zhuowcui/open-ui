@@ -29,8 +29,8 @@ The [latest complete clean census](../renderer/generated/four-profile-census-v18
 at `8269ea09` gained one exact comparison from v17:
 `out-of-flow-in-multicolumn-060` at 1280×720@1.25. No previously exact
 comparison regressed. Only that Open UI decoded image changed; all 22,924
-Chromium oracle identities and decoded hashes stayed fixed. The prior clean
-[v18 raster index](../renderer/generated/focused-primitive-raster-v18.json)
+Chromium oracle identities and decoded hashes stayed fixed. The clean
+[v19 raster index](../renderer/generated/focused-primitive-raster-v19.json)
 confirms both 40-profile matrices stayed exact with all 1,600 Open UI and
 Chromium decoded hashes unchanged. The census still fails exactness, with 947
 unowned residual test IDs. The [multicolumn investigation](../renderer/multicol-nested-positioned-continuation.md)

@@ -105,4 +105,7 @@ produced the [v18 census](generated/four-profile-census-v18.json):
 only the `-060` 1280×720@1.25 Open UI decoded image changed; it became exact.
 No previously exact comparison regressed. All 22,924 Chromium oracle
 identities and decoded hashes remained unchanged. The 947 residual test IDs
-remain unowned, so this is a nonqualifying diagnostic result.
+remain unowned, so this is a nonqualifying diagnostic result. The clean
+[v19 raster index](generated/focused-primitive-raster-v19.json) remained
+640/640 focused and 960/960 primitive exact, with all 1,600 decoded
+Open UI and Chromium images unchanged from the prior clean raster run.
