@@ -20,6 +20,7 @@
     { "id": "native_id_lookup_follows_attached_document_order", "domains": ["lifecycle"] },
     { "id": "native_class_lookup_tracks_event_driven_updates_and_detachment", "domains": ["lifecycle", "events"] },
     { "id": "native_kind_lookup_tracks_tree_order_and_detachment", "domains": ["lifecycle"] },
+    { "id": "native_text_nodes_attach_move_and_keep_element_traversal_typed", "domains": ["lifecycle", "text", "layout"] },
     { "id": "computed_style_is_an_owned_native_snapshot", "domains": ["lifecycle", "layout"] },
     { "id": "removed_weak_handle_expires", "domains": ["lifecycle"] },
     { "id": "cross_document_ownership_is_rejected", "domains": ["lifecycle"] },
