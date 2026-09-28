@@ -10058,7 +10058,7 @@ fn table_has_nested_multicol_ancestors(doc: &Document, table_id: NodeId) -> bool
 /// header and footer. Merely translating a full row-group fragment lets its
 /// background paint over a repeated header; assigning the body its own slice
 /// clip preserves table paint order without changing section z-order.
-fn clip_nested_repeated_table_body_slice(
+fn clip_repeated_table_body_slice(
     table: &mut Fragment,
     doc: &Document,
     sections: RepeatedTableSections,
@@ -10330,7 +10330,7 @@ fn prepare_nested_repeated_table_slice(
                     table_fragment_size,
                 );
                 position_nested_repeated_table_headers(table, doc);
-                clip_nested_repeated_table_body_slice(
+                clip_repeated_table_body_slice(
                     table,
                     doc,
                     sections,
@@ -10457,7 +10457,7 @@ fn prepare_nested_repeated_table_slice(
             } else {
                 body_capacity
             };
-            clip_nested_repeated_table_body_slice(
+            clip_repeated_table_body_slice(
                 table,
                 doc,
                 sections,
@@ -29737,6 +29737,29 @@ fn layout_multicol(
                                 repeated_table_body_consumed,
                                 visual_part_height,
                             );
+                            if !repeating_table_sections.is_empty()
+                                && !subtree_has_positioned_descendant(doc, child_node_id)
+                                && !subtree_has_forced_break_descendant(doc, child_node_id)
+                                && child_style.border_spacing == (Length::zero(), Length::zero())
+                            {
+                                // In a zero-spacing, normal-flow table, a
+                                // resumed row group can extend under a
+                                // repeated header. Keep its paint in the
+                                // body interval. Positioned descendants,
+                                // forced breaks, and border spacing need
+                                // their separate continuation geometry.
+                                let body_capacity = (content_in_part
+                                    - repeated_table_non_body_in_part)
+                                    .clamp_negative_to_zero();
+                                clip_repeated_table_body_slice(
+                                    &mut part,
+                                    doc,
+                                    repeating_table_sections,
+                                    repeated_table_body_consumed,
+                                    body_capacity,
+                                    content_consumed,
+                                );
+                            }
                             if let Some(captioned) = captioned_repeated_table_flow {
                                 prepare_captioned_repeated_table_slice(
                                     &mut part,
