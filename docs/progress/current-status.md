@@ -17,7 +17,7 @@ remain open.
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
-| Application conformance scenarios | 39 across 10 domains |
+| Application conformance scenarios | 40 across 10 domains |
 | Frozen / current C exports | 84 / 102 |
 | C examples / C++ consumers | 5 / 1 |
 | Workspace tests | pass |
@@ -80,6 +80,10 @@ load it.
   closed details content leaves layout and the accessibility tree.
 - Public native class-token changes and attached-document class lookup use
   the same retained tree from Rust callbacks.
+- Public native kind lookup and `Element::kind` cover the deterministic
+  test cases that find elements by tag, with attached-document order and
+  generation-checked handles. Authored names such as `div` and `main` can
+  share a native kind.
 - Retained accessibility trees/actions and Linux AccessKit integration.
 - Winit X11/Wayland runtime, backend-correct clipboard, IME/data events,
   softbuffer presentation, and multiple isolated windows.

@@ -1305,6 +1305,13 @@ impl Engine {
         Ok(self.document.node(self.resolve(handle)?).tag)
     }
 
+    /// Whether this handle identifies an authored element rather than text or
+    /// a generated pseudo-element.
+    pub fn is_authored_element(&self, handle: NodeHandle) -> Result<bool, EngineError> {
+        let node = self.document.node(self.resolve(handle)?);
+        Ok(node.tag != ElementTag::Text && node.pseudo_kind.is_none())
+    }
+
     pub fn scroll_offset(&self, handle: NodeHandle) -> Result<(f64, f64), EngineError> {
         let node = self.resolve(handle)?;
         let node = self.document.node(node);

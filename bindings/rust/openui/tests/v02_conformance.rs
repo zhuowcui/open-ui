@@ -116,6 +116,51 @@ fn native_class_lookup_tracks_event_driven_updates_and_detachment() {
 }
 
 #[test]
+fn native_kind_lookup_tracks_tree_order_and_detachment() {
+    let document = document();
+    let first = child(&document, "div");
+    first.set_id("first").unwrap();
+    let nested = Element::create(&document, "textarea").unwrap();
+    first.append_child(&nested).unwrap();
+    let later = child(&document, "div");
+    later.set_id("later").unwrap();
+    let detached = Element::create(&document, "div").unwrap();
+    first.create_text_child("not an element").unwrap();
+
+    assert_eq!(nested.kind().unwrap(), ElementTag::TextArea);
+    let ids: Vec<_> = document
+        .elements_of_kind(ElementTag::Div)
+        .unwrap()
+        .into_iter()
+        .map(|element| element.get_attribute("id").unwrap().unwrap())
+        .collect();
+    assert_eq!(ids, ["first", "later"]);
+    assert!(document
+        .elements_of_kind(ElementTag::Text)
+        .unwrap()
+        .is_empty());
+    assert_eq!(
+        document
+            .elements_of_kind(ElementTag::TextArea)
+            .unwrap()
+            .len(),
+        1
+    );
+
+    first.remove().unwrap();
+    assert_eq!(
+        document
+            .elements_of_kind(ElementTag::TextArea)
+            .unwrap()
+            .len(),
+        0
+    );
+    assert_eq!(document.elements_of_kind(ElementTag::Div).unwrap().len(), 1);
+    assert!(nested.kind().is_err());
+    assert_eq!(detached.kind().unwrap(), ElementTag::Div);
+}
+
+#[test]
 fn computed_style_is_an_owned_native_snapshot() {
     let document = document();
     let element = child(&document, "div");

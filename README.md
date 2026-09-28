@@ -35,7 +35,7 @@ The current v0.2 release candidate has:
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
   comparisons exact;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
-- 39 application scenarios covering retained updates, controls, editing,
+- 40 application scenarios covering retained updates, controls, editing,
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;

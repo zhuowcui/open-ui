@@ -105,6 +105,7 @@ pub use signal::{create_memo, create_signal, Memo, Signal};
 pub use document::Document;
 pub use element::{Element, WeakElement};
 pub use events::{Event, EventPhase, KeyEventType, Modifiers, MouseButton, MouseEventType};
+pub use openui_dom::ElementTag;
 pub use style::{Bitmap, Error, Rect};
 pub use text_node::{TextNode, WeakTextNode};
 

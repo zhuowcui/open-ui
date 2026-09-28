@@ -16,6 +16,7 @@ pub use crate::style::*;
 pub use crate::text_node::{TextNode, WeakTextNode};
 pub use crate::typed_style::*;
 pub use crate::view_node::{mount_view, IntoView, ViewNode};
+pub use crate::ElementTag;
 pub use crate::{
     AccessibilityAction, AccessibilityLive, AccessibilityRelation, AccessibilityRole,
     ViewportAuthority, ViewportMetrics,

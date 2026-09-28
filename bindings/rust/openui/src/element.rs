@@ -71,6 +71,14 @@ impl Element {
         }
     }
 
+    /// Return this element's native kind. Several authored tag names can
+    /// share a kind; for example, `div` and `main` are both [`ElementTag::Div`].
+    pub fn kind(&self) -> Result<ElementTag, Error> {
+        self.document
+            .with_engine(|engine| engine.element_tag(self.handle))?
+            .map_err(Into::into)
+    }
+
     pub fn append_child(&self, child: &Element) -> Result<(), Error> {
         if !Rc::ptr_eq(&self.document.inner, &child.document.inner) {
             return Err(openui_engine::EngineError::WrongDocument.into());

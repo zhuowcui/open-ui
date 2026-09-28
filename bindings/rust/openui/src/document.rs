@@ -6,7 +6,7 @@ use crate::events::{
 };
 use crate::style::{Bitmap, Error};
 use openui_compositor::SoftwareCompositor;
-use openui_dom::FormControlRole;
+use openui_dom::{ElementTag, FormControlRole};
 use openui_engine::{
     AccessibilityAction, AccessibilityTreeUpdate, AnimationEvent, AnimationEventKind, AnimationId,
     AnimationState, ControlAdjustment, EditCommand, Engine, EventPhase as EngineEventPhase,
@@ -93,6 +93,26 @@ impl Document {
                     .attribute(handle, "class")?
                     .is_some_and(|classes| class_tokens(classes).any(|token| token == class))
                 {
+                    matches.push(handle);
+                }
+                pending.extend(engine.children(handle)?.into_iter().rev());
+            }
+            Ok::<_, openui_engine::EngineError>(matches)
+        })??;
+        Ok(handles
+            .into_iter()
+            .map(|handle| Element::from_handle(self.clone(), handle))
+            .collect())
+    }
+
+    /// Find attached authored elements of this native kind in document order.
+    /// Some authored tag names share a kind, such as `div` and `main`.
+    pub fn elements_of_kind(&self, kind: ElementTag) -> Result<Vec<Element>, Error> {
+        let handles = self.with_engine(|engine| {
+            let mut matches = Vec::new();
+            let mut pending = vec![engine.root()];
+            while let Some(handle) = pending.pop() {
+                if engine.is_authored_element(handle)? && engine.element_tag(handle)? == kind {
                     matches.push(handle);
                 }
                 pending.extend(engine.children(handle)?.into_iter().rev());

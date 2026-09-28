@@ -28,7 +28,8 @@ Browser-style effects are provided by native operations where v0.2 needs them:
 | Application task | Public Rust API |
 |---|---|
 | Create, find, clone, move, or remove elements | `Element::create`, `Document::element_by_id`, `clone_subtree`, `append_child`, `insert_before`, `remove` |
-| Find elements by class or change class tokens | `Document::elements_with_class`, `Element::has_class`, `add_class`, `remove_class` |
+| Find elements by native kind or class | `Document::elements_of_kind`, `elements_with_class`, `Element::kind` |
+| Change class tokens | `Element::has_class`, `add_class`, `remove_class` |
 | Change text, attributes, or typed style | `set_text`, `set_attribute`, `set_property` and generated typed setters |
 | Read resolved style | `Element::computed_style`, which returns an owned snapshot |
 | Handle input or activate an element | `Element::on`, `on_capture`, `click`; Rust callbacks in `view!` |
@@ -44,6 +45,10 @@ behavior. An internal Engine operation or test-only fixture is not sufficient
 application API coverage.
 Class tokens are native element metadata; styling changes use typed style
 setters rather than a parsed CSS class rule.
+Native kinds group some tag names, such as `div` and `main`; an application
+that needs to distinguish them can retain its element handle or assign an ID.
+Kind lookup covers attached authored elements and excludes text and generated
+pseudo-elements.
 For example, the effects of looking up an element, activating it, focusing it,
 scrolling it, and changing an input value are available through
 `Document::element_by_id`, `Element::click`, `focus`, `scroll_to`, and
@@ -57,6 +62,9 @@ element operation used to reach it: if a consuming application needs the
 behavior, the public Rust API must provide it and exercise the same retained
 document and event path. Pixel equality from a test-only fixture does not
 close an application API gap.
+The current deterministic test scripts use ID, class, and tag lookups; the
+native equivalents are `element_by_id`, `elements_with_class`, and
+`elements_of_kind`. None requires a script engine.
 
 ## No JavaScript runtime
 
