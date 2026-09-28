@@ -18,7 +18,8 @@ network access.
 
 ## Native interaction API
 
-Rust application behavior runs in Rust. The public `openui` crate exposes
+All application behavior runs through native APIs; Open UI never runs
+JavaScript. The public `openui` crate exposes
 retained `Document` and `Element` handles; the application may keep those
 handles and call native methods from Rust callbacks. C applications use the
 versioned C ABI over the same engine. There is no JavaScript execution,
@@ -40,9 +41,10 @@ These methods operate on the same retained document as rendering and native
 input. Open UI does not promise browser-compatible names or the entire Web API
 surface. Every element interaction needed by a consuming application must be
 available through a public native Rust method backed by the shared engine.
-That includes browser-like operations on elements when applications need their
-behavior. An internal Engine operation or test-only fixture is not sufficient
-application API coverage.
+For example, an app can look up a button, register a Rust click callback, and
+change another element through `Document::element_by_id`, `Element::on`, and
+`Element::set_text`. It does not inject or execute a script. An internal Engine
+operation or test-only fixture is not sufficient application API coverage.
 Class tokens are native element metadata; styling changes use typed style
 setters rather than a parsed CSS class rule.
 Native kinds group some tag names, such as `div` and `main`; an application
@@ -56,12 +58,13 @@ scrolling it, and changing an input value are available through
 public Rust API cannot perform it, that is a native API gap to implement; it
 does not require JavaScript.
 
-When a browser test uses a DOM or JavaScript call to reach a visual state,
-we assess that final state as a rendering case. Separately, we review each
-element operation used to reach it: if a consuming application needs the
-behavior, the public Rust API must provide it and exercise the same retained
-document and event path. Pixel equality from a test-only fixture does not
-close an application API gap.
+When a Chromium test uses a script to reach a visual state, we assess that
+final state as a rendering case. Separately, we review each element operation
+used to reach it: if a consuming application needs the behavior, the public
+Rust API must provide it and exercise the same retained document and event
+path. Excluding a behavioral test from the pixel matrix does not exclude the
+needed native behavior from the product. Pixel equality from a test-only
+fixture does not close an application API gap.
 The current deterministic test scripts use ID, class, and tag lookups; the
 native equivalents are `element_by_id`, `elements_with_class`, and
 `elements_of_kind`. None requires a script engine.

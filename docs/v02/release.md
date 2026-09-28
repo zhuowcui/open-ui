@@ -38,6 +38,13 @@ claimed by source code alone.
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
 
+Chromium test files may contain scripts, but Open UI runs no JavaScript. Test
+tooling may translate a script's deterministic visual result into native Rust
+operations for pixel qualification. A test excluded from the pixel matrix for
+behavioral or nonvisual reasons is not a waiver for application interaction:
+needed element behavior must be available through the public native Rust API
+over the same retained document and event path.
+
 The latest clean census at `6e21bd9b` repaired the 1280×720@1.25
 `out-of-flow-in-multicolumn-046` comparison. A zero-height positioned parent
 retains the visual continuation for its absolute child but paints no parent
