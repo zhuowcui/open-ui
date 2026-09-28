@@ -5992,23 +5992,129 @@ fn paint_children_with_stacking_order(
     }
 
     // Phase 3: Non-negative z-index positioned elements (+ hoisted z:auto).
-    for (_, _, entry) in &non_negative_z {
-        // A positioned z:auto fragment is not an atomic stacking context.
-        // Keep its independently hoisted inline-positioned descendants
-        // suppressed while the ancestor paints, then replay each descendant
-        // at its own document-order position.
-        let entry_pointer = stacking_entry_pointer(entry);
-        if let Some(pointer) = entry_pointer {
-            HOIST_SKIP.with(|s| {
-                s.borrow_mut().remove(&pointer);
+    let mut positioned_index = 0;
+    while positioned_index < non_negative_z.len() {
+        let first = stacking_entry_fragment(&non_negative_z[positioned_index].2, children);
+        let mut group_end = positioned_index + 1;
+        while group_end < non_negative_z.len()
+            && stacking_entry_fragment(&non_negative_z[group_end].2, children).node_id
+                == first.node_id
+        {
+            group_end += 1;
+        }
+
+        // A fragmented positioned box has one decoration phase across its
+        // continuations. Paint every slice of that box before its descendants:
+        // interleaving decoration and child ink per slice changes SrcOver
+        // coverage at a shared fractional column edge. Keep independent
+        // stacking contexts and effects on their existing atomic path.
+        let mut prepainted = Vec::new();
+        if group_end > positioned_index + 1 && !first.node_id.is_none() {
+            let node = doc.node(first.node_id);
+            let style = &node.style;
+            let simple_group = first.is_first_for_node
+                && stacking_entry_fragment(&non_negative_z[group_end - 1].2, children)
+                    .is_last_for_node
+                && !is_fragment_stacking_context(first, doc)
+                && style.visibility == Visibility::Visible
+                && style.transform == openui_style::Transform2D::IDENTITY
+                && style.filter_blur == 0.0
+                && style.filter_grayscale == 0.0
+                && style.clip_path_inset.is_none()
+                && style.mask_layers.is_empty()
+                && !style.has_border_radius()
+                && style.overflow_x == Overflow::Visible
+                && style.overflow_y == Overflow::Visible
+                && node.replaced.is_none()
+                && node.form_control.is_none()
+                && non_negative_z[positioned_index..group_end]
+                    .iter()
+                    .all(|(_, _, entry)| {
+                        let fragment = stacking_entry_fragment(entry, children);
+                        let pointer = fragment as *const Fragment as usize;
+                        fragment.kind == FragmentKind::Box
+                            && fragment.decoration_slice.is_some()
+                            && fragment.has_overflow_clip
+                            && fragment.block_axis_clip_only
+                            && !fragment.skip_box_decoration
+                            && fragment.paint_background_color_override.is_none()
+                            && fragment.decoration_clip_rects.is_empty()
+                            && fragment.promoted_transform_ancestors.is_empty()
+                            && (!matches!(entry, StackingEntry::Direct(_))
+                                || !HOIST_SKIP.with(|skipped| skipped.borrow().contains(&pointer)))
+                            && !PREPAINTED_BOX_DECORATIONS
+                                .with(|prepainted| prepainted.borrow().contains(&pointer))
+                    })
+                && non_negative_z[positioned_index..group_end]
+                    .iter()
+                    .any(|(_, _, entry)| {
+                        !stacking_entry_fragment(entry, children).children.is_empty()
+                    });
+            if simple_group {
+                for (_, _, entry) in &non_negative_z[positioned_index..group_end] {
+                    let fragment = stacking_entry_fragment(entry, children);
+                    if let StackingEntry::DescendantWithClip(_, _, clip_rect) = entry {
+                        canvas.save();
+                        canvas.clip_rect(
+                            outward_snap_rect_to_physical(*clip_rect, doc.device_scale_factor()),
+                            ClipOp::Intersect,
+                            false,
+                        );
+                    }
+                    let parent_offset = match entry {
+                        StackingEntry::Direct(_) => offset,
+                        StackingEntry::Descendant(_, parent_offset)
+                        | StackingEntry::DescendantWithClip(_, parent_offset, _) => *parent_offset,
+                    };
+                    paint_fragment_box_decoration(
+                        canvas,
+                        fragment,
+                        doc,
+                        style,
+                        PhysicalOffset::new(
+                            parent_offset.left + fragment.offset.left,
+                            parent_offset.top + fragment.offset.top,
+                        ),
+                        1.0,
+                    );
+                    if matches!(entry, StackingEntry::DescendantWithClip(..)) {
+                        canvas.restore();
+                    }
+                    prepainted.push(fragment as *const Fragment as usize);
+                }
+                PREPAINTED_BOX_DECORATIONS.with(|fragments| {
+                    fragments.borrow_mut().extend(prepainted.iter().copied());
+                });
+            }
+        }
+
+        for (_, _, entry) in &non_negative_z[positioned_index..group_end] {
+            // A positioned z:auto fragment is not an atomic stacking context.
+            // Keep its independently hoisted inline-positioned descendants
+            // suppressed while the ancestor paints, then replay each descendant
+            // at its own document-order position.
+            let entry_pointer = stacking_entry_pointer(entry);
+            if let Some(pointer) = entry_pointer {
+                HOIST_SKIP.with(|s| {
+                    s.borrow_mut().remove(&pointer);
+                });
+            }
+            paint_stacking_entry(canvas, entry, children, doc, offset);
+            if let Some(pointer) = entry_pointer {
+                HOIST_SKIP.with(|s| {
+                    s.borrow_mut().insert(pointer);
+                });
+            }
+        }
+        if !prepainted.is_empty() {
+            PREPAINTED_BOX_DECORATIONS.with(|fragments| {
+                let mut fragments = fragments.borrow_mut();
+                for pointer in &prepainted {
+                    fragments.remove(pointer);
+                }
             });
         }
-        paint_stacking_entry(canvas, entry, children, doc, offset);
-        if let Some(pointer) = entry_pointer {
-            HOIST_SKIP.with(|s| {
-                s.borrow_mut().insert(pointer);
-            });
-        }
+        positioned_index = group_end;
     }
 
     if !hoisted_ptrs.is_empty() {
@@ -6876,6 +6982,17 @@ fn paint_stacking_entry(
             paint_fragment(canvas, fragment, doc, *parent_offset);
             canvas.restore();
         }
+    }
+}
+
+fn stacking_entry_fragment<'a>(
+    entry: &'a StackingEntry<'a>,
+    children: &'a [Fragment],
+) -> &'a Fragment {
+    match entry {
+        StackingEntry::Direct(index) => &children[*index],
+        StackingEntry::Descendant(fragment, _)
+        | StackingEntry::DescendantWithClip(fragment, _, _) => fragment,
     }
 }
 
