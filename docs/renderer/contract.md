@@ -232,6 +232,15 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
+[v19 diagnostic index](generated/four-profile-census-v19.json), with clean
+`17952772` source identity, contains 21,213 exact, 1,711 different, and zero
+errored comparisons across the four required profiles; 944 residual test IDs
+remain unowned. Compared with v18, only `out-of-flow-in-multicolumn-042`,
+`-043`, and `-045` at 1280×720@1.25 changed their Open UI decoded images,
+each becoming exact from 125 differing pixels. No prior exact comparison
+regressed. All 22,924 Chromium oracle identities and decoded hashes stayed
+unchanged. The [relative continuation clip investigation](multicol-relative-clip-translation.md)
+records the shared repair and reduced evidence. The prior
 [v18 diagnostic index](generated/four-profile-census-v18.json), with clean
 `8269ea09` source identity, contains 21,210 exact, 1,714 different, and zero
 errored comparisons across the four required profiles; 947 residual test IDs

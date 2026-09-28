@@ -8,7 +8,7 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,210/22,924 exact, 1,714 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v18.json) | fail |
+| Four-profile renderer matrix | 21,213/22,924 exact, 1,711 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v19.json) | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v19.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v8.json); 22,006/23,724 total comparisons exact, zero errors. A [clean recheck of all 200 additions](../renderer/generated/expanded-additions-recheck-v1.json) found the same 797/800 profile results and identical decoded hashes. None of the 36 original pending cases met all four profiles; no JavaScript is run by Open UI | open |
@@ -37,6 +37,16 @@ claimed by source code alone.
 
 The checked-in performance artifact is a WSL2 smoke result and explicitly has
 `qualification: false`. It must not be relabeled as reference-machine evidence.
+
+The latest clean census at `17952772` repaired three fractional-scale
+`out-of-flow-in-multicolumn-*` comparisons. Exactly three Open UI decoded
+images changed, and each became pixel exact against Chromium. No previously
+exact comparison regressed; all 22,924 Chromium oracle identities and decoded
+hashes stayed fixed. The [relative continuation clip investigation](../renderer/multicol-relative-clip-translation.md)
+records the cause and neighboring guards. The remaining 1,711 differences and
+944 unowned residual test IDs keep the renderer gate red. The focused and
+primitive raster matrices from the preceding clean source checkpoint remain
+640/640 and 960/960 exact; the new source still needs its clean raster run.
 
 The complete clean census at `9f983df9` measured the nested positioned
 continuation repair across all four profiles. One comparison became exact,

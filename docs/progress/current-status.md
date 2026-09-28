@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,210/22,924 exact, 1,714 different, 0 errors |
+| Fresh four-profile Chromium census | 21,213/22,924 exact, 1,711 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
@@ -25,16 +25,19 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v18.json)
-at `8269ea09` gained one exact comparison from v17:
-`out-of-flow-in-multicolumn-060` at 1280×720@1.25. No previously exact
-comparison regressed. Only that Open UI decoded image changed; all 22,924
-Chromium oracle identities and decoded hashes stayed fixed. The clean
+The [latest complete clean census](../renderer/generated/four-profile-census-v19.json)
+at `17952772` gained three exact comparisons from v18:
+`out-of-flow-in-multicolumn-042`, `-043`, and `-045` at 1280×720@1.25.
+No previously exact comparison regressed. Only those three Open UI decoded
+images changed; all 22,924 Chromium oracle identities and decoded hashes
+stayed fixed. The [relative continuation clip investigation](../renderer/multicol-relative-clip-translation.md)
+records the cause, reduced reproducer, and authored-overflow guard. The clean
 [v19 raster index](../renderer/generated/focused-primitive-raster-v19.json)
 confirms both 40-profile matrices stayed exact with all 1,600 Open UI and
-Chromium decoded hashes unchanged. The census still fails exactness, with 947
-unowned residual test IDs. The [multicolumn investigation](../renderer/multicol-nested-positioned-continuation.md)
-records the cause, reduced reproducer, and repaired seam. The prior
+Chromium decoded hashes unchanged at the preceding source checkpoint. The
+census still fails exactness, with 944 unowned residual test IDs. The prior
+[multicolumn investigation](../renderer/multicol-nested-positioned-continuation.md)
+records the v18 repair. The prior
 [fragment clip investigation](../renderer/fragment-decoration-clip-investigation.md)
 records the v16 repair.
 The [border-image seam investigation](../renderer/border-image-seam-investigation.md)
@@ -112,7 +115,7 @@ load it.
   still fails AddressSanitizer, LeakSanitizer, and fuzz on process-exit
   Fontconfig allocations. Its MSRV, Miri, Linux platform, and C UBSan jobs
   passed.
-- The four-profile Chromium census fails exactness; 948 residual test IDs
+- The four-profile Chromium census fails exactness; 944 residual test IDs
   have no reviewed owner. Both 40-profile CPU raster matrices are exact.
 - The C ABI covers the retained engine, headless renderer, and an owned full
   accessibility-tree snapshot, but does not yet export the owned Linux event loop.
