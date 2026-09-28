@@ -31,8 +31,8 @@ the source limit found previously exact table, column flex, and widow/orphan
 cases changing. That version was rejected. The row-flex guard addresses the
 measured fixed-height flex case without applying the rule to those formats.
 The 12 previously exact legacy-profile cases changed by the rejected broad
-version are exact again under the narrowed rule; a full clean run is still
-needed to exclude other regressions.
+version are exact again under the narrowed rule. The complete clean census
+confirmed no regression outside the intended flex comparisons.
 
 In the dirty diagnostic run of all 125 neighboring row flex fragmentation
 cases at four profiles, the previous 444/500 exact comparisons became
@@ -40,6 +40,22 @@ cases at four profiles, the previous 444/500 exact comparisons became
 `-030` at 1.25× and 1.5×; each became exact. None of the 500 Chromium oracle
 identities or decoded hashes changed. Direct checks show `-029` and `-030`
 exact at all four profiles under the narrowed rule. The 92 multicol layout
-tests and both full layout and paint crate test suites passed for the earlier
-candidate. A new full clean census and release qualification remain open for
-the narrowed rule.
+tests and both full layout and paint crate suites pass with the narrowed code.
+
+## Clean verification
+
+At clean checkpoint `99fd4432`, the complete four-profile
+[v21 census](generated/four-profile-census-v21.json) measured **21,217/22,924
+exact, 1,707 different, zero errors**. Exactly the three row-flex images above
+changed from v20, and each became exact against Chromium. No previously exact
+comparison regressed. All 22,924 Chromium oracle identities and decoded hashes
+stayed fixed. The census still has 941 unowned residual test IDs, so its release
+gate remains red.
+
+The [v22 raster index](generated/focused-primitive-raster-v22.json) remains
+640/640 focused and 960/960 primitive exact across both 40-profile matrices.
+All 1,600 Open UI and Chromium decoded hashes stayed unchanged from v21. The
+complete [expanded v11 requalification](generated/expanded-requalification-v11.json)
+measured 22,014/23,724 exact and zero errors. All 200 native additions kept
+their prior statuses and decoded hashes; 197 remain exact at all four profiles
+and three remain demoted.

@@ -168,7 +168,7 @@ remain unchanged. The v4 selection is diagnostic until a new contract admits
 it; neither the 36 originally pending cases nor the three demotions count as
 current exact coverage.
 
-The latest clean expanded matrix at `9f983df9` contains 22,006/23,724 exact
+An earlier clean expanded matrix at `9f983df9` contains 22,006/23,724 exact
 comparisons, 1,718 differences, and zero errors. Its one new exact comparison
 is in the original inventory. All 200 native additions retain their prior
 four-profile statuses, and all 800 decoded Open UI and Chromium hashes match
@@ -232,7 +232,28 @@ and common source/backend identities before emitting a versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
-[v20 diagnostic index](generated/four-profile-census-v20.json), with clean
+[v21 diagnostic index](generated/four-profile-census-v21.json), with clean
+`99fd4432` source identity, contains 21,217 exact, 1,707 different, and zero
+errored comparisons across the four required profiles; 941 residual test IDs
+remain unowned. Compared with v20, only
+`flexbox_multi-line-row-flex-fragmentation-029` at 1280×720@1.25 and `-030`
+at 1280×720@1.25 and 1920×1080@1.5 changed their Open UI decoded images,
+each becoming exact. No prior exact comparison regressed. All 22,924 Chromium
+oracle identities and decoded hashes stayed fixed. The
+[final-decoration investigation](flex-final-continuation-decoration.md)
+records the source-extent repair and rejected broad diagnostic. The clean
+[v22 raster index](generated/focused-primitive-raster-v22.json) remains 640/640
+focused and 960/960 primitive exact, with all 1,600 Open UI and Chromium
+decoded hashes unchanged from v21. The complete clean
+[v11 expanded requalification](generated/expanded-requalification-v11.json)
+measured 22,014/23,724 exact, 1,710 different, and zero errors. Only those
+three original flex comparisons changed; all 23,724 Chromium oracle identities
+and decoded hashes stayed fixed. Of the 200 native additions, 197 remain exact
+at all four profiles and three remain demoted. The
+[v12 diagnostic selection](../../tools/qualification/manifests/expanded-v12.json)
+does not change `complete-5731.json` or admit a failing case.
+
+The prior [v20 diagnostic index](generated/four-profile-census-v20.json), with clean
 `89a0a1f3` source identity, contains 21,214 exact, 1,710 different, and zero
 errored comparisons across the four required profiles; 943 residual test IDs
 remain unowned. Compared with v19, only
