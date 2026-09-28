@@ -1,5 +1,11 @@
 # Sub-Project 4: DOM Adapter & C API
 
+> **Historical plan only.** The V8 bootstrap described below was part of an
+> abandoned Blink extraction strategy. Open UI v0.2 executes no JavaScript and
+> does not embed V8. Consuming applications implement element interaction in
+> Rust through the [public `Document` and `Element` API](../v02/supported-platforms.md#native-interaction-api);
+> needed browser-like operations must be available as native Rust methods.
+
 > Build the stable C API (`openui.h`) that wraps Chromium's real blink rendering pipeline. External programs create element trees, set CSS properties, trigger layout, and query geometry — all through C function calls backed by actual Chromium code.
 
 ## Objective
