@@ -17,11 +17,11 @@ HTML loader, CSS text parser, JavaScript engine, or network stack. Chromium 147
 is retained only as the frozen reference used to prove renderer compatibility.
 Rust applications handle interaction in native Rust through `openui::Document`,
 `openui::Element`, signals, and Rust event callbacks. Document lookup by ID,
-element mutation, class lookup and updates, focus, scrolling, controls, and
-event handling use public Rust methods. When an application needs an operation
-analogous to a browser element API, Open UI must expose that behavior through
-a public native Rust method on the retained document or element. The
-application never runs JavaScript. See the
+element and text-node mutation, class lookup and updates, focus, scrolling,
+controls, and event handling use public Rust methods. When an application
+needs an operation analogous to a browser element API, Open UI must expose
+that behavior through a public native Rust method on the retained document
+or element. The application never runs JavaScript. See the
 [native interaction contract](docs/v02/supported-platforms.md#native-interaction-api).
 
 ## Verified status

@@ -126,30 +126,35 @@ impl Element {
         self.document.remove_node(self.handle)
     }
 
+    /// Return the first authored element child, skipping text nodes.
     pub fn first_child(&self) -> Result<Option<Element>, Error> {
-        let child = self
-            .document
-            .with_engine(|engine| engine.children(self.handle))??
-            .into_iter()
-            .next();
+        let child = self.document.with_engine(|engine| {
+            for handle in engine.children(self.handle)? {
+                if engine.is_authored_element(handle)? {
+                    return Ok(Some(handle));
+                }
+            }
+            Ok::<_, openui_engine::EngineError>(None)
+        })??;
         Ok(child.map(|handle| Self::from_handle(self.document.clone(), handle)))
     }
 
+    /// Return the next authored element sibling, skipping text nodes.
     pub fn next_sibling(&self) -> Result<Option<Element>, Error> {
-        let parent = self
-            .document
-            .with_engine(|engine| engine.parent(self.handle))??;
-        let Some(parent) = parent else {
-            return Ok(None);
-        };
-        let siblings = self
-            .document
-            .with_engine(|engine| engine.children(parent))??;
-        let next = siblings
-            .iter()
-            .position(|handle| *handle == self.handle)
-            .and_then(|index| siblings.get(index + 1))
-            .copied();
+        let next = self.document.with_engine(|engine| {
+            let Some(parent) = engine.parent(self.handle)? else {
+                return Ok(None);
+            };
+            let siblings = engine.children(parent)?;
+            if let Some(index) = siblings.iter().position(|handle| *handle == self.handle) {
+                for handle in siblings.into_iter().skip(index + 1) {
+                    if engine.is_authored_element(handle)? {
+                        return Ok(Some(handle));
+                    }
+                }
+            }
+            Ok::<_, openui_engine::EngineError>(None)
+        })??;
         Ok(next.map(|handle| Self::from_handle(self.document.clone(), handle)))
     }
 
@@ -166,6 +171,31 @@ impl Element {
             .with_engine_mut(|engine| engine.create_text(text))?;
         self.document
             .with_engine_mut(|engine| engine.append_child(self.handle, handle))
+    }
+
+    /// Attach or move an existing text node under this element.
+    pub fn append_text_child(&self, child: &crate::TextNode) -> Result<(), Error> {
+        if !Rc::ptr_eq(&self.document.inner, &child.document.inner) {
+            return Err(openui_engine::EngineError::WrongDocument.into());
+        }
+        self.document
+            .with_engine_mut(|engine| engine.append_or_move_child(self.handle, child.handle))
+    }
+
+    /// Insert or move a text node immediately before an element child.
+    pub fn insert_text_before(
+        &self,
+        child: &crate::TextNode,
+        before: &Element,
+    ) -> Result<(), Error> {
+        if !Rc::ptr_eq(&self.document.inner, &child.document.inner)
+            || !Rc::ptr_eq(&self.document.inner, &before.document.inner)
+        {
+            return Err(openui_engine::EngineError::WrongDocument.into());
+        }
+        self.document.with_engine_mut(|engine| {
+            engine.insert_before(self.handle, child.handle, before.handle)
+        })
     }
 
     pub fn create_text_child(&self, text: &str) -> Result<crate::TextNode, Error> {
@@ -412,6 +442,13 @@ impl Element {
     pub fn set_text(&self, text: &str) -> Result<(), Error> {
         self.remove_all_children()?;
         self.append_text_node(text)
+    }
+
+    /// Return this element's authored text and descendant text in tree order.
+    pub fn text_content(&self) -> Result<String, Error> {
+        Ok(self
+            .document
+            .with_engine(|engine| engine.text_content(self.handle))??)
     }
 
     pub fn set_image_resource(

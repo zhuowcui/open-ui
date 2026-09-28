@@ -930,6 +930,32 @@ impl Engine {
         Ok(())
     }
 
+    /// Return the data of an authored text node.
+    pub fn text_data(&self, handle: NodeHandle) -> Result<&str, EngineError> {
+        let node = self.document.node(self.resolve(handle)?);
+        if node.tag != ElementTag::Text || node.pseudo_kind.is_some() {
+            return Err(EngineError::InvalidInput("not an authored text node"));
+        }
+        Ok(node.text.as_deref().unwrap_or(""))
+    }
+
+    /// Concatenate authored text in tree order, excluding generated content.
+    pub fn text_content(&self, handle: NodeHandle) -> Result<String, EngineError> {
+        let mut content = String::new();
+        let mut pending = vec![handle];
+        while let Some(current) = pending.pop() {
+            let node = self.document.node(self.resolve(current)?);
+            if node.pseudo_kind.is_some() {
+                continue;
+            }
+            if let Some(text) = node.text.as_deref() {
+                content.push_str(text);
+            }
+            pending.extend(self.children(current)?.into_iter().rev());
+        }
+        Ok(content)
+    }
+
     pub fn set_attribute(
         &mut self,
         handle: NodeHandle,

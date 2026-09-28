@@ -48,6 +48,7 @@
 //! |------|---------|
 //! | [`Document`] | Native retained document and rendering context |
 //! | [`Element`] | A node in the retained document tree |
+//! | [`TextNode`] | Native text data that can be created, edited, attached, and moved |
 //!
 //! ## View system
 //!

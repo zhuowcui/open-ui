@@ -125,7 +125,7 @@ fn native_kind_lookup_tracks_tree_order_and_detachment() {
     let later = child(&document, "div");
     later.set_id("later").unwrap();
     let detached = Element::create(&document, "div").unwrap();
-    first.create_text_child("not an element").unwrap();
+    let _text = first.create_text_child("not an element").unwrap();
 
     assert_eq!(nested.kind().unwrap(), ElementTag::TextArea);
     let ids: Vec<_> = document
@@ -158,6 +158,77 @@ fn native_kind_lookup_tracks_tree_order_and_detachment() {
     assert_eq!(document.elements_of_kind(ElementTag::Div).unwrap().len(), 1);
     assert!(nested.kind().is_err());
     assert_eq!(detached.kind().unwrap(), ElementTag::Div);
+}
+
+#[test]
+fn native_text_nodes_attach_move_and_keep_element_traversal_typed() {
+    let document = document();
+    let container = child(&document, "div");
+    let first = Element::create(&document, "span").unwrap();
+    first.set_id("first").unwrap();
+    container.append_child(&first).unwrap();
+    let second = Element::create(&document, "span").unwrap();
+    second.set_id("second").unwrap();
+    container.append_child(&second).unwrap();
+
+    let leading_text = document.create_text_node("before").unwrap();
+    container.insert_text_before(&leading_text, &first).unwrap();
+    let middle_text = document.create_text_node("middle").unwrap();
+    container.insert_text_before(&middle_text, &second).unwrap();
+    assert_eq!(leading_text.data().unwrap(), "before");
+    assert_eq!(container.text_content().unwrap(), "beforemiddle");
+    assert_eq!(
+        container
+            .first_child()
+            .unwrap()
+            .unwrap()
+            .get_attribute("id")
+            .unwrap()
+            .as_deref(),
+        Some("first")
+    );
+    assert_eq!(
+        first
+            .next_sibling()
+            .unwrap()
+            .unwrap()
+            .get_attribute("id")
+            .unwrap()
+            .as_deref(),
+        Some("second")
+    );
+    assert!(second.next_sibling().unwrap().is_none());
+
+    let before = document.render_to_bitmap().unwrap();
+    leading_text.set_data("a longer native text node").unwrap();
+    assert_eq!(
+        container.text_content().unwrap(),
+        "a longer native text nodemiddle"
+    );
+    assert_ne!(
+        before.pixels(),
+        document.render_to_bitmap().unwrap().pixels()
+    );
+
+    let other = child(&document, "div");
+    other.set_id("text-parent").unwrap();
+    other.append_text_child(&middle_text).unwrap();
+    assert_eq!(middle_text.data().unwrap(), "middle");
+    assert_eq!(other.text_content().unwrap(), "middle");
+    assert!(other.first_child().unwrap().is_none());
+    assert_eq!(
+        middle_text
+            .parent()
+            .unwrap()
+            .unwrap()
+            .get_attribute("id")
+            .unwrap()
+            .as_deref(),
+        Some("text-parent")
+    );
+    let foreign_document = Document::new(320, 240).unwrap();
+    let foreign = foreign_document.create_text_node("foreign").unwrap();
+    assert!(container.append_text_child(&foreign).is_err());
 }
 
 #[test]

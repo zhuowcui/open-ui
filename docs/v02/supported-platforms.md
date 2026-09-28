@@ -29,9 +29,10 @@ Browser-style effects are provided by native operations where v0.2 needs them:
 | Application task | Public Rust API |
 |---|---|
 | Create, find, clone, move, or remove elements | `Element::create`, `Document::element_by_id`, `clone_subtree`, `append_child`, `insert_before`, `remove` |
+| Create, read, edit, attach, or move text nodes | `Document::create_text_node`, `TextNode::data`, `set_data`, `Element::append_text_child`, `insert_text_before` |
 | Find elements by native kind or class | `Document::elements_of_kind`, `elements_with_class`, `Element::kind` |
 | Change class tokens | `Element::has_class`, `add_class`, `remove_class` |
-| Change text, attributes, or typed style | `set_text`, `set_attribute`, `set_property` and generated typed setters |
+| Read or change text, attributes, or typed style | `Element::text_content`, `set_text`, `set_attribute`, `set_property` and generated typed setters |
 | Read resolved style | `Element::computed_style`, which returns an owned snapshot |
 | Handle input or activate an element | `Element::on`, `on_capture`, `click`; Rust callbacks in `view!` |
 | Focus, scroll, or inspect geometry | `focus`, `blur`, `scroll_to`, `scroll_by`, `bounding_rect`; `Document::hit_test` |

@@ -6,8 +6,8 @@ use openui_engine::{NodeHandle, WeakNode};
 use std::rc::{Rc, Weak};
 
 pub struct TextNode {
-    document: Document,
-    handle: NodeHandle,
+    pub(crate) document: Document,
+    pub(crate) handle: NodeHandle,
     remove_on_drop: bool,
 }
 
@@ -52,6 +52,19 @@ impl TextNode {
     pub fn set_data(&self, data: &str) -> Result<(), Error> {
         self.document
             .with_engine_mut(|engine| engine.set_text(self.handle, data.to_owned()))
+    }
+
+    pub fn data(&self) -> Result<String, Error> {
+        Ok(self
+            .document
+            .with_engine(|engine| engine.text_data(self.handle).map(str::to_owned))??)
+    }
+
+    pub fn parent(&self) -> Result<Option<crate::Element>, Error> {
+        let parent = self
+            .document
+            .with_engine(|engine| engine.parent(self.handle))??;
+        Ok(parent.map(|handle| crate::Element::from_handle(self.document.clone(), handle)))
     }
 
     pub fn remove(mut self) -> Result<(), Error> {
