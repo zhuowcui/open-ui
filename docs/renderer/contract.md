@@ -59,6 +59,13 @@ At clean checkpoint `5acc962a`, the 36 AST-lowered pending cases produced
 at all four required profiles, so none was admitted. The
 [pending-candidate evidence index](generated/pending-mutation-candidates-v1.json)
 records every profile result and links each case to its ordered mutation IR.
+At clean checkpoint `93b00601`, the
+[200-addition diagnostic recheck](generated/expanded-additions-recheck-v1.json)
+found 797/800 exact profile comparisons and zero errors. All 800 Open UI
+decoded hashes and Chromium oracle identities and decoded hashes matched the
+prior clean expanded requalification; the same three additions remain
+demoted. This selected-ID report has `complete_contract_scope=false` and is
+not a complete expanded-manifest qualification.
 
 Application and system font ownership, registration limits, and C handle
 lifetime rules are documented in [font collections](font-collections.md).

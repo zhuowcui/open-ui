@@ -52,6 +52,13 @@ exact at all four profiles and three remain demoted. The new exact comparison
 belongs to the original inventory. The
 [v9 diagnostic selection](../../tools/qualification/manifests/expanded-v9.json)
 retains only the 197 exact additions; it does not alter the original manifest.
+At clean checkpoint `93b00601`, a
+[four-profile additions recheck](../renderer/generated/expanded-additions-recheck-v1.json)
+rendered all 200 native additions: 797/800 profile comparisons exact, three
+different, and zero errors. The same three cases remain demoted. All 800
+Open UI decoded hashes, Chromium oracle identities, and Chromium decoded
+hashes match the prior clean v8 expanded run. This subset report is
+diagnostic; it does not replace a complete expanded-manifest qualification.
 
 The historical baseline records Chromium identity, viewport, device scale,
 fonts, resources, and result hashes. A fresh pinned Chromium capture differs
