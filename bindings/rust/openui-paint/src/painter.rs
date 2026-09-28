@@ -12239,7 +12239,10 @@ fn draw_paint_with_physical_coverage(
             };
             let one_fractional_axis = (horizontal_coverage < 1.0) ^ (vertical_coverage < 1.0);
             let packed_coverage = if one_fractional_axis && square_coverage {
-                (((analytic_coverage * 256.0).floor() + 1.0).min(255.0)) / 255.0
+                // The box contour and the replaced-content clip each supply
+                // fractional coverage. Their product is packed once; closing
+                // it upward adds a color level at an exact quarter sample.
+                ((analytic_coverage * 256.0).floor().min(255.0)) / 255.0
             } else if !square_coverage {
                 // Display-item clip coverage is stored in an eight-bit mask
                 // before it modulates the generated image. Preserve the 256-
