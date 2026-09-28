@@ -161,6 +161,16 @@ remain unchanged. The v4 selection is diagnostic until a new contract admits
 it; neither the 36 originally pending cases nor the three demotions count as
 current exact coverage.
 
+The latest clean expanded matrix at `9f983df9` contains 22,006/23,724 exact
+comparisons, 1,718 differences, and zero errors. Its one new exact comparison
+is in the original inventory. All 200 native additions retain their prior
+four-profile statuses, and all 800 decoded Open UI and Chromium hashes match
+the previous clean run. Every Chromium oracle identity remains fixed. The
+[v8 requalification ledger](generated/expanded-requalification-v8.json)
+records this result; [expanded-v9.json](../../tools/qualification/manifests/expanded-v9.json)
+still retains only the 197 four-profile exact additions as a diagnostic
+selection. The original manifest and 36 pending candidates remain unchanged.
+
 The clean expanded matrix at `4b89fd05` contains 22,005/23,724 exact
 comparisons, 1,719 differences, and zero errors. Its one new exact comparison
 is in the original inventory. All 800 Open UI and Chromium decoded hashes
@@ -215,14 +225,24 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
+[v17 diagnostic index](generated/four-profile-census-v17.json), with clean
+`9f983df9` source identity, contains 21,209 exact, 1,715 different, and zero
+errored comparisons across the four required profiles; 948 residual test IDs
+remain unowned. Eight complete disjoint shards share the same source, runner,
+backend, and oracle identities. Compared with v16, two Open UI images
+changed: one became exact, one remains different, and none regressed. All
+22,924 Chromium oracle identities and decoded hashes stayed unchanged. The
+clean [v18 raster index](generated/focused-primitive-raster-v18.json) stayed
+640/640 focused and 960/960 primitive exact, with all 1,600 decoded Open UI
+and Chromium images unchanged. The
+[multicolumn investigation](multicol-nested-positioned-continuation.md)
+records the cause, reduced reproducer, and remaining seam. The prior
 [v16 diagnostic index](generated/four-profile-census-v16.json), with clean
 `4b89fd05` source identity, contains 21,208 exact, 1,716 different, and zero
 errored comparisons across the four required profiles; 949 residual test IDs
-remain unowned. Eight complete disjoint shards share the same source, runner,
-backend, and oracle identities. Compared with v15, five Open UI images
-changed: one became exact, four remaining differences shrank, and none
-regressed. All 22,924 Chromium oracle identities and decoded hashes stayed
-unchanged. The prior
+remain unowned. Compared with v15, five Open UI images changed: one became
+exact, four remaining differences shrank, and none regressed. All 22,924
+Chromium oracle identities and decoded hashes stayed unchanged. The prior
 [v15 diagnostic index](generated/four-profile-census-v15.json), with clean
 `8ca66ffd` source identity, contains 21,207 exact, 1,717 different, and zero
 errored comparisons across the four required profiles; 949 residual test IDs
