@@ -313,6 +313,10 @@ pub struct Fragment {
     /// (background/border/shadow), while leaving children free to overflow.
     pub decoration_paint_block_size: Option<LayoutUnit>,
 
+    /// The decoration limit only trims a fragmentainer-expanded block tail;
+    /// preserve the normal fractional coverage of its inline edge.
+    pub decoration_limit_preserves_inline_coverage: bool,
+
     /// Whether this structural fragment delegates its background and border
     /// to a synthetic child with the same source style. Table wrappers use
     /// this when captions sit outside the table-grid decoration box.
@@ -500,6 +504,7 @@ impl Fragment {
             multicol_fragmentation: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
+            decoration_limit_preserves_inline_coverage: false,
             skip_box_decoration: false,
             ignore_border_radius: false,
             paint_border_after_children: false,
@@ -564,6 +569,7 @@ impl Fragment {
             multicol_fragmentation: None,
             fragmentation_writing_direction: None,
             decoration_paint_block_size: None,
+            decoration_limit_preserves_inline_coverage: false,
             skip_box_decoration: false,
             ignore_border_radius: false,
             paint_border_after_children: false,

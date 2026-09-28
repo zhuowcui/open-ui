@@ -15616,7 +15616,8 @@ fn paint_box_decoration_background(
         } else {
             style.effective_border_left() > 0 || style.effective_border_right() > 0
         };
-        let clip_rect = if inline_border_ink {
+        let clip_rect = if inline_border_ink || fragment.decoration_limit_preserves_inline_coverage
+        {
             let snapping = RasterSnapping::new(style.device_scale_factor);
             if fragment_block_axis_is_x(fragment) {
                 Rect::from_ltrb(

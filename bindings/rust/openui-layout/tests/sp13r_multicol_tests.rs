@@ -1618,6 +1618,9 @@ fn avoided_row_flex_break_tracks_visual_and_content_consumption_separately() {
         style.update_derived(|computed| computed.flex_wrap = openui_style::FlexWrap::Wrap);
         style.update_derived(|computed| computed.height = Length::px(150.0));
         style.update_derived(|computed| {
+            computed.background_color = Color::from_rgba8(0, 128, 0, 255)
+        });
+        style.update_derived(|computed| {
             computed.align_content =
                 ContentAlignment::with_distribution(ContentDistribution::SpaceBetween)
         });
@@ -1644,6 +1647,12 @@ fn avoided_row_flex_break_tracks_visual_and_content_consumption_separately() {
     doc.update_resolved_style(static_absolute, |style| style.width = Length::px(50.0));
     doc.update_resolved_style(static_absolute, |style| style.height = Length::px(13.0));
     doc.append_child(multicol, static_absolute);
+    let bottom_absolute = doc.create_node(ElementTag::Div);
+    doc.update_resolved_style(bottom_absolute, |style| style.position = Position::Absolute);
+    doc.update_resolved_style(bottom_absolute, |style| style.bottom = Length::px(0.0));
+    doc.update_resolved_style(bottom_absolute, |style| style.width = Length::px(50.0));
+    doc.update_resolved_style(bottom_absolute, |style| style.height = Length::px(13.0));
+    doc.append_child(multicol, bottom_absolute);
 
     let fragment = block_layout(
         &doc,
@@ -1655,7 +1664,9 @@ fn avoided_row_flex_break_tracks_visual_and_content_consumption_separately() {
     let first_flex = find_node(column_fragments[0], flex).expect("first flex fragment");
     let second_flex = find_node(column_fragments[1], flex).expect("second flex fragment");
     assert_eq!(first_flex.size.height, lu(100));
-    assert_eq!(second_flex.size.height, lu(50));
+    assert_eq!(second_flex.size.height, lu(100));
+    assert_eq!(second_flex.decoration_paint_block_size, Some(lu(50)));
+    assert!(second_flex.decoration_limit_preserves_inline_coverage);
     assert!(!second_flex.has_overflow_clip);
 
     let absolute = find_node(&fragment, static_absolute).expect("static absolute fragment");

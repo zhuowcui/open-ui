@@ -29256,6 +29256,22 @@ fn layout_multicol(
                                     }
                                 }
                             }
+                            if part.decoration_paint_block_size.is_none() {
+                                if let Some(slice) = part.decoration_slice {
+                                    let remaining_decoration = (slice.source_block_size
+                                        - slice.source_block_offset)
+                                        .clamp_negative_to_zero();
+                                    if remaining_decoration < visual_part_height {
+                                        // Fragmentainer geometry may extend a continuation
+                                        // beyond the principal box's authored block end. Keep
+                                        // its children in that visual interval, but stop its
+                                        // own sliced decoration at the source box end.
+                                        part.decoration_paint_block_size =
+                                            Some(remaining_decoration);
+                                        part.decoration_limit_preserves_inline_coverage = true;
+                                    }
+                                }
+                            }
                             if wraps_rows
                                 && algo.column_height.is_some()
                                 && child_style.height.is_auto()
@@ -29282,6 +29298,7 @@ fn layout_multicol(
                                     .unwrap_or(LayoutUnit::zero())
                                     .min_of(visual_part_height);
                                 part.decoration_paint_block_size = Some(forced_segment_extent);
+                                part.decoration_limit_preserves_inline_coverage = false;
                             }
                             // Multicol fragments normally need an overflow clip,
                             // but split wrappers with an independent decoration
