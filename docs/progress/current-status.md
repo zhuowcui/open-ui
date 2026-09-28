@@ -94,6 +94,9 @@ load it.
   it reached 408/640 focused and 624/960 primitive exact, below CPU Skia's
   640/640 and 960/960. It remains unpromoted; OpenGL presentation still uploads
   a CPU-rasterized frame.
+- The [current hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36365378115)
+  still fails AddressSanitizer, LeakSanitizer, and fuzz on process-exit
+  Fontconfig allocations. Its MSRV job was running when recorded.
 - The four-profile Chromium census fails exactness; 949 residual test IDs
   have no reviewed owner. Both 40-profile CPU raster matrices are exact.
 - The C ABI covers the retained engine, headless renderer, and an owned full

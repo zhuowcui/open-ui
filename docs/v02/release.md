@@ -87,8 +87,15 @@ on checkpoint `73502f9d` passed MSRV, Miri, X11/Mesa and pure-Wayland
 platform smoke, and C UBSan. All 18 FFI tests passed under both sanitizers,
 then LeakSanitizer and AddressSanitizer reported 10,476 bytes in 236
 Fontconfig allocations at process exit. Fuzz stopped on a 2,606-byte
-Fontconfig allocation report. These jobs remain failed; the current paint
-checkpoint has not yet had a separate hardening rerun.
+Fontconfig allocation report.
+
+The [manual hardening run](https://github.com/zhuowcui/open-ui/actions/runs/36365378115)
+on the current `ceebef52` evidence checkpoint passed X11/Mesa and pure-Wayland
+platform smoke, Miri handles, and C UBSan. AddressSanitizer and LeakSanitizer
+again failed after all 18 ABI tests passed: each reported 10,476 bytes in 236
+Fontconfig allocations at process exit. Fuzz failed on 2,606 bytes in 59
+Fontconfig allocations. The MSRV job was still running when this status was
+recorded. These failures keep hardening unqualified.
 
 The optional frozen replay checks the archived Open UI bytes; it does not prove
 those bytes equal Chromium. The historical pixel comparator accepted
