@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,227/22,924 exact, 1,697 different, 0 errors |
+| Fresh four-profile Chromium census | 21,238/22,924 exact, 1,686 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Pending native final-state candidates | 1/36 newly eligible at all four profiles; 35 still differ |
@@ -26,7 +26,22 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v28.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v29.json)
+at `7cd8e574` is 21,238/22,924 exact, 1,686 different, and zero errors.
+The shared [repeated table body-slice fix](../renderer/repeated-table-body-slice.md)
+made 11 comparisons exact and reduced one other difference, with no
+regression. Exactly 12 Open UI images changed and all 22,924 Chromium oracle
+hashes stayed fixed. The [v30 raster index](../renderer/generated/focused-primitive-raster-v30.json)
+is 640/640 focused and 960/960 primitive exact. The complete clean
+[v15 expanded requalification](../renderer/generated/expanded-requalification-v15.json)
+is 22,035/23,724 exact, with all 200 additions unchanged: 197 exact, three
+demoted. The [v16 diagnostic selection](../../tools/qualification/manifests/expanded-v16.json)
+retains those 197. The clean
+[v4 pending-candidate index](../renderer/generated/pending-mutation-candidates-v4.json)
+again records one of 36 cases exact at all four profiles. The release renderer
+gate still fails with 932 unowned residual test IDs.
+
+The [prior complete clean census](../renderer/generated/four-profile-census-v28.json)
 at `a0e3f4cd` is 21,227/22,924 exact, 1,697 different, and zero errors.
 The shared [clipped replaced-background coverage fix](../renderer/clipped-replaced-background-coverage.md)
 made two margin-trim comparisons exact and reduced a third iframe difference
@@ -291,7 +306,7 @@ load it.
   still fails AddressSanitizer, LeakSanitizer, and fuzz on process-exit
   Fontconfig allocations. Its MSRV, Miri, Linux platform, and C UBSan jobs
   passed.
-- The four-profile Chromium census fails exactness; 943 residual test IDs
+- The four-profile Chromium census fails exactness; 932 residual test IDs
   have no reviewed owner. Both 40-profile CPU raster matrices are exact.
 - The C ABI covers the retained engine, headless renderer, and an owned full
   accessibility-tree snapshot, but does not yet export the owned Linux event loop.

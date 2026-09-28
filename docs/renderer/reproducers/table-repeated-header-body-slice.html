@@ -1,0 +1,25 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Repeated table header over continued body</title>
+<style>
+  html, body { margin: 0; }
+  .columns {
+    margin: 20px;
+    width: 100px;
+    height: 100px;
+    columns: 4;
+    column-fill: auto;
+    column-gap: 0;
+    background: red;
+  }
+  .table { display: table; }
+  .header { display: table-header-group; break-inside: avoid; }
+  .header-fill { height: 20px; background: green; }
+  .body-fill { width: 25px; height: 320px; background: green; }
+</style>
+<div class="columns">
+  <div class="table">
+    <div class="header"><div class="header-fill"></div></div>
+    <div class="body-fill"></div>
+  </div>
+</div>

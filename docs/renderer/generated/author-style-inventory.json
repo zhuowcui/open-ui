@@ -381,6 +381,7 @@
       "canonical_schema_entry": true,
       "classification": "public-typed",
       "consumers": [
+        "bindings/rust/openui-layout/src/block.rs",
         "bindings/rust/openui-layout/src/table.rs"
       ],
       "css_name": "border-spacing",
