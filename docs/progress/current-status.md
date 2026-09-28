@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,207/22,924 exact, 1,717 different, 0 errors |
+| Fresh four-profile Chromium census | 21,208/22,924 exact, 1,716 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
 | Full inventory | 7,673 |
@@ -25,30 +25,29 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v15.json)
-at `8ca66ffd` made 22 more comparisons exact than v14, with no previously
-exact comparison regressing. Square padding-box and content-box color
-backgrounds now fill their outer box through a hard layout-space clip, matching
-Chromium's paint order. The `background-clip-color` and margin-trim residuals
-became exact at 1.25×. Twenty-eight Open UI images changed; 22 became exact,
-while six still differ with smaller mismatch regions. All 22,924 Chromium
-decoded hashes stayed fixed. The clean
-[v16 raster index](../renderer/generated/focused-primitive-raster-v16.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v16.json)
+at `4b89fd05` gained one exact comparison from v15: the 1.5× fieldset
+reference. Four other already-different comparisons became smaller; no
+previously exact comparison regressed. Five Open UI decoded images changed and
+all 22,924 Chromium oracle identities and decoded hashes stayed fixed. The
+clean [v17 raster index](../renderer/generated/focused-primitive-raster-v17.json)
 confirms both 40-profile matrices stayed exact with all 1,600 Open UI and
 Chromium decoded hashes unchanged. The census still fails exactness, with 949
-unowned residual test IDs. The [background-clip investigation](../renderer/background-clip-hard-clip-investigation.md)
-records the cause, rejected diagnostic, and clean repair.
+unowned residual test IDs. The [fragment clip investigation](../renderer/fragment-decoration-clip-investigation.md)
+records the cause, rejected broad change, and guarded repair. The earlier
+[background-clip investigation](../renderer/background-clip-hard-clip-investigation.md)
+remains the record for the v15 gains.
 The [border-image seam investigation](../renderer/border-image-seam-investigation.md)
 records a separate six-case fractional-scale residual and a rejected
 offscreen-layer diagnostic; it changes no qualifying count.
 
-The clean [expanded v6 requalification](../renderer/generated/expanded-requalification-v6.json)
-at `8ca66ffd` measured 22,004/23,724 exact comparisons, 1,720 different,
+The clean [expanded v7 requalification](../renderer/generated/expanded-requalification-v7.json)
+at `4b89fd05` measured 22,005/23,724 exact comparisons, 1,719 different,
 and zero errors. All 200 native final-state additions retained their prior
 four-profile statuses and Open UI/Chromium decoded hashes: 197 remain exact
-at all four profiles and three remain demoted. The 22 new exact comparisons
-belong to the original inventory. The
-[v7 diagnostic selection](../../tools/qualification/manifests/expanded-v7.json)
+at all four profiles and three remain demoted. The new exact comparison
+belongs to the original inventory. The
+[v8 diagnostic selection](../../tools/qualification/manifests/expanded-v8.json)
 retains only the 197 exact additions; it does not alter the original manifest.
 
 The historical baseline records Chromium identity, viewport, device scale,

@@ -161,7 +161,17 @@ remain unchanged. The v4 selection is diagnostic until a new contract admits
 it; neither the 36 originally pending cases nor the three demotions count as
 current exact coverage.
 
-The clean expanded matrix at `8ca66ffd` contains 22,004/23,724 exact
+The clean expanded matrix at `4b89fd05` contains 22,005/23,724 exact
+comparisons, 1,719 differences, and zero errors. Its one new exact comparison
+is in the original inventory. All 800 Open UI and Chromium decoded hashes
+and statuses for the 200 additions match the prior expanded run, and every
+Chromium oracle identity remains fixed. The
+[v7 requalification ledger](generated/expanded-requalification-v7.json)
+records this result; [expanded-v8.json](../../tools/qualification/manifests/expanded-v8.json)
+again retains only the 197 exact additions as a diagnostic selection. The
+original manifest and 36 pending candidates remain unchanged.
+
+The prior clean expanded matrix at `8ca66ffd` contains 22,004/23,724 exact
 comparisons, 1,720 differences, and zero errors. Its 22 gains are in the
 original inventory. All 800 Open UI and Chromium decoded hashes and statuses
 for the 200 additions match the prior expanded run, and every Chromium oracle
@@ -205,6 +215,14 @@ and common source/backend identities before emitting the versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
+[v16 diagnostic index](generated/four-profile-census-v16.json), with clean
+`4b89fd05` source identity, contains 21,208 exact, 1,716 different, and zero
+errored comparisons across the four required profiles; 949 residual test IDs
+remain unowned. Eight complete disjoint shards share the same source, runner,
+backend, and oracle identities. Compared with v15, five Open UI images
+changed: one became exact, four remaining differences shrank, and none
+regressed. All 22,924 Chromium oracle identities and decoded hashes stayed
+unchanged. The prior
 [v15 diagnostic index](generated/four-profile-census-v15.json), with clean
 `8ca66ffd` source identity, contains 21,207 exact, 1,717 different, and zero
 errored comparisons across the four required profiles; 949 residual test IDs
