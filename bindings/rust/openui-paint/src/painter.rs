@@ -6250,6 +6250,7 @@ fn text_fragment_reaches_block(
 struct SharedColumnClip {
     rect: Rect,
     antialias: bool,
+    fragmentainer: bool,
 }
 
 struct SharedColumnDecoration<'a> {
@@ -6258,6 +6259,18 @@ struct SharedColumnDecoration<'a> {
     clips: Vec<SharedColumnClip>,
     ancestor_node_ids: Vec<NodeId>,
     starts_at_shared_edge: bool,
+}
+
+fn has_inline_ancestor(doc: &Document, node_id: NodeId) -> bool {
+    let mut ancestor = doc.node(node_id).parent;
+    while !ancestor.is_none() {
+        let node = doc.node(ancestor);
+        if node.style.display.is_inline_level() {
+            return true;
+        }
+        ancestor = node.parent;
+    }
+    false
 }
 
 fn decoration_coverage_rect(decoration: &SharedColumnDecoration<'_>) -> Rect {
@@ -6441,6 +6454,31 @@ fn collect_shared_column_decorations<'a>(
         parent_offset.top + fragment.offset.top,
     );
     let mut child_clips = clips.to_vec();
+    if !fragment.node_id.is_none()
+        && doc.node(fragment.node_id).style.position == openui_style::Position::Relative
+        && fragment.fragmentation_visual_offset != PhysicalOffset::zero()
+        // Fragmented inline containing blocks have a separate row paint
+        // owner. Their stored visual offset can include the inline ancestor's
+        // translation, so shifting this prepass's clips would replay content
+        // outside the row's authoritative fragmentainer interval.
+        && !has_inline_ancestor(doc, fragment.node_id)
+    {
+        // A relative box is laid out in its source fragmentainer and then
+        // visually translated. The synthetic fragmentainer clips follow that
+        // translation for its decorations and descendants. Authored overflow
+        // clips stay attached to their owning ancestor instead.
+        let shift = fragment.fragmentation_visual_offset;
+        for clip in &mut child_clips {
+            if clip.fragmentainer {
+                clip.rect = Rect::from_ltrb(
+                    clip.rect.left + shift.left.to_f32(),
+                    clip.rect.top + shift.top.to_f32(),
+                    clip.rect.right + shift.left.to_f32(),
+                    clip.rect.bottom + shift.top.to_f32(),
+                );
+            }
+        }
+    }
     let mut child_ancestor_node_ids = ancestor_node_ids.to_vec();
     if fragment.kind == FragmentKind::ColumnBox {
         if fragment.has_overflow_clip {
@@ -6464,6 +6502,7 @@ fn collect_shared_column_decorations<'a>(
             child_clips.push(SharedColumnClip {
                 rect: physical_clip,
                 antialias: false,
+                fragmentainer: true,
             });
         }
     } else if !fragment.node_id.is_none() {
@@ -6493,7 +6532,7 @@ fn collect_shared_column_decorations<'a>(
             output.push(SharedColumnDecoration {
                 fragment,
                 offset: fragment_offset,
-                clips: clips.to_vec(),
+                clips: child_clips.clone(),
                 ancestor_node_ids: ancestor_node_ids.to_vec(),
                 starts_at_shared_edge: false,
             });
@@ -6564,6 +6603,7 @@ fn collect_shared_column_decorations<'a>(
                     outward_snap_rect_to_physical(logical_clip, style.device_scale_factor)
                 },
                 antialias,
+                fragmentainer: false,
             });
         } else if fragment.has_overflow_clip {
             // Shared column-root decorations are lifted out of the ordinary
@@ -6592,6 +6632,7 @@ fn collect_shared_column_decorations<'a>(
             child_clips.push(SharedColumnClip {
                 rect: physical_clip,
                 antialias: false,
+                fragmentainer: true,
             });
         }
     }
@@ -6726,6 +6767,7 @@ fn prepaint_shared_column_root_decorations(
                     doc.device_scale_factor(),
                 ),
                 antialias: false,
+                fragmentainer: true,
             })
             .into_iter()
             .collect::<Vec<_>>();
