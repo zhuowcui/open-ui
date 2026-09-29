@@ -144,5 +144,12 @@ failing images. Twenty-seven Chromium captures failed transiently in the first
 run; all were recovered from the pinned oracle cache and matched the prior
 Open UI and Chromium hashes. The [guard index](generated/broken-image-host-clip-guard-v1.json)
 summarizes all 4,588 comparisons and records the two changed image hashes.
-The remaining icon-interior sampling and alt-text differences still need a shared repair.
+The remaining icon-interior sampling and alt-text differences still need a
+shared repair.
 This is diagnostic progress, not an exact renderer qualification.
+
+The [clean v33 census](generated/four-profile-census-v33.json) at `d70c4696`
+confirmed that only those two reference images changed across all 22,924
+comparisons. Both improved by the measured amounts above; the exact count
+remained 21,244, there were zero errors and no exact regressions, and all
+Chromium oracle identities and decoded hashes were unchanged.

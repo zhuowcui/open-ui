@@ -26,8 +26,12 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v32.json)
-at `09683348` is 21,244/22,924 exact, 1,680 different, and zero errors.
+The [latest complete clean census](../renderer/generated/four-profile-census-v33.json)
+at `d70c4696` is 21,244/22,924 exact, 1,680 different, and zero errors.
+The image-host content clip changed only two already failing Open UI images:
+the `overflow-img-scroll-non-replaced-ref` result improved from 193 to 78
+wrong pixels at 1.25× and from 305 to 127 at 1.5×. All 22,924 Chromium
+oracle identities and decoded hashes stayed fixed, and no exact result regressed.
 The [new expanded admission](../renderer/adjoining-floats-native-admission.md)
 retains all 200 prior additions and adds one case exact at all four required
 profiles. The complete clean expanded run is
