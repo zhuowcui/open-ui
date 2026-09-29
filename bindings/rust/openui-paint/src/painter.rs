@@ -11040,17 +11040,29 @@ fn paint_text_fragment(
             } else {
                 0.0
             };
-            canvas.translate(Point::new(
-                abs_offset.left.to_f32()
-                    + fragment.size.width.to_f32()
-                    + aliased_ahem_inline_shift
-                    // Native vertical controls align the clockwise glyph ink
-                    // to the device pixel after their logical inline padding.
-                    // The anonymous flex item's fractional Ahem advance would
-                    // otherwise expose one pixel into the block-start padding.
-                    + if native_vertical_button_text { 1.0 } else { 0.0 },
-                abs_offset.top.to_f32(),
-            ));
+            let horizontal_translation = abs_offset.left.to_f32()
+                + fragment.size.width.to_f32()
+                + aliased_ahem_inline_shift
+                // Native vertical controls align the clockwise glyph ink
+                // to the device pixel after their logical inline padding.
+                // The anonymous flex item's fractional Ahem advance would
+                // otherwise expose one pixel into the block-start padding.
+                + if native_vertical_button_text { 1.0 } else { 0.0 };
+            // The vertical-lr Ahem mask uses a physical block-axis column.
+            // Align the clockwise rotation anchor before rasterization so a
+            // fractional layout-unit advance cannot move the whole mask one
+            // device column. Other writing modes anchor the run differently.
+            let horizontal_translation = if style.writing_mode
+                == openui_style::WritingMode::VerticalLr
+                && all_ahem_runs
+                && style.raster_configuration.author_text.edging == TextEdging::Alias
+            {
+                RasterSnapping::new(style.device_scale_factor)
+                    .logical_coordinate(horizontal_translation, PhysicalSnap::Nearest)
+            } else {
+                horizontal_translation
+            };
+            canvas.translate(Point::new(horizontal_translation, abs_offset.top.to_f32()));
             canvas.rotate(90.0, None);
             (0.0, fragment.baseline_offset)
         }
