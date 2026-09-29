@@ -66,3 +66,21 @@ coverage and when coincident child and clip edges are resolved as one edge,
 then verify that rule against the exact overflow cases before another full
 census. The button case remains different at 1.25, and the release gate stays
 open.
+
+## Rejected contained-child experiment
+
+A second dirty experiment kept analytic clipping except when both axes used
+`overflow: clip` and every direct child was a simple leaf box whose
+border box fit within the clip. It made the native final-state button case
+4/4 exact. Across the 848 selected original IDs at the two fractional
+profiles, however, the baseline was 1,421/1,696 exact and the experiment was
+1,418/1,696 exact. It fixed the button reference but regressed four previously
+exact comparisons: both fractional profiles of
+`css_flexbox/min-size-auto-overflow-clip` and
+`css_overflow/overflow-clip-margin-visual-box-and-value`. All selected
+Chromium decoded hashes stayed fixed. The
+[second diagnostic index](generated/rectangular-clip-contained-diagnostic-v1.json)
+records the five changed Open UI images and report identities. This edit was
+also reverted. Border-box containment alone is insufficient to decide clip
+coverage, including when flex sizing or a nondefault clip reference box is
+involved.

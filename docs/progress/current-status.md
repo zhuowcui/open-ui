@@ -49,7 +49,9 @@ has a public native Rust API path.
 A [fractional overflow-clip investigation](../renderer/fractional-rectangular-overflow-clip.md)
 found a coincident button/child edge that differs by 125 pixels at 1.25×. A
 dirty hard-clip experiment made that case exact but regressed 33 previously
-exact comparisons in a 3,392-comparison diagnostic. The edit was reverted;
+exact comparisons in a 3,392-comparison diagnostic. A narrower contained-child
+experiment still regressed four exact comparisons in 1,696 fractional-scale
+comparisons. Both edits were reverted;
 the clean census above remains the current qualification evidence.
 
 The [prior complete clean census](../renderer/generated/four-profile-census-v30.json)
