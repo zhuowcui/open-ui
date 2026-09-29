@@ -32,13 +32,14 @@ The current v0.2 release candidate has:
   on replay and 182 changed; these old screenshots are not pixel targets;
 - a clean four-profile Chromium census with 21,239 of 22,924 comparisons
   exact, 1,685 different, and zero render errors in the
-  [latest evidence index](docs/renderer/generated/four-profile-census-v30.json);
+  [latest evidence index](docs/renderer/generated/four-profile-census-v31.json);
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
   comparisons exact;
-- one of 36 pending native final-state cases now exact at all four profiles;
-  it remains outside admitted release coverage;
+- 201 admitted native final-state cases, including one newly admitted case
+  exact at all four profiles; 198 of 201 currently meet that gate and three
+  remain failures. The other 35 AST-lowered cases remain pending;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
-- 41 application scenarios covering retained updates, controls, editing,
+- 42 application scenarios covering retained updates, controls, editing,
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;

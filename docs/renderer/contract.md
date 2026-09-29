@@ -59,6 +59,18 @@ versions one newly exact case into the expanded contract. The other 35
 AST-lowered candidates remain pending. All 200 prior additions remain in the
 new manifest, including three that currently fail a profile; admission never
 turns their failing comparisons into passes.
+At clean checkpoint `9534c9f6`, the [v31 original census](generated/four-profile-census-v31.json)
+is 21,239/22,924 exact with 1,685 differences and zero errors. The complete
+[v17 expanded requalification](generated/expanded-requalification-v17.json)
+is 22,040/23,728 exact, with 1,688 differences and zero errors; 198 of 201
+additions are exact at all four profiles. The
+[v32 focused/primitive index](generated/focused-primitive-raster-v32.json)
+is 640/640 and 960/960 exact. The 35 remaining
+[pending candidates](generated/pending-mutation-candidates-v6.json)
+are 18/140 exact comparisons, with none exact at all four profiles. All
+23,724 prior expanded results retain their decoded Open UI and Chromium
+hashes, statuses, and diff signatures. The original renderer gate still has
+931 unowned residual test IDs.
 At clean checkpoint `8950b426`, the 36 AST-lowered pending cases produced
 22/144 exact comparisons, 122 differences, and zero errors. One case,
 `adjoining-floats-dynamic`, is exact at all four required profiles and is

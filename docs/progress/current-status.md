@@ -13,12 +13,12 @@ remain open.
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
 | Fresh four-profile Chromium census | 21,239/22,924 exact, 1,685 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
-| Expanded native final-state additions | 197/200 exact at all four profiles in the latest clean run; three demoted |
-| Pending native final-state candidates | 1/36 newly eligible at all four profiles; 35 still differ |
+| Expanded native final-state additions | 198/201 exact at all four profiles in the latest clean run; three still fail |
+| Pending native final-state candidates | 0/35 exact at all four profiles; all remain pending |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
-| Application conformance scenarios | 41 across 10 domains |
+| Application conformance scenarios | 42 across 10 domains |
 | Frozen / current C exports | 84 / 102 |
 | C examples / C++ consumers | 5 / 1 |
 | Workspace tests | pass |
@@ -26,7 +26,27 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v30.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v31.json)
+at `9534c9f6` is 21,239/22,924 exact, 1,685 different, and zero errors.
+The [new expanded admission](../renderer/adjoining-floats-native-admission.md)
+retains all 200 prior additions and adds one case exact at all four required
+profiles. The complete clean expanded run is
+[22,040/23,728 exact](../renderer/generated/expanded-requalification-v17.json),
+with 1,688 differences, zero errors, and 198 of 201 additions exact across
+four profiles. The [v19 diagnostic selection](../../tools/qualification/manifests/expanded-v19.json)
+lists those 198; the release contract still includes all 201. The same three
+earlier additions remain failures. Every prior
+expanded comparison kept its decoded Open UI and Chromium hashes and status;
+the new case contributed four exact comparisons. The clean
+[v32 raster index](../renderer/generated/focused-primitive-raster-v32.json)
+is 640/640 focused and 960/960 primitive exact. The remaining 35
+[pending candidates](../renderer/generated/pending-mutation-candidates-v6.json)
+produced 18/140 exact comparisons, 122 differences, and zero errors; none is
+exact at all four profiles. The original release gate still has 931 unowned
+residual test IDs. Open UI runs no JavaScript; the newly admitted interaction
+has a public native Rust API path.
+
+The [prior complete clean census](../renderer/generated/four-profile-census-v30.json)
 at `814a2005` is 21,239/22,924 exact, 1,685 different, and zero errors.
 The [table row-group clip repair](../renderer/truncated-table-row-group-clip.md)
 made the remaining repeated-section comparison exact at 1.25×. Across all

@@ -17,7 +17,7 @@ CONTRACT = ROOT / "docs/renderer/generated/qualification-contract-v2.json"
 ORIGINAL = ROOT / "tools/qualification/manifests/complete-5731.json"
 PRIOR = ROOT / "tools/qualification/manifests/expanded-v18.json"
 AST_AUDIT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v3.json"
-LEDGER = ROOT / "docs/renderer/generated/expanded-requalification-v1.json"
+LEDGER = ROOT / "docs/renderer/generated/expanded-requalification-v17.json"
 MANIFEST = ROOT / "tools/qualification/manifests/expanded-v19.json"
 
 
