@@ -1,8 +1,14 @@
 # SP17 — Advanced Text and Writing-Mode Parity
 
+> Historical sprint record. The active v0.2 contract is the
+> [native interaction API](v02/supported-platforms.md#native-interaction-api).
+> Open UI never executes JavaScript. References below to JavaScript describe
+> Chromium test sources and past test classification. Application interaction
+> uses public native Rust APIs over the retained document and Rust callbacks.
+
 ## Status
 
-SP17 W2B–W4 is the current checkpoint on `agent/sp17-advanced-text`, branched
+SP17 W2B–W4 was the checkpoint on `agent/sp17-advanced-text`, branched
 from `main` commit `2c1fe78c142c8b83896cd51b1b6d580496611b5e` on
 2026-08-19.
 
