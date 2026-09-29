@@ -1,5 +1,10 @@
 # Fractional rectangular overflow clip coverage
 
+This is a historical investigation. The later
+[native button content-clip repair](button-content-clip-coverage.md) made both
+button cases exact at 1.25× in a clean full census. The broad hard-clip and
+contained-child experiments below remain rejected.
+
 Chromium 147 is the pixel target. This investigation used the clean
 [four-profile census](generated/four-profile-census-v31.json) and the unchanged
 Chromium oracle. The source edit below was a dirty diagnostic and has been
@@ -64,8 +69,8 @@ The changed `clip` rule cannot be used. The remaining work belongs to paint
 clip and compositor coverage: determine when Chromium preserves analytic clip
 coverage and when coincident child and clip edges are resolved as one edge,
 then verify that rule against the exact overflow cases before another full
-census. The button case remains different at 1.25, and the release gate stays
-open.
+census. At this diagnostic checkpoint, the button case remained different at
+1.25× and the release gate stayed open.
 
 ## Rejected contained-child experiment
 

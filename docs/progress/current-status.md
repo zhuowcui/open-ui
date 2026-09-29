@@ -156,12 +156,14 @@ stack. The default 2 MiB worker stack still aborts in an existing fragmented
 multicol integration test; its isolated rerun passes at 4 MiB.
 
 A [fractional overflow-clip investigation](../renderer/fractional-rectangular-overflow-clip.md)
-found a coincident button/child edge that differs by 125 pixels at 1.25×. A
+previously found a coincident button/child edge that differed by 125 pixels at
+1.25×. A
 dirty hard-clip experiment made that case exact but regressed 33 previously
 exact comparisons in a 3,392-comparison diagnostic. A narrower contained-child
 experiment still regressed four exact comparisons in 1,696 fractional-scale
-comparisons. Both edits were reverted;
-the clean census above remains the current qualification evidence.
+comparisons. Both edits were reverted. The later scoped
+[button repair](../renderer/button-content-clip-coverage.md) is the clean
+qualification evidence above.
 
 A [broken-image sampling investigation](../renderer/broken-image-fractional-sampling.md)
 isolated five identical 1.5× differences to Chromium's fallback-image icon.
