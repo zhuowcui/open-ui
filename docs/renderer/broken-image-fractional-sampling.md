@@ -32,7 +32,14 @@ exact comparisons fell from 204/212 to 199/212. No Chromium oracle identity
 or decoded hash changed. The [diagnostic index](generated/broken-image-fractional-phase-diagnostic-v1.json)
 records all ten changed Open UI comparisons and their decoded hashes.
 
-The source-phase edit cannot be used. Next, derive the 1.5× sample coordinates
+Drawing the same resource directly through CPU Skia instead of the physical
+sampler was a second diagnostic. It changed only these five images in each
+profile, but made every one different: 85 pixels at 1×, 273 at 2×, 255 at
+1.25×, and 386 at 1.5×. The selection fell to 189/212 exact, with no Chromium
+oracle change. The [direct-draw index](generated/broken-image-direct-skia-diagnostic-v1.json)
+records the 20 changed comparisons. This edit was also reverted.
+
+Neither diagnostic can be used. Next, derive the 1.5× sample coordinates
 and filter weights from the pinned Chromium image draw, create a minimal
 Engine-backed broken-image fixture with neighboring scale and position phases,
 and check the shared sampler against already exact missing-image cases. The
