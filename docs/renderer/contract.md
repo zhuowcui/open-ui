@@ -59,6 +59,18 @@ versions one newly exact case into the expanded contract. The other 35
 AST-lowered candidates remain pending. All 200 prior additions remain in the
 new manifest, including three that currently fail a profile; admission never
 turns their failing comparisons into passes.
+At clean checkpoint `09683348`, the [v32 original census](generated/four-profile-census-v32.json)
+is 21,244/22,924 exact with 1,680 differences and zero errors. The
+[fixed-point broken-image repair](broken-image-fractional-sampling.md) made
+five 1.5× comparisons exact without regressing any previously exact image.
+All 22,924 Chromium oracle identities and decoded hashes stayed fixed. The
+complete [v18 expanded requalification](generated/expanded-requalification-v18.json)
+is 22,045/23,728 exact, with 1,683 differences, zero errors, and the same
+198 of 201 additions exact at all four profiles. The
+[v33 focused/primitive index](generated/focused-primitive-raster-v33.json)
+is 640/640 and 960/960 exact. The original renderer gate still has 926
+unowned residual test IDs. The 35 pending candidates have not been
+requalified at this renderer checkpoint.
 At clean checkpoint `9534c9f6`, the [v31 original census](generated/four-profile-census-v31.json)
 is 21,239/22,924 exact with 1,685 differences and zero errors. The complete
 [v17 expanded requalification](generated/expanded-requalification-v17.json)

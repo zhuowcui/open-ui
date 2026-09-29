@@ -11,10 +11,10 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,239/22,924 exact, 1,685 different, 0 errors |
+| Fresh four-profile Chromium census | 21,244/22,924 exact, 1,680 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 198/201 exact at all four profiles in the latest clean run; three still fail |
-| Pending native final-state candidates | 0/35 exact at all four profiles; all remain pending |
+| Pending native final-state candidates | 0/35 exact at all four profiles at the prior renderer checkpoint; recheck pending |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
@@ -26,25 +26,23 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v31.json)
-at `9534c9f6` is 21,239/22,924 exact, 1,685 different, and zero errors.
+The [latest complete clean census](../renderer/generated/four-profile-census-v32.json)
+at `09683348` is 21,244/22,924 exact, 1,680 different, and zero errors.
 The [new expanded admission](../renderer/adjoining-floats-native-admission.md)
 retains all 200 prior additions and adds one case exact at all four required
 profiles. The complete clean expanded run is
-[22,040/23,728 exact](../renderer/generated/expanded-requalification-v17.json),
-with 1,688 differences, zero errors, and 198 of 201 additions exact across
-four profiles. The [v19 diagnostic selection](../../tools/qualification/manifests/expanded-v19.json)
+[22,045/23,728 exact](../renderer/generated/expanded-requalification-v18.json),
+with 1,683 differences, zero errors, and 198 of 201 additions exact across
+four profiles. The [v20 diagnostic selection](../../tools/qualification/manifests/expanded-v20.json)
 lists those 198; the release contract still includes all 201. The same three
-earlier additions remain failures. Every prior
-expanded comparison kept its decoded Open UI and Chromium hashes and status;
-the new case contributed four exact comparisons. The clean
-[v32 raster index](../renderer/generated/focused-primitive-raster-v32.json)
+earlier additions remain failures. The clean
+[v33 raster index](../renderer/generated/focused-primitive-raster-v33.json)
 is 640/640 focused and 960/960 primitive exact. The remaining 35
 [pending candidates](../renderer/generated/pending-mutation-candidates-v6.json)
-produced 18/140 exact comparisons, 122 differences, and zero errors; none is
-exact at all four profiles. The original release gate still has 931 unowned
-residual test IDs. Open UI runs no JavaScript; the newly admitted interaction
-has a public native Rust API path.
+produced 18/140 exact comparisons, 122 differences, and zero errors at the
+prior checkpoint; they have not been requalified at `09683348`. The original
+release gate still has 926 unowned residual test IDs. Open UI runs no
+JavaScript; the newly admitted interaction has a public native Rust API path.
 The public `Element::detach` and `TextNode::detach` operations now keep authored
 nodes available for reattachment while removing them from the presented
 document. A new conformance scenario checks element lookup, focus,
@@ -68,9 +66,10 @@ the clean census above remains the current qualification evidence.
 
 A [broken-image sampling investigation](../renderer/broken-image-fractional-sampling.md)
 isolated five identical 1.5× differences to Chromium's fallback-image icon.
-Encoding the image phase at fractional scales reduced each difference but
-regressed the same five cases at 1.25×, so the diagnostic edit was reverted.
-The clean census and native API contract above remain unchanged.
+The pinned Skia fixed-point coordinate sequence made all five exact in the
+clean census. No previously exact comparison regressed and every Chromium
+oracle hash stayed fixed. Nineteen already failing comparisons changed size;
+two scrolling/alt-text overflow cases worsened and remain open.
 
 The [prior complete clean census](../renderer/generated/four-profile-census-v30.json)
 at `814a2005` is 21,239/22,924 exact, 1,685 different, and zero errors.

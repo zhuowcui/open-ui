@@ -1,9 +1,9 @@
 # Broken-image icon at fractional device scale
 
-Chromium 147 remains the sole pixel target. This investigation compares the
-clean [v31 census](generated/four-profile-census-v31.json) at `9534c9f6`
-with an uncommitted diagnostic. The diagnostic change was reverted and is not
-release qualification evidence.
+Chromium 147 remains the sole pixel target. This investigation began with the
+clean [v31 census](generated/four-profile-census-v31.json) at `9534c9f6`.
+The two diagnostic changes below were reverted. A subsequent shared sampler
+fix was verified at clean checkpoint `09683348`.
 
 Five original cases share the same 1.5× mismatch:
 `css_sizing/contain-intrinsic-size-012`, `-017`, `-020`, `-027`, and
@@ -18,10 +18,9 @@ these captured pixels.
 `LayoutImageResource::BrokenImage` in the pinned Chromium source chooses its
 100% image below device scale 2 and its 200% image at or above 2. Open UI's
 `broken_image_resource` uses pinned copies of those same resources. The
-remaining difference is in drawing the 100% resource into the 16 CSS-pixel
-fallback slot at 1.5×. That narrows ownership to
-`openui-paint::paint_missing_image` and its physical image sampler; the exact
-Chromium filter phase and coverage order at this scale are still unresolved.
+remaining difference was in drawing the 100% resource into the 16 CSS-pixel
+fallback slot at 1.5×. That narrowed ownership to
+`openui-paint::paint_missing_image` and its physical image sampler.
 
 As a diagnostic, `paint_missing_image` encoded its 1/16 destination phase in
 source coordinates at fractional scales as it already does at integral scales.
@@ -39,8 +38,38 @@ profile, but made every one different: 85 pixels at 1×, 273 at 2×, 255 at
 oracle change. The [direct-draw index](generated/broken-image-direct-skia-diagnostic-v1.json)
 records the 20 changed comparisons. This edit was also reverted.
 
-Neither diagnostic can be used. Next, derive the 1.5× sample coordinates
-and filter weights from the pinned Chromium image draw, create a minimal
-Engine-backed broken-image fixture with neighboring scale and position phases,
-and check the shared sampler against already exact missing-image cases. The
-five original comparisons and the complete renderer gate remain open.
+## Shared sampler repair
+
+Chromium's pinned Skia code maps the first sample through a 32-bit float
+inverse matrix, converts it to signed 32.32 fixed point, and advances each
+horizontal sample by a fixed step. The former Open UI sampler recalculated
+each sample from a higher-precision ratio. At 1.5× the 14-pixel image spans
+24 physical pixels; the difference puts every third column on the wrong side
+of a 1/16 filter-weight boundary. At physical columns 1, 4, and 7 relative
+to the icon, Chromium's weights are 5, 1, and 13; Open UI previously used
+6, 2, and 14. At 1.25×, the checked column 7 retains weight 12.
+
+The fractional-scale fallback-image path now uses that fixed-point coordinate
+sequence before the existing packed bilinear filter. Integral-scale sampling,
+the pinned image bytes, and the Chromium oracle remain unchanged. A focused
+unit test guards those filter phases. This is a resource-class raster rule,
+not a test-ID or post-raster pixel replacement.
+
+The [clean v32 full census](generated/four-profile-census-v32.json) is
+21,244/22,924 exact, five more than v31, with zero errors. All five original
+1.5× cases became exact. Across the entire corpus, 24 Open UI decoded images
+changed, no previously exact image regressed, and all 22,924 Chromium oracle
+identities and decoded hashes stayed fixed. The
+[change index](generated/broken-image-fixed-matrix-v1.json) records every
+changed image and its before/after hash and pixel count. Nineteen already
+failing comparisons also changed: most improved, while the two
+`overflow-img-scroll-non-replaced` comparisons grew by four mismatched pixels
+at 1.25× and by 86 and 85 at 1.5×. Their scroll, clipping, and alt-text paint
+path remains a separate residual to investigate.
+
+The clean [v33 focused/primitive matrices](generated/focused-primitive-raster-v33.json)
+remain 640/640 and 960/960 exact. The complete
+[v18 expanded requalification](generated/expanded-requalification-v18.json)
+is 22,045/23,728 exact, with the same 198 of 201 additions exact across all
+four profiles. The renderer release gate remains open: 1,680 original
+comparisons still differ, across 926 unowned test IDs.
