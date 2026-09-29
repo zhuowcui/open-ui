@@ -41,6 +41,9 @@ final-state addition is now exact at all four profiles, so 200 of 201
 additions pass. The [v25 diagnostic selection](../../tools/qualification/manifests/expanded-v25.json)
 lists those 200; the release contract retains all 201, including the remaining
 fieldset legend failure. The other 35 AST-lowered candidates remain pending.
+The [fractional Ahem legend investigation](../renderer/fieldset-legend-ahem-raster-investigation.md)
+records that case's 14 extra glyph rows and three rejected shared-raster
+experiments; no renderer fix or qualification is claimed from that work.
 
 At the prior clean checkpoint `e14e3e64`, the
 [v39 census](../renderer/generated/four-profile-census-v39.json)
