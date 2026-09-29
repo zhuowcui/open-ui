@@ -153,3 +153,5 @@ confirmed that only those two reference images changed across all 22,924
 comparisons. Both improved by the measured amounts above; the exact count
 remained 21,244, there were zero errors and no exact regressions, and all
 Chromium oracle identities and decoded hashes were unchanged.
+The clean [v34 focused/primitive index](generated/focused-primitive-raster-v34.json)
+remains 640/640 and 960/960 exact after this paint change.

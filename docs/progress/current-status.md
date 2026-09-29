@@ -40,7 +40,7 @@ with 1,683 differences, zero errors, and 198 of 201 additions exact across
 four profiles. The [v20 diagnostic selection](../../tools/qualification/manifests/expanded-v20.json)
 lists those 198; the release contract still includes all 201. The same three
 earlier additions remain failures. The clean
-[v33 raster index](../renderer/generated/focused-primitive-raster-v33.json)
+[v34 raster index](../renderer/generated/focused-primitive-raster-v34.json)
 is 640/640 focused and 960/960 primitive exact. The remaining 35
 [pending candidates](../renderer/generated/pending-mutation-candidates-v7.json)
 produced 18/140 exact comparisons, 122 differences, and zero errors at clean

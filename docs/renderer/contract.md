@@ -65,6 +65,8 @@ remains 21,244/22,924 exact with 1,680 differences and zero errors. The
 shared broken-image host content clip improved two already failing comparisons
 without changing any other Open UI image. Every Chromium oracle identity and
 decoded hash stayed fixed; 926 residual test IDs remain unowned.
+The clean [v34 focused/primitive index](generated/focused-primitive-raster-v34.json)
+remains 640/640 and 960/960 exact with zero errors.
 
 At clean checkpoint `09683348`, the [v32 original census](generated/four-profile-census-v32.json)
 is 21,244/22,924 exact with 1,680 differences and zero errors. The
