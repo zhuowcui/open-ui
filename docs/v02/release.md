@@ -50,6 +50,9 @@ The latest clean census at `d70c4696` is
 with 1,680 differences, zero errors, and 926 unowned residual test IDs. The
 broken-image host clip improved two already failing comparisons. No previously
 exact Open UI image changed, and all Chromium oracle images stayed fixed. The
+[201-addition guard](../renderer/generated/expanded-additions-host-clip-v1.json)
+retained all 801 exact and three different comparisons, with no changed Open UI
+or Chromium image; this selected guard is not a full expanded-manifest run. The
 [new native final-state admission](../renderer/adjoining-floats-native-admission.md)
 adds one four-profile-exact case while retaining all 200 earlier additions.
 The complete clean expanded run is

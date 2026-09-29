@@ -32,6 +32,11 @@ The image-host content clip changed only two already failing Open UI images:
 the `overflow-img-scroll-non-replaced-ref` result improved from 193 to 78
 wrong pixels at 1.25× and from 305 to 127 at 1.5×. All 22,924 Chromium
 oracle identities and decoded hashes stayed fixed, and no exact result regressed.
+The [201-addition clean guard](../renderer/generated/expanded-additions-host-clip-v1.json)
+at `b16113a3` retained all 801 exact and three different profile comparisons;
+none of its Open UI or Chromium decoded images changed from the prior full
+expanded run. The complete expanded manifest still needs a fresh full run
+after the next renderer changes.
 The [new expanded admission](../renderer/adjoining-floats-native-admission.md)
 retains all 200 prior additions and adds one case exact at all four required
 profiles. The complete clean expanded run is
