@@ -30,14 +30,14 @@ The current v0.2 release candidate has:
 
 - a historical archive of 5,731 Open UI renders, with 5,549 byte-identical
   on replay and 182 changed; these old screenshots are not pixel targets;
-- a clean four-profile Chromium census with 21,264 of 22,924 comparisons
-  exact, 1,660 different, and zero render errors in the
-  [latest evidence index](docs/renderer/generated/four-profile-census-v39.json);
+- a clean four-profile Chromium census with 21,265 of 22,924 comparisons
+  exact, 1,659 different, and zero render errors in the
+  [latest evidence index](docs/renderer/generated/four-profile-census-v40.json);
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
-  comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v40.json);
+  comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v41.json);
 - 201 native final-state cases in the expanded contract, including one newly
-  added case; 199 of 201 currently meet the four-profile gate and two
-  remain failures in the [latest full expanded report](docs/renderer/generated/expanded-requalification-v22.json).
+  added case; 200 of 201 currently meet the four-profile gate and one
+  remains a failure in the [latest full expanded report](docs/renderer/generated/expanded-requalification-v23.json).
   The other 35 AST-lowered cases remain pending;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
 - 43 application scenarios covering retained updates, controls, editing,
@@ -51,7 +51,7 @@ The current v0.2 release candidate has:
 
 Chromium is the sole pixel target. The archived Open UI bytes disagree with
 Chromium for some fixtures, which is why replaying old screenshots cannot be a
-release gate. The four-profile Chromium census still has 1,660 differences,
+release gate. The four-profile Chromium census still has 1,659 differences,
 so this repository is not yet declaring the final v0.2 release. Physical-GPU
 and reference-machine qualification, automated AT-SPI operation, direct Skia
 GPU qualification, retained per-node layers, compositor-owned animation

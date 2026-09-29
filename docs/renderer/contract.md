@@ -57,28 +57,47 @@ disposition. Product interactions must be available through the public
 The [native adjoining-floats admission](adjoining-floats-native-admission.md)
 versions one newly exact case into the expanded contract. The other 35
 AST-lowered candidates remain pending. All 200 prior additions remain in the
-new manifest, including two that currently fail a profile; admission never
+new manifest, including one that currently fails a profile; admission never
 turns their failing comparisons into passes.
 
-At clean checkpoint `e14e3e64`, the
-[v39 original census](generated/four-profile-census-v39.json) is
+At clean checkpoint `ee0b04dd`, the
+[v40 original census](generated/four-profile-census-v40.json) is
+21,265/22,924 exact, with 1,659 differences and zero errors. The shared
+[native button content-clip repair](button-content-clip-coverage.md)
+made one original comparison exact by removing duplicate edge coverage at
+1.25×. Only that Open UI image changed, no exact comparison regressed, and all
+22,924 Chromium oracle identities and decoded images stayed fixed. The 915
+residual test IDs remain unowned. The clean
+[v41 focused/primitive index](generated/focused-primitive-raster-v41.json)
+is 640/640 and 960/960 exact. The complete clean
+[v23 expanded requalification](generated/expanded-requalification-v23.json)
+is 22,068/23,728 exact, with 1,660 differences and zero errors. The button
+addition is now exact at all four profiles, leaving 200 of 201 additions
+exact. Every original expanded result matches the separate clean v40 census,
+and all 23,728 Chromium oracle identities and decoded images match the prior
+expanded run. The [v25 diagnostic selection](../../tools/qualification/manifests/expanded-v25.json)
+lists 200 exact additions; the release contract retains all 201 and the one
+remaining fieldset legend failure.
+
+At prior clean checkpoint `e14e3e64`, the
+[v39 original census](generated/four-profile-census-v39.json) was
 21,264/22,924 exact, with 1,660 differences and zero errors. The shared
 [vertical-lr Ahem rotation-anchor repair](vertical-lr-ahem-rotation-anchor.md)
 made nine original comparisons exact, changed only those nine Open UI images,
 and reduced wrong pixels by 30,184. No exact comparison regressed, and all
 22,924 Chromium oracle identities and decoded images stayed fixed. The 916
-residual test IDs remain unowned. The clean
+residual test IDs were unowned. The clean
 [v40 focused/primitive index](generated/focused-primitive-raster-v40.json)
-is 640/640 and 960/960 exact. The complete clean
+was 640/640 and 960/960 exact. The complete clean
 [v22 expanded requalification](generated/expanded-requalification-v22.json)
-is 22,066/23,728 exact, with 1,662 differences and zero errors. All original
+was 22,066/23,728 exact, with 1,662 differences and zero errors. All original
 decoded images and statuses match the separate clean census; the one changed
-addition is now exact at four profiles, leaving 199 of 201 additions exact.
-Every Chromium oracle identity and decoded image matches the prior clean
+addition became exact at four profiles, leaving 199 of 201 additions exact.
+Every Chromium oracle identity and decoded image matched the prior clean
 expanded run. The
 [v24 diagnostic selection](../../tools/qualification/manifests/expanded-v24.json)
-lists 199 exact additions, while the release contract still includes all 201
-and their two failures.
+listed 199 exact additions, while the release contract included all 201 and
+their two failures at that checkpoint.
 
 At the prior clean checkpoint `d39282e4`, the [v38 original census](generated/four-profile-census-v38.json)
 is 21,255/22,924 exact, with 1,669 differences and zero errors. The shared

@@ -11,9 +11,9 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,264/22,924 exact, 1,660 different, 0 errors |
+| Fresh four-profile Chromium census | 21,265/22,924 exact, 1,659 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
-| Expanded native final-state additions | 199/201 exact at all four profiles in the latest clean run; two still fail |
+| Expanded native final-state additions | 200/201 exact at all four profiles in the latest clean run; one still fails |
 | Pending native final-state candidates | 0/35 exact at all four profiles after the latest clean recheck |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
@@ -26,22 +26,39 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v39.json)
-at `e14e3e64` is 21,264/22,924 exact, 1,660 different, and zero errors.
+The [latest complete clean census](../renderer/generated/four-profile-census-v40.json)
+at `ee0b04dd` is 21,265/22,924 exact, 1,659 different, and zero errors.
+The [native button content-clip repair](../renderer/button-content-clip-coverage.md)
+made one original comparison exact by removing duplicate half-pixel coverage
+at a coincident button/child edge. Only that Open UI image changed; no exact
+case regressed, and all 22,924 Chromium oracle identities and decoded images
+stayed fixed. The 915 residual test IDs remain unowned. The clean
+[v41 focused/primitive index](../renderer/generated/focused-primitive-raster-v41.json)
+is 640/640 and 960/960 exact. The complete
+[v23 expanded requalification](../renderer/generated/expanded-requalification-v23.json)
+is 22,068/23,728 exact, 1,660 different, and zero errors. The button native
+final-state addition is now exact at all four profiles, so 200 of 201
+additions pass. The [v25 diagnostic selection](../../tools/qualification/manifests/expanded-v25.json)
+lists those 200; the release contract retains all 201, including the remaining
+fieldset legend failure. The other 35 AST-lowered candidates remain pending.
+
+At the prior clean checkpoint `e14e3e64`, the
+[v39 census](../renderer/generated/four-profile-census-v39.json)
+was 21,264/22,924 exact, 1,660 different, and zero errors.
 The [vertical-lr Ahem rotation-anchor repair](../renderer/vertical-lr-ahem-rotation-anchor.md)
 made nine original comparisons exact, changed only those nine Open UI images,
 and reduced wrong pixels by 30,184. No formerly exact comparison regressed;
 all 22,924 Chromium oracle identities and decoded images stayed fixed. The
-916 remaining residual test IDs are unowned. The clean
+916 remaining residual test IDs were unowned. The clean
 [v40 focused/primitive index](../renderer/generated/focused-primitive-raster-v40.json)
-is 640/640 and 960/960 exact. The complete
+was 640/640 and 960/960 exact. The complete
 [v22 expanded requalification](../renderer/generated/expanded-requalification-v22.json)
-is 22,066/23,728 exact, 1,662 different, and zero errors. The same nine
+was 22,066/23,728 exact, 1,662 different, and zero errors. The same nine
 original comparisons plus one admitted native final-state comparison became
-exact; 199 of 201 additions now pass all four profiles. The
+exact; 199 of 201 additions passed all four profiles. The
 [v24 diagnostic selection](../../tools/qualification/manifests/expanded-v24.json)
-lists those 199, while the release contract keeps all 201 and their two
-failures. The other 35 AST-lowered candidates remain pending.
+listed those 199, while the release contract kept all 201 and their two
+failures at that checkpoint. The other 35 AST-lowered candidates remained pending.
 
 At the prior clean checkpoint `d39282e4`, the
 [v38 census](../renderer/generated/four-profile-census-v38.json)
@@ -453,7 +470,7 @@ load it.
   still fails AddressSanitizer, LeakSanitizer, and fuzz on process-exit
   Fontconfig allocations. Its MSRV, Miri, Linux platform, and C UBSan jobs
   passed.
-- The four-profile Chromium census fails exactness; 916 residual test IDs
+- The four-profile Chromium census fails exactness; 915 residual test IDs
   have no reviewed owner. Both 40-profile CPU raster matrices are exact.
 - The C ABI covers the retained engine, headless renderer, and an owned full
   accessibility-tree snapshot, but does not yet export the owned Linux event loop.
