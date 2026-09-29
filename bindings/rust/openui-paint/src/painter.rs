@@ -16379,6 +16379,19 @@ fn paint_box_decoration_background(
                     // creates a separately quantized mask and loses the
                     // lowest-coverage edge samples.
                     let clip_radii = normalize_radii_to_rect(clip_radii, &bg_rect);
+                    let hard_clip_x =
+                        style.overflow_x == Overflow::Clip && style.overflow_y == Overflow::Visible;
+                    if hard_clip_x {
+                        // A one-axis paint-property clip owns the inline edge
+                        // for both the direct and F16 circular fill paths.
+                        let big = 100_000.0;
+                        canvas.save();
+                        canvas.clip_rect(
+                            Rect::from_ltrb(bg_rect.left, -big, bg_rect.right, big),
+                            ClipOp::Intersect,
+                            false,
+                        );
+                    }
                     if is_opaque_circular_background(&bg_rect, &clip_radii, &style.background_color)
                     {
                         // Chromium retains circular coverage in a float
@@ -16394,28 +16407,10 @@ fn paint_box_decoration_background(
                         canvas.draw_rrect(RRect::new_rect_radii(bg_rect, &clip_radii), &paint);
                         canvas.restore();
                     } else {
-                        let hard_clip_x = style.overflow_x == Overflow::Clip
-                            && style.overflow_y == Overflow::Visible;
-                        if hard_clip_x {
-                            // A one-axis `clip` overflow establishes a hard
-                            // inline-axis scissor while block overflow remains
-                            // visible. Keep the rounded fill's AA ramp from
-                            // leaking across that scissored box edge. The
-                            // block-axis path retains Skia's analytic tangent
-                            // coverage because its clip is applied later in
-                            // the overflow display-item phase.
-                            let big = 100_000.0;
-                            canvas.save();
-                            canvas.clip_rect(
-                                Rect::from_ltrb(bg_rect.left, -big, bg_rect.right, big),
-                                ClipOp::Intersect,
-                                false,
-                            );
-                        }
                         canvas.draw_rrect(RRect::new_rect_radii(bg_rect, &clip_radii), &paint);
-                        if hard_clip_x {
-                            canvas.restore();
-                        }
+                    }
+                    if hard_clip_x {
+                        canvas.restore();
                     }
                 } else {
                     canvas.save();
