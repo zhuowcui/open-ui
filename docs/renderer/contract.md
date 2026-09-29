@@ -252,6 +252,25 @@ and common source/backend identities before emitting a versioned
 on any unowned residual. `--allow-unowned-diagnostics` explicitly emits a
 nonqualifying snapshot for investigation; `--check` verifies that snapshot
 without rewriting it. The current
+[v30 diagnostic index](generated/four-profile-census-v30.json), with clean
+`814a2005` source identity, contains 21,239 exact, 1,685 different, and zero
+errors across the four required profiles; 931 residual test IDs remain
+unowned. Compared with v29, exactly one Open UI image changed: the truncated
+table row-group case became exact at 1.25×, with no exact regression. All
+22,924 Chromium oracle identities and decoded hashes stayed fixed. The clean
+[v31 raster index](generated/focused-primitive-raster-v31.json) is 640/640
+focused and 960/960 primitive exact, with all 1,600 decoded images unchanged.
+The complete clean
+[v16 expanded requalification](generated/expanded-requalification-v16.json)
+is 22,036/23,724 exact, with 197 of 200 prior additions exact and three
+demoted; every addition image is unchanged. The
+[v17 diagnostic selection](../../tools/qualification/manifests/expanded-v17.json)
+retains those 197. The repaired case is exact in the
+[40-profile sweep](generated/table-row-group-cross-v1.json). The
+[table row-group clip investigation](truncated-table-row-group-clip.md)
+records the source rule. The original release gate still fails.
+
+The prior
 [v29 diagnostic index](generated/four-profile-census-v29.json), with clean
 `7cd8e574` source identity, contains 21,238 exact, 1,686 different, and zero
 errors across the four required profiles; 932 residual test IDs remain

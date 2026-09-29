@@ -8,10 +8,10 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,238/22,924 exact, 1,686 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v29.json) | fail |
-| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v30.json) | pass |
+| Four-profile renderer matrix | 21,239/22,924 exact, 1,685 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v30.json) | fail |
+| Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v31.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v15.json); 22,035/23,724 total comparisons exact, 1,689 different, zero errors. One of the 36 pending cases is [exact at all four profiles](../renderer/generated/pending-mutation-candidates-v4.json), but is not yet in the admitted manifest. Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 197 of 200 exact additions and [demotes three](../renderer/generated/expanded-requalification-v16.json); 22,036/23,724 total comparisons exact, 1,688 different, zero errors. One of the 36 pending cases is [exact at all four profiles](../renderer/generated/pending-mutation-candidates-v5.json), but is not yet in the admitted manifest. Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
@@ -45,7 +45,29 @@ behavioral or nonvisual reasons is not a waiver for application interaction:
 needed element behavior must be available through the public native Rust API
 over the same retained document and event path.
 
-The latest clean census at `7cd8e574` is
+The latest clean census at `814a2005` is
+[21,239/22,924 exact](../renderer/generated/four-profile-census-v30.json),
+with 1,685 differences, zero errors, and 931 unowned residual test IDs. The
+[table row-group clip investigation](../renderer/truncated-table-row-group-clip.md)
+records the shared paint repair: the remaining repeated-section comparison
+became exact at 1.25×, and the same case is exact in its
+[40-profile sweep](../renderer/generated/table-row-group-cross-v1.json).
+Exactly one Open UI image changed across the full census; no exact comparison
+regressed, and all Chromium oracle identities and decoded hashes stayed
+fixed. The clean
+[v31 raster index](../renderer/generated/focused-primitive-raster-v31.json)
+is 640/640 focused and 960/960 primitive exact, with all 1,600 decoded images
+unchanged. The complete clean
+[v16 expanded requalification](../renderer/generated/expanded-requalification-v16.json)
+is 22,036/23,724 exact. All 800 addition images are unchanged, with 197 of
+200 additions still exact and three demoted. The
+[v17 diagnostic selection](../../tools/qualification/manifests/expanded-v17.json)
+retains those 197. The clean
+[v5 pending-candidate index](../renderer/generated/pending-mutation-candidates-v5.json)
+again finds `adjoining-floats-dynamic` exact at all four profiles; it remains
+outside admitted release coverage pending a new contract manifest.
+
+The prior clean census at `7cd8e574` is
 [21,238/22,924 exact](../renderer/generated/four-profile-census-v29.json),
 with 1,686 differences, zero errors, and 932 unowned residual test IDs. The
 [repeated table body-slice investigation](../renderer/repeated-table-body-slice.md)
