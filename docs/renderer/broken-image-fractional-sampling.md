@@ -73,3 +73,25 @@ remain 640/640 and 960/960 exact. The complete
 is 22,045/23,728 exact, with the same 198 of 201 additions exact across all
 four profiles. The renderer release gate remains open: 1,680 original
 comparisons still differ, across 926 unowned test IDs.
+
+## Scroll-host diagnostic
+
+The `overflow-img-scroll-non-replaced` pair still differs at fractional
+scales. In the source case the broken image itself is the scroll container;
+in the reference case the broken image is a child of a scroll container.
+At 1.5×, the two Chromium captures differ within the icon, while Open UI
+currently renders the same icon bytes for both. That narrows the remaining
+question to the image's paint context or local sampling origin; it does not
+establish a reviewed root cause.
+
+A dirty diagnostic used the ordinary floating sampler only when the broken
+image host had `overflow: scroll`. Across 55 selected cases and four profiles,
+the exact count stayed **212/220**. Only the source scroll-host case changed:
+its mismatched pixels fell from 67 to 63 at 1.25× and from 156 to 70 at
+1.5×. No Chromium oracle hash changed. The reference case and the five sizing
+cases repaired above were unchanged. The
+[diagnostic index](generated/broken-image-scroll-sampler-diagnostic-v1.json)
+records the report identities and changed comparisons. The experiment was
+reverted because neither scroll comparison became exact. The next review
+needs to measure the paint-local image matrix for a scroll host and a nested
+broken image before changing shared sampling again.

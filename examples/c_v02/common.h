@@ -44,10 +44,11 @@ static int oui_example_render(const char* label, OuiColor background) {
                          "create text") ||
       !oui_example_check(oui_element_append_child(root, card), "append card") ||
       !oui_example_check(oui_element_append_child(card, text_node), "append text") ||
-      !oui_example_check(oui_element_set_attribute(card, oui_example_utf8("id"),
-                                                   oui_example_utf8("primary")), "set ID") ||
-      !oui_example_check(oui_document_element_by_id(document, oui_example_utf8("primary"),
-                                                    &found), "find card") ||
+      !oui_example_check(
+          oui_element_set_attribute(card, oui_example_utf8("id"), oui_example_utf8("primary")),
+          "set ID") ||
+      !oui_example_check(oui_document_element_by_id(document, oui_example_utf8("primary"), &found),
+                         "find card") ||
       found == NULL) {
     result = 0;
     goto cleanup;
