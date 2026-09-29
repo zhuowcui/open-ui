@@ -20835,6 +20835,10 @@ mod tests {
         doc.append_child(doc.root(), image_node);
         doc.update_resolved_style(image_node, |style| {
             style.object_fit = ObjectFit::None;
+            // This test exercises an authored override of the Chromium UA
+            // clipping default on replaced elements.
+            style.overflow_x = Overflow::Visible;
+            style.overflow_y = Overflow::Visible;
             style.border_top_left_radius = (12.0, 12.0);
             style.border_top_right_radius = (12.0, 12.0);
             style.border_bottom_right_radius = (12.0, 12.0);
