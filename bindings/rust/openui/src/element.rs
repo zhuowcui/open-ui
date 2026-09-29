@@ -820,8 +820,37 @@ fn tag_definition(tag: &str) -> Result<(ElementTag, Option<Display>), Error> {
 mod tests {
     use super::*;
     use crate::events::{EventPhase, Modifiers, MouseButton, MouseEventType};
-    use openui_style::{AnimationOptions, FillMode, Keyframes};
+    use openui_style::{AnimationOptions, FillMode, Keyframes, Overflow, OverflowClipBox};
     use std::cell::{Cell, RefCell};
+
+    #[test]
+    fn native_replaced_elements_use_chromium_host_clip_defaults() {
+        let document = Document::new(100, 100).unwrap();
+        for tag in ["img", "canvas", "video", "iframe", "embed", "object"] {
+            let element = Element::create(&document, tag).unwrap();
+            let style = element.computed_style().unwrap();
+            assert_eq!(style.overflow_x, Overflow::Clip, "{tag}");
+            assert_eq!(style.overflow_y, Overflow::Clip, "{tag}");
+            assert_eq!(
+                style.overflow_clip_box,
+                OverflowClipBox::ContentBox,
+                "{tag}"
+            );
+        }
+
+        let image = Element::create(&document, "img").unwrap();
+        image.set_overflow_x(Overflow::Scroll).unwrap();
+        assert_eq!(image.computed_style().unwrap().overflow_x, Overflow::Scroll);
+        assert_eq!(image.computed_style().unwrap().overflow_y, Overflow::Clip);
+        assert_eq!(
+            Element::create(&document, "div")
+                .unwrap()
+                .computed_style()
+                .unwrap()
+                .overflow_x,
+            Overflow::Visible
+        );
+    }
 
     #[test]
     fn typed_animation_uses_manual_clock_and_dispatches_events() {
