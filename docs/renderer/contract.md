@@ -80,8 +80,9 @@ differences from 626 pixels to one each. The
 The [fractional Ahem stripe investigation](fractional-ahem-stripe-edges.md)
 records a shared text and border edge mismatch in multicolumn source and plain
 reference pages; its residual cause and exact repair remain open.
-The clean [v36 focused/primitive index](generated/focused-primitive-raster-v36.json)
-is 640/640 and 960/960 exact with zero errors. The clean
+The clean [v37 focused/primitive index](generated/focused-primitive-raster-v37.json)
+at `e1bdccc4` is 640/640 and 960/960 exact with zero errors and no decoded
+image changes from v36. The clean
 [201-addition guard](generated/expanded-additions-object-deferred-v1.json)
 is 801/804 exact with three differences and no changed Open UI or Chromium
 image; a complete expanded-manifest rerun remains open.

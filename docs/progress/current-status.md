@@ -42,6 +42,10 @@ reduced two already failing 1.25× cases from 626 wrong pixels to one each.
 The [object fallback investigation](../renderer/object-fallback-host-clip.md)
 records an exact-case regression in the intermediate v34 census and its scoped
 repair; all six original `object` fixtures are exact at four profiles again.
+The clean [v37 raster index](../renderer/generated/focused-primitive-raster-v37.json)
+at `e1bdccc4` is 640/640 focused and 960/960 primitive exact with zero errors.
+All 1,600 Open UI and 1,600 Chromium decoded images are unchanged from the
+prior raster index.
 The [201-addition clean guard](../renderer/generated/expanded-additions-object-deferred-v1.json)
 at `6676cf60` retained 801 exact and three different profile comparisons;
 none of its Open UI or Chromium decoded images changed from the prior guard.
@@ -53,9 +57,7 @@ profiles. The complete clean expanded run is
 with 1,683 differences, zero errors, and 198 of 201 additions exact across
 four profiles. The [v20 diagnostic selection](../../tools/qualification/manifests/expanded-v20.json)
 lists those 198; the release contract still includes all 201. The same three
-earlier additions remain failures. The clean
-[v36 raster index](../renderer/generated/focused-primitive-raster-v36.json)
-is 640/640 focused and 960/960 primitive exact. The remaining 35
+earlier additions remain failures. The remaining 35
 [pending candidates](../renderer/generated/pending-mutation-candidates-v7.json)
 produced 18/140 exact comparisons, 122 differences, and zero errors at clean
 checkpoint `8324c6b0`; none is exact at all four profiles. All 140 comparison

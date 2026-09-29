@@ -54,6 +54,9 @@ at `128edc38` confirmed the same 21 changed Open UI images across all 22,924
 original comparisons. It found no newly exact result or exact regression, 281
 fewer wrong pixels in total, zero render errors, and no change to any Chromium
 oracle identity or decoded image. The complete renderer gate remains red.
+The clean [v37 focused/primitive raster index](generated/focused-primitive-raster-v37.json)
+at `e1bdccc4` is 640/640 and 960/960 exact. All 1,600 Open UI and all
+1,600 Chromium decoded images are unchanged from the prior clean index.
 
 The remaining bottom-row channel difference is one level (Open UI RGB 64,
 Chromium RGB 63) in the plain reference. The green edge and right-side
