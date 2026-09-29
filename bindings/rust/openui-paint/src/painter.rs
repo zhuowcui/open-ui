@@ -4263,6 +4263,12 @@ fn paint_missing_image(
         && style.has_border_radius()
         && !fragment.ignore_border_radius
         && (style.overflow_x != Overflow::Visible || style.overflow_y != Overflow::Visible);
+    // Blink places the broken-image glyph in a UA shadow child. The host
+    // image's `overflow: clip` applies to that child even when the image is
+    // rendered as non-replaced alternative text. Paint the glyph under the
+    // host content clip, just as ordinary descendants are clipped below.
+    let clips_missing_nonreplaced = !treated_as_replaced
+        && (style.overflow_x == Overflow::Clip || style.overflow_y == Overflow::Clip);
     let mut missing_clip_rrect = None;
     if clips_missing_replaced {
         let content_rect = Rect::from_xywh(content_x, content_y, content_width, content_height);
@@ -4277,6 +4283,39 @@ fn paint_missing_image(
         canvas.save();
         canvas.clip_rrect(clip_rrect, ClipOp::Intersect, true);
         missing_clip_rrect = Some(clip_rrect);
+    }
+    if clips_missing_nonreplaced {
+        let (x, y, width, height) =
+            compute_overflow_clip_reference_rect(fragment, abs_offset, style);
+        let margin = style.overflow_clip_margin;
+        let bounds = Rect::from_ltrb(
+            if style.overflow_x == Overflow::Clip {
+                x - margin
+            } else {
+                -100_000.0
+            },
+            if style.overflow_y == Overflow::Clip {
+                y - margin
+            } else {
+                -100_000.0
+            },
+            if style.overflow_x == Overflow::Clip {
+                x + width + margin
+            } else {
+                100_000.0
+            },
+            if style.overflow_y == Overflow::Clip {
+                y + height + margin
+            } else {
+                100_000.0
+            },
+        );
+        canvas.save();
+        canvas.clip_rect(
+            bounds,
+            ClipOp::Intersect,
+            antialias_rectangular_overflow_clip(fragment, doc, style),
+        );
     }
     let (icon_x, icon_y) = if treated_as_replaced {
         let host_height = if style.height.is_fixed() {
@@ -4487,7 +4526,7 @@ fn paint_missing_image(
             &alt_style,
         );
     }
-    if clips_missing_replaced {
+    if clips_missing_replaced || clips_missing_nonreplaced {
         canvas.restore();
     }
 }

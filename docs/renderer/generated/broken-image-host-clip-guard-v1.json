@@ -1,0 +1,63 @@
+{
+  "baseline_clean_checkpoint": "09683348f3cf1b66a7952584e0286f330b06f1fb",
+  "baseline_counts": {
+    "different": 411,
+    "exact": 4177
+  },
+  "changed_openui_comparisons": [
+    {
+      "baseline": {
+        "mismatched_pixels": 193,
+        "openui_rgba_sha256": "bc012d2debf22cebbb3532d61441a7868166acc2060b4f3c7d9dfa54beeb043e",
+        "status": "different"
+      },
+      "chromium_oracle_identity_sha256": "1094194ec66c99e675ca2808f2612382d1e6a9e1ddc9b498f653e9c3fa019364",
+      "chromium_oracle_rgba_sha256": "62aaadfa0ca446d30d081822d6e06598dcf2137c2bde0a3b748812f4f15bcd6d",
+      "profile": "desktop-1280x720@1.25",
+      "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced-ref",
+      "trial": {
+        "mismatched_pixels": 78,
+        "openui_rgba_sha256": "7ccbaaa90d6e00b6dde0d29c71f4062db061a4827233aefc000877e233a82535",
+        "status": "different"
+      }
+    },
+    {
+      "baseline": {
+        "mismatched_pixels": 305,
+        "openui_rgba_sha256": "322f7947134a4f2d30e31efc72a2fe5c6857b69a3ca6b9be43e27f9d4929a10c",
+        "status": "different"
+      },
+      "chromium_oracle_identity_sha256": "4e4b69dd56a66ea956cc6565879118f6bafd154eaad00ce722fe20ffc0933b93",
+      "chromium_oracle_rgba_sha256": "7101cf2ce1d95a164ac9f67b2a2f9e12005ca95bd2a62d95b7e9a9ff4e8d1aeb",
+      "profile": "desktop-1920x1080@1.5",
+      "test_id": "wpt/css_overflow/overflow-img-scroll-non-replaced-ref",
+      "trial": {
+        "mismatched_pixels": 127,
+        "openui_rgba_sha256": "7ab7df31b9870df8c2abf331fbc8ce383449de2277828d2792455115bd82ccec",
+        "status": "different"
+      }
+    }
+  ],
+  "chromium_oracle_identity_changes": 0,
+  "chromium_oracle_rgba_changes": 0,
+  "comparisons": 4588,
+  "dirty_paint_diff_sha256": "0d423dcc3fec02eaec8bc778790e99f4680c839ff4680eb40e1e143d36eaeaa3",
+  "initial_chromium_capture_errors": 27,
+  "previously_exact_regressions": 0,
+  "profiles": 4,
+  "qualification": false,
+  "recovered_capture_errors": 27,
+  "remaining_errors": 0,
+  "report_sha256": {
+    "baseline_clean": "3e7a7f5f4b46af927594fd5f52a1d2e6dad82c4fb17cd879be36e651a1967fa2",
+    "dirty_error_retry": "a7e7005ce3d0ea51d115dd3f86ab995a9d52db3f48f070e434864cc2cd838b2e",
+    "dirty_guard": "ed03e2dbf54d0b72ee70021d2fbdaad735b81f7efe29b0a6910905f12af95263"
+  },
+  "schema_version": 1,
+  "selected_tests": 1147,
+  "source_checkpoint": "dd89d0389e3288ea2f985935799f9693b3a85b24",
+  "trial_counts": {
+    "different": 411,
+    "exact": 4177
+  }
+}

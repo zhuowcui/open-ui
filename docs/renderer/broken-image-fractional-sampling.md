@@ -92,11 +92,10 @@ its mismatched pixels fell from 67 to 63 at 1.25× and from 156 to 70 at
 cases repaired above were unchanged. The
 [diagnostic index](generated/broken-image-scroll-sampler-diagnostic-v1.json)
 records the report identities and changed comparisons. The experiment was
-reverted because neither scroll comparison became exact. The next review
-needs to distinguish the image's own paint from the ancestor scroll clip and
-scroll backing before changing shared sampling again.
+reverted because neither scroll comparison became exact. Later Chromium-only
+probes found that the edge difference remains without scrolling.
 
-## Scroll clip edge evidence
+## Image-host clip edge evidence
 
 The exact generated Chromium documents place both icons at a content-box
 origin of (33, 33) CSS px. A CDP `DOM.getBoxModel` probe at 1920×1080@1.5
@@ -111,9 +110,8 @@ edge: their inclusive difference bounds are (49, 49)..(74, 73). The two
 Open UI captures are identical in that crop. For example, at (50, 49),
 Chromium records (209, 209, 209) for the image that is itself a scroll host,
 but (232, 232, 232) for the image inside a scroll host. Open UI paints the
-same edge for both. This points to scroll clip or backing composition at a
-fractional edge; the evidence does not yet distinguish the exact coverage
-stage. The [scripted comparison index](generated/scroll-broken-image-clip-trials-v1.json)
+same edge for both. This observation alone did not establish a cause. The
+[scripted comparison index](generated/scroll-broken-image-clip-trials-v1.json)
 pins the clean report, both diagnostic reports, Chromium identities, and all
 eight profile results.
 
@@ -125,7 +123,26 @@ made the pair much worse: 590 and 1,049 wrong pixels at 1.25×, then 792 and
 1,263 at 1.5×. Neither change made a comparison exact, and neither is
 qualification evidence. The original results remain 67/193 wrong pixels at
 1.25× and 156/305 at 1.5×. All eight Chromium oracle hashes stayed fixed.
-The next implementation needs to reproduce Chromium's distinction between
-painting replaced content in its own scroll host and compositing replaced
-content through an ancestor scroll clip, then verify neighboring scroll
-cases and the full census.
+
+Chromium-only variants kept the same 66 edge differences when the wrapper's
+overflow was changed to `visible`; ordinary PNG images at the same fractional
+origin had no such difference. CDP inspection and the pinned Blink UA stylesheet
+show why: `img` defaults to `overflow: clip` with a content-box clip margin.
+The source image's authored `overflow: scroll` overrides that host clip, while
+the reference image keeps it. Both broken images contain an internal fallback
+image in a UA shadow child. Moving border and padding between the host and its
+wrapper while keeping the same content origin did not remove the difference.
+The earlier attribution to an ancestor scroll clip or scroll backing was wrong.
+
+Open UI already records the host's clip style, but painted the broken-image
+icon before applying that clip to descendants. A shared paint trial now clips
+the fallback icon to the non-replaced image host when the host uses
+`overflow: clip`. In the reference case it reduced wrong pixels from 193 to 78
+at 1.25× and from 305 to 127 at 1.5×; the source case was unchanged. A
+1,147-case, four-profile image/overflow guard changed only those two already
+failing images. Twenty-seven Chromium captures failed transiently in the first
+run; all were recovered from the pinned oracle cache and matched the prior
+Open UI and Chromium hashes. The [guard index](generated/broken-image-host-clip-guard-v1.json)
+summarizes all 4,588 comparisons and records the two changed image hashes.
+The remaining icon-interior sampling and alt-text differences still need a shared repair.
+This is diagnostic progress, not an exact renderer qualification.
