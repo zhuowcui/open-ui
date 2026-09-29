@@ -51,6 +51,7 @@ pub struct PointerUpdate {
 pub enum FocusOrigin {
     Pointer,
     Keyboard,
+    /// Legacy name for focus requested by native code. No script is executed.
     Script,
     Accessibility,
 }

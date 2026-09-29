@@ -71,6 +71,8 @@ public Rust API cannot perform it, that is a native API gap to implement; it
 does not require JavaScript.
 `Element::focus` and `Element::blur` deliver native focus and blur callbacks
 through the same document event path used by keyboard and accessibility input.
+The engine's `FocusOrigin::Script` is a legacy name for programmatic native
+focus; calling `Element::focus` does not run a script.
 The C ABI's `oui_document_element_by_id` performs the same attached-element
 lookup and returns an owned handle that the caller releases with
 `oui_element_destroy`.
