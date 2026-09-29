@@ -157,6 +157,16 @@ fn resolve_hinting(
         {
             FontHinting::None
         }
+        // At a fractional physical Ahem strike, Skia's light-fitting drops
+        // the trailing coverage cell that Chromium keeps. Integral strikes
+        // retain light fitting; removing it there regresses exact glyphs.
+        TextHinting::Slight
+            if requested_edging == TextEdging::SubpixelAntiAlias
+                && is_ahem
+                && (size - size.round()).abs() > 1.0e-4 =>
+        {
+            FontHinting::None
+        }
         TextHinting::Slight => FontHinting::Slight,
         TextHinting::Normal => FontHinting::Normal,
         TextHinting::Full => FontHinting::Full,
@@ -523,6 +533,32 @@ mod tests {
             ),
             FontHinting::None
         );
+    }
+
+    #[test]
+    fn lcd_ahem_hinting_tracks_physical_strike_fraction() {
+        assert_eq!(
+            resolve_hinting(
+                TextHinting::Slight,
+                TextEdging::SubpixelAntiAlias,
+                "Ahem",
+                physical_font_size(50.0, 1.25),
+                1.25,
+            ),
+            FontHinting::None
+        );
+        for (css_size, scale) in [(16.0, 1.0), (16.0, 1.5), (50.0, 1.5)] {
+            assert_eq!(
+                resolve_hinting(
+                    TextHinting::Slight,
+                    TextEdging::SubpixelAntiAlias,
+                    "Ahem",
+                    physical_font_size(css_size, scale),
+                    scale,
+                ),
+                FontHinting::Slight
+            );
+        }
     }
 
     #[test]

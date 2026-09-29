@@ -34,7 +34,28 @@ special author-LCD exclusion also changed none: that route is gated on aliased
 author text. Both trials were reverted; neither is a repair or a qualifying
 run. The renderer code remains unchanged by them.
 
-Investigation owner: text and border rasterization in `openui-paint`. A
+The source-level hinting trial found one real contributor. Skia's light-fitted
+Ahem mask drops the trailing half-covered row at a fractional physical font
+size. Using an unhinted mask only for fractional physical Ahem LCD strikes
+restores that row. A broader unhinted policy was rejected: it regressed seven
+formerly exact 1× cases. The restricted policy was checked against all 2,265
+original fixtures that explicitly use Ahem at four profiles (9,060 diagnostic
+comparisons): 21 Open UI images changed, 20 had fewer wrong pixels, one kept
+the same mismatch count, and none worsened or regressed from exact. The total
+wrong-pixel count fell by 281. All 9,060 Chromium decoded images stayed fixed.
+The earlier broader hinting trial left the focused 640 and primitive 960
+comparisons exact with unchanged Open UI and Chromium images. The restricted
+policy still needs clean focused, primitive, and complete-census evidence.
+These diagnostic runs used a dirty source tree and do not establish release
+qualification.
+
+The remaining bottom-row channel difference is one level (Open UI RGB 64,
+Chromium RGB 63) in the plain reference. The green edge and right-side
+rounding differences also remain. The reviewed cause for those residuals is
+still open.
+
+Investigation owner: font-strike selection in `openui-text` and text and border
+rasterization in `openui-paint`. A
 reviewed root cause, a source-level repair, and neighboring 40-profile and
 complete four-profile regression checks remain open. These tests retain their
 failing status until their Open UI bytes match the pinned Chromium captures.
