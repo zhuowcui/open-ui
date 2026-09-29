@@ -10039,9 +10039,9 @@ fn nested_repeated_table_flow_block_size(
     Some(table_start + first_capacity + continuation_capacity * continuation_count as i32)
 }
 
-fn table_has_nested_multicol_ancestors(doc: &Document, table_id: NodeId) -> bool {
+fn has_nested_multicol_ancestors(doc: &Document, node_id: NodeId) -> bool {
     let mut multicol_ancestors = 0u8;
-    let mut ancestor = doc.node(table_id).parent;
+    let mut ancestor = doc.node(node_id).parent;
     while !ancestor.is_none() {
         if crate::multicol::ColumnLayoutAlgorithm::from_style(&doc.node(ancestor).style).is_some() {
             multicol_ancestors += 1;
@@ -27238,7 +27238,7 @@ fn layout_multicol(
                         let mut repeating_table_sections =
                             repeated_table_sections(&child_frag, doc);
                         if !repeating_table_sections.is_empty()
-                            && table_has_nested_multicol_ancestors(doc, child_node_id)
+                            && has_nested_multicol_ancestors(doc, child_node_id)
                         {
                             let repeat_limit = col_remaining / LayoutUnit::from_i32(4);
                             if (repeating_table_sections.header > LayoutUnit::zero()
@@ -28640,7 +28640,7 @@ fn layout_multicol(
                                 part_height.max_of(avail)
                             } else if !repeating_table_sections.is_empty()
                                 && part_height > avail
-                                && !table_has_nested_multicol_ancestors(doc, child_node_id)
+                                && !has_nested_multicol_ancestors(doc, child_node_id)
                             {
                                 // A monolithic body unit can be taller than
                                 // the capacity left after a repeated header or
@@ -29890,6 +29890,44 @@ fn layout_multicol(
                                     } else {
                                         Vec::new()
                                     };
+                                // Keep the source bounds of adjacent opaque
+                                // leaf flex items before extending an item's
+                                // visual continuation. A following item can
+                                // already own the entire remaining interval.
+                                // Within nested multicolumn contexts, an
+                                // inner continuation may still supply paint
+                                // outside these local neighbor bounds.
+                                let row_flex_in_flow_item_bounds: Vec<_> = if child_style.display
+                                    == Display::Flex
+                                    && !child_style.flex_direction.is_column()
+                                    && !has_nested_multicol_ancestors(doc, child_node_id)
+                                {
+                                    part.children
+                                        .iter()
+                                        .filter(|candidate| {
+                                            if candidate.node_id.is_none()
+                                                || !candidate.children.is_empty()
+                                            {
+                                                return false;
+                                            }
+                                            let style = &doc.node(candidate.node_id).style;
+                                            !style.is_out_of_flow()
+                                                && !style.break_inside.is_avoid()
+                                                && style.background_color.is_opaque()
+                                        })
+                                        .map(|candidate| {
+                                            (
+                                                candidate.node_id,
+                                                candidate.offset.left,
+                                                candidate.offset.left + candidate.size.width,
+                                                candidate.offset.top,
+                                                candidate.offset.top + candidate.size.height,
+                                            )
+                                        })
+                                        .collect()
+                                } else {
+                                    Vec::new()
+                                };
                                 for c in &mut part.children {
                                     let original_child_top = c.offset.top;
                                     let is_repeated_table_section = !repeating_table_sections
@@ -30097,8 +30135,38 @@ fn layout_multicol(
                                                         - original_child_top)
                                                         .clamp_negative_to_zero()
                                                         + visual_part_height;
-                                                    c.size.height =
-                                                        c.size.height.max_of(needed_paint_height);
+                                                    let needed_paint_bottom =
+                                                        original_child_top + needed_paint_height;
+                                                    // An authored fixed-height leaf ends at its
+                                                    // own border box. If an adjacent opaque leaf
+                                                    // covers the same inline span and the rest
+                                                    // of this slice, extending the first leaf
+                                                    // would paint their shared fractional edge
+                                                    // twice. Auto-sized and fragmented descendants
+                                                    // keep the visual continuation path.
+                                                    let next_item_covers_remainder =
+                                                        item_style.height.is_fixed()
+                                                            && item_style.background_color.is_opaque()
+                                                            && !item_style.break_inside.is_avoid()
+                                                            && c.children.is_empty()
+                                                            && row_flex_in_flow_item_bounds.iter().any(
+                                                            |(node_id, left, right, top, bottom)| {
+                                                                *node_id != c.node_id
+                                                                    && *top == original_child_bottom
+                                                                    && *top < needed_paint_bottom
+                                                                    && *bottom >= needed_paint_bottom
+                                                                    && *left <= c.offset.left
+                                                                    && *right
+                                                                        >= c.offset.left
+                                                                            + c.size.width
+                                                            },
+                                                        );
+                                                    if !next_item_covers_remainder {
+                                                        c.size.height = c
+                                                            .size
+                                                            .height
+                                                            .max_of(needed_paint_height);
+                                                    }
                                                 }
                                                 if child_style.flex_wrap
                                                     != openui_style::FlexWrap::Nowrap

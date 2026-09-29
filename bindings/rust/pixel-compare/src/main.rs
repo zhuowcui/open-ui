@@ -4866,6 +4866,72 @@ mod profile_tests {
     use super::*;
 
     #[test]
+    fn adjacent_row_flex_items_keep_their_own_height_across_columns() {
+        fn second_or_third_column_items(
+            test_id: &str,
+            column: usize,
+        ) -> Vec<openui_layout::Fragment> {
+            let (viewport, _) = parse_viewport_options(&[
+                "--viewport".into(),
+                "800x600".into(),
+                "--scale".into(),
+                "1".into(),
+            ])
+            .unwrap();
+            let tests = registry();
+            let (_, builder) = tests.iter().find(|(id, _)| *id == test_id).unwrap();
+            let mut engine = builder(viewport).unwrap();
+            let scene = engine.scene().unwrap();
+            fn columns<'a>(
+                fragment: &'a openui_layout::Fragment,
+                out: &mut Vec<&'a openui_layout::Fragment>,
+            ) {
+                if fragment.kind == openui_layout::FragmentKind::ColumnBox {
+                    out.push(fragment);
+                }
+                for child in &fragment.children {
+                    columns(child, out);
+                }
+            }
+            let mut found = Vec::new();
+            columns(scene.fragments(), &mut found);
+            found[column].children[0].children.clone()
+        }
+
+        let adjacent = second_or_third_column_items(
+            "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-001",
+            2,
+        );
+        assert_eq!(
+            adjacent[0].size.height,
+            openui_geometry::LayoutUnit::from_i32(250)
+        );
+        assert_eq!(
+            adjacent[1].size.height,
+            openui_geometry::LayoutUnit::from_i32(250)
+        );
+        assert_eq!(
+            adjacent[2].offset.top,
+            openui_geometry::LayoutUnit::from_i32(50)
+        );
+
+        // A forced break with no following item still needs a visual
+        // continuation. It must keep its green background through the column.
+        let continued = second_or_third_column_items(
+            "wpt/css_break/flexbox_multi-line-row-flex-fragmentation-023",
+            1,
+        );
+        assert_eq!(
+            continued[2].offset.top,
+            openui_geometry::LayoutUnit::from_i32(-20)
+        );
+        assert_eq!(
+            continued[2].size.height,
+            openui_geometry::LayoutUnit::from_i32(120)
+        );
+    }
+
+    #[test]
     fn qualification_profile_uses_logical_authority_and_winit_rounding() {
         let options = vec![
             "--viewport".to_string(),
