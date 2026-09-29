@@ -60,6 +60,21 @@ AST-lowered candidates remain pending. All 200 prior additions remain in the
 new manifest, including three that currently fail a profile; admission never
 turns their failing comparisons into passes.
 
+At clean checkpoint `d39282e4`, the [v38 original census](generated/four-profile-census-v38.json)
+is 21,255/22,924 exact, with 1,669 differences and zero errors. The shared
+[analytic gradient-edge repair](fractional-multicol-seam-investigation.md)
+made seven comparisons exact and reduced wrong pixels by 5,957 without an
+exact regression. Exactly 29 Open UI images changed, and all 22,924
+Chromium oracle identities and decoded images stayed fixed. The 923 residual
+test IDs remain unowned. The clean
+[v39 focused/primitive index](generated/focused-primitive-raster-v39.json)
+is 640/640 and 960/960 exact; all 1,600 Open UI and Chromium images are
+unchanged from v38. The clean
+[201-addition guard](generated/expanded-additions-gradient-guard-v1.json)
+is 801/804 exact with the same three failures and no decoded image changes.
+It is a selected check, so the complete expanded manifest still requires a
+new clean run at this source checkpoint.
+
 At clean checkpoint `dc451061`, the complete
 [v20 expanded requalification](generated/expanded-requalification-v20.json)
 is 22,049/23,728 exact, with 1,679 differences and zero errors. The same

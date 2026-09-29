@@ -43,11 +43,22 @@ repeated-table family changed only this table image across 176 comparisons.
 These targeted results are promising but do not substitute for a clean full
 census.
 
+The clean [v38 full census](generated/four-profile-census-v38.json) at
+`d39282e4` confirmed the result across all 22,924 comparisons: 21,255 exact,
+1,669 different, zero errors, seven newly exact comparisons, no exact
+regression, 29 changed Open UI images, and 5,957 fewer wrong pixels than v37.
+All Chromium oracle identities and decoded images stayed fixed. The clean
+[v39 focused/primitive index](generated/focused-primitive-raster-v39.json)
+is 640/640 and 960/960 exact, with no decoded image changes. All 804 decoded
+images in the clean [201-addition guard](generated/expanded-additions-gradient-guard-v1.json)
+are unchanged from the prior complete expanded run; the same three additions
+remain different. The guard does not replace a complete expanded-manifest
+rerun at this checkpoint.
+
 The remaining signatures point to fractional fragment painting or clipping,
 not a general box-size error: both tests are exact at the three other required
 scales, and the table source has adjacent repeated header fragments at the
 seam. Further repair must follow fragment structure and reproduce Chromium's
-coverage without a case ID, color, or viewport branch. Until the full gates
-are measured and the last pixel mechanism reviewed, these comparisons remain
-different and their final root cause remains unowned for release
-qualification.
+coverage without a case ID, color, or viewport branch. The table and flex
+comparisons remain different, and their last pixel mechanism remains unowned
+for release qualification.
