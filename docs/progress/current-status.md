@@ -14,7 +14,7 @@ remain open.
 | Fresh four-profile Chromium census | 21,244/22,924 exact, 1,680 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 198/201 exact at all four profiles in the latest clean run; three still fail |
-| Pending native final-state candidates | 0/35 exact at all four profiles at the prior renderer checkpoint; recheck pending |
+| Pending native final-state candidates | 0/35 exact at all four profiles after the latest clean recheck |
 | Full inventory | 7,673 |
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
@@ -38,11 +38,13 @@ lists those 198; the release contract still includes all 201. The same three
 earlier additions remain failures. The clean
 [v33 raster index](../renderer/generated/focused-primitive-raster-v33.json)
 is 640/640 focused and 960/960 primitive exact. The remaining 35
-[pending candidates](../renderer/generated/pending-mutation-candidates-v6.json)
-produced 18/140 exact comparisons, 122 differences, and zero errors at the
-prior checkpoint; they have not been requalified at `09683348`. The original
-release gate still has 926 unowned residual test IDs. Open UI runs no
-JavaScript; the newly admitted interaction has a public native Rust API path.
+[pending candidates](../renderer/generated/pending-mutation-candidates-v7.json)
+produced 18/140 exact comparisons, 122 differences, and zero errors at clean
+checkpoint `8324c6b0`; none is exact at all four profiles. All 140 comparison
+statuses, mismatched-pixel counts, and diff signatures match the prior pending
+report. The original release gate still has 926 unowned residual test IDs.
+Open UI runs no JavaScript; the newly admitted interaction has a public native
+Rust API path.
 The public `Element::detach` and `TextNode::detach` operations now keep authored
 nodes available for reattachment while removing them from the presented
 document. A new conformance scenario checks element lookup, focus,

@@ -11,7 +11,7 @@ claimed by source code alone.
 | Four-profile renderer matrix | 21,244/22,924 exact, 1,680 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v32.json) | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v33.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 198 of 201 exact additions and [demotes three](../renderer/generated/expanded-requalification-v18.json); 22,045/23,728 total comparisons exact, 1,683 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v6.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 198 of 201 exact additions and [demotes three](../renderer/generated/expanded-requalification-v18.json); 22,045/23,728 total comparisons exact, 1,683 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
@@ -61,10 +61,11 @@ made five original comparisons exact with no exact regression and no Chromium
 oracle change. The clean
 [v33 focused/primitive index](../renderer/generated/focused-primitive-raster-v33.json)
 is 640/640 and 960/960 exact. The other 35
-[AST-lowered candidates](../renderer/generated/pending-mutation-candidates-v6.json)
-produced 18/140 exact profile comparisons and zero errors at the previous
-checkpoint; they have not been requalified at `09683348`. The release renderer
-gate remains open.
+[AST-lowered candidates](../renderer/generated/pending-mutation-candidates-v7.json)
+produced 18/140 exact profile comparisons, 122 differences, and zero errors at
+clean checkpoint `8324c6b0`. None is exact at all four profiles. All 140
+statuses, mismatch counts, and diff signatures match the prior report. The
+release renderer gate remains open.
 
 The prior clean census at `814a2005` is
 [21,239/22,924 exact](../renderer/generated/four-profile-census-v30.json),

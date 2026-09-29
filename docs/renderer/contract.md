@@ -69,8 +69,11 @@ is 22,045/23,728 exact, with 1,683 differences, zero errors, and the same
 198 of 201 additions exact at all four profiles. The
 [v33 focused/primitive index](generated/focused-primitive-raster-v33.json)
 is 640/640 and 960/960 exact. The original renderer gate still has 926
-unowned residual test IDs. The 35 pending candidates have not been
-requalified at this renderer checkpoint.
+unowned residual test IDs. The 35 [pending candidates](generated/pending-mutation-candidates-v7.json)
+were requalified at clean checkpoint `8324c6b0`: 18/140 exact comparisons,
+122 differences, zero errors, and none exact at all four profiles. All 140
+comparison statuses, mismatch counts, and diff signatures match the prior
+pending report.
 At clean checkpoint `9534c9f6`, the [v31 original census](generated/four-profile-census-v31.json)
 is 21,239/22,924 exact with 1,685 differences and zero errors. The complete
 [v17 expanded requalification](generated/expanded-requalification-v17.json)
