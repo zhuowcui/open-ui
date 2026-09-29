@@ -37,6 +37,13 @@ unchanged. The remaining 14 pixels in `-051` lie on physical x=87, mostly
 y=25–37; their raster-edge cause is still unreviewed and they remain a failing
 comparison.
 
+A later dirty diagnostic allowed the same neighbor rule to consider an
+authored `break-inside: avoid` item. Across all 125 row-flex fragmentation
+cases at four profiles, it changed no comparison status, wrong-pixel count, or
+decoded Open UI image, including the neighboring `-021` edge. The trial was
+reverted; its report SHA-256 is
+`2430815cbb1063246a013e7a7ac47eae7d916498a51fafa5631523bda5744448`.
+
 The clean [v37 complete census](generated/four-profile-census-v37.json) at
 `dc451061` is 21,248/22,924 exact, 1,676 different, zero errors. Compared
 with v36, only the four Open UI images in the table changed; three became
