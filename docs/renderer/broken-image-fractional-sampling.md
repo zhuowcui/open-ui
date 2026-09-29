@@ -93,5 +93,39 @@ cases repaired above were unchanged. The
 [diagnostic index](generated/broken-image-scroll-sampler-diagnostic-v1.json)
 records the report identities and changed comparisons. The experiment was
 reverted because neither scroll comparison became exact. The next review
-needs to measure the paint-local image matrix for a scroll host and a nested
-broken image before changing shared sampling again.
+needs to distinguish the image's own paint from the ancestor scroll clip and
+scroll backing before changing shared sampling again.
+
+## Scroll clip edge evidence
+
+The exact generated Chromium documents place both icons at a content-box
+origin of (33, 33) CSS px. A CDP `DOM.getBoxModel` probe at 1920×1080@1.5
+found the source image's content box at (33, 33)..(183, 81) and the
+reference scroll container's content box at the same coordinates. In the
+reference, the image child starts at (33, 33). Thus a different content-box
+origin does not explain the icon pixels.
+
+In the 30×30 physical crop x=45..74, y=45..74, the two pinned Chromium
+captures differ at **66 pixels**, all on the icon's top, left, and bottom
+edge: their inclusive difference bounds are (49, 49)..(74, 73). The two
+Open UI captures are identical in that crop. For example, at (50, 49),
+Chromium records (209, 209, 209) for the image that is itself a scroll host,
+but (232, 232, 232) for the image inside a scroll host. Open UI paints the
+same edge for both. This points to scroll clip or backing composition at a
+fractional edge; the evidence does not yet distinguish the exact coverage
+stage. The [scripted comparison index](generated/scroll-broken-image-clip-trials-v1.json)
+pins the clean report, both diagnostic reports, Chromium identities, and all
+eight profile results.
+
+Two shared scroll-clip hypotheses were tested with dirty builds and reverted.
+Allowing an analytic clip on every explicit scroll box with an empty range
+reduced each pair member's wrong pixels by 20 at 1.25×, but increased each by
+24 at 1.5×. Giving every fractional explicit scroll box a software backing
+made the pair much worse: 590 and 1,049 wrong pixels at 1.25×, then 792 and
+1,263 at 1.5×. Neither change made a comparison exact, and neither is
+qualification evidence. The original results remain 67/193 wrong pixels at
+1.25× and 156/305 at 1.5×. All eight Chromium oracle hashes stayed fixed.
+The next implementation needs to reproduce Chromium's distinction between
+painting replaced content in its own scroll host and compositing replaced
+content through an ancestor scroll clip, then verify neighboring scroll
+cases and the full census.
