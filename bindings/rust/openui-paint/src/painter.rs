@@ -13898,7 +13898,10 @@ fn paint_background_layers(
                     Some(Point::new(image_left, image_top)),
                     (layer.repeat_x == BackgroundRepeat::Space && xs.len() > 1)
                         || (layer.repeat_y == BackgroundRepeat::Space && ys.len() > 1),
-                    generated_image && fractional_physical_tile,
+                    // The direct radial path already owns fractional edge
+                    // coverage in its analytic tile clip above. Antialiasing
+                    // the tile draw as well would multiply that coverage.
+                    generated_image && fractional_physical_tile && !direct_radial_shader,
                     opacity_multiplier,
                     resample_from,
                     rectangular_transformed_clip.then_some(clipped_tile),
