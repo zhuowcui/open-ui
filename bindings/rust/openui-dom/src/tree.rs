@@ -282,11 +282,10 @@ impl NodeData {
                 | ElementTag::Video
                 | ElementTag::IFrame
                 | ElementTag::Embed
-                | ElementTag::Object
         ) {
-            // Blink's UA stylesheet clips replaced hosts at their content
-            // box. Apply the same default for native Rust and C elements;
-            // generated WPT builders also record it explicitly.
+            // Blink's UA stylesheet clips these replaced hosts at their
+            // content box. Object fallback children still use native block
+            // flow; their host clip needs separate qualification.
             style.update_derived(|fields| {
                 fields.overflow_x = Overflow::Clip;
                 fields.overflow_y = Overflow::Clip;

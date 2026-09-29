@@ -826,7 +826,7 @@ mod tests {
     #[test]
     fn native_replaced_elements_use_chromium_host_clip_defaults() {
         let document = Document::new(100, 100).unwrap();
-        for tag in ["img", "canvas", "video", "iframe", "embed", "object"] {
+        for tag in ["img", "canvas", "video", "iframe", "embed"] {
             let element = Element::create(&document, tag).unwrap();
             let style = element.computed_style().unwrap();
             assert_eq!(style.overflow_x, Overflow::Clip, "{tag}");
@@ -842,6 +842,16 @@ mod tests {
         image.set_overflow_x(Overflow::Scroll).unwrap();
         assert_eq!(image.computed_style().unwrap().overflow_x, Overflow::Scroll);
         assert_eq!(image.computed_style().unwrap().overflow_y, Overflow::Clip);
+        // Object fallback children currently use a native block-flow path;
+        // its host clip needs separate qualification against Chromium.
+        assert_eq!(
+            Element::create(&document, "object")
+                .unwrap()
+                .computed_style()
+                .unwrap()
+                .overflow_x,
+            Overflow::Visible
+        );
         assert_eq!(
             Element::create(&document, "div")
                 .unwrap()
