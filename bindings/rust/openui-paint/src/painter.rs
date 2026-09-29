@@ -13856,15 +13856,9 @@ fn paint_background_layers(
                     tile_rect.right.min(clip.right),
                     tile_rect.bottom.min(clip.bottom),
                 );
-                if direct_radial_shader {
-                    // Keep gradient evaluation in the destination coordinate
-                    // space, but resolve the shared fractional tile edge as
-                    // an analytic coverage mask. This preserves the direct
-                    // shader's dither phase while giving adjacent tiles the
-                    // complementary edge coverage used by Blink.
-                    canvas.save();
-                    canvas.clip_rect(tile_rect, ClipOp::Intersect, true);
-                }
+                // A direct radial tile is drawn with antialiasing below. Its
+                // draw owns fractional edge coverage; a second antialiased
+                // tile clip would multiply that coverage.
                 paint_css_image_tile(
                     canvas,
                     doc,
@@ -13905,9 +13899,6 @@ fn paint_background_layers(
                     Some(clip),
                     !square_opaque_border_bleed_clip,
                 );
-                if direct_radial_shader {
-                    canvas.restore();
-                }
             }
         }
         canvas.restore();
