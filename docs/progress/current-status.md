@@ -46,6 +46,12 @@ exact at all four profiles. The original release gate still has 931 unowned
 residual test IDs. Open UI runs no JavaScript; the newly admitted interaction
 has a public native Rust API path.
 
+A [fractional overflow-clip investigation](../renderer/fractional-rectangular-overflow-clip.md)
+found a coincident button/child edge that differs by 125 pixels at 1.25×. A
+dirty hard-clip experiment made that case exact but regressed 33 previously
+exact comparisons in a 3,392-comparison diagnostic. The edit was reverted;
+the clean census above remains the current qualification evidence.
+
 The [prior complete clean census](../renderer/generated/four-profile-census-v30.json)
 at `814a2005` is 21,239/22,924 exact, 1,685 different, and zero errors.
 The [table row-group clip repair](../renderer/truncated-table-row-group-clip.md)
