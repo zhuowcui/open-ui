@@ -8668,7 +8668,18 @@ fn antialias_rectangular_overflow_clip(
     // device-aligned viewport scissor, not another analytic CSS content clip.
     let is_embedded_viewport = !fragment.node_id.is_none()
         && doc.node(fragment.node_id).tag == openui_dom::ElementTag::IFrame;
+    // A button's implicit content clip is a native control scissor. At a
+    // fractional device scale, its boundary covers the full physical cell
+    // touched by the button. The child's own analytic edge supplies coverage
+    // when the two edges coincide; antialiasing the clip as well would apply
+    // that half-pixel coverage twice.
+    let is_button_content_clip = !fragment.node_id.is_none()
+        && doc.node(fragment.node_id).tag == openui_dom::ElementTag::Button
+        && doc.node(fragment.node_id).form_control == Some(FormControlRole::Button)
+        && style.overflow_x == Overflow::Clip
+        && style.overflow_y == Overflow::Clip;
     !is_embedded_viewport
+        && !is_button_content_clip
         && !style.has_border_radius()
         && ((style.transform.b != 0.0 || style.transform.c != 0.0)
             || (style.device_scale_factor.fract().abs() > f64::EPSILON
@@ -22141,6 +22152,53 @@ mod tests {
             &doc,
             &hidden
         ));
+    }
+
+    #[test]
+    fn button_content_clip_does_not_square_a_coincident_child_edge() {
+        let mut doc = Document::new();
+        let button = doc.create_node(openui_dom::ElementTag::Button);
+        doc.node_mut(button).form_control = Some(FormControlRole::Button);
+        doc.update_resolved_style(button, |style| {
+            style.device_scale_factor = 1.25;
+            style.background_color = Color::from_rgba8(128, 0, 128, 255);
+            style.overflow_x = Overflow::Clip;
+            style.overflow_y = Overflow::Clip;
+        });
+        doc.append_child(doc.root(), button);
+        let child = doc.create_node(openui_dom::ElementTag::Div);
+        doc.update_resolved_style(child, |style| {
+            style.device_scale_factor = 1.25;
+            style.background_color = Color::from_rgba8(0, 128, 0, 255);
+        });
+        doc.append_child(button, child);
+
+        let mut button_fragment = Fragment::new_box(
+            button,
+            PhysicalSize::new(LayoutUnit::from_i32(80), LayoutUnit::from_i32(80)),
+        );
+        button_fragment.offset =
+            PhysicalOffset::new(LayoutUnit::from_i32(70), LayoutUnit::from_i32(20));
+        let mut child_fragment = Fragment::new_box(
+            child,
+            PhysicalSize::new(LayoutUnit::from_i32(40), LayoutUnit::from_i32(40)),
+        );
+        child_fragment.offset = PhysicalOffset::new(LayoutUnit::zero(), LayoutUnit::from_i32(20));
+        button_fragment.children.push(child_fragment);
+
+        let mut surface = surfaces::raster_n32_premul((240, 180)).expect("surface");
+        surface.canvas().clear(skia_safe::Color::WHITE);
+        surface.canvas().scale((1.25, 1.25));
+        paint_fragment(
+            surface.canvas(),
+            &button_fragment,
+            &doc,
+            PhysicalOffset::zero(),
+        );
+        let pixels = surface_bytes(&mut surface);
+        let pixel = |x: usize, y: usize| &pixels[(y * 240 + x) * 4..][..4];
+        assert_eq!(pixel(87, 60), [95, 127, 95, 255]);
+        assert_eq!(pixel(88, 60), [0, 128, 0, 255]);
     }
 
     #[test]
