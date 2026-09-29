@@ -8,7 +8,7 @@ claimed by source code alone.
 |---|---|---|
 | Historical Open UI archive | Archive and records are byte-pinned; optional [replay](../renderer/generated/frozen-replay-v1.json) found 5,549/5,731 unchanged, 182 changed | provenance pass; replay diagnostic |
 | Chromium pixel target | Pinned Chromium 147 is the sole expected output for the declared renderer tests | see matrix below |
-| Four-profile renderer matrix | 21,245/22,924 exact, 1,679 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v35.json) | fail |
+| Four-profile renderer matrix | 21,245/22,924 exact, 1,679 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v36.json) | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v36.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
 | Expanded native final-state fixtures | Latest clean full expanded run retains 198 of 201 exact additions and [demotes three](../renderer/generated/expanded-requalification-v18.json); 22,045/23,728 total comparisons exact, 1,683 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
@@ -45,10 +45,14 @@ behavioral or nonvisual reasons is not a waiver for application interaction:
 needed element behavior must be available through the public native Rust API
 over the same retained document and event path.
 
-The latest clean census at `6676cf60` is
-[21,245/22,924 exact](../renderer/generated/four-profile-census-v35.json),
+The latest clean census at `128edc38` is
+[21,245/22,924 exact](../renderer/generated/four-profile-census-v36.json),
 with 1,679 differences, zero errors, and 926 unowned residual test IDs. The
-[full delta audit](../renderer/generated/radial-ua-full-delta-v1.json) records
+[fractional Ahem strike repair](../renderer/fractional-ahem-stripe-edges.md)
+changed 21 already failing images and reduced wrong pixels by 281 without an
+exact regression. All 22,924 Chromium oracle identities and decoded hashes
+remained fixed. At the prior clean checkpoint `6676cf60`, the
+[v35 delta audit](../renderer/generated/radial-ua-full-delta-v1.json) recorded
 nine changed Open UI images, one new exact comparison, no exact regression,
 and unchanged Chromium oracle identities and decoded images. The
 [radial repair](../renderer/radial-tile-edge-coverage.md) left one wrong pixel

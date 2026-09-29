@@ -60,6 +60,13 @@ AST-lowered candidates remain pending. All 200 prior additions remain in the
 new manifest, including three that currently fail a profile; admission never
 turns their failing comparisons into passes.
 
+At clean checkpoint `128edc38`, the [v36 original census](generated/four-profile-census-v36.json)
+is 21,245/22,924 exact, with 1,679 differences and zero errors. The
+[fractional Ahem strike repair](fractional-ahem-stripe-edges.md) changed 21
+already failing Open UI images and reduced wrong pixels by 281. No exact case
+regressed, and all 22,924 Chromium oracle identities and decoded images stayed
+fixed. The 926 residual test IDs remain unowned.
+
 At clean checkpoint `6676cf60`, the [v35 original census](generated/four-profile-census-v35.json)
 is 21,245/22,924 exact, with 1,679 differences and zero errors. The
 [full image-delta audit](generated/radial-ua-full-delta-v1.json) records nine
@@ -72,7 +79,7 @@ differences from 626 pixels to one each. The
 `object` host clip was deferred after an intermediate exact-case regression.
 The [fractional Ahem stripe investigation](fractional-ahem-stripe-edges.md)
 records a shared text and border edge mismatch in multicolumn source and plain
-reference pages; its root cause and repair remain open.
+reference pages; its residual cause and exact repair remain open.
 The clean [v36 focused/primitive index](generated/focused-primitive-raster-v36.json)
 is 640/640 and 960/960 exact with zero errors. The clean
 [201-addition guard](generated/expanded-additions-object-deferred-v1.json)

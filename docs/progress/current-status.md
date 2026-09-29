@@ -26,9 +26,15 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v35.json)
-at `6676cf60` is 21,245/22,924 exact, 1,679 different, and zero errors.
-The [full image-delta audit](../renderer/generated/radial-ua-full-delta-v1.json)
+The [latest complete clean census](../renderer/generated/four-profile-census-v36.json)
+at `128edc38` is 21,245/22,924 exact, 1,679 different, and zero errors.
+The fractional Ahem hinting repair changed 21 already failing Open UI images,
+reduced their combined wrong-pixel count by 281, and introduced no exact
+regression. All 22,924 Chromium oracle identities and decoded images stayed
+fixed. Its [remaining edge mismatch](../renderer/fractional-ahem-stripe-edges.md)
+still needs an exact source-level repair.
+At the prior clean checkpoint `6676cf60`,
+the [v35 image-delta audit](../renderer/generated/radial-ua-full-delta-v1.json)
 found nine changed Open UI images, one newly exact comparison, and no
 previously exact regression. All 22,924 Chromium oracle identities and decoded
 hashes stayed fixed. The [radial tile repair](../renderer/radial-tile-edge-coverage.md)

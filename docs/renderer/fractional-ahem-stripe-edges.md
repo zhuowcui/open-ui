@@ -49,6 +49,12 @@ policy still needs clean focused, primitive, and complete-census evidence.
 These diagnostic runs used a dirty source tree and do not establish release
 qualification.
 
+The subsequent [clean v36 complete census](generated/four-profile-census-v36.json)
+at `128edc38` confirmed the same 21 changed Open UI images across all 22,924
+original comparisons. It found no newly exact result or exact regression, 281
+fewer wrong pixels in total, zero render errors, and no change to any Chromium
+oracle identity or decoded image. The complete renderer gate remains red.
+
 The remaining bottom-row channel difference is one level (Open UI RGB 64,
 Chromium RGB 63) in the plain reference. The green edge and right-side
 rounding differences also remain. The reviewed cause for those residuals is

@@ -32,7 +32,7 @@ The current v0.2 release candidate has:
   on replay and 182 changed; these old screenshots are not pixel targets;
 - a clean four-profile Chromium census with 21,245 of 22,924 comparisons
   exact, 1,679 different, and zero render errors in the
-  [latest evidence index](docs/renderer/generated/four-profile-census-v35.json);
+  [latest evidence index](docs/renderer/generated/four-profile-census-v36.json);
 - clean 40-profile raster matrices with 640/640 focused and 960/960 primitive
   comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v36.json);
 - 201 admitted native final-state cases, including one newly admitted case
