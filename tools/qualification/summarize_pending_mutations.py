@@ -13,7 +13,7 @@ import residuals
 
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT = ROOT / "docs/renderer/generated/qualification-contract-v2.json"
-AST_AUDIT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v2.json"
+AST_AUDIT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v3.json"
 ORIGINAL_MANIFEST = ROOT / "tools/qualification/manifests/complete-5731.json"
 
 
@@ -29,7 +29,7 @@ def summarize(report_path: Path) -> dict:
         if entry["disposition"] == "ast-lowered-pending-exact"
     }
     ids = sorted(pending)
-    if len(ids) != 36 or len(pending) != ast["counts"]["ast-lowered-pending-exact"]:
+    if len(pending) != ast["counts"]["ast-lowered-pending-exact"]:
         raise ValueError("AST candidate inventory changed")
     report = json.loads(report_path.read_text())
     if report["suite"] != "full" or report["complete_contract_scope"]:

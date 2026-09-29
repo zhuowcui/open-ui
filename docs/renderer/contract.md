@@ -45,7 +45,7 @@ properties. An unclassified field is a qualification failure.
 `javascript-disposition.json` preserves the immutable 393-case final-state
 candidate inventory from historical WPT files that contain scripts. Offline
 test tooling uses the Acorn copy in the pinned Chromium checkout to parse
-those scripts into an ordered mutation IR in `javascript-mutation-audit-v2.json`.
+those scripts into an ordered mutation IR in `javascript-mutation-audit-v3.json`.
 Open UI does not execute that JavaScript. Native Rust test fixtures reproduce
 only deterministic final visual states; a fixture is admitted only when its
 Engine operations are exact against Chromium across all four profiles. A
@@ -54,6 +54,11 @@ an application-needed interaction remains a native API obligation. Every
 rejected case carries an AST-derived reason; porter syntax is never a final
 disposition. Product interactions must be available through the public
 `openui` Rust API; test-only Engine lowering does not establish that coverage.
+The [native adjoining-floats admission](adjoining-floats-native-admission.md)
+versions one newly exact case into the expanded contract. The other 35
+AST-lowered candidates remain pending. All 200 prior additions remain in the
+new manifest, including three that currently fail a profile; admission never
+turns their failing comparisons into passes.
 At clean checkpoint `8950b426`, the 36 AST-lowered pending cases produced
 22/144 exact comparisons, 122 differences, and zero errors. One case,
 `adjoining-floats-dynamic`, is exact at all four required profiles and is

@@ -81,6 +81,22 @@ fn native_id_lookup_follows_attached_document_order() {
 }
 
 #[test]
+fn native_layout_read_then_id_style_mutation_updates_the_same_document() {
+    let document = document();
+    let target = child(&document, "div");
+    target.set_id("target").unwrap();
+    sized(&target, 80.0, 20.0);
+
+    // A Chromium fixture can use a layout read before changing an element's
+    // width. Applications perform both operations through retained Rust APIs.
+    assert!(document.body().bounding_rect().unwrap().is_some());
+    assert_eq!(target.bounding_rect().unwrap().unwrap().width, 80.0);
+    let found = document.element_by_id("target").unwrap().unwrap();
+    found.set_width(LengthValue::px(50.0)).unwrap();
+    assert_eq!(target.bounding_rect().unwrap().unwrap().width, 50.0);
+}
+
+#[test]
 fn native_class_lookup_tracks_event_driven_updates_and_detachment() {
     let document = document();
     let first = child(&document, "div");

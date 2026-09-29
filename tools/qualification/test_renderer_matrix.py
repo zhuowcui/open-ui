@@ -103,7 +103,7 @@ class RendererMatrixTests(unittest.TestCase):
         self.assertEqual(len(full_ids), 5731)
         self.assertEqual(len(focused_ids), 16)
         self.assertEqual(len(primitive_ids), 24)
-        self.assertEqual(len(expanded_ids), len(full_ids) + 200)
+        self.assertEqual(len(expanded_ids), len(full_ids) + 201)
         self.assertTrue(set(full_ids) < set(expanded_ids))
         self.assertEqual(len(set(expanded_ids)), len(expanded_ids))
         self.assertTrue(set(focused_ids) < set(full_ids))

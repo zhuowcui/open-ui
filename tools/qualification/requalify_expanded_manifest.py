@@ -15,10 +15,10 @@ import residuals
 ROOT = Path(__file__).resolve().parents[2]
 CONTRACT = ROOT / "docs/renderer/generated/qualification-contract-v2.json"
 ORIGINAL = ROOT / "tools/qualification/manifests/complete-5731.json"
-PRIOR = ROOT / "tools/qualification/manifests/expanded-v1.json"
-AST_AUDIT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v2.json"
+PRIOR = ROOT / "tools/qualification/manifests/expanded-v18.json"
+AST_AUDIT = ROOT / "docs/renderer/generated/javascript-mutation-audit-v3.json"
 LEDGER = ROOT / "docs/renderer/generated/expanded-requalification-v1.json"
-MANIFEST = ROOT / "tools/qualification/manifests/expanded-v2.json"
+MANIFEST = ROOT / "tools/qualification/manifests/expanded-v19.json"
 
 
 def sha256(path: Path) -> str:
@@ -41,8 +41,8 @@ def requalify(
     additions = prior["additions"]
     if len(original) != 5731 or original != sorted(set(original)):
         raise ValueError("immutable original manifest changed")
-    if len(additions) != 200 or additions != sorted(set(additions)):
-        raise ValueError("prior 200-case admission changed")
+    if len(additions) != 201 or additions != sorted(set(additions)):
+        raise ValueError("current 201-case admission changed")
     if prior["base_manifest_sha256"] != sha256(ORIGINAL):
         raise ValueError("prior admission refers to a different original manifest")
     if prior["candidate_audit_sha256"] != sha256(AST_AUDIT):
@@ -56,7 +56,7 @@ def requalify(
     ids = sorted(set(original) | set(additions))
     report = json.loads(report_path.read_text())
     if report["suite"] != "expanded" or not report["complete_contract_scope"]:
-        raise ValueError("complete expanded-v1 matrix report required")
+        raise ValueError("complete expanded-v18 matrix report required")
     if not report["source"]["clean"] or report["evidence"]["tolerance_pixels"] != 0:
         raise ValueError("expanded requalification requires clean exact diagnostics")
     if report["commit"] != report["source"]["commit"]:
@@ -64,7 +64,7 @@ def requalify(
     if report["contract_sha256"] != sha256(CONTRACT):
         raise ValueError("qualification contract differs")
     if report["id_manifest"]["sha256"] != sha256(PRIOR):
-        raise ValueError("expanded-v1 manifest identity differs")
+        raise ValueError("expanded-v18 manifest identity differs")
     if report["chromium"]["build_identity"] != contract["chromium"]["raster_oracle_build_identity"]:
         raise ValueError("Chromium oracle build differs")
     if report["openui"]["raster_backend_identity"]["backend"] != contract["raster"]["qualification_backend"]:
@@ -135,7 +135,7 @@ def requalify(
         "base_manifest_sha256": sha256(ORIGINAL),
         "candidate_audit": prior["candidate_audit"],
         "candidate_audit_sha256": sha256(AST_AUDIT),
-        "prior_manifest": "expanded-v1.json",
+        "prior_manifest": PRIOR.name,
         "prior_manifest_sha256": sha256(PRIOR),
         "qualification_evidence": Path(os.path.relpath(
             ledger_output.resolve(), manifest_output.parent.resolve()

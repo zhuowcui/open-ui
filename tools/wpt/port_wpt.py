@@ -75,7 +75,7 @@ MEDIA_FIRST_FRAME_MANIFEST = (
     PROJECT_ROOT / 'docs' / 'renderer' / 'generated' / 'media-first-frames-v1.json'
 )
 JAVASCRIPT_MUTATION_AUDIT = (
-    PROJECT_ROOT / 'docs' / 'renderer' / 'generated' / 'javascript-mutation-audit-v2.json'
+    PROJECT_ROOT / 'docs' / 'renderer' / 'generated' / 'javascript-mutation-audit-v3.json'
 )
 _ACTIVE_RESOURCE_BASE: Path | None = None
 _MUTATION_AUDIT_BY_TEST_ID: dict[str, dict] | None = None
