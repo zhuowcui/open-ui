@@ -665,13 +665,11 @@ impl Element {
     }
 
     pub fn focus(&self) -> Result<(), Error> {
-        self.document
-            .with_engine_mut(|engine| engine.focus(self.handle))
+        self.document.focus_element(self.handle)
     }
 
     pub fn blur(&self) -> Result<(), Error> {
-        self.document
-            .with_engine_mut(|engine| engine.blur(self.handle))
+        self.document.blur_element(self.handle)
     }
 
     pub fn has_focus(&self) -> Result<bool, Error> {

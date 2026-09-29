@@ -69,6 +69,8 @@ scrolling it, and changing an input value are available through
 `set_control_value`. If an application needs another element operation and the
 public Rust API cannot perform it, that is a native API gap to implement; it
 does not require JavaScript.
+`Element::focus` and `Element::blur` deliver native focus and blur callbacks
+through the same document event path used by keyboard and accessibility input.
 The C ABI's `oui_document_element_by_id` performs the same attached-element
 lookup and returns an owned handle that the caller releases with
 `oui_element_destroy`.

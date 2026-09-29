@@ -938,6 +938,21 @@ impl Document {
         self.dispatch_focus_change(previous, Some(target))
     }
 
+    pub(crate) fn focus_element(&self, target: NodeHandle) -> Result<(), Error> {
+        let previous =
+            self.with_engine_mut(|engine| engine.focus_with_origin(target, FocusOrigin::Script))?;
+        self.dispatch_focus_change(previous, Some(target))
+    }
+
+    pub(crate) fn blur_element(&self, target: NodeHandle) -> Result<(), Error> {
+        let previous = self.with_engine(Engine::focused)?;
+        self.with_engine_mut(|engine| engine.blur(target))?;
+        if previous == Some(target) {
+            self.dispatch_focus_change(previous, None)?;
+        }
+        Ok(())
+    }
+
     fn dispatch_focus_change(
         &self,
         previous: Option<NodeHandle>,
@@ -1048,6 +1063,54 @@ mod tests {
             .set_property(StyleProperty::Height, LengthValue::px(40.0).into())
             .unwrap();
         element
+    }
+
+    #[test]
+    fn programmatic_focus_uses_native_event_path_after_engine_borrow() {
+        let document = Document::new(200, 100).unwrap();
+        let first = mounted(&document, "button");
+        let second = mounted(&document, "button");
+        let events = Rc::new(RefCell::new(Vec::new()));
+
+        let observed = events.clone();
+        let mutating_element = first.clone();
+        first
+            .on("focus", move |_| {
+                mutating_element
+                    .set_attribute("data-focus-event", "delivered")
+                    .unwrap();
+                observed.borrow_mut().push("first-focus");
+            })
+            .unwrap();
+        let observed = events.clone();
+        first
+            .on("blur", move |_| observed.borrow_mut().push("first-blur"))
+            .unwrap();
+        let observed = events.clone();
+        second
+            .on("focus", move |_| observed.borrow_mut().push("second-focus"))
+            .unwrap();
+        let observed = events.clone();
+        second
+            .on("blur", move |_| observed.borrow_mut().push("second-blur"))
+            .unwrap();
+
+        first.focus().unwrap();
+        first.focus().unwrap();
+        assert_eq!(
+            first.get_attribute("data-focus-event").unwrap().as_deref(),
+            Some("delivered")
+        );
+        second.focus().unwrap();
+        first.blur().unwrap();
+        second.blur().unwrap();
+        second.blur().unwrap();
+
+        assert_eq!(
+            events.borrow().as_slice(),
+            ["first-focus", "first-blur", "second-focus", "second-blur"]
+        );
+        assert!(document.focused_element().unwrap().is_none());
     }
 
     #[test]
