@@ -1263,6 +1263,41 @@ pub fn physical_quantized_image_patch(
         floor_color_coverage,
         coverage_bounds,
         true,
+        false,
+    )
+}
+
+/// Resolve the fractional-scale broken-image slot with Chromium's legacy
+/// software image coordinate path. Its first sample is mapped through a f32
+/// inverse matrix, then subsequent X samples advance in signed 32.32 fixed
+/// point. Exact 1/16 filter phases can therefore land on the preceding cell.
+pub fn physical_quantized_broken_image_patch(
+    image: &Image,
+    source: Rect,
+    destination: Rect,
+    device_scale: f32,
+) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
+    physical_quantized_image_patch_with_color_order(
+        image,
+        source,
+        destination,
+        device_scale,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        None,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        Some(destination),
+        true,
+        true,
     )
 }
 
@@ -1300,8 +1335,48 @@ pub fn physical_quantized_replaced_profile_corners(
         false,
         coverage_bounds,
         false,
+        false,
     )?;
     Ok((patch, aligned_destination))
+}
+
+#[derive(Clone, Copy)]
+struct LegacyFixedImageAxis {
+    inverse_scale: f32,
+    inverse_translation: f32,
+    step_fixed: i64,
+}
+
+impl LegacyFixedImageAxis {
+    const FIXED_ONE: f64 = 4_294_967_296.0;
+
+    fn new(source_start: f32, source_extent: f32, device_start: f32, device_extent: f32) -> Self {
+        let forward_scale = device_extent / source_extent;
+        let inverse_scale = (1.0 / f64::from(forward_scale)) as f32;
+        let inverse_translation =
+            (f64::from(source_start) - f64::from(device_start) * f64::from(inverse_scale)) as f32;
+        let step_fixed = (inverse_scale * Self::FIXED_ONE as f32) as i64;
+        Self {
+            inverse_scale,
+            inverse_translation,
+            step_fixed,
+        }
+    }
+
+    fn first_fixed(self, device_pixel: i32) -> i64 {
+        let center = device_pixel as f32 + 0.5;
+        let mapped = center * self.inverse_scale + self.inverse_translation;
+        (mapped * Self::FIXED_ONE as f32) as i64 - (1_i64 << 31)
+    }
+
+    fn sample(self, device_pixel: i32) -> f64 {
+        self.first_fixed(device_pixel) as f64 / Self::FIXED_ONE
+    }
+
+    fn sample_from_first(self, first_device_pixel: i32, index: i32) -> f64 {
+        (self.first_fixed(first_device_pixel) + self.step_fixed * i64::from(index)) as f64
+            / Self::FIXED_ONE
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -1325,6 +1400,7 @@ fn physical_quantized_image_patch_with_color_order(
     floor_color_coverage: bool,
     coverage_bounds: Option<Rect>,
     convert_before_coverage: bool,
+    legacy_float_matrix: bool,
 ) -> Result<(Image, Rect, Option<(Rect, Rect)>), String> {
     if !device_scale.is_finite()
         || device_scale <= 0.0
@@ -1482,6 +1558,22 @@ fn physical_quantized_image_patch_with_color_order(
         f64::from(sampling_source.width()) / f64::from(physical_destination.width());
     let inverse_scale_y =
         f64::from(sampling_source.height()) / f64::from(physical_destination.height());
+    let legacy_x = legacy_float_matrix.then(|| {
+        LegacyFixedImageAxis::new(
+            sampling_source.left,
+            sampling_source.width(),
+            physical_destination.left,
+            physical_destination.width(),
+        )
+    });
+    let legacy_y = legacy_float_matrix.then(|| {
+        LegacyFixedImageAxis::new(
+            sampling_source.top,
+            sampling_source.height(),
+            physical_destination.top,
+            physical_destination.height(),
+        )
+    });
     // An integral one-to-one image mapping is a texel copy. The predecessor
     // closure used by translated nine-slice/filter paths must not turn exact
     // source coordinates into a 15/16 bilinear blend in this case.
@@ -1496,7 +1588,9 @@ fn physical_quantized_image_patch_with_color_order(
     let single_axis_background_repeat = !replaced && (coverage_repeats_x ^ coverage_repeats_y);
     for target_y in 0..height {
         let device_y = f64::from(physical_top + target_y) + 0.5;
-        let source_y = if full_precision_sampling && single_axis_background_repeat {
+        let source_y = if let Some(axis) = legacy_y {
+            axis.sample(physical_top + target_y)
+        } else if full_precision_sampling && single_axis_background_repeat {
             full_precision_repeated_source_coordinate(
                 sampling_source.top,
                 sampling_source.height(),
@@ -1607,7 +1701,9 @@ fn physical_quantized_image_patch_with_color_order(
                 )
             };
             let device_x = f64::from(physical_left + target_x) + 0.5;
-            let source_x = if full_precision_sampling && single_axis_background_repeat {
+            let source_x = if let Some(axis) = legacy_x {
+                axis.sample_from_first(physical_left, target_x)
+            } else if full_precision_sampling && single_axis_background_repeat {
                 full_precision_repeated_source_coordinate(
                     sampling_source.left,
                     sampling_source.width(),
@@ -2432,6 +2528,18 @@ fn svg_has_explicit_dimension(bytes: &[u8]) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn broken_image_fixed_matrix_preserves_fractional_filter_phases() {
+        let weight = |coordinate: f64| ((coordinate.rem_euclid(1.0) * 16.0).floor()) as u32;
+        let at_150 = LegacyFixedImageAxis::new(0.0, 14.0, 30.0, 24.0);
+        assert_eq!(weight(at_150.sample_from_first(30, 1)), 5);
+        assert_eq!(weight(at_150.sample_from_first(30, 4)), 1);
+        assert_eq!(weight(at_150.sample_from_first(30, 7)), 13);
+
+        let at_125 = LegacyFixedImageAxis::new(0.0, 14.0, 25.0, 20.0);
+        assert_eq!(weight(at_125.sample_from_first(25, 7)), 12);
+    }
 
     #[test]
     fn svg_outer_edge_shortfall_tracks_the_composed_f32_phase() {

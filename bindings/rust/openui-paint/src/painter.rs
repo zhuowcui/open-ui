@@ -4394,27 +4394,37 @@ fn paint_missing_image(
     };
     let packed_physical_patch =
         if span_head.is_none() && style.raster_configuration.backend != RasterBackend::GaneshGl {
-            crate::image_resource::physical_quantized_image_patch(
-                &image,
-                packed_phase_source,
-                device_destination,
-                device_scale,
-                false,
-                false,
-                false,
-                false,
-                false,
-                false,
-                None,
-                false,
-                false,
-                false,
-                false,
-                false,
-                true,
-                Some(device_destination),
-            )
-            .ok()
+            if device_scale.fract().abs() > 1.0e-5 {
+                crate::image_resource::physical_quantized_broken_image_patch(
+                    &image,
+                    packed_phase_source,
+                    device_destination,
+                    device_scale,
+                )
+                .ok()
+            } else {
+                crate::image_resource::physical_quantized_image_patch(
+                    &image,
+                    packed_phase_source,
+                    device_destination,
+                    device_scale,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    None,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    true,
+                    Some(device_destination),
+                )
+                .ok()
+            }
         } else {
             None
         };
