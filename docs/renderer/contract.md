@@ -70,6 +70,9 @@ residual test IDs remain unowned. The shared
 differences from 626 pixels to one each. The
 [object fallback investigation](object-fallback-host-clip.md) records why the
 `object` host clip was deferred after an intermediate exact-case regression.
+The [fractional Ahem stripe investigation](fractional-ahem-stripe-edges.md)
+records a shared text and border edge mismatch in multicolumn source and plain
+reference pages; its root cause and repair remain open.
 The clean [v36 focused/primitive index](generated/focused-primitive-raster-v36.json)
 is 640/640 and 960/960 exact with zero errors. The clean
 [201-addition guard](generated/expanded-additions-object-deferred-v1.json)
