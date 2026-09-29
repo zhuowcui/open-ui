@@ -38,10 +38,15 @@ is 640/640 and 960/960 exact, with all 1,600 Open UI and Chromium images
 unchanged from the prior raster v38 index. The clean
 [201-addition guard](../renderer/generated/expanded-additions-gradient-guard-v1.json)
 is 801/804 exact, with the same three failures and all 804 Open UI and
-Chromium images unchanged from the prior complete expanded run. This selected
-guard is not a complete expanded-manifest requalification; the latest complete
-[v20 expanded run](../renderer/generated/expanded-requalification-v20.json)
-remains 22,049/23,728 exact, 1,679 different, and zero errors.
+Chromium images unchanged from the prior complete expanded run. The complete
+[v21 expanded requalification](../renderer/generated/expanded-requalification-v21.json)
+at clean checkpoint `e59ec07e` is 22,056/23,728 exact, 1,672 different,
+and zero errors. All 22,924 original and 804 added images match their clean
+v38 census and selected-additions guard respectively, including all Chromium
+oracle identities and decoded image hashes. The
+[v23 diagnostic selection](../../tools/qualification/manifests/expanded-v23.json)
+lists the 198 four-profile-exact additions; the release contract retains all
+201, including the same three failures.
 
 At the prior clean checkpoint `dc451061`, the
 [v37 census](../renderer/generated/four-profile-census-v37.json) was

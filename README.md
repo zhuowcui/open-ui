@@ -37,7 +37,7 @@ The current v0.2 release candidate has:
   comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v39.json);
 - 201 native final-state cases in the expanded contract, including one newly
   added exact case; 198 of 201 currently meet the four-profile gate and three
-  remain failures in the [latest full expanded report](docs/renderer/generated/expanded-requalification-v20.json).
+  remain failures in the [latest full expanded report](docs/renderer/generated/expanded-requalification-v21.json).
   The other 35 AST-lowered cases remain pending;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
 - 43 application scenarios covering retained updates, controls, editing,

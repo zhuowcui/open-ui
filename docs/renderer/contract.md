@@ -72,8 +72,13 @@ is 640/640 and 960/960 exact; all 1,600 Open UI and Chromium images are
 unchanged from v38. The clean
 [201-addition guard](generated/expanded-additions-gradient-guard-v1.json)
 is 801/804 exact with the same three failures and no decoded image changes.
-It is a selected check, so the complete expanded manifest still requires a
-new clean run at this source checkpoint.
+The complete [v21 expanded requalification](generated/expanded-requalification-v21.json)
+at clean checkpoint `e59ec07e` is 22,056/23,728 exact, with 1,672
+differences and zero errors. Every original and added decoded image, status,
+and Chromium oracle identity matches the separate clean census and addition
+guard. The [v23 diagnostic selection](../../tools/qualification/manifests/expanded-v23.json)
+retains 198 exact additions, while the release contract still includes all
+201 and their three failures.
 
 At clean checkpoint `dc451061`, the complete
 [v20 expanded requalification](generated/expanded-requalification-v20.json)

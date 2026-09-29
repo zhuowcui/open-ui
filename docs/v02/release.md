@@ -11,7 +11,7 @@ claimed by source code alone.
 | Four-profile renderer matrix | 21,255/22,924 exact, 1,669 different, zero errors in the [latest clean census](../renderer/generated/four-profile-census-v38.json) | fail |
 | Focused and primitive raster | 640/640 focused exact; 960/960 primitive exact in the [latest raster index](../renderer/generated/focused-primitive-raster-v39.json) | pass |
 | Direct Ganesh raster | Clean Mesa llvmpipe [comparison](../renderer/generated/ganesh-raster-comparison-v1.json): 408/640 focused and 624/960 primitive exact; CPU remains the qualification backend | unpromoted |
-| Expanded native final-state fixtures | Latest clean full expanded run retains 198 of 201 exact additions and [demotes three](../renderer/generated/expanded-requalification-v20.json); 22,049/23,728 total comparisons exact, 1,679 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
+| Expanded native final-state fixtures | Latest clean full expanded run retains 198 of 201 exact additions and [demotes three](../renderer/generated/expanded-requalification-v21.json); 22,056/23,728 total comparisons exact, 1,672 different, zero errors. The other 35 AST-lowered cases remain [pending](../renderer/generated/pending-mutation-candidates-v7.json). Open UI runs no JavaScript | open |
 | Accountability | 7/7 over 7,673 rows | pass |
 | Rust workspace and docs | full locked workspace suite | pass |
 | Rust 1.85 MSRV | [current hardening](https://github.com/zhuowcui/open-ui/actions/runs/36365378115): locked headless and Linux checks passed | pass |
@@ -58,8 +58,12 @@ is 640/640 and 960/960 exact, with no decoded image changes from v38. The
 clean [201-addition guard](../renderer/generated/expanded-additions-gradient-guard-v1.json)
 is 801/804 exact with the same three failures and no Open UI or Chromium
 image changes. That selected guard is not a complete expanded-manifest run;
-the latest complete [v20 expanded requalification](../renderer/generated/expanded-requalification-v20.json)
-remains 22,049/23,728 exact.
+the complete clean [v21 expanded requalification](../renderer/generated/expanded-requalification-v21.json)
+at `e59ec07e` is 22,056/23,728 exact, 1,672 different, and zero errors.
+Every original and added decoded image, status, and Chromium oracle identity
+matches the separate clean census and addition guard. The
+[v23 diagnostic selection](../../tools/qualification/manifests/expanded-v23.json)
+lists 198 exact additions; all 201 remain in the release contract.
 
 At the prior clean checkpoint `dc451061`, the census was
 [21,248/22,924 exact](../renderer/generated/four-profile-census-v37.json),

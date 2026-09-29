@@ -52,8 +52,12 @@ All Chromium oracle identities and decoded images stayed fixed. The clean
 is 640/640 and 960/960 exact, with no decoded image changes. All 804 decoded
 images in the clean [201-addition guard](generated/expanded-additions-gradient-guard-v1.json)
 are unchanged from the prior complete expanded run; the same three additions
-remain different. The guard does not replace a complete expanded-manifest
-rerun at this checkpoint.
+remain different. The subsequent complete clean
+[v21 expanded requalification](generated/expanded-requalification-v21.json)
+at `e59ec07e` is 22,056/23,728 exact with 1,672 differences and zero
+errors. All 22,924 original and 804 admitted profile images and Chromium
+oracle identities match the separate clean reports; 198 of 201 additions
+remain four-profile exact.
 
 The remaining signatures point to fractional fragment painting or clipping,
 not a general box-size error: both tests are exact at the three other required
