@@ -58,6 +58,11 @@ is 640/640 and 960/960 exact. The complete clean
 is 22,049/23,728 exact, 1,679 different, and zero errors; the same 198 of
 201 additions are exact at all four profiles.
 
+The [fractional multicolumn seam investigation](../renderer/fractional-multicol-seam-investigation.md)
+records two remaining one-column pixel signatures against Chromium. Its
+coverage explanation is still a hypothesis; those cases remain failing and
+unowned for release qualification.
+
 At the prior clean checkpoint `128edc38`, the v36 census was
 [21,245/22,924 exact](../renderer/generated/four-profile-census-v36.json),
 with 1,679 differences, zero errors, and 926 unowned residual test IDs. The

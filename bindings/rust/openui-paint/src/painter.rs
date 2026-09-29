@@ -16584,18 +16584,22 @@ fn paint_box_decoration_background(
                         None,
                         None,
                     ));
-                    canvas.save();
                     if has_radius {
+                        canvas.save();
                         let clip_rrect = RRect::new_rect_radii(
                             paint_rect,
                             &fragment_border_radii(style, fragment, &paint_rect, bt),
                         );
                         canvas.clip_rrect(clip_rrect, ClipOp::Intersect, true);
+                        canvas.draw_rect(paint_rect, &paint);
+                        canvas.restore();
                     } else {
-                        canvas.clip_rect(paint_rect, ClipOp::Intersect, false);
+                        // The analytic fill already ends at `paint_rect`. A
+                        // second hard clip to that identical rectangle drops
+                        // fractional edge coverage where adjacent fragments
+                        // meet on a non-integral device scale.
+                        canvas.draw_rect(paint_rect, &paint);
                     }
-                    canvas.draw_rect(paint_rect, &paint);
-                    canvas.restore();
                 }
             }
         }
