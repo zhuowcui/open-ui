@@ -18,6 +18,7 @@
     { "id": "static_headless_scene", "domains": ["lifecycle"] },
     { "id": "batched_tree_transaction", "domains": ["lifecycle"] },
     { "id": "native_id_lookup_follows_attached_document_order", "domains": ["lifecycle"] },
+    { "id": "native_detach_preserves_subtree_handles_and_listeners_for_reattachment", "domains": ["lifecycle", "events"] },
     { "id": "native_layout_read_then_id_style_mutation_updates_the_same_document", "domains": ["lifecycle", "layout"] },
     { "id": "native_class_lookup_tracks_event_driven_updates_and_detachment", "domains": ["lifecycle", "events"] },
     { "id": "native_kind_lookup_tracks_tree_order_and_detachment", "domains": ["lifecycle"] },
