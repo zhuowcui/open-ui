@@ -60,6 +60,16 @@ AST-lowered candidates remain pending. All 200 prior additions remain in the
 new manifest, including three that currently fail a profile; admission never
 turns their failing comparisons into passes.
 
+At clean checkpoint `6b53a991`, the complete
+[v19 expanded requalification](generated/expanded-requalification-v19.json)
+is 22,046/23,728 exact, with 1,682 differences and zero errors. The same
+198 of 201 additions are exact at all four profiles; three remain failures.
+All original profile results and all added profile results match their clean
+v36 census and selected-additions guard respectively, including every pinned
+Chromium oracle identity and decoded image hash. The
+[v21 diagnostic selection](../../tools/qualification/manifests/expanded-v21.json)
+records the 198 exact additions; the release contract still includes all 201.
+
 At clean checkpoint `128edc38`, the [v36 original census](generated/four-profile-census-v36.json)
 is 21,245/22,924 exact, with 1,679 differences and zero errors. The
 [fractional Ahem strike repair](fractional-ahem-stripe-edges.md) changed 21

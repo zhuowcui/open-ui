@@ -37,7 +37,8 @@ The current v0.2 release candidate has:
   comparisons exact in the [latest raster index](docs/renderer/generated/focused-primitive-raster-v37.json);
 - 201 admitted native final-state cases, including one newly admitted case
   exact at all four profiles; 198 of 201 currently meet that gate and three
-  remain failures. The other 35 AST-lowered cases remain pending;
+  remain failures in the [latest full expanded report](docs/renderer/generated/expanded-requalification-v19.json).
+  The other 35 AST-lowered cases remain pending;
 - a 7/7 repository accountability audit over all 7,673 inventoried tests;
 - 43 application scenarios covering retained updates, controls, editing,
   accessibility, resources, scrolling, animation, bidi, and multi-document use;

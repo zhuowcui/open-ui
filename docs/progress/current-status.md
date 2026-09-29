@@ -52,10 +52,10 @@ none of its Open UI or Chromium decoded images changed from the prior guard.
 This selected guard is not a complete expanded-manifest run.
 The [new expanded admission](../renderer/adjoining-floats-native-admission.md)
 retains all 200 prior additions and adds one case exact at all four required
-profiles. The complete clean expanded run is
-[22,045/23,728 exact](../renderer/generated/expanded-requalification-v18.json),
-with 1,683 differences, zero errors, and 198 of 201 additions exact across
-four profiles. The [v20 diagnostic selection](../../tools/qualification/manifests/expanded-v20.json)
+profiles. The complete clean expanded run at `6b53a991` is
+[22,046/23,728 exact](../renderer/generated/expanded-requalification-v19.json),
+with 1,682 differences, zero errors, and 198 of 201 additions exact across
+four profiles. The [v21 diagnostic selection](../../tools/qualification/manifests/expanded-v21.json)
 lists those 198; the release contract still includes all 201. The same three
 earlier additions remain failures. The remaining 35
 [pending candidates](../renderer/generated/pending-mutation-candidates-v7.json)
@@ -64,7 +64,8 @@ checkpoint `8324c6b0`; none is exact at all four profiles. All 140 comparison
 statuses, mismatched-pixel counts, and diff signatures match the prior pending
 report. The original release gate still has 926 unowned residual test IDs.
 Open UI runs no JavaScript; the newly admitted interaction has a public native
-Rust API path.
+Rust API path. A script in a Chromium test is a source-data fact, not an
+application feature requirement or an excuse to omit a needed native Rust API.
 The public `Element::detach` and `TextNode::detach` operations now keep authored
 nodes available for reattachment while removing them from the presented
 document. A new conformance scenario checks element lookup, focus,

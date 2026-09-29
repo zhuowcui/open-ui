@@ -77,9 +77,11 @@ There are two different axes:
 
 A test can be in an SP12-scope directory while depending on SP11 text/font metrics,
 SP13 fragmentation, grid/table layout, or a WPT script that must be assessed
-for a deterministic native final-state fixture. The `needs_javascript`
-classification describes Chromium test source, not an Open UI runtime or
-planned product feature.
+for a deterministic native final-state fixture. The historical
+`needs_javascript` classification describes Chromium test source, not an Open
+UI runtime, planned product feature, or reason to omit an application-needed
+native Rust API. Each needed element operation belongs in the public API over
+the shared engine.
 
 `sp12_layout_bug` is the fallback category for a failing runnable test when no other
 dependency detector applies. A clean SP12 exit requires this count to be zero.

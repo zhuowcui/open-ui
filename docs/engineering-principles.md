@@ -34,8 +34,11 @@ Examples:
 - `sp13_fragmentation` for block fragmentation ownership,
 - `sp13_multicol` for multi-column layout ownership,
 - `needs_writing_mode` for vertical-flow and bidi dependencies,
-- `needs_javascript` for Chromium WPT scripts requiring native final-state
-  assessment; it never calls for an Open UI JavaScript runtime,
+- `needs_javascript` is a legacy label for Chromium WPT files containing
+  scripts. Review their deterministic final visual states against Chromium
+  using native Rust fixtures, and expose any application-needed interaction
+  through the public Rust API. The label never calls for an Open UI JavaScript
+  runtime or waives a native API gap,
 - `needs_grid` for CSS Grid dependencies,
 - `needs_complex_border` for paint-quality cases outside layout.
 

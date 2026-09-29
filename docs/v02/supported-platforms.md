@@ -82,6 +82,10 @@ Rust API must provide it and exercise the same retained document and event
 path. Excluding a behavioral test from the pixel matrix does not exclude the
 needed native behavior from the product. Pixel equality from a test-only
 fixture does not close an application API gap.
+The presence of a script in a Chromium test is not, by itself, a reason to
+exclude a deterministic visual state from pixel qualification. Historical
+test data may call such a case `needs_javascript`; that label describes the
+Chromium source file, not Open UI's implementation or a release waiver.
 The current deterministic test scripts use ID, class, and tag lookups; the
 native equivalents are `element_by_id`, `elements_with_class`, and
 `elements_of_kind`. None requires a script engine.
