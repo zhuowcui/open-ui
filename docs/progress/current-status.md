@@ -66,6 +66,12 @@ experiment still regressed four exact comparisons in 1,696 fractional-scale
 comparisons. Both edits were reverted;
 the clean census above remains the current qualification evidence.
 
+A [broken-image sampling investigation](../renderer/broken-image-fractional-sampling.md)
+isolated five identical 1.5× differences to Chromium's fallback-image icon.
+Encoding the image phase at fractional scales reduced each difference but
+regressed the same five cases at 1.25×, so the diagnostic edit was reverted.
+The clean census and native API contract above remain unchanged.
+
 The [prior complete clean census](../renderer/generated/four-profile-census-v30.json)
 at `814a2005` is 21,239/22,924 exact, 1,685 different, and zero errors.
 The [table row-group clip repair](../renderer/truncated-table-row-group-clip.md)
