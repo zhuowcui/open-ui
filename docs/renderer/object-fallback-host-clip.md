@@ -18,7 +18,9 @@ the other five defaults. The [clean six-case guard](generated/object-fallback-ho
 covers every original fixture builder that creates an `object`, across all four
 required profiles: 24/24 exact, zero errors. Its Open UI and Chromium images
 are byte-identical to the pre-UA full census, including the restored caption
-row. This selected guard does not replace a complete post-repair census.
+row. The [complete post-repair census](generated/four-profile-census-v35.json)
+is 21,245/22,924 exact with zero errors and no regression from the pre-UA
+baseline.
 
 This decision does not establish Chromium-equivalent computed style for a
 native `object` with fallback content. Its fallback layout and clip ownership

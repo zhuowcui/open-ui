@@ -60,13 +60,29 @@ AST-lowered candidates remain pending. All 200 prior additions remain in the
 new manifest, including three that currently fail a profile; admission never
 turns their failing comparisons into passes.
 
+At clean checkpoint `6676cf60`, the [v35 original census](generated/four-profile-census-v35.json)
+is 21,245/22,924 exact, with 1,679 differences and zero errors. The
+[full image-delta audit](generated/radial-ua-full-delta-v1.json) records nine
+changed Open UI images, one new exact result, and no exact regression. All
+22,924 Chromium oracle identities and decoded hashes stayed fixed; 926
+residual test IDs remain unowned. The shared
+[radial tile repair](radial-tile-edge-coverage.md) reduced two 1.25×
+differences from 626 pixels to one each. The
+[object fallback investigation](object-fallback-host-clip.md) records why the
+`object` host clip was deferred after an intermediate exact-case regression.
+The clean [v36 focused/primitive index](generated/focused-primitive-raster-v36.json)
+is 640/640 and 960/960 exact with zero errors. The clean
+[201-addition guard](generated/expanded-additions-object-deferred-v1.json)
+is 801/804 exact with three differences and no changed Open UI or Chromium
+image; a complete expanded-manifest rerun remains open.
+
 At clean checkpoint `d70c4696`, the [v33 original census](generated/four-profile-census-v33.json)
-remains 21,244/22,924 exact with 1,680 differences and zero errors. The
+was 21,244/22,924 exact with 1,680 differences and zero errors. The
 shared broken-image host content clip improved two already failing comparisons
 without changing any other Open UI image. Every Chromium oracle identity and
 decoded hash stayed fixed; 926 residual test IDs remain unowned.
 The clean [v34 focused/primitive index](generated/focused-primitive-raster-v34.json)
-remains 640/640 and 960/960 exact with zero errors.
+was 640/640 and 960/960 exact with zero errors.
 
 At clean checkpoint `09683348`, the [v32 original census](generated/four-profile-census-v32.json)
 is 21,244/22,924 exact with 1,680 differences and zero errors. The

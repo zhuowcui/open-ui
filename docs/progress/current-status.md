@@ -11,7 +11,7 @@ remain open.
 |---|---:|
 | Historical frozen SP20 pass records | 5,731, using a tolerant comparator |
 | Optional historical byte replay | 5,549 unchanged, 182 changed, 0 errors; not a gate |
-| Fresh four-profile Chromium census | 21,244/22,924 exact, 1,680 different, 0 errors |
+| Fresh four-profile Chromium census | 21,245/22,924 exact, 1,679 different, 0 errors |
 | Focused / primitive 40-profile matrices | 640/640 / 960/960 exact |
 | Expanded native final-state additions | 198/201 exact at all four profiles in the latest clean run; three still fail |
 | Pending native final-state candidates | 0/35 exact at all four profiles after the latest clean recheck |
@@ -26,17 +26,20 @@ remain open.
 | Owned objects after 10,000 mutation soak | no growth/leak |
 | Unchanged-frame lifecycle | zero layout, paint, and raster work |
 
-The [latest complete clean census](../renderer/generated/four-profile-census-v33.json)
-at `d70c4696` is 21,244/22,924 exact, 1,680 different, and zero errors.
-The image-host content clip changed only two already failing Open UI images:
-the `overflow-img-scroll-non-replaced-ref` result improved from 193 to 78
-wrong pixels at 1.25× and from 305 to 127 at 1.5×. All 22,924 Chromium
-oracle identities and decoded hashes stayed fixed, and no exact result regressed.
-The [201-addition clean guard](../renderer/generated/expanded-additions-host-clip-v1.json)
-at `b16113a3` retained all 801 exact and three different profile comparisons;
-none of its Open UI or Chromium decoded images changed from the prior full
-expanded run. The complete expanded manifest still needs a fresh full run
-after the next renderer changes.
+The [latest complete clean census](../renderer/generated/four-profile-census-v35.json)
+at `6676cf60` is 21,245/22,924 exact, 1,679 different, and zero errors.
+The [full image-delta audit](../renderer/generated/radial-ua-full-delta-v1.json)
+found nine changed Open UI images, one newly exact comparison, and no
+previously exact regression. All 22,924 Chromium oracle identities and decoded
+hashes stayed fixed. The [radial tile repair](../renderer/radial-tile-edge-coverage.md)
+reduced two already failing 1.25× cases from 626 wrong pixels to one each.
+The [object fallback investigation](../renderer/object-fallback-host-clip.md)
+records an exact-case regression in the intermediate v34 census and its scoped
+repair; all six original `object` fixtures are exact at four profiles again.
+The [201-addition clean guard](../renderer/generated/expanded-additions-object-deferred-v1.json)
+at `6676cf60` retained 801 exact and three different profile comparisons;
+none of its Open UI or Chromium decoded images changed from the prior guard.
+This selected guard is not a complete expanded-manifest run.
 The [new expanded admission](../renderer/adjoining-floats-native-admission.md)
 retains all 200 prior additions and adds one case exact at all four required
 profiles. The complete clean expanded run is
@@ -45,7 +48,7 @@ with 1,683 differences, zero errors, and 198 of 201 additions exact across
 four profiles. The [v20 diagnostic selection](../../tools/qualification/manifests/expanded-v20.json)
 lists those 198; the release contract still includes all 201. The same three
 earlier additions remain failures. The clean
-[v34 raster index](../renderer/generated/focused-primitive-raster-v34.json)
+[v36 raster index](../renderer/generated/focused-primitive-raster-v36.json)
 is 640/640 focused and 960/960 primitive exact. The remaining 35
 [pending candidates](../renderer/generated/pending-mutation-candidates-v7.json)
 produced 18/140 exact comparisons, 122 differences, and zero errors at clean
