@@ -43,7 +43,7 @@ The current v0.2 release candidate has:
   accessibility, resources, scrolling, animation, bidi, and multi-document use;
 - generation-checked Rust and C handles, deterministic manual clocks, immutable
   scenes, X11/Wayland operation, software presentation, and OpenGL upload;
-- 84 frozen retained-engine/headless C exports, with 103 current exports and
+- 84 frozen retained-engine/headless C exports, with 104 current exports and
   checked layouts and an ABI checksum;
 - sanitizer, Miri, fuzz, leak, latency, idle-work, and package gates defined
   in CI; several remain open or failing.

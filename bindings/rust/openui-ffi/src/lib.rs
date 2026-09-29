@@ -757,6 +757,31 @@ pub extern "C" fn oui_document_root(
     })
 }
 
+// SAFETY CONTRACT: `document` is live, `id` names readable UTF-8 bytes, and
+// `out_element` is writable. A found result is an owned handle; release it
+// with `oui_element_destroy`. A missing ID writes null and returns success.
+#[no_mangle]
+pub extern "C" fn oui_document_element_by_id(
+    document_handle: *mut OuiDocument,
+    id: OuiUtf8,
+    out_element: *mut *mut OuiElement,
+) -> OuiStatus {
+    ffi(|| {
+        if out_element.is_null() {
+            return Err(invalid("out_element is null"));
+        }
+        // SAFETY: the caller guarantees storage for one output pointer.
+        unsafe { ptr::write(out_element, ptr::null_mut()) };
+        let state = document(document_handle as usize)?;
+        let id = utf8(id, "id")?;
+        let node = borrow_engine(&state)?.element_by_id(&id);
+        if let Some(node) = node {
+            write_element_handle(out_element, &state, node)?;
+        }
+        Ok(())
+    })
+}
+
 // SAFETY CONTRACT: both pointers reference live/readable objects for this call.
 #[no_mangle]
 pub extern "C" fn oui_document_set_viewport(
@@ -3805,6 +3830,46 @@ mod tests {
         assert_eq!(oui_app_document(app, &mut document), OuiStatus::Ok);
         assert_eq!(oui_app_destroy(app), OuiStatus::Ok);
         assert_eq!(oui_document_update(document), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn c_id_lookup_returns_owned_attached_element_handles() {
+        let document = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let child = create_element(document, 0, root);
+        assert_eq!(
+            oui_element_set_attribute(child, text("id"), text("control")),
+            OuiStatus::Ok
+        );
+
+        let mut found = ptr::null_mut();
+        assert_eq!(
+            oui_document_element_by_id(document, text("control"), &mut found),
+            OuiStatus::Ok
+        );
+        assert!(!found.is_null());
+        assert_ne!(found, child);
+        assert_eq!(oui_element_detach(found), OuiStatus::Ok);
+
+        let mut missing = found;
+        assert_eq!(
+            oui_document_element_by_id(document, text("control"), &mut missing),
+            OuiStatus::Ok
+        );
+        assert!(missing.is_null());
+        assert_eq!(oui_element_append_child(root, child), OuiStatus::Ok);
+        assert_eq!(
+            oui_document_element_by_id(document, text("control"), &mut missing),
+            OuiStatus::Ok
+        );
+        assert!(!missing.is_null());
+
+        assert_eq!(oui_element_destroy(found), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(missing), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(child), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }
 

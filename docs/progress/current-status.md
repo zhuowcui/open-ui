@@ -19,7 +19,7 @@ remain open.
 | Explicitly unported | 1,942 |
 | Accountability audit | 7/7 |
 | Application conformance scenarios | 43 across 10 domains |
-| Frozen / current C exports | 84 / 103 |
+| Frozen / current C exports | 84 / 104 |
 | C examples / C++ consumers | 5 / 1 |
 | Workspace tests | pass |
 | Python closure and qualification tests | 231 pass |
@@ -52,8 +52,9 @@ reattachment, listener delivery, and eventual destruction; the text-node
 scenario now checks detachment and reattachment too. The conformance suite is
 43/43.
 The append-only C `oui_element_detach` export uses the same engine operation
-for element and text handles. ABI verification reports 103 current symbols;
-the 84 frozen symbols and all C struct layouts remain intact.
+for element and text handles. `oui_document_element_by_id` now provides owned
+handles for native C element lookup. ABI verification reports 104 current
+symbols; the 84 frozen symbols and all C struct layouts remain intact.
 The locked Rust workspace suite passed with CI's 4 MiB libtest worker-thread
 stack. The default 2 MiB worker stack still aborts in an existing fragmented
 multicol integration test; its isolated rerun passes at 4 MiB.

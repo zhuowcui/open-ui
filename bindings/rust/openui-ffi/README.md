@@ -22,6 +22,10 @@ All opaque handles are generation-checked and thread-affine. Strings are
 length-delimited UTF-8. Every status failure records a thread-local structured
 error. Event callbacks are synchronous, may reenter the API on the owning
 thread, and remain registered until their `OuiListener` is destroyed.
+`oui_document_element_by_id` finds an attached element in document order and
+returns an owned handle, or null on a successful miss. The caller destroys a
+found handle with `oui_element_destroy`; detaching the node excludes it from
+later lookups while preserving its existing handles for reattachment.
 The owned `OuiAccessibilitySnapshot` API exposes node metadata, ordered
 relations, focus, and changed/removed IDs without retaining engine borrows.
 Snapshots remain readable after document destruction on their owning thread.

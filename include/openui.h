@@ -737,6 +737,8 @@ OuiStatus oui_document_render_png(OuiDocument* document, OuiBuffer** out_buffer)
 OuiStatus oui_document_dispatch_event(OuiDocument* document, OuiElement* target, OuiEvent* event);
 OuiStatus oui_document_dispatch_pointer_event(OuiDocument* document, OuiEvent* event);
 OuiStatus oui_document_hit_test(OuiDocument* document, float x, float y, OuiElement** out_element);
+/* Found elements return owned handles; destroy them with oui_element_destroy. */
+OuiStatus oui_document_element_by_id(OuiDocument* document, OuiUtf8 id, OuiElement** out_element);
 OuiStatus oui_document_advance_focus(OuiDocument* document, int32_t direction, OuiElement** out_element);
 OuiStatus oui_document_set_modal_root(OuiDocument* document, OuiElement* root);
 OuiStatus oui_document_accessibility_update(OuiDocument* document, OuiAccessibilityUpdate* out_update);

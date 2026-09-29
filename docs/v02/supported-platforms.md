@@ -69,6 +69,9 @@ scrolling it, and changing an input value are available through
 `set_control_value`. If an application needs another element operation and the
 public Rust API cannot perform it, that is a native API gap to implement; it
 does not require JavaScript.
+The C ABI's `oui_document_element_by_id` performs the same attached-element
+lookup and returns an owned handle that the caller releases with
+`oui_element_destroy`.
 
 When a Chromium test uses a script to reach a visual state, we assess that
 final state as a rendering case. Separately, we review each element operation
