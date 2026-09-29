@@ -1254,6 +1254,13 @@ pub extern "C" fn oui_element_remove(element_handle: *mut OuiElement) -> OuiStat
     ffi(|| with_element_mut(element_handle as usize, Engine::remove))
 }
 
+// SAFETY CONTRACT: `element` is a live node handle owned by this thread.
+// The retained node and handle remain valid for later reattachment.
+#[no_mangle]
+pub extern "C" fn oui_element_detach(element_handle: *mut OuiElement) -> OuiStatus {
+    ffi(|| with_element_mut(element_handle as usize, Engine::detach))
+}
+
 // SAFETY CONTRACT: `element` is a live element handle owned by this thread.
 #[no_mangle]
 pub extern "C" fn oui_element_remove_all_children(element_handle: *mut OuiElement) -> OuiStatus {
@@ -3826,6 +3833,36 @@ mod tests {
         assert_eq!(oui_element_destroy(second_element), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(first), OuiStatus::Ok);
         assert_eq!(oui_document_destroy(second), OuiStatus::Ok);
+    }
+
+    #[test]
+    fn detached_c_nodes_keep_their_handles_until_explicit_removal() {
+        let document = create_document(64, 64);
+        let mut root = ptr::null_mut();
+        assert_eq!(oui_document_root(document, &mut root), OuiStatus::Ok);
+        let parent = create_element(document, 0, root);
+        let child = create_element(document, 0, parent);
+        let mut text_node = ptr::null_mut();
+        assert_eq!(
+            oui_text_create(document, text("native"), &mut text_node),
+            OuiStatus::Ok
+        );
+        assert_eq!(oui_element_append_child(parent, text_node), OuiStatus::Ok);
+
+        assert_eq!(oui_element_detach(parent), OuiStatus::Ok);
+        assert_eq!(oui_element_detach(parent), OuiStatus::Ok);
+        assert_eq!(set_length(child, 4, 20.0), OuiStatus::Ok);
+        assert_eq!(oui_element_detach(text_node), OuiStatus::Ok);
+        assert_eq!(oui_element_append_child(parent, text_node), OuiStatus::Ok);
+        assert_eq!(oui_element_append_child(root, parent), OuiStatus::Ok);
+        assert_eq!(oui_element_remove(parent), OuiStatus::Ok);
+        assert_eq!(set_length(child, 4, 30.0), OuiStatus::StaleHandle);
+
+        assert_eq!(oui_element_destroy(text_node), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(child), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(parent), OuiStatus::Ok);
+        assert_eq!(oui_element_destroy(root), OuiStatus::Ok);
+        assert_eq!(oui_document_destroy(document), OuiStatus::Ok);
     }
 
     #[test]

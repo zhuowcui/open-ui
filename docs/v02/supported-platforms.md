@@ -60,6 +60,9 @@ removed, or the document is dropped.
 `TextNode::detach` does the same for a text node and transfers it to document
 ownership so dropping the Rust handle does not destroy a node intended for
 later reattachment.
+The C ABI exposes the shared engine operation as `oui_element_detach` for both
+element and text handles. It leaves the handle valid for `oui_element_append_child`
+or `oui_element_insert_before`; `oui_element_remove` still destroys the node.
 For example, the effects of looking up an element, activating it, focusing it,
 scrolling it, and changing an input value are available through
 `Document::element_by_id`, `Element::click`, `focus`, `scroll_to`, and

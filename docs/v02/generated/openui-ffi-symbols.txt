@@ -54,6 +54,7 @@ oui_element_blur
 oui_element_copy_control_value
 oui_element_create
 oui_element_destroy
+oui_element_detach
 oui_element_focus
 oui_element_get_accessibility_id
 oui_element_get_bounds

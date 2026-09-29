@@ -775,6 +775,8 @@ OuiStatus oui_element_destroy(OuiElement* element);
 OuiStatus oui_element_append_child(OuiElement* parent, OuiElement* child);
 OuiStatus oui_element_insert_before(OuiElement* parent, OuiElement* child, OuiElement* before);
 OuiStatus oui_element_remove(OuiElement* element);
+/* Detach without invalidating the node handle; reattach with append/insert. */
+OuiStatus oui_element_detach(OuiElement* element);
 OuiStatus oui_element_remove_all_children(OuiElement* element);
 OuiStatus oui_element_set_text(OuiElement* element, OuiUtf8 text);
 OuiStatus oui_element_set_attribute(OuiElement* element, OuiUtf8 name, OuiUtf8 value);
